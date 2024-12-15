@@ -32,7 +32,7 @@ function App() {
           <Routes>
             <Route path="/product/:productownedby/:userType" element={<UploadForm />} />
             {/* Dynamic product ID route for ProductView */}
-            <Route path="/product-view/:id/:productownedby/:userType" element={<ProductView />} /> 
+            <Route path="/product-view/:productownedby/:userType" element={<ProductView />} /> 
             <Route path="/product-list/:productownedby" element={<ProductList />} />
             <Route path="/product-edit/:id/:userType" element={<EditUploadForm />} />           
             <Route path="/RaiseTicket/:customerId/:userType" element={<RaiseTicket />} />
