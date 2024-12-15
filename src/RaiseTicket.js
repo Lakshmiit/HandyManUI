@@ -197,7 +197,7 @@ useEffect(() => {
     };
   
     try {
-      const response = await fetch('https://handymanapiv2.azurewebsites.net/api/SupportTicket/CreateSupportTicket', {
+      const response = await fetch('https://handymanapiv2.azurewebsites.net/api/RaiseTicket/CreateSupportTicket', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
