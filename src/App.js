@@ -39,7 +39,7 @@ function App() {
             <Route path="/buyProducts/:userType" element={<BuyProduct />} />
             <Route path="/sidebar/:userType" element={<Sidebar />} />
             <Route path="/buyproduct-view/:userType" element={<BuyProductView />} />
-            <Route path="/adminProductApproval/:id/:userType" element={<AdminProductApproval />} />
+            <Route path="/adminProductApproval/:id" element={<AdminProductApproval />} />
             <Route path="/adminProductList" element={<AdminProductList />} />
             <Route path="/adminUpdateProduct/:id" element={<AdminUpdateProduct />} />
             <Route path="/notifications" element={<Notifications />} />
