@@ -11,6 +11,7 @@ import PaymentsIcon from '@mui/icons-material/Payments';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import InventoryIcon from '@mui/icons-material/Inventory';
 
+
 const AddTechnician = ({onClose, onSubmit}) => {
     const [ name, setName ] = useState(""); 
     const [ emailAddress, setEmailAddress ] = useState("");
