@@ -177,9 +177,9 @@ useEffect(() => {
     const ticketId = `${ticketIdPrefix}${ticketIdSuffix}`;
   
     const payload = {
-      ticketId,
+      RaiseTicketId:ticketId,
       date: new Date().toISOString(),
-
+      
       address: addresses.find((addr) => addr.type === 'primary')?.address || '',
       subject: formData.subject,
       details: formData.details,
@@ -197,7 +197,7 @@ useEffect(() => {
     };
   
     try {
-      const response = await fetch('https://handymanapiv2.azurewebsites.net/api/RaiseTicket/CreateSupportTicket', {
+      const response = await fetch('https://handymanapiv2.azurewebsites.net/api/RaiseTicket/CreateRaiseTicket', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
