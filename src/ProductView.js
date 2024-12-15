@@ -176,14 +176,14 @@ const ProductAdmin = () => {
               {/* Product Details */}
               <div className="row">
                 <div className="col-md-6">
-                  <p><strong>Category:</strong> {category}</p>
-                  <p><strong>Name:</strong> {productName}</p>
-                  <p><strong>Catalogue:</strong> {catalogue}</p>
-                  <p><strong>Size:</strong> {productSize}</p>
-                  <p><strong>Color:</strong> {color}</p>
-                  <p><strong>Rate:</strong> ${rate}</p>
-                  <p><strong>Discount:</strong> {discount}%</p>
-                  <p><strong>Price After Discount:</strong> ${afterDiscountPrice.toFixed(2)}</p>
+                  <p><strong>Category:</strong> {productData.category}</p>
+                  <p><strong>Name:</strong> {productData.productName}</p>
+                  <p><strong>Catalogue:</strong> {productData.catalogue}</p>
+                  <p><strong>Size:</strong> {productData.productSize}</p>
+                  <p><strong>Color:</strong> {productData.color}</p>
+                  <p><strong>Rate:</strong> ${productData.rate}</p>
+                  <p><strong>Discount:</strong> {productData.discount}%</p>
+                  <p><strong>Price After Discount:</strong> ${productData.afterDiscountPrice.toFixed(2)}</p>
                 </div>
                 <div className="col-md-6">
                   <h5>Specifications</h5>
@@ -195,9 +195,9 @@ const ProductAdmin = () => {
                     ))}
                   </ul>
                   <h5>Warranty</h5>
-                  <p>{warranty} months</p>
+                  <p>{productData.warranty} months</p>
                   <h5>Additional Information</h5>
-                  <p>{additionalInformation}</p>
+                  <p>{productData.additionalInformation}</p>
                 </div>
               </div>
 
