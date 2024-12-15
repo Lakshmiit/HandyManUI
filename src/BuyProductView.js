@@ -14,6 +14,7 @@ import Image1 from './img/builder_reg.jpeg';
 import Image2 from './img/customer_reg.jpeg';
 import Image3 from './img/estimtr_reg.jpeg';
 
+
 const BuyProduct = () => {
   return (
    
