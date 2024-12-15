@@ -1,19 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import "./App.css";
+import { v4 as uuidv4 } from 'uuid'; 
+import Sidebar from './Sidebar';
 import "bootstrap/dist/css/bootstrap.min.css";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import SupportAgentIcon from "@mui/icons-material/SupportAgent";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import RouteIcon from "@mui/icons-material/Route";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import PaymentsIcon from "@mui/icons-material/Payments";
-import AccountCircle from "@mui/icons-material/AccountCircle";
-import InventoryIcon from "@mui/icons-material/Inventory";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
+import { Button, Form, Modal } from 'react-bootstrap'; // Import Bootstrap components for modal
 
 const BuyProduct = () => {
   const navigate = useNavigate();
+  const [isMobile, setIsMobile] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const { productId, selectedUserType } = useParams(); 
   const [category, setCategory] = useState("Electrical items");
   const [productSize, setProductSize] = useState("");
   const [productCatalogue, setProductCatalogue] = useState("");
@@ -23,6 +21,59 @@ const BuyProduct = () => {
   const [units, setUnits] = useState("");
   const [productName, setProductName] = useState("");
   const [product] = useState({ id: 1 });
+  const [showSecondaryAddresses, setShowSecondaryAddresses] = useState(false);
+  const [addresses, setAddresses] = useState([]);
+  const [newAddress, setNewAddress] = useState('');
+  const [addressType, setAddressType] = useState('');
+  const [state, setState] = useState('');
+  const [district, setDistrict] = useState('');
+  const [pincode, setPincode] = useState('');
+  const [showModal, setShowModal] = useState(false);
+
+  // Fetch customer profile data
+  useEffect(() => {
+    const fetchProfileType = async () => {
+      try {
+        const API_URL = `https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/}`;
+        const response = await fetch(`${API_URL}${productId}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch customer profile data');
+        }
+        const data = await response.json();
+        console.log(data);
+        // Assuming data contains an array of addresses, wrap the data in an array if it's not an array
+        const addresses = Array.isArray(data) ? data : [data];
+        
+        // Format addresses if necessary
+        const formattedAddresses = addresses.map((addr) => ({
+          id: addr.addressId, // Use addressId
+          type: addr.isPrimaryAddress ? 'primary' : 'secondary',
+          address: addr.address,
+          state: addr.state,
+          district: addr.district,
+          zipCode: addr.zipCode, // Correct key from pinCode
+        }));
+  
+        // Set the addresses state
+        setAddresses(formattedAddresses);
+      } catch (error) {
+        console.error('Error fetching customer data:', error);
+      }
+    };
+    if (productId) {
+      fetchProfileType();
+    }
+  }, [productId]);
+
+  // Detect screen size for responsiveness
+useEffect(() => {
+  const handleResize = () => setIsMobile(window.innerWidth <= 768);
+  handleResize(); // Set initial state
+  window.addEventListener('resize', handleResize);
+
+  return () => window.removeEventListener('resize', handleResize);
+}, []);
+
 
   const handleAddToCart = () => {
     alert("Item added to cart!");
@@ -37,72 +88,279 @@ const BuyProduct = () => {
     alert("Form submitted");
   };
 
+  const states = ['Andhra Pradesh', 'Telangana'];
+  const districts = {
+    'Andhra Pradesh': ['Visakhapatnam', 'Vijayawada', 'Guntur'],
+    'Telangana': ['Hyderabad', 'Warangal', 'Khammam'],
+  };
+
+  // Handle adding a new address
+  const handleAddAddress = () => {
+    if (
+      newAddress.trim() === '' ||
+      addressType.trim() === '' ||
+      state.trim() === '' ||
+      district.trim() === '' ||
+      pincode.trim() === ''
+    ) {
+      alert('Please fill in all the fields.');
+      return;
+    }
+
+    if (addresses.length >= 4) {
+      alert('You can only add up to 4 addresses.');
+      return;
+    }
+
+    const newAddr = {
+      id: uuidv4(),
+      type: addressType,
+      address: newAddress,
+      state,
+      district,
+      pincode,
+    };
+
+    setAddresses((prevAddresses) => [...prevAddresses, newAddr]);
+    resetAddressForm();
+    setShowModal(false);
+  };
+
+  // Reset address form fields
+  const resetAddressForm = () => {
+    setNewAddress('');
+    setAddressType('');
+    setState('');
+    setDistrict('');
+    setPincode('');
+  };
+
+  // Handle secondary address selection
+  const handleSecondaryAddressSelect = (id) => {
+    const updatedAddresses = addresses.map((address) =>
+      address.id === id
+        ? { ...address, type: 'primary' }
+        : address.type === 'primary'
+        ? { ...address, type: 'secondary' }
+        : address
+    );
+    setAddresses(updatedAddresses);
+    setShowSecondaryAddresses(false); // Collapse secondary addresses view
+  };
+
+  // Handle address editing
+  const handleAddressEdit = (id) => {
+    const addressToEdit = addresses.find((address) => address.id === id);
+    if (addressToEdit) {
+      setNewAddress(addressToEdit.address);
+      setAddressType(addressToEdit.type);
+      setState(addressToEdit.state);
+      setDistrict(addressToEdit.district);
+      setPincode(addressToEdit.pincode);
+      setShowModal(true);
+      handleAddressDelete(id); // Remove the address to re-add it after edit
+    }
+  };
+
+  // Handle address deletion
+  const handleAddressDelete = (id) => {
+    const updatedAddresses = addresses.filter((address) => address.id !== id);
+    setAddresses(updatedAddresses);
+  };
+
   return (
     <div className="d-flex flex-row justify-content-start align-items-start">
-      <div className="m-0 p-0 sde_mnu">
-        <div className="_mnu_dv">
-          <span>
-            <DashboardIcon /> Dashboard
-          </span>
+      {/* Sidebar menu for Larger Screens */}
+      {!isMobile && (
+        <div className=" ml-0 m-4 p-0 sde_mnu">
+          <Sidebar userType={selectedUserType} />
         </div>
-        <div className="_mnu_dv">
-          <span>
-            <SupportAgentIcon /> Raise Ticket
-          </span>
+      )}
+
+      {/* Floating menu for mobile */}
+      {isMobile && (
+        <div className="floating-menu">
+          <Button
+            variant="primary"
+            className="rounded-circle shadow"
+            onClick={() => setShowMenu(!showMenu)}
+          >
+            <MoreVertIcon />
+          </Button>
+
+          {showMenu && (
+              <div className="sidebar-container">
+                <Sidebar userType={selectedUserType} />
+              </div>
+          )}
         </div>
-        <div className="_mnu_dv">
-          <span>
-            <PersonAddIcon /> Add Member
-          </span>
-        </div>
-        <div className="_mnu_dv">
-          <span>
-            <RouteIcon /> Track Ticket Status
-          </span>
-        </div>
-        <div className="_mnu_dv">
-          <span>
-            <NotificationsIcon /> Notifications
-          </span>
-        </div>
-        <div className="_mnu_dv">
-          <span>
-            <PaymentsIcon /> Buy Products
-          </span>
-        </div>
-        <div className="_mnu_dv">
-          <span>
-            <InventoryIcon /> Orders
-          </span>
-        </div>
-        <div className="_mnu_dv">
-          <span>
-            <ShoppingCartIcon /> Cart
-          </span>
-        </div>
-        <div className="_mnu_dv">
-          <span>
-            <AccountCircle /> My Accounts
-          </span>
-        </div>
-      </div>
-      {/* Form Section */}
-      <div className="container-fluid p-2">
-        <h3 className="mb-4">Buy Products</h3>
+      )}
+
+      {/* Main Content */}
+      <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
+      <h3 className="mb-4">Buy Products</h3>
         <div className="bg-white rounded-3 p-4 bx_sdw w-75">
           <form className="form" onSubmit={handleSubmit}>
             <div className="m-1">
               <div className="d-flex justify-content-between align-items-center">
-                <h5 className="mb-0">Address</h5>
-                <p className="text-dark mb-0 text-decoration-underline">Change Address</p>
+                <label>Address</label>
+                <button
+                  type="button"
+                  className="btn btn-link ml-2"
+                  onClick={() =>  setShowSecondaryAddresses(true)}
+                >
+                  Change Address
+                </button>
               </div>
               <div className="p-3 border rounded bg-light">
-                <p className="mb-1">Akshya Nagar 1st Block 1st Cross,</p>
-                <p className="mb-1">Rammurthy Nagar,</p>
-                <p className="mb-0">Bangalore-560016</p>
+                {addresses
+                  .filter((addr) => addr.type === 'primary')
+                  .map((address) => (
+                    <div
+                      key={address.id}
+                      className="list-group-item d-flex justify-content-between align-items-center bg-white text-dark"
+                    >
+                      <div>
+                        <span className="ml-2">{address.address}</span>
+                        <br />
+                        <span className="ml-2">{address.state}</span>
+                        <br />
+                        <span className="ml-2">{address.district}</span>
+                        <br />
+                        <span className="ml-2">{address.zipCode}</span>
+                        <br />
+                        <small className="text-muted">Primary Address</small>
+                      </div>
+                    </div>
+                  ))}
+
+                {showSecondaryAddresses && (
+                  <>
+                    <div className="list-group">
+                      {addresses
+                        .filter((addr) => addr.type === 'secondary')
+                        .map((address) => (
+                          <div
+                            key={address.id}
+                            className="list-group-item d-flex justify-content-between align-items-center"
+                          >
+                            <div>
+                              <input
+                                type="radio"
+                                name="address"
+                                checked={address.type === 'primary'}
+                                onChange={() => handleSecondaryAddressSelect(address.id)}
+                              />
+                              <span className="ml-2">{address.address}</span>
+                              <br />
+                              <small className="text-muted">Secondary Address</small>
+                            </div>
+                            <div>
+                              <button
+                                className="btn btn-warning btn-sm mx-1"
+                                onClick={() => handleAddressEdit(address.id)}
+                              >
+                                Edit
+                              </button>
+                              <button
+                                className="btn btn-danger btn-sm mx-1"
+                                onClick={() => handleAddressDelete(address.id)}
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                    <div className="mt-3">
+                    <button
+                      className="btn btn-success"
+                      onClick={() => setShowModal(true)}
+                    >
+                      Add Address
+                    </button>
+                  </div>
+                  </>
+                )}
               </div>
             </div>
 
+            <Modal show={showModal} onHide={() => setShowModal(false)}>
+                  <Modal.Header closeButton>
+                    <Modal.Title>{newAddress ? 'Edit Address' : 'Add Address'}</Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>
+                    <Form.Group controlId="address">
+                      <Form.Label>Address</Form.Label>
+                      <Form.Control
+                        type="text"
+                        value={newAddress}
+                        onChange={(e) => setNewAddress(e.target.value)}
+                        placeholder="Enter address"
+                      />
+                    </Form.Group>
+
+                    <Form.Group controlId="addressType">
+                      <Form.Label>Address Type</Form.Label>
+                      <Form.Control
+                        as="select"
+                        value={addressType}
+                        onChange={(e) => setAddressType(e.target.value)}
+                      >
+                        <option value="">Select Address Type</option>
+                        <option value="primary">Primary</option>
+                        <option value="secondary">Secondary</option>
+                      </Form.Control>
+                    </Form.Group>
+
+                    <Form.Group controlId="state">
+                      <Form.Label>State</Form.Label>
+                      <Form.Control
+                        as="select"
+                        value={state}
+                        onChange={(e) => setState(e.target.value)}
+                      >
+                        <option value="">Select State</option>
+                        {states.map((state, index) => (
+                          <option key={index} value={state}>
+                            {state}
+                          </option>
+                        ))}
+                      </Form.Control>
+                    </Form.Group>
+
+                    <Form.Group controlId="district">
+                      <Form.Label>District</Form.Label>
+                      <Form.Control
+                        as="select"
+                        value={district}
+                        onChange={(e) => setDistrict(e.target.value)}
+                      >
+                        <option value="">Select District</option>
+                        {districts[state]?.map((district, index) => (
+                          <option key={index} value={district}>
+                            {district}
+                          </option>
+                        ))}
+                      </Form.Control>
+                    </Form.Group>
+
+                    <Form.Group controlId="pincode">
+                      <Form.Label>Pincode</Form.Label>
+                      <Form.Control
+                        type="text"
+                        value={pincode}
+                        onChange={(e) => setPincode(e.target.value)}
+                        placeholder="Enter pincode"
+                      />
+                    </Form.Group>
+
+                    <Button type="button" variant="primary" onClick={handleAddAddress}>
+                      {newAddress ? 'Save Address' : 'Add Address'}
+                    </Button>
+                  </Modal.Body>
+                </Modal>
+  
             <div className="form-group">
               <label>
                 Category <span className="req_star">*</span>
@@ -237,6 +495,35 @@ const BuyProduct = () => {
           </form>
         </div>
       </div>
+      {/* Styles for floating menu */}
+<style jsx>{`
+        .floating-menu {
+          position: fixed;
+          top: 80px; /* Increased from 20px to avoid overlapping with the logo */
+          left: 20px; /* Adjusted for placement on the left side */
+          z-index: 1000;
+        }
+        .menu-popup {
+          position: absolute;
+          top: 50px; /* Keeps the popup aligned below the floating menu */
+          left: 0; /* Aligns the popup to the left */
+          background: white;
+          border: 1px solid #ddd;
+          border-radius: 5px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          width: 200px;
+        }
+        .menu-item {
+          padding: 10px;
+          border-bottom: 1px solid #ddd;
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+        }
+        .menu-item:last-child {
+          border-bottom: none;
+        }
+      `}</style>
     </div>
   );
 };
