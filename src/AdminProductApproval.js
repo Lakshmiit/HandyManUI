@@ -1,22 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import './App.css';
+import {  Button } from 'react-bootstrap'; // Import Bootstrap components for modal
+import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import {
-  Dashboard as DashboardIcon,
-  SupportAgent as SupportAgentIcon,
-  PersonAdd as PersonAddIcon,
-  Route as RouteIcon,
-  Notifications as NotificationsIcon,
-  ShoppingCart as ShoppingCartIcon,
-  Payments as PaymentsIcon,
-  AccountCircle,
-  Inventory as InventoryIcon,
-} from '@mui/icons-material';
+import Sidebar from './Sidebar';
 
 const ProductAdmin = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const {selectedUserType} = useParams();
   const [productData, setProductData] = useState(null);
   const [imageUrls, setImageUrls] = useState([]);
   const [productType, setProductType] = useState("Approved");
@@ -50,6 +44,15 @@ const ProductAdmin = () => {
     };
     fetchData();
   }, [id]);
+
+  // Detect screen size for responsiveness
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    handleResize(); // Set initial state
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []); 
 
   const handleSubmit = async () => {
     if (!productData) {
@@ -85,6 +88,7 @@ const ProductAdmin = () => {
     }
   };
 
+
   if (!productData) {
     return (
       <div className="d-flex justify-content-center align-items-center vh-100">
@@ -113,24 +117,36 @@ const ProductAdmin = () => {
   return (
     <div className="wrapper bg-light">
       <div className="container-fluid mt-4 h-100 d-flex flex-column">
-        <div className="row">
+        <div className="d-flex flex-row justify-content-start align-items-start">
           {/* Sidebar */}
-          <div className="col-md-3 p-3 bg-dark text-white border-end rounded">
-            <h5 className="text-center mb-4">Admin Panel</h5>
-            <ul className="list-unstyled">
-              <li className="mb-3"><DashboardIcon /> Dashboard</li>
-              <li className="mb-3"><SupportAgentIcon /> Support</li>
-              <li className="mb-3"><PersonAddIcon /> Add User</li>
-              <li className="mb-3"><RouteIcon /> Routes</li>
-              <li className="mb-3"><NotificationsIcon /> Notifications</li>
-              <li className="mb-3"><ShoppingCartIcon /> Orders</li>
-              <li className="mb-3"><PaymentsIcon /> Payments</li>
-              <li className="mb-3"><InventoryIcon /> Inventory</li>
-            </ul>
+          {!isMobile && (
+          <div className=" ml-0 m-4 p-0 sde_mnu">
+          <Sidebar userType={selectedUserType} />
           </div>
+          )}
+          
+          {/* Floating menu for mobile */}
+      {isMobile && (
+        <div className="floating-menu">
+          <Button
+            variant="primary"
+            className="rounded-circle shadow"
+            onClick={() => setShowMenu(!showMenu)}
+          >
+            <MoreVertIcon />
+          </Button>
+
+          {showMenu && (
+              <div className="sidebar-container">
+                <Sidebar userType={selectedUserType} />
+              </div>
+          )}
+        </div>
+      )}
 
           {/* Main Content */}
-          <div className="col-md-9">
+          <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
+          <div className=" col-md-9">
             <div className="bg-white p-4 rounded shadow-sm">
               <h3 className="mb-4 text-primary">Product Details</h3>
 
@@ -268,7 +284,7 @@ const ProductAdmin = () => {
                 {/* View Single Product Button */}
       <button
         type="button"
-       
+        className='btn btn-warning text-white'
        
           onClick={() => navigate(`/product-list/${productownedby}`)}
       >
@@ -281,6 +297,28 @@ const ProductAdmin = () => {
         </div>
       </div>
     </div>
+    {/* Styles for floating menu */}
+<style jsx>{`
+        .floating-menu {
+          position: fixed;
+          top: 80px; /* Increased from 20px to avoid overlapping with the logo */
+          left: 20px; /* Adjusted for placement on the left side */
+          z-index: 1000;
+        }
+        .menu-popup {
+          position: absolute;
+          top: 50px; /* Keeps the popup aligned below the floating menu */
+          left: 0; /* Aligns the popup to the left */
+          background: white;
+          border: 1px solid #ddd;
+          border-radius: 5px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          width: 200px;
+        }
+      `}</style>
+
+
+  </div>
   );
 };
 
