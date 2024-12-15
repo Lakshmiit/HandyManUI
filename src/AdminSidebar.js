@@ -10,7 +10,7 @@ import AdminSiderBar from './AdminSidebar';
 const ProductAdmin = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const {selectedUserType} = useParams();
+
   const [productData, setProductData] = useState(null);
   const [imageUrls, setImageUrls] = useState([]);
   const [productType, setProductType] = useState("Approved");
