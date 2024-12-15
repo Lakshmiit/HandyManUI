@@ -3,7 +3,7 @@ import { Modal, Button, Form, Row, Col } from 'react-bootstrap'; // Import Boots
 import { v4 as uuidv4 } from 'uuid'; // To generate unique IDs for addresses
 import {
   Dashboard as DashboardIcon,
-  SupportAgent as SupportAgentIcon,
+  Agent as AgentIcon,
   PersonAdd as PersonAddIcon,
   Route as RouteIcon,
   Notifications as NotificationsIcon,
@@ -98,7 +98,7 @@ useEffect(() => {
 
   const menuItems = [
     { icon: <DashboardIcon />, label: 'Dashboard' },
-    { icon: <SupportAgentIcon />, label: 'Raise Ticket' },
+    { icon: <AgentIcon />, label: 'Raise Ticket' },
     { icon: <PersonAddIcon />, label: 'Add Member' },
     { icon: <RouteIcon />, label: 'Track Ticket Status' },
     { icon: <NotificationsIcon />, label: 'Notifications' },
@@ -212,14 +212,14 @@ useEffect(() => {
       zipcode:pincode,
       requestType: requestType,
       status:'open',
-      SupportTicketId: uuidv4(),
+      TicketId: uuidv4(),
       id: uuidv4(),// Unique identifier for the API call
       customerId: customerId, // Replace with actual customer ID logic
       attachments: uploadedFiles.map((file) => file.name), // Attachments by name (or actual file handling logic)
     };
   
     try {
-      const response = await fetch('https://handymanapiv2.azurewebsites.net/api/SupportTicket/CreateSupportTicket', {
+      const response = await fetch('https://handymanapiv2.azurewebsites.net/api/RaiseTicket/CreateTicket', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
