@@ -66,6 +66,20 @@ const ProductAdmin = () => {
   }
 
 
+   const {
+    productName,
+    category,
+    catalogue,
+    productSize,
+    color,
+    rate,
+    discount,
+    specifications,
+    warranty,
+    additionalInformation,
+  } = productData;
+
+
   const afterDiscountPrice = rate - (rate * discount) / 100;
 
   return (
