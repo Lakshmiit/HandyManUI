@@ -3,7 +3,6 @@ import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 // Importing necessary components
 import Header from './Header';
-
 import UploadForm from './uploadform';
 import ProductView from './ProductView';  // Add ProductView component
 import EditUploadForm from './EditUploadForm';
