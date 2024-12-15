@@ -6,6 +6,7 @@ import UpdateIcon from '@mui/icons-material/Update';
 import { useNavigate, useParams } from 'react-router-dom';
 import Sidebar from './Sidebar';
 
+
 const ProductUpload = () => {
     const { id } = useParams(); // Retrieve the dynamic id from URL
     const [selectedUserType] = useState("customer");
