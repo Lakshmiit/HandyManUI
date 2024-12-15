@@ -18,8 +18,6 @@ const ProductView = () => {
   const navigate = useNavigate();
 
   // Define dynamic parameters for the URL
- 
-
   const { productownedby } = useParams(); 
 
   // Fetch product data, categories, and catalogues
