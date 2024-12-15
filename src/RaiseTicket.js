@@ -2,20 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap'; // Import Bootstrap components for modal
 import { v4 as uuidv4 } from 'uuid'; // To generate unique IDs for addresses
 import {
-  Dashboard as DashboardIcon,
-  Agent as AgentIcon,
-  PersonAdd as PersonAddIcon,
-  Route as RouteIcon,
-  Notifications as NotificationsIcon,
-  ShoppingCart as ShoppingCartIcon,
-  Payments as PaymentsIcon,
-  AccountCircle as AccountCircleIcon,
-  Inventory as InventoryIcon,
   Dashboard as MoreVertIcon,
 } from '@mui/icons-material';
-
+import Sidebar from './Sidebar';
 import { useParams } from 'react-router-dom';
 const AddressManager = () => {
+  const {selectedUserType} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const { customerId } = useParams(); 
@@ -95,20 +87,6 @@ useEffect(() => {
 
   return () => window.removeEventListener('resize', handleResize);
 }, []);
-
-  const menuItems = [
-    { icon: <DashboardIcon />, label: 'Dashboard' },
-    { icon: <AgentIcon />, label: 'Raise Ticket' },
-    { icon: <PersonAddIcon />, label: 'Add Member' },
-    { icon: <RouteIcon />, label: 'Track Ticket Status' },
-    { icon: <NotificationsIcon />, label: 'Notifications' },
-    { icon: <PaymentsIcon />, label: 'Buy Products' },
-    { icon: <InventoryIcon />, label: 'Orders' },
-    { icon: <ShoppingCartIcon />, label: 'Cart' },
-    { icon: <AccountCircleIcon />, label: 'My Accounts' },
-  ];
-  
-   
 
   const states = ['Andhra Pradesh', 'Telangana'];
   const districts = {
@@ -212,14 +190,14 @@ useEffect(() => {
       zipcode:pincode,
       requestType: requestType,
       status:'open',
-      TicketId: uuidv4(),
+      SupportTicketId: uuidv4(),
       id: uuidv4(),// Unique identifier for the API call
       customerId: customerId, // Replace with actual customer ID logic
       attachments: uploadedFiles.map((file) => file.name), // Attachments by name (or actual file handling logic)
     };
   
     try {
-      const response = await fetch('https://handymanapiv2.azurewebsites.net/api/RaiseTicket/CreateTicket', {
+      const response = await fetch('https://handymanapiv2.azurewebsites.net/api/SupportTicket/CreateSupportTicket', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -286,12 +264,8 @@ useEffect(() => {
     <div className="d-flex flex-row justify-content-start align-items-start">
        {/* Sidebar for larger screens */}
        {!isMobile && (
-        <div className="m-3 p-0 sde_mnu">
-          {menuItems.map((item, index) => (
-            <div key={index} className="_mnu_dv">
-              <span>{item.icon} {item.label}</span>
-            </div>
-          ))}
+        <div className=" ml-0 m-4 p-0 sde_mnu">
+          <Sidebar userType={selectedUserType} />
         </div>
       )}
 
@@ -307,13 +281,9 @@ useEffect(() => {
           </Button>
 
           {showMenu && (
-            <div className="menu-popup">
-              {menuItems.map((item, index) => (
-                <div key={index} className="menu-item">
-                  <span>{item.icon}</span> {item.label}
-                </div>
-              ))}
-            </div>
+              <div className="sidebar-container">
+                <Sidebar userType={selectedUserType} />
+              </div>
           )}
         </div>
       )}
