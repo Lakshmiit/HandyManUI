@@ -1,19 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Button } from 'react-bootstrap';
 import "./App.css"; // Add this for the required CSS.
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import SupportAgentIcon from '@mui/icons-material/SupportAgent';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import RouteIcon from '@mui/icons-material/Route';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import PaymentsIcon from '@mui/icons-material/Payments';
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import InventoryIcon from '@mui/icons-material/Inventory';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import UpdateIcon from '@mui/icons-material/Update';
+import { useParams } from 'react-router-dom';
+import Sidebar from './Sidebar';
+import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 
 const AdminUpdate = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const { selectedUserType } = useParams(); 
   const [productName, setProductName] = useState("");
   const [category, setCategory] = useState("");
   const [catalogue, setCatalogue] = useState("");
@@ -39,6 +37,15 @@ const AdminUpdate = () => {
     }
     setProductPhotos([...productPhotos, ...selectedFiles]);
   };
+
+// Detect screen size for responsiveness
+useEffect(() => {
+  const handleResize = () => setIsMobile(window.innerWidth <= 768);
+  handleResize(); // Set initial state
+  window.addEventListener('resize', handleResize);
+
+  return () => window.removeEventListener('resize', handleResize);
+}, []);
 
   // Handle file upload
   const handleUploadFiles = async () => {
@@ -177,20 +184,34 @@ const AdminUpdate = () => {
 
   return (
     <div className="d-flex flex-row justify-content-start align-items-start">
-      <div className="sde_mnu">
-        {/* Sidebar Menu */}
-        <div className="_mnu_dv"><span><DashboardIcon /> Dashboard</span></div>
-        <div className="_mnu_dv"><span><SupportAgentIcon /> Raise Ticket</span></div>
-        <div className="_mnu_dv"><span><PersonAddIcon /> Add Member</span></div>
-        <div className="_mnu_dv"><span><RouteIcon /> Track Ticket Status</span></div>
-        <div className="_mnu_dv"><span><NotificationsIcon /> Notifications</span></div>
-        <div className="_mnu_dv"><span><PaymentsIcon /> Buy Products</span></div>
-        <div className="_mnu_dv"><span><InventoryIcon /> Orders</span></div>
-        <div className="_mnu_dv"><span><ShoppingCartIcon /> Cart</span></div>
-        <div className="_mnu_dv"><span><AccountCircle /> My Accounts</span></div>
-      </div>
+      {/* Sidebar menu for Larger Screens */}
+      {!isMobile && (
+        <div className=" ml-0 m-4 p-0 sde_mnu">
+          <Sidebar userType={selectedUserType} />
+        </div>
+      )}
 
-      <div className="m-3">
+      {/* Floating menu for mobile */}
+      {isMobile && (
+        <div className="floating-menu">
+          <Button
+            variant="primary"
+            className="rounded-circle shadow"
+            onClick={() => setShowMenu(!showMenu)}
+          >
+            <MoreVertIcon />
+          </Button>
+
+          {showMenu && (
+              <div className="sidebar-container">
+                <Sidebar userType={selectedUserType} />
+              </div>
+          )}
+        </div>
+      )}
+
+      {/* Main Content */}
+      <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
         <h3 className="mb-3 text-center">Update Products</h3>
         <div className="bg-white rounded-3 p-3 bx_sdw w-60 m-auto">
           <form onSubmit={handleSubmit}>
@@ -406,6 +427,35 @@ const AdminUpdate = () => {
           </form>
         </div>
       </div>
+      {/* Styles for floating menu */}
+<style jsx>{`
+        .floating-menu {
+          position: fixed;
+          top: 80px; /* Increased from 20px to avoid overlapping with the logo */
+          left: 20px; /* Adjusted for placement on the left side */
+          z-index: 1000;
+        }
+        .menu-popup {
+          position: absolute;
+          top: 50px; /* Keeps the popup aligned below the floating menu */
+          left: 0; /* Aligns the popup to the left */
+          background: white;
+          border: 1px solid #ddd;
+          border-radius: 5px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          width: 200px;
+        }
+        .menu-item {
+          padding: 10px;
+          border-bottom: 1px solid #ddd;
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+        }
+        .menu-item:last-child {
+          border-bottom: none;
+        }
+      `}</style> 
     </div>
   );
 };
