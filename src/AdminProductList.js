@@ -159,9 +159,6 @@ const AdminProductList = () => {
           </select>
         </div>
 
-
-
-
         {/* Add New Product Button */}
         <div className="text-end col-md-3 mb-1">
   <button
@@ -186,6 +183,7 @@ const AdminProductList = () => {
                 <th>Price</th>
                 <th>Discount</th>
                 <th>After Discount Price</th>
+                <th>Requested By</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -196,6 +194,18 @@ const AdminProductList = () => {
                   <td>₹{product.rate}</td>
                   <td>{product.discount ? `${product.discount}%` : "No discount"}</td>
                   <td>₹{product.afterDiscountPrice || 'N/A'}</td>
+                  <td>
+                    {product.productOwnedBy ? (
+                      <span
+                        style={{ textDecoration: 'underline', color: 'blue', cursor: 'pointer' }}
+                        title={product.productOwnedBy}
+                      >
+                        {product.productOwnedBy}
+                      </span>
+                    ) : (
+                      'N/A'
+                    )}
+                  </td>
                   <td>
                     <Link to={`/adminUpdateProduct/${product.id}`} className="btn btn-warning mx-2" title="Edit">
                       <FaEdit />
