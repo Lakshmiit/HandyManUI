@@ -13,7 +13,7 @@ const BuyProduct = () => {
   const {userType} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const { productId, selectedUserType } = useParams(); 
+  const { selectedUserType } = useParams(); 
   const [category, setCategory] = useState("Electrical items");
   const [productSize, setProductSize] = useState("");
   const [productCatalogue, setProductCatalogue] = useState("");
