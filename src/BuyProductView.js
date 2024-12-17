@@ -15,13 +15,10 @@ const BuyProdcutView = () => {
   const {userType} = useParams();
   const [productData, setProductData] = useState(null);
   const [imageUrls, setImageUrls] = useState([]);
-  const [productType, setProductType] = useState("Approve");
-  const [otherThanProduct, setOtherThanProduct] = useState("");
-    const [requiredQuality, setRequiredQuality] = useState("");
-    const [units, setUnits] = useState("");
+  const [otherThanProduct] = useState("");
+    const [requiredQuality] = useState("");
+    const [units] = useState("");
     //const [catalogue, setProductCatalogue] = useState("");
-    const [chooseColor, setChooseColor] = useState("");
-  const [comments, setComments] = useState("");
   const { id } = useParams();
   const navigate = useNavigate(); // Hook to programmatically navigate
     const { userId } = useParams(); 
@@ -61,39 +58,39 @@ const BuyProdcutView = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleSubmit = async () => {
-    if (!productData) {
-      console.error("No product data to submit.");
-      return;
-    }
+  // const handleSubmit = async () => {
+  //   if (!productData) {
+  //     console.error("No product data to submit.");
+  //     return;
+  //   }
 
-    const payload = {
-      ...productData,
-      productStatus: productType,
-      comments,
-    };
+  //   const payload = {
+  //     ...productData,
+  //     productStatus: productType,
+  //     comments,
+  //   };
 
-    try {
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+  //   try {
+  //     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/${id}`, {
+  //       method: "PUT",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(payload),
+  //     });
 
-      if (response.ok) {
-        alert("Product status updated successfully.");
-      } else {
-        const errorData = await response.json();
-        console.error("Error updating product:", errorData);
-        alert("Failed to update product. Please try again.");
-      }
-    } catch (error) {
-      console.error("Error submitting product data:", error);
-      alert("An error occurred. Please try again later.");
-    }
-  };
+  //     if (response.ok) {
+  //       alert("Product status updated successfully.");
+  //     } else {
+  //       const errorData = await response.json();
+  //       console.error("Error updating product:", errorData);
+  //       alert("Failed to update product. Please try again.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error submitting product data:", error);
+  //     alert("An error occurred. Please try again later.");
+  //   }
+  // };
 
   if (!productData) {
     return (
