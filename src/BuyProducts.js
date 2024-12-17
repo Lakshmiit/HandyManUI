@@ -3,68 +3,142 @@ import "./App.css";
 import { v4 as uuidv4 } from 'uuid'; 
 import Sidebar from './Sidebar';
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import { Button, Form, Modal } from 'react-bootstrap'; // Import Bootstrap components for modal
+import axios from 'axios';
 
 const BuyProduct = () => {
   const navigate = useNavigate();
+  const {userType} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const { productId, selectedUserType } = useParams(); 
   const [category, setCategory] = useState("Electrical items");
   const [productSize, setProductSize] = useState("");
   const [productCatalogue, setProductCatalogue] = useState("");
-  const [chooseColor, setChooseColor] = useState("");
+  const [color, setChooseColor] = useState("");
   const [otherThanProduct, setOtherThanProduct] = useState("");
   const [requiredQuality, setRequiredQuality] = useState("");
   const [units, setUnits] = useState("");
   const [productName, setProductName] = useState("");
-  const [product] = useState({ id: 1 });
   const [showSecondaryAddresses, setShowSecondaryAddresses] = useState(false);
-  const [addresses, setAddresses] = useState([]);
   const [newAddress, setNewAddress] = useState('');
+  const [addresses, setAddresses] = useState([]);
   const [addressType, setAddressType] = useState('');
   const [state, setState] = useState('');
   const [district, setDistrict] = useState('');
   const [pincode, setPincode] = useState('');
   const [showModal, setShowModal] = useState(false);
-
+  const [productSuggestions, setProductSuggestions] = useState([]);
+  const [filteredSuggestions, setFilteredSuggestions] = useState([]);
+  const [allProducts, setAllProducts] = useState([]);
+  const [id, setId] = useState("");
+  const { userId } = useParams(); 
+  const location = useLocation();
+ // Check if there's state passed from ViewProduct page
+ useEffect(() => {
+  if (location.state) {
+    const {
+      productName,
+      catalogue,
+      productSize,
+      color,
+      otherThanProduct,
+      requiredQuality,
+      units,
+      id,
+    } = location.state;
+    setProductName(productName);
+    setProductCatalogue(catalogue);
+    setProductSize(productSize);
+    setChooseColor(color);
+    setOtherThanProduct(otherThanProduct);
+    setRequiredQuality(requiredQuality);
+    setUnits(units);
+    setId(id);
+  }
+}, [location.state]);
   // Fetch customer profile data
   useEffect(() => {
     const fetchProfileType = async () => {
       try {
-        const API_URL = `https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/}`;
-        const response = await fetch(`${API_URL}${productId}`);
+        const API_URL = "https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/";
+        const response = await fetch(`${API_URL}${userId}`);
         if (!response.ok) {
-          throw new Error('Failed to fetch customer profile data');
+          throw new Error("Failed to fetch customer profile data");
         }
         const data = await response.json();
         console.log(data);
-        // Assuming data contains an array of addresses, wrap the data in an array if it's not an array
         const addresses = Array.isArray(data) ? data : [data];
-        
-        // Format addresses if necessary
         const formattedAddresses = addresses.map((addr) => ({
-          id: addr.addressId, // Use addressId
-          type: addr.isPrimaryAddress ? 'primary' : 'secondary',
+          id: addr.addressId,
+          type: addr.isPrimaryAddress ? "primary" : "secondary",
           address: addr.address,
           state: addr.state,
           district: addr.district,
-          zipCode: addr.zipCode, // Correct key from pinCode
+          zipCode: addr.zipCode,
         }));
-  
-        // Set the addresses state
         setAddresses(formattedAddresses);
       } catch (error) {
-        console.error('Error fetching customer data:', error);
+        console.error("Error fetching customer data:", error);
       }
     };
-    if (productId) {
+
+    if (userId) {
       fetchProfileType();
     }
-  }, [productId]);
+  }, [userId]);
 
+  // Generate ticket ID in the format VSKPAKP002
+  const ticketIdPrefix = "VSKPAKP";
+  const ticketIdSuffix = String(Math.floor(Math.random() * 999) + 1).padStart(3, "0");
+  const ticketId = `${ticketIdPrefix}${ticketIdSuffix}`;
+
+  const handleGetQuotation = async () => {
+   
+    const primaryAddress = addresses.find((addr) => addr.type === "primary");
+    const state = primaryAddress?.state || "";
+    const district = primaryAddress?.district || "";
+    const pincode = primaryAddress?.zipCode || "";
+  
+    const payload = {
+      BuyProductId: ticketId,
+      id: "string",
+      Address: primaryAddress?.address || "",
+      category,
+      status: "Open",
+      productName,
+      ProductCatalogue: productCatalogue,
+      productSize,
+      color: color,
+      otherThanProduct,
+      requiredQuantity: requiredQuality,
+      units,
+      AddressType: primaryAddress ? "primary" : "secondary",
+      State: state,
+      District: district,
+      ZipCode: pincode,
+      CustomerId: "123456789",
+      RequestedBy: userId,
+    };
+  
+    try {
+      const response = await axios.post(
+        "https://handymanapiv2.azurewebsites.net/api/BuyProduct/BuyProductUpload",
+        payload
+      );
+      if (response.status === 200) {
+        window.alert(`Quotation submitted successfully! Your reference number is ${ticketId}. Get Quote will contact you shortly.`);
+      } else {
+        alert("Failed to submit quotation. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error submitting quotation:", error);
+      alert("An error occurred while submitting the quotation.");
+    }
+  };
+  
   // Detect screen size for responsiveness
 useEffect(() => {
   const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -79,14 +153,9 @@ useEffect(() => {
     alert("Item added to cart!");
   };
 
-  const handleGetQuotation = () => {
-    alert("Quotation requested");
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    alert("Form submitted");
-  };
+   const handleSubmit = (e) => {
+     e.preventDefault();
+   };
 
   const states = ['Andhra Pradesh', 'Telangana'];
   const districts = {
@@ -94,7 +163,40 @@ useEffect(() => {
     'Telangana': ['Hyderabad', 'Warangal', 'Khammam'],
   };
 
-  // Handle adding a new address
+
+  // // Handle adding a new address
+  // const handleAddAddress = () => {
+  //   if (
+  //     newAddress.trim() === '' ||
+  //     addressType.trim() === '' ||
+  //     state.trim() === '' ||
+  //     district.trim() === '' ||
+  //     pincode.trim() === ''
+  //   ) {
+  //     alert('Please fill in all the fields.');
+  //     return;
+  //   }
+
+  //   if (addresses.length >= 4) {
+  //     alert('You can only add up to 4 addresses.');
+  //     return;
+  //   }
+
+  //   const newAddr = {
+  //     id: uuidv4(),
+  //     type: addressType,
+  //     address: newAddress,
+  //     state,
+  //     district,
+  //     pincode,
+  //   };
+
+  //   setAddresses((prevAddresses) => [...prevAddresses, newAddr]);
+  //   resetAddressForm();
+  //   setShowModal(false);
+  // };
+
+
   const handleAddAddress = () => {
     if (
       newAddress.trim() === '' ||
@@ -106,25 +208,28 @@ useEffect(() => {
       alert('Please fill in all the fields.');
       return;
     }
-
+  
     if (addresses.length >= 4) {
       alert('You can only add up to 4 addresses.');
       return;
     }
-
+  
     const newAddr = {
       id: uuidv4(),
       type: addressType,
       address: newAddress,
       state,
       district,
-      pincode,
+      zipCode: pincode, // Corrected field name for consistency
     };
-
+  
+    console.log('New Address:', newAddr); // Debugging
+  
     setAddresses((prevAddresses) => [...prevAddresses, newAddr]);
     resetAddressForm();
     setShowModal(false);
   };
+  
 
   // Reset address form fields
   const resetAddressForm = () => {
@@ -166,6 +271,48 @@ useEffect(() => {
   const handleAddressDelete = (id) => {
     const updatedAddresses = addresses.filter((address) => address.id !== id);
     setAddresses(updatedAddresses);
+  };
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get(
+          `https://handymanapiv2.azurewebsites.net/api/Product/GetProductsByCategory?category=${category}`
+        );
+        setAllProducts(response.data);
+        setProductSuggestions(response.data.map((product) => product.productName));
+      } catch (error) {
+        console.error("Error fetching products by category:", error);
+      }
+    };
+    fetchProducts();
+  }, [category]);
+  
+  useEffect(() => {
+    if (productName) {
+      setFilteredSuggestions(
+        productSuggestions.filter((name) =>
+          name.toLowerCase().startsWith(productName.toLowerCase())
+        )
+      );
+    } else {
+      setFilteredSuggestions([]);
+    }
+  }, [productName, productSuggestions]);
+  
+  const handleProductSelect = (selectedProductName) => {
+    setProductName(selectedProductName); // Update the input field to reflect the selected name
+    const selectedProduct = allProducts.find(
+      (product) => product.productName === selectedProductName
+    );
+    if (selectedProduct) {
+      setProductCatalogue(selectedProduct.catalogue);
+      setProductSize(selectedProduct.productSize);
+      setChooseColor(selectedProduct.color);
+      setId(selectedProduct.id);
+    }
+    
+    setFilteredSuggestions([]);
   };
 
   return (
@@ -212,27 +359,30 @@ useEffect(() => {
                   Change Address
                 </button>
               </div>
-              <div className="p-3 border rounded bg-light">
-                {addresses
-                  .filter((addr) => addr.type === 'primary')
-                  .map((address) => (
-                    <div
-                      key={address.id}
-                      className="list-group-item d-flex justify-content-between align-items-center bg-white text-dark"
-                    >
-                      <div>
-                        <span className="ml-2">{address.address}</span>
-                        <br />
-                        <span className="ml-2">{address.state}</span>
-                        <br />
-                        <span className="ml-2">{address.district}</span>
-                        <br />
-                        <span className="ml-2">{address.zipCode}</span>
-                        <br />
-                        <small className="text-muted">Primary Address</small>
-                      </div>
-                    </div>
-                  ))}
+
+              
+
+<div className="p-3 border rounded bg-light">
+  {addresses
+    .filter((addr) => addr.type === 'primary')
+    .map((address) => (
+      <div
+        key={address.id}
+        className="list-group-item d-flex justify-content-between align-items-center bg-white text-dark"
+      >
+        <div>
+          <span className="ml-2">{address.address}</span>
+          <br />
+          <span className="ml-2">{address.state}</span>
+          <br />
+          <span className="ml-2">{address.district}</span>
+          <br />
+          <span className="ml-2">{address.zipCode}</span> 
+          <br />
+          <small className="text-muted">Primary Address</small>
+        </div>
+      </div>
+    ))}
 
                 {showSecondaryAddresses && (
                   <>
@@ -286,80 +436,81 @@ useEffect(() => {
             </div>
 
             <Modal show={showModal} onHide={() => setShowModal(false)}>
-                  <Modal.Header closeButton>
-                    <Modal.Title>{newAddress ? 'Edit Address' : 'Add Address'}</Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                    <Form.Group controlId="address">
-                      <Form.Label>Address</Form.Label>
-                      <Form.Control
-                        type="text"
-                        value={newAddress}
-                        onChange={(e) => setNewAddress(e.target.value)}
-                        placeholder="Enter address"
-                      />
-                    </Form.Group>
+  <Modal.Header closeButton>
+    <Modal.Title>{newAddress ? 'Edit Address' : 'Add Address'}</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    <Form.Group controlId="address">
+      <Form.Label>Address</Form.Label>
+      <Form.Control
+        type="text"
+        value={newAddress}
+        onChange={(e) => setNewAddress(e.target.value)}
+        placeholder="Enter address"
+      />
+    </Form.Group>
 
-                    <Form.Group controlId="addressType">
-                      <Form.Label>Address Type</Form.Label>
-                      <Form.Control
-                        as="select"
-                        value={addressType}
-                        onChange={(e) => setAddressType(e.target.value)}
-                      >
-                        <option value="">Select Address Type</option>
-                        <option value="primary">Primary</option>
-                        <option value="secondary">Secondary</option>
-                      </Form.Control>
-                    </Form.Group>
+    <Form.Group controlId="addressType">
+      <Form.Label>Address Type</Form.Label>
+      <Form.Control
+        as="select"
+        value={addressType}
+        onChange={(e) => setAddressType(e.target.value)}
+      >
+        <option value="">Select Address Type</option>
+        <option value="primary">Primary</option>
+        <option value="secondary">Secondary</option>
+      </Form.Control>
+    </Form.Group>
 
-                    <Form.Group controlId="state">
-                      <Form.Label>State</Form.Label>
-                      <Form.Control
-                        as="select"
-                        value={state}
-                        onChange={(e) => setState(e.target.value)}
-                      >
-                        <option value="">Select State</option>
-                        {states.map((state, index) => (
-                          <option key={index} value={state}>
-                            {state}
-                          </option>
-                        ))}
-                      </Form.Control>
-                    </Form.Group>
+    <Form.Group controlId="state">
+      <Form.Label>State</Form.Label>
+      <Form.Control
+        as="select"
+        value={state}
+        onChange={(e) => setState(e.target.value)}
+      >
+        <option value="">Select State</option>
+        {states.map((state, index) => (
+          <option key={index} value={state}>
+            {state}
+          </option>
+        ))}
+      </Form.Control>
+    </Form.Group>
 
-                    <Form.Group controlId="district">
-                      <Form.Label>District</Form.Label>
-                      <Form.Control
-                        as="select"
-                        value={district}
-                        onChange={(e) => setDistrict(e.target.value)}
-                      >
-                        <option value="">Select District</option>
-                        {districts[state]?.map((district, index) => (
-                          <option key={index} value={district}>
-                            {district}
-                          </option>
-                        ))}
-                      </Form.Control>
-                    </Form.Group>
+    <Form.Group controlId="district">
+      <Form.Label>District</Form.Label>
+      <Form.Control
+        as="select"
+        value={district}
+        onChange={(e) => setDistrict(e.target.value)}
+      >
+        <option value="">Select District</option>
+        {districts[state]?.map((district, index) => (
+          <option key={index} value={district}>
+            {district}
+          </option>
+        ))}
+      </Form.Control>
+    </Form.Group>
 
-                    <Form.Group controlId="pincode">
-                      <Form.Label>Pincode</Form.Label>
-                      <Form.Control
-                        type="text"
-                        value={pincode}
-                        onChange={(e) => setPincode(e.target.value)}
-                        placeholder="Enter pincode"
-                      />
-                    </Form.Group>
+    <Form.Group controlId="pincode">
+      <Form.Label>Pincode</Form.Label>
+      <Form.Control
+        type="text"
+        value={pincode}
+        onChange={(e) => setPincode(e.target.value)}
+        placeholder="Enter pincode"
+      />
+    </Form.Group>
 
-                    <Button type="button" variant="primary" onClick={handleAddAddress}>
-                      {newAddress ? 'Save Address' : 'Add Address'}
-                    </Button>
-                  </Modal.Body>
-                </Modal>
+    <Button type="button" variant="primary" onClick={handleAddAddress}>
+      {newAddress ? 'Save Address' : 'Add Address'}
+    </Button>
+  </Modal.Body>
+</Modal>
+
   
             <div className="form-group">
               <label>
@@ -391,6 +542,19 @@ useEffect(() => {
                 onChange={(e) => setProductName(e.target.value)}
                 placeholder="Enter Product Name"
               />
+              {filteredSuggestions.length > 0 && (
+                <ul className="list-group mt-2">
+                  {filteredSuggestions.map((suggestion, index) => (
+                    <li
+                      key={index}
+                      className="list-group-item list-group-item-action"
+                      onClick={() => handleProductSelect(suggestion)}
+                    >
+                      {suggestion}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
 
             <div className="form-group">
@@ -424,7 +588,7 @@ useEffect(() => {
               <input
                 type="text"
                 className="form-control"
-                value={chooseColor}
+                value={color}
                 onChange={(e) => setChooseColor(e.target.value)}
                 placeholder="Enter Color"
               />
@@ -433,10 +597,23 @@ useEffect(() => {
             <button
               type="button"
               className="btn btn-warning text-white w-50 mt-2"
-              onClick={() => navigate(`/product-view/${product.id}`)}
+              onClick={() =>
+                navigate(`/buyproduct-view/${id}/${userId}/${userType}`, {
+                  state: {
+                    productName,
+                    productCatalogue,
+                    productSize,
+                    color,
+                    otherThanProduct,
+                    requiredQuality,
+                    units,
+                  },
+                })
+              }
             >
               View Product
             </button>
+
 
             <div className="form-group mb-3">
               <label>Other Than Product</label>
