@@ -1,13 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./App.css"; // Add this for the required CSS.
 import { useNavigate } from 'react-router-dom';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import UploadIcon from '@mui/icons-material/Upload';
 import Sidebar from './Sidebar';
+import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
+import {  Button } from 'react-bootstrap'; // Import Bootstrap components for modal
 import { useParams } from 'react-router-dom';
+
 const ProductUpload = () => {
-  const [selectedUserType] = useState("customer");
+  const [isMobile, setIsMobile] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
  // const [ProductStatus] = useState("Draft");
   const [productName, setProductName] = useState("");
   const [category, setCategory] = useState("");
@@ -24,12 +28,15 @@ const ProductUpload = () => {
   const [uploadedFiles, setUploadedFiles] = useState([]); // To store the uploaded files (URLs or file names)
   const [color, setColor] = useState("");
   const [specificationDesc, setSpecificationDesc] = useState("");
-  const [alertMessage, setAlertMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
+  const { userType} = useParams();
+  // const [alertMessage, setAlertMessage] = useState("");
   const navigate = useNavigate(); // Hook to programmatically navigate
   const { productownedby } = useParams(); 
+  const { selectedUserType} = useParams();
   //const { productstatus } = useState("Pending Approval");
   // Handle file input change (multiple files)
+
   const handleFileChange = (event) => {
     const selectedFiles = Array.from(event.target.files);
     if (selectedFiles.length + productPhotos.length > 5) {
@@ -37,13 +44,22 @@ const ProductUpload = () => {
       return;
     }
     setProductPhotos([...productPhotos, ...selectedFiles]);
-    setAlertMessage("Please click on Upload Files button to upload the selected image");
     setShowAlert(true);
   };
+
+  // Detect screen size for responsiveness
+useEffect(() => {
+  const handleResize = () => setIsMobile(window.innerWidth <= 768);
+  handleResize(); // Set initial state
+  window.addEventListener('resize', handleResize);
+
+  return () => window.removeEventListener('resize', handleResize);
+}, []);
 
   // Handle file upload
   const handleUploadFiles = async () => {
     setLoading(true);
+    setShowAlert(false);
     const uploadedFilesList = [];
 
     // Loop through selected files and upload each one
@@ -62,7 +78,7 @@ const ProductUpload = () => {
           src: response, // Assuming the response contains the file URL or filename
           alt: fileName  // Using the file name as the alt text
         });
-        //alert("Image Uploaded Sucessfully"); 
+        alert("Image Uploaded Sucessfully"); 
       }
       else {
         alert("Failed Upload Image");
@@ -115,6 +131,7 @@ const ProductUpload = () => {
 
     const payload = {
       id: "unique-id", // Replace with unique ID logic if necessary
+      productId:"string",
       productName: productName,
       ProductPhotos: uploadedFiles.map(file => file.src),
       Catalogue: catalogue,
@@ -183,10 +200,33 @@ const ProductUpload = () => {
 
   return (
     <div className="d-flex flex-row justify-content-start align-items-start">
-      <div className="sidebar-container">
-        <Sidebar userType={selectedUserType} />
-      </div>
-      <div className="m-3">
+      {/* Sidebar menu for Larger Screens */}
+      {!isMobile && (
+        <div className=" ml-0 m-4 p-0 sde_mnu">
+          <Sidebar userType={selectedUserType} />
+        </div>
+      )}
+
+      {/* Floating menu for mobile */}
+      {isMobile && (
+        <div className="floating-menu">
+          <Button
+            variant="primary"
+            className="rounded-circle shadow"
+            onClick={() => setShowMenu(!showMenu)}
+          >
+            <MoreVertIcon />
+          </Button>
+
+          {showMenu && (
+              <div className="sidebar-container">
+                <Sidebar userType={selectedUserType} />
+              </div>
+          )}
+        </div>
+      )}
+
+       <div className={`container m-3 ${isMobile ? 'w-100' : 'w-75'}`}>
         <h3 className="mb-3 text-center">Upload Products</h3>
         <div className="bg-white rounded-3 p-3 bx_sdw w-60 m-auto">
           <form onSubmit={handleSubmit}>
@@ -209,6 +249,7 @@ const ProductUpload = () => {
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
               >
+                <option>Choose Category</option>
                 <option>Electrical items</option>
                 <option>Plumbing Materials</option>
                 <option>Sanitary items</option>
@@ -274,15 +315,16 @@ const ProductUpload = () => {
                 multiple
                 onChange={handleFileChange}
               />
+              {showAlert && (
+                <div className="alert alert-warning mt-2">
+                  Please click the <strong>Upload Files</strong> button to upload the selected images.
+                </div>
+              )}
               <div className="mt-2">
                 {productPhotos.map((file, index) => (
                   <p key={index}>{file.name}</p>
                 ))}
               </div>
-              {showAlert && 
-              <div className="alert alert-info text-danger" role="alert">
-                {alertMessage} 
-              </div>}
               <button
                 type="button"
                 className="btn btn-primary mt-2"
@@ -316,7 +358,6 @@ const ProductUpload = () => {
                 placeholder="If any Discount Enter Percentage"
               />
             </div>
-
 
             {/* Product Specifications */}
             <div className="form-group">
@@ -399,7 +440,7 @@ const ProductUpload = () => {
         type="button"
         className="btn btn-primary w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
        
-          onClick={() => navigate(`/product-list/${productownedby}`)}
+          onClick={() => navigate(`/product-list/${productownedby}/${userType}`)}
       >
         <VisibilityIcon className="me-2" />
         <span>View Product</span>
