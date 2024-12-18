@@ -5,21 +5,24 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import UpdateIcon from '@mui/icons-material/Update';
 import { useNavigate, useParams } from 'react-router-dom';
 import Sidebar from './Sidebar';
-
+import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
+import { Button } from 'react-bootstrap'; // Import Bootstrap components for modal
 
 const ProductUpload = () => {
+    const [isMobile, setIsMobile] = useState(false);
+    const [showMenu, setShowMenu] = useState(false);
     const { id } = useParams(); // Retrieve the dynamic id from URL
-    const [selectedUserType] = useState("customer");
+    const {selectedUserType} = useParams();
+    const {productownedby} = useParams();
+    const { userType} = useParams();
     const navigate = useNavigate();
     const [product, setProduct] = useState(null);
     const [productPhotos, setProductPhotos] = useState([]);
     const [uploadedFiles, setUploadedFiles] = useState([]);
-    const [alertMessage, setAlertMessage] = useState("");
+    // const [alertMessage, setAlertMessage] = useState("");
     const [showAlert, setShowAlert] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
-    
     const [productName, setProductName] = useState("");
     const [catalogue, setCatalogue] = useState("");
     const [productSize, setProductSize] = useState("");
@@ -45,8 +48,8 @@ const ProductUpload = () => {
                 setProductName(productData.productName);
                 setCatalogue(productData.catalog);
                 setColor(productData.colors);
-                setProductSize(productData.Size);
-                setUnits(productData.unit);
+                setProductSize(productData.size || "");
+                setUnits(productData.unit || "");
                 setRate(productData.rate);
                 setDiscount(productData.discount);
                 setSpecifications(productData.specifications || [{ label: "", value: "" }]);
@@ -74,13 +77,20 @@ const ProductUpload = () => {
             return;
         }
         setProductPhotos([...productPhotos, ...selectedFiles]);
-        setAlertMessage("Please click on the Upload Files button to upload the Images.");
         setShowAlert(true);
     };
 
-    const handleRemoveFile = (index) => {
-        const updatedUploadedFiles = uploadedFiles.filter((_, i) => i !== index);
-        setUploadedFiles(updatedUploadedFiles);
+    // const handleRemoveFile = (index) => {
+    //     const updatedUploadedFiles = uploadedFiles.filter((_, i) => i !== index);
+    //     setUploadedFiles(updatedUploadedFiles);
+    // };
+
+    const handleRemoveFile = (index, isUploaded) => {
+        if (isUploaded) {
+            setUploadedFiles((prev) => prev.filter((_, i) => i !== index));
+        } else {
+            setProductPhotos((prev) => prev.filter((_, i) => i !== index));
+        }
     };
  
     // Handle change of specification field (label or value)
@@ -108,6 +118,7 @@ const ProductUpload = () => {
     // Handle file upload
     const handleUploadFiles = async () => {
         setLoading(true);
+        setShowAlert(false);
         const uploadedFilesList = [];
     
         // Loop through selected files and upload each one
@@ -217,6 +228,15 @@ const ProductUpload = () => {
         }
     };
 
+    // Detect screen size for responsiveness
+    useEffect(() => {
+      const handleResize = () => setIsMobile(window.innerWidth <= 768);
+      handleResize(); // Set initial state
+      window.addEventListener('resize', handleResize);
+    
+      return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     if (loading) {
         return <div>Loading...</div>;
     }
@@ -229,13 +249,37 @@ const ProductUpload = () => {
         return <div>No data available for the selected product.</div>;
     }
 
+
     return (
         <div className="d-flex flex-row justify-content-start align-items-start">
-            <div className="sidebar-container">
-        <Sidebar userType={selectedUserType} />
-      </div>
+        {/* Sidebar for larger screens */}
+       {!isMobile && (
+        <div className=" ml-0 m-4 p-0 sde_mnu">
+          <Sidebar userType={selectedUserType} />
+        </div>
+      )}
 
-            <div className="m-3">
+      {/* Floating menu for mobile */}
+      {isMobile && (
+        <div className="floating-menu">
+          <Button
+            variant="primary"
+            className="rounded-circle shadow"
+            onClick={() => setShowMenu(!showMenu)}
+          >
+            <MoreVertIcon />
+          </Button>
+
+          {showMenu && (
+              <div className="sidebar-container">
+                <Sidebar userType={selectedUserType} />
+              </div>
+          )}
+        </div>
+      )}
+
+      {/* Main Content */}
+      <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
                 <h3 className="mb-3 text-center">Update Product</h3>
                 <div className="bg-white rounded-3 p-3 bx_sdw w-60 m-auto">
                     <form onSubmit={handleSubmit}>
@@ -314,7 +358,7 @@ const ProductUpload = () => {
                                             <p>{file.name}</p>
                                             <button
                                                 type="button"
-                                                onClick={() => handleRemoveFile(index)}
+                                                onClick={() => handleRemoveFile(index, false)}
                                                 className="btn btn-danger btn-sm px-2 py-1 gap-5"
                                             >
                                                 X
@@ -330,17 +374,18 @@ const ProductUpload = () => {
                                             <img src={file.src} alt={file.alt} width="100" />
                                             <button
                                                 type="button"
-                                                onClick={() => handleRemoveFile(index)}
+                                                onClick={() => handleRemoveFile(index, true)}
                                                 className="btn btn-danger btn-sm px-2 py-1 gap-5"
                                             >
                                                 X
                                             </button>
                                         </div>
                                     ))}
-                                    {showAlert && 
-                                    <div className="m-2 alert alert-info text-danger" role="alert">
-                                        {alertMessage}
-                                    </div>}
+                                    {showAlert && (
+                                        <div className="alert alert-warning mt-2">
+                                        Please click the <strong>Upload Files</strong> button to upload the selected images.
+                                        </div>
+                                    )}
                                     <button
                                         type="button"
                                         className="btn btn-primary mt-2"
@@ -451,7 +496,7 @@ const ProductUpload = () => {
                             <button
                                 type="button"
                                 className="btn btn-primary w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
-                                onClick={() => navigate('/product-list')}
+                                onClick={() => navigate(`/product-list/${productownedby}/${userType}`)}
                             >
                                 <VisibilityIcon className="me-2" />
                                 <span>View Product</span>
