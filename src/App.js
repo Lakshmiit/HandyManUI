@@ -34,7 +34,7 @@ function App() {
             <Route path="/product/:productownedby/:userType" element={<UploadForm />} />
             {/* Dynamic product ID route for ProductView */}
             <Route path="/product-view/:id/:productownedby/:userType" element={<ProductView />} /> 
-            <Route path="/product-list/:productownedby" element={<ProductList />} />
+            <Route path="/product-list/:productownedby/:userType" element={<ProductList />} />
             <Route path="/product-edit/:id/:userType" element={<EditUploadForm />} />           
             <Route path="/RaiseTicket/:customerId/:userType" element={<RaiseTicket />} />
             <Route path="/buyProducts/:userId/:userType" element={<BuyProduct />} />
@@ -42,7 +42,7 @@ function App() {
             <Route path="/buyproduct-view/:id/:userId/:userType" element={<BuyProductView />} />
             <Route path="/adminProductApproval/:id/:userType" element={<AdminProductApproval />} />
             <Route path="/adminProductList" element={<AdminProductList />} />
-            <Route path="/adminUpdateProduct/:id/:userType" element={<AdminUpdateProduct />} />
+            <Route path="/adminUpdateProduct/:id/:userType" element={<AdminUpdateProduct />} /> 
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/raiseTicketActionView" element={<RaiseTicketActionView />} />
             <Route path="/raiseQuote/:userType" element={<RaiseaQuote />} />
