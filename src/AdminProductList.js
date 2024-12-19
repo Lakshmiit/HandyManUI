@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'; 
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
 
@@ -16,8 +16,8 @@ const AdminProductList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 15;
   const navigate = useNavigate();
-  const {userType} = useParams();
-  const {ProductOwnedBy} = useParams();
+  // const {userType} = useParams();
+  // const {ProductOwnedBy} = useParams();
  
 
   // Fetch product data, categories, and catalogues
@@ -161,7 +161,7 @@ const AdminProductList = () => {
         <div className="text-end col-md-3 mb-1">
   <button
     className="btn btn-success"
-    onClick={() => navigate(`/product/${ProductOwnedBy}/${userType}`)}
+    onClick={() => navigate(`/adminUploadForm/Admin`)}
   >
     Add New Product
   </button>
