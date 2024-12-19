@@ -91,7 +91,7 @@ const ProductUpload = () => {
             return;
         }
         setProductPhotos([...productPhotos, ...selectedFiles]);
-        // setAlertMessage("Please click on the Upload Files button to upload the Images.");
+        //setAlertMessage("Please click on the Upload Files button to upload the Images.");
         setShowAlert(true);
     };
 
@@ -125,7 +125,8 @@ const ProductUpload = () => {
     // Handle file upload
     const handleUploadFiles = async () => {
         setLoading(true);
-        const uploadedFilesList = [];
+        setShowAlert(false);
+        const uploadedFilesList = [...uploadedFiles];
     
         // Loop through selected files and upload each one
         for (let i = 0; i < productPhotos.length; i++) {
@@ -152,6 +153,7 @@ const ProductUpload = () => {
     
         // Once all files are uploaded, update the state with the uploaded files
         setUploadedFiles(uploadedFilesList);
+        setProductPhotos([]);
         setLoading(false);
     };
 
@@ -359,11 +361,10 @@ const ProductUpload = () => {
                                 multiple
                                 onChange={handleFileChange}
                             />
-                            
                             <div className="mt-2">
                                     {productPhotos.map((file, index) => (
-                                        <div className="d-flex align-items-center gap-2 mb-2">
-                                            <p key={index}>{file.name}</p>
+                                        <div key={index} className="d-flex align-items-center gap-2 mb-2">
+                                            <p>{file.name}</p>
                                             <button
                                                 type="button"
                                                 onClick={() => handleRemoveFile(index)}
@@ -389,6 +390,7 @@ const ProductUpload = () => {
                                             </button>
                                         </div>
                                     ))}
+                                    {/* Alert for uploading files */}
                                     {showAlert && (
                                         <div className="alert alert-danger  mt-2">
                                         Please click the <strong>Upload Files</strong> button to upload the selected images.
@@ -403,7 +405,6 @@ const ProductUpload = () => {
                                         {loading ? 'Uploading...' : 'Upload Files'}
                                     </button>
                                 </div>
-
 
                         {/* Rate */}
                         <div className="form-group">
