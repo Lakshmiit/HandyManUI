@@ -3,9 +3,8 @@ import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 // Importing necessary components
 import Header from './Header';
-
 import UploadForm from './uploadform';
-import ProductView from './ProductView';  // Add ProductView component
+import ProductView from './ProductView'; 
 import EditUploadForm from './EditUploadForm';
 import ProductList from './ProductList';
 import RaiseTicket from './RaiseTicket';
@@ -15,6 +14,7 @@ import BuyProductView from './BuyProductView';
 import AdminProductApproval from './AdminProductApproval.js';
 import AdminProductList from './AdminProductList.js';
 import AdminUpdateProduct from './AdminUpdateProduct.js';
+import AdminSidebar from './AdminSidebar';
 import Notifications from './Notifications.js';
 import RaiseTicketActionView from './RaiseTicketActionView.js';
 import RaiseaQuote from './RaiseaQuote.js';
@@ -40,9 +40,10 @@ function App() {
             <Route path="/buyProducts/:userId/:userType" element={<BuyProduct />} />
             <Route path="/sidebar/:userType" element={<Sidebar />} />
             <Route path="/buyproduct-view/:id/:userId/:userType" element={<BuyProductView />} />
-            <Route path="/adminProductApproval/:id/:userType" element={<AdminProductApproval />} />
-            <Route path="/adminProductList" element={<AdminProductList />} />
-            <Route path="/adminUpdateProduct/:id/:userType" element={<AdminUpdateProduct />} /> 
+            <Route path="/adminProductApproval/:id/:ProductOwnedBy/:userType" element={<AdminProductApproval />} />
+            <Route path="/adminProductList/:ProductOwnedBy/:userType" element={<AdminProductList />} />
+            <Route path="/adminUpdateProduct/:id/:ProductOwnedBy/:userType" element={<AdminUpdateProduct />} /> 
+            <Route path="/adminSidebar" element={<AdminSidebar />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/raiseTicketActionView" element={<RaiseTicketActionView />} />
             <Route path="/raiseQuote/:userType" element={<RaiseaQuote />} />
