@@ -15,16 +15,18 @@ const ProductView = () => {
   const [loading, setLoading] = useState(true); // Loading state
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 15;
+  const {userType} = useParams();
   const navigate = useNavigate();
 
   // Define dynamic parameters for the URL
-  const { productownedby } = useParams(); 
+ 
+
+  const { ProductOwnedBy } = useParams(); 
 
   // Fetch product data, categories, and catalogues
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv2.azurewebsites.net/api/Product/GetProductList?ProductOwnedBy=${productownedby}`;
-
+    const url = `https://handymanapiv2.azurewebsites.net/api/Product/GetProductList?ProductOwnedBy=Admin`
     axios.get(url)
       .then(response => {
         const products = response.data.map((product) => ({
@@ -50,7 +52,7 @@ const ProductView = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, [productownedby]);
+  }, [ProductOwnedBy]);
 
   // Handle delete functionality
   const handleDelete = (productId) => {
@@ -156,14 +158,11 @@ const ProductView = () => {
           </select>
         </div>
 
-
-
-
         {/* Add New Product Button */}
         <div className="text-end col-md-3 mb-1">
   <button
     className="btn btn-success"
-    onClick={() => navigate(`/product/${productownedby}`)}
+    onClick={() => navigate(`/product/${ProductOwnedBy}/${userType}`)}
   >
     Add New Product
   </button>
@@ -199,10 +198,10 @@ const ProductView = () => {
       <td>{product.discount ? `${product.discount}%` : "No discount"}</td>
       <td>₹{product.afterDiscountPrice || 'N/A'}</td>
       <td>
-        <Link to={`/product-edit/${product.id}`} className="btn btn-warning mx-2" title="Edit">
+        <Link to={`/product-edit/${product.id}/${ProductOwnedBy}/${userType}`} className="btn btn-warning mx-2" title="Edit">
           <FaEdit />
         </Link>
-        <Link to={`/product-view/${product.id}/${productownedby}`} className="btn btn-info mx-2" title="View">
+        <Link to={`/product-view/${product.id}/${ProductOwnedBy}/${userType}`} className="btn btn-info mx-2" title="View">
           <FaEye />
         </Link>
         <button
