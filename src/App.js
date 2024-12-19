@@ -11,7 +11,6 @@ import RaiseTicket from './RaiseTicket';
 import BuyProduct from './BuyProducts';
 import Sidebar from './Sidebar';
 import BuyProductView from './BuyProductView';
-import AdminProductApproval from './AdminProductApproval.js';
 import AdminProductList from './AdminProductList.js';
 import AdminUpdateProduct from './AdminUpdateProduct.js';
 import AdminUploadForm from './AdminUploadForm.js';
@@ -42,7 +41,6 @@ function App() {
             <Route path="/sidebar/:userType" element={<Sidebar />} />
             <Route path="/buyproduct-view/:id/:userId/:userType" element={<BuyProductView />} />
             <Route path="/adminUploadForm/Admin" element={<AdminUploadForm />} />
-            <Route path="/adminProductApproval/:id/Admin" element={<AdminProductApproval />} />
             <Route path="/adminProductList/Admin" element={<AdminProductList />} />
             <Route path="/adminUpdateProduct/:id/Admin" element={<AdminUpdateProduct />} /> 
             <Route path="/adminSidebar" element={<AdminSidebar />} />
