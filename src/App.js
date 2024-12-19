@@ -14,6 +14,7 @@ import BuyProductView from './BuyProductView';
 import AdminProductApproval from './AdminProductApproval.js';
 import AdminProductList from './AdminProductList.js';
 import AdminUpdateProduct from './AdminUpdateProduct.js';
+import AdminUploadForm from './AdminUploadForm.js';
 import AdminSidebar from './AdminSidebar';
 import Notifications from './Notifications.js';
 import RaiseTicketActionView from './RaiseTicketActionView.js';
@@ -40,6 +41,7 @@ function App() {
             <Route path="/buyProducts/:userId/:userType" element={<BuyProduct />} />
             <Route path="/sidebar/:userType" element={<Sidebar />} />
             <Route path="/buyproduct-view/:id/:userId/:userType" element={<BuyProductView />} />
+            <Route path="/adminUploadForm/Admin" element={<AdminUploadForm />} />
             <Route path="/adminProductApproval/:id/Admin" element={<AdminProductApproval />} />
             <Route path="/adminProductList/Admin" element={<AdminProductList />} />
             <Route path="/adminUpdateProduct/:id/Admin" element={<AdminUpdateProduct />} /> 
