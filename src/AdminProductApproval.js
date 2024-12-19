@@ -5,7 +5,7 @@ import {  Button } from 'react-bootstrap'; // Import Bootstrap components for mo
 import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
-import Sidebar from './Sidebar';
+import AdminSidebar from './AdminSidebar';
 
 const ProductAdmin = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -17,7 +17,7 @@ const ProductAdmin = () => {
   const [comments, setComments] = useState("");
   const { id } = useParams();
   const navigate = useNavigate(); // Hook to programmatically navigate
-  const { productownedby } = useParams(); 
+  //const {userType} = useParams();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -28,7 +28,7 @@ const ProductAdmin = () => {
         const imageRequests =
           data.productPhotos?.map((photo) =>
             fetch(
-              `https://handymanapiservices.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+              `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
             )
               .then((res) => res.json())
               .then((data) => ({
@@ -105,9 +105,11 @@ const ProductAdmin = () => {
     catalogue,
     productSize,
     color,
+    units,
     rate,
     discount,
     specifications,
+    specificationDesc,
     warranty,
     additionalInformation,
   } = productData;
@@ -116,13 +118,12 @@ const ProductAdmin = () => {
 
   return (
     <div className="wrapper bg-light">
-      <div className="container-fluid mt-4 h-100 d-flex flex-column">
         <div className="d-flex flex-row justify-content-start align-items-start">
           {/* Sidebar */}
           {!isMobile && (
-          <div className=" ml-0 m-4 p-0 sde_mnu">
-          <Sidebar userType={selectedUserType} />
-          </div>
+          <div className="ml-0 m-4 p-0 adm_mnu">
+          <AdminSidebar userType={selectedUserType}/>
+         </div>
           )}
           
           {/* Floating menu for mobile */}
@@ -138,7 +139,7 @@ const ProductAdmin = () => {
 
           {showMenu && (
               <div className="sidebar-container">
-                <Sidebar userType={selectedUserType} />
+                <AdminSidebar userType={selectedUserType} />
               </div>
           )}
         </div>
@@ -217,6 +218,7 @@ const ProductAdmin = () => {
                   <p><strong>Catalogue:</strong> {catalogue}</p>
                   <p><strong>Size:</strong> {productSize}</p>
                   <p><strong>Color:</strong> {color}</p>
+                  <p><strong>Units:</strong> {units}</p>
                   <p><strong>Rate:</strong> ${rate}</p>
                   <p><strong>Discount:</strong> {discount}%</p>
                   <p><strong>Price After Discount:</strong> ${afterDiscountPrice.toFixed(2)}</p>
@@ -229,6 +231,7 @@ const ProductAdmin = () => {
                         {spec.label}: {spec.value}
                       </li>
                     ))}
+                    <li>{specificationDesc}</li>
                   </ul>
                   <h5>Warranty</h5>
                   <p>{warranty} months</p>
@@ -286,7 +289,7 @@ const ProductAdmin = () => {
         type="button"
         className='btn btn-warning text-white'
        
-          onClick={() => navigate(`/product-list/${productownedby}`)}
+          onClick={() => navigate(`/adminProductList/Admin`)}
       >
       
         <span>Back</span>
@@ -296,7 +299,6 @@ const ProductAdmin = () => {
           </div>
         </div>
       </div>
-    </div>
     {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {
