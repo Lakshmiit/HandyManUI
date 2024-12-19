@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import './App.css';
-import { Button } from 'react-bootstrap'; // Import Bootstrap components for modal
+import {  Button } from 'react-bootstrap'; // Import Bootstrap components for modal
 import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
@@ -13,20 +13,12 @@ const ProductAdmin = () => {
   const {selectedUserType} = useParams();
   const [productData, setProductData] = useState(null);
   const [imageUrls, setImageUrls] = useState([]);
+  // const [productType] = useState("Approved");
+  // const [comments] = useState("");
   const { id } = useParams();
   const navigate = useNavigate(); // Hook to programmatically navigate
-  const { productownedby } = useParams(); 
-
-  // Detect screen size for responsiveness
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 768);
-    handleResize(); // Set initial state
-    window.addEventListener('resize', handleResize);
-
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-
+  const { ProductOwnedBy } = useParams(); 
+  const {userType} = useParams();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -54,7 +46,50 @@ const ProductAdmin = () => {
     fetchData();
   }, [id]);
 
-  
+  // Detect screen size for responsiveness
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    handleResize(); // Set initial state
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []); 
+
+  // const handleSubmit = async () => {
+  //   if (!productData) {
+  //     console.error("No product data to submit.");
+  //     return;
+  //   }
+
+  //   const payload = {
+  //     ...productData,
+  //     productStatus: productType,
+  //     comments,
+  //   };
+
+  //   try {
+  //     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/${id}`, {
+  //       method: "PUT",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(payload),
+  //     });
+
+  //     if (response.ok) {
+  //       alert("Product status updated successfully.");
+  //     } else {
+  //       const errorData = await response.json();
+  //       console.error("Error updating product:", errorData);
+  //       alert("Failed to update product. Please try again.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error submitting product data:", error);
+  //     alert("An error occurred. Please try again later.");
+  //   }
+  // };
+
+
   if (!productData) {
     return (
       <div className="d-flex justify-content-center align-items-center vh-100">
@@ -65,35 +100,35 @@ const ProductAdmin = () => {
     );
   }
 
-
-   const {
+  const {
     productName,
     category,
     catalogue,
     productSize,
     color,
+    units,
     rate,
     discount,
     specifications,
+    specificationDesc,
     warranty,
     additionalInformation,
   } = productData;
-
 
   const afterDiscountPrice = rate - (rate * discount) / 100;
 
   return (
     <div className="wrapper bg-light">
       <div className="container-fluid mt-4 h-100 d-flex flex-column">
-        <div className="d-flex py-3 gap-3">
-         {/* Sidebar menu for Larger Screens */}
-      {!isMobile && (
-        <div className=" ml-0 m-4 p-0 sde_mnu">
+        <div className="d-flex flex-row justify-content-start align-items-start">
+          {/* Sidebar */}
+          {!isMobile && (
+          <div className=" ml-0 m-4 p-0 sde_mnu">
           <Sidebar userType={selectedUserType} />
-        </div>
-      )}
-
-      {/* Floating menu for mobile */}
+          </div>
+          )}
+          
+          {/* Floating menu for mobile */}
       {isMobile && (
         <div className="floating-menu">
           <Button
@@ -111,8 +146,10 @@ const ProductAdmin = () => {
           )}
         </div>
       )}
+
           {/* Main Content */}
           <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
+          <div className=" col-md-9">
             <div className="bg-white p-4 rounded shadow-sm">
               <h3 className="mb-4 text-primary">Product Details</h3>
 
@@ -183,6 +220,7 @@ const ProductAdmin = () => {
                   <p><strong>Catalogue:</strong> {catalogue}</p>
                   <p><strong>Size:</strong> {productSize}</p>
                   <p><strong>Color:</strong> {color}</p>
+                  <p><strong>Units:</strong> {units} </p>
                   <p><strong>Rate:</strong> ${rate}</p>
                   <p><strong>Discount:</strong> {discount}%</p>
                   <p><strong>Price After Discount:</strong> ${afterDiscountPrice.toFixed(2)}</p>
@@ -192,9 +230,10 @@ const ProductAdmin = () => {
                   <ul>
                     {specifications?.map((spec, index) => (
                       <li key={index}>
-                        {spec.label}: {spec.value}
+                        {spec.label} : {spec.value}
                       </li>
                     ))}
+                    <li>{specificationDesc}</li>
                   </ul>
                   <h5>Warranty</h5>
                   <p>{warranty} months</p>
@@ -202,16 +241,49 @@ const ProductAdmin = () => {
                   <p>{additionalInformation}</p>
                 </div>
               </div>
+               {/* Approval Section
+               <div className="mt-4">
+                  <h5>Approval</h5>
+                  <div className="form-check">
+                    <input
+                      type="radio"
+                      className="form-check-input"
+                      name="productStatus"
+                      id="approve"
+                      value="Approved"
+                      checked={productType === 'Approved'}
+                      onChange={() => setProductType('Approved')}
+                    />
+                    <label className="form-check-label" htmlFor="approve">Approve</label>
+                  </div>
+                  <div className="form-check">
+                    <input
+                      type="radio"
+                      className="form-check-input"
+                      name="productStatus"
+                      id="reject"
+                      value="Reject"
+                      checked={productType === 'Reject'}
+                      onChange={() => setProductType('Reject')}
+                    />
+                    <label className="form-check-label" htmlFor="reject">Reject</label>
+                  </div>
+                  <textarea
+                    className="form-control mt-3"
+                    placeholder="Comments"
+                    value={comments}
+                    onChange={(e) => setComments(e.target.value)}
+                  />
+                </div> */}
 
-           
-              {/* Submit Button */}
+          
               <div className="mt-3">
                 {/* View Single Product Button */}
       <button
         type="button"
-        className="btn btn-warning text-white"
+        className='btn btn-warning text-white'
        
-          onClick={() => navigate(`/product-list/${productownedby}`)}
+          onClick={() => navigate(`/product-list/${ProductOwnedBy}/${userType}`)}
       >
       
         <span>Back</span>
@@ -221,7 +293,8 @@ const ProductAdmin = () => {
           </div>
         </div>
       </div>
-      {/* Styles for floating menu */}
+    </div>
+    {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {
           position: fixed;
@@ -239,18 +312,10 @@ const ProductAdmin = () => {
           box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
           width: 200px;
         }
-        .menu-item {
-          padding: 10px;
-          border-bottom: 1px solid #ddd;
-          display: flex;
-          align-items: center;
-          justify-content: flex-start;
-        }
-        .menu-item:last-child {
-          border-bottom: none;
-        }
       `}</style>
-    </div>
+
+
+  </div>
   );
 };
 
