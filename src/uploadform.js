@@ -6,7 +6,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import UploadIcon from '@mui/icons-material/Upload';
 import Sidebar from './Sidebar';
 import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
-import {  Button } from 'react-bootstrap'; // Import Bootstrap components for modal
+import {  Button } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 
 const ProductUpload = () => {
@@ -32,7 +32,7 @@ const ProductUpload = () => {
   const { userType} = useParams();
   // const [alertMessage, setAlertMessage] = useState("");
   const navigate = useNavigate(); // Hook to programmatically navigate
-  const { productownedby } = useParams(); 
+  const { ProductOwnedBy } = useParams(); 
   const { selectedUserType} = useParams();
   //const { productstatus } = useState("Pending Approval");
   // Handle file input change (multiple files)
@@ -118,7 +118,7 @@ useEffect(() => {
       });
 
       const responseData = await response.text();
-      return responseData || ''; // Assuming the response contains the file URL or filename
+      return responseData || ''; 
     } catch (error) {
       console.error('Error uploading file:', error);
       return '';
@@ -130,14 +130,14 @@ useEffect(() => {
     event.preventDefault();
 
     const payload = {
-      id: "unique-id", // Replace with unique ID logic if necessary
-      productId:"string",
+      id: "unique-id", 
+      productId: "string",
       productName: productName,
       ProductPhotos: uploadedFiles.map(file => file.src),
       Catalogue: catalogue,
       ProductSize: productSize,
-      Color: color, // Assuming hardcoded colors, replace as needed
-      unit: units,
+      Color: color, 
+      Units: units,
       rate: parseFloat(rate),
       discount: parseFloat(discount),
       afterDiscountPrice: parseFloat(rate) - parseFloat(discount),
@@ -150,12 +150,12 @@ useEffect(() => {
       additionalInfo: moreInfo,
       Category: category,
       ProductStatus: "Pending Approval",
-      ProductOwnedBy:productownedby,
-      AdditionalInformation:moreInfo
+      AdditionalInformation:moreInfo,
+      ProductOwnedBy:"Admin",
     };
 
     try {
-      const response = await fetch("https://handymanapiv2.azurewebsites.net/api/product/productupload", {
+      const response = await fetch("https://handymanapiv2.azurewebsites.net/api/Product/ProductUpload", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -166,7 +166,7 @@ useEffect(() => {
       if (response.ok) {
         alert("Product uploaded successfully!");
 
-        // Reset the form or perform other actions as needed
+        
       } else {
         alert("Please fill in all mandatory fields.");
         alert("Failed to upload product.");
@@ -260,6 +260,7 @@ useEffect(() => {
               </select>
             </div>
 
+
             {/* Catalogue */}
             <div className="form-group">
               <label>Catalogue<span className="req_star">*</span></label>
@@ -316,7 +317,7 @@ useEffect(() => {
                 onChange={handleFileChange}
               />
               {showAlert && (
-                <div className="alert alert-warning mt-2">
+                <div className="alert alert-danger  mt-2">
                   Please click the <strong>Upload Files</strong> button to upload the selected images.
                 </div>
               )}
@@ -440,7 +441,7 @@ useEffect(() => {
         type="button"
         className="btn btn-primary w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
        
-          onClick={() => navigate(`/product-list/${productownedby}/${userType}`)}
+          onClick={() => navigate(`/product-list/${ProductOwnedBy}/${userType}`)}
       >
         <VisibilityIcon className="me-2" />
         <span>View Product</span>
