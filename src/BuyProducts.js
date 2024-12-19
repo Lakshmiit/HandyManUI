@@ -1,326 +1,129 @@
-import React, { useState, useEffect} from "react";
-import "./App.css";
-import { v4 as uuidv4 } from 'uuid'; 
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
-import "bootstrap/dist/css/bootstrap.min.css";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
-import { Button, Form, Modal } from 'react-bootstrap'; // Import Bootstrap components for modal
-import axios from 'axios';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { Button } from 'react-bootstrap'; // Import Bootstrap components for modal
 
-const BuyProduct = () => {
-  const navigate = useNavigate();
-  const {userType} = useParams();
+
+const BuyProdcutView = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const { selectedUserType } = useParams(); 
-  const [category, setCategory] = useState("Electrical items");
-  const [productSize, setProductSize] = useState("");
-  const [productCatalogue, setProductCatalogue] = useState("");
-  const [color, setChooseColor] = useState("");
-  const [otherThanProduct, setOtherThanProduct] = useState("");
-  const [requiredQuality, setRequiredQuality] = useState("");
-  const [units, setUnits] = useState("");
-  const [productName, setProductName] = useState("");
-  const [showSecondaryAddresses, setShowSecondaryAddresses] = useState(false);
-  const [newAddress, setNewAddress] = useState('');
-  const [addresses, setAddresses] = useState([]);
-  const [addressType, setAddressType] = useState('');
-  const [state, setState] = useState('');
-  const [district, setDistrict] = useState('');
-  const [pincode, setPincode] = useState('');
-  const [showModal, setShowModal] = useState(false);
-  const [productSuggestions, setProductSuggestions] = useState([]);
-  const [filteredSuggestions, setFilteredSuggestions] = useState([]);
-  const [allProducts, setAllProducts] = useState([]);
-  const [id, setId] = useState("");
-  const { userId } = useParams(); 
-  const location = useLocation();
- // Check if there's state passed from ViewProduct page
- useEffect(() => {
-  if (location.state) {
-    const {
-      productName,
-      catalogue,
-      productSize,
-      color,
-      otherThanProduct,
-      requiredQuality,
-      units,
-      id,
-    } = location.state;
-    setProductName(productName);
-    setProductCatalogue(catalogue);
-    setProductSize(productSize);
-    setChooseColor(color);
-    setOtherThanProduct(otherThanProduct);
-    setRequiredQuality(requiredQuality);
-    setUnits(units);
-    setId(id);
-  }
-}, [location.state]);
-  // Fetch customer profile data
+  const {selectedUserType} = useParams();
+  const {userType} = useParams();
+  const [productData, setProductData] = useState(null);
+  const [imageUrls, setImageUrls] = useState([]);
+  const [otherThanProduct] = useState("");
+    const [requiredQuality] = useState("");
+    const [units] = useState("");
+    //const [catalogue, setProductCatalogue] = useState("");
+  const { id } = useParams();
+  const navigate = useNavigate(); // Hook to programmatically navigate
+    const { userId } = useParams(); 
   useEffect(() => {
-    const fetchProfileType = async () => {
+    const fetchData = async () => {
       try {
-        const API_URL = "https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/";
-        const response = await fetch(`${API_URL}${userId}`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch customer profile data");
-        }
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/${id}`);
         const data = await response.json();
-        console.log(data);
-        const addresses = Array.isArray(data) ? data : [data];
-        const formattedAddresses = addresses.map((addr) => ({
-          id: addr.addressId,
-          type: addr.isPrimaryAddress ? "primary" : "secondary",
-          address: addr.address,
-          state: addr.state,
-          district: addr.district,
-          zipCode: addr.zipCode,
-        }));
-        setAddresses(formattedAddresses);
+        setProductData(data);
+
+        const imageRequests =
+          data.productPhotos?.map((photo) =>
+            fetch(
+              `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+            )
+              .then((res) => res.json())
+              .then((data) => ({
+                src: photo,
+                imageData: data.imageData,
+              }))
+          ) || [];
+        const images = await Promise.all(imageRequests);
+        setImageUrls(images);
       } catch (error) {
-        console.error("Error fetching customer data:", error);
+        console.error("Error fetching product data:", error);
       }
     };
+    fetchData();
+  }, [id]);
 
-    if (userId) {
-      fetchProfileType();
-    }
-  }, [userId]);
-
-  // Generate ticket ID in the format VSKPAKP002
-  const ticketIdPrefix = "VSKPAKP";
-  const ticketIdSuffix = String(Math.floor(Math.random() * 999) + 1).padStart(3, "0");
-  const ticketId = `${ticketIdPrefix}${ticketIdSuffix}`;
-
-  const handleGetQuotation = async () => {
-   
-    const primaryAddress = addresses.find((addr) => addr.type === "primary");
-    const state = primaryAddress?.state || "";
-    const district = primaryAddress?.district || "";
-    const pincode = primaryAddress?.zipCode || "";
-  
-    const payload = {
-      BuyProductId: ticketId,
-      id: "string",
-      Address: primaryAddress?.address || "",
-      category,
-      status: "Open",
-      productName,
-      ProductCatalogue: productCatalogue,
-      productSize,
-      color: color,
-      otherThanProduct,
-      requiredQuantity: requiredQuality,
-      units,
-      AddressType: primaryAddress ? "primary" : "secondary",
-      State: state,
-      District: district,
-      ZipCode: pincode,
-      CustomerId: "123456789",
-      RequestedBy: userId,
-    };
-  
-    try {
-      const response = await axios.post(
-        "https://handymanapiv2.azurewebsites.net/api/BuyProduct/BuyProductUpload",
-        payload
-      );
-      if (response.status === 200) {
-        window.alert(`Quotation submitted successfully! Your reference number is ${ticketId}. Get Quote will contact you shortly.`);
-      } else {
-        alert("Failed to submit quotation. Please try again.");
-      }
-    } catch (error) {
-      console.error("Error submitting quotation:", error);
-      alert("An error occurred while submitting the quotation.");
-    }
-  };
-  
   // Detect screen size for responsiveness
-useEffect(() => {
-  const handleResize = () => setIsMobile(window.innerWidth <= 768);
-  handleResize(); // Set initial state
-  window.addEventListener('resize', handleResize);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    handleResize(); // Set initial state
+    window.addEventListener('resize', handleResize);
+  
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
-  return () => window.removeEventListener('resize', handleResize);
-}, []);
-
-
-  const handleAddToCart = () => {
-    alert("Item added to cart!");
-  };
-
-   const handleSubmit = (e) => {
-     e.preventDefault();
-   };
-
-  const states = ['Andhra Pradesh', 'Telangana'];
-  const districts = {
-    'Andhra Pradesh': ['Visakhapatnam', 'Vijayawada', 'Guntur'],
-    'Telangana': ['Hyderabad', 'Warangal', 'Khammam'],
-  };
-
-
-  // // Handle adding a new address
-  // const handleAddAddress = () => {
-  //   if (
-  //     newAddress.trim() === '' ||
-  //     addressType.trim() === '' ||
-  //     state.trim() === '' ||
-  //     district.trim() === '' ||
-  //     pincode.trim() === ''
-  //   ) {
-  //     alert('Please fill in all the fields.');
+  // const handleSubmit = async () => {
+  //   if (!productData) {
+  //     console.error("No product data to submit.");
   //     return;
   //   }
 
-  //   if (addresses.length >= 4) {
-  //     alert('You can only add up to 4 addresses.');
-  //     return;
-  //   }
-
-  //   const newAddr = {
-  //     id: uuidv4(),
-  //     type: addressType,
-  //     address: newAddress,
-  //     state,
-  //     district,
-  //     pincode,
+  //   const payload = {
+  //     ...productData,
+  //     productStatus: productType,
+  //     comments,
   //   };
 
-  //   setAddresses((prevAddresses) => [...prevAddresses, newAddr]);
-  //   resetAddressForm();
-  //   setShowModal(false);
+  //   try {
+  //     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/${id}`, {
+  //       method: "PUT",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(payload),
+  //     });
+
+  //     if (response.ok) {
+  //       alert("Product status updated successfully.");
+  //     } else {
+  //       const errorData = await response.json();
+  //       console.error("Error updating product:", errorData);
+  //       alert("Failed to update product. Please try again.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error submitting product data:", error);
+  //     alert("An error occurred. Please try again later.");
+  //   }
   // };
 
-
-  const handleAddAddress = () => {
-    if (
-      newAddress.trim() === '' ||
-      addressType.trim() === '' ||
-      state.trim() === '' ||
-      district.trim() === '' ||
-      pincode.trim() === ''
-    ) {
-      alert('Please fill in all the fields.');
-      return;
-    }
-  
-    if (addresses.length >= 4) {
-      alert('You can only add up to 4 addresses.');
-      return;
-    }
-  
-    const newAddr = {
-      id: uuidv4(),
-      type: addressType,
-      address: newAddress,
-      state,
-      district,
-      zipCode: pincode, // Corrected field name for consistency
-    };
-  
-    console.log('New Address:', newAddr); // Debugging
-  
-    setAddresses((prevAddresses) => [...prevAddresses, newAddr]);
-    resetAddressForm();
-    setShowModal(false);
-  };
-  
-
-  // Reset address form fields
-  const resetAddressForm = () => {
-    setNewAddress('');
-    setAddressType('');
-    setState('');
-    setDistrict('');
-    setPincode('');
-  };
-
-  // Handle secondary address selection
-  const handleSecondaryAddressSelect = (id) => {
-    const updatedAddresses = addresses.map((address) =>
-      address.id === id
-        ? { ...address, type: 'primary' }
-        : address.type === 'primary'
-        ? { ...address, type: 'secondary' }
-        : address
+  if (!productData) {
+    return (
+      <div className="d-flex justify-content-center align-items-center vh-100">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
     );
-    setAddresses(updatedAddresses);
-    setShowSecondaryAddresses(false); // Collapse secondary addresses view
-  };
+  }
 
-  // Handle address editing
-  const handleAddressEdit = (id) => {
-    const addressToEdit = addresses.find((address) => address.id === id);
-    if (addressToEdit) {
-      setNewAddress(addressToEdit.address);
-      setAddressType(addressToEdit.type);
-      setState(addressToEdit.state);
-      setDistrict(addressToEdit.district);
-      setPincode(addressToEdit.pincode);
-      setShowModal(true);
-      handleAddressDelete(id); // Remove the address to re-add it after edit
-    }
-  };
+  const {
+    productName,
+    category,
+    catalogue,
+    productSize,
+   
+    color,
+    rate,
+    discount,
+    specifications,
+    warranty,
+    additionalInformation,
+  } = productData;
 
-  // Handle address deletion
-  const handleAddressDelete = (id) => {
-    const updatedAddresses = addresses.filter((address) => address.id !== id);
-    setAddresses(updatedAddresses);
-  };
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get(
-          `https://handymanapiv2.azurewebsites.net/api/Product/GetProductsByCategory?category=${category}`
-        );
-        setAllProducts(response.data);
-        setProductSuggestions(response.data.map((product) => product.productName));
-      } catch (error) {
-        console.error("Error fetching products by category:", error);
-      }
-    };
-    fetchProducts();
-  }, [category]);
-  
-  useEffect(() => {
-    if (productName) {
-      setFilteredSuggestions(
-        productSuggestions.filter((name) =>
-          name.toLowerCase().startsWith(productName.toLowerCase())
-        )
-      );
-    } else {
-      setFilteredSuggestions([]);
-    }
-  }, [productName, productSuggestions]);
-  
-  const handleProductSelect = (selectedProductName) => {
-    setProductName(selectedProductName); // Update the input field to reflect the selected name
-    const selectedProduct = allProducts.find(
-      (product) => product.productName === selectedProductName
-    );
-    if (selectedProduct) {
-      setProductCatalogue(selectedProduct.catalogue);
-      setProductSize(selectedProduct.productSize);
-      setChooseColor(selectedProduct.color);
-      setId(selectedProduct.id);
-    }
-    
-    setFilteredSuggestions([]);
-  };
+  const afterDiscountPrice = rate - (rate * discount) / 100;
 
   return (
-    <div className="d-flex flex-row justify-content-start align-items-start">
+    <div className="wrapper bg-light d-flex">
       {/* Sidebar menu for Larger Screens */}
       {!isMobile && (
         <div className=" ml-0 m-4 p-0 sde_mnu">
-          <Sidebar userType={selectedUserType} />
+          <Sidebar  userType={selectedUserType}/>
         </div>
       )}
 
@@ -337,7 +140,7 @@ useEffect(() => {
 
           {showMenu && (
               <div className="sidebar-container">
-                <Sidebar userType={selectedUserType} />
+                <Sidebar userType={selectedUserType}/>
               </div>
           )}
         </div>
@@ -345,334 +148,123 @@ useEffect(() => {
 
       {/* Main Content */}
       <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
-      <h3 className="mb-4">Buy Products</h3>
-        <div className="bg-white rounded-3 p-4 bx_sdw w-75">
-          <form className="form" onSubmit={handleSubmit}>
-            <div className="m-1">
-              <div className="d-flex justify-content-between align-items-center">
-                <label>Address</label>
+              <h3 className="mb-4 text-primary">Product Details</h3>
+
+              {/* Carousel */}
+              <div
+                id="productCarousel"
+                className="carousel slide mb-4 rounded"
+                data-bs-ride="carousel"
+              >
+                {/* Indicators */}
+                <div className="carousel-indicators">
+                  {imageUrls.map((_, index) => (
+                    <button
+                      type="button"
+                      data-bs-target="#productCarousel"
+                      data-bs-slide-to={index}
+                      className={index === 0 ? 'active' : ''}
+                      aria-current={index === 0 ? 'true' : 'false'}
+                      aria-label={`Slide ${index + 1}`}
+                      key={index}
+                    ></button>
+                  ))}
+                </div>
+
+                {/* Carousel items */}
+                <div className="carousel-inner">
+                  {imageUrls.map((img, index) => (
+                    <div
+                      className={`carousel-item ${index === 0 ? 'active' : ''}`}
+                      key={img.src}
+                    >
+                      <img
+                        src={`data:image/jpeg;base64,${img.imageData}`}
+                        className="d-block w-100 rounded"
+                        style={{ maxHeight: '400px', objectFit: 'cover' }}
+                        alt={`Slide ${index + 1}`}
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                {/* Controls */}
                 <button
+                  className="carousel-control-prev"
                   type="button"
-                  className="btn btn-link ml-2"
-                  onClick={() =>  setShowSecondaryAddresses(true)}
+                  data-bs-target="#productCarousel"
+                  data-bs-slide="prev"
                 >
-                  Change Address
+                  <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span className="visually-hidden">Previous</span>
+                </button>
+                <button
+                  className="carousel-control-next"
+                  type="button"
+                  data-bs-target="#productCarousel"
+                  data-bs-slide="next"
+                >
+                  <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span className="visually-hidden">Next</span>
                 </button>
               </div>
 
-              
+              {/* Product Details */}
+              <div className="row">
+                <div className="col-md-6">
+                  <p><strong>Category:</strong> {category}</p>
+                  <p><strong>Name:</strong> {productName}</p>
+                  <p><strong>Catalogue:</strong> {catalogue}</p>
+                  <p><strong>Size:</strong> {productSize}</p>
+                  <p><strong>Color:</strong> {color}</p>
+                  <p><strong>Rate:</strong> ${rate}</p>
+                  <p><strong>Discount:</strong> {discount}%</p>
+                  <p><strong>Price After Discount:</strong> ${afterDiscountPrice.toFixed(2)}</p>
+                </div>
+                <div className="col-md-6">
+                  <h5>Specifications</h5>
+                  <ul>
+                    {specifications?.map((spec, index) => (
+                      <li key={index}>
+                        {spec.label}: {spec.value}
+                      </li>
+                    ))}
+                  </ul>
+                  <h5>Warranty</h5>
+                  <p>{warranty} months</p>
+                  <h5>Additional Information</h5>
+                  <p>{additionalInformation}</p>
+                </div>
+              </div>
 
-<div className="p-3 border rounded bg-light">
-  {addresses
-    .filter((addr) => addr.type === 'primary')
-    .map((address) => (
-      <div
-        key={address.id}
-        className="list-group-item d-flex justify-content-between align-items-center bg-white text-dark"
-      >
-        <div>
-          <span className="ml-2">{address.address}</span>
-          <br />
-          <span className="ml-2">{address.state}</span>
-          <br />
-          <span className="ml-2">{address.district}</span>
-          <br />
-          <span className="ml-2">{address.zipCode}</span> 
-          <br />
-          <small className="text-muted">Primary Address</small>
-        </div>
-      </div>
-    ))}
-
-                {showSecondaryAddresses && (
-                  <>
-                    <div className="list-group">
-                      {addresses
-                        .filter((addr) => addr.type === 'secondary')
-                        .map((address) => (
-                          <div
-                            key={address.id}
-                            className="list-group-item d-flex justify-content-between align-items-center"
-                          >
-                            <div>
-                              <input
-                                type="radio"
-                                name="address"
-                                checked={address.type === 'primary'}
-                                onChange={() => handleSecondaryAddressSelect(address.id)}
-                              />
-                              <span className="ml-2">{address.address}</span>
-                              <br />
-                              <small className="text-muted">Secondary Address</small>
-                            </div>
-                            <div>
-                              <button
-                                className="btn btn-warning btn-sm mx-1"
-                                onClick={() => handleAddressEdit(address.id)}
-                              >
-                                Edit
-                              </button>
-                              <button
-                                className="btn btn-danger btn-sm mx-1"
-                                onClick={() => handleAddressDelete(address.id)}
-                              >
-                                Delete
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                    </div>
-                    <div className="mt-3">
-                    <button
-                      className="btn btn-success"
-                      onClick={() => setShowModal(true)}
-                    >
-                      Add Address
-                    </button>
-                  </div>
-                  </>
-                )}
+           
+              {/* Submit Button */}
+              <div className="mt-3">
+                {/* View Single Product Button */}
+    
+     
+     <button
+  type="button"
+  className="btn btn-warning text-white w-50 mt-2"
+  onClick={() =>
+    navigate(`/buyProducts/${userId}/${userType}`, {
+      state: {
+        productName,
+        catalogue,
+        productSize,
+        color,
+        otherThanProduct,
+        requiredQuality,
+        units,
+      },
+    })
+  }
+>
+  <span>Back</span>
+      </button>
               </div>
             </div>
-
-            <Modal show={showModal} onHide={() => setShowModal(false)}>
-  <Modal.Header closeButton>
-    <Modal.Title>{newAddress ? 'Edit Address' : 'Add Address'}</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    <Form.Group controlId="address">
-      <Form.Label>Address</Form.Label>
-      <Form.Control
-        type="text"
-        value={newAddress}
-        onChange={(e) => setNewAddress(e.target.value)}
-        placeholder="Enter address"
-      />
-    </Form.Group>
-
-    <Form.Group controlId="addressType">
-      <Form.Label>Address Type</Form.Label>
-      <Form.Control
-        as="select"
-        value={addressType}
-        onChange={(e) => setAddressType(e.target.value)}
-      >
-        <option value="">Select Address Type</option>
-        <option value="primary">Primary</option>
-        <option value="secondary">Secondary</option>
-      </Form.Control>
-    </Form.Group>
-
-    <Form.Group controlId="state">
-      <Form.Label>State</Form.Label>
-      <Form.Control
-        as="select"
-        value={state}
-        onChange={(e) => setState(e.target.value)}
-      >
-        <option value="">Select State</option>
-        {states.map((state, index) => (
-          <option key={index} value={state}>
-            {state}
-          </option>
-        ))}
-      </Form.Control>
-    </Form.Group>
-
-    <Form.Group controlId="district">
-      <Form.Label>District</Form.Label>
-      <Form.Control
-        as="select"
-        value={district}
-        onChange={(e) => setDistrict(e.target.value)}
-      >
-        <option value="">Select District</option>
-        {districts[state]?.map((district, index) => (
-          <option key={index} value={district}>
-            {district}
-          </option>
-        ))}
-      </Form.Control>
-    </Form.Group>
-
-    <Form.Group controlId="pincode">
-      <Form.Label>Pincode</Form.Label>
-      <Form.Control
-        type="text"
-        value={pincode}
-        onChange={(e) => setPincode(e.target.value)}
-        placeholder="Enter pincode"
-      />
-    </Form.Group>
-
-    <Button type="button" variant="primary" onClick={handleAddAddress}>
-      {newAddress ? 'Save Address' : 'Add Address'}
-    </Button>
-  </Modal.Body>
-</Modal>
-
-  
-            <div className="form-group">
-              <label>
-                Category <span className="req_star">*</span>
-              </label>
-              <select
-                className="form-control"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-              >
-                <option>Electrical items</option>
-                <option>Plumbing Materials</option>
-                <option>Sanitary items</option>
-                <option>Electronics appliances</option>
-                <option>Paints</option>
-                <option>Hardware items</option>
-                <option>Civil & Waterproofing Materials</option>
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label>
-                Product Name <span className="req_star">*</span>
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                value={productName}
-                onChange={(e) => setProductName(e.target.value)}
-                placeholder="Enter Product Name"
-              />
-              {filteredSuggestions.length > 0 && (
-                <ul className="list-group mt-2">
-                  {filteredSuggestions.map((suggestion, index) => (
-                    <li
-                      key={index}
-                      className="list-group-item list-group-item-action"
-                      onClick={() => handleProductSelect(suggestion)}
-                    >
-                      {suggestion}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-
-            <div className="form-group">
-              <label>
-                Product Catalogue <span className="req_star">*</span>
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                value={productCatalogue}
-                onChange={(e) => setProductCatalogue(e.target.value)}
-                placeholder="Select Product Catalogue"
-              />
-            </div>
-
-            <div className="form-group">
-              <label>
-                Product Size <span className="req_star">*</span>
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                value={productSize}
-                onChange={(e) => setProductSize(e.target.value)}
-                placeholder="Select Product Size"
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Color (Optional)</label>
-              <input
-                type="text"
-                className="form-control"
-                value={color}
-                onChange={(e) => setChooseColor(e.target.value)}
-                placeholder="Enter Color"
-              />
-            </div>
-
-            <button
-              type="button"
-              className="btn btn-warning text-white w-50 mt-2"
-              onClick={() =>
-                navigate(`/buyproduct-view/${id}/${userId}/${userType}`, {
-                  state: {
-                    productName,
-                    productCatalogue,
-                    productSize,
-                    color,
-                    otherThanProduct,
-                    requiredQuality,
-                    units,
-                  },
-                })
-              }
-            >
-              View Product
-            </button>
-
-
-            <div className="form-group mb-3">
-              <label>Other Than Product</label>
-              <input
-                type="text"
-                className="form-control"
-                value={otherThanProduct}
-                onChange={(e) => setOtherThanProduct(e.target.value)}
-                placeholder="Enter Product Name"
-              />
-            </div>
-
-            <div className="row">
-              <div className="col-md-6">
-                <label>
-                  Required Quality <span className="req_star">*</span>
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={requiredQuality}
-                  onChange={(e) => setRequiredQuality(e.target.value)}
-                  placeholder="Enter Required Quality"
-                />
-              </div>
-              <div className="col-md-6">
-                <label>
-                  Units <span className="req_star">*</span>
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={units}
-                  onChange={(e) => setUnits(e.target.value)}
-                  placeholder="Enter Units"
-                />
-              </div>
-            </div>
-
-            <div className="d-flex gap-5 mt-3">
-              <button
-                type="button"
-                className="text-white btn btn-warning w-50"
-                onClick={handleAddToCart}
-              >
-                Add to Cart
-              </button>
-              <button
-                type="button"
-                className="text-white btn btn-warning w-50"
-                onClick={handleGetQuotation}
-              >
-                Get Quotation
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-      {/* Styles for floating menu */}
+        {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {
           position: fixed;
@@ -680,29 +272,9 @@ useEffect(() => {
           left: 20px; /* Adjusted for placement on the left side */
           z-index: 1000;
         }
-        .menu-popup {
-          position: absolute;
-          top: 50px; /* Keeps the popup aligned below the floating menu */
-          left: 0; /* Aligns the popup to the left */
-          background: white;
-          border: 1px solid #ddd;
-          border-radius: 5px;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-          width: 200px;
-        }
-        .menu-item {
-          padding: 10px;
-          border-bottom: 1px solid #ddd;
-          display: flex;
-          align-items: center;
-          justify-content: flex-start;
-        }
-        .menu-item:last-child {
-          border-bottom: none;
-        }
       `}</style>
-    </div>
+      </div>
   );
 };
 
-export default BuyProduct;
+export default BuyProdcutView;
