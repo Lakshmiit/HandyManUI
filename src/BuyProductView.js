@@ -32,7 +32,7 @@ const BuyProdcutView = () => {
         const imageRequests =
           data.productPhotos?.map((photo) =>
             fetch(
-              `https://handymanapiservices.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+              `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
             )
               .then((res) => res.json())
               .then((data) => ({
