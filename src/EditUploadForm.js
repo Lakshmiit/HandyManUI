@@ -6,17 +6,17 @@ import UpdateIcon from '@mui/icons-material/Update';
 import { useNavigate, useParams } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
-import { Button } from 'react-bootstrap'; // Import Bootstrap components for modal
+import {  Button } from 'react-bootstrap';
+
 
 const ProductUpload = () => {
+    const { id } = useParams(); // Retrieve the dynamic id from URL
+    const [selectedUserType] = useState("");
     const [isMobile, setIsMobile] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
-    const { id } = useParams(); // Retrieve the dynamic id from URL
-    const {selectedUserType} = useParams();
-    const {productownedby} = useParams();
-    const { userType} = useParams();
     const navigate = useNavigate();
     const [product, setProduct] = useState(null);
+
     const [productPhotos, setProductPhotos] = useState([]);
     const [uploadedFiles, setUploadedFiles] = useState([]);
     // const [alertMessage, setAlertMessage] = useState("");
@@ -26,6 +26,7 @@ const ProductUpload = () => {
     const [productName, setProductName] = useState("");
     const [catalogue, setCatalogue] = useState("");
     const [productSize, setProductSize] = useState("");
+    const [category, setCategory] = useState("");
     const [units, setUnits] = useState("");
     const [rate, setRate] = useState("");
     const [discount, setDiscount] = useState("");
@@ -34,11 +35,13 @@ const ProductUpload = () => {
     const [warranty, setWarranty] = useState("");
     const [moreInfo, setMoreInfo] = useState("");
     const [color, setColor] = useState("");
+    const {ProductOwnedBy} = useParams();
+    const {userType} = useParams();
     useEffect(() => {
         const fetchProductData = async () => {
             try {
                 setLoading(true);
-                const productResponse = await fetch(`https://handymanapiservices.azurewebsites.net/api/Product/${id}`);
+                const productResponse = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/${id}`);
                 if (!productResponse.ok) {
                     throw new Error('Product not found');
                 }
@@ -46,17 +49,19 @@ const ProductUpload = () => {
                 console.log("productData:", productData);
                 setProduct(productData);
                 setProductName(productData.productName);
-                setCatalogue(productData.catalog);
-                setColor(productData.colors);
-                setProductSize(productData.size || "");
-                setUnits(productData.unit || "");
+                  // setProductID(productData.productId);
+                setCategory(productData.category);
+                setCatalogue(productData.catalogue);
+                setColor(productData.color);
+                setProductSize(productData.productSize);
+                setUnits(productData.units);
                 setRate(productData.rate);
                 setDiscount(productData.discount);
                 setSpecifications(productData.specifications || [{ label: "", value: "" }]);
                 setSpecificationDesc(productData.specificationDesc);
                 setWarranty(productData.warranty);
-                setMoreInfo(productData.additionalInfo);
-                setUploadedFiles(productData.images || []);
+                setMoreInfo(productData.additionalInformation);
+                setUploadedFiles(productData.productPhotos?.filter(photo => photo && photo.src) || []);
             } catch (error) {
                 setError(error.message);
             } finally {
@@ -69,6 +74,15 @@ const ProductUpload = () => {
         }
     }, [id]);
 
+    // Detect screen size for responsiveness
+    useEffect(() => {
+      const handleResize = () => setIsMobile(window.innerWidth <= 768);
+      handleResize(); // Set initial state
+      window.addEventListener('resize', handleResize);
+    
+      return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
 
     const handleFileChange = (event) => {
         const selectedFiles = Array.from(event.target.files);
@@ -77,20 +91,13 @@ const ProductUpload = () => {
             return;
         }
         setProductPhotos([...productPhotos, ...selectedFiles]);
+        // setAlertMessage("Please click on the Upload Files button to upload the Images.");
         setShowAlert(true);
     };
 
-    // const handleRemoveFile = (index) => {
-    //     const updatedUploadedFiles = uploadedFiles.filter((_, i) => i !== index);
-    //     setUploadedFiles(updatedUploadedFiles);
-    // };
-
-    const handleRemoveFile = (index, isUploaded) => {
-        if (isUploaded) {
-            setUploadedFiles((prev) => prev.filter((_, i) => i !== index));
-        } else {
-            setProductPhotos((prev) => prev.filter((_, i) => i !== index));
-        }
+    const handleRemoveFile = (index) => {
+        const updatedUploadedFiles = uploadedFiles.filter((_, i) => i !== index);
+        setUploadedFiles(updatedUploadedFiles);
     };
  
     // Handle change of specification field (label or value)
@@ -118,7 +125,6 @@ const ProductUpload = () => {
     // Handle file upload
     const handleUploadFiles = async () => {
         setLoading(true);
-        setShowAlert(false);
         const uploadedFilesList = [];
     
         // Loop through selected files and upload each one
@@ -186,15 +192,15 @@ const ProductUpload = () => {
 
         const payload = {
             id,
+            ProductId: "string",
+            category: category,
+            ProductStatus: "Pending Approval",
             productName,
-            images: uploadedFiles.map(file => ({
-                src: file.src,
-                alt: file.alt
-            })),
-            catalog: catalogue,
-            Size: productSize,
-            colors: color,
-            unit: units,
+            productPhotos: uploadedFiles.map(file => file.src),
+            catalogue: catalogue,
+            productSize: productSize,
+            color: color,
+            units: units,
             rate: parseFloat(rate),
             discount: parseFloat(discount),
             afterDiscountPrice: parseFloat(rate) - parseFloat(discount),
@@ -204,11 +210,12 @@ const ProductUpload = () => {
             })),
             specificationDesc: specificationDesc,
             warranty,
-            additionalInfo: moreInfo
+            additionalInformation: moreInfo,
+            ProductOwnedBy:"Admin",
         };
-
+    
         try {
-            const response = await fetch(`https://handymanapiservices.azurewebsites.net/api/product/${id}`, {
+            const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -218,7 +225,7 @@ const ProductUpload = () => {
 
             if (response.ok) {
                 alert("Product updated successfully!");
-                navigate(`/product-list`);
+                navigate(`/product-list/${ProductOwnedBy}/${userType}`);
             } else {
                 alert("Please fill in all mandatory fields.");
                 alert("Failed to update product.");
@@ -227,15 +234,6 @@ const ProductUpload = () => {
             alert("An error occurred while updating the product.");
         }
     };
-
-    // Detect screen size for responsiveness
-    useEffect(() => {
-      const handleResize = () => setIsMobile(window.innerWidth <= 768);
-      handleResize(); // Set initial state
-      window.addEventListener('resize', handleResize);
-    
-      return () => window.removeEventListener('resize', handleResize);
-    }, []);
 
     if (loading) {
         return <div>Loading...</div>;
@@ -249,37 +247,35 @@ const ProductUpload = () => {
         return <div>No data available for the selected product.</div>;
     }
 
-
     return (
         <div className="d-flex flex-row justify-content-start align-items-start">
-        {/* Sidebar for larger screens */}
-       {!isMobile && (
-        <div className=" ml-0 m-4 p-0 sde_mnu">
-          <Sidebar userType={selectedUserType} />
-        </div>
-      )}
-
-      {/* Floating menu for mobile */}
-      {isMobile && (
-        <div className="floating-menu">
-          <Button
-            variant="primary"
-            className="rounded-circle shadow"
-            onClick={() => setShowMenu(!showMenu)}
-          >
-            <MoreVertIcon />
-          </Button>
-
-          {showMenu && (
-              <div className="sidebar-container">
+            {/* Sidebar menu for Larger Screens */}
+            {!isMobile && (
+                <div className=" ml-0 m-4 p-0 sde_mnu">
                 <Sidebar userType={selectedUserType} />
-              </div>
-          )}
-        </div>
-      )}
+                </div>
+            )}
 
-      {/* Main Content */}
-      <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
+            {/* Floating menu for mobile */}
+            {isMobile && (
+                <div className="floating-menu">
+                <Button
+                    variant="primary"
+                    className="rounded-circle shadow"
+                    onClick={() => setShowMenu(!showMenu)}
+                >
+                    <MoreVertIcon />
+                </Button>
+
+                {showMenu && (
+                    <div className="sidebar-container">
+                        <Sidebar userType={selectedUserType} />
+                    </div>
+                )}
+                </div>
+            )}
+
+       <div className={`container m-3 ${isMobile ? 'w-100' : 'w-75'}`}>
                 <h3 className="mb-3 text-center">Update Product</h3>
                 <div className="bg-white rounded-3 p-3 bx_sdw w-60 m-auto">
                     <form onSubmit={handleSubmit}>
@@ -293,6 +289,17 @@ const ProductUpload = () => {
                                 onChange={(e) => setProductName(e.target.value)}
                                 placeholder="Enter Product Name"
                             />
+                        </div>
+
+                        {/* Category */}
+                        <div className="form-group">
+                        <label>Category <span className="req_star">*</span></label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value)}
+                        />
                         </div>
 
                         {/* Catalogue */}
@@ -352,13 +359,14 @@ const ProductUpload = () => {
                                 multiple
                                 onChange={handleFileChange}
                             />
+                            
                             <div className="mt-2">
                                     {productPhotos.map((file, index) => (
-                                        <div key={index} className="d-flex align-items-center gap-2 mb-2">
-                                            <p>{file.name}</p>
+                                        <div className="d-flex align-items-center gap-2 mb-2">
+                                            <p key={index}>{file.name}</p>
                                             <button
                                                 type="button"
-                                                onClick={() => handleRemoveFile(index, false)}
+                                                onClick={() => handleRemoveFile(index)}
                                                 className="btn btn-danger btn-sm px-2 py-1 gap-5"
                                             >
                                                 X
@@ -374,7 +382,7 @@ const ProductUpload = () => {
                                             <img src={file.src} alt={file.alt} width="100" />
                                             <button
                                                 type="button"
-                                                onClick={() => handleRemoveFile(index, true)}
+                                                onClick={() => handleRemoveFile(index)}
                                                 className="btn btn-danger btn-sm px-2 py-1 gap-5"
                                             >
                                                 X
@@ -382,7 +390,7 @@ const ProductUpload = () => {
                                         </div>
                                     ))}
                                     {showAlert && (
-                                        <div className="alert alert-warning mt-2">
+                                        <div className="alert alert-danger  mt-2">
                                         Please click the <strong>Upload Files</strong> button to upload the selected images.
                                         </div>
                                     )}
@@ -496,7 +504,7 @@ const ProductUpload = () => {
                             <button
                                 type="button"
                                 className="btn btn-primary w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
-                                onClick={() => navigate(`/product-list/${productownedby}/${userType}`)}
+                                onClick={() => navigate(`/product-list/${ProductOwnedBy}/${userType}`)}
                             >
                                 <VisibilityIcon className="me-2" />
                                 <span>View Product</span>
@@ -505,6 +513,25 @@ const ProductUpload = () => {
                     </form>
                 </div>
             </div>
+            {/* Styles for floating menu */}
+<style jsx>{`
+        .floating-menu {
+          position: fixed;
+          top: 80px; /* Increased from 20px to avoid overlapping with the logo */
+          left: 20px; /* Adjusted for placement on the left side */
+          z-index: 1000;
+        }
+        .menu-popup {
+          position: absolute;
+          top: 50px; /* Keeps the popup aligned below the floating menu */
+          left: 0; /* Aligns the popup to the left */
+          background: white;
+          border: 1px solid #ddd;
+          border-radius: 5px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          width: 200px;
+        }
+      `}</style>
         </div>
     );
 };
