@@ -23,7 +23,7 @@ import AddTechnician from './AddTechnician.js';
 
 function App() {
   return (
-    <Router>
+    <Router>     
       <div className="App">
         {/* Header Component */}
         <Header />
@@ -31,11 +31,11 @@ function App() {
         {/* Main content */}
         <main className="container py-3 mt_100px">
           <Routes>
-            <Route path="/product/:productownedby/:userType" element={<UploadForm />} />
+            <Route path="/product/:ProductOwnedBy/:userType" element={<UploadForm />} />
             {/* Dynamic product ID route for ProductView */}
-            <Route path="/product-view/:id/:productownedby/:userType" element={<ProductView />} /> 
-            <Route path="/product-list/:productownedby/:userType" element={<ProductList />} />
-            <Route path="/product-edit/:id/:userType" element={<EditUploadForm />} />           
+            <Route path="/product-view/:id/:ProductOwnedBy/:userType" element={<ProductView />} /> 
+            <Route path="/product-list/:ProductOwnedBy/:userType" element={<ProductList />} />
+            <Route path="/product-edit/:id/:ProductOwnedBy/:userType" element={<EditUploadForm />} />           
             <Route path="/RaiseTicket/:customerId/:userType" element={<RaiseTicket />} />
             <Route path="/buyProducts/:userId/:userType" element={<BuyProduct />} />
             <Route path="/sidebar/:userType" element={<Sidebar />} />
