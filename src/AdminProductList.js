@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'; 
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
 
@@ -16,11 +16,9 @@ const AdminProductList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 15;
   const navigate = useNavigate();
-
-  // Define dynamic parameters for the URL
+  const {userType} = useParams();
+  const {ProductOwnedBy} = useParams();
  
-
-  //const { productownedby } = useParams(); 
 
   // Fetch product data, categories, and catalogues
   useEffect(() => {
@@ -163,7 +161,7 @@ const AdminProductList = () => {
         <div className="text-end col-md-3 mb-1">
   <button
     className="btn btn-success"
-    onClick={() => navigate(`/product/Admin`)}
+    onClick={() => navigate(`/product/${ProductOwnedBy}/${userType}`)}
   >
     Add New Product
   </button>
@@ -207,10 +205,10 @@ const AdminProductList = () => {
                     )}
                   </td>
                   <td>
-                    <Link to={`/adminUpdateProduct/${product.id}`} className="btn btn-warning mx-2" title="Edit">
+                    <Link to={`/adminUpdateProduct/${product.id}/Admin`} className="btn btn-warning mx-2" title="Edit">
                       <FaEdit />
                     </Link>
-                    <Link to={`/adminProductApproval/${product.id}`} className="btn btn-info mx-2" title="View">
+                    <Link to={`/adminProductApproval/${product.id}/Admin`} className="btn btn-info mx-2" title="View">
                       <FaEye />
                     </Link>
                     <button
