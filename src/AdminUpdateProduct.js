@@ -4,14 +4,17 @@ import { Button } from 'react-bootstrap';
 import "./App.css"; // Add this for the required CSS.
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import UpdateIcon from '@mui/icons-material/Update';
-import { useParams } from 'react-router-dom';
-import Sidebar from './Sidebar';
+import { useParams, useNavigate } from 'react-router-dom';
+import AdminSidebar from './AdminSidebar';
 import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 
 const AdminUpdate = () => {
+  const { id } = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const { selectedUserType } = useParams(); 
+  const [selectedUserType]  = useState(""); 
+  const [showAlert, setShowAlert] = useState(false);
+  const navigate = useNavigate();
   const [productName, setProductName] = useState("");
   const [category, setCategory] = useState("");
   const [catalogue, setCatalogue] = useState("");
@@ -23,10 +26,50 @@ const AdminUpdate = () => {
   const [specifications, setSpecifications] = useState([{ label: "", value: "" }]); // Initial specification with empty fields
   const [warranty, setWarranty] = useState("");
   const [moreInfo, setMoreInfo] = useState("");
-  const [loading, setLoading] = useState(false); // Loading state for file upload
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [product, setProduct] = useState(null);
   const [uploadedFiles, setUploadedFiles] = useState([]); // To store the uploaded files (URLs or file names)
   const [color, setColor] = useState("");
   const [specificationDesc, setSpecificationDesc] = useState("");
+
+  useEffect(() => {
+          const fetchProductData = async () => {
+              try {
+                  setLoading(true);
+                  const productResponse = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/${id}`);
+                  if (!productResponse.ok) {
+                      throw new Error('Product not found');
+                  }
+                  const productData = await productResponse.json();
+                  console.log("productData:", productData);
+                  setProduct(productData);
+                  setProductName(productData.productName);
+                    // setProductID(productData.productId);
+                  setCategory(productData.category);
+                  setCatalogue(productData.catalogue);
+                  setColor(productData.color);
+                  setProductSize(productData.productSize);
+                  setUnits(productData.units);
+                  setRate(productData.rate);
+                  setDiscount(productData.discount);
+                  setSpecifications(productData.specifications || [{ label: "", value: "" }]);
+                  setSpecificationDesc(productData.specificationDesc);
+                  setWarranty(productData.warranty);
+                  setMoreInfo(productData.additionalInformation);
+                  setUploadedFiles(productData.productPhotos?.filter(photo => photo && photo.src) || []);
+              } catch (error) {
+                  setError(error.message);
+              } finally {
+                  setLoading(false);
+              }
+          };
+  
+          if (id) {
+              fetchProductData();
+          }
+      }, [id]);
+
 
   // Handle file input change (multiple files)
   const handleFileChange = (event) => {
@@ -36,6 +79,8 @@ const AdminUpdate = () => {
       return;
     }
     setProductPhotos([...productPhotos, ...selectedFiles]);
+    setShowAlert(true);
+
   };
 
 // Detect screen size for responsiveness
@@ -47,9 +92,15 @@ useEffect(() => {
   return () => window.removeEventListener('resize', handleResize);
 }, []);
 
+const handleRemoveFile = (index) => {
+  const updatedUploadedFiles = uploadedFiles.filter((_, i) => i !== index);
+  setUploadedFiles(updatedUploadedFiles);
+};
+
   // Handle file upload
   const handleUploadFiles = async () => {
     setLoading(true);
+    setShowAlert(false);
     const uploadedFilesList = [];
 
     // Loop through selected files and upload each one
@@ -99,7 +150,7 @@ useEffect(() => {
       formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
       formData.append('fileName', fileName);
 
-      const response = await fetch('https://handymanapiservices.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
+      const response = await fetch('https://handymanapiv2.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
         method: 'POST',
         headers: {
           'Accept': 'text/plain',
@@ -120,14 +171,16 @@ useEffect(() => {
     event.preventDefault();
 
     const payload = {
-      id: "unique-id", // Replace with unique ID logic if necessary
-      productName: productName,
-      images: uploadedFiles.map(file => ({
-        src: file.src, // URL or file path
-        alt: file.alt   // File name as alt text
-      })),
-      catalog: catalogue,
-      colors: color, // Assuming hardcoded colors, replace as needed
+      id: "unique-id",
+      ProductId: "string",
+      category: category,
+      ProductStatus: "Pending Approval",
+      productName,
+      productPhotos: uploadedFiles.map(file => file.src),
+      catalogue: catalogue,
+      productSize: productSize,
+      color: color,
+      units: units,
       rate: parseFloat(rate),
       discount: parseFloat(discount),
       afterDiscountPrice: parseFloat(rate) - parseFloat(discount),
@@ -137,11 +190,12 @@ useEffect(() => {
       })),
       specificationDesc: specificationDesc,
       warranty: warranty,
-      additionalInfo: moreInfo
+      AdditionalInformation: moreInfo,
+      ProductOwnedBy:"Admin",
     };
 
     try {
-      const response = await fetch("https://handymanapiservices.azurewebsites.net/api/product/productupload", {
+      const response = await fetch("https://handymanapiv2.azurewebsites.net/api/Product/productupload", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -182,15 +236,27 @@ useEffect(() => {
     setSpecifications([...specifications, { label: "", value: "" }]);
   };
 
+  if (loading) {
+    return <div>Loading...</div>;
+}
+
+if (error) {
+    return <div>{error}</div>;
+}
+
+if (!product) {
+    return <div>No data available for the selected product.</div>;
+}
+
   return (
     <div className="d-flex flex-row justify-content-start align-items-start">
-      {/* Sidebar menu for Larger Screens */}
+      {/* Sidebar */}
       {!isMobile && (
-        <div className=" ml-0 m-4 p-0 sde_mnu">
-          <Sidebar userType={selectedUserType} />
-        </div>
+          <div className="ml-0 m-4 p-0 adm_mnu">
+          <AdminSidebar userType={selectedUserType}/>
+         </div>
       )}
-
+          
       {/* Floating menu for mobile */}
       {isMobile && (
         <div className="floating-menu">
@@ -204,7 +270,7 @@ useEffect(() => {
 
           {showMenu && (
               <div className="sidebar-container">
-                <Sidebar userType={selectedUserType} />
+                <AdminSidebar userType={selectedUserType} />
               </div>
           )}
         </div>
@@ -229,19 +295,13 @@ useEffect(() => {
             {/* Category */}
             <div className="form-group">
               <label>Category</label>
-              <select
+              <input
+                type="text"
                 className="form-control"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-              >
-                <option>Electrical items</option>
-                <option>Plumbing Materials</option>
-                <option>Sanitary items</option>
-                <option>Electronics appliances</option>
-                <option>Paints</option>
-                <option>Hardware items</option>
-                <option>Civil & Waterproofing Materials</option>
-              </select>
+                placeholder="Enter Catalogue"
+              />
             </div>
 
             {/* Catalogue */}
@@ -290,30 +350,59 @@ useEffect(() => {
               placeholder="Enter Units" />
             </div>
 
-            {/* Product Photos */}
-            <div className="form-group">
-              <label>Product Photos <span className="req_star">*</span></label>
-              <input
-                type="file"
-                className="form-control"
-                multiple
-                onChange={handleFileChange}
-              />
-              <div className="mt-2">
-                {productPhotos.map((file, index) => (
-                  <p key={index}>{file.name}</p>
-                ))}
-              </div>
-              <button
-                type="button"
-                className="btn btn-primary mt-2"
-                onClick={handleUploadFiles}
-                disabled={loading || productPhotos.length === 0}
-              >
-                {loading ? 'Uploading...' : 'Upload Files'}
-              </button>
-            </div>
-
+            {/* Product Images */}
+                        <div className="form-group">
+                            <label>Product Photos <span className="req_star">*</span></label>
+                            <input
+                                type="file"
+                                className="form-control"
+                                multiple
+                                onChange={handleFileChange}
+                            />
+                            <div className="mt-2">
+                                    {productPhotos.map((file, index) => (
+                                        <div key={index} className="d-flex align-items-center gap-2 mb-2">
+                                            <p>{file.name}</p>
+                                            <button
+                                                type="button"
+                                                onClick={() => handleRemoveFile(index)}
+                                                className="btn btn-danger btn-sm px-2 py-1 gap-5"
+                                            >
+                                                X
+                                            </button>
+                                        </div>
+                                    ))}
+                            </div>
+                        </div>
+                                {/* Other inputs */}
+                                <div>
+                                    {uploadedFiles.map((file, index) => (
+                                        <div key={index} className="d-flex align-items-center gap-2 mb-2">
+                                            <img src={file.src} alt={file.alt} width="100" />
+                                            <button
+                                                type="button"
+                                                onClick={() => handleRemoveFile(index)}
+                                                className="btn btn-danger btn-sm px-2 py-1 gap-5"
+                                            >
+                                                X
+                                            </button>
+                                        </div>
+                                    ))}
+                                    {/* Alert for uploading files */}
+                                    {showAlert && (
+                                        <div className="alert alert-danger  mt-2">
+                                        Please click the <strong>Upload Files</strong> button to upload the selected images.
+                                        </div>
+                                    )}
+                                    <button
+                                        type="button"
+                                        className="btn btn-primary mt-2"
+                                        onClick={handleUploadFiles}
+                                        disabled={loading || productPhotos.length === 0}
+                                    >
+                                        {loading ? 'Uploading...' : 'Upload Files'}
+                                    </button>
+                                </div>
             {/* Rate */}
             <div className="form-group">
               <label>Rate</label>
@@ -418,6 +507,7 @@ useEffect(() => {
       <button
         type="button"
         className="btn btn-primary w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
+        onClick={() => navigate(`/adminProductList/Admin`)}
       >
         <VisibilityIcon className="me-2" />
         <span>View Product</span>
