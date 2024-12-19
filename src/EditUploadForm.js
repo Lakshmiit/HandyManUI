@@ -174,7 +174,7 @@ const ProductUpload = () => {
             formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
             formData.append('fileName', fileName);
 
-            const response = await fetch('https://handymanapiservices.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
+            const response = await fetch('https://handymanapiv2.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
                 method: 'POST',
                 headers: { 'Accept': 'text/plain' },
                 body: formData
