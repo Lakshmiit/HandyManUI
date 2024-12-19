@@ -40,9 +40,9 @@ function App() {
             <Route path="/buyProducts/:userId/:userType" element={<BuyProduct />} />
             <Route path="/sidebar/:userType" element={<Sidebar />} />
             <Route path="/buyproduct-view/:id/:userId/:userType" element={<BuyProductView />} />
-            <Route path="/adminProductApproval/:id/:ProductOwnedBy/:userType" element={<AdminProductApproval />} />
-            <Route path="/adminProductList/:ProductOwnedBy/:userType" element={<AdminProductList />} />
-            <Route path="/adminUpdateProduct/:id/:ProductOwnedBy/:userType" element={<AdminUpdateProduct />} /> 
+            <Route path="/adminProductApproval/:id/Admin" element={<AdminProductApproval />} />
+            <Route path="/adminProductList/Admin" element={<AdminProductList />} />
+            <Route path="/adminUpdateProduct/:id/Admin" element={<AdminUpdateProduct />} /> 
             <Route path="/adminSidebar" element={<AdminSidebar />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/raiseTicketActionView" element={<RaiseTicketActionView />} />
