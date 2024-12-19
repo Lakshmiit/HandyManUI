@@ -318,8 +318,6 @@ const ProductAdmin = () => {
           width: 200px;
         }
       `}</style>
-
-
   </div>
   );
 };
