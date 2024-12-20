@@ -9,7 +9,6 @@ import ForwardIcon from '@mui/icons-material/Forward';
 import { Link } from 'react-router-dom';
 import './App.css';
 
-
 const RaiseActionView = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);

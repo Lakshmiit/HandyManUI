@@ -5,7 +5,6 @@
   .sidebar.active {
     transform: translateX(0);
   }
-
   .menu-toggle {
     position: fixed;
     bottom: 15px;
@@ -16,4 +15,3 @@
     padding: 10px;
     cursor: pointer;
   }
-  

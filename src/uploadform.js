@@ -147,7 +147,6 @@ useEffect(() => {
       })),
       specificationDesc: specificationDesc,
       warranty: warranty,
-      additionalInfo: moreInfo,
       Category: category,
       ProductStatus: "Pending Approval",
       AdditionalInformation:moreInfo,

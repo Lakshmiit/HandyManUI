@@ -176,10 +176,14 @@ useEffect(() => {
     const ticketIdSuffix = String(Math.floor(Math.random() * 999) + 1).padStart(3, "0");
     const ticketId = `${ticketIdPrefix}${ticketIdSuffix}`;
   
+    const primaryAddress = addresses.find((addr) => addr.type === "primary");
+    const state = primaryAddress?.state || "";
+    const district = primaryAddress?.district || "";
+    const pincode = primaryAddress?.zipCode || primaryAddress?.pincode || "";
+
     const payload = {
       RaiseTicketId:ticketId,
       date: new Date().toISOString(),
-      
       address: addresses.find((addr) => addr.type === 'primary')?.address || '',
       subject: formData.subject,
       details: formData.details,
@@ -214,7 +218,7 @@ useEffect(() => {
   
       // Show alert message and navigate to CustomerProfilePage
       window.alert(`Ticket has been submitted successfully! Your reference number is ${ticketId}. Get Quote will contact you shortly.`);
-      window.location.href = 'https://handymanserviceproviders.com/CustomerProfilePage';
+      // window.location.href = 'https://handymanserviceproviders.com/CustomerProfilePage';
     } catch (error) {
       console.error('Error:', error);
       window.alert('Failed to create the ticket. Please try again later.');
@@ -291,7 +295,6 @@ useEffect(() => {
       {/* Main Content */}
       <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
       <h1 className="text-center mb-2">Raise a Ticket</h1>
-
       {/* Ticket Form */}
       <Form onSubmit={handleSaveTicket}>
         {/* Display primary address with "Change Address" link */}
