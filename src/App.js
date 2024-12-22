@@ -16,7 +16,7 @@ import AdminProductList from './AdminProductList.js';
 import AdminUpdateProduct from './AdminUpdateProduct.js';
 import AdminUploadForm from './AdminUploadForm.js';
 import AdminSidebar from './AdminSidebar';
-import Notifications from './Notifications.js';
+import Notifications from './AdminNotifications.js';
 import RaiseTicketActionView from './RaiseTicketActionView.js';
 import RaiseaQuote from './RaiseaQuote.js';
 import RaiseTicketNotifications from './RaiseTicketNotifications.js';
@@ -51,6 +51,7 @@ function App() {
             <Route path="/raiseQuote/:userType" element={<RaiseaQuote />} />
             <Route path="/raiseTicketNotification" element={<RaiseTicketNotifications />} />
             <Route path="/addTechnician/:userType" element={<AddTechnician />} />
+                <Route path="/adminNotifications" element={<Notifications />} />
           </Routes>
         </main>
       </div>
