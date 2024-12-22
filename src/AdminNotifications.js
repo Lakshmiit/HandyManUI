@@ -15,7 +15,7 @@ const RaiseTicketNotifications = ({ notifications, highlightedTicket }) => {
 
   // Sort notifications by date descending and slice to get the latest 10
   const raiseTicketNotifications = notifications
-    .filter((item) => item.category === "Painting")
+    //.filter((item) => item.category === "Painting")
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .slice(0, 10);
 
