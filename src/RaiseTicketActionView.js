@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Button, Form, Row, Col } from 'react-bootstrap'; 
 import AdminSidebar from './AdminSidebar';
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
-import { FaEdit} from 'react-icons/fa'; // Correct icon import
+// import { FaEdit} from 'react-icons/fa'; // Correct icon import
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import SaveAsIcon from '@mui/icons-material/SaveAs';
-import ForwardIcon from '@mui/icons-material/Forward';
-import FileDownloadIcon from '@mui/icons-material/FileDownload';
+// import ForwardIcon from '@mui/icons-material/Forward';
+// import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { Link, useParams } from 'react-router-dom';
 import './App.css';
 
@@ -22,7 +22,7 @@ const RaiseActionView = () => {
   const [ticketData, setTicketData] = useState(null); 
   const [requestType, setRequestType] = useState('Without Material');
   // const [uploadedFiles, setUploadedFiles] = useState([]);
-  const [imageUrls, setImageUrls] = useState([]);
+  // const [imageUrls, setImageUrls] = useState([]);
   const [specifications, setSpecifications] = useState([{ material: "", quantity: "" }]); 
   const [commentsList, setCommentsList] = useState([{updatedDate: new Date(), commentText: ""}]); 
   const [loading, setLoading] = useState(true);
@@ -31,7 +31,10 @@ const RaiseActionView = () => {
   const [zipCode,setzipCode]=useState('');
   const [status, setStatus] = useState("");
   const [assignedTo, setAssignedTo] = useState('');
-
+  
+  useEffect(() => {
+    console.log(ticketData, status);
+  }, [ticketData, status]);
 
   useEffect(() => {
     const fetchticketData = async () => {
@@ -57,21 +60,21 @@ const RaiseActionView = () => {
 
         //setSpecifications(productData.specifications || [{ label: "", value: "" }]);
         setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: ""}])
-        const imageRequests =
-          data.attachments?.map(async (photo) => {
-            const Image = await fetch(
-              `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
-            );
-            if (!Image.ok) throw new Error('Failed to fetch image');
-            const blob = await Image.blob();
-            const imageUrl = URL.createObjectURL(blob);
-            return {
-              src: photo,
-              imageUrl,
-            };
-          }) || [];
-        const images = await Promise.all(imageRequests);
-        setImageUrls(images);
+        // const imageRequests =
+        //   data.attachments?.map(async (photo) => {
+        //     const Image = await fetch(
+        //       `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+        //     );
+        //     if (!Image.ok) throw new Error('Failed to fetch image');
+        //     const blob = await Image.blob();
+        //     const imageUrl = URL.createObjectURL(blob);
+        //     return {
+        //       src: photo,
+        //       imageUrl,
+        //     };
+        //   }) || [];
+        // const images = await Promise.all(imageRequests);
+        // setImageUrls(images);
       } catch (error) {
         console.error('Error fetching ticket data:', error);
         // window.alert('Failed to load ticket data. Please try again later.');
@@ -129,7 +132,7 @@ const RaiseActionView = () => {
       [name]: value,
     }));
   };
-
+ 
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -161,7 +164,7 @@ const RaiseActionView = () => {
       category: ticketData.category,
       assignedTo,
       id : id,
-      status: status,
+      status: ticketData.status,
       InternalStatus: "Assigned",
       TicketOwner: ticketData.customerId,
       CustomerId: customerId,
@@ -200,27 +203,27 @@ const RaiseActionView = () => {
   };
 
 
-  const handleForwardTicket = async () => {
-    try {
-      const response = await fetch(``, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...ticketData,
-          assignedTo: 'Technician',
-          status: 'Assigned',
-        }),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to Forward the ticket');
-      }
-      alert('Ticket forwared to Technician!');
-    } catch (error) {
-      console.error('Error forwarding the ticket:', error);
-    }
-  };
+  // const handleForwardTicket = async () => {
+  //   try {
+  //     const response = await fetch(``, {
+  //       method: 'PUT',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({
+  //         ...ticketData,
+  //         assignedTo: 'Technician',
+  //         status: 'Assigned',
+  //       }),
+  //     });
+  //     if (!response.ok) {
+  //       throw new Error('Failed to Forward the ticket');
+  //     }
+  //     alert('Ticket forwared to Technician!');
+  //   } catch (error) {
+  //     console.error('Error forwarding the ticket:', error);
+  //   }
+  // };
 
   return (
     <div className="d-flex flex-row justify-content-start align-items-start">
@@ -351,7 +354,7 @@ const RaiseActionView = () => {
           </Col>
         </Row>
 
-        {/* Attachments */}
+        {/* Attachments
         <div className="form-group mt-4">
           <label className="text-danger">View/Download Attachments</label>
           <div className="d-flex flex-column">
@@ -377,7 +380,7 @@ const RaiseActionView = () => {
               <p className="text-muted">No attachments available.</p>
             )}
           </div>
-        </div>
+        </div> */}
 
         
         {/* Assigned To */}
@@ -502,12 +505,12 @@ const RaiseActionView = () => {
           <Link to='/raiseTicketNotification' className="btn btn-warning text-white mx-2" title='Back'>
             <ArrowLeftIcon />
           </Link>
-          <Link to='/raiseTicketActionView/{ticketId}' className="btn btn-warning text-white mx-2" title='Edit'> 
+          {/* <Link to='/raiseTicketActionView/{ticketId}' className="btn btn-warning text-white mx-2" title='Edit'> 
           <FaEdit />
           </Link>
-          <Button onClick={handleForwardTicket} className="btn btn-warning text-white mx-2" title='Forward'>
+          <Button className="btn btn-warning text-white mx-2" title='Forward'>
             <ForwardIcon />
-          </Button>
+          </Button> */}
           <Button onClick={handleSaveTicket} type="submit" className="btn btn-warning text-white mx-2" title="Save">
             <SaveAsIcon />
           </Button>

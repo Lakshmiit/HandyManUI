@@ -23,7 +23,7 @@ const RaiseQuote = () => {
   const [totalAmount, setTotalAmount] = useState("");
   const [assignedTo, setAssignedTo] = useState('');
   const [uploadedFiles, setUploadedFiles] = useState([]);
-  const [quotedAmount, setQuote] = useState("");
+  const [enterQuoteAmount, setQuote] = useState("");
   const [fixedQuote, setFixedQuote] = useState("");
   const [discount, setDiscount] = useState("");
   const [fixedDiscount, setFixedDiscount] = useState("");
@@ -41,6 +41,7 @@ const RaiseQuote = () => {
   const [requestType, setRequestType] = useState('');
   const [customerId, setCustomerId] = useState(''); 
   const [status, setStatus] = useState('');
+  const [raiseAQuote] = useState('');
   //alksdfjdkfj
   const [subject, setSubject] = useState('');
   const [imageUrls, setImageUrls] = useState([]);
@@ -127,19 +128,19 @@ const handleFixedChange = (setter, fixedSetter) => (e) => {
   setter(value); 
 
   if (setter === setDiscount) {
-    fixedSetter((quotedAmount * value) / 100); // Set discount amount
-    setFixedDiscount((quotedAmount * value) / 100); // Set fixed discount
+    fixedSetter((enterQuoteAmount * value) / 100); // Set discount amount
+    setFixedDiscount((enterQuoteAmount * value) / 100); // Set fixed discount
   } else if (setter === setGST) {
     setFixedGST(gst); // Set only the GST portion
-    const { total } = calculateTotalPrice(quotedAmount, value, otherCharge, serviceCharge, gst);
+    const { total } = calculateTotalPrice(enterQuoteAmount, value, otherCharge, serviceCharge, gst);
     setTotalAmount(total); // Update totalAmount state
   } else if (setter === setOtherCharge) {
     setFixedOtherCharge(value); // Set fixed other charges
-    const { total } = calculateTotalPrice(quotedAmount, discount, value, serviceCharge, gst);
+    const { total } = calculateTotalPrice(enterQuoteAmount, discount, value, serviceCharge, gst);
     setTotalAmount(total); // Update totalAmount state
   } else if (setter === setServiceCharge) {
     setFixedServiceCharge(value); // Set fixed service charge
-    const { total } = calculateTotalPrice(quotedAmount, discount, otherCharge, value, gst);
+    const { total } = calculateTotalPrice(enterQuoteAmount, discount, otherCharge, value, gst);
     setTotalAmount(total); // Update totalAmount state
   } else {
     fixedSetter(value); // For other fields
@@ -212,7 +213,7 @@ if (loading) {
       subject: ticketData.subject,
       details: ticketData.details,
       category: ticketData.category,
-      assignedTo,
+      assignedTo: ticketData.assignedTo,
       id : id,
       status: status,
       InternalStatus: "Assigned",
@@ -261,21 +262,21 @@ if (loading) {
       id : id,
       quotedDate: new Date().toISOString(), 
       raiseAQuoteId: "string",
-      raiseAQuote: "string",
+      raiseAQuote: raiseAQuote || "",
       technicianId: id,
       CustomerId: customerId,
       ticketId: ticketData.raiseTicketId,
-      enterQuoteAmount: quotedAmount,
-      discount: discount,
-      othercharges: otherCharge,
-      serviceCharges: serviceCharge,
-      gst: gst,
-      totalAmount: totalAmount,
+      enterQuoteAmount: "0",
+      discount: "0",
+      othercharges: "0",
+      serviceCharges: "0",
+      gst: "0",
+      totalAmount: "12345",
       addrRmarks: remarks.map((comment) => ({
         requestedDate: comment.requestedDate,
         remarks: comment.remarks,
     })),
-    };
+    }; 
     try {
       //imageUrls="";
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/CreateRaiseAQuote`, {
@@ -654,7 +655,7 @@ if (loading) {
         <input
             type="number"
             className="form-control"
-            value={quotedAmount}
+            value={enterQuoteAmount}
             onChange={handleFixedChange(setQuote, setFixedQuote)}
             placeholder="Enter Quote Amount"
         />

@@ -61,12 +61,12 @@ function App() {
             <Route path="/addTechnician/:userType" element={<AddTechnician />} />
             <Route path="/technicianQuoteNotification/:userType" element={<TechnicianQuoteNotifications />} />
             <Route path="/viewRaiseQuote/:raiseTicketId/:userType" element={<ViewRaiseQuoteTech />} />
-            <Route path="/raiseTicketQuotation" element={<RaiseTicketQuotation />} />
+            <Route path="/raiseTicketQuotation/:raiseTicketId" element={<RaiseTicketQuotation />} />
             <Route path="/quoteNotification" element={<QuoteNotifications />} />
-            <Route path="/notificationTechnician/:userType" element={<NotificationTechnician />} />
+            <Route path="/notificationTechnician/:userType/:district/:category" element={<NotificationTechnician />} />
             <Route path="/customerNotification/:userType" element={<CustomerNotification />} />
             <Route path="/viewCustomer/:userType" element={<ViewCustomerGrid />} />
-            <Route path="/shortAdminNotifications" element={<ShortAdminNotifications />} />
+            <Route path="/ShortAdminNotifications" element={<ShortAdminNotifications />} />
           </Routes>
         </main>
       </div>

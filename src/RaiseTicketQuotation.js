@@ -33,7 +33,7 @@ const RaiseQuotation = () => {
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [formData, setFormData] = useState({
     customerId: '',
-    subject: '',
+    subject: '', 
     details: '',
     category: '',
   });

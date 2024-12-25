@@ -13,13 +13,13 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
   const navigate = useNavigate();
 
   const raiseTicketNotifications = notifications.filter(
-    (item) => item.assignedTo === "Customer Care"
+    (item) => item.assignedTo === "Technical Agency"
   );
 
   const getQuoteNotifications = notifications.filter(
-    (item) => item.assignedTo !== "Customer Care"
+    (item) => item.internalstatus === "Assigned"
   );
-
+ 
   const handleTicketClick = (ticketId) => {
     navigate(`/raiseTicketActionView/${ticketId}`, { state: { ticketId } });
   };

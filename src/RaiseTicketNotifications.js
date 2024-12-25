@@ -88,7 +88,7 @@ const RaiseTicketNotification = () => {
     if (district) {
       filtered = filtered.filter((ticket) => ticket.district === district);
     }
-
+ 
     if (zipCode) {
       filtered = filtered.filter((ticket) => ticket.zipCode === zipCode);
     }

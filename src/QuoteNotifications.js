@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
+import axios from 'axios';
 import AdminSidebar from "./AdminSidebar";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FaTrash, FaEye } from "react-icons/fa";
 import {
   Dashboard as MoreVertIcon,
@@ -9,69 +10,96 @@ import {
   Forward as ForwardIcon,
 } from "@mui/icons-material";
 import "./App.css";
-
+ 
 const QuoteNotification = () => {
+  // const navigate = useNavigate();
+  //const [status, setStatus] = useState("");
+  const [assignedTo, setAssignedTo] = useState("");
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const navigate = useNavigate();
-  const [status, setStatus] = useState("Open Tickets");
-  const [assignedTo, setAssignedTo] = useState("Technical Agency");
-  const [raiseQuote, setRaiseQuote] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
+  const [ticketData, setTicketData] = useState([]);
   const [state, setState] = useState("");
   const [district, setDistrict] = useState("");
-  const [pinCode, setPincode] = useState("");
+  const [zipCode, setZipcode] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [filteredData, setFilteredData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [states, setStates] = useState([]); const [districts, setDistricts] = useState([]); 
+  const [pinCodes, setPinCodes] = useState([]);
+  const [assigned, setAssigned] = useState([]);
   const rowsPerPage = 15;
 
-  // Detect screen size for responsiveness
-    useEffect(() => {
-      const handleResize = () => setIsMobile(window.innerWidth <= 768);
-      handleResize(); // Set initial state
-      window.addEventListener('resize', handleResize);
-    
-      return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
-  const currentRaiseTicketData = [
-    {
-      customerId: "C653567",
-      ticketId: "Q5465456",
-      category: "Land",
-      description: "Site is in auction.",
-      attachments: [{ fileUrl: "/path/to/file1.pdf", fileName: "file1.pdf" }],
-    },
-    {
-      customerId: "C789854",
-      ticketId: "Q54833",
-      category: "Construction",
-      description: "3BHK Flat.",
-      attachments: [{ fileUrl: "/path/to/file2.pdf", fileName: "file2.pdf" }],
-    },
-  ];
 
   useEffect(() => {
-    let filtered = raiseQuote;
+    setLoading(true);
+    const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications`
+    const photoUrl = `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
+
+    axios.get(url)
+      .then(response => {
+        const tickets = response.data.map((ticket) => ({
+          ...ticket,
+          attachments: ticket.attachments ? ticket.attachments.map(fileName => ({
+            fileName: fileName,
+            fileUrl: `${photoUrl}${fileName}`  
+          })) : []
+        }));
+        setTicketData(tickets);
+        setFilteredData(tickets);
+
+        // Extract unique categories and catalogues
+        const uniqueStates = [...new Set(tickets.map(ticket => ticket.state))];
+        const uniqueDistricts = [...new Set(tickets.map(ticket => ticket.district))];
+        const uniquePinCode = [...new Set(tickets.map(ticket => ticket.zipCode))];
+        const uniqueAssigned = [...new Set(tickets.map(ticket => ticket.assignedTo))]
+        setStates(uniqueStates);
+        setDistricts(uniqueDistricts);
+        setPinCodes(uniquePinCode);
+        setAssigned(uniqueAssigned);
+      })
+      .catch(error => {
+        console.error("Error fetching ticket data:", error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
+  const handleDelete = (ticketId) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this ticket?');
+    if (confirmDelete) {
+      axios.delete(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${ticketId}`)
+        .then(() => {
+          setTicketData(prevData => prevData.filter(ticket => ticket.id !== ticketId));
+          setFilteredData(prevData => prevData.filter(ticket => ticket.id !== ticketId));
+        })
+        .catch(error => {
+          console.error("Error deleting ticket:", error);
+        });
+    }
+  };
+
+  useEffect(() => {
+    let filtered = ticketData;
 
     if (state) {
-      filtered = filtered.filter((quote) => quote.state === state);
+      filtered = filtered.filter((ticket) => ticket.state === state);
     }
 
     if (district) {
-      filtered = filtered.filter((quote) => quote.district === district);
+      filtered = filtered.filter((ticket) => ticket.district === district);
     }
 
-    if (pinCode) {
-      filtered = filtered.filter((quote) => quote.pinCode === pinCode);
+    if (zipCode) {
+      filtered = filtered.filter((ticket) => ticket.zipCode === zipCode);
+    }
+    if (assignedTo) {
+      filtered = filtered.filter((ticket) =>ticket.assignedTo === assignedTo);
     }
 
     setFilteredData(filtered);
     setCurrentPage(1);
-  }, [state, district, pinCode, raiseQuote]);
-
-  const handleViewClick = () => {
-    navigate(`/raiseTicketQuotation`);
-  };
+  }, [state, district, zipCode, assignedTo, ticketData]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -85,18 +113,24 @@ const QuoteNotification = () => {
     setCurrentPage(pageNumber);
   };
 
-  const handleRemoveTicket = (index) => {
-    setRaiseQuote((prev) => prev.filter((_, i) => i !== index));
-  };
+ // Get paginated data
+ const indexOfLastTicket = currentPage * rowsPerPage;
+ const indexOfFirstTicket = indexOfLastTicket - rowsPerPage;
+ const currentRaiseTicket = filteredData.slice(indexOfFirstTicket, indexOfLastTicket);
+
+ if (loading) {
+   return <div>Loading...</div>; // Show loading message while data is fetching
+ }
 
   return (
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
-        <div className=" ml-0 m-4 p-0 adm_mnu h-90">
+        <div className="ml-0 m-4 p-0 adm_mnu">
           <AdminSidebar />
         </div>
       )}
 
+      {/* Floating menu for mobile */}
       {isMobile && (
         <div className="floating-menu">
           <Button
@@ -108,14 +142,14 @@ const QuoteNotification = () => {
           </Button>
 
           {showMenu && (
-            <div className="sidebar-container">
-              <AdminSidebar />
-            </div>
+              <div className="sidebar-container">
+                <AdminSidebar />
+              </div>
           )}
         </div>
       )}
 
-      <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
+      <div className={`container m-1 ${isMobile ? "w-100" : "w-75"}`}>
         <h2 className="text-center mb-4">Raise a Quote Notifications</h2>
         <h4 className="text-center mb-4">District Wise Quote Summary</h4>
         <div className="d-flex align-items-center justify-content-between">
@@ -126,9 +160,10 @@ const QuoteNotification = () => {
               value={state}
               onChange={(e) => setState(e.target.value)}
             >
-              <option value="">Select State</option>
-              <option value="Andhra Pradesh">Andhra Pradesh</option>
-              <option value="Telangana">Telangana</option>
+              <option value="">All States</option>
+              {states.map((stateOption, index) => (
+                <option key={index} value={stateOption}>{stateOption}</option>
+              ))}
             </select>
           </div>
           <div className="form-group col-md-2 m-5 mb-2">
@@ -138,26 +173,39 @@ const QuoteNotification = () => {
               value={district}
               onChange={(e) => setDistrict(e.target.value)}
             >
-              <option value="">Select District</option>
-              <option value="Visakhapatnam">Visakhapatnam</option>
-              <option value="Vijayawada">Vijayawada</option>
+              <option value="">All Districts</option>
+              {districts.map((districtOption, index) => (
+                <option key={index} value={districtOption}>{districtOption}</option>
+              ))}
             </select>
           </div>
+          {/* Pin Code */}
           <div className="form-group col-md-2 m-5 mb-2">
             <label>Pin Code</label>
             <select
               className="form-control"
-              value={pinCode}
-              onChange={(e) => setPincode(e.target.value)}
+              value={zipCode}
+              onChange={(e) => setZipcode(e.target.value)}
             >
               <option value="">Select Pincode</option>
-              {[...new Set(filteredData.map((ticket) => ticket.pinCode))].map(
-                (pinCodeOption, index) => (
-                  <option key={index} value={pinCodeOption}>
-                    {pinCodeOption}
-                  </option>
-                )
-              )}
+              {pinCodes.map((pinCodeOption, index) => (
+                <option key={index} value={pinCodeOption}>{pinCodeOption}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Assigned To */}
+          <div className="form-group col-md-2 m-5 mb-2">
+            <label>Assigned To</label>
+            <select
+              className="form-control"
+              value={assignedTo}
+              onChange={(e) => setAssignedTo(e.target.value)}
+            >
+              <option value="">Select Assigned To</option>
+              {assigned.map((assignedOption, index) => (
+                <option key={index} value={assignedOption}>{assignedOption}</option>
+              ))} 
             </select>
           </div>
         </div>
@@ -176,23 +224,24 @@ const QuoteNotification = () => {
             </tr>
           </thead>
           <tbody>
-            {currentRaiseTicketData.map((quote, index) => (
+            {currentRaiseTicket.map((ticket, index) => (
               <tr key={index}>
-                <td>{quote.customerId}</td>
-                <td>{quote.ticketId}</td>
-                <td>{quote.category}</td>
-                <td>{quote.description}</td>
+                <td>{ticket.customerId}</td>
+                <td>{ticket.raiseTicketId}</td>
+                <td>{ticket.category}</td>
+                <td>{ticket.details}</td>
                 <td>
-                  {quote.attachments && quote.attachments.length > 0 ? (
-                    quote.attachments.map((attachment, i) => (
+                  {ticket.attachments.length > 0 ? (
+                    ticket.attachments.map((attachment, i) => (
                       <div key={i} className="d-flex align-items-center">
-                        <FileDownloadIcon className="me-2" />
                         <a
                           href={attachment.fileUrl}
                           download={attachment.fileName}
-                          className="text-decoration-none"
+                          className="text-primary text-decoration-underline me-2"
+                          style={{ cursor: "pointer", display: 'flex', alignItems: 'center' }}
                         >
-                          {attachment.fileName}
+                          <FileDownloadIcon className="me-2" style={{ cursor: "pointer" }} />
+                          <span>{attachment.fileName}</span>
                         </a>
                       </div>
                     ))
@@ -200,41 +249,21 @@ const QuoteNotification = () => {
                     <span>No Attachments</span>
                   )}
                 </td>
-                <td>
-                  <select
-                    className="form-select color-dropdown"
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value)}
-                  >
-                    <option value="Open Tickets">Open Tickets</option>
-                    <option value="Not Assigned">Not Assigned</option>
-                    <option value="Pending Tickets">Pending Tickets</option>
-                    <option value="Closed Tickets">Closed Tickets</option>
-                  </select>
-                </td>
-                <td>
-                  <select
-                    className="form-select color-dropdown"
-                    value={assignedTo}
-                    onChange={(e) => setAssignedTo(e.target.value)}
-                  >
-                    <option value="Technical Agency">Technical Agency</option>
-                    <option value="Customer">Customer</option>
-                  </select>
-                </td>
+                <td>{ticket.status}</td>
+                <td>{ticket.assignedTo}</td>
                 <td className="d-flex align-items-center">
-                  <button
-                    onClick={() => handleViewClick(quote.ticketId)}
+                  <Link
+                    to={`/raiseTicketQuotation/${ticket.id}`}
                     className="btn btn-info mx-2"
                   >
-                    <FaEye />
-                  </button>
-                  <button
-                    onClick={() => handleRemoveTicket(index)}
+                    <FaEye />   
+                  </Link>
+                  <Link
+                    onClick={() => handleDelete(ticket.id)}
                     className="btn btn-danger mx-2"
-                  >
+                  >   
                     <FaTrash />
-                  </button>
+                  </Link>
                   <Link to="#" className="btn btn-success mx-2">
                     <ForwardIcon />
                   </Link>
@@ -268,7 +297,8 @@ const QuoteNotification = () => {
           </nav>
         </div>
       </div>
-      <style jsx>{`
+      {/* Styles for floating menu */}
+<style jsx>{`
         .floating-menu {
           position: fixed;
           top: 80px; /* Increased from 20px to avoid overlapping with the logo */
