@@ -18,8 +18,6 @@ const AdminProductList = () => {
   const navigate = useNavigate();
   // const {userType} = useParams();
   // const {ProductOwnedBy} = useParams();
- 
-
   // Fetch product data, categories, and catalogues
   useEffect(() => {
     setLoading(true);

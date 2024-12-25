@@ -8,7 +8,6 @@ import Sidebar from './Sidebar';
 import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import {  Button } from 'react-bootstrap';
 
-
 const ProductUpload = () => {
     const { id } = useParams(); // Retrieve the dynamic id from URL
     const [selectedUserType] = useState("");
@@ -16,7 +15,6 @@ const ProductUpload = () => {
     const [showMenu, setShowMenu] = useState(false);
     const navigate = useNavigate();
     const [product, setProduct] = useState(null);
-
     const [productPhotos, setProductPhotos] = useState([]);
     const [uploadedFiles, setUploadedFiles] = useState([]);
     // const [alertMessage, setAlertMessage] = useState("");
@@ -61,14 +59,13 @@ const ProductUpload = () => {
                 setSpecificationDesc(productData.specificationDesc);
                 setWarranty(productData.warranty);
                 setMoreInfo(productData.additionalInformation);
-                setUploadedFiles(productData.productPhotos?.filter(photo => photo && photo.src) || []);
+                setUploadedFiles(productData.images || []);
             } catch (error) {
                 setError(error.message);
             } finally {
                 setLoading(false);
             }
         };
-
         if (id) {
             fetchProductData();
         }
@@ -86,18 +83,29 @@ const ProductUpload = () => {
 
     const handleFileChange = (event) => {
         const selectedFiles = Array.from(event.target.files);
-        if (selectedFiles.length + uploadedFiles.length > 5) {
+        const uniqueFiles = selectedFiles.filter(
+            (file) => !productPhotos.some((photo) => photo.name === file.name)
+        );
+
+        if (uniqueFiles.length + uploadedFiles.length > 5) {
             alert("You can only upload up to 5 files.");
             return;
         }
-        setProductPhotos([...productPhotos, ...selectedFiles]);
+        setProductPhotos([...productPhotos, ...uniqueFiles]);
         //setAlertMessage("Please click on the Upload Files button to upload the Images.");
         setShowAlert(true);
     };
 
-    const handleRemoveFile = (index) => {
-        const updatedUploadedFiles = uploadedFiles.filter((_, i) => i !== index);
-        setUploadedFiles(updatedUploadedFiles);
+    const handleRemoveFile = (index, isNewFile = true) => {
+        if (isNewFile) {
+            const updatedPhotos = [...productPhotos];
+            updatedPhotos.splice(index, 1);
+            setProductPhotos(updatedPhotos);
+        } else {
+            const updatedFiles = [...uploadedFiles];
+            updatedFiles.splice(index, 1);
+            setUploadedFiles(updatedFiles);
+        }
     };
  
     // Handle change of specification field (label or value)
@@ -198,7 +206,7 @@ const ProductUpload = () => {
             category: category,
             ProductStatus: "Pending Approval",
             productName,
-            productPhotos: uploadedFiles.map(file => file.src),
+            productPhotos:uploadedFiles.map((file) => file.src),
             catalogue: catalogue,
             productSize: productSize,
             color: color,
@@ -361,6 +369,7 @@ const ProductUpload = () => {
                                 multiple
                                 onChange={handleFileChange}
                             />
+                            {/* Display New Photos */}
                             <div className="mt-2">
                                     {productPhotos.map((file, index) => (
                                         <div key={index} className="d-flex align-items-center gap-2 mb-2">
@@ -375,21 +384,21 @@ const ProductUpload = () => {
                                         </div>
                                     ))}
                             </div>
-                        </div>
-                                {/* Other inputs */}
+                                {/* Display Old Photos */}
                                 <div>
                                     {uploadedFiles.map((file, index) => (
                                         <div key={index} className="d-flex align-items-center gap-2 mb-2">
                                             <img src={file.src} alt={file.alt} width="100" />
                                             <button
                                                 type="button"
-                                                onClick={() => handleRemoveFile(index)}
+                                                onClick={() => handleRemoveFile(index, false)}
                                                 className="btn btn-danger btn-sm px-2 py-1 gap-5"
                                             >
                                                 X
                                             </button>
                                         </div>
                                     ))}
+                                    </div>
                                     {/* Alert for uploading files */}
                                     {showAlert && (
                                         <div className="alert alert-danger  mt-2">

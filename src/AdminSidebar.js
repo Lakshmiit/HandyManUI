@@ -34,7 +34,7 @@ const menuConfig = [
   { MenuIcon: <GroupsIcon />, MenuTitle: "Meetings", TargetUrl: "/meetings" },
 ];
 
-const AdminSidebar = () => {
+const Sidebar = () => {
   const [openDropdown, setOpenDropdown] = useState(null);
 
   const handleDropdownToggle = (menuTitle) => {
@@ -42,33 +42,44 @@ const AdminSidebar = () => {
   };
 
   return (
-    <div>
+    <div className="sidebar">
       {menuConfig.map((menu, index) => (
         <div key={index}>
           <div className="menu-item">
-          <Link to={menu.TargetUrl}>
-                <div
-                  className="_mnu_dv"
-                  onClick={() => menu.subMenu && handleDropdownToggle(menu.MenuTitle)}
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    cursor: "pointer",
-                  }}
-                >
-                  <div style={{ display: "flex", gap: "10px" }}>
-                    {menu.MenuIcon} {menu.MenuTitle}
-                  </div>
-                  {menu.subMenu && <ArrowDropDownIcon />}
-                </div>
-              </Link>
+            <div
+              className="_mnu_dv"
+              onClick={() => menu.subMenu && handleDropdownToggle(menu.MenuTitle)}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                cursor: "pointer",
+                color: "#212121",
+                fontSize: "20px",
+                textDecoration: "none",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none", fontSize: "16px" }}>
+                {menu.MenuIcon} {menu.MenuTitle}
+              </div>
+              {menu.subMenu && <ArrowDropDownIcon />}
             </div>
+          </div>
 
-              {menu.subMenu && openDropdown === menu.MenuTitle && (
-            <div className="dropdown">
+          {menu.subMenu && openDropdown === menu.MenuTitle && (
+            <div className="dropdown"  style={{
+              marginLeft: "20px",
+              padding: "5px 0",
+            }}>
               {menu.subMenu.map((subItem, subIndex) => (
-                <Link to={subItem.TargetUrl} key={subIndex}>
-                  <div className="_mnu_dv">{subItem.MenuTitle}</div>
+                <Link to={subItem.TargetUrl} key={subIndex} style={{
+                  display: "block",
+                  padding: "5px 15px",
+                  fontSize: "14px",
+                  color: "black", 
+                  textDecoration: "none", 
+                }}
+                >
+                  <div className="dropdown-item">{subItem.MenuTitle}</div>
                 </Link>
               ))}
             </div>
@@ -84,7 +95,7 @@ const App = () => {
   return (
     <div className="d-flex">
       <div className="m-0 p-0 adm_mnu">
-        <AdminSidebar />
+        <Sidebar />
       </div>
     </div>
   );

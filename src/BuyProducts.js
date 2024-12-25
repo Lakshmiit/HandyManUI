@@ -14,7 +14,7 @@ const BuyProduct = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const { selectedUserType } = useParams(); 
-  const [category, setCategory] = useState("Electrical items");
+  const [category, setCategory] = useState("");
   const [productSize, setProductSize] = useState("");
   const [productCatalogue, setProductCatalogue] = useState("");
   const [color, setChooseColor] = useState("");
@@ -521,6 +521,7 @@ useEffect(() => {
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
               >
+                <option>Choose Category</option>
                 <option>Electrical items</option>
                 <option>Plumbing Materials</option>
                 <option>Sanitary items</option>
@@ -697,6 +698,7 @@ useEffect(() => {
           align-items: center;
           justify-content: flex-start;
         }
+
         .menu-item:last-child {
           border-bottom: none;
         }

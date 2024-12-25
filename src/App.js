@@ -16,11 +16,18 @@ import AdminProductList from './AdminProductList.js';
 import AdminUpdateProduct from './AdminUpdateProduct.js';
 import AdminUploadForm from './AdminUploadForm.js';
 import AdminSidebar from './AdminSidebar';
-import Notifications from './AdminNotifications.js';
+import AdminNotifications from './AdminNotifications.js';
 import RaiseTicketActionView from './RaiseTicketActionView.js';
-import RaiseaQuote from './RaiseaQuote.js';
+import AdminRaiseaQuote from './AdminRaiseaQuote.js';
 import RaiseTicketNotifications from './RaiseTicketNotifications.js';
 import AddTechnician from './AddTechnician.js';
+import TechnicianQuoteNotifications from './TechnicianQuoteNotifications.js';
+import ViewRaiseQuoteTech from './ViewRaiseQuoteTech.js';
+import RaiseTicketQuotation from './RaiseTicketQuotation';
+import QuoteNotifications from './QuoteNotifications';
+import NotificationTechnician from './NotificationTechnician.js';
+import CustomerNotification from './CustomerNotification.js';
+import ViewCustomerGrid from './ViewCustomerGrid.js';
 
 function App() {
   return (
@@ -46,12 +53,18 @@ function App() {
             <Route path="/adminProductList/Admin" element={<AdminProductList />} />
             <Route path="/adminUpdateProduct/:id/Admin" element={<AdminUpdateProduct />} /> 
             <Route path="/adminSidebar" element={<AdminSidebar />} />
-            <Route path="/notifications" element={<Notifications />} />
-            <Route path="/raiseTicketActionView" element={<RaiseTicketActionView />} />
-            <Route path="/raiseQuote/:userType" element={<RaiseaQuote />} />
+            <Route path="/adminNotifications" element={<AdminNotifications />} />
+            <Route path="/raiseTicketActionView/:raiseTicketId" element={<RaiseTicketActionView />} />
+            <Route path="/adminRaiseQuote" element={<AdminRaiseaQuote />} />
             <Route path="/raiseTicketNotification" element={<RaiseTicketNotifications />} />
             <Route path="/addTechnician/:userType" element={<AddTechnician />} />
-                <Route path="/adminNotifications" element={<Notifications />} />
+            <Route path="/technicianQuoteNotification/:userType" element={<TechnicianQuoteNotifications />} />
+            <Route path="/viewRaiseQuote/:raiseTicketId/:userType" element={<ViewRaiseQuoteTech />} />
+            <Route path="/raiseTicketQuotation" element={<RaiseTicketQuotation />} />
+            <Route path="/quoteNotification" element={<QuoteNotifications />} />
+            <Route path="/notificationTechnician/:userType" element={<NotificationTechnician />} />
+            <Route path="/customerNotification/:userType" element={<CustomerNotification />} />
+            <Route path="/viewCustomer/:userType" element={<ViewCustomerGrid />} />
           </Routes>
         </main>
       </div>

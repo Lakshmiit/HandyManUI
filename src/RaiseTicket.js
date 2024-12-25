@@ -11,7 +11,6 @@ const AddressManager = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const { customerId } = useParams(); 
-  
  const [addresses, setAddresses] = useState([]);
     
  // {
@@ -32,8 +31,10 @@ const AddressManager = () => {
   const [assignedTo, setAssignedTo] = useState('');
   const [requestType, setRequestType] = useState('');
   const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [specifications] = useState([{ material : "", Quantity : "" }]);
   const [showModal, setShowModal] = useState(false);
   const [showSecondaryAddresses, setShowSecondaryAddresses] = useState(false);
+  const [commentsList] = useState([{updatedDate: new Date(), commentText: ""}]);
   const [formData, setFormData] = useState({
     subject: '',
     details: '',
@@ -194,10 +195,19 @@ useEffect(() => {
       zipcode:pincode,
       requestType: requestType,
       status:'open',
+      internalStatus:'open',
       SupportTicketId: uuidv4(),
       id: uuidv4(),// Unique identifier for the API call
       customerId: customerId, // Replace with actual customer ID logic
-      attachments: uploadedFiles.map((file) => file.name), // Attachments by name (or actual file handling logic)
+      attachments: uploadedFiles.map((file) => file.name), 
+      comments: commentsList.map((comment) => ({
+        UpdatedDate : comment.updatedDate,
+        CommentText: comment.commentText,
+    })),
+      Materials:specifications.map(spec => ({
+        material : spec.material,
+        Quantity : spec.Quantity ,
+      })),
     };
   
     try {
@@ -218,7 +228,7 @@ useEffect(() => {
   
       // Show alert message and navigate to CustomerProfilePage
       window.alert(`Ticket has been submitted successfully! Your reference number is ${ticketId}. Get Quote will contact you shortly.`);
-      // window.location.href = 'https://handymanserviceproviders.com/CustomerProfilePage';
+      window.location.href = 'https://handymanserviceproviders.com/CustomerProfilePage';
     } catch (error) {
       console.error('Error:', error);
       window.alert('Failed to create the ticket. Please try again later.');

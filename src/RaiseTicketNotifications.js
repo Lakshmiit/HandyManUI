@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
+import axios from 'axios';
 import AdminSidebar from "./AdminSidebar";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FaTrash, FaEye } from "react-icons/fa";
 import {
   Dashboard as MoreVertIcon,
@@ -11,42 +12,74 @@ import {
 import "./App.css";
 
 const RaiseTicketNotification = () => {
-  const navigate = useNavigate();
-  const [status, setStatus] = useState("Open Tickets");
-  const [assignedTo, setAssignedTo] = useState("Technical Agency");
+  // const navigate = useNavigate();
+  //const [status, setStatus] = useState("");
+  const [assignedTo, setAssignedTo] = useState("");
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const [raiseTicket, setRaiseTicket] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
+  const [ticketData, setTicketData] = useState([]);
   const [state, setState] = useState("");
   const [district, setDistrict] = useState("");
-  const [pinCode, setPincode] = useState("");
+  const [zipCode, setZipcode] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [filteredData, setFilteredData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [states, setStates] = useState([]); const [districts, setDistricts] = useState([]); 
+  const [pinCodes, setPinCodes] = useState([]);
+  const [assigned, setAssigned] = useState([]);
   const rowsPerPage = 15;
 
-  const currentRaiseTicketData = [
-    {
-      customerId: "C00123",
-      ticketId: "T00123",
-      category: "Technical",
-      description: "Issue with login",
-      attachments: [
-        { fileUrl: "/path/to/file1.pdf", fileName: "file1.pdf" },
-      ],
-    },
-    {
-      customerId: "C00456",
-      ticketId: "T00456",
-      category: "Billing",
-      description: "Incorrect Pin",
-      attachments: [
-        { fileUrl: "/path/to/file2.pdf", fileName: "file2.pdf" },
-      ],
-    },
-  ];
+  useEffect(() => {
+    setLoading(true);
+    const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications`
+    const photoUrl = `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
+
+    axios.get(url)
+      .then(response => {
+        const tickets = response.data.map((ticket) => ({
+          ...ticket,
+          attachments: ticket.attachments ? ticket.attachments.map(fileName => ({
+            fileName: fileName,
+            fileUrl: `${photoUrl}${fileName}`  
+          })) : []
+        }));
+        setTicketData(tickets);
+        setFilteredData(tickets);
+
+        // Extract unique categories and catalogues
+        const uniqueStates = [...new Set(tickets.map(ticket => ticket.state))];
+        const uniqueDistricts = [...new Set(tickets.map(ticket => ticket.district))];
+        const uniquePinCode = [...new Set(tickets.map(ticket => ticket.zipCode))];
+        const uniqueAssigned = [...new Set(tickets.map(ticket => ticket.assignedTo))]
+        setStates(uniqueStates);
+        setDistricts(uniqueDistricts);
+        setPinCodes(uniquePinCode);
+        setAssigned(uniqueAssigned);
+      })
+      .catch(error => {
+        console.error("Error fetching ticket data:", error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
+  const handleDelete = (ticketId) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this ticket?');
+    if (confirmDelete) {
+      axios.delete(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${ticketId}`)
+        .then(() => {
+          setTicketData(prevData => prevData.filter(ticket => ticket.id !== ticketId));
+          setFilteredData(prevData => prevData.filter(ticket => ticket.id !== ticketId));
+        })
+        .catch(error => {
+          console.error("Error deleting ticket:", error);
+        });
+    }
+  };
 
   useEffect(() => {
-    let filtered = raiseTicket;
+    let filtered = ticketData;
 
     if (state) {
       filtered = filtered.filter((ticket) => ticket.state === state);
@@ -56,17 +89,16 @@ const RaiseTicketNotification = () => {
       filtered = filtered.filter((ticket) => ticket.district === district);
     }
 
-    if (pinCode) {
-      filtered = filtered.filter((ticket) => ticket.pinCode === pinCode);
+    if (zipCode) {
+      filtered = filtered.filter((ticket) => ticket.zipCode === zipCode);
+    }
+    if (assignedTo) {
+      filtered = filtered.filter((ticket) =>ticket.assignedTo === assignedTo);
     }
 
     setFilteredData(filtered);
     setCurrentPage(1);
-  }, [state, district, pinCode, raiseTicket]);
-
-  const handleViewClick = (ticketId) => {
-    navigate(`/raiseTicketActionView/${ticketId}`);
-  };
+  }, [state, district, zipCode, assignedTo, ticketData]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -80,9 +112,14 @@ const RaiseTicketNotification = () => {
     setCurrentPage(pageNumber);
   };
 
-  const handleRemoveTicket = (index) => {
-    setRaiseTicket((prev) => prev.filter((_, i) => i !== index));
-  };
+ // Get paginated data
+ const indexOfLastTicket = currentPage * rowsPerPage;
+ const indexOfFirstTicket = indexOfLastTicket - rowsPerPage;
+ const currentRaiseTicket = filteredData.slice(indexOfFirstTicket, indexOfLastTicket);
+
+ if (loading) {
+   return <div>Loading...</div>; // Show loading message while data is fetching
+ }
 
   return (
     <div className="d-flex flex-row justify-content-start align-items-start">
@@ -122,9 +159,10 @@ const RaiseTicketNotification = () => {
               value={state}
               onChange={(e) => setState(e.target.value)}
             >
-              <option value="">Select State</option>
-              <option value="Andhra Pradesh">Andhra Pradesh</option>
-              <option value="Telangana">Telangana</option>
+              <option value="">All States</option>
+              {states.map((stateOption, index) => (
+                <option key={index} value={stateOption}>{stateOption}</option>
+              ))}
             </select>
           </div>
           <div className="form-group col-md-2 m-5 mb-2">
@@ -134,9 +172,10 @@ const RaiseTicketNotification = () => {
               value={district}
               onChange={(e) => setDistrict(e.target.value)}
             >
-              <option value="">Select District</option>
-              <option value="Visakhapatnam">Visakhapatnam</option>
-              <option value="Vijayawada">Vijayawada</option>
+              <option value="">All Districts</option>
+              {districts.map((districtOption, index) => (
+                <option key={index} value={districtOption}>{districtOption}</option>
+              ))}
             </select>
           </div>
           {/* Pin Code */}
@@ -144,15 +183,28 @@ const RaiseTicketNotification = () => {
             <label>Pin Code</label>
             <select
               className="form-control"
-              value={pinCode}
-              onChange={(e) => setPincode(e.target.value)}
+              value={zipCode}
+              onChange={(e) => setZipcode(e.target.value)}
             >
               <option value="">Select Pincode</option>
-            {[...new Set(filteredData.map(ticket => ticket.pinCode))].map((pinCodeOption, index) => (
-              <option key={index} value={pinCodeOption}>
-                {pinCodeOption}
-              </option>
-            ))}
+              {pinCodes.map((pinCodeOption, index) => (
+                <option key={index} value={pinCodeOption}>{pinCodeOption}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Assigned To */}
+          <div className="form-group col-md-2 m-5 mb-2">
+            <label>Assigned To</label>
+            <select
+              className="form-control"
+              value={assignedTo}
+              onChange={(e) => setAssignedTo(e.target.value)}
+            >
+              <option value="">Select Assigned To</option>
+              {assigned.map((assignedOption, index) => (
+                <option key={index} value={assignedOption}>{assignedOption}</option>
+              ))} 
             </select>
           </div>
         </div>
@@ -171,23 +223,24 @@ const RaiseTicketNotification = () => {
             </tr>
           </thead>
           <tbody>
-            {currentRaiseTicketData.map((ticket, index) => (
+            {currentRaiseTicket.map((ticket, index) => (
               <tr key={index}>
                 <td>{ticket.customerId}</td>
-                <td>{ticket.ticketId}</td>
+                <td>{ticket.raiseTicketId}</td>
                 <td>{ticket.category}</td>
-                <td>{ticket.description}</td>
+                <td>{ticket.details}</td>
                 <td>
-                  {ticket.attachments && ticket.attachments.length > 0 ? (
+                  {ticket.attachments.length > 0 ? (
                     ticket.attachments.map((attachment, i) => (
                       <div key={i} className="d-flex align-items-center">
-                        <FileDownloadIcon className="me-2" />
                         <a
                           href={attachment.fileUrl}
                           download={attachment.fileName}
-                          className="text-decoration-none"
+                          className="text-primary text-decoration-underline me-2"
+                          style={{ cursor: "pointer", display: 'flex', alignItems: 'center' }}
                         >
-                          {attachment.fileName}
+                          <FileDownloadIcon className="me-2" style={{ cursor: "pointer" }} />
+                          <span>{attachment.fileName}</span>
                         </a>
                       </div>
                     ))
@@ -195,38 +248,21 @@ const RaiseTicketNotification = () => {
                     <span>No Attachments</span>
                   )}
                 </td>
-                <td>
-                  <select
-                    className="form-select color-dropdown"
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value)}
-                  >
-                    <option value="Open Tickets">Open Tickets</option>
-                    <option value="Not Assigned">Not Assigned</option>
-                  </select>
-                </td>
-                <td>
-                  <select
-                    className="form-select color-dropdown"
-                    value={assignedTo}
-                    onChange={(e) => setAssignedTo(e.target.value)}
-                  >
-                    <option value="Technical Agency">Technical Agency</option>
-                  </select>
-                </td>
+                <td>{ticket.status}</td>
+                <td>{ticket.assignedTo}</td>
                 <td className="d-flex align-items-center">
-                  <button
-                    onClick={() => handleViewClick(ticket.ticketId)}
+                  <Link
+                    to={`/raiseTicketActionView/${ticket.id}`}
                     className="btn btn-info mx-2"
                   >
-                    <FaEye />
-                  </button>
-                  <button
-                    onClick={() => handleRemoveTicket(index)}
+                    <FaEye />   
+                  </Link>
+                  <Link
+                    onClick={() => handleDelete(ticket.id)}
                     className="btn btn-danger mx-2"
-                  >
+                  >   
                     <FaTrash />
-                  </button>
+                  </Link>
                   <Link to="#" className="btn btn-success mx-2">
                     <ForwardIcon />
                   </Link>
