@@ -21,7 +21,6 @@ const RaiseQuote = () => {
   const [fixedGST, setFixedGST] = useState("");
   const [totalAmount, setTotalAmount] = useState("");
   const [assignedTo, setAssignedTo] = useState('');
-  const [setSubject] = useState('');
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [quotedAmount, setQuote] = useState("");
   const [fixedQuote, setFixedQuote] = useState("");
@@ -42,7 +41,7 @@ const RaiseQuote = () => {
   const [imageUrls, setImageUrls] = useState([]);
   const [customerId, setCustomerId] = useState(''); 
   const [status, setStatus] = useState('');
-  // const {handleSaveTicket}=useState('');
+  const [subject, setSubject] = useState('');
 
   useEffect(() => {
       const fetchticketData = async () => {

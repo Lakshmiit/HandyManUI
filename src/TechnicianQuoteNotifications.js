@@ -16,19 +16,16 @@ const RaiseTicketNotification = () => {
   //const [status, setStatus] = useState("");
   const {userType} = useParams();
   const {selectedUserType} = useParams();
-  const [assignedTo, setAssignedTo] = useState("");
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const [ticketData, setTicketData] = useState([]);
-  const [state, setState] = useState("");
-  const [district, setDistrict] = useState("");
-  const [zipCode, setZipcode] = useState("");
+  const [setTicketData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [states, setStates] = useState([]); const [districts, setDistricts] = useState([]); 
-  const [pinCodes, setPinCodes] = useState([]);
-  const [assigned, setAssigned] = useState([]);
+  const [setStates] = useState([]); 
+  const [ setDistricts] = useState([]); 
+  const [ setPinCodes] = useState([]);
+  const [ setAssigned] = useState([]);
   const rowsPerPage = 15;
 
   useEffect(() => {
