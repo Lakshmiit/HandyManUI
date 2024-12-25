@@ -25,7 +25,9 @@ const RaiseTicketNotification = () => {
   const [pinCodes, setPinCodes] = useState([]);
   const [assigned, setAssigned] = useState([]);
   const rowsPerPage = 15;
-
+useEffect(() => {
+    console.log(ticketData, states,districts,pinCodes,assigned);
+  }, [ticketData, states,districts,pinCodes,assigned]);
   useEffect(() => {
     setLoading(true);
     const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications`;

@@ -46,8 +46,8 @@ const RaiseQuote = () => {
   const [subject, setSubject] = useState('');
   const [imageUrls, setImageUrls] = useState([]);
   useEffect(() => {
-    console.log(subject, imageUrls,ticketData);
-  }, [subject, imageUrls,ticketData]);
+    console.log(subject, imageUrls);
+  }, [subject, imageUrls]);
   useEffect(() => {
       const fetchticketData = async () => {
         try {
