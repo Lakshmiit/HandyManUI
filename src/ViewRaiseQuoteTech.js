@@ -39,7 +39,6 @@ const RaiseQuote = () => {
   const [commentsList, setCommentsList] = useState([{updatedDate: new Date(), CommentText: ""}]);
   const [remarks] = useState([{requestedDate: new Date(), remarks: ""}]); 
   const [requestType, setRequestType] = useState('');
-
   const [customerId, setCustomerId] = useState(''); 
   const [status, setStatus] = useState('');
   //alksdfjdkfj
@@ -96,9 +95,6 @@ const RaiseQuote = () => {
       fetchticketData();
     }, [raiseTicketId]);
 
-
-
-  
   // Detect screen size for responsiveness
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -266,14 +262,15 @@ if (loading) {
       quotedDate: new Date().toISOString(), 
       raiseAQuoteId: "string",
       raiseAQuote: "string",
-      TechnicianId: id,
+      technicianId: id,
       CustomerId: customerId,
       ticketId: ticketData.raiseTicketId,
-      quotedAmount: "000",
-      serviceCharges: "0000",
-      gst: "0",
-      totalQuotedAmount: "0",
-      totalAmount: "0",
+      enterQuoteAmount: quotedAmount,
+      discount: discount,
+      othercharges: otherCharge,
+      serviceCharges: serviceCharge,
+      gst: gst,
+      totalAmount: totalAmount,
       addrRmarks: remarks.map((comment) => ({
         requestedDate: comment.requestedDate,
         remarks: comment.remarks,

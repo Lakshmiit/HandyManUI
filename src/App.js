@@ -28,6 +28,7 @@ import QuoteNotifications from './QuoteNotifications';
 import NotificationTechnician from './NotificationTechnician.js';
 import CustomerNotification from './CustomerNotification.js';
 import ViewCustomerGrid from './ViewCustomerGrid.js';
+import ShortAdminNotifications from './ShortAdminNotifications.js';
 
 function App() {
   return (
@@ -65,6 +66,7 @@ function App() {
             <Route path="/notificationTechnician/:userType" element={<NotificationTechnician />} />
             <Route path="/customerNotification/:userType" element={<CustomerNotification />} />
             <Route path="/viewCustomer/:userType" element={<ViewCustomerGrid />} />
+            <Route path="/shortAdminNotifications" element={<ShortAdminNotifications />} />
           </Routes>
         </main>
       </div>

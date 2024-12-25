@@ -21,7 +21,7 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
   );
 
   const handleTicketClick = (ticketId) => {
-    navigate(`/raiseTicketNotification`, { state: { ticketId } });
+    navigate(`/raiseTicketActionView/${ticketId}`, { state: { ticketId } });
   };
 
   const handleQuoteClick = (raiseTicketId) => {
@@ -41,7 +41,7 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
             <div className="notification-header">
               <strong>Ticket ID: </strong>{" "}
               <span
-                onClick={() => handleTicketClick(notification.raiseTicketId)}
+                onClick={() => handleTicketClick(notification.id)}
                 style={{
                   color: "blue",
                   cursor: "pointer",
