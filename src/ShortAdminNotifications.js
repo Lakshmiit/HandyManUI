@@ -15,7 +15,7 @@ const RaiseTicketNotifications = ({ notifications, highlightedTicket }) => {
 
   const handleTicketClick = (ticketId) => {
    
-    window.location.href=(`https://lakshmisaiserviceproviders.com/RaiseTicketActionView/${ticketId}`, { state: { ticketId } });
+    window.location.href=`https://lakshmisaiserviceproviders.com/RaiseTicketActionView/${ticketId}`;
   };
 
   return (
