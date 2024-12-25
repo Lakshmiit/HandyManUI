@@ -12,6 +12,7 @@ const RaiseQuote = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const {raiseTicketId} = useParams();
+  // eslint-disable-next-line
   const [ticketData, setTicketData] = useState(null);
   const [otherCharge, setOtherCharge] = useState("");
   const [fixedOtherCharge, setFixedOtherCharge] = useState("");
@@ -38,11 +39,15 @@ const RaiseQuote = () => {
   const [commentsList, setCommentsList] = useState([{updatedDate: new Date(), CommentText: ""}]);
   const [remarks] = useState([{requestedDate: new Date(), remarks: ""}]); 
   const [requestType, setRequestType] = useState('');
-  const [imageUrls, setImageUrls] = useState([]);
+
   const [customerId, setCustomerId] = useState(''); 
   const [status, setStatus] = useState('');
+  //alksdfjdkfj
   const [subject, setSubject] = useState('');
-
+  const [imageUrls, setImageUrls] = useState([]);
+  useEffect(() => {
+    console.log(subject, imageUrls,ticketData);
+  }, [subject, imageUrls,ticketData]);
   useEffect(() => {
       const fetchticketData = async () => {
         try {
@@ -275,7 +280,7 @@ if (loading) {
     })),
     };
     try {
-      imageUrls="";
+      //imageUrls="";
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/CreateRaiseAQuote`, {
         method: 'POST',
         headers: {
