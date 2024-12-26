@@ -12,127 +12,78 @@ import "./App.css";
 const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) => {
   const navigate = useNavigate();
 
-  // const handleTicketClick = (ticketId) => {
-  //   navigate(`/raiseTicketActionView/${ticketId}`, { state: { ticketId } });
-  // };
-
   const handleQuoteClick = (ticketId) => {
     navigate(`/viewRaiseQuote/${ticketId}`, { state: { ticketId } });
   };
 
   return (
-    <>
-    {/* <div>
+    <div className="notification-list">
       {notifications.map((notification) => (
         <div
-          key={notification.raiseTicketId}
+          key={notification.raiseAQuoteId}
           className={`notification-item ${
-            notification.raiseTicketId === highlightedItem ? "highlight" : ""
+            notification.raiseAQuoteId === highlightedItem ? "highlight" : ""
           }`}
         >
           <div className="notification-header">
-            <strong>Ticket ID: </strong>{" "}
+            <strong>Ticket ID: </strong>
             <span
-              onClick={() => handleTicketClick(notification.id)}
-              style={{ color: "blue", cursor: "pointer", textDecoration: "underline" }}
+              onClick={() => handleQuoteClick(notification.raiseTicketId)}
+              style={{
+                color: "blue",
+                cursor: "pointer",
+                textDecoration: "underline",
+              }}
             >
               {notification.raiseTicketId}
             </span>
           </div>
           <div>
-            <strong>Subject:</strong> {notification.subject}
-          </div>
-          <div>
             <strong>Details:</strong> {notification.details}
           </div>
+          <div>
+            <strong>Subject:</strong> {notification.subject}
+          </div>
           <div className="notification-date">
-            <strong>Date:</strong> {new Date(notification.date).toLocaleString()}
+            <strong>Quoted Date:</strong> {new Date(notification.date).toLocaleString()}
           </div>
         </div>
       ))}
     </div>
-     */}
-     <div className="notification-list">
-        {notifications.map((notification) => (
-          <div
-            key={notification.raiseAQuoteId}
-            className={`notification-item ${
-              notification.raiseAQuoteId === highlightedItem ? "highlight" : ""
-            }`}
-          >
-            <div className="notification-header">
-              <strong>Ticket ID: </strong>
-              <span
-                onClick={() => handleQuoteClick(notification.raiseTicketId)}
-                style={{
-                  color: "blue",
-                  cursor: "pointer",
-                  textDecoration: "underline",
-                }}
-              >
-                {notification.raiseTicketId}
-              </span> 
-            </div>
-            <div>
-              <strong>Details:</strong> {notification.details}
-            </div>
-            <div>
-              <strong>Subject:</strong> {notification.subject}
-            </div>
-            <div className="notification-date">
-              <strong>Quoted Date:</strong> {new Date(notification.date).toLocaleString()}
-            </div>
-          </div>
-        ))}
-      </div>
-      </>
-  );
+  );  
 };
 
 const Notification = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const [ticketNotifications, setTicketNotifications] = useState([]);
   const [quoteNotifications, setQuoteNotifications] = useState([]);
-  const [newTicketCount, setNewTicketCount] = useState(0);
   const [newQuoteCount, setNewQuoteCount] = useState(0);
   const [newNotificationCount, setNewNotificationCount] = useState(0);
-  const [highlightedTicket, setHighlightedTicket] = useState(null);
   const [highlightedQuote, setHighlightedQuote] = useState(null);
-  const [activeTab, setActiveTab] = useState("Raise Ticket");
+  const [activeTab, setActiveTab] = useState("");
   const [glow, setGlow] = useState(false);
-  const [glowTicket, setGlowTicket] = useState(false);
   const [glowQuote, setGlowQuote] = useState(false);
   const { district, category } = useParams();
-  const { userType } = useParams(); 
+  const { userType } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     handleResize();
     window.addEventListener("resize", handleResize);
-
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const raiseTicketResponse = await fetch(
-          "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications"
-        );
-        const raiseTicketData = await raiseTicketResponse.json();
-        const getTicketCount = raiseTicketData.length;
-        setTicketNotifications(raiseTicketData);
-        setNewTicketCount(getTicketCount);
-        setGlowTicket(getTicketCount > 0);
-        if (getTicketCount > 0) {
-          setHighlightedTicket(raiseTicketData[0].raiseTicketId);
-        }
-
         const getQuoteResponse = await fetch(
           `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByDistrict?district=${district}&category=${category}`
         );
+        if (!getQuoteResponse.ok) {
+          throw new Error("Failed to fetch quote notifications");
+        }
+
         const getQuoteData = await getQuoteResponse.json();
         const getQuoteCount = getQuoteData.length;
 
@@ -143,9 +94,8 @@ const Notification = () => {
           setHighlightedQuote(getQuoteData[0].raiseAQuoteId);
         }
 
-        const totalNotifications = getTicketCount + getQuoteCount;
-        setNewNotificationCount(totalNotifications);
-        setGlow(totalNotifications > 0);
+        setNewNotificationCount(getQuoteCount);
+        setGlow(getQuoteCount > 0);
       } catch (error) {
         console.error("Failed to fetch notifications:", error);
       }
@@ -154,12 +104,6 @@ const Notification = () => {
     fetchNotifications();
   }, [district, category]);
 
-  const handleClearTicketNotifications = () => {
-    setNewTicketCount(0);
-    setGlowTicket(false);
-    setHighlightedTicket(null);
-  };
-
   const handleClearQuoteNotifications = () => {
     setNewQuoteCount(0);
     setGlowQuote(false);
@@ -167,11 +111,6 @@ const Notification = () => {
   };
 
   const handleTabClick = (tab) => setActiveTab(tab);
-
-  const handleItemClick = (id, tab) => {
-    const ticket = tab === "Raise  Ticket" ? `/raiseTicketNotification` : `/technicianQuoteNotification/${userType}`;
-    navigate(ticket, { state: { id } });
-  };
 
   return (
     <div className="d-flex flex-row justify-content-start align-items-start">
@@ -214,66 +153,30 @@ const Notification = () => {
 
         <div className="notifications-container d-flex bg-white border rounded shadow-sm m-4 p-3">
           <div className="tabs">
-            {["Raise  Ticket", "Get  Quote"].map((tab) => (
+            {["Get Quote"].map((tab) => (
               <span
                 key={tab}
                 className={`tab-item ${activeTab === tab ? "active" : ""} ${
-                  tab === "Raise  Ticket" && glowTicket
-                    ? "glow"
-                    : tab === "Get  Quote" && glowQuote
-                    ? "glow"
-                    : ""
+                  tab === "Get Quote" && glowQuote ? "glow" : ""
                 }`}
                 onClick={() => handleTabClick(tab)}
                 style={{ cursor: "pointer" }}
               >
-                {tab === "Raise  Ticket" && (
-                  <>
-                    Raise Ticket{" "}
-                    {newTicketCount > 0 && (
-                      <span className="badge bg-danger">{newTicketCount}</span>
-                    )}
-                  </>
-                )}
-                {tab === "Get  Quote" && (
-                  <>
-                    Get Quote{" "}
-                    {newQuoteCount > 0 && (
-                      <span className="badge bg-danger">{newQuoteCount}</span>
-                    )}
-                  </>
+                Get Quote{" "}
+                {newQuoteCount > 0 && (
+                  <span className="badge bg-danger">{newQuoteCount}</span>
                 )}
               </span>
             ))}
           </div>
+
           <div>
-            {activeTab === "Raise  Ticket" && (
-              <>
-                <NotificationsList
-                  notifications={ticketNotifications}
-                  highlightedItem={highlightedTicket}
-                  handleItemClick={(id) => handleItemClick(id, "Ticket")}
-                />
-                <div
-                  className=" view-notifications text-info mx-2"
-                  onClick={() => {
-                    navigate("/raiseTicketNotification");
-                    handleClearTicketNotifications();
-                  }}
-                  style={{ cursor: "pointer" }}
-                >
-                  View All Notifications
-                </div>
-              </>
-            )}
-          </div>
-          <div>
-            {activeTab === "Get  Quote" && (
+            {activeTab === "Get Quote" && (
               <>
                 <NotificationsList
                   notifications={quoteNotifications}
                   highlightedItem={highlightedQuote}
-                  handleItemClick={(id) => handleItemClick(id, "Quote")}
+                  handleItemClick={(id) => navigate(`/technicianQuoteNotification/${userType}`, { state: { id } })}
                 />
                 <div
                   className="view-notifications text-info mx-2"

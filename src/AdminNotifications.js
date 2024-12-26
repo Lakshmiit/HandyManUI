@@ -17,7 +17,7 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
   );
 
   const getQuoteNotifications = notifications.filter(
-    (item) => item.internalstatus === "Assigned"
+    (item) => item.assignedTo !== "Technical Agency"
   );
  
   const handleTicketClick = (ticketId) => {
@@ -67,22 +67,22 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
       <div className="notification-list">
         {getQuoteNotifications.map((notification) => (
           <div
-            key={notification.raiseAQuoteId}
+            key={notification.ticketId}
             className={`notification-item ${
-              notification.raiseAQuoteId === highlightedItem ? "highlight" : ""
+              notification.ticketId === highlightedItem ? "highlight" : ""
             }`}
           >
             <div className="notification-header">
               <strong>Ticket ID: </strong>
               <span
-                onClick={() => handleQuoteClick(notification.raiseAQuoteId)}
+                onClick={() => handleQuoteClick(notification.ticketId)}
                 style={{
                   color: "blue",
                   cursor: "pointer",
                   textDecoration: "underline",
                 }}
               >
-                {notification.raiseAQuoteId}
+                {notification.ticketId}
               </span>
             </div>
             <div>
@@ -92,7 +92,7 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
               <strong>Technician ID:</strong> {notification.technicianId}
             </div>
             <div className="notification-date">
-              <strong>Quoted Date:</strong> {new Date(notification.quotedDate).toLocaleString()}
+              <strong>Date:</strong> {new Date(notification.quotedDate).toLocaleString()}
             </div>
           </div>
         ))}
@@ -109,10 +109,12 @@ const Notification = () => {
   const [quoteNotifications, setQuoteNotifications] = useState([]);
   const [newTicketCount, setNewTicketCount] = useState(0);
   const [newQuoteCount, setNewQuoteCount] = useState(0);
+  const [newProductCount, setNewProductCount] = useState("");
   const [newNotificationCount, setNewNotificationCount] = useState(0);
   const [glow, setGlow] = useState(false);
   const [glowTicket, setGlowTicket] = useState(false);
   const [glowQuote, setGlowQuote] = useState(false);
+  const [glowProduct, setGlowProduct] = useState(false);
   const [highlightedTicket, setHighlightedTicket] = useState(null);
   const [highlightedQuote, setHighlightedQuote] = useState(null);
   const [activeTab, setActiveTab] = useState("Raise Ticket");
@@ -136,7 +138,7 @@ const Notification = () => {
         const raiseTicketData = await raiseTicketResponse.json();
 
         const raiseTicketFiltered = raiseTicketData.filter(
-          (item) => item.assignedTo === "Customer Care"
+          (item) => item.assignedTo === "Technical Agency"
         );
         const raiseTicketCount = raiseTicketFiltered.length;
 
@@ -232,13 +234,15 @@ const Notification = () => {
 
         <div className="notifications-container d-flex bg-white border rounded shadow-sm m-4 p-3">
           <div className="tabs">
-            {["Raise  Ticket", "Get  Quote"].map((tab) => (
+            {["Raise  Ticket", "Get  Quote", "Buy Products"].map((tab) => (
               <span
                 key={tab}
                 className={`tab-item ${activeTab === tab ? "active" : ""} ${
                   tab === "Raise  Ticket" && glowTicket
                     ? "glow"
                     : tab === "Get  Quote" && glowQuote
+                    ? "glow"
+                     : tab === "Buy Products" && glowProduct
                     ? "glow"
                     : ""
                 }`}
@@ -258,6 +262,14 @@ const Notification = () => {
                     Get Quote{" "}
                     {newQuoteCount > 0 && (
                       <span className="badge bg-danger">{newQuoteCount}</span>
+                    )}
+                  </>
+                )}
+                {tab === "Buy Products" && (
+                  <>
+                    Buy Products{" "}
+                    {newProductCount > 0 && (
+                      <span className="badge bg-danger">{newProductCount}</span>
                     )}
                   </>
                 )}

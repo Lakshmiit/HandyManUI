@@ -29,6 +29,7 @@ import NotificationTechnician from './NotificationTechnician.js';
 import CustomerNotification from './CustomerNotification.js';
 import ViewCustomerGrid from './ViewCustomerGrid.js';
 import ShortAdminNotifications from './ShortAdminNotifications.js';
+import RaiseTicketBuyProducts from './RaiseTicketBuyProducts.js';
 
 function App() {
   return (
@@ -67,6 +68,7 @@ function App() {
             <Route path="/customerNotification/:userType" element={<CustomerNotification />} />
             <Route path="/viewCustomer/:userType" element={<ViewCustomerGrid />} />
             <Route path="/ShortAdminNotifications" element={<ShortAdminNotifications />} />
+            <Route path="/raiseTicketBuyProducts/:userType" element={<RaiseTicketBuyProducts />} />
           </Routes>
         </main>
       </div>

@@ -14,19 +14,19 @@ const RaiseQuote = () => {
   const {raiseTicketId} = useParams();
   // eslint-disable-next-line
   const [ticketData, setTicketData] = useState(null);
-  const [otherCharge, setOtherCharge] = useState("");
-  const [fixedOtherCharge, setFixedOtherCharge] = useState("");
-  const [serviceCharge, setServiceCharge] = useState("");
-  const [fixedServiceCharge, setFixedServiceCharge] = useState("");
-  const [gst, setGST] = useState("");
-  const [fixedGST, setFixedGST] = useState("");
-  const [totalAmount, setTotalAmount] = useState("");
+  const [otherCharge, setOtherCharge] = useState('');
+  const [fixedOtherCharge, setFixedOtherCharge] = useState('');
+  const [serviceCharge, setServiceCharge] = useState('');
+  const [fixedServiceCharge, setFixedServiceCharge] = useState('');
+  const [gst, setGST] = useState('');
+  const [fixedGST, setFixedGST] = useState('');
+  const [totalAmount, setTotalAmount] = useState('');
   const [assignedTo, setAssignedTo] = useState('');
   const [uploadedFiles, setUploadedFiles] = useState([]);
-  const [enterQuoteAmount, setQuote] = useState("");
-  const [fixedQuote, setFixedQuote] = useState("");
-  const [discount, setDiscount] = useState("");
-  const [fixedDiscount, setFixedDiscount] = useState("");
+  const [enterQuoteAmount, setQuote] = useState('');
+  const [fixedQuote, setFixedQuote] = useState('');
+  const [discount, setDiscount] = useState('');
+  const [fixedDiscount, setFixedDiscount] = useState('');
   const [state, setState] = useState('');
   const [district, setDistrict] = useState('')
   const [id, setId] = useState('');
@@ -37,11 +37,11 @@ const RaiseQuote = () => {
   const [attachments, setAttachments] = useState([]);
   const [specifications, setSpecifications] = useState([{ material: "", quantity: "" }]); 
   const [commentsList, setCommentsList] = useState([{updatedDate: new Date(), CommentText: ""}]);
-  const [remarks] = useState([{requestedDate: new Date(), remarks: ""}]); 
+  const [addrRmarks, setAddrRmarks] = useState([{requestedDate: new Date(), remarks: ""}]); 
   const [requestType, setRequestType] = useState('');
   const [customerId, setCustomerId] = useState(''); 
   const [status, setStatus] = useState('');
-  const [raiseAQuote] = useState('');
+
   //alksdfjdkfj
   const [subject, setSubject] = useState('');
   const [imageUrls, setImageUrls] = useState([]);
@@ -112,41 +112,62 @@ const RaiseQuote = () => {
   }, [uploadedFiles]);
 
   const calculateTotalPrice = (quote, discountPercentage, otherCharges, serviceChargePercentage, gstPercentage) => {
-    const discountAmount = quote * (discountPercentage / 100); // Discount calculated as percentage of quote
-    const priceAfterDiscount = quote - discountAmount; // Price after discount
-    const priceAfterOtherCharges = priceAfterDiscount + otherCharges; // Add other charges to the discounted price
-    const serviceCharge = priceAfterDiscount * (serviceChargePercentage / 100); // Service charge calculated on discounted price
-    const priceAfterServiceCharge = priceAfterOtherCharges + serviceCharge; // Price after service charge
-    const gst = priceAfterServiceCharge * (gstPercentage / 100); // GST calculated on price after service charge
-    const total = priceAfterServiceCharge + gst; // Total price after GST
-    return { total }; // Return total and gst amount
-};
+    const discountAmount = quote * (discountPercentage / 100); 
+    const priceAfterDiscount = quote - discountAmount; 
+    const priceAfterOtherCharges = priceAfterDiscount + otherCharges; 
+    const serviceCharge = priceAfterOtherCharges * (serviceChargePercentage / 100); 
+    const priceAfterServiceCharge = priceAfterOtherCharges + serviceCharge;
+    const gst = priceAfterServiceCharge * (gstPercentage / 100);
+    const total = priceAfterServiceCharge + gst; 
+    return { total, discountAmount, serviceCharge, gst }; 
+  };
 
+  const handleFixedChange = (setter, fixedSetter) => (e) => {
+    const value = parseFloat(e.target.value) || 0; 
+    setter(value); 
+    let updatedQuote = enterQuoteAmount;
+    let updatedDiscount = discount;
+    let updatedOtherCharge = otherCharge;
+    let updatedServiceCharge = serviceCharge;
+    let updatedGST = gst;
 
-const handleFixedChange = (setter, fixedSetter) => (e) => {
-  const value = parseFloat(e.target.value);
-  setter(value); 
+    if (setter === setQuote) {
+      updatedQuote = value;
+      fixedSetter(value);  
+    }
 
-  if (setter === setDiscount) {
-    fixedSetter((enterQuoteAmount * value) / 100); // Set discount amount
-    setFixedDiscount((enterQuoteAmount * value) / 100); // Set fixed discount
-  } else if (setter === setGST) {
-    setFixedGST(gst); // Set only the GST portion
-    const { total } = calculateTotalPrice(enterQuoteAmount, value, otherCharge, serviceCharge, gst);
-    setTotalAmount(total); // Update totalAmount state
-  } else if (setter === setOtherCharge) {
-    setFixedOtherCharge(value); // Set fixed other charges
-    const { total } = calculateTotalPrice(enterQuoteAmount, discount, value, serviceCharge, gst);
-    setTotalAmount(total); // Update totalAmount state
-  } else if (setter === setServiceCharge) {
-    setFixedServiceCharge(value); // Set fixed service charge
-    const { total } = calculateTotalPrice(enterQuoteAmount, discount, otherCharge, value, gst);
-    setTotalAmount(total); // Update totalAmount state
-  } else {
-    fixedSetter(value); // For other fields
-  }
-};
+    if (setter === setDiscount) {
+      updatedDiscount = value;
+    }
+    if (setter === setOtherCharge) {
+      updatedOtherCharge = value;
+    }
+    if (setter === setServiceCharge) {
+      updatedServiceCharge = value;
+    }
+    if (setter === setGST) {
+      updatedGST = value;
+    }
 
+    const { total, discountAmount, serviceCharge: calculatedServiceCharge, gst: calculatedGST } = calculateTotalPrice(
+      updatedQuote, 
+      updatedDiscount, 
+      updatedOtherCharge, 
+      updatedServiceCharge, 
+      updatedGST
+    );
+    
+    if (setter === setDiscount) {
+      fixedSetter(discountAmount); 
+    } else if (setter === setOtherCharge) {
+      fixedSetter(updatedOtherCharge); 
+    } else if (setter === setServiceCharge) {
+      fixedSetter(calculatedServiceCharge); 
+    } else if (setter === setGST) {
+      fixedSetter(calculatedGST); 
+    }
+    setTotalAmount(total);
+  };
   // Handle material input change
   const handleMaterialChange = (index, field, value) => {
     const updatedMaterials = [...specifications];
@@ -167,9 +188,9 @@ const handleFixedChange = (setter, fixedSetter) => (e) => {
   };
 
   const handleAddComment = (index, field, value) => {
-    const updatedComments = [...commentsList];
+    const updatedComments = [...addrRmarks];
     updatedComments[index][field] = value;
-    setCommentsList(updatedComments);
+    setAddrRmarks(updatedComments);
   };
 
 //   const addComment = () => {
@@ -259,20 +280,19 @@ if (loading) {
     e.preventDefault();
     
     const payload = {
-      id : id,
+      id :"string",
       quotedDate: new Date().toISOString(), 
       raiseAQuoteId: "string",
-      raiseAQuote: raiseAQuote || "",
-      technicianId: id,
       CustomerId: customerId,
       ticketId: ticketData.raiseTicketId,
-      enterQuoteAmount: "0",
-      discount: "0",
-      othercharges: "0",
-      serviceCharges: "0",
-      gst: "0",
-      totalAmount: "12345",
-      addrRmarks: remarks.map((comment) => ({
+      technicianId: id,
+      enterQuoteAmount: enterQuoteAmount.toString(),
+      discount: discount.toString(),
+      othercharges: otherCharge.toString(),
+      serviceCharges: serviceCharge.toString(),
+      gst: gst.toString(),
+      totalAmount: totalAmount.toString(),
+      addrRmarks: addrRmarks.map((comment) => ({
         requestedDate: comment.requestedDate,
         remarks: comment.remarks,
     })),
@@ -385,14 +405,11 @@ if (loading) {
   //   }
   // };
   
-
   const handleBothActions = (e) => {
     e.preventDefault();
     handleUpdateTicket(e);
     handleSaveTicket(e);
   }
-
-
 
   return (
     <div className="d-flex flex-row justify-content-start align-items-start">
@@ -792,14 +809,14 @@ if (loading) {
        {/* Add Remarks */}
        <div className="form-group">
             <label>Add Remarks</label>
-            {commentsList.map((comment, index) => (
+            {addrRmarks.map((comment, index) => (
             <div className="d-flex gap-3 mb-2" key={index}>
             <input 
             type="text"
             className="form-control"
             value={comment.remarks}
             placeholder="Comment Text"
-            onChange={(e) => handleAddComment(index, "commentText", e.target.value)}
+            onChange={(e) => handleAddComment(index, "remarks", e.target.value)}
             />
             </div>
           ))}

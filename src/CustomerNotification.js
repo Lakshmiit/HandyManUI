@@ -1,52 +1,191 @@
-import React, { useState, useEffect } from "react"; 
-import Sidebar from "./Sidebar";
-import { Dashboard as MoreVertIcon, ArrowBack as ArrowBackIcon, NotificationsNone as NotificationsNoneIcon } from "@mui/icons-material";
-import "./App.css"; 
-import { Button } from "react-bootstrap"; 
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import Sidebar from "./Sidebar";
+import {
+  Dashboard as MoreVertIcon,
+  ArrowBack as ArrowBackIcon,
+  NotificationsNone as NotificationsNoneIcon,
+} from "@mui/icons-material";
+import { Button } from "react-bootstrap";
+import "./App.css";
 
+const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) => {
+  const navigate = useNavigate();
+
+  const raiseTicketNotifications = notifications.filter(
+    (item) => item.assignedTo === "Customer Care"
+  );
+
+  return (
+    <div>
+      <div className="notification-list">
+        {raiseTicketNotifications.map((notification) => (
+          <div
+            key={notification.raiseTicketId}
+            className={`notification-item ${
+              notification.raiseTicketId === highlightedItem ? "highlight" : ""
+            }`}
+          >
+            <div className="notification-header">
+              <strong>Ticket ID: </strong>{" "}
+              <span
+                // onClick={() => handleTicketClick(notification.id)}
+                style={{
+                  color: "blue",
+                  cursor: "pointer",
+                  textDecoration: "underline",
+                }}
+              >
+                {notification.raiseTicketId}
+              </span>
+            </div>
+            <div>
+              <strong>Subject:</strong> {notification.subject}
+            </div>
+            <div>
+              <strong>Details:</strong> {notification.details}
+            </div>
+            <div className="notification-date">
+              <strong>Date:</strong> {new Date(notification.date).toLocaleString()}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* <div className="notification-list">
+        {getQuoteNotifications.map((notification) => (
+          <div
+            key={notification.ticketId}
+            className={`notification-item ${
+              notification.ticketId === highlightedItem ? "highlight" : ""
+            }`}
+          >
+            <div className="notification-header">
+              <strong>Ticket ID: </strong>
+              <span
+                onClick={() => handleQuoteClick(notification.ticketId)}
+                style={{
+                  color: "blue",
+                  cursor: "pointer",
+                  textDecoration: "underline",
+                }}
+              >
+                {notification.ticketId}
+              </span>
+            </div>
+            <div>
+              <strong>Customer ID:</strong> {notification.customerId}
+            </div>
+            <div>
+              <strong>Technician ID:</strong> {notification.technicianId}
+            </div>
+            <div className="notification-date">
+              <strong>Date:</strong> {new Date(notification.quotedDate).toLocaleString()}
+            </div>
+          </div>
+        ))}
+      </div> */}
+    </div>
+  );
+};
+
+// Main Notification Component
 const Notification = () => {
-  const {userType} = useParams();
-    const [selectedUserType] = useState("");
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const [activeTab, setActiveTab] = useState("Raise Ticket"); 
+  const [ticketNotifications, setTicketNotifications] = useState([]);
+  // const [quoteNotifications, setQuoteNotifications] = useState([]);
+  const [newTicketCount, setNewTicketCount] = useState(0);
+  const [newQuoteCount] = useState(0);
+  const [newNotificationCount, setNewNotificationCount] = useState(0);
+  const [glow, setGlow] = useState(false);
+  const [glowTicket, setGlowTicket] = useState(false);
+  const [glowQuote] = useState(false);
+  const [glowGet] = useState(false);
+  const [highlightedTicket, setHighlightedTicket] = useState(null);
+  // const [highlightedQuote, setHighlightedQuote] = useState(null);
+  const [activeTab, setActiveTab] = useState("Raise Ticket");
   const navigate = useNavigate();
-  const [notification, setNotification] = useState([
-    { id: 1, date: "14-12-2024", text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum......", category: "General" },
-    { id: 2, text: "Jiyyannavlasa, Palavalasa to the public", category: "Customer" },
-    { id: 3, text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.", category: "RaiseTicket" },
-    { id: 4, text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.", category: "BuyProduct" },
-  ]);
+  const {userType} = useParams();
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setNotification((prev) => [
-        { id: Date.now(), date: new Date().toLocaleDateString(), text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.", category: activeTab },
-        ...prev,
-      ]);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, [activeTab]);
-
-  // Detect screen size for responsiveness
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
-    handleResize(); // Set initial state
+    handleResize();
     window.addEventListener("resize", handleResize);
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const filteredNotifications = notification.filter(
-    (item) => item.category === activeTab
-  );
+  // API Call to fetch notifications
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const raiseTicketResponse = await fetch(
+          "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications"
+        );
+        const raiseTicketData = await raiseTicketResponse.json();
+
+        const raiseTicketFiltered = raiseTicketData.filter(
+          (item) => item.assignedTo === "Customer Care"
+        );
+        const raiseTicketCount = raiseTicketFiltered.length;
+
+        setTicketNotifications(raiseTicketFiltered);
+        setNewTicketCount(raiseTicketCount);
+        setGlowTicket(raiseTicketCount > 0);
+
+        if (raiseTicketCount > 0) {
+          setHighlightedTicket(raiseTicketFiltered[0].raiseTicketId);
+        }
+
+        // const getQuoteResponse = await fetch(
+        //   "https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetails"
+        // );
+        // const getQuoteData = await getQuoteResponse.json();
+        // const getQuoteCount = getQuoteData.length;
+
+        // setQuoteNotifications(getQuoteData);
+        // setNewQuoteCount(getQuoteCount);
+        // setGlowQuote(getQuoteCount > 0);
+
+        // if (getQuoteCount > 0) {
+        //   setHighlightedQuote(getQuoteData[0].raiseAQuoteId);
+        // }
+
+        const totalNotifications = raiseTicketCount;
+        setNewNotificationCount(totalNotifications);
+        setGlow(totalNotifications > 0);
+      } catch (error) {
+        console.error("Failed to fetch notifications:", error);
+      }
+    };
+    fetchNotifications();
+  }, []);
+
+  const handleClearTicketNotifications = () => {
+    setNewTicketCount(0);
+    setGlowTicket(false);
+    setHighlightedTicket(null);
+  };
+
+  // const handleClearQuoteNotifications = () => {
+  //   setNewQuoteCount(0);
+  //   setGlowQuote(false);
+  //   setHighlightedQuote(null);
+  // };
+
+  const handleTabClick = (tab) => setActiveTab(tab);
+
+  const handleItemClick = (id) => {
+    const ticket = `/viewCustomer/${userType}`;
+    navigate(ticket, { state: { id } });
+  };
 
   return (
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className="ml-0 m-4 p-0 sde_mnu">
-          <Sidebar userType={selectedUserType} />
+          <Sidebar />
         </div>
       )}
 
@@ -62,67 +201,107 @@ const Notification = () => {
 
           {showMenu && (
             <div className="sidebar-container">
-              <Sidebar userType={selectedUserType}/>
+              <Sidebar />
             </div>
           )}
         </div>
       )}
 
-      {/* Main Content */}
       <div className={`container m-1 ${isMobile ? "w-100" : "w-75"}`}>
         <h2 className="text-start mb-2 fs-20">
-          <ArrowBackIcon fontSize="large" /> <NotificationsNoneIcon fontSize="large" /> Notifications
+          <ArrowBackIcon fontSize="large" />{" "}
+          <NotificationsNoneIcon
+            fontSize="large"
+            className={glow ? "glow" : ""}
+          />{" "}
+          Notifications{" "}
+          {newNotificationCount > 0 && (
+            <span className="badge bg-danger">{newNotificationCount}</span>
+          )}
         </h2>
 
-        {/* Tickets Notification Box */}
-        <div className="notifications-container bg-white border rounded shadow-sm m-4 p-3">
+        <div className="notifications-container d-flex bg-white border rounded shadow-sm m-4 p-3">
           <div className="tabs">
-            {["Raise A Ticket", "Buy Product", "Get Notifications"].map((tab) => (
+            {["Raise  Ticket", "Buy  Product", "Get  Notifications"].map((tab) => (
               <span
                 key={tab}
-                className={`tab-item ${activeTab === tab ? "active" : ""}`}
-                onClick={() => setActiveTab(tab)}
+                className={`tab-item ${activeTab === tab ? "active" : ""} ${
+                  tab === "Raise  Ticket" && glowTicket
+                    ? "glow"
+                    : tab === "Buy  Product" && glowQuote
+                    ? "glow"
+                    : tab === "Get  Notifications" && glowGet
+                    ? "glow"
+                    : ""
+                }`}
+                onClick={() => handleTabClick(tab)}
                 style={{ cursor: "pointer" }}
               >
-                {tab}
+                {tab === "Raise  Ticket" && (
+                  <>
+                    Raise Ticket{" "}
+                    {newTicketCount > 0 && (
+                      <span className="badge bg-danger">{newTicketCount}</span>
+                    )}
+                  </>
+                )}
+                {tab === "Buy  Product" && (
+                  <>
+                    Get Quote{" "}
+                    {newQuoteCount > 0 && (
+                      <span className="badge bg-danger">{newQuoteCount}</span>
+                    )}
+                  </>
+                )}
+                 {tab === "Get  Notifications" && (
+                  <>
+                    Get Notifications{" "}
+                    {newQuoteCount > 0 && (
+                      <span className="badge bg-danger">{newQuoteCount}</span>
+                    )}
+                  </>
+                )}
               </span>
             ))}
           </div>
-
-          <div className="notifictions-content">
-            {filteredNotifications.map((item) => (
-              <div key={item.id} className="d-flex notification-item">
-                {item.date && <span className="date">{item.date}</span>}
-                <span className="text">{item.text}</span>
-              </div>
-            ))}
-          </div>
-          <div
-            className="text-info mx-2 text-end"
-            onClick={() => navigate(`/viewCustomer/${userType}`)}
-            style={{ cursor: "pointer" }}
-          >
-            View All Notifications
+          <div>
+            {activeTab === "Raise  Ticket" && (
+              <>
+                <NotificationsList
+                  notifications={ticketNotifications}
+                  highlightedItem={highlightedTicket}
+                  handleItemClick={(id) => handleItemClick(id, "Ticket")}
+                />
+                <div
+                  className=" view-notifications text-info mx-2"
+                  onClick={() => {
+                    navigate(`/viewCustomer/${userType}`);
+                    handleClearTicketNotifications();
+                  }}
+                  style={{ cursor: "pointer" }}
+                >
+                  View All Notifications
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
-      {/* Styles for floating menu */}
-<style jsx>{`
-        .floating-menu {
-          position: fixed;
-          top: 80px; /* Increased from 20px to avoid overlapping with the logo */
-          left: 20px; /* Adjusted for placement on the left side */
-          z-index: 1000;
+      <style jsx>{`
+        .glow {
+          color: gold;
+          animation: glow-animation 1s infinite;
         }
-        .menu-popup {
-          position: absolute;
-          top: 50px; /* Keeps the popup aligned below the floating menu */
-          left: 0; /* Aligns the popup to the left */
-          background: white;
-          border: 1px solid #ddd;
-          border-radius: 5px;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-          width: 200px;
+        @keyframes glow-animation {
+          0% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.5;
+          }
+          100% {
+            opacity: 1;
+          }
         }
       `}</style>
     </div>

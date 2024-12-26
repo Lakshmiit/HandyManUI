@@ -404,7 +404,6 @@ const RaiseActionView = () => {
           </Col>
         </Row>
 
-
       <div className="radio">
       <label className="m-1">
         <input

@@ -1153,10 +1153,10 @@ textarea {
 }
 
 .tab-item {
-  font-size: 25px;
+  font-size: 20px;
   padding: 8px 16px;
   cursor: pointer;
-  border-radius: 10px;
+  border-radius: 8px;
   transition: all 0.3s ease; 
   background-color: #FFB300;
 }
