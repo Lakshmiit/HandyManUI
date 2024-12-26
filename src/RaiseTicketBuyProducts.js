@@ -93,9 +93,9 @@ const BuyProduct = () => {
   }, [userId]);
 
   // Generate ticket ID in the format VSKPAKP002
-  const ticketIdPrefix = "VSKPAKP";
-  const ticketIdSuffix = String(Math.floor(Math.random() * 999) + 1).padStart(3, "0");
-  const ticketId = `${ticketIdPrefix}${ticketIdSuffix}`;
+  // const ticketIdPrefix = "VSKPAKP";
+  // const ticketIdSuffix = String(Math.floor(Math.random() * 999) + 1).padStart(3, "0");
+  // const ticketId = `${ticketIdPrefix}${ticketIdSuffix}`;
 
   const handleSendQuote = async () => {
     if (!category || !productName || !productCatalogue || !productSize || !requiredQuality || !units) {

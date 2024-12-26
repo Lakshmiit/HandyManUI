@@ -10,7 +10,6 @@ import { Button } from "react-bootstrap";
 import "./App.css";
 
 const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) => {
-  const navigate = useNavigate();
 
   const raiseTicketNotifications = notifications.filter(
     (item) => item.assignedTo === "Customer Care"

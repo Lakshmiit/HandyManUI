@@ -36,7 +36,7 @@ const RaiseQuote = () => {
   const [loading, setLoading] = useState(true);
   const [attachments, setAttachments] = useState([]);
   const [specifications, setSpecifications] = useState([{ material: "", quantity: "" }]); 
-  const [commentsList, setCommentsList] = useState([{updatedDate: new Date(), CommentText: ""}]);
+  const [commentsList] = useState([{updatedDate: new Date(), CommentText: ""}]);
   const [addrRmarks, setAddrRmarks] = useState([{requestedDate: new Date(), remarks: ""}]); 
   const [requestType, setRequestType] = useState('');
   const [customerId, setCustomerId] = useState(''); 

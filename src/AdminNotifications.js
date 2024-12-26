@@ -109,12 +109,12 @@ const Notification = () => {
   const [quoteNotifications, setQuoteNotifications] = useState([]);
   const [newTicketCount, setNewTicketCount] = useState(0);
   const [newQuoteCount, setNewQuoteCount] = useState(0);
-  const [newProductCount, setNewProductCount] = useState("");
+  const [newProductCount] = useState("");
   const [newNotificationCount, setNewNotificationCount] = useState(0);
   const [glow, setGlow] = useState(false);
   const [glowTicket, setGlowTicket] = useState(false);
   const [glowQuote, setGlowQuote] = useState(false);
-  const [glowProduct, setGlowProduct] = useState(false);
+  const [glowProduct] = useState(false);
   const [highlightedTicket, setHighlightedTicket] = useState(null);
   const [highlightedQuote, setHighlightedQuote] = useState(null);
   const [activeTab, setActiveTab] = useState("Raise Ticket");
@@ -245,7 +245,7 @@ const Notification = () => {
                      : tab === "Buy Products" && glowProduct
                     ? "glow"
                     : ""
-                }`}
+                }`} 
                 onClick={() => handleTabClick(tab)}
                 style={{ cursor: "pointer" }}
               >
