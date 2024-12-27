@@ -153,16 +153,16 @@ const Notification = () => {
 
         <div className="notifications-container d-flex bg-white border rounded shadow-sm m-4 p-3">
           <div className="tabs">
-            {["Get Quote"].map((tab) => (
+            {["Raise A Quote"].map((tab) => (
               <span
                 key={tab}
                 className={`tab-item ${activeTab === tab ? "active" : ""} ${
-                  tab === "Get Quote" && glowQuote ? "glow" : ""
+                  tab === "Raise A Quote" && glowQuote ? "glow" : ""
                 }`}
                 onClick={() => handleTabClick(tab)}
                 style={{ cursor: "pointer" }}
               >
-                Get Quote{" "}
+                Raise A Quote{" "}
                 {newQuoteCount > 0 && (
                   <span className="badge bg-danger">{newQuoteCount}</span>
                 )}
@@ -171,7 +171,7 @@ const Notification = () => {
           </div>
 
           <div>
-            {activeTab === "Get Quote" && (
+            {activeTab === "Raise A Quote" && (
               <>
                 <NotificationsList
                   notifications={quoteNotifications}

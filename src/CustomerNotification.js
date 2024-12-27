@@ -221,7 +221,7 @@ const Notification = () => {
 
         <div className="notifications-container d-flex bg-white border rounded shadow-sm m-4 p-3">
           <div className="tabs">
-            {["Raise  Ticket", "Buy  Product", "Get  Notifications"].map((tab) => (
+            {["Raise  Ticket", "Buy  Product", "General  Notifications"].map((tab) => (
               <span
                 key={tab}
                 className={`tab-item ${activeTab === tab ? "active" : ""} ${
@@ -229,7 +229,7 @@ const Notification = () => {
                     ? "glow"
                     : tab === "Buy  Product" && glowQuote
                     ? "glow"
-                    : tab === "Get  Notifications" && glowGet
+                    : tab === "General  Notifications" && glowGet
                     ? "glow"
                     : ""
                 }`}
@@ -246,15 +246,15 @@ const Notification = () => {
                 )}
                 {tab === "Buy  Product" && (
                   <>
-                    Get Quote{" "}
+                    Buy Product{" "}
                     {newQuoteCount > 0 && (
                       <span className="badge bg-danger">{newQuoteCount}</span>
                     )}
                   </>
                 )}
-                 {tab === "Get  Notifications" && (
+                 {tab === "General  Notifications" && (
                   <>
-                    Get Notifications{" "}
+                    General Notifications{" "}
                     {newQuoteCount > 0 && (
                       <span className="badge bg-danger">{newQuoteCount}</span>
                     )}

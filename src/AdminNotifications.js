@@ -13,13 +13,13 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
   const navigate = useNavigate();
 
   const raiseTicketNotifications = notifications.filter(
-    (item) => item.assignedTo === "Technical Agency"
+    (item) => item.assignedTo === "Customer Care"
   );
 
   const getQuoteNotifications = notifications.filter(
     (item) => item.assignedTo !== "Technical Agency"
   );
- 
+
   const handleTicketClick = (ticketId) => {
     navigate(`/raiseTicketActionView/${ticketId}`, { state: { ticketId } });
   };
@@ -39,9 +39,9 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
             }`}
           >
             <div className="notification-header">
-              <strong>Ticket ID: </strong>{" "}
+              <strong>Ticket ID: </strong>
               <span
-                onClick={() => handleTicketClick(notification.id)}
+                onClick={() => handleTicketClick(notification.raiseTicketId)}
                 style={{
                   color: "blue",
                   cursor: "pointer",
@@ -101,7 +101,6 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
   );
 };
 
-// Main Notification Component
 const Notification = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -109,12 +108,8 @@ const Notification = () => {
   const [quoteNotifications, setQuoteNotifications] = useState([]);
   const [newTicketCount, setNewTicketCount] = useState(0);
   const [newQuoteCount, setNewQuoteCount] = useState(0);
-  const [newProductCount] = useState("");
   const [newNotificationCount, setNewNotificationCount] = useState(0);
   const [glow, setGlow] = useState(false);
-  const [glowTicket, setGlowTicket] = useState(false);
-  const [glowQuote, setGlowQuote] = useState(false);
-  const [glowProduct] = useState(false);
   const [highlightedTicket, setHighlightedTicket] = useState(null);
   const [highlightedQuote, setHighlightedQuote] = useState(null);
   const [activeTab, setActiveTab] = useState("Raise Ticket");
@@ -128,70 +123,63 @@ const Notification = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // API Call to fetch notifications
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const raiseTicketResponse = await fetch(
-          "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications"
-        );
-        const raiseTicketData = await raiseTicketResponse.json();
+  const fetchNotifications = async () => {
+    try {
+      const raiseTicketResponse = await fetch(
+        "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications"
+      );
+      const raiseTicketData = await raiseTicketResponse.json();
 
-        const raiseTicketFiltered = raiseTicketData.filter(
-          (item) => item.assignedTo === "Technical Agency"
-        );
-        const raiseTicketCount = raiseTicketFiltered.length;
+      const raiseTicketFiltered = raiseTicketData.filter(
+        (item) => item.assignedTo === "Customer Care"
+      );
+      const raiseTicketCount = raiseTicketFiltered.length;
 
-        setTicketNotifications(raiseTicketFiltered);
-        setNewTicketCount(raiseTicketCount);
-        setGlowTicket(raiseTicketCount > 0);
+      setTicketNotifications(raiseTicketFiltered);
+      setNewTicketCount(raiseTicketCount);
 
-        if (raiseTicketCount > 0) {
-          setHighlightedTicket(raiseTicketFiltered[0].raiseTicketId);
-        }
-
-        const getQuoteResponse = await fetch(
-          "https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetails"
-        );
-        const getQuoteData = await getQuoteResponse.json();
-        const getQuoteCount = getQuoteData.length;
-
-        setQuoteNotifications(getQuoteData);
-        setNewQuoteCount(getQuoteCount);
-        setGlowQuote(getQuoteCount > 0);
-
-        if (getQuoteCount > 0) {
-          setHighlightedQuote(getQuoteData[0].raiseAQuoteId);
-        }
-
-        const totalNotifications = raiseTicketCount + getQuoteCount;
-        setNewNotificationCount(totalNotifications);
-        setGlow(totalNotifications > 0);
-      } catch (error) {
-        console.error("Failed to fetch notifications:", error);
+      if (raiseTicketCount > 0) {
+        setHighlightedTicket(raiseTicketFiltered[0].raiseTicketId);
       }
-    };
+
+      const getQuoteResponse = await fetch(
+        "https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetails"
+      );
+      const getQuoteData = await getQuoteResponse.json();
+      const getQuoteCount = getQuoteData.length;
+
+      setQuoteNotifications(getQuoteData);
+      setNewQuoteCount(getQuoteCount);
+
+      if (getQuoteCount > 0) {
+        setHighlightedQuote(getQuoteData[0].raiseAQuoteId);
+      }
+
+      const totalNotifications = raiseTicketCount + getQuoteCount;
+      setNewNotificationCount(totalNotifications);
+      setGlow(totalNotifications > 0);
+    } catch (error) {
+      console.error("Failed to fetch notifications:", error);
+    }
+  };
+
+  useEffect(() => {
     fetchNotifications();
+    const interval = setInterval(fetchNotifications, 60000); // Poll every 60 seconds
+    return () => clearInterval(interval);
   }, []);
 
   const handleClearTicketNotifications = () => {
     setNewTicketCount(0);
-    setGlowTicket(false);
     setHighlightedTicket(null);
   };
 
   const handleClearQuoteNotifications = () => {
     setNewQuoteCount(0);
-    setGlowQuote(false);
     setHighlightedQuote(null);
   };
 
   const handleTabClick = (tab) => setActiveTab(tab);
-
-  const handleItemClick = (id, tab) => {
-    const ticket = tab === "Raise  Ticket" ? `/raiseTicketNotification` : `/quoteNotification`;
-    navigate(ticket, { state: { id } });
-  };
 
   return (
     <div className="d-flex flex-row justify-content-start align-items-start">
@@ -234,109 +222,49 @@ const Notification = () => {
 
         <div className="notifications-container d-flex bg-white border rounded shadow-sm m-4 p-3">
           <div className="tabs">
-            {["Raise  Ticket", "Get  Quote", "Buy Products"].map((tab) => (
+            {["Raise Ticket", "Get Quote", "Buy Products"].map((tab) => (
               <span
                 key={tab}
-                className={`tab-item ${activeTab === tab ? "active" : ""} ${
-                  tab === "Raise  Ticket" && glowTicket
-                    ? "glow"
-                    : tab === "Get  Quote" && glowQuote
-                    ? "glow"
-                     : tab === "Buy Products" && glowProduct
-                    ? "glow"
-                    : ""
-                }`} 
+                className={`tab-item ${activeTab === tab ? "active" : ""}`}
                 onClick={() => handleTabClick(tab)}
                 style={{ cursor: "pointer" }}
               >
-                {tab === "Raise  Ticket" && (
-                  <>
-                    Raise Ticket{" "}
-                    {newTicketCount > 0 && (
-                      <span className="badge bg-danger">{newTicketCount}</span>
-                    )}
-                  </>
-                )}
-                {tab === "Get  Quote" && (
-                  <>
-                    Get Quote{" "}
-                    {newQuoteCount > 0 && (
-                      <span className="badge bg-danger">{newQuoteCount}</span>
-                    )}
-                  </>
-                )}
-                {tab === "Buy Products" && (
-                  <>
-                    Buy Products{" "}
-                    {newProductCount > 0 && (
-                      <span className="badge bg-danger">{newProductCount}</span>
-                    )}
-                  </>
-                )}
+                {tab}
               </span>
             ))}
           </div>
-          <div>
-            {activeTab === "Raise  Ticket" && (
-              <>
-                <NotificationsList
-                  notifications={ticketNotifications}
-                  highlightedItem={highlightedTicket}
-                  handleItemClick={(id) => handleItemClick(id, "Ticket")}
-                />
-                <div
-                  className=" view-notifications text-info mx-2"
-                  onClick={() => {
-                    navigate("/raiseTicketNotification");
-                    handleClearTicketNotifications();
-                  }}
-                  style={{ cursor: "pointer" }}
-                >
-                  View All Notifications
-                </div>
-              </>
-            )}
-          </div>
-          <div>
-            {activeTab === "Get  Quote" && (
-              <>
-                <NotificationsList
-                  notifications={quoteNotifications}
-                  highlightedItem={highlightedQuote}
-                  handleItemClick={(id) => handleItemClick(id, "Quote")}
-                />
-                <div
-                  className="view-notifications text-info mx-2"
-                  onClick={() => {
-                    navigate(`/quoteNotification`);
-                    handleClearQuoteNotifications();
-                  }}
-                  style={{ cursor: "pointer" }}
-                >
-                  View All Notifications
-                </div>
-              </>
-            )}
-          </div>
+          {activeTab === "Raise Ticket" && (
+            <>
+              <NotificationsList
+                notifications={ticketNotifications}
+                highlightedItem={highlightedTicket}
+              />
+              <div
+                className="view-notifications text-info mx-2"
+                onClick={handleClearTicketNotifications}
+                style={{ cursor: "pointer" }}
+              >
+                View All Notifications
+              </div>
+            </>
+          )}
+          {activeTab === "Get Quote" && (
+            <>
+              <NotificationsList
+                notifications={quoteNotifications}
+                highlightedItem={highlightedQuote}
+              />
+              <div
+                className="view-notifications text-info mx-2"
+                onClick={handleClearQuoteNotifications}
+                style={{ cursor: "pointer" }}
+              >
+                View All Notifications
+              </div>
+            </>
+          )}
         </div>
       </div>
-      <style jsx>{`
-        .glow {
-          color: gold;
-          animation: glow-animation 1s infinite;
-        }
-        @keyframes glow-animation {
-          0% {
-            opacity: 1;
-          }
-          50% {
-            opacity: 0.5;
-          }
-          100% {
-            opacity: 1;
-          }
-        }
-      `}</style>
     </div>
   );
 };

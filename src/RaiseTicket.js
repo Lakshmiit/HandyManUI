@@ -491,6 +491,7 @@ useEffect(() => {
               multiple
               onChange={handleFileUpload}
               className="d-none"
+              required
             />
           </div>
         </div>

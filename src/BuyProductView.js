@@ -7,7 +7,6 @@ import Sidebar from './Sidebar';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Button } from 'react-bootstrap'; // Import Bootstrap components for modal
 
-
 const BuyProdcutView = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -107,7 +106,6 @@ const BuyProdcutView = () => {
     category,
     catalogue,
     productSize,
-   
     color,
     rate,
     discount,

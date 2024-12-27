@@ -6,7 +6,6 @@ import { Link } from "react-router-dom";
 import { FaTrash, FaEye } from "react-icons/fa";
 import {
   Dashboard as MoreVertIcon,
-  FileDownload as FileDownloadIcon,
   Forward as ForwardIcon,
 } from "@mui/icons-material";
 import "./App.css";
@@ -14,19 +13,12 @@ import "./App.css";
 const RaiseTicketNotification = () => {
   // const navigate = useNavigate();
   //const [status, setStatus] = useState("");
-  const [assignedTo, setAssignedTo] = useState("");
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [ticketData, setTicketData] = useState([]);
-  const [state, setState] = useState("");
-  const [district, setDistrict] = useState("");
-  const [zipCode, setZipcode] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [states, setStates] = useState([]); const [districts, setDistricts] = useState([]); 
-  const [pinCodes, setPinCodes] = useState([]);
-  const [assigned, setAssigned] = useState([]);
   const rowsPerPage = 15;
 
   useEffect(() => {
@@ -45,16 +37,6 @@ const RaiseTicketNotification = () => {
         }));
         setTicketData(tickets);
         setFilteredData(tickets);
-
-        // Extract unique categories and catalogues
-        const uniqueStates = [...new Set(tickets.map(ticket => ticket.state))];
-        const uniqueDistricts = [...new Set(tickets.map(ticket => ticket.district))];
-        const uniquePinCode = [...new Set(tickets.map(ticket => ticket.zipCode))];
-        const uniqueAssigned = [...new Set(tickets.map(ticket => ticket.assignedTo))]
-        setStates(uniqueStates);
-        setDistricts(uniqueDistricts);
-        setPinCodes(uniquePinCode);
-        setAssigned(uniqueAssigned);
       })
       .catch(error => {
         console.error("Error fetching ticket data:", error);
@@ -78,29 +60,7 @@ const RaiseTicketNotification = () => {
     }
   };
 
-  useEffect(() => {
-    let filtered = ticketData;
-
-    if (state) {
-      filtered = filtered.filter((ticket) => ticket.state === state);
-    }
-
-    if (district) {
-      filtered = filtered.filter((ticket) => ticket.district === district);
-    }
- 
-    if (zipCode) {
-      filtered = filtered.filter((ticket) => ticket.zipCode === zipCode);
-    }
-    if (assignedTo) {
-      filtered = filtered.filter((ticket) =>ticket.assignedTo === assignedTo);
-    }
-
-    setFilteredData(filtered);
-    setCurrentPage(1);
-  }, [state, district, zipCode, assignedTo, ticketData]);
-
-  useEffect(() => {
+    useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -149,74 +109,13 @@ const RaiseTicketNotification = () => {
       )}
 
       <div className={`container m-1 ${isMobile ? "w-100" : "w-75"}`}>
-        <h2 className="text-center mb-4">Customer Raise a Ticket Notifications</h2>
-        <h4 className="text-center mb-4">District Wise Ticket Summary</h4>
-        <div className="d-flex align-items-center justify-content-between">
-          <div className="form-group text-start col-md-2 ml-2 m-5 mb-2">
-            <label>State</label>
-            <select
-              className="form-control"
-              value={state}
-              onChange={(e) => setState(e.target.value)}
-            >
-              <option value="">All States</option>
-              {states.map((stateOption, index) => (
-                <option key={index} value={stateOption}>{stateOption}</option>
-              ))}
-            </select>
-          </div>
-          <div className="form-group col-md-2 m-5 mb-2">
-            <label>District</label>
-            <select
-              className="form-control"
-              value={district}
-              onChange={(e) => setDistrict(e.target.value)}
-            >
-              <option value="">All Districts</option>
-              {districts.map((districtOption, index) => (
-                <option key={index} value={districtOption}>{districtOption}</option>
-              ))}
-            </select>
-          </div>
-          {/* Pin Code */}
-          <div className="form-group col-md-2 m-5 mb-2">
-            <label>Pin Code</label>
-            <select
-              className="form-control"
-              value={zipCode}
-              onChange={(e) => setZipcode(e.target.value)}
-            >
-              <option value="">Select Pincode</option>
-              {pinCodes.map((pinCodeOption, index) => (
-                <option key={index} value={pinCodeOption}>{pinCodeOption}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Assigned To */}
-          <div className="form-group col-md-2 m-5 mb-2">
-            <label>Assigned To</label>
-            <select
-              className="form-control"
-              value={assignedTo}
-              onChange={(e) => setAssignedTo(e.target.value)}
-            >
-              <option value="">Select Assigned To</option>
-              {assigned.map((assignedOption, index) => (
-                <option key={index} value={assignedOption}>{assignedOption}</option>
-              ))} 
-            </select>
-          </div>
-        </div>
-
+        <h2 className="text-center m-4">Customer Raise a Ticket Notifications</h2>
         <table className="table table-bordered">
           <thead>
             <tr>
-              <th>Customer ID</th>
               <th>Ticket ID</th>
               <th>Category</th>
               <th>Description</th>
-              <th>View/Download Attachment</th>
               <th>Status</th>
               <th>Assigned To</th>
               <th>Actions</th>
@@ -225,29 +124,9 @@ const RaiseTicketNotification = () => {
           <tbody>
             {currentRaiseTicket.map((ticket, index) => (
               <tr key={index}>
-                <td>{ticket.customerId}</td>
                 <td>{ticket.raiseTicketId}</td>
                 <td>{ticket.category}</td>
                 <td>{ticket.details}</td>
-                <td>
-                  {ticket.attachments.length > 0 ? (
-                    ticket.attachments.map((attachment, i) => (
-                      <div key={i} className="d-flex align-items-center">
-                        <a
-                          href={attachment.fileUrl}
-                          download={attachment.fileName}
-                          className="text-primary text-decoration-underline me-2"
-                          style={{ cursor: "pointer", display: 'flex', alignItems: 'center' }}
-                        >
-                          <FileDownloadIcon className="me-2" style={{ cursor: "pointer" }} />
-                          <span>{attachment.fileName}</span>
-                        </a>
-                      </div>
-                    ))
-                  ) : (
-                    <span>No Attachments</span>
-                  )}
-                </td>
                 <td>{ticket.status}</td>
                 <td>{ticket.assignedTo}</td>
                 <td className="d-flex align-items-center">

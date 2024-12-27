@@ -8,13 +8,23 @@ import AdminSidebar from './AdminSidebar';
 import ForwardIcon from '@mui/icons-material/Forward';
 import SaveAsIcon from '@mui/icons-material/SaveAs';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
-import {Link} from 'react-router-dom';
+import {Link, useNavigate, useParams} from 'react-router-dom';
 
 const RaiseQuotation = () => {
+  const Navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const [materials, setMaterials] = useState([]);
-  const [quantity, setQuantity] = useState([]);
+  const {raiseTicketId} = useParams();
+  const [id, setId] = useState('');
+  const [ticketData, setTicketData] = useState('');
+  const [subject, setSubject] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [imageUrls, setImageUrls] = useState([]);
+  const [attachments, setAttachments] = useState([]);
+  const [specifications, setSpecifications] = useState([{ material: "", quantity: "" }]);
+  const [requestType, setRequestType] = useState('');
+  const [customerId, setCustomerId] = useState(''); 
+  const [status, setStatus] = useState(''); 
   const [technicianId, setTechnicianId] = useState(""); 
   const [serviceCharges] = useState("");
   const [gst] = useState("");
@@ -31,15 +41,62 @@ const RaiseQuotation = () => {
   const [addremarks, setAddRemarks] = useState("");
   const [assignedTo, setAssignedTo] = useState('');
   const [uploadedFiles, setUploadedFiles] = useState([]);
-  const [formData, setFormData] = useState({
-    customerId: '',
-    subject: '', 
-    details: '',
-    category: '',
-  });
-  const [showAlert, setShowAlert] = useState(false);
-  const [alertMessage, setAlertMessage] = useState('');
+  const [showAlert] = useState(false);
+  const [alertMessage] = useState('');
   const [isWithMaterial, setIsWithMaterial] = useState(false);
+
+
+  useEffect(() => {
+    console.log(subject, imageUrls, loading, isWithMaterial);
+  }, [subject, imageUrls, loading, isWithMaterial]);
+
+  useEffect(() => {
+        const fetchticketData = async () => {
+          try {
+            const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+            if (!response.ok) {
+              throw new Error('Failed to fetch ticket data');
+            }
+            const data = await response.json();
+            setTicketData(data);
+            // setState(data.state);
+            // setDistrict(data.district);
+            // setzipCode(data.zipCode);
+            // setAddress(data.address);
+            setSubject(data.subject);
+            setId(data.id);
+            setCustomerId(data.customerId);
+            setIsWithMaterial(data.isMaterialType);
+            setAssignedTo(data.assignedTo);
+            setStatus(data.status);
+            setRequestType(data.requestType || 'Without Material');
+            setAttachments(data.attachments);
+            setSpecifications(data.materials || [{ material: "", quantity: "" }]);
+            // setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: ""}])
+            const imageRequests =
+              data.attachments?.map(async (photo) => {
+                const Image = await fetch(
+                  `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+                );
+                if (!Image.ok) throw new Error('Failed to fetch image');
+                const blob = await Image.blob();
+                const imageUrl = URL.createObjectURL(blob);
+                return {
+                  src: photo,
+                  imageUrl,
+                };
+              }) || [];
+            const images = await Promise.all(imageRequests);
+            setImageUrls(images);
+          } catch (error) {
+            console.error('Error fetching ticket data:', error);
+            // window.alert('Failed to load ticket data. Please try again later.');
+          } finally {
+            setLoading(false);
+          }
+        };
+        fetchticketData();
+      }, [raiseTicketId]);
 
   useEffect(() => {
     const lowest = technicianDetails.reduce((prev, current) => {
@@ -53,10 +110,69 @@ const RaiseQuotation = () => {
   // Handle form data changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
+    setTicketData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
+  };
+
+  const handleSaveTicket = async (e) => {
+    e.preventDefault();
+    
+    const payload = {
+      RaiseTicketId: ticketData.raiseTicketId,
+      date: new Date().toISOString(),
+      // address: address,
+      subject: ticketData.subject,
+      details: ticketData.details,
+      category: ticketData.category,
+      assignedTo: ticketData.assignedTo,
+      id : id,
+      status: status,
+      InternalStatus: "Assigned",
+      TicketOwner: ticketData.customerId,
+      CustomerId: customerId,
+      // state: state,
+      // isMaterialType: isMaterialType,
+      // district: district,
+      // ZipCode: zipCode,
+      RequestType: requestType,
+      attachments:attachments || [],
+      materials: specifications.map((spec) => ({
+          material: spec.material,
+          quantity: spec.quantity,
+      })),
+      // comments: commentsList.map((comment) => ({
+      //     updatedDate: comment.updatedDate,
+      //     CommentText: comment.CommentText,
+      // })),
+    };
+    try {
+      
+      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to save ticket data');
+      }
+      alert('Ticket saved Successfully!');
+    } catch (error) {
+      console.error('Error saving ticket data:', error);
+      window.alert('Failed to save the ticket data. Please try again later.')
+    }
+  };
+
+  const handleQuotation = () => {
+    const quotationData = {
+      ticketId: ticketData.raiseTicketId,
+      subject: ticketData.subject,
+      materials: ticketData.specifications,
+    };
+    Navigate("/raiseTicketBuyProducts", { state: quotationData });
   };
   
   // Detect screen size for responsiveness
@@ -69,31 +185,20 @@ const RaiseQuotation = () => {
   }, []);
 
   // Handle material input change
-  const handleMaterialChange = (index, value) => {
-    const updatedMaterials = [...materials];
-    updatedMaterials[index] = value;
-    setMaterials(updatedMaterials);
-  };
-
-  // Handle quantity input change
-  const handleInputChange = (index, value) => {
-    const updatedQuantities = [...quantity];
-    updatedQuantities[index] = value;
-    setQuantity(updatedQuantities);
+  const handleMaterialChange = (index, field, value) => {
+    const updatedMaterials = [...specifications];
+    updatedMaterials[index][field] = value;
+    setSpecifications(updatedMaterials);
   };
 
   // Add new material and quantity fields
   const handleAddMaterial = () => {
-    setMaterials([...materials, ""]);
-    setQuantity([...quantity, ""]);
+    setSpecifications([...specifications, { material: "", quantity: "" }]);
   };
 
   // Remove a material and its corresponding quantity
   const handleRemoveMaterial = (index) => {
-    const updatedMaterials = materials.filter((_, i) => i !== index);
-    const updatedQuantities = quantity.filter((_, i) => i !== index);
-    setMaterials(updatedMaterials);
-    setQuantity(updatedQuantities);
+    setSpecifications(specifications.filter((_, i) => i !== index));
   };
 
   // Handle file upload
@@ -107,27 +212,6 @@ const RaiseQuotation = () => {
     const newUploadedFiles = [...uploadedFiles];
     newUploadedFiles.splice(index, 1);
     setUploadedFiles(newUploadedFiles);
-  };
-
-  // Handle preview and confirmation on ticket submission
-  const handleSaveTicket = (e) => {
-    e.preventDefault();
-
-    // Ensure all fields are filled before submitting
-    if (
-      !formData.customerId ||
-      !formData.subject ||
-      !formData.details ||
-      !formData.category ||
-      !assignedTo
-    ) {
-      setAlertMessage('Please fill in all mandatory fields.');
-      setShowAlert(true);
-      return;
-    }
-
-    setAlertMessage('Ticket has been submitted successfully! Customer Care will contact you shortly.');
-    setShowAlert(true);
   };
 
   useEffect(() => {
@@ -175,7 +259,7 @@ const RaiseQuotation = () => {
           <Form.Control
           type="text"
           name="customerId"
-          value={FormData.customerId}
+          value={ticketData.raiseTicketId}
           onChange={handleChange}
           placeholder="Ticket Number"
           required/>
@@ -191,7 +275,7 @@ const RaiseQuotation = () => {
               <Form.Control
                 type="text"
                 name="subject"
-                value={formData.subject}
+                value={ticketData.subject}
                 onChange={handleChange}
                 placeholder="Enter subject"
                 required
@@ -206,7 +290,7 @@ const RaiseQuotation = () => {
           <Form.Control
             as="textarea"
             name="details"
-            value={formData.details}
+            value={ticketData.details}
             onChange={handleChange}
             rows="4"
             placeholder="Enter details"
@@ -222,7 +306,7 @@ const RaiseQuotation = () => {
               <Form.Control
                 type="text"
                 name="category"
-                value={formData.category}
+                value={ticketData.category}
                 onChange={handleChange}
                 placeholder='Category'
                 required
@@ -315,10 +399,10 @@ const RaiseQuotation = () => {
         <input
           className="form-check-input"
           type="radio"
-          name="IsWithMaterial"
+          name="RequestType"
           value="With Material"
-          checked={isWithMaterial === "With Material"}
-          onChange={(e) => setIsWithMaterial(e.target.value)}
+          checked={requestType === "With Material"}
+          onChange={(e) => setRequestType(e.target.value)}
           required
         />
         With Material
@@ -328,33 +412,33 @@ const RaiseQuotation = () => {
         <input
           className="form-check-input"
           type="radio"
-          name="IsWithMaterial"
+          name="RequestType"
           value="Without Material"
-          checked={isWithMaterial === "Without Material"}
-          onChange={(e) => setIsWithMaterial(e.target.value)}
+          checked={requestType === "Without Material"}
+          onChange={(e) => setRequestType(e.target.value)}
         />
         Without Material
       </label>
 
           {/* Material Input Fields */}
-      {isWithMaterial === "With Material" && (
+      {requestType === "With Material" && (
         <div className="form-group">
           <label>Required (Optional)</label>
-          {materials.map((material, index) => (
+          {specifications.map((spec, index) => (
             <div className="d-flex gap-3 mb-2" key={index}>
               <input
                 type="text"
                 className="form-control"
-                value={material}
+                value={spec.material}
                 placeholder="Enter Material"
-                onChange={(e) => handleMaterialChange(index, e.target.value)}
+                onChange={(e) => handleMaterialChange(index, "material", e.target.value)}
               />
               <input
                 type="text"
                 className="form-control"
                 placeholder="Enter Quantity"
-                value={quantity[index] || ""}
-                onChange={(e) => handleInputChange(index, e.target.value)}
+                value={spec.quantity}
+                onChange={(e) => handleMaterialChange(index, "quantity", e.target.value)}
               />
               <button
                 type="button"
@@ -368,7 +452,9 @@ const RaiseQuotation = () => {
           <button type="button" className="btn btn-primary" onClick={handleAddMaterial}>
             Add Material
           </button>
-          <button type="button" className="btn btn-primary m-1">
+          <button type="button" className="btn btn-primary m-1"
+          onClick={handleQuotation}
+          >
             Get Quotation
           </button>
         </div>
