@@ -15,40 +15,61 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
-      # Step to checkout the repository
-      - uses: actions/checkout@v3
+      # Checkout the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v3
         with:
           submodules: true
           lfs: false
-      
-      # Step to set up Node.js
+
+      # Set up Node.js environment
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
-      
-      # Step to install dependencies
+
+      # Install dependencies
       - name: Install Dependencies
-        run: npm install
-      
-      # Step to build and deploy
+        run: |
+          echo "Installing dependencies..."
+          npm install
+          echo "Checking installed dependencies..."
+          npm list jszip
+          npm list file-saver
+
+      # Debug to validate Node.js environment and package installation
+      - name: Debug Environment
+        run: |
+          echo "Node version: $(node -v)"
+          echo "NPM version: $(npm -v)"
+          npm list --depth=0
+          cat package.json
+          cat package-lock.json
+
+      # Build the app
+      - name: Build the App
+        run: |
+          echo "Building the app..."
+          npm run build
+
+      # Deploy to Azure Static Web Apps
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_AGREEABLE_PEBBLE_0B4DB7D1E }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for GitHub integrations (i.e., PR comments)
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: "/" # App source code path
-          api_location: "" # API source code path - optional
-          output_location: "build" # Built app content directory - optional
+          app_location: "/" 
+          api_location: "" 
+          output_location: "build"
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
     name: Close Pull Request Job
     steps:
-      # Step to close the pull request
+      # Close pull request step
       - name: Close Pull Request
         id: closepullrequest
         uses: Azure/static-web-apps-deploy@v1
