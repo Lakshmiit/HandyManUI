@@ -13,11 +13,11 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
   const navigate = useNavigate();
 
   const raiseTicketNotifications = notifications.filter(
-    (item) => item.assignedTo === "Customer Care"
+    (item) => item.internalStatus === "open"
   );
 
   const getQuoteNotifications = notifications.filter(
-    (item) => item.assignedTo !== "Technical Agency"
+    (item) => item.internalStatus === "Pending"
   );
 
   const handleTicketClick = (ticketId) => {
@@ -41,7 +41,7 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
             <div className="notification-header">
               <strong>Ticket ID: </strong>
               <span
-                onClick={() => handleTicketClick(notification.raiseTicketId)}
+                onClick={() => handleTicketClick(notification.id)}
                 style={{
                   color: "blue",
                   cursor: "pointer",
@@ -67,32 +67,32 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
       <div className="notification-list">
         {getQuoteNotifications.map((notification) => (
           <div
-            key={notification.ticketId}
+            key={notification.raiseTicketId}
             className={`notification-item ${
-              notification.ticketId === highlightedItem ? "highlight" : ""
+              notification.raiseTicketId === highlightedItem ? "highlight" : ""
             }`}
           >
             <div className="notification-header">
               <strong>Ticket ID: </strong>
               <span
-                onClick={() => handleQuoteClick(notification.ticketId)}
+                onClick={() => handleQuoteClick(notification.raiseTicketId)}
                 style={{
                   color: "blue",
                   cursor: "pointer",
                   textDecoration: "underline",
                 }}
               >
-                {notification.ticketId}
+                {notification.raiseTicketId}
               </span>
             </div>
             <div>
-              <strong>Customer ID:</strong> {notification.customerId}
+              <strong>Subject:</strong> {notification.subject}
             </div>
             <div>
-              <strong>Technician ID:</strong> {notification.technicianId}
+              <strong>Details:</strong> {notification.details}
             </div>
             <div className="notification-date">
-              <strong>Date:</strong> {new Date(notification.quotedDate).toLocaleString()}
+              <strong>Date:</strong> {new Date(notification.date).toLocaleString()}
             </div>
           </div>
         ))}
@@ -125,13 +125,18 @@ const Notification = () => {
 
   const fetchNotifications = async () => {
     try {
-      const raiseTicketResponse = await fetch(
-        "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications"
-      );
-      const raiseTicketData = await raiseTicketResponse.json();
+      const [raiseTicketResponse, getQuoteResponse] = await Promise.all([
+        fetch(
+          "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications"
+        ),
+        fetch(
+          "https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetails"
+        ),
+      ]);
 
+      const raiseTicketData = await raiseTicketResponse.json();
       const raiseTicketFiltered = raiseTicketData.filter(
-        (item) => item.assignedTo === "Customer Care"
+        (item) => item.internalStatus === "open"
       );
       const raiseTicketCount = raiseTicketFiltered.length;
 
@@ -142,9 +147,6 @@ const Notification = () => {
         setHighlightedTicket(raiseTicketFiltered[0].raiseTicketId);
       }
 
-      const getQuoteResponse = await fetch(
-        "https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetails"
-      );
       const getQuoteData = await getQuoteResponse.json();
       const getQuoteCount = getQuoteData.length;
 
@@ -229,7 +231,28 @@ const Notification = () => {
                 onClick={() => handleTabClick(tab)}
                 style={{ cursor: "pointer" }}
               >
-                {tab}
+                {tab === "Raise Ticket" && (
+                  <>
+                    Raise Ticket{" "}
+                    {newTicketCount > 0 && (
+                      <span className="badge bg-danger">{newTicketCount}</span>
+                    )}
+                  </>
+                )}
+                {tab === "Get Quote" && (
+                  <>
+                    Get Quote{" "}
+                    {newQuoteCount > 0 && (
+                      <span className="badge bg-danger">{newQuoteCount}</span>
+                    )}
+                  </>
+                )}
+                {tab === "Buy Products" && (
+                  <>
+                    Buy Products{" "}
+                    {/* {0 > 0 && <span className="badge bg-danger">{0}</span>} */}
+                  </>
+                )}
               </span>
             ))}
           </div>
@@ -241,8 +264,12 @@ const Notification = () => {
               />
               <div
                 className="view-notifications text-info mx-2"
-                onClick={handleClearTicketNotifications}
+                onClick={() => {
+                  navigate(`/raiseTicketNotification`);
+                  handleClearTicketNotifications();
+                }}
                 style={{ cursor: "pointer" }}
+
               >
                 View All Notifications
               </div>
@@ -256,7 +283,10 @@ const Notification = () => {
               />
               <div
                 className="view-notifications text-info mx-2"
-                onClick={handleClearQuoteNotifications}
+                onClick={() => {
+                  navigate(`/quoteNotification`);
+                  handleClearQuoteNotifications();
+                }} 
                 style={{ cursor: "pointer" }}
               >
                 View All Notifications

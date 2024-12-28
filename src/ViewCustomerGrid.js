@@ -20,7 +20,10 @@ const RaiseTicketNotification = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
   const rowsPerPage = 15;
-
+ 
+  useEffect(() => {
+    console.log(ticketData);
+  }, [ticketData]);
   useEffect(() => {
     setLoading(true);
     const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications`

@@ -31,14 +31,17 @@ const BuyProduct = () => {
   // const [address, setAddress] = useState('');
   const [loading, setLoading] = useState(true);
   // const [zipCode,setzipCode]=useState('');
-  const [customerId, setCustomerId] = useState('');
+  const [customerId] = useState('');
   const [subject, setSubject] = useState('');
   //const [id, setId] = useState(""); 
   // Generate ticket ID in the format VSKPAKP002
   // const ticketIdPrefix = "VSKPAKP";
   // const ticketIdSuffix = String(Math.floor(Math.random() * 999) + 1).padStart(3, "0");
   // const ticketId = `${ticketIdPrefix}${ticketIdSuffix}`;
-
+  
+  useEffect(() =>  {
+    console.log(loading, subject);
+  }, [loading, subject]);
 
  useEffect(() => {
     const fetchticketData = async () => {
@@ -121,7 +124,7 @@ useEffect(() => {
 
   return () => window.removeEventListener('resize', handleResize);
 }, []);
-
+ 
 
 // Handle material input change
 const handleMaterialChange = (index, field, value) => {

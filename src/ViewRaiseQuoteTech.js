@@ -12,10 +12,8 @@ const RaiseQuote = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const {raiseTicketId} = useParams();
-  const { raiseAQuoteId} = useParams();
-  const {technicianId} = useParams();
-  const [ticketData, setTicketData] = useState(null);
-  const [quoteData, setQuoteData] = useState(null);
+  // eslint-disable-next-line
+  const [ticketData, setTicketData] = useState('');
   const [otherCharge, setOtherCharge] = useState('');
   const [fixedOtherCharge, setFixedOtherCharge] = useState('');
   const [serviceCharge, setServiceCharge] = useState('');
@@ -48,27 +46,23 @@ const RaiseQuote = () => {
   const [subject, setSubject] = useState('');
   const [imageUrls, setImageUrls] = useState([]);
   useEffect(() => {
-    console.log(subject, imageUrls);
-  }, [subject, imageUrls]);
+    console.log(subject, imageUrls, status);
+  }, [subject, imageUrls, status ]);
   useEffect(() => {
       const fetchticketData = async () => {
         try {
-          setLoading(true);
-          const [ticketResponse, quoteResponse] = await Promise.all([
-            fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`),
-            fetch(`${raiseAQuoteId}`)
-          ]);
-          if (!ticketResponse.ok) {
+          const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+          if (!response.ok) {
             throw new Error('Failed to fetch ticket data');
           }
-          const data = await ticketResponse.json();
+          const data = await response.json();
           setTicketData(data);
           setState(data.state);
           setDistrict(data.district);
           setzipCode(data.zipCode);
           setAddress(data.address);
           setSubject(data.subject);
-          setId(data.id);
+          setId(data.id); 
           setCustomerId(data.customerId);
           setIsWithMaterial(data.isMaterialType);
           setAssignedTo(data.assignedTo);
@@ -78,7 +72,7 @@ const RaiseQuote = () => {
           setSpecifications(data.materials || [{ material: "", quantity: "" }]);
           //setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: ""}])
           const imageRequests =
-          data.attachments?.map(async (photo) => {
+            data.attachments?.map(async (photo) => {
               const Image = await fetch(
                 `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
               );
@@ -92,27 +86,15 @@ const RaiseQuote = () => {
             }) || [];
           const images = await Promise.all(imageRequests);
           setImageUrls(images);
-
-          if (!quoteResponse.ok) {
-            throw new Error('Filed to fetch quote data');
-          }
-          const Data = await quoteResponse.json(); 
-          setQuoteData(data);
-          setQuote(data.enterQuoteAmount);
-          setDiscount(data.discount);
-          setOtherCharge(data.otherCharge);
-          setServiceCharge(data.serviceCharge);
-          setGST(data.gst);
-          setTotalAmount(data.totalAmount);
         } catch (error) {
-          console.error('Error fetching data:', error);
+          console.error('Error fetching ticket data:', error);
           // window.alert('Failed to load ticket data. Please try again later.');
         } finally {
           setLoading(false);
         }
       };
       fetchticketData();
-    }, [raiseTicketId, raiseAQuoteId]);
+    }, [raiseTicketId]);
 
   // Detect screen size for responsiveness
   useEffect(() => {
@@ -121,7 +103,7 @@ const RaiseQuote = () => {
     window.addEventListener('resize', handleResize);
   
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, []); 
 
   useEffect(() => {
     return () => {
@@ -192,19 +174,29 @@ const RaiseQuote = () => {
     updatedMaterials[index][field] = value;
     setSpecifications(updatedMaterials);
   };
+
+
   // Add new material and quantity fields
   const handleAddMaterial = () => {
     setSpecifications([...specifications, { material: "", quantity: "" }]);
   };
+
+
   // Remove a material and its corresponding quantity
   const handleRemoveMaterial = (index) => {
     setSpecifications(specifications.filter((_, i) => i !== index));
   };
+
   const handleAddComment = (index, field, value) => {
     const updatedComments = [...addrRmarks];
     updatedComments[index][field] = value;
     setAddrRmarks(updatedComments);
   };
+
+//   const addComment = () => {
+//     setCommentsList([...commentsList, { updatedDate: "", commentText: "" }]);
+//  };
+
  // Handle form data changes
  const handleChange = (e) => {
   const { name, value } = e.target;
@@ -242,9 +234,9 @@ if (loading) {
       subject: ticketData.subject,
       details: ticketData.details,
       category: ticketData.category,
-      assignedTo: ticketData.assignedTo,
+      assignedTo,
       id : id,
-      status: status,
+      status: ticketData.status,
       InternalStatus: "Assigned",
       TicketOwner: ticketData.customerId,
       CustomerId: customerId,
@@ -260,17 +252,8 @@ if (loading) {
       })),
       comments: commentsList.map((comment) => ({
           updatedDate: comment.updatedDate,
-          CommentText: comment.CommentText,
+          commentText: comment.CommentText,
       })),
-    };
-    const quotePayload = {
-      raiseAQuoteId: raiseAQuoteId,
-      enterQuoteAmount: quoteData.enterQuoteAmount,
-      discount: quoteData.discount,
-      otherCharge: quoteData.otherCharge,
-      serviceCharge: quoteData.serviceCharge,
-      gst: quoteData.gst,
-      totalAmount: quoteData.totalAmount,
     };
     try {
       
@@ -281,31 +264,15 @@ if (loading) {
         },
         body: JSON.stringify(payload),
       });
-      if (!response.ok)
-        
-        {
+      if (!response.ok) {
         throw new Error('Failed to save ticket data');
       }
       alert('Ticket saved Successfully!');
-
-      const quoteResponse = await fetch(`${raiseAQuoteId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(quotePayload),
-      });
-      if (!quoteResponse.ok) {
-        throw new Error('Failed to Save quote data');
-      }
-      alert('Quote saved Successfully!');
-      alert('Ticket and Quote Updated Successfully!');
     } catch (error) {
-      console.error('Error saving  data:', error);
-      window.alert('Failed to save the data. Please try again later.')
+      console.error('Error saving ticket data:', error);
+      window.alert('Failed to save the ticket data. Please try again later.')
     }
   };
-
 
   const handleSaveTicket = async (e) => {
     e.preventDefault();
@@ -316,7 +283,7 @@ if (loading) {
       raiseAQuoteId: "string",
       CustomerId: customerId,
       ticketId: ticketData.raiseTicketId,
-      TechnicianId: technicianId,
+      technicianId: id,
       enterQuoteAmount: enterQuoteAmount.toString(),
       discount: discount.toString(),
       othercharges: otherCharge.toString(),
@@ -346,29 +313,96 @@ if (loading) {
       window.alert('Failed to save the Technician ticket data. Please try again later.')
     }
   };
-  // useEffect(() => {
-  //   const fetchAmountData = async () => {
-  //     try {
-  //       const response = await fetch(``);
-  //       if (!response.ok) {
-  //         throw new Error('Failed to fetch Data');
-  //       }
-  //       const data = await response.json();
-  //       setQuoteData(data);
-  //       setQuote(data.enterQuoteAmount);
-  //       setDiscount(data.discount);
-  //       setOtherCharge(data.otherCharge);
-  //       setServiceCharge(data.serviceCharge);
-  //       setGST(data.gst);
-  //       setTotalAmount(data.totalAmount);
-  //     } catch (error) {
-  //       console.error('Error fetching data:', error);
-  //     } finally {
-  //       setLoading(false);
+
+
+  // // const handleBothActions = async (e) => {
+  // //   e.preventDefault();
+  
+  // //   try {
+  //     // Call the first API (handleUpdateTicket)
+  //     const updatePayload = {
+  //       RaiseTicketId: ticketData.raiseTicketId,
+  //       date: new Date().toISOString(),
+  //       address: address,
+  //       subject: ticketData.subject,
+  //       details: ticketData.details,
+  //       category: ticketData.category,
+  //       assignedTo,
+  //       id: id,
+  //       status: status,
+  //       InternalStatus: "Assigned",
+  //       TicketOwner: ticketData.customerId,
+  //       CustomerId: customerId,
+  //       state: state,
+  //       isMaterialType: isMaterialType,
+  //       district: district,
+  //       ZipCode: zipCode,
+  //       RequestType: requestType,
+  //       attachments: attachments || [],
+  //       materials: specifications.map((spec) => ({
+  //         material: spec.material,
+  //         quantity: spec.quantity,
+  //       })),
+  //       comments: commentsList.map((comment) => ({
+  //         updatedDate: comment.updatedDate,
+  //         CommentText: comment.CommentText,
+  //       })),
+  //     };
+  
+  //     const updateResponse = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+  //       method: 'PUT',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(updatePayload),
+  //     });
+  
+  //     if (!updateResponse.ok) {
+  //       throw new Error('Failed to save ticket data');
   //     }
-  //   };
-  //   fetchAmountData();
-  // },[raiseAQuoteId]);
+  //     console.log('Ticket updated successfully');
+  
+  //     // Call the second API (handleSaveTicket)
+  //     const savePayload = {
+  //       id: id,
+  //       quotedDate: new Date().toISOString(),
+  //       raiseAQuoteId: "string",
+        
+  //       CustomerId: customerId,
+  //       ticketId: ticketData.raiseTicketId,
+  //       technicianId:"3456",
+  //       quotedAmount: quotedAmount,
+  //       serviceCharges: serviceCharge,
+  //       gst: gst,
+  //       totalQuotedAmount: discount,
+  //       totalAmount: totalAmount,
+  //       addrRmarks: remarks.map((comment) => ({
+  //         requestedDate: comment.requestedDate,
+  //         remarks: comment.remarks,
+  //       })),
+  //     };
+  
+  //     const saveResponse = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/CreateRaiseAQuote`, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(savePayload),
+  //     });
+  
+  //     if (!saveResponse.ok) {
+  //       throw new Error('Failed to save Technician ticket data');
+  //     }
+  //     console.log('Technician ticket saved successfully');
+  
+  //     // If both API calls are successful
+  //     alert('Both actions completed successfully!');
+  //   } catch (error) {
+  //     console.error('Error in performing actions:', error);
+  //     alert('Failed to complete the actions. Please try again later.');
+  //   }
+  // };
+  
   const handleBothActions = (e) => {
     e.preventDefault();
     handleUpdateTicket(e);
@@ -414,7 +448,7 @@ if (loading) {
           <label>Customer Ticket ID</label>
           <Form.Control
           type="text"
-          name="TicketID"
+          name="TicketID" 
           value={ticketData.raiseTicketId}
           onChange={handleChange}
           placeholder="Ticket Number"

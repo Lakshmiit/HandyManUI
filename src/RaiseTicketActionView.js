@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Form, Row, Col } from 'react-bootstrap'; 
+import { Button, Form, Row, Col } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import AdminSidebar from './AdminSidebar';
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
 // import { FaEdit} from 'react-icons/fa'; // Correct icon import
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import SaveAsIcon from '@mui/icons-material/SaveAs';
 // import ForwardIcon from '@mui/icons-material/Forward';
-// import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { Link, useParams } from 'react-router-dom';
 import './App.css';
-
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
 const RaiseActionView = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -55,26 +57,24 @@ const RaiseActionView = () => {
         setAssignedTo(data.assignedTo);
         setStatus(data.status);
         setRequestType(data.requestType || 'Without Material');
-        setAttachments(data.attachments);
+        // setAttachments(data.attachments || []);
         setSpecifications(data.materials || [{ material: "", quantity: "" }]);
 
         //setSpecifications(productData.specifications || [{ label: "", value: "" }]);
         setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: ""}])
-        // const imageRequests =
-        //   data.attachments?.map(async (photo) => {
-        //     const Image = await fetch(
-        //       `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
-        //     );
-        //     if (!Image.ok) throw new Error('Failed to fetch image');
-        //     const blob = await Image.blob();
-        //     const imageUrl = URL.createObjectURL(blob);
-        //     return {
-        //       src: photo,
-        //       imageUrl,
-        //     };
-        //   }) || [];
-        // const images = await Promise.all(imageRequests);
-        // setImageUrls(images);
+        const imageRequests =
+          data.attachments?.map((photo) => fetch(
+              `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+            )
+            .then((res) => res.json())
+              .then((data) => ({
+              
+                src: photo,
+                imageData: data.imageData,
+              }))
+          ) || [];
+        const images = await Promise.all(imageRequests);
+        setAttachments(images);
       } catch (error) {
         console.error('Error fetching ticket data:', error);
         // window.alert('Failed to load ticket data. Please try again later.');
@@ -83,7 +83,7 @@ const RaiseActionView = () => {
       }
     };
     fetchticketData();
-  }, [raiseTicketId]);
+  }, [raiseTicketId]); 
 
 
   // useEffect(() => {
@@ -108,7 +108,35 @@ const RaiseActionView = () => {
   const handleRemoveMaterial = (index) => {
     setSpecifications(specifications.filter((_, i) => i !== index));
   };
-
+  const handleDownloadAllAttachments = async () => {
+    if (attachments.length === 0) {
+      alert("No files to download");
+      return;
+    }
+  
+    const zip = new JSZip();
+    const folder = zip.folder("TicketAttachments"); // Optional folder name inside ZIP
+  
+    // Add files to ZIP
+    for (const attachment of attachments) {
+      try {
+        const response = await fetch(`data:image/jpeg;base64,${attachment.imageData}`);
+        const blob = await response.blob();
+        folder.file(attachment.src.split("/").pop(), blob); // Add file to the ZIP folder
+      } catch (error) {
+        console.error("Error fetching attachment:", error);
+      }
+    }
+  
+    // Generate ZIP and download
+    try {
+      const content = await zip.generateAsync({ type: "blob" });
+      saveAs(content, "TicketAttachments.zip");
+    } catch (error) {
+      console.error("Error generating ZIP:", error);
+      alert("Failed to download attachments. Please try again.");
+    }
+  };
   const handleAddComment = (index, field, value) => {
     const updatedComments = [...commentsList];
     updatedComments[index][field] = value;
@@ -173,7 +201,7 @@ const RaiseActionView = () => {
       district: district,
       ZipCode: zipCode,
       RequestType: requestType,
-      attachments:attachments || [],
+      attachments:attachments.map((file) => file.src),
       materials: specifications.map((spec) => ({
           material: spec.material,
           quantity: spec.quantity,
@@ -190,7 +218,7 @@ const RaiseActionView = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(payload), 
       });
       if (!response.ok) {
         throw new Error('Failed to save ticket data');
@@ -201,29 +229,6 @@ const RaiseActionView = () => {
       window.alert('Failed to save the ticket data. Please try again later.')
     }
   };
-
-
-  // const handleForwardTicket = async () => {
-  //   try {
-  //     const response = await fetch(``, {
-  //       method: 'PUT',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify({
-  //         ...ticketData,
-  //         assignedTo: 'Technician',
-  //         status: 'Assigned',
-  //       }),
-  //     });
-  //     if (!response.ok) {
-  //       throw new Error('Failed to Forward the ticket');
-  //     }
-  //     alert('Ticket forwared to Technician!');
-  //   } catch (error) {
-  //     console.error('Error forwarding the ticket:', error);
-  //   }
-  // };
 
   return (
     <div className="d-flex flex-row justify-content-start align-items-start">
@@ -354,34 +359,73 @@ const RaiseActionView = () => {
           </Col>
         </Row>
 
-        {/* Attachments
+        {/*Attachments*/}
+        
         <div className="form-group mt-4">
-          <label className="text-danger">View/Download Attachments</label>
-          <div className="d-flex flex-column">
-            {imageUrls.length > 0 ? (
-              imageUrls.map((image, index) => (
-                <div key={index} className="d-flex flex-column align-items-center mb-3">
-                  <span>{image.src}</span> 
-                    <img
-                      src={image.imageUrl}
-                      alt={image.src}
-                      className="img-fluid"
-                      style={{ maxWidth: '300px' }}
-                    />
-                     <button
-                        className="btn btn-warning text-white"
-                        onClick={() => document.getElementById('fileInput').click()}
-                      >
-                        <FileDownloadIcon /> View/Download
-                      </button>
-                </div>
-              ))
-            ) : (
-              <p className="text-muted">No attachments available.</p>
-            )}
-          </div>
-        </div> */}
+  <label>Photos</label>
 
+  <Button
+    className="btn btn-primary my-2"
+    onClick={handleDownloadAllAttachments}
+  >
+    Download All Attachments
+  </Button>
+
+  <div
+    id="ticketCarousel"
+    className="carousel slide mb-4 rounded"
+    data-bs-ride="carousel"
+  >
+    <div className="carousel-indicators">
+      {attachments.map((_, index) => (
+        <button
+          key={index}
+          type="button"
+          data-bs-target="#ticketCarousel"
+          data-bs-slide-to={index}
+          className={index === 0 ? "active" : ""}
+          aria-current={index === 0 ? "true" : "false"}
+          aria-label={`Slide ${index + 1}`}
+        ></button>
+      ))}
+    </div>
+
+    <div className="carousel-inner">
+      {attachments.map((img, index) => (
+        <div
+          className={`carousel-item ${index === 0 ? "active" : ""}`}
+          key={img.src}
+        >
+          <img
+            src={`data:image/jpeg;base64,${img.imageData}`}
+            className="d-block w-50 rounded"
+            style={{ maxHeight: "200px", objectFit: "cover" }}
+            alt={`Slide ${index + 1}`}
+          />
+        </div>
+      ))}
+    </div>
+
+    <button
+      className="carousel-control-prev"
+      type="button"
+      data-bs-target="#ticketCarousel"
+      data-bs-slide="prev"
+    >
+      <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span className="visually-hidden">Previous</span>
+    </button>
+    <button
+      className="carousel-control-next"
+      type="button"
+      data-bs-target="#ticketCarousel"
+      data-bs-slide="next"
+    >
+      <span className="carousel-control-next-icon" aria-hidden="true"></span>
+      <span className="visually-hidden">Next</span>
+    </button>
+  </div>
+</div>
         
         {/* Assigned To */}
         <Row>
@@ -391,7 +435,7 @@ const RaiseActionView = () => {
               <Form.Control
                 as="select"
                 name="assignedTo"
-                value={ticketData.assignedTo}
+                value={assignedTo}
                 onChange={(e) => setAssignedTo(e.target.value)}
                 required
               >

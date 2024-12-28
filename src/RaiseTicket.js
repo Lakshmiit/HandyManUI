@@ -30,6 +30,9 @@ const AddressManager = () => {
   const [pincode, setPincode] = useState('');
   const [assignedTo, setAssignedTo] = useState('');
   const [requestType, setRequestType] = useState('');
+  const [loading, setLoading] = useState(false); 
+  const [showAlert, setShowAlert] = useState(false);
+  const [ticketPhotos, setTicketPhotos] = useState([]);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [specifications] = useState([{ material : "", Quantity : "" }]);
   const [showModal, setShowModal] = useState(false);
@@ -146,18 +149,74 @@ useEffect(() => {
   };
 
   // Handle file upload
-  const handleFileUpload = (e) => {
+  const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
-    setUploadedFiles((prevFiles) => [...prevFiles, ...files]);
+    if (files.length + ticketPhotos.length > 5) {
+      alert("You can upload up to 5 files.");
+      return;
+    }
+    setTicketPhotos([...ticketPhotos, ...files]);
+    setShowAlert(true);
   };
 
-  // Handle file deletion
-  const handleFileDelete = (index) => {
-    const newUploadedFiles = [...uploadedFiles];
-    newUploadedFiles.splice(index, 1);
-    setUploadedFiles(newUploadedFiles);
+
+  const handleUploadFiles = async () => {
+    setLoading(true);
+    setShowAlert(false);
+    const uploadedFilesList=[];
+    for (let i = 0; i < ticketPhotos.length; i++) {
+      const file = ticketPhotos[i];
+      const fileName = file.name;
+      const mimetype = file.type;
+      const byteArray = await getFileByteArray(file);
+      const response = await uploadFile(byteArray, fileName, mimetype, file);
+      if (response) {
+        uploadedFilesList.push({
+          src: response,
+          alt: fileName
+        }); 
+        alert("Image Uploaded Sucessfully");
+      } else {
+        alert("Failed Upload Image");
+      }
+    }
+    setUploadedFiles(uploadedFilesList);
+    setLoading(false);
   };
 
+  // Convert the file to a byte array
+  const getFileByteArray = (file) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const byteArray = new Uint8Array(reader.result);
+        resolve(byteArray);
+      };
+      reader.readAsArrayBuffer(file);
+    });
+  };
+
+  const uploadFile = async (byteArray, fileName, mimeType, file) => {
+    try {
+      const formData = new FormData();
+      formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
+      formData.append('fileName', fileName);
+
+      const response = await fetch('https://handymanapiv2.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
+        method: 'POST',
+        headers: {
+          'Accept': 'text/plain',
+        },
+        body: formData,
+      });
+
+      const responseData = await response.text();
+      return responseData || ''; 
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      return '';
+    }
+  };
   const handleSaveTicket = async (e) => {
     e.preventDefault();
   
@@ -199,7 +258,7 @@ useEffect(() => {
       SupportTicketId: uuidv4(),
       id: uuidv4(),// Unique identifier for the API call
       customerId: customerId, // Replace with actual customer ID logic
-      attachments: uploadedFiles.map((file) => file.name), 
+      attachments: uploadedFiles.map((file) => file.src), 
       comments: commentsList.map((comment) => ({
         UpdatedDate : comment.updatedDate,
         CommentText: comment.commentText,
@@ -473,30 +532,34 @@ useEffect(() => {
 
         {/* File Upload */}
         <div className="form-group mt-4">
-          <label className="text-danger">Upload your Query Photos or Videos</label>
-          <div className="d-flex flex-column align-items-center">
-            <button
-            type="button"
-              className="btn btn-warning text-dark"
-              onClick={() => document.getElementById('fileInput').click()}
-            >
-              Upload
-            </button>
-
-
-            <input
-              type="file"
-              id="fileInput"
-              accept="image/*,video/*"
-              multiple
-              onChange={handleFileUpload}
-              className="d-none"
-              required
-            />
+          <label className="text-danger m-2">Upload your Query Photos or Videos <span className="req_star">*</span></label>
+          <input
+                type="file"
+                className="form-control"
+                multiple
+                onChange={handleFileChange}
+              />
+              {showAlert && (
+                <div className="alert alert-danger  mt-2">
+                  Please click the <strong>Upload Files</strong> button to upload the selected images.
+                </div>
+              )}
+              <div className="mt-2">
+                {ticketPhotos.map((file, index) => (
+                <p key={index}>{file.name}</p>
+                ))}
+              </div>
+              <button
+                type="button"
+                className="btn btn-primary mt-2"
+                onClick={handleUploadFiles}
+                disabled={loading || ticketPhotos.length === 0}
+              >
+                {loading ? 'Uploading...' : 'Upload Files'}
+              </button>
           </div>
-        </div>
 
-        {/* File Preview */}
+        {/* File Preview
         <div className="preview-container mt-3">
           {uploadedFiles.length > 0 &&
             uploadedFiles.map((file, index) => {
@@ -512,7 +575,7 @@ useEffect(() => {
                     Delete
                   </button>
                   <div className="mt-2">
-                    {/* Preview the file (image or video) */}
+                     Preview the file (image or video) 
                     {file.type.startsWith('image') && (
                       <img
                         src={fileUrl}
@@ -533,7 +596,7 @@ useEffect(() => {
                 </div>
               );
             })}
-        </div>
+        </div> */}
 
         <div className="radio">
       <label className="m-1">
