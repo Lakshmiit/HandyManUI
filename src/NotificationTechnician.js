@@ -11,9 +11,10 @@ import "./App.css";
 
 const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) => {
   const navigate = useNavigate();
+  const {userType} = useParams();
 
   const handleQuoteClick = (ticketId) => {
-    navigate(`/viewRaiseQuote/${ticketId}`, { state: { ticketId } });
+    navigate(`/viewRaiseQuote/${ticketId}/${userType}`, { state: { ticketId } });
   };
 
   return (
@@ -28,7 +29,7 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
           <div className="notification-header">
             <strong>Ticket ID: </strong>
             <span
-              onClick={() => handleQuoteClick(notification.raiseTicketId)}
+              onClick={() => handleQuoteClick(notification.id)}
               style={{
                 color: "blue",
                 cursor: "pointer",
@@ -181,7 +182,7 @@ const Notification = () => {
                 <div
                   className="view-notifications text-info mx-2"
                   onClick={() => {
-                    navigate(`/technicianQuoteNotification/${userType}`);
+                    navigate(`/technicianQuoteNotification/${userType}/${district}/${category}`);
                     handleClearQuoteNotifications();
                   }}
                   style={{ cursor: "pointer" }}

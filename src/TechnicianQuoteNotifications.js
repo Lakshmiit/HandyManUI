@@ -6,9 +6,9 @@ import { Link, useParams } from "react-router-dom";
 import { FaTrash, FaEye } from "react-icons/fa";
 import {
   Dashboard as MoreVertIcon,
-  FileDownload as FileDownloadIcon,
   Forward as ForwardIcon,
 } from "@mui/icons-material";
+import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import "./App.css";
 
 const RaiseTicketNotification = () => {
@@ -24,13 +24,15 @@ const RaiseTicketNotification = () => {
   const [districts, setDistricts] = useState([]);
   const [pinCodes, setPinCodes] = useState([]);
   const [assigned, setAssigned] = useState([]);
+   const { district, category } = useParams();
   const rowsPerPage = 15;
 useEffect(() => {
     console.log(ticketData, states,districts,pinCodes,assigned);
   }, [ticketData, states,districts,pinCodes,assigned]);
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications`;
+    // const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications`;
+    const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByDistrict?district=${district}&category=${category}`;
     const photoUrl = `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
 
     axios
@@ -68,7 +70,7 @@ useEffect(() => {
       .finally(() => {
         setLoading(false);
       });
-  }, [setAssigned, setDistricts, setPinCodes, setStates, setTicketData]);
+  }, [setAssigned, setDistricts, setPinCodes, setStates, setTicketData, district, category]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -151,7 +153,6 @@ useEffect(() => {
               <th>Ticket ID</th>
               <th>Category</th>
               <th>Description</th>
-              <th>View/Download Attachment</th>
               <th>Status</th>
               <th>Assigned To</th>
               <th>Actions</th>
@@ -164,28 +165,6 @@ useEffect(() => {
                 <td>{ticket.raiseTicketId}</td>
                 <td>{ticket.category}</td>
                 <td>{ticket.details}</td>
-                <td>
-                  {ticket.attachments.length > 0 ? (
-                    ticket.attachments.map((attachment, i) => (
-                      <div key={i} className="d-flex align-items-center">
-                        <a
-                          href={attachment.fileUrl}
-                          download={attachment.fileName}
-                          className="text-primary text-decoration-underline me-2"
-                          style={{ cursor: "pointer", display: "flex", alignItems: "center" }}
-                        >
-                          <FileDownloadIcon
-                            className="me-2"
-                            style={{ cursor: "pointer" }}
-                          />
-                          <span>{attachment.fileName}</span>
-                        </a>
-                      </div>
-                    ))
-                  ) : (
-                    <span>No Attachments</span>
-                  )}
-                </td>
                 <td>{ticket.status}</td>
                 <td>{ticket.assignedTo}</td>
                 <td className="d-flex align-items-center">
@@ -209,6 +188,12 @@ useEffect(() => {
             ))}
           </tbody>
         </table>
+        <div className="mt-4 text-end">
+          <Link to={`/notificationTechnician/technician/${district}/${category}`} className="btn btn-warning text-white mx-2" title='Back'>
+            <ArrowLeftIcon />
+          </Link>
+        </div>
+
         {/* Pagination */}
         <div className="d-flex justify-content-center mt-3">
           <nav aria-label="Page navigation">

@@ -6,14 +6,12 @@ import { Link } from "react-router-dom";
 import { FaTrash, FaEye } from "react-icons/fa";
 import {
   Dashboard as MoreVertIcon,
-  FileDownload as FileDownloadIcon,
   Forward as ForwardIcon,
 } from "@mui/icons-material";
+import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import "./App.css";
 
 const RaiseTicketNotification = () => {
-  // const navigate = useNavigate();
-  //const [status, setStatus] = useState("");
   const [assignedTo, setAssignedTo] = useState("");
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -58,7 +56,7 @@ const RaiseTicketNotification = () => {
       })
       .catch(error => {
         console.error("Error fetching ticket data:", error);
-      })
+      }) 
       .finally(() => {
         setLoading(false);
       });
@@ -216,7 +214,7 @@ const RaiseTicketNotification = () => {
               <th>Ticket ID</th>
               <th>Category</th>
               <th>Description</th>
-              <th>View/Download Attachment</th>
+              {/* <th>View/Download Attachment</th> */}
               <th>Status</th>
               <th>Assigned To</th>
               <th>Actions</th>
@@ -229,7 +227,7 @@ const RaiseTicketNotification = () => {
                 <td>{ticket.raiseTicketId}</td>
                 <td>{ticket.category}</td>
                 <td>{ticket.details}</td>
-                <td>
+                {/* <td>
                   {ticket.attachments.length > 0 ? (
                     ticket.attachments.map((attachment, i) => (
                       <div key={i} className="d-flex align-items-center">
@@ -247,7 +245,7 @@ const RaiseTicketNotification = () => {
                   ) : (
                     <span>No Attachments</span>
                   )}
-                </td>
+                </td> */}
                 <td>{ticket.status}</td>
                 <td>{ticket.assignedTo}</td>
                 <td className="d-flex align-items-center">
@@ -271,6 +269,11 @@ const RaiseTicketNotification = () => {
             ))}
           </tbody>
         </table>
+        <div className="mt-4 text-end">
+          <Link to='/adminNotifications' className="btn btn-warning text-white mx-2" title='Back'>
+            <ArrowLeftIcon />
+          </Link>
+        </div>
         {/* Pagination */}
         <div className="d-flex justify-content-center mt-3">
           <nav aria-label="Page navigation">

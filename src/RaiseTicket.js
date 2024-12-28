@@ -174,8 +174,7 @@ useEffect(() => {
         uploadedFilesList.push({
           src: response,
           alt: fileName
-        }); 
-        alert("Image Uploaded Sucessfully");
+        });
       } else {
         alert("Failed Upload Image");
       }

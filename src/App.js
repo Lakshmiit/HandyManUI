@@ -60,8 +60,8 @@ function App() {
             <Route path="/adminRaiseQuote" element={<AdminRaiseaQuote />} />
             <Route path="/raiseTicketNotification" element={<RaiseTicketNotifications />} />
             <Route path="/addTechnician/:userType" element={<AddTechnician />} />
-            <Route path="/technicianQuoteNotification/:userType" element={<TechnicianQuoteNotifications />} />
-            <Route path="/viewRaiseQuote/:technicianId/:userType" element={<ViewRaiseQuoteTech />} />
+            <Route path="/technicianQuoteNotification/:userType/:district/:category" element={<TechnicianQuoteNotifications />} />
+            <Route path="/viewRaiseQuote/:raiseTicketId/:userType" element={<ViewRaiseQuoteTech />} />
             <Route path="/raiseTicketQuotation/:raiseTicketId" element={<RaiseTicketQuotation />} />
             <Route path="/quoteNotification" element={<QuoteNotifications />} />
             <Route path="/notificationTechnician/:userType/:district/:category" element={<NotificationTechnician />} />

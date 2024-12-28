@@ -4,10 +4,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import AdminSidebar from './AdminSidebar';
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
-// import { FaEdit} from 'react-icons/fa'; // Correct icon import
+import { FaEdit} from 'react-icons/fa'; // Correct icon import
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import SaveAsIcon from '@mui/icons-material/SaveAs';
-// import ForwardIcon from '@mui/icons-material/Forward';
+import ForwardIcon from '@mui/icons-material/Forward';
 import { Link, useParams } from 'react-router-dom';
 import './App.css';
 import JSZip from "jszip";
@@ -23,8 +23,6 @@ const RaiseActionView = () => {
   const [isMaterialType, setIsWithMaterial] = useState('');
   const [ticketData, setTicketData] = useState(null); 
   const [requestType, setRequestType] = useState('Without Material');
-  // const [uploadedFiles, setUploadedFiles] = useState([]);
-  // const [imageUrls, setImageUrls] = useState([]);
   const [specifications, setSpecifications] = useState([{ material: "", quantity: "" }]); 
   const [commentsList, setCommentsList] = useState([{updatedDate: new Date(), commentText: ""}]); 
   const [loading, setLoading] = useState(true);
@@ -33,6 +31,7 @@ const RaiseActionView = () => {
   const [zipCode,setzipCode]=useState('');
   const [status, setStatus] = useState("");
   const [assignedTo, setAssignedTo] = useState('');
+  const [newPhotoCount , setPhotoCount] = useState(0);
   
   useEffect(() => {
     console.log(ticketData, status);
@@ -75,6 +74,7 @@ const RaiseActionView = () => {
           ) || [];
         const images = await Promise.all(imageRequests);
         setAttachments(images);
+        setPhotoCount(images.length);
       } catch (error) {
         console.error('Error fetching ticket data:', error);
         // window.alert('Failed to load ticket data. Please try again later.');
@@ -84,13 +84,6 @@ const RaiseActionView = () => {
     };
     fetchticketData();
   }, [raiseTicketId]); 
-
-
-  // useEffect(() => {
-  //   return () => {
-  //     uploadedFiles.forEach((file) => URL.revokeObjectURL(file));
-  //   };
-  // }, [uploadedFiles]);
 
   // Handle material input change
   const handleMaterialChange = (index, field, value) => {
@@ -165,21 +158,6 @@ const RaiseActionView = () => {
     return <div>Loading...</div>;
   }
 
-  // const handleFileUpload = (event) => {
-  //   const files = event.target.files; 
-  //   setTicketData((prevData) => ({
-  //     ...prevData,
-  //     attachments: files, 
-  //   }));
-  // };
-
-  // // Handle file deletion
-  // const handleFileDelete = (index) => {
-  //   const newUploadedFiles = [...uploadedFiles];
-  //   newUploadedFiles.splice(index, 1);
-  //   setUploadedFiles(newUploadedFiles);
-  // };
-
   const handleSaveTicket = async (e) => {
     e.preventDefault();
     
@@ -190,7 +168,7 @@ const RaiseActionView = () => {
       subject: ticketData.subject,
       details: ticketData.details,
       category: ticketData.category,
-      assignedTo,
+      assignedTo: ticketData.assignedTo,
       id : id,
       status: ticketData.status,
       InternalStatus: "Assigned",
@@ -227,6 +205,21 @@ const RaiseActionView = () => {
     } catch (error) {
       console.error('Error saving ticket data:', error);
       window.alert('Failed to save the ticket data. Please try again later.')
+    }
+  }; 
+
+  const handleForwardTicket = async () => {
+    try {
+      const updatedTicket = {
+        ...ticketData,
+        status: "Assigned",
+        assignedTo: "Technical Agency",
+      };
+      setTicketData(updatedTicket);
+      alert("Ticket Forwarded successfully to Technician");
+    } catch (error) {
+      console.error("Error Forwarding ticket:", error);
+      alert("Failed to forward the ticket. Please try again.")
     }
   };
 
@@ -362,13 +355,15 @@ const RaiseActionView = () => {
         {/*Attachments*/}
         
         <div className="form-group mt-4">
-  <label>Photos</label>
+  <label>Customer Uploaded Photos  {" "}
+    {newPhotoCount >0 && (<span className="badge bg-danger" style={{ fontSize: "18px" }}>{newPhotoCount}</span>)}
+  </label>
 
   <Button
-    className="btn btn-primary my-2"
+    className="btn btn-primary m-3"
     onClick={handleDownloadAllAttachments}
   >
-    Download All Attachments
+     Download All Attachments
   </Button>
 
   <div
@@ -435,7 +430,7 @@ const RaiseActionView = () => {
               <Form.Control
                 as="select"
                 name="assignedTo"
-                value={assignedTo}
+                value={ticketData.assignedTo}
                 onChange={(e) => setAssignedTo(e.target.value)}
                 required
               >
@@ -516,13 +511,6 @@ const RaiseActionView = () => {
           <label>Add Comment</label>
           {commentsList.map((comment, index) => (
             <div className="d-flex gap-3 mb-2" key={index}>
-              {/* <input
-                type="date"
-                className="form-control"
-                value={comment.updatedDate.toISOString().split('T')[0]}
-                placeholder="Enter Date"
-                onChange={(e) => handleAddComment(index, "updatedDate", e.target.value)}
-              /> */}
               <input
                 type="text"
                 className="form-control"
@@ -533,28 +521,21 @@ const RaiseActionView = () => {
             </div>
           ))}
         </div>
-        {/* <Row>
-         <Col md={12} className="mt-3">
-            {commentsList.map((comment, index) => (
-             <p key={index}>
-              <strong>{comment.updatedDate}</strong> {comment.commentText}
-             </p>
-            ))}
-        </Col> 
-      </Row> */}
-
+      
         {/* Save Button */}
         <div className="mt-4 text-end">
           <Link to='/raiseTicketNotification' className="btn btn-warning text-white mx-2" title='Back'>
             <ArrowLeftIcon />
           </Link>
-          {/* <Link to='/raiseTicketActionView/{ticketId}' className="btn btn-warning text-white mx-2" title='Edit'> 
+          <Link to='/raiseTicketActionView/{ticketId}' className="btn btn-warning text-white mx-2" title='Edit'> 
           <FaEdit />
           </Link>
-          <Button className="btn btn-warning text-white mx-2" title='Forward'>
+          <Button onClick={handleForwardTicket} className="btn btn-warning text-white mx-2" title='Forward'
+          disabled={status === "Assigned" && assignedTo === "Technical Agency"}>
             <ForwardIcon />
-          </Button> */}
-          <Button onClick={handleSaveTicket} type="submit" className="btn btn-warning text-white mx-2" title="Save">
+          </Button>
+          <Button onClick={handleSaveTicket} type="submit" className="btn btn-warning text-white mx-2" title="Save" 
+          disabled={status === "Assigned" && assignedTo === "Technical Agency"}>
             <SaveAsIcon />
           </Button>
         </div>
