@@ -28,25 +28,20 @@ jobs:
         with:
           node-version: 18
 
-      # Install dependencies
+      # Install Dependencies
       - name: Install Dependencies
         run: |
           echo "Installing dependencies..."
-          npm install
-          echo "Checking installed dependencies..."
-          npm list jszip
-          npm list file-saver
+          npm install jszip file-saver --save
+          echo "Dependencies installed successfully."
 
-      # Debug to validate Node.js environment and package installation
-      - name: Debug Environment
+      # Debug Installed Packages
+      - name: Debug Installed Packages
         run: |
-          echo "Node version: $(node -v)"
-          echo "NPM version: $(npm -v)"
-          npm list --depth=0
-          cat package.json
-          cat package-lock.json
+          echo "Listing installed dependencies..."
+          npm list
 
-      # Build the app
+      # Build the App
       - name: Build the App
         run: |
           echo "Building the app..."
