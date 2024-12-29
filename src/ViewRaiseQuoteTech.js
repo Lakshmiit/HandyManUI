@@ -933,7 +933,7 @@ const RaiseActionView = () => {
           <FaEdit />
           </Link> */}
           <Button onClick={handleBothActions}className="btn btn-warning text-white mx-2" title='Forward'
-           disabled={internalStatus === "Assigned" }
+           disabled={internalStatus === "Pending" }
            >
             <ForwardIcon />
           </Button>
