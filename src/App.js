@@ -64,7 +64,7 @@ function App() {
             <Route path="/viewRaiseQuote/:raiseTicketId/:userType" element={<ViewRaiseQuoteTech />} />
             <Route path="/raiseTicketQuotation/:raiseTicketId" element={<RaiseTicketQuotation />} />
             <Route path="/quoteNotification" element={<QuoteNotifications />} />
-            <Route path="/notificationTechnician/:userType/:district/:category" element={<NotificationTechnician />} />
+            <Route path="/notificationTechnician/:district/:category/:userType" element={<NotificationTechnician />} />
             <Route path="/customerNotification/:userType" element={<CustomerNotification />} />
             <Route path="/viewCustomer/:userType" element={<ViewCustomerGrid />} />
             <Route path="/ShortAdminNotifications" element={<ShortAdminNotifications />} />
