@@ -19,13 +19,13 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
   const getQuoteNotifications = notifications.filter(
     (item) => item.internalStatus === "Pending"
   );
-
+    
   const handleTicketClick = (ticketId) => {
     navigate(`/raiseTicketActionView/${ticketId}`, { state: { ticketId } });
   };
 
   const handleQuoteClick = (raiseTicketId) => {
-    navigate(`/quoteNotification`, { state: { raiseTicketId } });
+    navigate(`/raiseTicketQuotation/${raiseTicketId}`, { state: { raiseTicketId } });
   };
 
   return (
@@ -75,7 +75,7 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
             <div className="notification-header">
               <strong>Ticket ID: </strong>
               <span
-                onClick={() => handleQuoteClick(notification.raiseTicketId)}
+                onClick={() => handleQuoteClick(notification.id)}
                 style={{
                   color: "blue",
                   cursor: "pointer",
@@ -130,7 +130,7 @@ const Notification = () => {
           "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications"
         ),
         fetch(
-          "https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetails"
+          "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications"
         ),
       ]);
 
@@ -148,7 +148,10 @@ const Notification = () => {
       }
 
       const getQuoteData = await getQuoteResponse.json();
-      const getQuoteCount = getQuoteData.length;
+      const quoteTicketFiltered = getQuoteData.filter(
+        (item) => item.internalStatus === "Pending"
+      );
+      const getQuoteCount = quoteTicketFiltered.length;
 
       setQuoteNotifications(getQuoteData);
       setNewQuoteCount(getQuoteCount);

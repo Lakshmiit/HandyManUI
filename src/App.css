@@ -1148,7 +1148,7 @@ textarea {
 
 .tabs {
   display: flex;
-  justify-content: space-around;
+  justify-content: start;
   margin: 10px;
 }
 

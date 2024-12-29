@@ -3,10 +3,10 @@ import { Button } from "react-bootstrap";
 import axios from "axios";
 import Sidebar from "./Sidebar";
 import { Link, useParams } from "react-router-dom";
-import { FaTrash, FaEye } from "react-icons/fa";
+import { FaEye } from "react-icons/fa";
 import {
   Dashboard as MoreVertIcon,
-  Forward as ForwardIcon,
+  // Forward as ForwardIcon,
 } from "@mui/icons-material";
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import "./App.css";
@@ -14,6 +14,7 @@ import "./App.css";
 const RaiseTicketNotification = () => {
   const { userType } = useParams();
   const { selectedUserType } = useParams();
+  const {technicianId} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [ticketData, setTicketData] = useState([]);
@@ -33,19 +34,11 @@ useEffect(() => {
     setLoading(true);
     // const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications`;
     const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByDistrict?district=${district}&category=${category}`;
-    const photoUrl = `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
-
     axios
       .get(url)
       .then((response) => {
         const tickets = response.data.map((ticket) => ({
           ...ticket,
-          attachments: ticket.attachments
-            ? ticket.attachments.map((fileName) => ({
-                fileName: fileName,
-                fileUrl: `${photoUrl}${fileName}`,
-              }))
-            : [],
         }));
         setTicketData(tickets);
         setFilteredData(tickets);
@@ -80,26 +73,26 @@ useEffect(() => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleDelete = (ticketId) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this ticket?"
-    );
-    if (confirmDelete) {
-      axios
-        .delete(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${ticketId}`)
-        .then(() => {
-          setTicketData((prevData) =>
-            prevData.filter((ticket) => ticket.id !== ticketId)
-          );
-          setFilteredData((prevData) =>
-            prevData.filter((ticket) => ticket.id !== ticketId)
-          );
-        })
-        .catch((error) => {
-          console.error("Error deleting ticket:", error);
-        });
-    }
-  };
+  // const handleDelete = (ticketId) => {
+  //   const confirmDelete = window.confirm(
+  //     "Are you sure you want to delete this ticket?"
+  //   );
+  //   if (confirmDelete) {
+  //     axios
+  //       .delete(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${ticketId}`)
+  //       .then(() => {
+  //         setTicketData((prevData) =>
+  //           prevData.filter((ticket) => ticket.id !== ticketId)
+  //         );
+  //         setFilteredData((prevData) =>
+  //           prevData.filter((ticket) => ticket.id !== ticketId)
+  //         );
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error deleting ticket:", error);
+  //       });
+  //   }
+  // };
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -169,12 +162,12 @@ useEffect(() => {
                 <td>{ticket.assignedTo}</td>
                 <td className="d-flex align-items-center">
                   <Link
-                    to={`/viewRaiseQuote/${ticket.id}/${userType}`}
+                    to={`/viewRaiseQuote/${ticket.id}/${userType}/${technicianId}`}
                     className="btn btn-info mx-2"
                   >
                     <FaEye />
                   </Link>
-                  <Link
+                  {/* <Link
                     onClick={() => handleDelete(ticket.id)}
                     className="btn btn-danger mx-2"
                   >
@@ -182,14 +175,14 @@ useEffect(() => {
                   </Link>
                   <Link to="#" className="btn btn-success mx-2">
                     <ForwardIcon />
-                  </Link>
+                  </Link> */}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
         <div className="mt-4 text-end">
-          <Link to={`/notificationTechnician/technician/${district}/${category}`} className="btn btn-warning text-white mx-2" title='Back'>
+          <Link to={`/notificationTechnician/technician/${district}/${category}/${technicianId}`} className="btn btn-warning text-white mx-2" title='Back'>
             <ArrowLeftIcon />
           </Link>
         </div>

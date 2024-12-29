@@ -9,6 +9,8 @@ import ForwardIcon from '@mui/icons-material/Forward';
 import SaveAsIcon from '@mui/icons-material/SaveAs';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import {Link, useNavigate, useParams} from 'react-router-dom';
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
 
 const RaiseQuotation = () => {
   const Navigate = useNavigate();
@@ -19,7 +21,6 @@ const RaiseQuotation = () => {
   const [ticketData, setTicketData] = useState('');
   const [subject, setSubject] = useState('');
   const [loading, setLoading] = useState(true);
-  const [imageUrls, setImageUrls] = useState([]);
   const [attachments, setAttachments] = useState([]);
   const [specifications, setSpecifications] = useState([{ material: "", quantity: "" }]);
   const [requestType, setRequestType] = useState('');
@@ -30,25 +31,60 @@ const RaiseQuotation = () => {
   const [gst] = useState("");
   const [totalQuotedAmount, setTotalQuotedAmount] = useState("");
   const [lowestBidder, setLowestBidder] = useState("");
-  const [technicianDetails] = useState([
-    { technicianId: 'Tech-1', quotedAmount: 12000, serviceCharges: 500, gst: 20, totalQuotedAmount: 110000 },
-    { technicianId: 'Tech-2', quotedAmount: 4000, serviceCharges: 200, gst: 425, totalQuotedAmount: 785200 },
-    { technicianId: 'Tech-3', quotedAmount: 10000, serviceCharges: 20, gst: 89, totalQuotedAmount: 3581200 },
-    { technicianId: 'Tech-4', quotedAmount: 250000, serviceCharges: 1000, gst: 18, totalQuotedAmount: 420148 },
-    { technicianId: 'Tech-5', quotedAmount: 3000, serviceCharges: 750, gst: 44, totalQuotedAmount: 953300 },
-    { technicianId: 'Tech-6', quotedAmount: 15000, serviceCharges: 1156, gst: 56, totalQuotedAmount: 458230 },
-  ]);
+
+
+
+  // const [technicianDetails] = useState([
+  //   { technicianId: 'Tech-1', quotedAmount: 12000, serviceCharges: 500, gst: 20, totalQuotedAmount: 110000 },
+  //   { technicianId: 'Tech-2', quotedAmount: 4000, serviceCharges: 200, gst: 425, totalQuotedAmount: 785200 },
+  //   { technicianId: 'Tech-3', quotedAmount: 10000, serviceCharges: 20, gst: 89, totalQuotedAmount: 3581200 },
+  //   { technicianId: 'Tech-4', quotedAmount: 250000, serviceCharges: 1000, gst: 18, totalQuotedAmount: 420148 },
+  //   { technicianId: 'Tech-5', quotedAmount: 3000, serviceCharges: 750, gst: 44, totalQuotedAmount: 953300 },
+  //   { technicianId: 'Tech-6', quotedAmount: 15000, serviceCharges: 1156, gst: 56, totalQuotedAmount: 458230 },
+  // ]);
   const [addremarks, setAddRemarks] = useState("");
   const [assignedTo, setAssignedTo] = useState('');
-  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [uploadedFiles] = useState([]);
   const [showAlert] = useState(false);
   const [alertMessage] = useState('');
   const [isWithMaterial, setIsWithMaterial] = useState(false);
+  const [newPhotoCount , setPhotoCount] = useState(0);
+    // Initial state for technician details
+    const [technicianDetails, setTechnicianDetails] = useState([]);
+ 
+    // Fetch data from API on component mount
+    useEffect(() => {
+      // API URL
+      const apiUrl = 'https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=46a850bc-779d-45dc-b60c-040a3d29539c';
+      
+      // Fetching the data from the API
+      const fetchData = async () => {
+        try {
+          const response = await fetch(apiUrl);
+          const data = await response.json();
+          // Map the data to match your technician details structure
+          const mappedData = data.map(item => ({
+            technicianId: item.technicianId,
+            quotedAmount: parseFloat(item.enterQuoteAmount),
+            serviceCharges: parseFloat(item.serviceCharges),
+            gst: parseFloat(item.gst),
+            totalQuotedAmount: parseFloat(item.totalAmount),
+          }));
+          // Update state with the fetched and mapped data
+          setTechnicianDetails(mappedData);
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      };
+  
+      // Call the fetchData function
+      fetchData();
+    }, []); 
 
 
   useEffect(() => {
-    console.log(subject, imageUrls, loading, isWithMaterial);
-  }, [subject, imageUrls, loading, isWithMaterial]);
+    console.log(subject, loading, isWithMaterial);
+  }, [subject, loading, isWithMaterial]);
 
   useEffect(() => {
         const fetchticketData = async () => {
@@ -74,20 +110,19 @@ const RaiseQuotation = () => {
             setSpecifications(data.materials || [{ material: "", quantity: "" }]);
             // setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: ""}])
             const imageRequests =
-              data.attachments?.map(async (photo) => {
-                const Image = await fetch(
+              data.attachments?.map((photo) => 
+               fetch(
                   `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
-                );
-                if (!Image.ok) throw new Error('Failed to fetch image');
-                const blob = await Image.blob();
-                const imageUrl = URL.createObjectURL(blob);
-                return {
+                )
+                .then((res) => res.json())
+                .then((data) => ({
                   src: photo,
-                  imageUrl,
-                };
-              }) || [];
+                  imageData: data.imageData,
+                }))
+              ) || [];
             const images = await Promise.all(imageRequests);
-            setImageUrls(images);
+            setAttachments(images);
+            setPhotoCount(images.length);
           } catch (error) {
             console.error('Error fetching ticket data:', error);
             // window.alert('Failed to load ticket data. Please try again later.');
@@ -98,14 +133,22 @@ const RaiseQuotation = () => {
         fetchticketData();
       }, [raiseTicketId]);
 
-  useEffect(() => {
-    const lowest = technicianDetails.reduce((prev, current) => {
-      return current.quotedAmount < prev.quotedAmount ? current : prev;
-    });
-    setTechnicianId(lowest.technicianId);
-    setLowestBidder(lowest.technicianId);
-    setTotalQuotedAmount(lowest.quotedAmount + serviceCharges + gst);
-  }, [technicianDetails, serviceCharges, gst]);
+      useEffect(() => {
+        if (technicianDetails.length > 0) {
+          const lowest = technicianDetails.reduce((prev, current) => {
+            return current.quotedAmount < prev.quotedAmount ? current : prev;
+          });
+          setTechnicianId(lowest.technicianId);
+          setLowestBidder(lowest.technicianId);
+          setTotalQuotedAmount(lowest.quotedAmount + serviceCharges + gst);
+        } else {
+          // Optionally, handle the case where technicianDetails is empty
+          setTechnicianId('');
+          setLowestBidder('');
+          setTotalQuotedAmount(0);
+        }
+      }, [technicianDetails, serviceCharges, gst]);
+      
 
   // Handle form data changes
   const handleChange = (e) => {
@@ -114,6 +157,35 @@ const RaiseQuotation = () => {
       ...prevData,
       [name]: value,
     }));
+  };
+  const handleDownloadAllAttachments = async () => {
+    if (attachments.length === 0) {
+      alert("No files to download");
+      return;
+    }
+  
+    const zip = new JSZip();
+    const folder = zip.folder("TicketAttachments"); // Optional folder name inside ZIP
+  
+    // Add files to ZIP
+    for (const attachment of attachments) {
+      try {
+        const response = await fetch(`data:image/jpeg;base64,${attachment.imageData}`);
+        const blob = await response.blob();
+        folder.file(attachment.src.split("/").pop(), blob); // Add file to the ZIP folder
+      } catch (error) {
+        console.error("Error fetching attachment:", error);
+      }
+    }
+  
+    // Generate ZIP and download
+    try {
+      const content = await zip.generateAsync({ type: "blob" });
+      saveAs(content, "TicketAttachments.zip");
+    } catch (error) {
+      console.error("Error generating ZIP:", error);
+      alert("Failed to download attachments. Please try again.");
+    }
   };
 
   const handleSaveTicket = async (e) => {
@@ -137,7 +209,8 @@ const RaiseQuotation = () => {
       // district: district,
       // ZipCode: zipCode,
       RequestType: requestType,
-      attachments:attachments || [],
+      attachments:attachments.map((file) => file.src),
+
       materials: specifications.map((spec) => ({
           material: spec.material,
           quantity: spec.quantity,
@@ -199,19 +272,6 @@ const RaiseQuotation = () => {
   // Remove a material and its corresponding quantity
   const handleRemoveMaterial = (index) => {
     setSpecifications(specifications.filter((_, i) => i !== index));
-  };
-
-  // Handle file upload
-  const handleFileUpload = (e) => {
-    const files = Array.from(e.target.files);
-    setUploadedFiles((prevFiles) => [...prevFiles, ...files]);
-  };
-
-  // Handle file deletion
-  const handleFileDelete = (index) => {
-    const newUploadedFiles = [...uploadedFiles];
-    newUploadedFiles.splice(index, 1);
-    setUploadedFiles(newUploadedFiles);
   };
 
   useEffect(() => {
@@ -336,62 +396,72 @@ const RaiseQuotation = () => {
 
         {/* File Upload */}
         <div className="form-group mt-4">
-          <label className="text-danger">View Query Photos or Videos</label>
-          <div className="d-flex flex-column align-items-center">
-            <button
-              className="btn btn-warning text-dark"
-              onClick={() => document.getElementById('fileInput').click()}
-            >
-              View
-            </button>
-            <input
-              type="file"
-              id="fileInput"
-              accept="image/*,video/*"
-              multiple
-              onChange={handleFileUpload}
-              className="d-none"
-            />
-          </div>
-        </div>
+  <label>Customer Uploaded Photos  {" "}
+    {newPhotoCount >0 && (<span className="badge bg-danger" style={{ fontSize: "18px" }}>{newPhotoCount}</span>)}
+  </label>
 
-        {/* File Preview */}
-        <div className="preview-container mt-3">
-          {uploadedFiles.length > 0 &&
-            uploadedFiles.map((file, index) => {
-              const fileUrl = URL.createObjectURL(file);
-              return (
-                <div key={index} className="file-preview">
-                  <span>{file.name}</span>
-                  <button
-                    type="button"
-                    className="btn btn-danger btn-sm ml-2"
-                    onClick={() => handleFileDelete(index)}
-                  >
-                    Delete
-                  </button>
-                  <div className="mt-2">
-                    {/* Preview the file (image or video) */}
-                    {file.type.startsWith('image') && (
-                      <img
-                        src={fileUrl}
-                        alt={file.name}
-                        className="img-fluid"
-                        style={{ maxWidth: '200px' }}
-                      />
-                    )}
-                    {file.type.startsWith('video') && (
-                      <video
-                        controls
-                        src={fileUrl}
-                        className="img-fluid"
-                        style={{ maxWidth: '200px' }}
-                      />
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+  <Button
+    className="btn btn-primary m-3"
+    onClick={handleDownloadAllAttachments}
+  >
+     Download All Attachments
+  </Button>
+
+  <div
+    id="ticketCarousel"
+    className="carousel slide mb-4 rounded"
+    data-bs-ride="carousel"
+  >
+    <div className="carousel-indicators">
+      {attachments.map((_, index) => (
+        <button
+          key={index}
+          type="button"
+          data-bs-target="#ticketCarousel"
+          data-bs-slide-to={index}
+          className={index === 0 ? "active" : ""}
+          aria-current={index === 0 ? "true" : "false"}
+          aria-label={`Slide ${index + 1}`}
+        ></button>
+      ))}
+    </div>
+
+    <div className="carousel-inner">
+      {attachments.map((img, index) => (
+        <div
+          className={`carousel-item ${index === 0 ? "active" : ""}`}
+          key={img.src}
+        >
+          <img
+            src={`data:image/jpeg;base64,${img.imageData}`}
+            className="d-block w-50 rounded"
+            style={{ maxHeight: "200px", objectFit: "cover" }}
+            alt={`Slide ${index + 1}`}
+          />
+        </div>
+      ))}
+    </div>
+
+    <button
+      className="carousel-control-prev"
+      type="button"
+      data-bs-target="#ticketCarousel"
+      data-bs-slide="prev"
+    >
+      <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span className="visually-hidden">Previous</span>
+    </button>
+    <button
+      className="carousel-control-next"
+      type="button"
+      data-bs-target="#ticketCarousel"
+      data-bs-slide="next"
+    >
+      <span className="carousel-control-next-icon" aria-hidden="true"></span>
+      <span className="visually-hidden">Next</span>
+    </button>
+  </div>
+</div>
 
           {/* Radio Buttons */}
           <div className="radio">
@@ -444,7 +514,7 @@ const RaiseQuotation = () => {
                 type="button"
                 className="btn btn-danger"
                 onClick={() => handleRemoveMaterial(index)}
-              >
+              > 
                 Remove
               </button>
             </div>
@@ -460,11 +530,11 @@ const RaiseQuotation = () => {
         </div>
       )}
     </div>
-    </div>
-
+   
+<div>
 <table className="table table-bordered">
   <thead>
-    <tr colSpan="2">
+    <tr>
       <td>Technician ID</td>
       <td>Quoted Amount</td>
       <td>Service Charges</td>
@@ -475,19 +545,19 @@ const RaiseQuotation = () => {
   </thead>
 
   <tbody>
-    {technicianDetails.map((tech) => (
-      <tr key={tech.technicianId}>
-        <td>{tech.technicianId}</td>
-        <td>{tech.quotedAmount}</td>
-        <td>{tech.serviceCharges}</td>
-        <td>{tech.gst}</td>
-        <td>{tech.totalQuotedAmount}</td>
-        <td>{tech.technicianId === lowestBidder ? 'Yes' : 'No'}</td>
+    {technicianDetails.map((technician, index) => (
+      <tr key={index}>
+        <td>{technician.technicianId}</td>
+        <td>{technician.quotedAmount}</td>
+        <td>{technician.serviceCharges}</td>
+        <td>{technician.gst}</td>
+        <td>{technician.totalQuotedAmount}</td>
+        <td>{technician.technicianId === lowestBidder ? 'Yes' : 'No'}</td>
       </tr>
     ))}  
   </tbody>
-
     {/* Technician ID and Total Amount */}
+
     <tbody>
         <tr>
         <td>Technician ID</td>
@@ -498,7 +568,7 @@ const RaiseQuotation = () => {
             value={technicianId}
             readOnly
             placeholder='Technician ID'
-            />
+            /> 
         </td>
         <td>Total Amount</td>
         
@@ -514,6 +584,7 @@ const RaiseQuotation = () => {
         </tr>
         </tbody>
         </table>
+        </div>
 
        {/* Add Remarks */}
        <div className="form-group col-md-6">

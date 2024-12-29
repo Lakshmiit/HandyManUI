@@ -6,7 +6,6 @@ import { Link } from "react-router-dom";
 import { FaTrash, FaEye } from "react-icons/fa";
 import {
   Dashboard as MoreVertIcon,
-  FileDownload as FileDownloadIcon,
   Forward as ForwardIcon,
 } from "@mui/icons-material";
 import "./App.css";
@@ -33,16 +32,11 @@ const QuoteNotification = () => {
   useEffect(() => {
     setLoading(true);
     const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications`
-    const photoUrl = `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
 
     axios.get(url)
       .then(response => {
         const tickets = response.data.map((ticket) => ({
           ...ticket,
-          attachments: ticket.attachments ? ticket.attachments.map(fileName => ({
-            fileName: fileName,
-            fileUrl: `${photoUrl}${fileName}`  
-          })) : []
         }));
         setTicketData(tickets);
         setFilteredData(tickets);
@@ -217,7 +211,7 @@ const QuoteNotification = () => {
               <th>Ticket ID</th>
               <th>Category</th>
               <th>Description</th>
-              <th>View/Download Attachment</th>
+              
               <th>Status</th>
               <th>Assigned To</th>
               <th>Actions</th>
@@ -230,25 +224,6 @@ const QuoteNotification = () => {
                 <td>{ticket.raiseTicketId}</td>
                 <td>{ticket.category}</td>
                 <td>{ticket.details}</td>
-                <td>
-                  {ticket.attachments.length > 0 ? (
-                    ticket.attachments.map((attachment, i) => (
-                      <div key={i} className="d-flex align-items-center">
-                        <a
-                          href={attachment.fileUrl}
-                          download={attachment.fileName}
-                          className="text-primary text-decoration-underline me-2"
-                          style={{ cursor: "pointer", display: 'flex', alignItems: 'center' }}
-                        >
-                          <FileDownloadIcon className="me-2" style={{ cursor: "pointer" }} />
-                          <span>{attachment.fileName}</span>
-                        </a>
-                      </div>
-                    ))
-                  ) : (
-                    <span>No Attachments</span>
-                  )}
-                </td>
                 <td>{ticket.status}</td>
                 <td>{ticket.assignedTo}</td>
                 <td className="d-flex align-items-center">

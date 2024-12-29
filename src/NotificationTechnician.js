@@ -12,9 +12,10 @@ import "./App.css";
 const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) => {
   const navigate = useNavigate();
   const {userType} = useParams();
+  const {technicianId} = useParams();
 
   const handleQuoteClick = (ticketId) => {
-    navigate(`/viewRaiseQuote/${ticketId}/${userType}`, { state: { ticketId } });
+    navigate(`/viewRaiseQuote/${ticketId}/${userType}/${technicianId}`, { state: { ticketId } });
   };
 
   return (
@@ -66,6 +67,7 @@ const Notification = () => {
   const [glowQuote, setGlowQuote] = useState(false);
   const { district, category } = useParams();
   const { userType } = useParams();
+  const { technicianId } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -73,7 +75,7 @@ const Notification = () => {
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, []); 
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -153,7 +155,7 @@ const Notification = () => {
         </h2>
 
         <div className="notifications-container d-flex bg-white border rounded shadow-sm m-4 p-3">
-          <div className="tabs">
+          <div className="tabs d-flex mb-3">
             {["Raise A Quote"].map((tab) => (
               <span
                 key={tab}
@@ -182,7 +184,7 @@ const Notification = () => {
                 <div
                   className="view-notifications text-info mx-2"
                   onClick={() => {
-                    navigate(`/technicianQuoteNotification/${userType}/${district}/${category}`);
+                    navigate(`/technicianQuoteNotification/${userType}/${category}/${district}/${technicianId}`);
                     handleClearQuoteNotifications();
                   }}
                   style={{ cursor: "pointer" }}

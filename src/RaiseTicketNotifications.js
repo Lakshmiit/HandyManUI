@@ -30,16 +30,11 @@ const RaiseTicketNotification = () => {
   useEffect(() => {
     setLoading(true);
     const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications`
-    const photoUrl = `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
 
     axios.get(url)
       .then(response => {
         const tickets = response.data.map((ticket) => ({
           ...ticket,
-          attachments: ticket.attachments ? ticket.attachments.map(fileName => ({
-            fileName: fileName,
-            fileUrl: `${photoUrl}${fileName}`  
-          })) : []
         }));
         setTicketData(tickets);
         setFilteredData(tickets);

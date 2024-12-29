@@ -60,11 +60,11 @@ function App() {
             <Route path="/adminRaiseQuote" element={<AdminRaiseaQuote />} />
             <Route path="/raiseTicketNotification" element={<RaiseTicketNotifications />} />
             <Route path="/addTechnician/:userType" element={<AddTechnician />} />
-            <Route path="/technicianQuoteNotification/:userType/:district/:category" element={<TechnicianQuoteNotifications />} />
-            <Route path="/viewRaiseQuote/:raiseTicketId/:userType" element={<ViewRaiseQuoteTech />} />
+            <Route path="/technicianQuoteNotification/:userType/:category/:district/:technicianId" element={<TechnicianQuoteNotifications />} />
+            <Route path="/viewRaiseQuote/:raiseTicketId/:userType/:technicianId" element={<ViewRaiseQuoteTech />} />
             <Route path="/raiseTicketQuotation/:raiseTicketId" element={<RaiseTicketQuotation />} />
             <Route path="/quoteNotification" element={<QuoteNotifications />} />
-            <Route path="/notificationTechnician/:userType/:district/:category" element={<NotificationTechnician />} />
+            <Route path="/notificationTechnician/:userType/:category/:district/:technicianId" element={<NotificationTechnician />} />
             <Route path="/customerNotification/:userType" element={<CustomerNotification />} />
             <Route path="/viewCustomer/:userType" element={<ViewCustomerGrid />} />
             <Route path="/ShortAdminNotifications" element={<ShortAdminNotifications />} />
