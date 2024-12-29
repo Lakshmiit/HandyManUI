@@ -9,7 +9,7 @@ import EditUploadForm from './EditUploadForm';
 import ProductList from './ProductList';
 import RaiseTicket from './RaiseTicket';
 import BuyProduct from './BuyProducts';
-import Sidebar from './Sidebar';
+import Sidebar from './Sidebar'; 
 import BuyProductView from './BuyProductView';
 import AdminProductApproval from './AdminProductApproval.js';
 import AdminProductList from './AdminProductList.js';
