@@ -153,11 +153,11 @@ const Notification = () => {
       );
       const getQuoteCount = quoteTicketFiltered.length;
 
-      setQuoteNotifications(getQuoteData);
+      setQuoteNotifications(quoteTicketFiltered);
       setNewQuoteCount(getQuoteCount);
 
       if (getQuoteCount > 0) {
-        setHighlightedQuote(getQuoteData[0].raiseAQuoteId);
+        setHighlightedQuote(quoteTicketFiltered[0].raiseAQuoteId);
       }
 
       const totalNotifications = raiseTicketCount + getQuoteCount;

@@ -23,8 +23,13 @@ const BuyProduct = () => {
   const [sgst, setSGST] = useState('');
   const [fixedSGST, setFixedSGST] = useState('');
   const [totalAmount, setTotalAmount] = useState('');
-  const [ticketData, setTicketData] = useState('');
-  const [specifications, setSpecifications] = useState([{ material: "", quantity: "" }]);
+  const [ticketData, setTicketData] = useState({
+    raiseTicketId: '',
+    subject: '',
+    materials: []
+  });
+  const [specifications, setSpecifications] = useState([{ material: "", quantity: "", rate: "", total: "" }]);
+  const [rateQuotedBy, setRateQuotedBy] = useState("");
   // const [state, setState] = useState('');
   // const [district, setDistrict] = useState('')
   const [id, setId] = useState('');
@@ -51,10 +56,16 @@ const BuyProduct = () => {
           throw new Error('Failed to fetch ticket data');
         }
         const data = await response.json();
+        console.log("No data Found");
+        console.log(data.id);
+        console.log(data.subject);
+        alert(data.id);
+
         setTicketData(data);
-        setId(data.id);
         setSubject(data.subject);
+        setId(data.id);
         setSpecifications(data.materials || [{ material: "", quantity: "" }]);
+        alert(JSON.stringify(data));
       } catch (error) {
         console.error("Error fetching ticket data:", error);
       } finally {
@@ -224,12 +235,12 @@ const handleChange = (e) => {
       <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
       <h3 className="mb-4">Raise Ticket Buy Products</h3>
         <div className="bg-white rounded-3 p-4 bx_sdw w-75">
-          <form className="form">
+          <form className="form" onSubmit={handleSaveTicket}>
             <div className="form-group">
               <label>Ticket ID <span className="req_star">*</span></label>
               <input
               type="text"
-              name="ticketId"
+              name="customerId"
               value={ticketData.raiseTicketId}
               className="form-control"
               onChange={handleChange}
@@ -267,18 +278,34 @@ const handleChange = (e) => {
                 <option>Civil & Waterproofing Materials</option>
               </select>
             </div>
-            <div className="form-group">
-              <label>AssignedTo<span className="req_star">*</span></label>
-              <select
-              className="form-control"
-              value={assignedTo}
-              onChange={(e) => setAssignedTo(e.target.value)}
-              >
-                <option>Choose AssignedTo</option>
-                <option>Customer</option>
-                <option>Dealer/Agency</option>
-              </select>
-            </div>
+             <div className="form-group">
+              <label>Rate Quoted By<span className="req_star">*</span></label>
+              <div className="radio">
+                <label className="m-1">
+                  <input className="form-check-input m-2"
+                  type="radio"
+                  name="RateQuotedBy"
+                  value="Customer Care"
+                  checked={rateQuotedBy === "Customer Care"}
+                  onChange={(e) => setRateQuotedBy(e.target.value)}
+                  required
+                />
+                Customer Care
+                </label>
+                <label className="m-1">
+                  <input
+                  className="form-check-input m-2"
+                  type="radio"
+                  name="RateQuotedBy"
+                  value="Dealer/Agency"
+                  checked={rateQuotedBy === "Dealer/Agency"}
+                  onChange={(e) => setRateQuotedBy(e.target.value)}
+                  required
+                  />
+                  Dealer/Agency
+                </label>
+              </div>
+            </div> 
 
       {/* Material Input Fields */}
         <div className="form-group">
@@ -290,16 +317,16 @@ const handleChange = (e) => {
                 className="form-control"
                 value={spec.material}
                 placeholder="Enter Material"
-                // onChange={(e) => handleMaterialChange(index, "material", e.target.value)}
-                disabled
+                onChange={(e) => handleMaterialChange(index, "material", e.target.value)}
+                
               />
               <input
                 type="text"
                 className="form-control"
                 placeholder="Enter Quantity"
                 value={spec.quantity}
-                // onChange={(e) => handleMaterialChange(index,"quantity", e.target.value)}
-                readOnly
+               onChange={(e) => handleMaterialChange(index,"quantity", e.target.value)}
+                
               />
               <input
                 type="number"
@@ -483,16 +510,28 @@ const handleChange = (e) => {
         </tr>
         </tbody>
         </table>
-      
+        {/* Assigned To */}
+        <div className="form-group">
+              <label>AssignedTo<span className="req_star">*</span></label>
+              <select
+              className="form-control"
+              value={assignedTo}
+              onChange={(e) => setAssignedTo(e.target.value)}
+              >
+                <option>Choose AssignedTo</option>
+                <option>Customer</option>
+                <option>Dealer/Agency</option>
+              </select>
+            </div>
     
     {/* Send Quote Button */}
             <div className="mt-4">
                 <button
                 type="button"
-                className="btn btn-primary w-50 mt-3"
-                onClick={handleSaveTicket}
+                className={`btn btn-primary w-50 mt-3 ${rateQuotedBy === "Dealer/Agency" ? "btn-success" : "btn-primary"}`}
+                // onClick={handleSaveTicket}
                 >
-                Send Quote
+                {rateQuotedBy === "Customer Care" ? "Send Quote" : "Get Quotation"}
                 </button>
             </div>
           </form>

@@ -88,6 +88,7 @@ const Notification = () => {
         }
 
         const getQuoteData = await getQuoteResponse.json();
+        
         const getQuoteCount = getQuoteData.length;
 
         setQuoteNotifications(getQuoteData);

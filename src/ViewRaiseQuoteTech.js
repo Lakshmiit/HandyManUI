@@ -33,24 +33,25 @@ const RaiseActionView = () => {
   const [status, setStatus] = useState("");
   const [assignedTo, setAssignedTo] = useState('');
   const [newPhotoCount , setPhotoCount] = useState(0);
-  const [otherCharge, setOtherCharge] = useState(2);
+  const [otherCharge, setOtherCharge] = useState('');
   const [fixedOtherCharge, setFixedOtherCharge] = useState('');
-  const [serviceCharge, setServiceCharge] = useState(2);
+  const [serviceCharge, setServiceCharge] = useState('');
   const [fixedServiceCharge, setFixedServiceCharge] = useState('');
-  const [gst, setGST] = useState(2);
+  const [gst, setGST] = useState('');
   const [fixedGST, setFixedGST] = useState('');
   const [totalAmount, setTotalAmount] = useState();
   // const [uploadedFiles, setUploadedFiles] = useState([]);
-  const [enterQuoteAmount, setQuote] = useState(2);
+  const [enterQuoteAmount, setQuote] = useState('');
+  const [isAmountPosted, setIsAmountPosted] = useState(false);
   const [fixedQuote, setFixedQuote] = useState('');
-  const [discount, setDiscount] = useState(2);
+  const [discount, setDiscount] = useState('');
   const [fixedDiscount, setFixedDiscount] = useState('');
   const [addrRmarks, setAddrRmarks] = useState([{requestedDate: new Date(), remarks: ""}]);
   const [userType] = useState('technician');
   const { selectedUserType} = useParams();
   const {category} = useParams();
   const {technicianId} = useParams();
-  const [internalStatus, setInternalStatus] = useState('');
+  // const [internalStatus, setInternalStatus] = useState('');
   const [ticketId, setTicketId] = useState('');
   
   useEffect(() => {
@@ -83,7 +84,7 @@ const RaiseActionView = () => {
         setRequestType(data.requestType || 'Without Material');
         setSpecifications(data.materials || [{ material: "", quantity: "" }]);
         setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: ""}])
-        setInternalStatus(data.internalStatus);
+        
         const imageRequests =
           data.attachments?.map((photo) => fetch(
               `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
@@ -236,6 +237,7 @@ const RaiseActionView = () => {
       if (!response.ok) {
         throw new Error('Failed to save Technician ticket data');
       }
+     
       alert('Ticket  Technician  saved Successfully!');
     } catch (error) {
       console.error('Error saving Technician ticket data:', error);
@@ -265,6 +267,7 @@ const RaiseActionView = () => {
           setId(techDataItem.id);
           setCustomerId(techDataItem.customerId);
           setQuote(techDataItem.enterQuoteAmount);
+          setIsAmountPosted(true);
           setDiscount(techDataItem.discount);
           setOtherCharge(techDataItem.othercharges);
           setServiceCharge(techDataItem.serviceCharges);
@@ -342,15 +345,15 @@ const RaiseActionView = () => {
   //   }
   // };
 
-  const calculateTotal = () => {
-    const subtotal = 
-      Number(enterQuoteAmount) + 
-      Number(otherCharge) + 
-      Number(serviceCharge) - 
-      Number(discount);
-    const gstAmount = (subtotal * Number(gst)) / 100;
-    setTotalAmount(subtotal + gstAmount);
-  };
+  // const calculateTotal = () => {
+  //   const subtotal = 
+  //     Number(enterQuoteAmount) + 
+  //     Number(otherCharge) + 
+  //     Number(serviceCharge) - 
+  //     Number(discount);
+  //   const gstAmount = (subtotal * Number(gst)) / 100;
+  //   setTotalAmount(subtotal + gstAmount);
+  // };
 
 
   // Handle material input change
@@ -384,55 +387,67 @@ const RaiseActionView = () => {
   const handleFixedChange = (setter, fixedSetter) => (e) => {
     const value = parseFloat(e.target.value) || 0; 
     setter(value); 
-    let updatedQuote = enterQuoteAmount;
-    let updatedDiscount = discount;
-    let updatedOtherCharge = otherCharge;
-    let updatedServiceCharge = serviceCharge;
-    let updatedGST = gst;
+    // let updatedQuote = enterQuoteAmount;
+    // let updatedDiscount = discount;
+    // let updatedOtherCharge = otherCharge;
+    // let updatedServiceCharge = serviceCharge;
+    // let updatedGST = gst;
 
-    if (setter === setQuote) {
-      updatedQuote = value;
-      fixedSetter(value);  
-    }
+    // if (setter === setQuote) {
+    //   updatedQuote = value;
+    //   // fixedSetter(value);  
+    // }
 
-    if (setter === setDiscount) {
-      updatedDiscount = value;
-    }
-    if (setter === setOtherCharge) {
-      updatedOtherCharge = value;
-    }
-    if (setter === setServiceCharge) {
-      updatedServiceCharge = value;
-    }
-    if (setter === setGST) {
-      updatedGST = value;
-    }
+    // if (setter === setDiscount) {
+    //   updatedDiscount = value;
+    // }
+    // if (setter === setOtherCharge) {
+    //   updatedOtherCharge = value;
+    // }
+    // if (setter === setServiceCharge) {
+    //   updatedServiceCharge = value;
+    // }
+    // if (setter === setGST) {
+    //   updatedGST = value;
+    // }
 
     const { total, discountAmount, serviceCharge: calculatedServiceCharge, gst: calculatedGST } = calculateTotalPrice(
-      updatedQuote, 
-      updatedDiscount, 
-      updatedOtherCharge, 
-      updatedServiceCharge, 
-      updatedGST
+      enterQuoteAmount, 
+      discount, 
+      otherCharge, 
+      serviceCharge, 
+      gst
     );
     
-    if (setter === setDiscount) {
-      fixedSetter(discountAmount); 
-    } else if (setter === setOtherCharge) {
-      fixedSetter(updatedOtherCharge); 
-    } else if (setter === setServiceCharge) {
-      fixedSetter(calculatedServiceCharge); 
-    } else if (setter === setGST) {
-      fixedSetter(calculatedGST); 
-    }
+    if (setter === setDiscount) fixedSetter(discountAmount); 
+    if (setter === setOtherCharge) fixedSetter(otherCharge); 
+    if (setter === setServiceCharge) fixedSetter(calculatedServiceCharge); 
+    if (setter === setGST) fixedSetter(calculatedGST); 
+   
     setTotalAmount(total);
   };
+
+  useEffect(() => {
+    const { total, discountAmount, serviceCharge: calculatedServiceCharge, gst:calculatedGST} = calculateTotalPrice(
+      enterQuoteAmount,
+      discount,
+      otherCharge,
+      serviceCharge,
+      gst
+    );
+    setFixedQuote(enterQuoteAmount);
+    setFixedDiscount(discountAmount);
+    setFixedOtherCharge(otherCharge);
+    setFixedServiceCharge(calculatedServiceCharge);
+    setFixedGST(calculatedGST);
+    setTotalAmount(total);
+  }, [enterQuoteAmount, discount, otherCharge, serviceCharge, gst]);
 
   const handleAddComment = (index, field, value) => {
     const updatedComments = [...commentsList];
     updatedComments[index][field] = value;
     setCommentsList(updatedComments);
-  };
+  }; 
    // Handle form data changes
    const handleChange = (e) => {
     const { name, value } = e.target;
@@ -455,7 +470,7 @@ const RaiseActionView = () => {
   return (
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
-        <div className=" ml-0 m-4 p-0 adm_mnu h-90">
+        <div className=" ml-0 m-4 p-0 sde_mnu h-90">
           <Sidebar userType={selectedUserType}/>
         </div>
       )}
@@ -745,7 +760,7 @@ const RaiseActionView = () => {
             type="number"
             className="form-control"
             value={enterQuoteAmount}
-            onBlur={calculateTotal}
+            // onBlur={calculateTotal}
             onChange={handleFixedChange(setQuote, setFixedQuote)}
             placeholder="Enter Quote Amount"
         />
@@ -771,7 +786,7 @@ const RaiseActionView = () => {
           type="number"
           className="form-control"
           value={discount}
-          onBlur={calculateTotal}
+          // onBlur={calculateTotal}
           onChange={handleFixedChange(setDiscount, setFixedDiscount)}
           placeholder="Enter Discount"
         />
@@ -797,7 +812,7 @@ const RaiseActionView = () => {
           type="number"
           className="form-control"
           value={otherCharge}
-          onBlur={calculateTotal}
+          // onBlur={calculateTotal}
           onChange={handleFixedChange(setOtherCharge, setFixedOtherCharge)}
           placeholder="Enter Other Charges"
         />
@@ -823,7 +838,7 @@ const RaiseActionView = () => {
           type="number"
           className="form-control"
           value={serviceCharge}
-          onBlur={calculateTotal}
+          // onBlur={calculateTotal}
           onChange={handleFixedChange(setServiceCharge, setFixedServiceCharge)}
           placeholder="Enter Service Charges"
         />
@@ -849,7 +864,7 @@ const RaiseActionView = () => {
           type="number"
           className="form-control"
           value={gst}
-          onBlur={calculateTotal}
+          // onBlur={calculateTotal}
           onChange={handleFixedChange(setGST, setFixedGST)}
           placeholder="Enter GST"
         />
@@ -933,7 +948,7 @@ const RaiseActionView = () => {
           <FaEdit />
           </Link> */}
           <Button onClick={handleBothActions}className="btn btn-warning text-white mx-2" title='Forward'
-           disabled={internalStatus === "Pending" }
+           disabled={isAmountPosted === true }
            >
             <ForwardIcon />
           </Button>

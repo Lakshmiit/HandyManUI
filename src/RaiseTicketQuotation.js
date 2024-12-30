@@ -55,12 +55,13 @@ const RaiseQuotation = () => {
     // Fetch data from API on component mount
     useEffect(() => {
       // API URL
-      const apiUrl = 'https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=46a850bc-779d-45dc-b60c-040a3d29539c';
+      const apiUrl = `https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
       
       // Fetching the data from the API
       const fetchData = async () => {
         try {
           const response = await fetch(apiUrl);
+
           const data = await response.json();
           // Map the data to match your technician details structure
           const mappedData = data.map(item => ({
@@ -79,7 +80,7 @@ const RaiseQuotation = () => {
   
       // Call the fetchData function
       fetchData();
-    }, []); 
+    }, [raiseTicketId]); 
 
 
   useEffect(() => {

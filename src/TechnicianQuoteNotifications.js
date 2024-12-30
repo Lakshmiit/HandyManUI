@@ -182,7 +182,7 @@ useEffect(() => {
           </tbody>
         </table>
         <div className="mt-4 text-end">
-          <Link to={`/notificationTechnician/technician/${district}/${category}/${technicianId}`} className="btn btn-warning text-white mx-2" title='Back'>
+          <Link to={`/notificationTechnician/technician/${category}/${district}/${technicianId}`} className="btn btn-warning text-white mx-2" title='Back'>
             <ArrowLeftIcon />
           </Link>
         </div>
