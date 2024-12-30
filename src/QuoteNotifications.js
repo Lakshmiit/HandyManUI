@@ -32,7 +32,7 @@ const QuoteNotification = () => {
   useEffect(() => {
     setLoading(true);
     const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications`
-
+    // const url =`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByDistrict?district=${district}&category=${category}`
     axios.get(url)
       .then(response => {
         const tickets = response.data.map((ticket) => ({

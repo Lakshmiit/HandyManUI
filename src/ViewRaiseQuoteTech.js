@@ -8,11 +8,12 @@ import { Dashboard as MoreVertIcon } from '@mui/icons-material';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 // import SaveAsIcon from '@mui/icons-material/SaveAs';
 import ForwardIcon from '@mui/icons-material/Forward';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import './App.css';
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 const RaiseActionView = () => {
+  const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const {raiseTicketId} = useParams();
@@ -327,6 +328,7 @@ const RaiseActionView = () => {
     e.preventDefault();
     handleUpdateTicket(e);
     handleSaveTicket(e);
+    navigate(`/notificationTechnician/${userType}/${category}/${district}/${technicianId}`);
     //handleTechnicianTicket(e);
   }
 
@@ -947,9 +949,7 @@ const RaiseActionView = () => {
           {/* <Link to='/raiseTicketActionView/{ticketId}' className="btn btn-warning text-white mx-2" title='Edit'> 
           <FaEdit />
           </Link> */}
-          <Button onClick={handleBothActions}className="btn btn-warning text-white mx-2" title='Forward'
-           disabled={isAmountPosted === true }
-           >
+          <Button onClick={handleBothActions} disabled={isAmountPosted === true } className="btn btn-warning text-white mx-2" title='Forward'>
             <ForwardIcon />
           </Button>
           {/* <Button onClick={handleUpdateTicket} type="submit" className="btn btn-warning text-white mx-2" title="Save" 
