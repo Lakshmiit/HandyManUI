@@ -88,14 +88,16 @@ const Notification = () => {
         }
 
         const getQuoteData = await getQuoteResponse.json();
-        
-        const getQuoteCount = getQuoteData.length;
+        const getQuoteFiltered = getQuoteData.filter(
+          (item) => item.internalstatus === "Assigned"
+        );
+        const getQuoteCount = getQuoteFiltered.length;
 
-        setQuoteNotifications(getQuoteData);
+        setQuoteNotifications(getQuoteFiltered);
         setNewQuoteCount(getQuoteCount);
         setGlowQuote(getQuoteCount > 0);
         if (getQuoteCount > 0) {
-          setHighlightedQuote(getQuoteData[0].raiseAQuoteId);
+          setHighlightedQuote(getQuoteFiltered[0].raiseAQuoteId);
         }
 
         setNewNotificationCount(getQuoteCount);
