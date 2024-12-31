@@ -61,20 +61,20 @@ const RaiseQuotation = () => {
           // Map the data to match your technician details structure
           const mappedData = data.map(item => ({
             technicianId: item.technicianId,
-            quotedAmount: parseFloat(item.enterQuoteAmount).toFixed(2),
-            discount: parseFloat(item.discount).toFixed(2),
-            fixedDiscount: parseFloat(item.fixedDiscount).toFixed(2),
+            quotedAmount: parseFloat(item.enterQuoteAmount),
+            discount: parseFloat(item.discount),
+            fixedDiscount: parseFloat(item.fixedDiscount),
 
-            othercharges: parseFloat(item.othercharges).toFixed(2),
-            fixedOtherCharge: parseFloat(item.fixedOtherCharge).toFixed(2),
+            othercharges: parseFloat(item.othercharges),
+            fixedOtherCharge: parseFloat(item.fixedOtherCharge),
 
-            serviceCharges: parseFloat(item.serviceCharges).toFixed(2),
-            fixedServiceCharge: parseFloat(item.fixedServiceCharge).toFixed(2),
+            serviceCharges: parseFloat(item.serviceCharges),
+            fixedServiceCharge: parseFloat(item.fixedServiceCharge),
 
-            gst: parseFloat(item.gst).toFixed(2),
-            fixedGST: parseFloat(item.fixedGST).toFixed(2),
+            gst: parseFloat(item.gst),
+            fixedGST: parseFloat(item.fixedGST),
 
-            totalQuotedAmount: parseFloat(item.totalAmount).toFixed(2),
+            totalQuotedAmount: parseFloat(item.totalAmount),
             addrRmarks:item.addrRmarks,
           }));
           // Update state with the fetched and mapped data
@@ -148,7 +148,7 @@ const RaiseQuotation = () => {
           setTechnicianId(lowest.technicianId);
           setLowestBidder(lowest.technicianId);
           setTotalQuotedAmount(lowest.totalQuotedAmount +discount+ fixedDiscount + othercharges + fixedOtherCharge+ serviceCharges + fixedServiceCharge+ gst + fixedGST);
-        alert(JSON.stringify(lowest.addrRmarks[0].remarks));
+       // alert(JSON.stringify(lowest.addrRmarks[0].remarks));
           if (lowest.addrRmarks?.length > 0) {
             setAddRemarks(lowest.addrRmarks[0].remarks);
           } else {
@@ -593,7 +593,7 @@ const RaiseQuotation = () => {
     <tbody>
         <tr>
         <td>Technician ID</td>
-        <td colSpan="3">
+        <td colSpan="2">
             <input
             type="text"
             className='form-control text-end'
