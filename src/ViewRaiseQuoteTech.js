@@ -25,8 +25,9 @@ const RaiseActionView = () => {
   const [ticketData, setTicketData] = useState(null); 
   const [technicianData, setTechnicianData] = useState(null);
   const [requestType, setRequestType] = useState('Without Material');
-  const [specifications, setSpecifications] = useState([{ material: "", quantity: "" }]); 
-  const [commentsList, setCommentsList] = useState([{updatedDate: new Date(), commentText: ""}]); 
+  const [specifications, setSpecifications] = useState([{ material: "", quantity: "", price: "" }]); 
+  const [commentsList, setCommentsList] = useState([{updatedDate: new Date(), commentText: ""}]);
+  // const [requiredMaterials, setRequiredMaterials] = useState([{material: "", quantity: "", price: ""}]); 
   const [loading, setLoading] = useState(true);
   const [attachments, setAttachments] = useState([]);
   const [customerId, setCustomerId] = useState(''); 
@@ -83,7 +84,7 @@ const RaiseActionView = () => {
         setAssignedTo(data.assignedTo);
         setStatus(data.status);
         setRequestType(data.requestType || 'Without Material');
-        setSpecifications(data.materials || [{ material: "", quantity: "" }]);
+        
         setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: ""}])
         
         const imageRequests =
@@ -214,16 +215,26 @@ const RaiseActionView = () => {
       ticketId: ticketData.raiseTicketId,
       technicianId: technicianId,
       enterQuoteAmount: enterQuoteAmount.toString(),
+      fixedQuote: fixedQuote.toString(),
       discount: discount.toString(),
+      fixedDiscount: fixedDiscount.toString(),
       othercharges: otherCharge.toString(),
+      fixedOtherCharge: fixedOtherCharge.toString(),
       serviceCharges: serviceCharge.toString(),
+      fixedServiceCharge: fixedServiceCharge.toString(),
       gst: gst.toString(),
+      fixedGST: fixedGST.toString(),
       totalAmount: totalAmount.toString(),
       raiseTicketId: raiseTicketId,
       addrRmarks: addrRmarks.map((comment) => ({
         requestedDate: comment.requestedDate,
         remarks: comment.remarks,
     })),
+    materials: specifications.map((spec) => ({
+      material: spec.material,
+      quantity: spec.quantity,
+      price: "string",
+  })),
     }; 
     try {
       //imageUrls="";
@@ -268,8 +279,11 @@ const RaiseActionView = () => {
           setId(techDataItem.id);
           setCustomerId(techDataItem.customerId);
           setQuote(techDataItem.enterQuoteAmount);
+       
+          setSpecifications(techDataItem.materials || [{ material: "", quantity: "", price: ""}])
           setIsAmountPosted(true);
           setDiscount(techDataItem.discount);
+          
           setOtherCharge(techDataItem.othercharges);
           setServiceCharge(techDataItem.serviceCharges);
           setGST(techDataItem.gst);
@@ -345,18 +359,7 @@ const RaiseActionView = () => {
   //     console.error("Error Forwarding ticket:", error);
   //     alert("Failed to forward the ticket. Please try again.")
   //   }
-  // };
-
-  // const calculateTotal = () => {
-  //   const subtotal = 
-  //     Number(enterQuoteAmount) + 
-  //     Number(otherCharge) + 
-  //     Number(serviceCharge) - 
-  //     Number(discount);
-  //   const gstAmount = (subtotal * Number(gst)) / 100;
-  //   setTotalAmount(subtotal + gstAmount);
-  // };
-
+  // }
 
   // Handle material input change
   const handleMaterialChange = (index, field, value) => {

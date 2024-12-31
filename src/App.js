@@ -30,6 +30,7 @@ import CustomerNotification from './CustomerNotification.js';
 import ViewCustomerGrid from './ViewCustomerGrid.js';
 import ShortAdminNotifications from './ShortAdminNotifications.js';
 import RaiseTicketBuyProducts from './RaiseTicketBuyProducts.js';
+import CustomerRaiseTicketQuotation from './CustomerRaiseTicketQuotation.js';
 
 function App() {
   return (
@@ -69,6 +70,7 @@ function App() {
             <Route path="/viewCustomer/:userType" element={<ViewCustomerGrid />} />
             <Route path="/ShortAdminNotifications" element={<ShortAdminNotifications />} />
             <Route path="/raiseTicketBuyProducts" element={<RaiseTicketBuyProducts />} />
+            <Route path="/customerRaiseTicketQuotation/:userType" element={<CustomerRaiseTicketQuotation />} />
           </Routes>
         </main>
       </div>

@@ -29,20 +29,15 @@ const RaiseQuotation = () => {
   const [technicianId, setTechnicianId] = useState(""); 
   const [serviceCharges] = useState("");
   const [gst] = useState("");
+  const [fixedDiscount] = useState('');
+  const [fixedOtherCharge] = useState('');
+  const [fixedServiceCharge] = useState('');
+  const [fixedGST] = useState('');
   const [totalQuotedAmount, setTotalQuotedAmount] = useState("");
   const [lowestBidder, setLowestBidder] = useState("");
-
-
-
-  // const [technicianDetails] = useState([
-  //   { technicianId: 'Tech-1', quotedAmount: 12000, serviceCharges: 500, gst: 20, totalQuotedAmount: 110000 },
-  //   { technicianId: 'Tech-2', quotedAmount: 4000, serviceCharges: 200, gst: 425, totalQuotedAmount: 785200 },
-  //   { technicianId: 'Tech-3', quotedAmount: 10000, serviceCharges: 20, gst: 89, totalQuotedAmount: 3581200 },
-  //   { technicianId: 'Tech-4', quotedAmount: 250000, serviceCharges: 1000, gst: 18, totalQuotedAmount: 420148 },
-  //   { technicianId: 'Tech-5', quotedAmount: 3000, serviceCharges: 750, gst: 44, totalQuotedAmount: 953300 },
-  //   { technicianId: 'Tech-6', quotedAmount: 15000, serviceCharges: 1156, gst: 56, totalQuotedAmount: 458230 },
-  // ]);
-  const [addremarks, setAddRemarks] = useState("");
+  const [discount] = useState("");
+  const [othercharges] = useState("");
+  const [addrRmarks, setAddRemarks] = useState([{requestedDate: "", remarks: ""}]);
   const [assignedTo, setAssignedTo] = useState('');
   const [uploadedFiles] = useState([]);
   const [showAlert] = useState(false);
@@ -66,10 +61,21 @@ const RaiseQuotation = () => {
           // Map the data to match your technician details structure
           const mappedData = data.map(item => ({
             technicianId: item.technicianId,
-            quotedAmount: parseFloat(item.enterQuoteAmount),
-            serviceCharges: parseFloat(item.serviceCharges),
-            gst: parseFloat(item.gst),
-            totalQuotedAmount: parseFloat(item.totalAmount),
+            quotedAmount: parseFloat(item.enterQuoteAmount).toFixed(2),
+            discount: parseFloat(item.discount).toFixed(2),
+            fixedDiscount: parseFloat(item.fixedDiscount).toFixed(2),
+
+            othercharges: parseFloat(item.othercharges).toFixed(2),
+            fixedOtherCharge: parseFloat(item.fixedOtherCharge).toFixed(2),
+
+            serviceCharges: parseFloat(item.serviceCharges).toFixed(2),
+            fixedServiceCharge: parseFloat(item.fixedServiceCharge).toFixed(2),
+
+            gst: parseFloat(item.gst).toFixed(2),
+            fixedGST: parseFloat(item.fixedGST).toFixed(2),
+
+            totalQuotedAmount: parseFloat(item.totalAmount).toFixed(2),
+            addrRmarks:item.addrRmarks,
           }));
           // Update state with the fetched and mapped data
           setTechnicianDetails(mappedData);
@@ -137,18 +143,25 @@ const RaiseQuotation = () => {
       useEffect(() => {
         if (technicianDetails.length > 0) {
           const lowest = technicianDetails.reduce((prev, current) => {
-            return current.quotedAmount < prev.quotedAmount ? current : prev;
+            return current.totalQuotedAmount < prev.totalQuotedAmount ? current : prev;
           });
           setTechnicianId(lowest.technicianId);
           setLowestBidder(lowest.technicianId);
-          setTotalQuotedAmount(lowest.quotedAmount + serviceCharges + gst);
+          setTotalQuotedAmount(lowest.totalQuotedAmount +discount+ fixedDiscount + othercharges + fixedOtherCharge+ serviceCharges + fixedServiceCharge+ gst + fixedGST);
+        alert(JSON.stringify(lowest.addrRmarks[0].remarks));
+          if (lowest.addrRmarks?.length > 0) {
+            setAddRemarks(lowest.addrRmarks[0].remarks);
+          } else {
+            setAddRemarks("");
+          }
         } else {
           // Optionally, handle the case where technicianDetails is empty
           setTechnicianId('');
           setLowestBidder('');
           setTotalQuotedAmount(0);
+          setAddRemarks("");
         }
-      }, [technicianDetails, serviceCharges, gst]);
+      }, [technicianDetails, discount, fixedDiscount, othercharges, fixedOtherCharge, serviceCharges,fixedServiceCharge, gst, fixedGST]);
       
 
   // Handle form data changes
@@ -158,6 +171,12 @@ const RaiseQuotation = () => {
       ...prevData,
       [name]: value,
     }));
+  };
+
+  const handleAddRemarks = (index, value) => {
+    setAddRemarks((prev) =>
+      prev.map((item, i) => (i === index ? { ...item, addrRmarks: value } : item))
+    );
   };
   const handleDownloadAllAttachments = async () => {
     if (attachments.length === 0) {
@@ -538,8 +557,14 @@ const RaiseQuotation = () => {
     <tr>
       <td>Technician ID</td>
       <td>Quoted Amount</td>
-      <td>Service Charges</td>
-      <td>GST</td>
+      {/* <td>Discount</td> */}
+      <td>Enter Discount</td>
+      {/* <td>Any Other Charges</td> */}
+      <td>Enter Any Other Charges</td>
+      {/* <td>Service Charges</td> */}
+      <td>Enter Service Charges</td>
+      {/* <td>GST</td> */}
+      <td>Enter GST</td>
       <td>Total Quoted Amount</td>
       <td>Lowest Bidder</td>
     </tr>
@@ -550,8 +575,14 @@ const RaiseQuotation = () => {
       <tr key={index}>
         <td>{technician.technicianId}</td>
         <td>{technician.quotedAmount}</td>
-        <td>{technician.serviceCharges}</td>
-        <td>{technician.gst}</td>
+        {/* <td>{technician.discount}</td> */}
+        <td>{technician.fixedDiscount}</td>
+        {/* <td>{technician.othercharges}</td> */}
+        <td>{technician.fixedOtherCharge}</td>
+        {/* <td>{technician.serviceCharges}</td> */}
+        <td>{technician.fixedServiceCharge}</td>
+        {/* <td>{technician.gst}</td> */}
+        <td>{technician.fixedGST}</td>
         <td>{technician.totalQuotedAmount}</td>
         <td>{technician.technicianId === lowestBidder ? 'Yes' : 'No'}</td>
       </tr>
@@ -562,7 +593,7 @@ const RaiseQuotation = () => {
     <tbody>
         <tr>
         <td>Technician ID</td>
-        <td colSpan="2">
+        <td colSpan="3">
             <input
             type="text"
             className='form-control text-end'
@@ -589,14 +620,17 @@ const RaiseQuotation = () => {
 
        {/* Add Remarks */}
        <div className="form-group col-md-6">
-            <label>Add Remarks</label>
-            <input 
-            type="text"
-            className="form-control"
-            value={addremarks}
-            placeholder="Enter Remarks"
-            onChange={(e) => setAddRemarks(e.target.value)}
-            />
+          <label>Technician Remarks</label>
+              <div className="d-flex gap-3">
+                <input
+                  type="text"
+                  className="form-control"
+                  value={addrRmarks}
+                  
+                  onChange={(e) => handleAddRemarks(e.target.value)}
+                  readOnly
+                />
+              </div>
         </div>
 
         {/* Send Quote Button */}

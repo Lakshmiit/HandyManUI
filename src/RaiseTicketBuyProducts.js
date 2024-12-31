@@ -18,10 +18,8 @@ const BuyProduct = () => {
   const [fixedServiceCharge, setFixedServiceCharge] = useState('');
   const [discount, setDiscount] = useState('');
   const [fixedDiscount, setFixedDiscount] = useState('');
-  const [cgst, setCGST] = useState('');
-  const [fixedCGST, setFixedCGST] = useState('');
-  const [sgst, setSGST] = useState('');
-  const [fixedSGST, setFixedSGST] = useState('');
+  const [gst, setGST] = useState('');
+  const [fixedGST, setFixedGST] = useState('');
   const [totalAmount, setTotalAmount] = useState('');
   const [ticketData, setTicketData] = useState({
     raiseTicketId: '',
@@ -29,7 +27,8 @@ const BuyProduct = () => {
     materials: []
   });
   const [specifications, setSpecifications] = useState([{ material: "", quantity: "", rate: "", total: "" }]);
-  const [rateQuotedBy, setRateQuotedBy] = useState("");
+  const [rateQuotedBy, setRateQuotedBy] = useState("Customer Care");
+  const [isDealerSelected, setIsDealerSelected] = useState(false);
   // const [state, setState] = useState('');
   // const [district, setDistrict] = useState('')
   const [id, setId] = useState('');
@@ -126,6 +125,10 @@ const handleSaveTicket = async (e) => {
   }
 };
 
+const handleRateQuotedByChange = (value) => {
+  setRateQuotedBy(value);
+  setIsDealerSelected(value === "Dealer/Agency");
+};
 
   // Detect screen size for responsiveness
 useEffect(() => {
@@ -173,24 +176,21 @@ const handleFixedChange = (setter, fixedSetter, grandTotalAmount) => (e) => {
     const updatedDiscount = parseFloat(discount) || 0;
     const updatedDeliveryCharges = parseFloat(deliveryCharges) || 0;
     const updatedServiceCharge = parseFloat(serviceCharge) || 0;
-    const updatedCGST = parseFloat(cgst) || 0;
-    const updatedSGST = parseFloat(sgst) || 0;
+    const updatedGST = parseFloat(gst) || 0;
 
-    const { total, discountAmount, serviceCharge: calculatedServiceCharge, cgst: calculatedCGST, sgst: calculatedSGST } = calculateTotalAmount(
+    const { total, discountAmount, serviceCharge: calculatedServiceCharge, gst: calculatedGST } = calculateTotalAmount(
         updatedGrandTotal,
         updatedDiscount,
         updatedDeliveryCharges,
         updatedServiceCharge,
-        updatedCGST,
-        updatedSGST
+        updatedGST
     );
 
     if (setter === setDiscount) fixedSetter(discountAmount.toFixed(2));
     else if (setter === setDeliveryCharges) fixedSetter(updatedDeliveryCharges.toFixed(2));
     else if (setter === setServiceCharge) fixedSetter(calculatedServiceCharge.toFixed(2));
-    else if (setter === setCGST) fixedSetter(calculatedCGST.toFixed(2));
-    else if (setter === setSGST) fixedSetter(calculatedSGST.toFixed(2));
-
+    else if (setter === setGST) fixedSetter(calculatedGST.toFixed(2));
+  
     setTotalAmount(total.toFixed(2));
 };
 
@@ -287,7 +287,7 @@ const handleChange = (e) => {
                   name="RateQuotedBy"
                   value="Customer Care"
                   checked={rateQuotedBy === "Customer Care"}
-                  onChange={(e) => setRateQuotedBy(e.target.value)}
+                  onChange={(e) => handleRateQuotedByChange(e.target.value)}
                   required
                 />
                 Customer Care
@@ -299,7 +299,7 @@ const handleChange = (e) => {
                   name="RateQuotedBy"
                   value="Dealer/Agency"
                   checked={rateQuotedBy === "Dealer/Agency"}
-                  onChange={(e) => setRateQuotedBy(e.target.value)}
+                  onChange={(e) => handleRateQuotedByChange(e.target.value)}
                   required
                   />
                   Dealer/Agency
@@ -312,6 +312,17 @@ const handleChange = (e) => {
           <label>Required Material</label>
           {specifications.map((spec, index) => (
             <div className="d-flex gap-3 mb-2" key={index}>
+              {isDealerSelected && (
+                <div className="form-check">
+                  <input 
+                  type="radio"
+                  className="form-check-input mt-3"
+                  name={`materialRadio${index}`}
+                  id={`materialRadio${index}`}
+                  value={spec.material}
+                  />
+                  </div>
+              )}
               <input
                 type="text"
                 className="form-control"
@@ -446,52 +457,28 @@ const handleChange = (e) => {
     {/* CGST */}
     <tr>
       <td>
-        <label>SGST</label>
+        <label>GST</label>
       </td>
       <td colSpan="2">
         <input
           type="number"
           className="form-control"
-          value={sgst}
-          onChange={handleFixedChange(setSGST, setFixedSGST)}
-          placeholder="Enter SGST"
+          value={gst}
+          onChange={handleFixedChange(setGST, setFixedGST)}
+          placeholder="Enter GST"
         />
       </td>
       <td colSpan="2">
         <input
           type="number"
           className="form-control"
-          value={fixedSGST}
+          value={fixedGST}
           disabled
-          placeholder="Fixed SGST"
+          placeholder="Fixed GST"
         />
       </td>
     </tr>
 
-    {/* CGST */}
-    <tr>
-      <td>
-        <label>CGST</label>
-      </td>
-      <td colSpan="2">
-        <input
-          type="number"
-          className="form-control"
-          value={cgst}
-          onChange={handleFixedChange(setCGST, setFixedCGST)}
-          placeholder="Enter SGST"
-        />
-      </td>
-      <td colSpan="2">
-        <input
-          type="number"
-          className="form-control"
-          value={fixedCGST}
-          disabled
-          placeholder="Fixed CGST"
-        />
-      </td>
-    </tr>
 
     {/* Total Amount */}
         <tr>
