@@ -10,10 +10,15 @@ import { Button } from "react-bootstrap";
 import "./App.css";
 
 const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) => {
+  const navigate = useNavigate();
+  const {userType} = useParams();
 
   const raiseTicketNotifications = notifications.filter(
     (item) => item.assignedTo === "Customer Care"
   );
+  const handleTicketClick = (ticketId) => {
+    navigate(`/customerRaiseTicketQuotation/${userType}/${ticketId}`, { state: { ticketId } });
+  };
 
   return (
     <div>
@@ -28,7 +33,7 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
             <div className="notification-header">
               <strong>Ticket ID: </strong>{" "}
               <span
-                // onClick={() => handleTicketClick(notification.id)}
+                onClick={() => handleTicketClick(notification.id)}
                 style={{
                   color: "blue",
                   cursor: "pointer",
@@ -106,6 +111,7 @@ const Notification = () => {
   const [activeTab, setActiveTab] = useState("Raise Ticket");
   const navigate = useNavigate();
   const {userType} = useParams();
+  const { customerId } = useParams();
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -120,7 +126,7 @@ const Notification = () => {
     const fetchNotifications = async () => {
       try {
         const raiseTicketResponse = await fetch(
-          "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications"
+          `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetRaiseTicketNotificationsByCustomerId?customerId=${customerId}`
         );
         const raiseTicketData = await raiseTicketResponse.json();
 
@@ -132,11 +138,11 @@ const Notification = () => {
         setTicketNotifications(raiseTicketFiltered);
         setNewTicketCount(raiseTicketCount);
         setGlowTicket(raiseTicketCount > 0);
-
+ 
         if (raiseTicketCount > 0) {
           setHighlightedTicket(raiseTicketFiltered[0].raiseTicketId);
         }
-
+ 
         // const getQuoteResponse = await fetch(
         //   "https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetails"
         // );
@@ -159,7 +165,7 @@ const Notification = () => {
       }
     };
     fetchNotifications();
-  }, []);
+  }, [customerId]);
 
   const handleClearTicketNotifications = () => {
     setNewTicketCount(0);
@@ -221,13 +227,13 @@ const Notification = () => {
 
         <div className="notifications-container d-flex bg-white border rounded shadow-sm m-4 p-3">
           <div className="tabs">
-            {["Raise  Ticket", "Buy  Product", "General  Notifications"].map((tab) => (
+            {["Raise Ticket Quotations", "Buy Product Quotations", "General  Notifications"].map((tab) => (
               <span
                 key={tab}
                 className={`tab-item ${activeTab === tab ? "active" : ""} ${
-                  tab === "Raise  Ticket" && glowTicket
+                  tab === "Raise Ticket Quotations" && glowTicket
                     ? "glow"
-                    : tab === "Buy  Product" && glowQuote
+                    : tab === "Buy Product Quotations" && glowQuote
                     ? "glow"
                     : tab === "General  Notifications" && glowGet
                     ? "glow"
@@ -236,17 +242,17 @@ const Notification = () => {
                 onClick={() => handleTabClick(tab)}
                 style={{ cursor: "pointer" }}
               >
-                {tab === "Raise  Ticket" && (
+                {tab === "Raise Ticket Quotations" && (
                   <>
-                    Raise Ticket{" "}
+                    Raise Ticket Quotations{" "}
                     {newTicketCount > 0 && (
                       <span className="badge bg-danger">{newTicketCount}</span>
                     )}
                   </>
                 )}
-                {tab === "Buy  Product" && (
+                {tab === "Buy Product Quotations" && (
                   <>
-                    Buy Product{" "}
+                    Buy Product Quotations{" "}
                     {newQuoteCount > 0 && (
                       <span className="badge bg-danger">{newQuoteCount}</span>
                     )}
@@ -264,7 +270,7 @@ const Notification = () => {
             ))}
           </div>
           <div>
-            {activeTab === "Raise  Ticket" && (
+            {activeTab === "Raise Ticket Quotations" && (
               <>
                 <NotificationsList
                   notifications={ticketNotifications}
@@ -274,7 +280,7 @@ const Notification = () => {
                 <div
                   className=" view-notifications text-info mx-2"
                   onClick={() => {
-                    navigate(`/viewCustomer/${userType}`);
+                    navigate(`/viewCustomer/${userType}/${customerId}`);
                     handleClearTicketNotifications();
                   }}
                   style={{ cursor: "pointer" }}

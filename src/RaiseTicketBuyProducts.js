@@ -55,16 +55,16 @@ const BuyProduct = () => {
           throw new Error('Failed to fetch ticket data');
         }
         const data = await response.json();
-        console.log("No data Found");
-        console.log(data.id);
-        console.log(data.subject);
-        alert(data.id);
+        // console.log("No data Found");
+        // console.log(data.id);
+        // console.log(data.subject);
+        // alert(data.id);
 
         setTicketData(data);
         setSubject(data.subject);
         setId(data.id);
         setSpecifications(data.materials || [{ material: "", quantity: "" }]);
-        alert(JSON.stringify(data));
+        // alert(JSON.stringify(data));
       } catch (error) {
         console.error("Error fetching ticket data:", error);
       } finally {
@@ -156,30 +156,33 @@ const handleMaterialChange = (index, field, value) => {
 
   const calculateGrandTotal = () => specifications.reduce((sum, spec) => sum + spec.total, 0);
 
-const calculateTotalAmount = (grandTotalAmount, discountPercentage, deliveryCharges, serviceChargePercentage, cgstPercentage, sgstPercentage) => {
-    const discountAmount = grandTotalAmount * (discountPercentage / 100);
+const calculateTotalAmount = (grandTotalAmount, discountPercentage, deliveryCharges, serviceChargePercentage, gstPercentage) => {
+  const discountAmount = grandTotalAmount * (discountPercentage / 100); 
     const priceAfterDiscount = grandTotalAmount - discountAmount;
     const priceAfterDelivery = priceAfterDiscount + parseFloat(deliveryCharges || 0);
     const serviceCharge = priceAfterDelivery * (serviceChargePercentage / 100);
     const priceAfterServiceCharge = priceAfterDelivery + serviceCharge;
-    const cgst = priceAfterServiceCharge * (cgstPercentage / 100);
-    const sgst = priceAfterServiceCharge * (sgstPercentage / 100);
-    const total = priceAfterServiceCharge + cgst + sgst;
-    return { total, discountAmount, serviceCharge, cgst, sgst };
+    const gst = priceAfterServiceCharge * (gstPercentage / 100);
+    const total = priceAfterServiceCharge + gst;
+    return {
+      total: parseFloat(total.toFixed(2)),
+      discountAmount: parseFloat(discountAmount.toFixed(2)),
+      serviceCharge: parseFloat(serviceCharge.toFixed(2)),
+      gst: parseFloat(gst.toFixed(2)),
+  };
 };
 
 const handleFixedChange = (setter, fixedSetter, grandTotalAmount) => (e) => {
-    const value = parseFloat(e.target.value) || 0;
+    const value = parseFloat(e.target.value);
     setter(value);
 
-    const updatedGrandTotal = parseFloat(grandTotalAmount) || 0;
     const updatedDiscount = parseFloat(discount) || 0;
     const updatedDeliveryCharges = parseFloat(deliveryCharges) || 0;
     const updatedServiceCharge = parseFloat(serviceCharge) || 0;
     const updatedGST = parseFloat(gst) || 0;
 
     const { total, discountAmount, serviceCharge: calculatedServiceCharge, gst: calculatedGST } = calculateTotalAmount(
-        updatedGrandTotal,
+        parseFloat(grandTotalAmount) || 0,
         updatedDiscount,
         updatedDeliveryCharges,
         updatedServiceCharge,
@@ -190,9 +193,24 @@ const handleFixedChange = (setter, fixedSetter, grandTotalAmount) => (e) => {
     else if (setter === setDeliveryCharges) fixedSetter(updatedDeliveryCharges.toFixed(2));
     else if (setter === setServiceCharge) fixedSetter(calculatedServiceCharge.toFixed(2));
     else if (setter === setGST) fixedSetter(calculatedGST.toFixed(2));
-  
+
     setTotalAmount(total.toFixed(2));
 };
+useEffect(() => {
+  const { totalAmounts, discountAmount, serviceCharge: calculatedServiceCharge, gst:calculatedGST} = calculateTotalAmount(
+    totalAmounts,
+    discount,
+    deliveryCharges, 
+    serviceCharge,
+    gst
+  );
+  setFixedDiscount(discountAmount);
+  setFixedDelivery(deliveryCharges);
+  setFixedServiceCharge(calculatedServiceCharge);
+  setFixedGST(calculatedGST);
+  setTotalAmount(totalAmount);
+}, [totalAmount, discount, deliveryCharges, serviceCharge, gst]);
+
 
 const handleChange = (e) => {
   const { name, value } = e.target;
@@ -411,7 +429,7 @@ const handleChange = (e) => {
       </td>
       <td colSpan="2">
         <input
-            type="number"
+            type="number" 
             className="form-control"
             value={deliveryCharges}
             onChange={handleFixedChange(setDeliveryCharges, setFixedDelivery)}

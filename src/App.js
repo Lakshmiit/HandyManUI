@@ -64,13 +64,13 @@ function App() {
             <Route path="/technicianQuoteNotification/:userType/:category/:district/:technicianId" element={<TechnicianQuoteNotifications />} />
             <Route path="/viewRaiseQuote/:raiseTicketId/:userType/:technicianId" element={<ViewRaiseQuoteTech />} />
             <Route path="/raiseTicketQuotation/:raiseTicketId" element={<RaiseTicketQuotation />} />
+            <Route path="/raiseTicketBuyProducts/:raiseTicketId" element={<RaiseTicketBuyProducts />} />
             <Route path="/quoteNotification" element={<QuoteNotifications />} />
             <Route path="/notificationTechnician/:userType/:category/:district/:technicianId" element={<NotificationTechnician />} />
-            <Route path="/customerNotification/:userType" element={<CustomerNotification />} />
-            <Route path="/viewCustomer/:userType" element={<ViewCustomerGrid />} />
+            <Route path="/customerNotification/:userType/:customerId" element={<CustomerNotification />} />
+            <Route path="/viewCustomer/:userType/:customerId" element={<ViewCustomerGrid />} />
             <Route path="/ShortAdminNotifications" element={<ShortAdminNotifications />} />
-            <Route path="/raiseTicketBuyProducts" element={<RaiseTicketBuyProducts />} />
-            <Route path="/customerRaiseTicketQuotation/:userType" element={<CustomerRaiseTicketQuotation />} />
+            <Route path="/customerRaiseTicketQuotation/:userType/:raiseTicketId" element={<CustomerRaiseTicketQuotation />} />
           </Routes>
         </main>
       </div>

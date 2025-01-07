@@ -2,17 +2,19 @@ import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import axios from 'axios';
 import Sidebar from "./Sidebar";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { FaTrash, FaEye } from "react-icons/fa";
 import {
   Dashboard as MoreVertIcon,
-  Forward as ForwardIcon,
+  // Forward as ForwardIcon,
 } from "@mui/icons-material";
 import "./App.css";
 
 const RaiseTicketNotification = () => {
   // const navigate = useNavigate();
   //const [status, setStatus] = useState("");
+  // const { raiseTicketId } = useParams();
+  const { userType } = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [ticketData, setTicketData] = useState([]);
@@ -20,23 +22,19 @@ const RaiseTicketNotification = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
   const rowsPerPage = 15;
+  const { customerId } = useParams();
  
   useEffect(() => {
-    console.log(ticketData);
-  }, [ticketData]);
+    console.log(ticketData, loading);
+  }, [ticketData, loading]);
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications`
-    const photoUrl = `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
+    const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetRaiseTicketNotificationsByCustomerId?customerId=${customerId}`
 
     axios.get(url)
       .then(response => {
         const tickets = response.data.map((ticket) => ({
           ...ticket,
-          attachments: ticket.attachments ? ticket.attachments.map(fileName => ({
-            fileName: fileName,
-            fileUrl: `${photoUrl}${fileName}`  
-          })) : []
         }));
         setTicketData(tickets);
         setFilteredData(tickets);
@@ -47,7 +45,7 @@ const RaiseTicketNotification = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, []);
+  }, [customerId]);
 
   const handleDelete = (ticketId) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this ticket?');
@@ -80,9 +78,9 @@ const RaiseTicketNotification = () => {
  const indexOfFirstTicket = indexOfLastTicket - rowsPerPage;
  const currentRaiseTicket = filteredData.slice(indexOfFirstTicket, indexOfLastTicket);
 
- if (loading) {
-   return <div>Loading...</div>; // Show loading message while data is fetching
- }
+//  if (loading) {
+//    return <div>Loading...</div>; // Show loading message while data is fetching
+//  }
 
   return (
     <div className="d-flex flex-row justify-content-start align-items-start">
@@ -134,7 +132,7 @@ const RaiseTicketNotification = () => {
                 <td>{ticket.assignedTo}</td>
                 <td className="d-flex align-items-center">
                   <Link
-                    to={``}
+                    to={`/customerRaiseTicketQuotation/${userType}/${ticket.id}`}
                     className="btn btn-info mx-2"
                   >
                     <FaEye />   
@@ -145,9 +143,9 @@ const RaiseTicketNotification = () => {
                   >   
                     <FaTrash />
                   </Link>
-                  <Link to="#" className="btn btn-success mx-2">
+                  {/* <Link to="#" className="btn btn-success mx-2">
                     <ForwardIcon />
-                  </Link>
+                  </Link> */}
                 </td>
               </tr>
             ))}

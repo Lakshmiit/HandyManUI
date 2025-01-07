@@ -168,7 +168,7 @@ const RaiseActionView = () => {
       subject: ticketData.subject,
       details: ticketData.details,
       category: ticketData.category,
-      assignedTo: ticketData.assignedTo,
+      assignedTo: "Technical Agency",
       id : id,
       status: ticketData.status,
       InternalStatus: "Assigned",
@@ -188,6 +188,7 @@ const RaiseActionView = () => {
           updatedDate: comment.updatedDate,
           commentText: comment.commentText,
       })),
+      LowestBidderTechnicainId: "",
     };
     try {
       
@@ -213,7 +214,7 @@ const RaiseActionView = () => {
       const updatedTicket = {
         ...ticketData,
         status: "Assigned",
-        assignedTo: "Technical Agency",
+        assignedTo: "",
       };
       setTicketData(updatedTicket);
       alert("Ticket Forwarded successfully to Technician");
@@ -538,6 +539,7 @@ const RaiseActionView = () => {
           disabled={status === "Assigned" && assignedTo === "Technical Agency"}>
             <SaveAsIcon />
           </Button>
+
         </div>
         </Form>
 

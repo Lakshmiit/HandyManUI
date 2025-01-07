@@ -421,9 +421,9 @@ const handleFixedChange = (setter, fixedSetter) => (e) => {
             value={quote}
             onChange={handleFixedChange(setQuote, setFixedQuote)}
             placeholder="Enter Quote Amount"
-        />
+         />
       </td>
-        <td colSpan="2">
+        <td colSpan="2"> 
         <input
           type="number"
           className="form-control"

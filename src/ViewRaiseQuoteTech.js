@@ -55,6 +55,7 @@ const RaiseActionView = () => {
   const {technicianId} = useParams();
   // const [internalStatus, setInternalStatus] = useState('');
   const [ticketId, setTicketId] = useState('');
+      const [materialQuotation, setMaterialQuotation] = useState([{discount: "", deliveryCharges: "", servicecharges: "", gst: "", gradntotal: ""}])
   
   useEffect(() => {
     console.log(ticketData, status, id, technicianData, customerId, ticketId);
@@ -155,15 +156,15 @@ const RaiseActionView = () => {
     e.preventDefault();
     
     const payload = {
+      id: id,
       RaiseTicketId: ticketData.raiseTicketId,
       date: new Date().toISOString(),
       address: address,
       subject: ticketData.subject,
       details: ticketData.details,
-      category: ticketData.category,
-      assignedTo,
-      id : ticketData.id,
       status: ticketData.status,
+      category: ticketData.category,
+      assignedTo:"Technical Agency",
       InternalStatus: "Pending",
       TicketOwner: ticketData.customerId,
       CustomerId: ticketData.customerId,
@@ -181,9 +182,8 @@ const RaiseActionView = () => {
           updatedDate: comment.updatedDate,
           commentText: comment.commentText,
       })),
+      LowestBidderTechnicainId: "",
     };
-
-    console.log(payload);
     try {
       
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
@@ -233,7 +233,15 @@ const RaiseActionView = () => {
     materials: specifications.map((spec) => ({
       material: spec.material,
       quantity: spec.quantity,
-      price: "string",
+      price: "",
+      total: "",
+  })),
+  materialQuotation: materialQuotation.map((mat) => ({
+    discount: "",
+    deliveryCharges: "",
+    serviceCharge: "",
+    gst: "",
+    grandtotal: "",
   })),
     }; 
     try {
@@ -392,29 +400,7 @@ const RaiseActionView = () => {
   const handleFixedChange = (setter, fixedSetter) => (e) => {
     const value = parseFloat(e.target.value) || 0; 
     setter(value); 
-    // let updatedQuote = enterQuoteAmount;
-    // let updatedDiscount = discount;
-    // let updatedOtherCharge = otherCharge;
-    // let updatedServiceCharge = serviceCharge;
-    // let updatedGST = gst;
-
-    // if (setter === setQuote) {
-    //   updatedQuote = value;
-    //   // fixedSetter(value);  
-    // }
-
-    // if (setter === setDiscount) {
-    //   updatedDiscount = value;
-    // }
-    // if (setter === setOtherCharge) {
-    //   updatedOtherCharge = value;
-    // }
-    // if (setter === setServiceCharge) {
-    //   updatedServiceCharge = value;
-    // }
-    // if (setter === setGST) {
-    //   updatedGST = value;
-    // }
+    
 
     const { total, discountAmount, serviceCharge: calculatedServiceCharge, gst: calculatedGST } = calculateTotalPrice(
       enterQuoteAmount, 

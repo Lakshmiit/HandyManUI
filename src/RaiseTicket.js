@@ -266,6 +266,7 @@ useEffect(() => {
         material : spec.material,
         Quantity : spec.Quantity ,
       })),
+      LowestBidderTechnicainId: "",
     };
   
     try {
@@ -537,6 +538,7 @@ useEffect(() => {
                 className="form-control"
                 multiple
                 onChange={handleFileChange}
+                required
               />
               {showAlert && (
                 <div className="alert alert-danger  mt-2">

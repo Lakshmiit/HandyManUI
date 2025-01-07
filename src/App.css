@@ -1144,8 +1144,6 @@ textarea {
   cursor: pointer;
 }
 
-
-
 .tabs {
   display: flex;
   justify-content: start;
@@ -1168,4 +1166,20 @@ textarea {
 .tab-item.active {
   background-color: #f0f0f0; 
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); 
+}
+
+.blinking-row {
+  animation: blinking-background 1.5s infinite;
+}
+
+@keyframes blinking-background {
+  0% {
+    background-color: yellow;
+  }
+  50% {
+    background-color: transparent;
+  }
+  100% {
+    background-color: yellow;
+  }
 }

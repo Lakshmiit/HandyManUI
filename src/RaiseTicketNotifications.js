@@ -22,7 +22,8 @@ const RaiseTicketNotification = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [states, setStates] = useState([]); const [districts, setDistricts] = useState([]); 
+  const [states, setStates] = useState([]);
+  const [districts, setDistricts] = useState([]); 
   const [pinCodes, setPinCodes] = useState([]);
   const [assigned, setAssigned] = useState([]);
   const rowsPerPage = 15;
