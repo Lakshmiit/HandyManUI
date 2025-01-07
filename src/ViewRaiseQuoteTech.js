@@ -55,7 +55,7 @@ const RaiseActionView = () => {
   const {technicianId} = useParams();
   // const [internalStatus, setInternalStatus] = useState('');
   const [ticketId, setTicketId] = useState('');
-      const [materialQuotation, setMaterialQuotation] = useState([{discount: "", deliveryCharges: "", servicecharges: "", gst: "", gradntotal: ""}])
+      const [materialQuotation] = useState([{discount: "", deliveryCharges: "", servicecharges: "", gst: "", gradntotal: ""}])
   
   useEffect(() => {
     console.log(ticketData, status, id, technicianData, customerId, ticketId);

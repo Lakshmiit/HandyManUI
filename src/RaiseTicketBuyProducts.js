@@ -197,8 +197,8 @@ const handleFixedChange = (setter, fixedSetter, grandTotalAmount) => (e) => {
     setTotalAmount(total.toFixed(2));
 };
 useEffect(() => {
-  const { totalAmounts, discountAmount, serviceCharge: calculatedServiceCharge, gst:calculatedGST} = calculateTotalAmount(
-    totalAmounts,
+  const {  discountAmount, serviceCharge: calculatedServiceCharge, gst:calculatedGST} = calculateTotalAmount(
+    // totalAmounts,
     discount,
     deliveryCharges, 
     serviceCharge,
