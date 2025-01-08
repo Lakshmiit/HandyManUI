@@ -8,12 +8,12 @@ import AdminSidebar from './AdminSidebar';
 import ForwardIcon from '@mui/icons-material/Forward';
 import SaveAsIcon from '@mui/icons-material/SaveAs';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
-import {Link, useParams} from 'react-router-dom';
+import {Link, useNavigate, useParams} from 'react-router-dom';
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 
 const RaiseQuotation = () => {
-  // const Navigate = useNavigate();
+  const Navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const {raiseTicketId} = useParams();
@@ -26,30 +26,31 @@ const RaiseQuotation = () => {
   const [commentsList, setCommentsList] = useState([{updatedDate: new Date(), commentText: ""}]); 
   const [requestType, setRequestType] = useState('');
   const [customerId, setCustomerId] = useState(''); 
+
+  
   const [status, setStatus] = useState(''); 
   const [technicianId, setTechnicianId] = useState(""); 
   const [gst, setGST] = useState("");
   const [fixedOtherCharge, setFixedOtherCharge] = useState('');
   const [raiseAQuoteId,setRaiseAQuoteId]=useState('');
   const [fixedGST, setFixedGSTs] = useState('');
-  const [totalQuotedAmount, setTotalQuotedAmount] = useState("");
   const [lowestBidder, setLowestBidder] = useState("");
-  const [Othercharges, setOtherCharge] = useState("");
+  const [othercharges, setOtherCharge] = useState("");
   const [addrRmarks, setAddRemarks] = useState([{requestedDate: new Date(), remarks: ""}]);
   const [assignedTo, setAssignedTo] = useState('');
   const [uploadedFiles] = useState([]);
-  const [showAlert] = useState(false);
-  const [alertMessage] = useState('');
   const [isWithMaterial, setIsWithMaterial] = useState(false);
   const [newPhotoCount , setPhotoCount] = useState(0);
     // Initial state for technician details
     const [technicianDetails, setTechnicianDetails] = useState([]);
     const [fixedServiceCharge, setFixedServiceCharge] = useState('');
+    
     const [discount, setDiscount] = useState("");
     const [fixedDiscount, setFixedDiscount] = useState('');
-    const [TotalAmount, setTotalAmounts] = useState('');
-    const [ServiceCharges, setServiceCharge] = useState('');
-    const [ids,setIds]=useState('');
+    const [totalAmount, setTotalAmount] = useState('');
+    const [serviceCharges, setServiceCharge] = useState('');
+    //const [internalRaiseQuoteid,setInternalRaiseQuoteid]=useState('');
+
     const [enterQuoteAmount, setQuote] = useState('');
     const [fixedQuote, setFixedQuote] = useState('');
     const [state, setState] = useState('');
@@ -65,13 +66,11 @@ const RaiseQuotation = () => {
     useEffect(() => {
       // API URL
       const apiUrl = `https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
-      //const apiUrl = `https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByTechnicianId?raiseAQuotetId=${raiseTicketId}&TechnicianId=${technicianId}`
       // Fetching the data from the API
       const fetchData = async () => {
         try {
           const response = await fetch(apiUrl);
-
-          const data = await response.json();
+          const quotedata = await response.json();
           // Map the data to match your technician details structure 
           // const mappedData = data.map(item => ({
           //   id: item.id,
@@ -93,26 +92,26 @@ const RaiseQuotation = () => {
           //   addrRmarks:item.addrRmarks,
           //   materials: item.materials,
           // }));
-          setTechnicianDetails(data);
-          // alert(JSON.stringify(technicianDetails));
-          setRaiseAQuoteId(data.raiseAQuoteId);
-          setQuote(data.enterQuoteAmount);
+          setTechnicianDetails(quotedata);
+          //alert(JSON.stringify(technicianDetails));
+          setRaiseAQuoteId(quotedata.raiseAQuoteId);
+          setQuote(quotedata.enterQuoteAmount);
   
-          setFixedQuote(data.fixedQuote);
-          setDiscount(data.discount);
-          setFixedDiscount(data.fixedDiscount);
-          setIds(data.id);
+          setFixedQuote(quotedata.fixedQuote);
+          setDiscount(quotedata.discount);
+          setFixedDiscount(quotedata.fixedDiscount);
+          setId(quotedata.id);
           
-          setGST(data.gst);
-          setFixedGSTs(data.fixedGST);
-          setTotalQuotedAmount(data.totalAmount);
-          // alert(data.totalAmount);
-          setOtherCharge(data.Othercharges);
+          setGST(quotedata.gst);
+          setFixedGSTs(quotedata.fixedGST);
+          setTotalAmount(quotedata.totalAmount);
+          //  alert(quotedata.totalAmount);
+          setOtherCharge(quotedata.othercharges);
           // alert(otherCharge);
-          setServiceCharge(data.ServiceCharges);
-          setFixedServiceCharge(data.fixedServiceCharge);
-          setFixedOtherCharge(data.fixedOtherCharge);         
-          setAddRemarks(data.addrRmarks);
+          setServiceCharge(quotedata.serviceCharges);
+          setFixedServiceCharge(quotedata.fixedServiceCharge);
+          setFixedOtherCharge(quotedata.fixedOtherCharge);         
+          setAddRemarks(quotedata.addrRmarks);
         } catch (error) {
           console.error('Error fetching data:', error);
         }
@@ -140,25 +139,36 @@ const RaiseQuotation = () => {
       setIsDealerSelected(value === "Dealer/Agency");
     };  
   
-// const materialAmount = () => specifications.reduce((sum, spec) => sum + spec.total, 0);
-const baseAmount = specifications.reduce((sum, spec) => sum + spec.total, 0);
-useEffect(() => {
-  // Define the calculation logic directly inside useEffect
+    const materialAmount = () => specifications.reduce((sum, spec) => sum + Number(spec.total), 0);
+
+const calculateTotalPrice = () => {
+  // const discountAmount = total * (discountPercentage / 100);
+  // const priceAfterDiscount = total - discountAmount;
+ 
+  // const priceAfterDeliveryCharges = priceAfterDiscount + deliveryCharges;
+
+  // const serviceChargeAmount = priceAfterDeliveryCharges * (serviceChargePercentage / 100);
+  // const priceAfterServiceCharge = priceAfterDeliveryCharges + serviceChargeAmount;
+
+  // const gstAmount = priceAfterServiceCharge * (material[0].gstPercentage / 100);
+  // const total1 = priceAfterServiceCharge + gstAmount;
+
+ 
   setMaterialQuotation((prev) => {
     const updated = [...prev];
     const discount = updated[0]?.discounts;
     const deliveryCharges = updated[0]?.deliveryCharges;
-    const serviceCharges = updated[0]?.serviceCharges;
+    const serviceCharges = updated[0]?.serviceCharges; 
     const gst = updated[0]?.gsts;
-    // const baseAmount = specifications.reduce((sum, spec) => sum + spec.total, 0);
-
-    const fixedDiscounts = baseAmount * (discount / 100); 
+    const baseAmount = materialAmount();
+  
+    const fixedDiscounts = baseAmount * (discount / 100); // Percentage discount
     const fixedDeliveryCharges = deliveryCharges;
-    const fixedServiceCharges = ((baseAmount - fixedDiscounts + deliveryCharges) * serviceCharges) / 100;
-    const fixedGSTS = ((baseAmount - fixedDiscounts + deliveryCharges + fixedServiceCharges) * gst) / 100;
+    const fixedServiceCharges = ((baseAmount - fixedDiscounts + deliveryCharges) * serviceCharges) / 100;;
+    const fixedGSTS = ((baseAmount - fixedDiscounts + deliveryCharges + serviceCharges) * gst) / 100;
     const grandtotal =
       baseAmount - fixedDiscounts + fixedDeliveryCharges + fixedServiceCharges + fixedGSTS;
-
+  
     updated[0] = {
       ...updated[0],
       fixedDiscounts,
@@ -169,22 +179,23 @@ useEffect(() => {
     };
     return updated;
   });
-}, [baseAmount]); 
-
-// useEffect(() => {
-//   calculateTotalPrice();
-// }, [
   
-//   material[0]?.discounts,
-//   material[0]?.deliveryCharges,
-//   material[0]?.serviceCharges,
-//   material[0]?.gsts,
-// ]);
+};
+
+useEffect(() => {
+  calculateTotalPrice();
+}
+  
+  // material[0]?.discounts,
+  // material[0]?.deliveryCharges,
+  // material[0]?.serviceCharges,
+  // material[0]?.gsts,
+);
 
   
   useEffect(() => {
-    console.log(subject, loading, isWithMaterial, ids);
-  }, [subject, loading, isWithMaterial, ids]);
+    console.log(subject, loading, isWithMaterial);
+  }, [subject, loading, isWithMaterial]);
 
   useEffect(() => {
         const fetchticketData = async () => {
@@ -237,29 +248,28 @@ useEffect(() => {
       useEffect(() => {
         if (technicianDetails.length > 0) {
           const lowest = technicianDetails.reduce((prev, current) => {
-            return current.totalQuotedAmount < prev.totalQuotedAmount ? current : prev;
+            const prevAmount = parseFloat(prev.totalAmount);
+            const currentAmount = parseFloat(current.totalAmount);
+            return currentAmount < prevAmount ? current : prev;
           });
+          setTotalAmount(lowest.totalAmount);
+          // alert(lowest.totalAmount);
           setTechnicianId(lowest.technicianId);
           setQuote(lowest.enterQuoteAmount);
-          //alert(enterQuoteAmount);
-
           setRaiseAQuoteId(lowest.raiseAQuoteId);
-          setIds(lowest.ids);
-          // alert(ids);
-          
+          setId(lowest.id);
           setFixedQuote(lowest.fixedQuote);
           setDiscount(lowest.discount);
           setFixedDiscount(lowest.fixedDiscount);
           setGST(lowest.gst);
           setFixedGSTs(lowest.fixedGST);
-          setOtherCharge(lowest.Othercharges);
+          setOtherCharge(lowest.othercharges);
           setFixedOtherCharge(lowest.fixedOtherCharge);
-          setServiceCharge(lowest.ServiceCharges);
+          setServiceCharge(lowest.serviceCharges);
           setFixedServiceCharge(lowest.fixedServiceCharge);
           setLowestBidder(lowest.technicianId);
           setSpecifications(lowest.materials);
-          setTotalAmounts(lowest.TotalAmount);
-          setTotalQuotedAmount(lowest.totalQuotedAmount );   
+             
           if (lowest.addrRmarks?.length > 0) {
             setAddRemarks(lowest.addrRmarks[0].remarks);
           } else {
@@ -269,7 +279,7 @@ useEffect(() => {
         } else {
           setTechnicianId('');
           setLowestBidder('');
-          setTotalQuotedAmount(0);
+          setTotalAmount('');
           setQuote('');
           setFixedQuote('');
           setDiscount('');
@@ -281,9 +291,8 @@ useEffect(() => {
           setGST('');
           setFixedGSTs('');
           setAddRemarks("");
-          setTotalAmounts('');
         }
-      }, [technicianDetails, discount, fixedDiscount, Othercharges, fixedOtherCharge, ServiceCharges,fixedServiceCharge, gst, fixedGST]);
+      }, [technicianDetails, discount, fixedDiscount, othercharges, fixedOtherCharge, serviceCharges,fixedServiceCharge, gst, fixedGST]);
       
 
   // Handle form data changes
@@ -333,6 +342,7 @@ useEffect(() => {
   const handleSaveTicket = async (e) => {
     e.preventDefault();
     
+   
     const payload = {
       RaiseTicketId: ticketData.raiseTicketId,
       date: new Date().toISOString(),
@@ -341,7 +351,7 @@ useEffect(() => {
       details: ticketData.details,
       category: ticketData.category,
       assignedTo: ticketData.assignedTo,
-      id : id,
+      id : raiseTicketId,
       status: status,
       InternalStatus: "Assigned",
       TicketOwner: ticketData.customerId,
@@ -386,9 +396,15 @@ useEffect(() => {
 
   const handleValuesTicket = async (e) => {
     e.preventDefault();
+    // var techData = technicianDetails[0];
+    // alert(techData);
+    // var techData = JSON.stringify(technicianDetails);
+    // alert(techData);
+    //alert(enterQuoteAmount);
+    // console.log(techData);
     
     const payload3 = {
-      id: "03dd6bbc-36ba-4795-b39c-b40d58991d87",
+      id: id,
       quotedDate: new Date().toISOString(),
       RaiseAQuoteId:raiseAQuoteId ,
       //raiseAQuote: ticketData.raiseAQuote,
@@ -398,19 +414,19 @@ useEffect(() => {
       TechnicianId: technicianId,
       enterQuoteAmount: enterQuoteAmount,
       Discount: discount, 
-      Othercharges: Othercharges,
-      ServiceCharges: ServiceCharges,
+      othercharges: othercharges,
+      serviceCharges: serviceCharges,
       GST: gst,
-      TotalAmount: TotalAmount,
+      totalAmount: totalAmount,
       fixedQuote: fixedQuote,
       fixedDiscount:fixedDiscount,
       fixedOtherCharge:fixedOtherCharge,
       fixedServiceCharge: fixedServiceCharge,
-      fixedGST: fixedDiscount,
+      fixedGST: fixedGST,
       addrRmarks: Array.isArray(addrRmarks)
       ? addrRmarks.map((comment) => ({
-          requestedDate: "2025-01-07T08:57:22.484Z",
-          remarks: "remarks",
+          requestedDate: comment.requestedDate,
+          remarks: comment.remarks ,
         }))
       : [],
     materials: specifications.map((spec) => ({
@@ -425,6 +441,7 @@ useEffect(() => {
       servicecharges: quote.serviceCharges.toString(),
       gst: quote.gsts.toString(),
       grandtotal: quote.grandtotal.toString(), 
+      
       fixedDiscount: quote.fixedDiscounts.toString(),
       fixedDeliveryChargs: quote.fixedDeliveryCharges.toString(),
       fixedServicecharges: quote.fixedServiceCharges.toString(),
@@ -436,7 +453,7 @@ useEffect(() => {
     //alert(JSON.stringify(payload3));
     //console.log(JSON.stringify(payload3));
   try {
-    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/id?id=03dd6bbc-36ba-4795-b39c-b40d58991d87`, {
+    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/id?id=${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -460,6 +477,7 @@ useEffect(() => {
     e.preventDefault();
     handleSaveTicket(e);
     handleValuesTicket(e);
+    Navigate(`/adminNotifications`);
   }
 
   // Detect screen size for responsiveness
@@ -798,7 +816,7 @@ useEffect(() => {
       <input
         type="number"
         className="form-control text-end"
-        value={baseAmount}
+        value={materialAmount()}
         readOnly
       />
     </td>
@@ -977,7 +995,7 @@ useEffect(() => {
         <td>{technician.fixedServiceCharge}</td>
         {/* <td>{technician.gst}</td> */}
         <td>{technician.fixedGST}</td>
-        <td>{technician.totalQuotedAmount}</td>
+        <td>{technician.totalAmount}</td>
         <td>{technician.technicianId === lowestBidder ? 'Yes' : 'No'}</td>
       </tr>
     ))}  
@@ -1002,7 +1020,7 @@ useEffect(() => {
             <input
             type="number"
             className="form-control text-end"
-            value={totalQuotedAmount}
+            value={totalAmount}
             readOnly
             placeholder="Total Amount"
             />
@@ -1040,13 +1058,6 @@ useEffect(() => {
           </Link>
         </div>
       </Form>
-
-      {/* Success Alert */}
-      {showAlert && (
-        <div className="mt-4 alert alert-info" role="alert">
-          {alertMessage}
-        </div>
-      )}
     </div>
   </div>
   );

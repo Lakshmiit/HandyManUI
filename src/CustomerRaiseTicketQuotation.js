@@ -38,9 +38,8 @@ const RaiseQuotation = () => {
   const [fixedOtherCharge, setFixedOtherCharge] = useState('');
   const [fixedServiceCharge, setFixedServiceCharge] = useState('');
   const [fixedGST, setFixedGST] = useState('');
-  const [totalQuotedAmount, setTotalQuotedAmount] = useState("");
   const [lowestBidder, setLowestBidder] = useState("");
-  const [TotalAmount] = useState('');
+  const [totalAmount, setTotalAmount] = useState('');
   const [othercharges, setOtherCharge] = useState("");
   const [assignedTo, setAssignedTo] = useState('');
   const [showAlert] = useState(false);
@@ -48,13 +47,23 @@ const RaiseQuotation = () => {
   const [category, setCategory] = useState("");
   const [technicianDetails, setTechnicianDetails] = useState([]);
   const [addrRmarks, setAddrRmarks] = useState([{requestedDate: new Date(), remarks: ""}]);
-  const [traderDetails] = useState([]);
-  
   const [raiseAQuoteId, setRaiseAQuoteId] = useState('');
   const [enterQuoteAmount, setQuote] = useState('');
   const [discount, setDiscount] = useState('');
-  const [material] = useState([{discounts: "", fixedDiscounts: "", deliveryCharges: "", fixedDeliveryCharges: "", serviceCharges: "", fixedServiceCharges: "", gsts: "", fixedGSTS: "", grandtotal: ""}])
-  
+  const [materialQuotation, setMaterial] = useState([{discounts: "", fixedDiscounts: "", deliveryCharges: "", fixedDeliveryCharges: "", serviceCharges: "", fixedServiceCharges: "", gsts: "", fixedGSTS: "", grandtotal: ""}])
+  const charges = materialQuotation[0] || {
+    discount: "",
+    fixedDiscount: "",
+    deliveryCharges: "",
+    fixedDeliveryChargs: "",
+    serviceCharges: "",
+    fixedServicharges: "",
+    gsts: "",
+    fixedGST: "",
+    grandtotal: "",
+  };
+  // 
+   
 
   useEffect(() => {
     console.log(category, loading, subject,status, id);
@@ -83,6 +92,7 @@ const RaiseQuotation = () => {
         setZipcode(data.ZipCode);
         setSubject(data.subject);
         setCategory(data.category);
+        setCustomerId(data.customerId);
         setAssignedTo(data.assignedTo);
         setIsWithMaterial(data.isMaterialType);
         setRequestType(data.requestType || 'Without Material');
@@ -130,75 +140,66 @@ const RaiseQuotation = () => {
           // }));
           // Update state with the fetched and mapped data
           // setTechnicianDetails(mappedData);
-          setTechnicianDetails(data);
-          // alert(JSON.stringify(technicianDetails));
-          setRaiseAQuoteId(data.raiseAQuoteId);
+          setTechnicianDetails(data);     
+          // alert(JSON.stringify(data));        
           setQuote(data.enterQuoteAmount);
-  
           setFixedQuote(data.fixedQuote);
           setDiscount(data.discount);
           setFixedDiscount(data.fixedDiscount);
           setId(data.id);
-          
           setGST(data.gst);
           setFixedGST(data.fixedGST);
-          setTotalQuotedAmount(data.totalAmount);
-          // alert(data.totalAmount);
-          setOtherCharge(data.Othercharges);
-          // alert(otherCharge);
-          setServiceCharge(data.ServiceCharges);
+          setTotalAmount(data.totalAmount);
+          setOtherCharge(data.othercharges);
+          setServiceCharge(data.serviceCharges);
           setFixedServiceCharge(data.fixedServiceCharge);
           setFixedOtherCharge(data.fixedOtherCharge);         
+          setRaiseAQuoteId(data.raiseAQuoteId);
           setAddrRmarks(data.addrRmarks);
           setSpecifications(data.materials || [{material: "", quantity: "", price: "", total: ""}]);
-          // alert(JSON.stringify(technicianDetails));
+          setMaterial(data.materialQuotation || [{discount: "", fixedDiscount: "", deliverycharges: "", fixedDeliveryChargs: "", servicecharges: "", fixedServiceCharges: "", gst: "", fixedGST: "", grandtotal: ""}])
+          // alert(data.materialQuotation);
+      //  alert(JSON.stringify(technicianDetails));
+      //  console.log(materialQuotation);
+      //  alert(materialQuotation);
+        console.log("Material Quotation State:",materialQuotation);
         } catch (error) {
           console.error('Error fetching data:', error);
         }
       };
       fetchData();
-    }, [raiseTicketId]); 
-
-  // useEffect(() => {
-  //   if (traderDetails.length > 0) {
-  //     const lowest = traderDetails.reduce((prev, current) => {
-  //       return current.totalAmount < prev.totalAmount ? current : prev;
-  //     });
-      
-  //     setLowestBidder(lowest.totalAmount);
-  //     setTotalAmount(lowest.totalAmount);
-  //     // if (lowest.addrRmarks?.length > 0) {
-  //     //   setAddrRmarks(lowest.addrRmarks[0].remarks);
-  //     // } else {
-  //     //   setAddrRmarks("");
-  //     // }
-  //   } else {
-  //     // Optionally, handle the case where technicianDetails is empty
-  //     setTechnicianId('');
-  //     setLowestBidder('');
-  //     setTotalQuotedAmount(0);
-  //   }
-  // }, [traderDetails]);
-  
+    }, [raiseTicketId, materialQuotation]); 
 
       useEffect(() => {
         if (technicianDetails.length > 0) {
           const lowest = technicianDetails.reduce((prev, current) => {
-            return current.totalQuotedAmount < prev.totalQuotedAmount ? current : prev;
+            const prevAmount = parseFloat(prev.totalAmount);
+            const currentAmount = parseFloat(current.totalAmount);
+            return currentAmount < prevAmount ? current : prev;
           });
           setTechnicianId(lowest.technicianId);
           setLowestBidder(lowest.technicianId);
-          setTotalQuotedAmount(lowest.totalQuotedAmount);
+          setTotalAmount(lowest.totalAmount); 
+          setSpecifications(lowest.materials);
+          setMaterial(lowest.materialQuotation);
+          
+          // alert(JSON.stringify(lowest.materialQuotation[0]));
+          // let fixedDiscounts = lowest.materialQuotation[0]["fixedDiscounts"];
+          // setFixedDiscounts(fixedDiscounts);
+          //alert(calculatedfixedDiscounts);
+          //console.log(fixedDiscounts);
           if (lowest.addrRmarks?.length > 0) {
             setAddrRmarks(lowest.addrRmarks[0].remarks);
           } else {
             setAddrRmarks("");
           }
+          // alert(lowest.addrRmarks[0].remarks);
         } else {
           // Optionally, handle the case where technicianDetails is empty
           setTechnicianId('');
           setLowestBidder('');
-          setTotalQuotedAmount(0);
+          setTotalAmount(0);
+          // setSpecifications('')
         }
       }, [technicianDetails, discount, fixedDiscount, othercharges, fixedOtherCharge, serviceCharges,fixedServiceCharge, gst, fixedGST]);
       
@@ -220,14 +221,15 @@ const handleAddRemarks = (index, value) => {
   
   const handleSaveTicket = async (e) => {
     e.preventDefault();
+
     
     const payload = {
       RaiseTicketId: ticketData.raiseTicketId,
       date: new Date().toISOString(),
-      Subject: ticketData.subject,
+      Subject: subject,
       Details: details,
-      Category: ticketData.category,
-      AssignedTo: ticketData.assignedTo,
+      Category: category,
+      AssignedTo: assignedTo,
       id : ticketData.id,
       status: ticketData.status,
       internalStatus: "Assigned",
@@ -257,6 +259,7 @@ const handleAddRemarks = (index, value) => {
       : [],
       LowestBidderTechnicainId: lowestBidder,
     };
+    // alert(JSON.stringify(payload));
     try {
       
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
@@ -293,7 +296,7 @@ const handleAddRemarks = (index, value) => {
       Othercharges: othercharges,
       ServiceCharges: serviceCharges,
       GST: gst,
-      TotalAmount: TotalAmount,
+      TotalAmount: totalAmount,
       fixedQuote: fixedQuote,
       fixedDiscount:fixedDiscount,
       fixedOtherCharge:fixedOtherCharge,
@@ -311,16 +314,16 @@ const handleAddRemarks = (index, value) => {
       price: spec.price.toString(),
       total: spec.total.toString(),
     })),
-    materialQuotation: material.map((quote) => ({
-      discount: quote.discounts.toString(),
-      deliverycharges: quote.deliveryCharges.toString(),
-      servicecharges: quote.serviceCharges.toString(),
-      gst: quote.gsts.toString(),
-      grandtotal: quote.grandtotal.toString(), 
-      fixedDiscount: quote.fixedDiscounts.toString(),
-      fixedDeliveryChargs: quote.fixedDeliveryCharges.toString(),
-      fixedServicecharges: quote.fixedServiceCharges.toString(),
-      fixedGST: quote.fixedGSTS.toString(),
+    materialQuotation: materialQuotation.map((quote) => ({
+      discount: quote.discounts,
+      deliverycharges: quote.deliveryCharges,
+      servicecharges: quote.serviceCharges,
+      gst: quote.gsts,
+      grandtotal: quote.grandtotal, 
+      fixedDiscount: quote.fixedDiscounts,
+      fixedDeliveryChargs: quote.fixedDeliveryCharges,
+      fixedServicecharges: quote.fixedServiceCharges,
+      fixedGST: quote.fixedGSTS,
     })),
     // LowestBidderTechnicianId: lowestBidder,
   };
@@ -411,8 +414,8 @@ const handleAddRemarks = (index, value) => {
       <Form onSubmit={handleSaveTicket}>
       <div className="ticket-info">
         <p><strong>Ticket ID: </strong> {ticketData.raiseTicketId}</p>
-        <p><strong>Subject: </strong> {ticketData.subject}</p>
-        <p><strong>Category: </strong> {ticketData.category}</p>
+        <p><strong>Subject: </strong> {subject}</p>
+        <p><strong>Category: </strong> {category}</p>
       </div>
 
       <div className="radio m-1">
@@ -446,7 +449,21 @@ const handleAddRemarks = (index, value) => {
         {requestType === "With Material" && (
         <>
         <div className="form-group">
-          <p><strong>Required Material Quotation</strong></p>
+          <p><strong>Required Material</strong></p>
+          <div className='d-flex gap-3 mb-2'>
+          <div style={{ flex: 4 }}>
+            <label className="fw-bold">Material</label>
+          </div>
+          <div style={{ flex: 4 }}>
+            <label className="fw-bold">Quantity</label>
+          </div>
+          <div style={{ flex: 4 }}>
+            <label className="fw-bold">Price</label>
+          </div>
+          <div style={{ flex: 4 }}>
+            <label className="fw-bold">Total</label>
+          </div>
+          </div>
           {specifications.map((spec, index) => (
             <div className="d-flex gap-3 mb-2" key={index}>
               <input
@@ -455,8 +472,8 @@ const handleAddRemarks = (index, value) => {
                 value={spec.material}
                 placeholder="Material"
                 onChange={(e) => handleMaterialChange(index, "material", e.target.value)}
-                
               />
+              
               <input
                 type="text"
                 className="form-control"
@@ -487,36 +504,36 @@ const handleAddRemarks = (index, value) => {
   <thead>
     <tr>
     <td>Trader ID</td>
-
+    <td>Total</td>
     <td>Discount</td>
-    {/* <td>Fixed Discount</td> */}
     <td>Delivery Charges</td>
-    {/* <td>Fixed Delivery Charges</td> */}
     <td>Service Charges</td>
-    {/* <td>Fixed Service Charges</td> */}
     <td>GST</td>
-    {/* <td>Fixed GST</td> */}
     <td>Grand Total</td>
     <td>Lowest Bidder</td>
     </tr>
-    </thead>
+    </thead> 
     <tbody>
-        {traderDetails.map((trader, index) => (
-        <tr key={index}>
+        <tr>
             <td>Customer Care</td>
-            {/* <td>{trader.quotedAmount}</td> */}
-            <td>{trader.discount}</td>
-            {/* <td>{trader.fixedDiscount}</td> */}
-            <td>{trader.othercharges}</td>
-            {/* <td>{trader.fixedDeliveryCharges}</td> */}
-            <td>{trader.serviceCharges}</td>
-            {/* <td>{trader.fixedServiceCharges}</td> */}
-            <td>{trader.gst}</td>
-            <td>{trader.totalQuotedAmount}</td>
-            {/* <td>{trader.fixedGST}</td> */}
-            <td>{trader.traderId === lowestBidder ? 'Yes' : 'No'}</td>
+            <td>Total</td>
+            <td>
+  {charges.fixedDiscount
+    ? Number(charges.fixedDiscount).toFixed(2)
+    : '0.00'}
+</td>
+            <td>{charges.fixedDeliveryChargs}</td>
+            <td>{charges.fixedServicecharges
+    ? Number(charges.fixedServicecharges).toFixed(2)
+    : '0.00'}</td>
+            <td>{charges.fixedGST
+    ? Number(charges.fixedGST).toFixed(2)
+    : '0.00'}</td>
+            <td>{charges.grandtotal
+    ? Number(charges.grandtotal).toFixed(2)
+    : '0.00'}</td>
+            <td>YES</td>
         </tr>
-        ))}
     </tbody>
     <tbody>
     <tr>
@@ -529,18 +546,18 @@ const handleAddRemarks = (index, value) => {
             placeholder='Lowest Bidder Trader ID'
             /> 
         </td>
-        <td>Lowest Bid Amount</td>
-        
+        <td className="m-4">Lowest Bid Amount</td>
         <td colspan="4">
             <input
             type="number"
             className="form-control text-end"
-            value={totalQuotedAmount}
+            value={charges.grandtotal
+              ? Number(charges.grandtotal).toFixed(2)
+              : '0.00'}
             readOnly
             placeholder="Lowest Bidder Total Amount"
-            />
-        </td>
-        
+            /> 
+        </td> 
     </tr>
     </tbody>
     </table>
@@ -556,13 +573,9 @@ const handleAddRemarks = (index, value) => {
       <td>Technician ID</td>
       <td>Quoted Amount</td>
       <td>Discount</td>
-      {/* <td>Enter Discount</td> */}
-      <td>Any Other Charges</td>
-      {/* <td>Enter Any Other Charges</td> */}
+      <td>Other Charges</td>
       <td>Service Charges</td>
-      {/* <td>Enter Service Charges</td> */}
       <td>GST</td>
-      {/* <td>Enter GST</td> */}
       <td>Total Quoted Amount</td>
       <td>Lowest Bidder</td>
     </tr>
@@ -572,23 +585,28 @@ const handleAddRemarks = (index, value) => {
     {technicianDetails.map((technician, index) => (
       <tr key={index}>
         <td>{technician.technicianId}</td>
-        <td>{technician.quotedAmount}</td>
-        <td>{technician.discount}</td>
-        {/* <td>{technician.fixedDiscount}</td> */}
-        <td>{technician.othercharges}</td>
-        {/* <td>{technician.fixedOtherCharge}</td> */}
-        <td>{technician.serviceCharges}</td>
-        {/* <td>{technician.fixedServiceCharge}</td> */}
-        <td>{technician.gst}</td>
-        {/* <td>{technician.fixedGST}</td> */}
-        <td>{technician.totalQuotedAmount}</td>
+        <td>{technician.enterQuoteAmount}</td>
+        <td>{technician.fixedDiscount
+    ? Number(technician.fixedDiscount).toFixed(2)
+    : '0.00'}</td>
+        <td>{technician.fixedOtherCharge
+    ? Number(technician.fixedOtherCharge).toFixed(2)
+    : '0.00'}</td>
+        <td>{technician.fixedServiceCharge
+    ? Number(technician.fixedServiceCharge).toFixed(2)
+    : '0.00'}</td>
+        <td>{technician.fixedGST
+    ? Number(technician.fixedGST).toFixed(2)
+    : '0.00'}</td>
+        <td>{technician.totalAmount
+    ? Number(technician.totalAmount).toFixed(2)
+    : '0.00'}</td>
         <td>{technician.technicianId === lowestBidder ? 'Yes' : 'No'}</td>
       </tr>
     ))}  
   </tbody>
     <tbody>
         <tr>
-        {/* <td>Technician ID</td> */}
         <td colSpan="3">
             <input
             type="text"
@@ -604,7 +622,7 @@ const handleAddRemarks = (index, value) => {
             <input
             type="number"
             className="form-control text-end"
-            value={totalQuotedAmount}
+            value={Number(totalAmount || 0).toFixed(2)}
             readOnly
             placeholder="Lowest Bidder Amount"
             />
@@ -628,8 +646,8 @@ const handleAddRemarks = (index, value) => {
         <tbody>
           <tr>
             <td>Required Material Quotation Bid Amount</td>
-            <td></td>
-            <td></td>
+            <td>Customer Care</td>
+            <td>{materialQuotation[0]?.grandtotal}</td>
             <td>
               <input type="radio" name="materialApproval" className="form-check-input" value="approved" checked /> Approved
             </td>
@@ -637,7 +655,7 @@ const handleAddRemarks = (index, value) => {
           <tr>
             <td>Technical Agency Quotation Bid Amount</td>
             <td>{technicianId}</td>
-            <td>{totalQuotedAmount}</td>
+            <td>{totalAmount}</td>
             <td>
               <input type="radio" name="agencyApproval" className="form-check-input" value="approved" checked/> Approved
             </td>
@@ -665,7 +683,7 @@ const handleAddRemarks = (index, value) => {
               <Form.Control
                 as="select"
                 name="assignedTo"
-                value={assignedTo}
+                value={ticketData.assignedTo}
                 onChange={(e) => setAssignedTo(e.target.value)}
                 required
               >
@@ -692,7 +710,7 @@ const handleAddRemarks = (index, value) => {
                 type='checkbox'
                 name='terms'
                 value="accepted"
-                className="form-check-input"
+                className="form-check-input m-2"
             /> 
             Terms and Conditions Apply
             </label>
