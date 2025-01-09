@@ -966,14 +966,10 @@ useEffect(() => {
     <tr>
       <td>Technician ID</td>
       <td>Quoted Amount</td>
-      {/* <td>Discount</td> */}
-      <td>Enter Discount</td>
-      {/* <td>Any Other Charges</td> */}
-      <td>Enter Any Other Charges</td>
-      {/* <td>Service Charges</td> */}
-      <td>Enter Service Charges</td>
-      {/* <td>GST</td> */}
-      <td>Enter GST</td>
+      <td>Discount</td>
+      <td>Any Other Charges</td>
+      <td> Service Charges</td>
+      <td> GST</td>
       <td>Total Quoted Amount</td>
       <td>Lowest Bidder</td>
     </tr>
@@ -984,9 +980,7 @@ useEffect(() => {
       <tr key={index}>
         <td>{technician.technicianId}</td>
         <td>{technician.enterQuoteAmount}</td>
-        {/* <td>{technician.discount}</td> */}
         <td>{technician.fixedDiscount}</td>
-        {/* <td>{technician.othercharges}</td> */}
         <td>{technician.fixedOtherCharge}</td>
         {/* <td>{technician.serviceCharges}</td> */}
         <td>{technician.fixedServiceCharge}</td>

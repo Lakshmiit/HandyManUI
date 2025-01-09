@@ -14,7 +14,7 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
   const {userType} = useParams();
 
   const raiseTicketNotifications = notifications.filter(
-    (item) => item.assignedTo === "Customer Care"
+    (item) => item.assignedTo === "Technical Agency"
   );
   const handleTicketClick = (ticketId) => {
     navigate(`/customerRaiseTicketQuotation/${userType}/${ticketId}`, { state: { ticketId } });
@@ -131,7 +131,7 @@ const Notification = () => {
         const raiseTicketData = await raiseTicketResponse.json();
 
         const raiseTicketFiltered = raiseTicketData.filter(
-          (item) => item.assignedTo === "Customer Care"
+          (item) => item.assignedTo === "Technical Agency"
         );
         const raiseTicketCount = raiseTicketFiltered.length;
 
