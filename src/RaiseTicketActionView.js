@@ -6,7 +6,7 @@ import AdminSidebar from './AdminSidebar';
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
 import { FaEdit} from 'react-icons/fa'; // Correct icon import
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
-import SaveAsIcon from '@mui/icons-material/SaveAs';
+// import SaveAsIcon from '@mui/icons-material/SaveAs';
 import ForwardIcon from '@mui/icons-material/Forward';
 import { Link, useParams } from 'react-router-dom';
 import './App.css';
@@ -209,20 +209,20 @@ const RaiseActionView = () => {
     }
   }; 
 
-  const handleForwardTicket = async () => {
-    try {
-      const updatedTicket = {
-        ...ticketData,
-        status: "Assigned",
-        assignedTo: "",
-      };
-      setTicketData(updatedTicket);
-      alert("Ticket Forwarded successfully to Technician");
-    } catch (error) {
-      console.error("Error Forwarding ticket:", error);
-      alert("Failed to forward the ticket. Please try again.")
-    }
-  };
+  // const handleForwardTicket = async () => {
+  //   try {
+  //     const updatedTicket = {
+  //       ...ticketData,
+  //       status: "Assigned",
+  //       assignedTo: "",
+  //     };
+  //     setTicketData(updatedTicket);
+  //     alert("Ticket Forwarded successfully to Technician");
+  //   } catch (error) {
+  //     console.error("Error Forwarding ticket:", error);
+  //     alert("Failed to forward the ticket. Please try again.")
+  //   }
+  // };
 
   return (
     <div className="d-flex flex-row justify-content-start align-items-start">
