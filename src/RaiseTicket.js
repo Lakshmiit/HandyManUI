@@ -466,8 +466,6 @@ useEffect(() => {
               />
             </Form.Group>
           </Col>
-          {/* Assigned To */}
-
         </Row>
 
         {/* Details */}
@@ -602,7 +600,7 @@ useEffect(() => {
         <div className="radio">
       <label className="m-1">
         <input
-          className="m-1"
+          className="form-check-input"
           type="radio"
           name="RequestType"
           value="With Material" // Unique value
@@ -615,7 +613,7 @@ useEffect(() => {
 
       <label className="m-1">
         <input
-          className="m-1"
+          className="form-check-input"
           type="radio"
           name="RequestType"
           value="Without Material" // Unique value

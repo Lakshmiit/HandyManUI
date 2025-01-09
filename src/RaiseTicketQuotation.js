@@ -26,8 +26,6 @@ const RaiseQuotation = () => {
   const [commentsList, setCommentsList] = useState([{updatedDate: new Date(), commentText: ""}]); 
   const [requestType, setRequestType] = useState('');
   const [customerId, setCustomerId] = useState(''); 
-
-  
   const [status, setStatus] = useState(''); 
   const [technicianId, setTechnicianId] = useState(""); 
   const [gst, setGST] = useState("");
@@ -44,13 +42,11 @@ const RaiseQuotation = () => {
     // Initial state for technician details
     const [technicianDetails, setTechnicianDetails] = useState([]);
     const [fixedServiceCharge, setFixedServiceCharge] = useState('');
-    
     const [discount, setDiscount] = useState("");
     const [fixedDiscount, setFixedDiscount] = useState('');
     const [totalAmount, setTotalAmount] = useState('');
     const [serviceCharges, setServiceCharge] = useState('');
     //const [internalRaiseQuoteid,setInternalRaiseQuoteid]=useState('');
-
     const [enterQuoteAmount, setQuote] = useState('');
     const [fixedQuote, setFixedQuote] = useState('');
     const [state, setState] = useState('');
@@ -110,7 +106,8 @@ const RaiseQuotation = () => {
           // alert(otherCharge);
           setServiceCharge(quotedata.serviceCharges);
           setFixedServiceCharge(quotedata.fixedServiceCharge);
-          setFixedOtherCharge(quotedata.fixedOtherCharge);         
+          setFixedOtherCharge(quotedata.fixedOtherCharge);
+          setSpecifications(quotedata.materials);         
           setAddRemarks(quotedata.addrRmarks);
         } catch (error) {
           console.error('Error fetching data:', error);
@@ -191,7 +188,7 @@ useEffect(() => {
   // material[0]?.serviceCharges,
   // material[0]?.gsts,
 );
-
+ 
   
   useEffect(() => {
     console.log(subject, loading, isWithMaterial);
@@ -269,7 +266,7 @@ useEffect(() => {
           setFixedServiceCharge(lowest.fixedServiceCharge);
           setLowestBidder(lowest.technicianId);
           setSpecifications(lowest.materials);
-             
+          setMaterialQuotation(lowest.material);
           if (lowest.addrRmarks?.length > 0) {
             setAddRemarks(lowest.addrRmarks[0].remarks);
           } else {

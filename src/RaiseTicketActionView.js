@@ -531,13 +531,13 @@ const RaiseActionView = () => {
           <Link to='/raiseTicketActionView/{ticketId}' className="btn btn-warning text-white mx-2" title='Edit'> 
           <FaEdit />
           </Link>
-          <Button onClick={handleForwardTicket} className="btn btn-warning text-white mx-2" title='Forward'
-          disabled={status === "Assigned" && assignedTo === "Technical Agency"}>
-            <ForwardIcon />
-          </Button>
-          <Button onClick={handleSaveTicket} type="submit" className="btn btn-warning text-white mx-2" title="Save" 
+          {/* <Button onClick={handleForwardTicket} className="btn btn-warning text-white mx-2" title='Forward'
           disabled={status === "Assigned" && assignedTo === "Technical Agency"}>
             <SaveAsIcon />
+          </Button> */}
+          <Button onClick={handleSaveTicket} type="submit" className="btn btn-warning text-white mx-2" title="Save" 
+          disabled={status === "Assigned" && assignedTo === "Technical Agency"}>
+            <ForwardIcon />
           </Button>
 
         </div>
