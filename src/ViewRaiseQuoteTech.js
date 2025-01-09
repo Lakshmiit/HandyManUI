@@ -55,7 +55,7 @@ const RaiseActionView = () => {
   const {technicianId} = useParams();
   // const [internalStatus, setInternalStatus] = useState('');
   const [ticketId, setTicketId] = useState('');
-      const [materialQuotation] = useState([{discount: "", deliveryCharges: "", servicecharges: "", gst: "", gradntotal: ""}])
+      const [materialQuotation] = useState([{discount: "", fixedDiscount: "", deliveryCharges: "", fixedDeliveryChargs: "", servicecharges: "", fixedServicecharges: "", gst: "", fixedGST: "", gradntotal: ""}])
   
   useEffect(() => {
     console.log(ticketData, status, id, technicianData, customerId, ticketId);
@@ -238,9 +238,13 @@ const RaiseActionView = () => {
   })),
   materialQuotation: materialQuotation.map((mat) => ({
     discount: "",
+    fixedDiscount: "",
     deliveryCharges: "",
+    fixedDeliveryChargs: "",
     serviceCharge: "",
+    fixedServicecharges: "",
     gst: "",
+    fixedGST: "",
     grandtotal: "",
   })),
     }; 
