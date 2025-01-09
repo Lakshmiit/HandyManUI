@@ -107,7 +107,7 @@ const RaiseQuotation = () => {
           setServiceCharge(quotedata.serviceCharges);
           setFixedServiceCharge(quotedata.fixedServiceCharge);
           setFixedOtherCharge(quotedata.fixedOtherCharge);
-          setSpecifications(quotedata.materials);         
+         // setSpecifications(quotedata.materials);         
           setAddRemarks(quotedata.addrRmarks);
         } catch (error) {
           console.error('Error fetching data:', error);
@@ -266,7 +266,7 @@ useEffect(() => {
           setFixedServiceCharge(lowest.fixedServiceCharge);
           setLowestBidder(lowest.technicianId);
           setSpecifications(lowest.materials);
-          setMaterialQuotation(lowest.material);
+          setMaterialQuotation(lowest.materialQuotation);
           if (lowest.addrRmarks?.length > 0) {
             setAddRemarks(lowest.addrRmarks[0].remarks);
           } else {

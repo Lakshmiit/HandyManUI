@@ -402,7 +402,7 @@ const RaiseActionView = () => {
   };
 
   const handleFixedChange = (setter, fixedSetter) => (e) => {
-    const value = parseFloat(e.target.value) || 0; 
+    const value = parseFloat(e.target.value); 
     setter(value); 
     
 
