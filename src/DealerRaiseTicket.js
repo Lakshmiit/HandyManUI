@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import "./App.css";
-import AdminSidebar from './AdminSidebar';
+import Sidebar from './Sidebar';
 import ForwardIcon from '@mui/icons-material/Forward';
 // import SaveAsIcon from '@mui/icons-material/SaveAs';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
@@ -55,11 +55,10 @@ const RaiseQuotation = () => {
     const [material, setMaterialQuotation] = useState([{discounts: "", fixedDiscounts: "", deliveryCharges: "", fixedDeliveryCharges: "", serviceCharges: "", fixedServiceCharges: "", gsts: "", fixedGSTS: "", grandtotal: ""}])
     const [category, setCategory] = useState('');
     const {userType} = useParams();
-    const [newPhotoCount, setPhotoCount] = useState('');
 
     useEffect(() => {
-      console.log(subject, loading, isWithMaterial, id, raiseAQuoteId, totalAmount, enterQuoteAmount, fixedQuote, newPhotoCount);
-    }, [subject, loading, isWithMaterial, id, raiseAQuoteId, totalAmount, enterQuoteAmount, fixedQuote, newPhotoCount]);
+      console.log(subject, loading, isWithMaterial, id, raiseAQuoteId, totalAmount, enterQuoteAmount, fixedQuote );
+    }, [subject, loading, isWithMaterial, id, raiseAQuoteId, totalAmount, enterQuoteAmount, fixedQuote]);
  
     // Fetch data from API on component mount
     useEffect(() => {
@@ -198,22 +197,8 @@ useEffect(() => {
             setAttachments(data.attachments);
             setSpecifications(data.materials || [{ material: "", quantity: ""}]);
             setMaterialQuotation(data.materialQuotation || [{ discounts: "", fixedDiscounts: "", deliveryCharges: "", fixedDeliveryCharges: "", serviceCharges: "", fixedServiceCharges: "", gsts: "", fixedGSTS: "", grandtotal: ""}])
-            setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: ""}]);
-            const imageRequests =
-              data.attachments?.map((photo) => 
-               fetch(
-                  `https://localhost:7091/api/FileUpload/download?generatedfilename=${photo}`
-                )
-                .then((res) => res.json())
-                .then((data) => ({
-                  src: photo,
-                  imageData: data.imageData,
-                }))
-              ) || [];
-            const images = await Promise.all(imageRequests);
-            setAttachments(images);
-            setPhotoCount(images.length);
-            setAttachments(images);
+            setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: ""}])
+            // setAttachments(images);
           } catch (error) {
             console.error('Error fetching ticket data:', error);
             // window.alert('Failed to load ticket data. Please try again later.');
@@ -511,8 +496,8 @@ materialQuotation: material.map((mat) => ({
   return (
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
-        <div className=" ml-0 m-4 p-0 adm_mnu h-90">
-          <AdminSidebar />
+        <div className=" ml-0 m-4 p-0 sde_mnu h-90">
+          <Sidebar />
         </div>
       )}
 
@@ -528,7 +513,7 @@ materialQuotation: material.map((mat) => ({
 
           {showMenu && (
             <div className="sidebar-container">
-              <AdminSidebar />
+              <Sidebar />
             </div>
           )}
         </div>

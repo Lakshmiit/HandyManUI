@@ -25,7 +25,7 @@ const RaiseActionView = () => {
   const [ticketData, setTicketData] = useState(null); 
   const [technicianData, setTechnicianData] = useState(null);
   const [requestType, setRequestType] = useState('Without Material');
-  const [specifications, setSpecifications] = useState([{ material: "", quantity: "", price: "" }]); 
+  const [specifications, setSpecifications] = useState([{ material: "", quantity: "", price: "", total: ""}]); 
   const [commentsList, setCommentsList] = useState([{updatedDate: new Date(), commentText: ""}]);
   // const [requiredMaterials, setRequiredMaterials] = useState([{material: "", quantity: "", price: ""}]); 
   const [loading, setLoading] = useState(true);
@@ -35,9 +35,9 @@ const RaiseActionView = () => {
   const [status, setStatus] = useState("");
   const [assignedTo, setAssignedTo] = useState('');
   const [newPhotoCount , setPhotoCount] = useState(0);
-  const [otherCharge, setOtherCharge] = useState('');
+  const [othercharges, setOtherCharge] = useState('');
   const [fixedOtherCharge, setFixedOtherCharge] = useState('');
-  const [serviceCharge, setServiceCharge] = useState('');
+  const [serviceCharges, setServiceCharge] = useState('');
   const [fixedServiceCharge, setFixedServiceCharge] = useState('');
   const [gst, setGST] = useState('');
   const [fixedGST, setFixedGST] = useState('');
@@ -64,7 +64,7 @@ const RaiseActionView = () => {
   useEffect(() => {
     const fetchticketData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+        const response = await fetch(`https://localhost:7091/api/RaiseTicket/GetTicket/${raiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
@@ -85,12 +85,12 @@ const RaiseActionView = () => {
         setAssignedTo(data.assignedTo);
         setStatus(data.status);
         setRequestType(data.requestType || 'Without Material');
-        
-        setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: ""}])
+        setSpecifications(data.materials || [{material: "", quantity: ""}]);
+        setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: ""}]);
         
         const imageRequests =
           data.attachments?.map((photo) => fetch(
-              `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+              `https://localhost:7091/api/FileUpload/download?generatedfilename=${photo}`
             )
             .then((res) => res.json())
               .then((data) => ({
@@ -186,7 +186,7 @@ const RaiseActionView = () => {
     };
     try {
       
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://localhost:7091/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -218,9 +218,9 @@ const RaiseActionView = () => {
       fixedQuote: fixedQuote.toString(),
       discount: discount.toString(),
       fixedDiscount: fixedDiscount.toString(),
-      othercharges: otherCharge.toString(),
+      othercharges: othercharges.toString(),
       fixedOtherCharge: fixedOtherCharge.toString(),
-      serviceCharges: serviceCharge.toString(),
+      serviceCharges: serviceCharges.toString(),
       fixedServiceCharge: fixedServiceCharge.toString(),
       gst: gst.toString(),
       fixedGST: fixedGST.toString(),
@@ -250,7 +250,7 @@ const RaiseActionView = () => {
     }; 
     try {
       //imageUrls="";
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/CreateRaiseAQuote`, {
+      const response = await fetch(`https://localhost:7091/api/RaiseAQuote/CreateRaiseAQuote`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -274,7 +274,7 @@ const RaiseActionView = () => {
       const fetchtechnicianData = async () => {
         try {
           const technicianResponse = await fetch(
-            `https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByTechnicianId?raiseAQuotetId=${raiseTicketId}&TechnicianId=${technicianId}`
+            `https://localhost:7091/api/RaiseAQuote/GetRaiseAQuoteDetailsByTechnicianId?raiseAQuotetId=${raiseTicketId}&TechnicianId=${technicianId}`
           );
           if (!technicianResponse.ok) {
             throw new Error('Failed to fetch technician data');
@@ -292,15 +292,23 @@ const RaiseActionView = () => {
           setCustomerId(techDataItem.customerId);
           setQuote(techDataItem.enterQuoteAmount);
        
-          setSpecifications(techDataItem.materials || [{ material: "", quantity: "", price: ""}])
+          setSpecifications(techDataItem.materials || [{ material: "", quantity: "", price: "", total: ""}])
           setIsAmountPosted(true);
+          setQuote(techDataItem.enterQuoteAmount);
+          setFixedQuote(techDataItem.fixedQuote);
           setDiscount(techDataItem.discount);
-          
+          setFixedDiscount(techDataItem.fixedDiscount);
           setOtherCharge(techDataItem.othercharges);
+          setFixedOtherCharge(techDataItem.fixedOtherCharge);
           setServiceCharge(techDataItem.serviceCharges);
+          setFixedServiceCharge(techDataItem.fixedServiceCharge);
           setGST(techDataItem.gst);
+          setFixedGST(techDataItem.fixedGST);
           setTotalAmount(techDataItem.totalAmount);
           setAddrRmarks(techDataItem.addrRmarks || [{ requestedDate: new Date(), remarks: "" }]);
+          alert("Hello");
+          alert(JSON.stringify(techDataItem));
+          console.log(JSON.stringify(techDataItem.addrRmarks));
         } catch (error) {
           console.error('Error fetching technician data:', error);
         } finally {
@@ -333,7 +341,7 @@ const RaiseActionView = () => {
 //   })), 
 //   };
 //   try {
-//     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+//     const response = await fetch(`https://localhost:7091/api/RaiseTicket/${raiseTicketId}`, {
 //       method: 'PUT',
 //       headers: {
 //         'Content-Type': 'application/json',
@@ -409,13 +417,13 @@ const RaiseActionView = () => {
     const { total, discountAmount, serviceCharge: calculatedServiceCharge, gst: calculatedGST } = calculateTotalPrice(
       enterQuoteAmount, 
       discount, 
-      otherCharge, 
-      serviceCharge, 
+      othercharges, 
+      serviceCharges, 
       gst
     );
     
     if (setter === setDiscount) fixedSetter(discountAmount); 
-    if (setter === setOtherCharge) fixedSetter(otherCharge); 
+    if (setter === setOtherCharge) fixedSetter(othercharges); 
     if (setter === setServiceCharge) fixedSetter(calculatedServiceCharge); 
     if (setter === setGST) fixedSetter(calculatedGST); 
    
@@ -426,17 +434,17 @@ const RaiseActionView = () => {
     const { total, discountAmount, serviceCharge: calculatedServiceCharge, gst:calculatedGST} = calculateTotalPrice(
       enterQuoteAmount,
       discount,
-      otherCharge,
-      serviceCharge,
+      othercharges,
+      serviceCharges,
       gst
     );
     setFixedQuote(enterQuoteAmount);
     setFixedDiscount(discountAmount);
-    setFixedOtherCharge(otherCharge);
+    setFixedOtherCharge(othercharges);
     setFixedServiceCharge(calculatedServiceCharge);
     setFixedGST(calculatedGST);
     setTotalAmount(total);
-  }, [enterQuoteAmount, discount, otherCharge, serviceCharge, gst]);
+  }, [enterQuoteAmount, discount, othercharges, serviceCharges, gst]);
 
   const handleAddComment = (index, field, value) => {
     const updatedComments = [...commentsList];
@@ -806,7 +814,7 @@ const RaiseActionView = () => {
         <input
           type="number"
           className="form-control"
-          value={otherCharge}
+          value={othercharges}
           // onBlur={calculateTotal}
           onChange={handleFixedChange(setOtherCharge, setFixedOtherCharge)}
           placeholder="Enter Other Charges"
@@ -832,7 +840,7 @@ const RaiseActionView = () => {
         <input
           type="number"
           className="form-control"
-          value={serviceCharge}
+          value={serviceCharges}
           // onBlur={calculateTotal}
           onChange={handleFixedChange(setServiceCharge, setFixedServiceCharge)}
           placeholder="Enter Service Charges"
@@ -942,7 +950,8 @@ const RaiseActionView = () => {
           {/* <Link to='/raiseTicketActionView/{ticketId}' className="btn btn-warning text-white mx-2" title='Edit'> 
           <FaEdit />
           </Link> */}
-          <Button onClick={handleBothActions} disabled={isAmountPosted === true } className="btn btn-warning text-white mx-2" title='Forward'>
+          <Button onClick={handleBothActions} disabled={isAmountPosted === true && assignedTo === "Technical Agency" } className="btn btn-warning text-white mx-2" title='Forward'
+          >
             <ForwardIcon />
           </Button>
           {/* <Button onClick={handleUpdateTicket} type="submit" className="btn btn-warning text-white mx-2" title="Save" 

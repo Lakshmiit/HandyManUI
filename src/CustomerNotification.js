@@ -14,7 +14,7 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
   const {userType} = useParams();
 
   const raiseTicketNotifications = notifications.filter(
-    (item) => item.assignedTo === "Technical Agency"
+    (item) => item.assignedTo === "Customer"
   );
   const handleTicketClick = (ticketId) => {
     navigate(`/customerRaiseTicketQuotation/${userType}/${ticketId}`, { state: { ticketId } });
@@ -126,12 +126,12 @@ const Notification = () => {
     const fetchNotifications = async () => {
       try {
         const raiseTicketResponse = await fetch(
-          `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetRaiseTicketNotificationsByCustomerId?customerId=${customerId}`
+          `https://localhost:7091/api/RaiseTicket/GetRaiseTicketNotificationsByCustomerId?customerId=${customerId}`
         );
         const raiseTicketData = await raiseTicketResponse.json();
 
         const raiseTicketFiltered = raiseTicketData.filter(
-          (item) => item.assignedTo === "Technical Agency"
+          (item) => item.assignedTo === "Customer"
         );
         const raiseTicketCount = raiseTicketFiltered.length;
 
@@ -144,7 +144,7 @@ const Notification = () => {
         }
  
         // const getQuoteResponse = await fetch(
-        //   "https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetails"
+        //   "https://localhost:7091/api/RaiseAQuote/GetRaiseAQuoteDetails"
         // );
         // const getQuoteData = await getQuoteResponse.json();
         // const getQuoteCount = getQuoteData.length;

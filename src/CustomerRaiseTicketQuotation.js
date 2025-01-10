@@ -28,7 +28,7 @@ const RaiseQuotation = () => {
   const [specifications, setSpecifications] = useState([{ material: "", quantity: "", price: "", total: "" }]);
   const [requestType, setRequestType] = useState('');
   const [customerId, setCustomerId] = useState(''); 
-  const [details, setDetails] = useState(''); 
+  const [details] = useState(''); 
   const [status, setStatus] = useState(''); 
   const [technicianId, setTechnicianId] = useState(""); 
   const [serviceCharges, setServiceCharge] = useState("");
@@ -73,23 +73,20 @@ const RaiseQuotation = () => {
   useEffect(() => {
     const fetchticketData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+        const response = await fetch(`https://localhost:7091/api/RaiseTicket/GetTicket/${raiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
         const data = await response.json();
-        // alert(JSON.stringify(data));
-        // console.log(JSON.stringify(data));
         setTicketData(data);
-        // alert(JSON.stringify(data));
         setId(data.id);
         setStatus(data.status);
-        setDetails(data.Details);
+        // setDetails(data.Details);
         setCustomerId(data.CustomerId);
-        setState(data.State);
-        setAddress(data.Address);
-        setDistrict(data.District);
-        setZipcode(data.ZipCode);
+        setState(data.state);
+        setAddress(data.address);
+        setDistrict(data.district);
+        setZipcode(data.zipCode);
         setSubject(data.subject);
         setCategory(data.category);
         setCustomerId(data.customerId);
@@ -111,7 +108,7 @@ const RaiseQuotation = () => {
 
     // Fetch data from API on component mount
     useEffect(() => {
-      const apiUrl = `https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
+      const apiUrl = `https://localhost:7091/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
       // Fetching the data from the API
       const fetchData = async () => {
         try {
@@ -156,12 +153,8 @@ const RaiseQuotation = () => {
           setFixedOtherCharge(data.fixedOtherCharge);         
           setRaiseAQuoteId(data.raiseAQuoteId);
           setAddrRmarks(data.addrRmarks);
-          setSpecifications(data.materials || [{material: "", quantity: "", price: "", total: ""}]);
-          setMaterial(data.materialQuotation || [{discount: "", fixedDiscount: "", deliverycharges: "", fixedDeliveryChargs: "", servicecharges: "", fixedServiceCharges: "", gst: "", fixedGST: "", grandtotal: ""}])
-          // alert(data.materialQuotation);
-      //  alert(JSON.stringify(technicianDetails));
-      //  console.log(materialQuotation);
-      //  alert(materialQuotation);
+          // setSpecifications(data.materials || [{material: "", quantity: "", price: "", total: ""}]);
+          // setMaterial(data.materialQuotation || [{discount: "", fixedDiscount: "", deliverycharges: "", fixedDeliveryChargs: "", servicecharges: "", fixedServiceCharges: "", gst: "", fixedGST: "", grandtotal: ""}]);
         console.log("Material Quotation State:",materialQuotation);
         } catch (error) {
           console.error('Error fetching data:', error);
@@ -179,15 +172,21 @@ const RaiseQuotation = () => {
           });
           setTechnicianId(lowest.technicianId);
           setLowestBidder(lowest.technicianId);
+          setQuote(lowest.enterQuoteAmount);
+          setRaiseAQuoteId(lowest.raiseAQuoteId);
+          setId(lowest.id);
+          setFixedQuote(lowest.fixedQuote);
+          setDiscount(lowest.discount);
+          setFixedDiscount(lowest.fixedDiscount);
+          setGST(lowest.gst);
+          setFixedGST(lowest.fixedGST);
+          setOtherCharge(lowest.othercharges);
+          setFixedOtherCharge(lowest.fixedOtherCharge);
+          setServiceCharge(lowest.serviceCharges);
+          setFixedServiceCharge(lowest.fixedServiceCharge);
           setTotalAmount(lowest.totalAmount); 
           setSpecifications(lowest.materials);
           setMaterial(lowest.materialQuotation);
-          
-          // alert(JSON.stringify(lowest.materialQuotation[0]));
-          // let fixedDiscounts = lowest.materialQuotation[0]["fixedDiscounts"];
-          // setFixedDiscounts(fixedDiscounts);
-          //alert(calculatedfixedDiscounts);
-          //console.log(fixedDiscounts);
           if (lowest.addrRmarks?.length > 0) {
             setAddrRmarks(lowest.addrRmarks[0].remarks);
           } else {
@@ -221,48 +220,47 @@ const handleAddRemarks = (index, value) => {
   
   const handleSaveTicket = async (e) => {
     e.preventDefault();
-
     
     const payload = {
       RaiseTicketId: ticketData.raiseTicketId,
       date: new Date().toISOString(),
-      Subject: subject,
-      Details: details,
-      Category: category,
-      AssignedTo: assignedTo,
-      id : ticketData.id,
-      status: ticketData.status,
+      address: address,
+      subject: subject,
+      details: details,
+      category: category,
+      assignedTo: assignedTo,
+      id : raiseTicketId,
+      status: status,
       internalStatus: "Assigned",
       TicketOwner: ticketData.customerId,
       CustomerId: customerId,
-      Address: address,
-      State: state,
+      state: state,
       isMaterialType: isMaterialType,
-      District: district,
+      district: district,
       ZipCode: zipCode,
       RequestType: requestType,
       materials: specifications.map((spec) => ({
           material: spec.material,
           quantity: spec.quantity,
-          // price: spec.price,
-          // total: spec.total,
+          price: spec.price,
+          total: spec.total,
       })),
       comments: commentsList.map((comment) => ({
           updatedDate: comment.updatedDate,
           CommentText: comment.commentText,
       })),
-      addrRmarks: Array.isArray(addrRmarks)
-      ? addrRmarks.map((comment) => ({
-          requestedDate: "2025-01-07T08:57:22.484Z",
-          remarks: "remarks",
-        }))
-      : [],
+      // addrRmarks: Array.isArray(addrRmarks)
+      // ? addrRmarks.map((comment) => ({
+      //     requestedDate: "2025-01-07T08:57:22.484Z",
+      //     remarks: "remarks",
+      //   }))
+      // : [],
       LowestBidderTechnicainId: lowestBidder,
     };
     // alert(JSON.stringify(payload));
     try {
       
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://localhost:7091/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -283,7 +281,7 @@ const handleAddRemarks = (index, value) => {
     e.preventDefault();
     
     const payload3 = {
-      id: "03dd6bbc-36ba-4795-b39c-b40d58991d87",
+      id: id,
       quotedDate: new Date().toISOString(),
       RaiseAQuoteId:raiseAQuoteId ,
       //raiseAQuote: ticketData.raiseAQuote,
@@ -304,8 +302,8 @@ const handleAddRemarks = (index, value) => {
       fixedGST: fixedDiscount, 
       addrRmarks: Array.isArray(addrRmarks)
       ? addrRmarks.map((comment) => ({
-          requestedDate: "2025-01-07T08:57:22.484Z",
-          remarks: "remarks",
+          requestedDate: comment.requestedDate,
+          remarks: comment.remarks,
         }))
       : [],
     materials: specifications.map((spec) => ({
@@ -331,7 +329,7 @@ const handleAddRemarks = (index, value) => {
     //alert(JSON.stringify(payload3));
     //console.log(JSON.stringify(payload3));
   try {
-    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/id?id=03dd6bbc-36ba-4795-b39c-b40d58991d87`, {
+    const response = await fetch(`https://localhost:7091/api/RaiseAQuote/id?id=03dd6bbc-36ba-4795-b39c-b40d58991d87`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -516,7 +514,7 @@ const handleAddRemarks = (index, value) => {
     <tbody>
         <tr>
             <td>Customer Care</td>
-            <td>Total</td>
+            <td> {specifications.reduce((acc, spec) => acc + (spec.quantity * spec.price || 0), 0)}</td>
             <td>
   {charges.fixedDiscount
     ? Number(charges.fixedDiscount).toFixed(2)
@@ -647,7 +645,9 @@ const handleAddRemarks = (index, value) => {
           <tr>
             <td>Required Material Quotation Bid Amount</td>
             <td>Customer Care</td>
-            <td>{materialQuotation[0]?.grandtotal}</td>
+            <td>{charges.grandtotal
+              ? Number(charges.grandtotal).toFixed(2)
+              : '0.00'}</td>
             <td>
               <input type="radio" name="materialApproval" className="form-check-input" value="approved" checked /> Approved
             </td>
@@ -655,7 +655,7 @@ const handleAddRemarks = (index, value) => {
           <tr>
             <td>Technical Agency Quotation Bid Amount</td>
             <td>{technicianId}</td>
-            <td>{totalAmount}</td>
+            <td>{Number(totalAmount || 0).toFixed(2)}</td>
             <td>
               <input type="radio" name="agencyApproval" className="form-check-input" value="approved" checked/> Approved
             </td>
@@ -663,7 +663,7 @@ const handleAddRemarks = (index, value) => {
           <tr>
             <td>Total Amount</td>
             <td></td>
-            <td></td>
+            <td>{(Number(materialQuotation[0]?.grandtotal || 0) + Number(totalAmount || 0)).toFixed(2)}</td>
             <td></td>
           </tr>
           <tr className="blinking-row">

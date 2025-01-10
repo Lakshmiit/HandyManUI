@@ -24,18 +24,21 @@ import AddTechnician from './AddTechnician.js';
 import TechnicianQuoteNotifications from './TechnicianQuoteNotifications.js';
 import ViewRaiseQuoteTech from './ViewRaiseQuoteTech.js';
 import RaiseTicketQuotation from './RaiseTicketQuotation';
+import RaiseTicketBuyProducts from './RaiseTicketBuyProducts.js';
 import QuoteNotifications from './QuoteNotifications';
 import NotificationTechnician from './NotificationTechnician.js';
 import CustomerNotification from './CustomerNotification.js';
 import ViewCustomerGrid from './ViewCustomerGrid.js';
 import ShortAdminNotifications from './ShortAdminNotifications.js';
-import RaiseTicketBuyProducts from './RaiseTicketBuyProducts.js';
+import DealerRaiseTicket from './DealerRaiseTicket.js';
 import CustomerRaiseTicketQuotation from './CustomerRaiseTicketQuotation.js';
+import DealerNotifications from './DealerNotifications.js';
+import DealerNotificationsGrid from './DealerNotificationsGrid.js';
 
 function App() {
   return (
     <Router>     
-      <div className="App">
+      <div className="App"> 
         {/* Header Component */}
         <Header />
 
@@ -64,13 +67,16 @@ function App() {
             <Route path="/technicianQuoteNotification/:userType/:category/:district/:technicianId" element={<TechnicianQuoteNotifications />} />
             <Route path="/viewRaiseQuote/:raiseTicketId/:userType/:technicianId" element={<ViewRaiseQuoteTech />} />
             <Route path="/raiseTicketQuotation/:raiseTicketId" element={<RaiseTicketQuotation />} />
-            <Route path="/raiseTicketBuyProducts/:raiseTicketId" element={<RaiseTicketBuyProducts />} />
+            <Route path="/raiseTicketBuyProducts/:raiseTicketId" element={<RaiseTicketBuyProducts />} /> 
             <Route path="/quoteNotification" element={<QuoteNotifications />} />
             <Route path="/notificationTechnician/:userType/:category/:district/:technicianId" element={<NotificationTechnician />} />
             <Route path="/customerNotification/:userType/:customerId" element={<CustomerNotification />} />
             <Route path="/viewCustomer/:userType/:customerId" element={<ViewCustomerGrid />} />
             <Route path="/ShortAdminNotifications" element={<ShortAdminNotifications />} />
             <Route path="/customerRaiseTicketQuotation/:userType/:raiseTicketId" element={<CustomerRaiseTicketQuotation />} />
+            <Route path="/dealerNotifications/:userType/:district/:category" element={<DealerNotifications />} /> 
+            <Route path="/dealerNotificationsGrid/:userType/:district/:category" element={<DealerNotificationsGrid />} />
+            <Route path="/dealerRaiseTicket/:userType/:raiseTicketId" element={<DealerRaiseTicket />} />
           </Routes>
         </main>
       </div>
@@ -79,3 +85,4 @@ function App() {
 }
 
 export default App;
+ 

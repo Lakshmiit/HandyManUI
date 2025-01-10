@@ -3,10 +3,10 @@ import { Button } from "react-bootstrap";
 import axios from "axios";
 import Sidebar from "./Sidebar";
 import { Link, useParams } from "react-router-dom";
-import { FaEye } from "react-icons/fa";
+import { FaEye, FaTrash } from "react-icons/fa";
 import {
   Dashboard as MoreVertIcon,
-  // Forward as ForwardIcon,
+  Forward as ForwardIcon,
 } from "@mui/icons-material";
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import "./App.css";
@@ -14,7 +14,7 @@ import "./App.css";
 const RaiseTicketNotification = () => {
   const { userType } = useParams();
   const { selectedUserType } = useParams();
-  const {technicianId} = useParams();
+  // const {technicianId} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [ticketData, setTicketData] = useState([]);
@@ -32,8 +32,7 @@ useEffect(() => {
   }, [ticketData, states,districts,pinCodes,assigned]);
   useEffect(() => {
     setLoading(true);
-    // const url = `https://localhost:7091/api/RaiseTicket/GetTicketsNotifications`;
-    const url = `https://localhost:7091/api/RaiseTicket/GetNotificationsByDistrict?district=${district}&category=${category}`;
+    const url = `https://localhost:7091/api/RaiseTicket/GetRaiseTicketNotificationsByStateAndDistrictForDealer?district=${district}&category=${category}`;
     axios
       .get(url)
       .then((response) => {
@@ -73,26 +72,26 @@ useEffect(() => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // const handleDelete = (ticketId) => {
-  //   const confirmDelete = window.confirm(
-  //     "Are you sure you want to delete this ticket?"
-  //   );
-  //   if (confirmDelete) {
-  //     axios
-  //       .delete(`https://localhost:7091/api/RaiseTicket/${ticketId}`)
-  //       .then(() => {
-  //         setTicketData((prevData) =>
-  //           prevData.filter((ticket) => ticket.id !== ticketId)
-  //         );
-  //         setFilteredData((prevData) =>
-  //           prevData.filter((ticket) => ticket.id !== ticketId)
-  //         );
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error deleting ticket:", error);
-  //       });
-  //   }
-  // };
+  const handleDelete = (ticketId) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this ticket?"
+    );
+    if (confirmDelete) {
+      axios
+        .delete(`https://localhost:7091/api/RaiseTicket/${ticketId}`)
+        .then(() => {
+          setTicketData((prevData) =>
+            prevData.filter((ticket) => ticket.id !== ticketId)
+          );
+          setFilteredData((prevData) =>
+            prevData.filter((ticket) => ticket.id !== ticketId)
+          );
+        })
+        .catch((error) => {
+          console.error("Error deleting ticket:", error);
+        });
+    }
+  };
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -138,7 +137,7 @@ useEffect(() => {
       )}
 
       <div className={`container m-1 ${isMobile ? "w-100" : "w-75"}`}>
-        <h2 className="text-center mb-4">Technician Quote Notifications</h2>
+        <h2 className="text-center mb-4">Dealer Notifications</h2>
         <table className="table table-bordered">
           <thead>
             <tr>
@@ -162,12 +161,12 @@ useEffect(() => {
                 <td>{ticket.assignedTo}</td>
                 <td className="d-flex align-items-center">
                   <Link
-                    to={`/viewRaiseQuote/${ticket.id}/${userType}/${technicianId}`}
+                    to={`/dealerRaiseTicket/${userType}/${ticket.id}`}
                     className="btn btn-info mx-2"
                   >
                     <FaEye />
                   </Link>
-                  {/* <Link
+                  <Link
                     onClick={() => handleDelete(ticket.id)}
                     className="btn btn-danger mx-2"
                   >
@@ -175,14 +174,14 @@ useEffect(() => {
                   </Link>
                   <Link to="#" className="btn btn-success mx-2">
                     <ForwardIcon />
-                  </Link> */}
+                  </Link>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
         <div className="mt-4 text-end">
-          <Link to={`/notificationTechnician/technician/${category}/${district}/${technicianId}`} className="btn btn-warning text-white mx-2" title='Back'>
+          <Link to={`/dealerNotifications/dealer/${district}/${category}`} className="btn btn-warning text-white mx-2" title='Back'>
             <ArrowLeftIcon />
           </Link>
         </div>

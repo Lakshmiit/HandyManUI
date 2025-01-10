@@ -4,15 +4,16 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import AdminSidebar from './AdminSidebar';
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
-import { FaEdit} from 'react-icons/fa'; // Correct icon import
+// import { FaEdit} from 'react-icons/fa'; // Correct icon import
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 // import SaveAsIcon from '@mui/icons-material/SaveAs';
 import ForwardIcon from '@mui/icons-material/Forward';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import './App.css';
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 const RaiseActionView = () => {
+  const Navigate = useNavigate(); 
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const {raiseTicketId} = useParams();
@@ -40,7 +41,7 @@ const RaiseActionView = () => {
   useEffect(() => {
     const fetchticketData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+        const response = await fetch(`https://localhost:7091/api/RaiseTicket/GetTicket/${raiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
@@ -63,7 +64,7 @@ const RaiseActionView = () => {
         setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: ""}])
         const imageRequests =
           data.attachments?.map((photo) => fetch(
-              `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+              `https://localhost:7091/api/FileUpload/download?generatedfilename=${photo}`
             )
             .then((res) => res.json())
               .then((data) => ({
@@ -192,7 +193,7 @@ const RaiseActionView = () => {
     };
     try {
       
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://localhost:7091/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -203,6 +204,7 @@ const RaiseActionView = () => {
         throw new Error('Failed to save ticket data');
       }
       alert('Ticket saved Successfully!');
+      Navigate(`/adminNotifications`);
     } catch (error) {
       console.error('Error saving ticket data:', error);
       window.alert('Failed to save the ticket data. Please try again later.')
@@ -528,14 +530,14 @@ const RaiseActionView = () => {
           <Link to='/raiseTicketNotification' className="btn btn-warning text-white mx-2" title='Back'>
             <ArrowLeftIcon />
           </Link>
-          <Link to='/raiseTicketActionView/{ticketId}' className="btn btn-warning text-white mx-2" title='Edit'> 
+          {/* <Link to='/raiseTicketActionView/{ticketId}' className="btn btn-warning text-white mx-2" title='Edit'> 
           <FaEdit />
-          </Link>
+          </Link> */}
           {/* <Button onClick={handleForwardTicket} className="btn btn-warning text-white mx-2" title='Forward'
           disabled={status === "Assigned" && assignedTo === "Technical Agency"}>
             <SaveAsIcon />
           </Button> */}
-          <Button onClick={handleSaveTicket} type="submit" className="btn btn-warning text-white mx-2" title="Save" 
+          <Button onClick={handleSaveTicket} type="submit" className="btn btn-warning text-white mx-2" title="Forward" 
           disabled={status === "Assigned" && assignedTo === "Technical Agency"}>
             <ForwardIcon />
           </Button>

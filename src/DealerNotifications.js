@@ -12,19 +12,19 @@ import "./App.css";
 const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) => {
   const navigate = useNavigate();
   const {userType} = useParams();
-  const {technicianId} = useParams();
+//   const {technicianId} = useParams();
 
   const handleQuoteClick = (ticketId) => {
-    navigate(`/viewRaiseQuote/${ticketId}/${userType}/${technicianId}`, { state: { ticketId } });
+    navigate(`/dealerRaiseTicket/${userType}/${ticketId}`, { state: { ticketId } });
   };
 
   return (
     <div className="notification-list">
       {notifications.map((notification) => (
         <div
-          key={notification.raiseAQuoteId}
+          key={notification.raiseTicketId}
           className={`notification-item ${
-            notification.raiseAQuoteId === highlightedItem ? "highlight" : ""
+            notification.raiseTicketId === highlightedItem ? "highlight" : ""
           }`}
         >
           <div className="notification-header">
@@ -67,7 +67,7 @@ const Notification = () => {
   const [glowQuote, setGlowQuote] = useState(false);
   const { district, category } = useParams();
   const { userType } = useParams();
-  const { technicianId } = useParams();
+//   const { technicianId } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -81,7 +81,7 @@ const Notification = () => {
     const fetchNotifications = async () => {
       try {
         const getQuoteResponse = await fetch(
-          `https://localhost:7091/api/RaiseTicket/GetNotificationsByDistrict?district=${district}&category=${category}`
+          `https://localhost:7091/api/RaiseTicket/GetRaiseTicketNotificationsByStateAndDistrictForDealer?district=${district}&category=${category}`
         );
         if (!getQuoteResponse.ok) {
           throw new Error("Failed to fetch quote notifications");
@@ -156,16 +156,16 @@ const Notification = () => {
 
         <div className="notifications-container d-flex bg-white border rounded shadow-sm m-4 p-3">
           <div className="tabs d-flex mb-3">
-            {["Raise A Quote"].map((tab) => (
+            {["Raise A Quote Buy Products"].map((tab) => (
               <span
                 key={tab}
                 className={`tab-item ${activeTab === tab ? "active" : ""} ${
-                  tab === "Raise A Quote" && glowQuote ? "glow" : ""
+                  tab === "Raise A Quote Buy Products" && glowQuote ? "glow" : ""
                 }`}
                 onClick={() => handleTabClick(tab)}
                 style={{ cursor: "pointer" }}
               >
-                Raise A Quote{" "}
+                Raise A Quote Buy Products{" "}
                 {newQuoteCount > 0 && (
                   <span className="badge bg-danger">{newQuoteCount}</span>
                 )}
@@ -174,17 +174,17 @@ const Notification = () => {
           </div>
 
           <div>
-            {activeTab === "Raise A Quote" && (
+            {activeTab === "Raise A Quote Buy Products" && (
               <>
                 <NotificationsList
                   notifications={quoteNotifications}
                   highlightedItem={highlightedQuote}
-                  handleItemClick={(id) => navigate(`/technicianQuoteNotification/${userType}`, { state: { id } })}
+                  handleItemClick={(id) => navigate(``, { state: { id } })}
                 />
                 <div
                   className="view-notifications text-info mx-2"
                   onClick={() => {
-                    navigate(`/technicianQuoteNotification/${userType}/${category}/${district}/${technicianId}`);
+                    navigate(`/dealerNotificationsGrid/${userType}/${district}/${category}`);
                     handleClearQuoteNotifications();
                   }}
                   style={{ cursor: "pointer" }}

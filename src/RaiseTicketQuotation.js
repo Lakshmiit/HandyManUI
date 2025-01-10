@@ -6,7 +6,7 @@ import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import "./App.css";
 import AdminSidebar from './AdminSidebar';
 import ForwardIcon from '@mui/icons-material/Forward';
-import SaveAsIcon from '@mui/icons-material/SaveAs';
+// import SaveAsIcon from '@mui/icons-material/SaveAs';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import {Link, useNavigate, useParams} from 'react-router-dom';
 import JSZip from "jszip";
@@ -54,14 +54,14 @@ const RaiseQuotation = () => {
     const [zipCode, setZipcode] = useState('');
     const [address, setAddress] = useState('');
     const [rateQuotedBy, setRateQuotedBy] = useState("Customer Care");
-    const [isDealerSelected, setIsDealerSelected] = useState(false);
+    // const [isDealerSelected, setIsDealerSelected] = useState(false);
     const [material, setMaterialQuotation] = useState([{discounts: "", fixedDiscounts: "", deliveryCharges: "", fixedDeliveryCharges: "", serviceCharges: "", fixedServiceCharges: "", gsts: "", fixedGSTS: "", grandtotal: ""}])
 
  
     // Fetch data from API on component mount
     useEffect(() => {
       // API URL
-      const apiUrl = `https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
+      const apiUrl = `https://localhost:7091/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
       // Fetching the data from the API
       const fetchData = async () => {
         try {
@@ -133,7 +133,7 @@ const RaiseQuotation = () => {
 
     const handleRateQuotedByChange = (value) => {
       setRateQuotedBy(value);
-      setIsDealerSelected(value === "Dealer/Agency");
+      // setIsDealerSelected(value === "Dealer/Trader");
     };  
   
     const materialAmount = () => specifications.reduce((sum, spec) => sum + Number(spec.total), 0);
@@ -197,7 +197,7 @@ useEffect(() => {
   useEffect(() => {
         const fetchticketData = async () => {
           try {
-            const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+            const response = await fetch(`https://localhost:7091/api/RaiseTicket/GetTicket/${raiseTicketId}`);
             if (!response.ok) {
               throw new Error('Failed to fetch ticket data');
             }
@@ -221,7 +221,7 @@ useEffect(() => {
             const imageRequests =
               data.attachments?.map((photo) => 
                fetch(
-                  `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+                  `https://localhost:7091/api/FileUpload/download?generatedfilename=${photo}`
                 )
                 .then((res) => res.json())
                 .then((data) => ({
@@ -347,7 +347,7 @@ useEffect(() => {
       subject: ticketData.subject,
       details: ticketData.details,
       category: ticketData.category,
-      assignedTo: ticketData.assignedTo,
+      assignedTo: "Customer",
       id : raiseTicketId,
       status: status,
       InternalStatus: "Assigned",
@@ -374,7 +374,7 @@ useEffect(() => {
     };
     try {
       
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://localhost:7091/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -450,7 +450,7 @@ useEffect(() => {
     //alert(JSON.stringify(payload3));
     //console.log(JSON.stringify(payload3));
   try {
-    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/id?id=${id}`, {
+    const response = await fetch(`https://localhost:7091/api/RaiseAQuote/id?id=${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -502,6 +502,9 @@ useEffect(() => {
     };
   }, [uploadedFiles]);
 
+  const handleGetQuoteClick = (raiseTicketId) => {
+    Navigate(`/raiseTicketBuyProducts/${raiseTicketId}`);
+  };
 
   return (
     <div className="d-flex flex-row justify-content-start align-items-start">
@@ -732,12 +735,12 @@ useEffect(() => {
                   className="form-check-input m-2"
                   type="radio"
                   name="RateQuotedBy"
-                  value="Dealer/Agency"
-                  checked={rateQuotedBy === "Dealer/Agency"}
+                  value="Dealer/Trader"
+                  checked={rateQuotedBy === "Dealer/Trader"}
                   onChange={(e) => handleRateQuotedByChange(e.target.value)}
                   required
                   />
-                  Dealer/Agency
+                  Dealer/Trader
                 </label>
               </div>
             </div> 
@@ -749,7 +752,7 @@ useEffect(() => {
           <label>Required (Optional)</label>
           {specifications.map((spec, index) => (
             <div className="d-flex gap-3 mb-2" key={index}>
-              {isDealerSelected && (
+              {/* {isDealerSelected && (
                 <div className="form-check">
                 <input 
                 type="radio"
@@ -757,7 +760,7 @@ useEffect(() => {
                 value={spec.material}
                 />
                 </div>
-            )}
+            )} */}
               <input
                 type="text"
                 className="form-control"
@@ -796,12 +799,19 @@ useEffect(() => {
               </button>
             </div>
           ))}
-          <button type="button" className="btn btn-primary" onClick={handleAddMaterial}>
+          <button type="button" className="btn btn-primary m-1" onClick={handleAddMaterial}>
             Add Material
           </button>
+          {rateQuotedBy === "Dealer/Trader" && (
+          <button type="button" className="btn btn-primary m-1" onClick={() =>handleGetQuoteClick(raiseTicketId)}>
+            Get Quotation
+          </button>
+          )}
         </div>
       )}
     </div>
+
+    {rateQuotedBy === "Customer Care" && (
     <table className="table table-bordered m-1">
     <tbody>
   {/* Quote Amount */}
@@ -957,9 +967,8 @@ useEffect(() => {
     </td>
   </tr>
 </tbody>
-
-        </table>
-   
+ </table>
+ )}
 <div>
 <table className="table table-bordered">
   <thead>
@@ -1041,9 +1050,9 @@ useEffect(() => {
           <Link to='/quoteNotification' className="btn btn-warning text-white mx-2" title='Back'>
             <ArrowLeftIcon />
           </Link>
-          <Link className="btn btn-warning text-white mx-2"  type="submit" title="Save">
+          {/* <Link className="btn btn-warning text-white mx-2"  type="submit" title="Save">
             <SaveAsIcon />
-          </Link>
+          </Link> */}
           <Link onClick={handleBothActions} className="btn btn-warning text-white mx-2" title='Forward'>
             <ForwardIcon />
           </Link>
