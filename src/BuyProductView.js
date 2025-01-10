@@ -24,14 +24,14 @@ const BuyProdcutView = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`https://localhost:7091/api/Product/${id}`);
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/${id}`);
         const data = await response.json();
         setProductData(data);
 
         const imageRequests =
           data.productPhotos?.map((photo) =>
             fetch(
-              `https://localhost:7091/api/FileUpload/download?generatedfilename=${photo}`
+              `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
             )
               .then((res) => res.json())
               .then((data) => ({
@@ -70,7 +70,7 @@ const BuyProdcutView = () => {
   //   };
 
   //   try {
-  //     const response = await fetch(`https://localhost:7091/api/Product/${id}`, {
+  //     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/${id}`, {
   //       method: "PUT",
   //       headers: {
   //         "Content-Type": "application/json",

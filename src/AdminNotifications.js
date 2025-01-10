@@ -127,10 +127,10 @@ const Notification = () => {
     try {
       const [raiseTicketResponse, getQuoteResponse] = await Promise.all([
         fetch(
-          "https://localhost:7091/api/RaiseTicket/GetTicketsNotifications"
+          "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications"
         ),
         fetch(
-          "https://localhost:7091/api/RaiseTicket/GetTicketsNotifications"
+          "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications"
         ),
       ]);
 
