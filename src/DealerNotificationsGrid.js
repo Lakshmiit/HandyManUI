@@ -14,7 +14,7 @@ import "./App.css";
 const RaiseTicketNotification = () => {
   const { userType } = useParams();
   const { selectedUserType } = useParams();
-  // const {technicianId} = useParams();
+  const {dealerId} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [ticketData, setTicketData] = useState([]);
@@ -161,7 +161,7 @@ useEffect(() => {
                 <td>{ticket.assignedTo}</td>
                 <td className="d-flex align-items-center">
                   <Link
-                    to={`/dealerRaiseTicket/${userType}/${ticket.id}`}
+                    to={`/viewDealerRaiseTicket/${ticket.id}/${userType}/${dealerId}`}
                     className="btn btn-info mx-2"
                   >
                     <FaEye />
@@ -181,7 +181,7 @@ useEffect(() => {
           </tbody>
         </table>
         <div className="mt-4 text-end">
-          <Link to={`/dealerNotifications/dealer/${district}/${category}`} className="btn btn-warning text-white mx-2" title='Back'>
+          <Link to={`/dealerNotifications/dealer/${category}/${district}/${dealerId}`} className="btn btn-warning text-white mx-2" title='Back'>
             <ArrowLeftIcon />
           </Link>
         </div>

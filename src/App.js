@@ -30,7 +30,7 @@ import NotificationTechnician from './NotificationTechnician.js';
 import CustomerNotification from './CustomerNotification.js';
 import ViewCustomerGrid from './ViewCustomerGrid.js';
 import ShortAdminNotifications from './ShortAdminNotifications.js';
-import DealerRaiseTicket from './DealerRaiseTicket.js';
+import ViewDealerRaiseTicket from './ViewDealerRaiseTicket.js';
 import CustomerRaiseTicketQuotation from './CustomerRaiseTicketQuotation.js';
 import DealerNotifications from './DealerNotifications.js';
 import DealerNotificationsGrid from './DealerNotificationsGrid.js';
@@ -74,9 +74,9 @@ function App() {
             <Route path="/viewCustomer/:userType/:customerId" element={<ViewCustomerGrid />} />
             <Route path="/ShortAdminNotifications" element={<ShortAdminNotifications />} />
             <Route path="/customerRaiseTicketQuotation/:userType/:raiseTicketId" element={<CustomerRaiseTicketQuotation />} />
-            <Route path="/dealerNotifications/:userType/:district/:category" element={<DealerNotifications />} /> 
-            <Route path="/dealerNotificationsGrid/:userType/:district/:category" element={<DealerNotificationsGrid />} />
-            <Route path="/dealerRaiseTicket/:userType/:raiseTicketId" element={<DealerRaiseTicket />} />
+            <Route path="/dealerNotifications/:userType/:category/:district/:dealerId" element={<DealerNotifications />} /> 
+            <Route path="/dealerNotificationsGrid/:userType/:category/:district/:dealerId" element={<DealerNotificationsGrid />} />
+            <Route path="/viewDealerRaiseTicket/:raiseTicketId/:userType/:dealerId" element={<ViewDealerRaiseTicket />} />
           </Routes>
         </main>
       </div>

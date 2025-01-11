@@ -12,10 +12,10 @@ import "./App.css";
 const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) => {
   const navigate = useNavigate();
   const {userType} = useParams();
-//   const {technicianId} = useParams();
+  const {dealerId} = useParams();
 
   const handleQuoteClick = (ticketId) => {
-    navigate(`/dealerRaiseTicket/${userType}/${ticketId}`, { state: { ticketId } });
+    navigate(`/viewDealerRaiseTicket/${ticketId}/${userType}/${dealerId}`, { state: { ticketId } });
   };
 
   return (
@@ -67,7 +67,7 @@ const Notification = () => {
   const [glowQuote, setGlowQuote] = useState(false);
   const { district, category } = useParams();
   const { userType } = useParams();
-//   const { technicianId } = useParams();
+  const { dealerId } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -184,7 +184,7 @@ const Notification = () => {
                 <div
                   className="view-notifications text-info mx-2"
                   onClick={() => {
-                    navigate(`/dealerNotificationsGrid/${userType}/${district}/${category}`);
+                    navigate(`/dealerNotificationsGrid/${userType}/${category}/${district}/${dealerId}`);
                     handleClearQuoteNotifications();
                   }}
                   style={{ cursor: "pointer" }}
