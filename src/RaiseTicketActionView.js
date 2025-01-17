@@ -41,7 +41,7 @@ const RaiseActionView = () => {
   useEffect(() => {
     const fetchticketData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+        const response = await fetch(`https://localhost:7091/api/RaiseTicket/GetTicket/${raiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
@@ -64,7 +64,7 @@ const RaiseActionView = () => {
         setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: ""}])
         const imageRequests =
           data.attachments?.map((photo) => fetch(
-              `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+              `https://localhost:7091/api/FileUpload/download?generatedfilename=${photo}`
             )
             .then((res) => res.json())
               .then((data) => ({
@@ -190,10 +190,11 @@ const RaiseActionView = () => {
           commentText: comment.commentText,
       })),
       LowestBidderTechnicainId: "",
+      LowestBidderDealerId: "",
     };
     try {
       
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://localhost:7091/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -487,7 +488,7 @@ const RaiseActionView = () => {
               />
               <input
                 type="text"
-                className="form-control"
+                className="form-control text-center"
                 placeholder="Enter Quantity"
                 value={spec.quantity}
                 onChange={(e) => handleMaterialChange(index,"quantity", e.target.value)}

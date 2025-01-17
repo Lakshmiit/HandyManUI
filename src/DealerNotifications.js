@@ -13,9 +13,10 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
   const navigate = useNavigate();
   const {userType} = useParams();
   const {dealerId} = useParams();
+  const {category} = useParams();
 
   const handleQuoteClick = (ticketId) => {
-    navigate(`/viewDealerRaiseTicket/${ticketId}/${userType}/${dealerId}`, { state: { ticketId } });
+    navigate(`/viewDealerRaiseTicket/${ticketId}/${userType}/${category}/${dealerId}`, { state: { ticketId } });
   };
 
   return (
@@ -81,7 +82,7 @@ const Notification = () => {
     const fetchNotifications = async () => {
       try {
         const getQuoteResponse = await fetch(
-          `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetRaiseTicketNotificationsByStateAndDistrictForDealer?district=${district}&category=${category}`
+          `https://localhost:7091/api/RaiseTicket/GetRaiseTicketNotificationsByStateAndDistrictForDealer?district=${district}&category=${category}`
         );
         if (!getQuoteResponse.ok) {
           throw new Error("Failed to fetch quote notifications");

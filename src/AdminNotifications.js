@@ -17,16 +17,25 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
   );
 
   const getQuoteNotifications = notifications.filter(
-    (item) => item.internalStatus === "Pending"
+    (item) => item.internalStatus === "Pending" && item.assignedTo === "Technical Agency"
   );
     
+
+  const dealerQuoteNotifications = notifications.filter(
+    (item) => item.internalStatus === "Pending" && item.assignedTo === "Dealer/Trader"
+  );
   const handleTicketClick = (ticketId) => {
     navigate(`/raiseTicketActionView/${ticketId}`, { state: { ticketId } });
   };
 
-  const handleQuoteClick = (raiseTicketId) => {
-    navigate(`/raiseTicketQuotation/${raiseTicketId}`, { state: { raiseTicketId } });
+  const handleQuoteClick = (ticketId) => {
+    navigate(`/raiseTicketQuotation/${ticketId}`, { state: { ticketId } });
   };
+
+  const handleDealerClick = (raiseTicketId) => {
+    navigate(`/bidderTicketQuotation/${raiseTicketId}`, { state: { raiseTicketId } });
+  };
+
 
   return (
     <div>
@@ -97,6 +106,40 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
           </div>
         ))}
       </div>
+
+      <div className="notification-list">
+        {dealerQuoteNotifications.map((notification) => (
+          <div
+            key={notification.raiseTicketId}
+            className={`notification-item ${
+              notification.raiseTicketId === highlightedItem ? "highlight" : ""
+            }`}
+          >
+            <div className="notification-header">
+              <strong>Ticket ID: </strong>
+              <span
+                onClick={() => handleDealerClick(notification.id)}
+                style={{
+                  color: "blue",
+                  cursor: "pointer",
+                  textDecoration: "underline",
+                }}
+              >
+                {notification.raiseTicketId}
+              </span>
+            </div>
+            <div>
+              <strong>Subject:</strong> {notification.subject}
+            </div>
+            <div>
+              <strong>Details:</strong> {notification.details}
+            </div>
+            <div className="notification-date">
+              <strong>Date:</strong> {new Date(notification.date).toLocaleString()}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
@@ -106,13 +149,16 @@ const Notification = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [ticketNotifications, setTicketNotifications] = useState([]);
   const [quoteNotifications, setQuoteNotifications] = useState([]);
+  const [dealerNotifications, setDealerNotifications] = useState([]);
   const [newTicketCount, setNewTicketCount] = useState(0);
   const [newQuoteCount, setNewQuoteCount] = useState(0);
+  const [newDealerCount, setNewDealerCount] = useState(0);
   const [newNotificationCount, setNewNotificationCount] = useState(0);
   const [glow, setGlow] = useState(false);
   const [highlightedTicket, setHighlightedTicket] = useState(null);
   const [highlightedQuote, setHighlightedQuote] = useState(null);
-  const [activeTab, setActiveTab] = useState("Raise Ticket");
+  const [highlightedDealer, setHighlightedDealer] = useState(null);
+  const [activeTab, setActiveTab] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -125,12 +171,15 @@ const Notification = () => {
 
   const fetchNotifications = async () => {
     try {
-      const [raiseTicketResponse, getQuoteResponse] = await Promise.all([
+      const [raiseTicketResponse, getQuoteResponse, getDealerResponse] = await Promise.all([
         fetch(
-          "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications"
+          "https://localhost:7091/api/RaiseTicket/GetTicketsNotifications"
         ),
         fetch(
-          "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications"
+          "https://localhost:7091/api/RaiseTicket/GetTicketsNotificationsForTechnician"
+        ),
+        fetch(
+          "https://localhost:7091/api/RaiseTicket/GetRaiseTicketsForDealers"
         ),
       ]);
 
@@ -149,7 +198,7 @@ const Notification = () => {
 
       const getQuoteData = await getQuoteResponse.json();
       const quoteTicketFiltered = getQuoteData.filter(
-        (item) => item.internalStatus === "Pending"
+        (item) => item.internalStatus === "Pending" && item.assignedTo === "Technical Agency"
       );
       const getQuoteCount = quoteTicketFiltered.length;
 
@@ -160,7 +209,20 @@ const Notification = () => {
         setHighlightedQuote(quoteTicketFiltered[0].raiseAQuoteId);
       }
 
-      const totalNotifications = raiseTicketCount + getQuoteCount;
+      const getDealerData = await getDealerResponse.json();
+      const dealerTicketFiltered = getDealerData.filter(
+        (item) => item.internalStatus === "Pending" && item.assignedTo === "Dealer/Trader" 
+      );
+      const getDealerCount = dealerTicketFiltered.length;
+
+      setDealerNotifications(dealerTicketFiltered);
+      setNewDealerCount(getDealerCount);
+
+      if (getDealerCount > 0) {
+        setHighlightedQuote(dealerTicketFiltered[0].raiseTicketId);
+      }
+
+      const totalNotifications = raiseTicketCount + getQuoteCount + getDealerCount;
       setNewNotificationCount(totalNotifications);
       setGlow(totalNotifications > 0);
     } catch (error) {
@@ -182,6 +244,11 @@ const Notification = () => {
   const handleClearQuoteNotifications = () => {
     setNewQuoteCount(0);
     setHighlightedQuote(null);
+  };
+
+  const handleClearDealerNotifications = () => {
+    setNewDealerCount(0);
+    setHighlightedDealer(null);
   };
 
   const handleTabClick = (tab) => setActiveTab(tab);
@@ -227,7 +294,7 @@ const Notification = () => {
 
         <div className="notifications-container d-flex bg-white border rounded shadow-sm m-4 p-3">
           <div className="tabs">
-            {["Raise Ticket", "Get Quote", "Buy Products"].map((tab) => (
+            {["Raise Ticket", "Technician Get Quote", "Dealer Get Quote"].map((tab) => (
               <span
                 key={tab}
                 className={`tab-item ${activeTab === tab ? "active" : ""}`}
@@ -242,18 +309,20 @@ const Notification = () => {
                     )}
                   </>
                 )}
-                {tab === "Get Quote" && (
+                {tab === "Technician Get Quote" && (
                   <>
-                    Get Quote{" "}
+                    Technician Get Quote{" "}
                     {newQuoteCount > 0 && (
                       <span className="badge bg-danger">{newQuoteCount}</span>
                     )}
                   </>
                 )}
-                {tab === "Buy Products" && (
+                {tab === "Dealer Get Quote" && (
                   <>
-                    Buy Products{" "}
-                    {/* {0 > 0 && <span className="badge bg-danger">{0}</span>} */}
+                    Dealer Get Quote{" "}
+                    {newDealerCount > 0 && (
+                      <span className="badge bg-danger">{newDealerCount}</span>
+                    )} 
                   </>
                 )}
               </span>
@@ -278,7 +347,7 @@ const Notification = () => {
               </div>
             </>
           )}
-          {activeTab === "Get Quote" && (
+          {activeTab === "Technician Get Quote" && (
             <>
               <NotificationsList
                 notifications={quoteNotifications}
@@ -296,6 +365,25 @@ const Notification = () => {
               </div>
             </>
           )}
+
+{activeTab === "Dealer Get Quote" && (
+              <>
+                <NotificationsList
+                  notifications={dealerNotifications}
+                  highlightedItem={highlightedDealer}
+                />
+                <div
+                  className="view-notifications text-info mx-2"
+                  onClick={() => {
+                    navigate(`/dealerGrid`);
+                    handleClearDealerNotifications();
+                  }} 
+                  style={{ cursor: "pointer" }}
+                >
+                  View All Notifications
+                </div>
+              </>
+            )}
         </div>
       </div>
     </div>

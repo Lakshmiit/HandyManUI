@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Form, Row, Col } from 'react-bootstrap'; // Import Bootstrap components for modal
+import { Button, Form } from 'react-bootstrap'; // Import Bootstrap components for modal
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
@@ -42,38 +42,32 @@ const RaiseQuotation = () => {
   const [totalAmount, setTotalAmount] = useState('');
   const [othercharges, setOtherCharge] = useState("");
   const [assignedTo, setAssignedTo] = useState('');
-  const [showAlert] = useState(false);
-  const [alertMessage] = useState('');
   const [category, setCategory] = useState("");
   const [technicianDetails, setTechnicianDetails] = useState([]);
+  const [techRemarks, setRemarks] = useState('');
   const [addrRmarks, setAddrRmarks] = useState([{requestedDate: new Date(), remarks: ""}]);
   const [raiseAQuoteId, setRaiseAQuoteId] = useState('');
   const [enterQuoteAmount, setQuote] = useState('');
   const [discount, setDiscount] = useState('');
-  const [materialQuotation, setMaterial] = useState([{discounts: "", fixedDiscounts: "", deliveryCharges: "", fixedDeliveryCharges: "", serviceCharges: "", fixedServiceCharges: "", gsts: "", fixedGSTS: "", grandtotal: ""}])
-  const charges = materialQuotation[0] || {
-    discount: "",
-    fixedDiscount: "",
-    deliveryCharges: "",
-    fixedDeliveryChargs: "",
-    serviceCharges: "",
-    fixedServicharges: "",
-    gsts: "",
-    fixedGST: "",
-    grandtotal: "",
-  };
-  // 
-   
+  // const [isChecked, setIsChecked] = useState(false);
+  const [isMaterialApproved, setIsMaterialApproved] = useState(false);
+  const [isAgencyApproved, setIsAgencyApproved] = useState(false);
+  const [materialQuotation, setMaterialQuotation] = useState([{discounts: "", fixedDiscounts: "", deliveryCharges: "", fixedDeliveryCharges: "", serviceCharges: "", fixedServiceCharges: "", gsts: "", fixedGSTS: "", grandtotal: ""}]);
+  const [lowestGrandTotal, setLowestGrandTotal] = useState('');
+  const [dealerDetails, setDealerDetails] = useState([]);
+  const [lowestDealerBidder, setLowestDealerBidder] = useState("");
+  const [dealerId, setDealerId] = useState("");
+  
 
   useEffect(() => {
-    console.log(category, loading, subject,status, id);
-  }, [category, loading, subject,status, id]);
+    console.log(category, loading, subject,status, id, fixedQuote, enterQuoteAmount, materialQuotation, raiseAQuoteId);
+  }, [category, loading, subject,status, id, fixedQuote, enterQuoteAmount, materialQuotation, raiseAQuoteId]);
 
   
   useEffect(() => {
     const fetchticketData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+        const response = await fetch(`https://localhost:7091/api/RaiseTicket/GetTicket/${raiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
@@ -108,35 +102,12 @@ const RaiseQuotation = () => {
 
     // Fetch data from API on component mount
     useEffect(() => {
-      const apiUrl = `https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
+      const apiUrl = `https://localhost:7091/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
       // Fetching the data from the API
       const fetchData = async () => {
         try {
           const response = await fetch(apiUrl);
           const data = await response.json();
-          // Map the data to match your technician details structure
-          // alert(JSON.stringify(data));
-          // const mappedData = data.map(item => ({
-          //   technicianId: item.technicianId,
-          //   quotedAmount: parseFloat(item.enterQuoteAmount),
-          //   discount: parseFloat(item.discount),
-          //   fixedDiscount: parseFloat(item.fixedDiscount),
-
-          //   othercharges: parseFloat(item.othercharges),
-          //   fixedOtherCharge: parseFloat(item.fixedOtherCharge),
-
-          //   serviceCharges: parseFloat(item.serviceCharges),
-          //   fixedServiceCharge: parseFloat(item.fixedServiceCharge),
-
-          //   gst: parseFloat(item.gst),
-          //   fixedGST: parseFloat(item.fixedGST),
-
-          //   totalQuotedAmount: parseFloat(item.totalQuotedAmount),
-          //   addrRmarks:item.addrRmarks,
-          //   materials: item.materials,
-          // }));
-          // Update state with the fetched and mapped data
-          // setTechnicianDetails(mappedData);
           setTechnicianDetails(data);     
           // alert(JSON.stringify(data));        
           setQuote(data.enterQuoteAmount);
@@ -152,16 +123,15 @@ const RaiseQuotation = () => {
           setFixedServiceCharge(data.fixedServiceCharge);
           setFixedOtherCharge(data.fixedOtherCharge);         
           setRaiseAQuoteId(data.raiseAQuoteId);
-          setAddrRmarks(data.addrRmarks);
+          // setAddrRmarks(data.addrRmarks);
           // setSpecifications(data.materials || [{material: "", quantity: "", price: "", total: ""}]);
-          // setMaterial(data.materialQuotation || [{discount: "", fixedDiscount: "", deliverycharges: "", fixedDeliveryChargs: "", servicecharges: "", fixedServiceCharges: "", gst: "", fixedGST: "", grandtotal: ""}]);
-        console.log("Material Quotation State:",materialQuotation);
+          setMaterialQuotation(data.materialQuotation || [{discount: "", fixedDiscount: "", deliverycharges: "", fixedDeliveryChargs: "", servicecharges: "", fixedServiceCharges: "", gst: "", fixedGST: "", grandtotal: ""}]);
         } catch (error) {
           console.error('Error fetching data:', error);
         }
       };
       fetchData();
-    }, [raiseTicketId, materialQuotation]); 
+    }, [raiseTicketId]); 
 
       useEffect(() => {
         if (technicianDetails.length > 0) {
@@ -186,11 +156,11 @@ const RaiseQuotation = () => {
           setFixedServiceCharge(lowest.fixedServiceCharge);
           setTotalAmount(lowest.totalAmount); 
           setSpecifications(lowest.materials);
-          setMaterial(lowest.materialQuotation);
+          setMaterialQuotation(lowest.materialQuotation);
           if (lowest.addrRmarks?.length > 0) {
-            setAddrRmarks(lowest.addrRmarks[0].remarks);
+            setRemarks(lowest.addrRmarks[0].remarks);
           } else {
-            setAddrRmarks("");
+            setRemarks("");
           }
           // alert(lowest.addrRmarks[0].remarks);
         } else {
@@ -201,7 +171,65 @@ const RaiseQuotation = () => {
           // setSpecifications('')
         }
       }, [technicianDetails, discount, fixedDiscount, othercharges, fixedOtherCharge, serviceCharges,fixedServiceCharge, gst, fixedGST]);
-      
+
+
+      useEffect(() => {
+        const fetchDealerData = async () => {
+          try {
+            const response = await fetch(`https://localhost:7091/api/RaiseAQuoteByDealer/GetRaiseAQuoteLowestDealerByid?raiseAQuotetDealerId=${raiseTicketId}`);
+            if (!response.ok) {
+              throw new Error('Failed to fetch ticket data');
+            }
+            const dataDealer = await  response.json();
+            
+            // alert(JSON.stringify(dataDealer));
+            // console.log(JSON.stringify(dataDealer));
+            setDealerDetails(dataDealer);
+            // setId(dataDealer.id);
+            // setDealerId(dataDealer.dealerId);
+            // setCustomerId(dataDealer.customerId);
+            setAddrRmarks(dataDealer[0].addrRmarks || []);
+            //  setSpecifications(dataDealer[0].materials || []);
+           setMaterialQuotation(dataDealer[0]?.materialQuotation || []);
+          } catch (error) {
+            console.error('Error fetching dealer data:', error);
+          } finally {
+            setLoading(false);
+          }
+        };
+        fetchDealerData();
+      }, [raiseTicketId]);
+
+      useEffect(() => {
+        if (dealerDetails.length > 0) {
+          const lowest = dealerDetails.reduce((prev, current) => {
+            const prevAmount = parseFloat(prev.materialQuotation[0].grandtotal);
+            const currentAmount = parseFloat(current.materialQuotation[0].grandtotal);
+            return currentAmount < prevAmount ? current : prev;
+          });
+          setLowestDealerBidder(lowest.dealerId);
+          setDealerId(lowest.dealerId);
+          setLowestGrandTotal(lowest.materialQuotation[0].grandtotal);
+          setSpecifications(lowest.materials);
+          setId(lowest.id);
+          setDealerId(lowest.dealerId);
+          // alert(lowest.dealerId);
+          
+           
+           if (lowest.addrRmarks?.length > 0) {
+            setAddrRmarks(lowest.addrRmarks[0].remarks);
+          } else {
+            setAddrRmarks("");
+          }
+        } else {
+          setId('');
+          setDealerId('');
+          setLowestDealerBidder('');
+          // setSpecifications('');
+          setMaterialQuotation('');
+          setAddrRmarks('');
+        }
+      }, [dealerDetails]);        
 
 //   // Handle form data changes
 //   const handleChange = (e) => {
@@ -214,6 +242,12 @@ const RaiseQuotation = () => {
 
 const handleAddRemarks = (index, value) => {
   setAddrRmarks((prev) =>
+    prev.map((item, i) => (i === index ? { ...item, addrRmarks: value } : item))
+  );
+};
+
+const handleTechRemarks = (index, value) => {
+  setRemarks((prev) =>
     prev.map((item, i) => (i === index ? { ...item, addrRmarks: value } : item))
   );
 };
@@ -256,11 +290,12 @@ const handleAddRemarks = (index, value) => {
       //   }))
       // : [],
       LowestBidderTechnicainId: lowestBidder,
+      LowestBidderDealerId: dealerId,
     };
     // alert(JSON.stringify(payload));
     try {
       
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://localhost:7091/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -277,82 +312,78 @@ const handleAddRemarks = (index, value) => {
     }
   };
 
-  const handleValuesTicket = async (e) => {
-    e.preventDefault();
+//   const handleValuesTicket = async (e) => {
+//     e.preventDefault();
     
-    const payload3 = {
-      id: id,
-      quotedDate: new Date().toISOString(),
-      RaiseAQuoteId:raiseAQuoteId ,
-      //raiseAQuote: ticketData.raiseAQuote,
-      RaiseTicketId: raiseTicketId,
-      CustomerId: customerId,
-      TicketId: ticketData.raiseTicketId,
-      TechnicianId: technicianId,
-      enterQuoteAmount: enterQuoteAmount,
-      Discount: discount, 
-      Othercharges: othercharges,
-      ServiceCharges: serviceCharges,
-      GST: gst,
-      TotalAmount: totalAmount,
-      fixedQuote: fixedQuote,
-      fixedDiscount:fixedDiscount,
-      fixedOtherCharge:fixedOtherCharge,
-      fixedServiceCharge: fixedServiceCharge,
-      fixedGST: fixedDiscount, 
-      addrRmarks: Array.isArray(addrRmarks)
-      ? addrRmarks.map((comment) => ({
-          requestedDate: comment.requestedDate,
-          remarks: comment.remarks,
-        }))
-      : [],
-    materials: specifications.map((spec) => ({
-      material: spec.material,
-      quantity: spec.quantity,
-      price: spec.price.toString(),
-      total: spec.total.toString(),
-    })),
-    materialQuotation: materialQuotation.map((quote) => ({
-      discount: quote.discounts,
-      deliverycharges: quote.deliveryCharges,
-      servicecharges: quote.serviceCharges,
-      gst: quote.gsts,
-      grandtotal: quote.grandtotal, 
-      fixedDiscount: quote.fixedDiscounts,
-      fixedDeliveryChargs: quote.fixedDeliveryCharges,
-      fixedServicecharges: quote.fixedServiceCharges,
-      fixedGST: quote.fixedGSTS,
-    })),
-    // LowestBidderTechnicianId: lowestBidder,
-  };
-  // var techData = JSON.stringify(payload3);
-    //alert(JSON.stringify(payload3));
-    //console.log(JSON.stringify(payload3));
-  try {
-    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/id?id=03dd6bbc-36ba-4795-b39c-b40d58991d87`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload3),
-    });
+//     const payload3 = {
+//       id: id,
+//       quotedDate: new Date().toISOString(),
+//       RaiseAQuoteId:raiseAQuoteId ,
+//       //raiseAQuote: ticketData.raiseAQuote,
+//       RaiseTicketId: raiseTicketId,
+//       CustomerId: customerId,
+//       TicketId: ticketData.raiseTicketId,
+//       TechnicianId: technicianId,
+//       enterQuoteAmount: enterQuoteAmount,
+//       Discount: discount, 
+//       Othercharges: othercharges,
+//       ServiceCharges: serviceCharges,
+//       GST: gst,
+//       TotalAmount: totalAmount,
+//       fixedQuote: fixedQuote,
+//       fixedDiscount:fixedDiscount,
+//       fixedOtherCharge:fixedOtherCharge,
+//       fixedServiceCharge: fixedServiceCharge,
+//       fixedGST: fixedDiscount, 
+//       addrRmarks: Array.isArray(addrRmarks)
+//       ? addrRmarks.map((comment) => ({
+//           requestedDate: comment.requestedDate,
+//           remarks: comment.remarks,
+//         }))
+//       : [],
+//     materials: specifications.map((spec) => ({
+//       material: spec.material,
+//       quantity: spec.quantity,
+//       price: spec.price.toString(),
+//       total: spec.total.toString(),
+//     })),
+//     materialQuotation: materialQuotation.map((quote) => ({
+//       discount: quote.discounts,
+//       deliverycharges: quote.deliveryCharges,
+//       servicecharges: quote.serviceCharges,
+//       gst: quote.gsts,
+//       grandtotal: quote.grandtotal, 
+//       fixedDiscount: quote.fixedDiscounts,
+//       fixedDeliveryChargs: quote.fixedDeliveryCharges,
+//       fixedServicecharges: quote.fixedServiceCharges,
+//       fixedGST: quote.fixedGSTS,
+//     })),
+//   };
+//   try {
+//     const response = await fetch(`https://localhost:7091/api/RaiseAQuote/id?id=03dd6bbc-36ba-4795-b39c-b40d58991d87`, {
+//       method: 'PUT',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify(payload3),
+//     });
      
-    if (!response.ok) {
-      throw new Error('Failed to Update RaiseAQuote data');
-    }
+//     if (!response.ok) {
+//       throw new Error('Failed to Update RaiseAQuote data');
+//     }
 
-    alert('RaiseAQuote Updated Successfully!');
-  } catch (error) {
-    console.error('Error Update RaiseAQuote ticket data:', error);
-    window.alert('Failed to Update the RaiseAQuote ticket data. Please try again later.');
-  }
-};
+//     alert('RaiseAQuote Updated Successfully!');
+//   } catch (error) {
+//     console.error('Error Update RaiseAQuote ticket data:', error);
+//     window.alert('Failed to Update the RaiseAQuote ticket data. Please try again later.');
+//   }
+// };
 
 
   const handleBothActions =  (e) => {
     e.preventDefault();
     handleSaveTicket(e);
-    handleValuesTicket(e);
+    // handleValuesTicket(e);
   }
   
   // Detect screen size for responsiveness
@@ -377,6 +408,25 @@ const handleAddRemarks = (index, value) => {
     setSpecifications(updatedSpecifications);
   };
 
+  const materialCharge = parseFloat(lowestGrandTotal);
+  const technicalAmount = parseFloat(Number(totalAmount || 0).toFixed(2));
+  const total = materialCharge + technicalAmount;
+
+  const approvedAcceptanceTotal = (() => {
+    if (isMaterialApproved && isAgencyApproved) {
+      
+      return total;
+    } else if (isAgencyApproved) {
+      
+      return technicalAmount;
+    } else if (isMaterialApproved) {
+      
+      return materialCharge;
+    } else {
+     
+      return 0;
+    }
+  })();
   // const calculateGrandTotal = () => specifications.reduce((sum, spec) => sum + spec.total, 0);
  
   return (
@@ -474,7 +524,7 @@ const handleAddRemarks = (index, value) => {
               
               <input
                 type="text"
-                className="form-control"
+                className="form-control text-center"
                 placeholder="Quantity"
                 value={spec.quantity}
                onChange={(e) => handleMaterialChange(index,"quantity", e.target.value)}
@@ -482,14 +532,14 @@ const handleAddRemarks = (index, value) => {
               />
               <input
                 type="number"
-                className="form-control"
+                className="form-control text-end"
                 placeholder="Price"
                 value={spec.price}
                 onChange={(e) => handleMaterialChange(index,"price", e.target.value)}
               />
               <input
                 type="number"
-                className="form-control"
+                className="form-control text-end"
                 placeholder="Total"
                 value={spec.total}
                 readOnly
@@ -508,52 +558,42 @@ const handleAddRemarks = (index, value) => {
     <td>Service Charges</td>
     <td>GST</td>
     <td>Grand Total</td>
-    <td>Lowest Bidder</td>
     </tr>
     </thead> 
     <tbody>
-        <tr>
-            <td>Customer Care</td>
+    {dealerDetails.map((dealer, index) => (
+        <tr key = {index} className="text-end">
+            <td>{dealer.dealerId}</td>
             <td> {specifications.reduce((acc, spec) => acc + (spec.quantity * spec.price || 0), 0)}</td>
-            <td>
-  {charges.fixedDiscount
-    ? Number(charges.fixedDiscount).toFixed(2)
-    : '0.00'}
-</td>
-            <td>{charges.fixedDeliveryChargs}</td>
-            <td>{charges.fixedServicecharges
-    ? Number(charges.fixedServicecharges).toFixed(2)
-    : '0.00'}</td>
-            <td>{charges.fixedGST
-    ? Number(charges.fixedGST).toFixed(2)
-    : '0.00'}</td>
-            <td>{charges.grandtotal
-    ? Number(charges.grandtotal).toFixed(2)
-    : '0.00'}</td>
-            <td>YES</td>
+            <td>{Number(dealer.materialQuotation[0].fixedDiscount).toFixed(2)}</td>
+            <td>{dealer.materialQuotation[0].fixedDeliveryChargs}</td>
+            <td>{Number(dealer.materialQuotation[0].fixedServicecharges).toFixed(2)}</td>
+            <td>{Number(dealer.materialQuotation[0].fixedGST).toFixed(2)}</td>
+            <td>{Number(dealer.materialQuotation[0].grandtotal).toFixed(2)}</td>
+            <td>{dealer.dealerId === lowestDealerBidder ? 'Yes' : 'No'}</td>
         </tr>
+    ))}
     </tbody>
+     {/* Dealer ID and Total Amount */}
     <tbody>
     <tr>
     <td colSpan="3">
             <input
             type="text"
             className='form-control text-end'
-            value= "Customer Care"
+            value= {dealerId}
             readOnly
             placeholder='Lowest Bidder Trader ID'
             /> 
         </td>
-        <td className="m-4">Lowest Bid Amount</td>
+        <td className="m-4">Quotation Amount</td>
         <td colspan="4">
             <input
             type="number"
             className="form-control text-end"
-            value={charges.grandtotal
-              ? Number(charges.grandtotal).toFixed(2)
-              : '0.00'}
+            value={Number(lowestGrandTotal).toFixed(2)}
             readOnly
-            placeholder="Lowest Bidder Total Amount"
+            placeholder="Quotation Amount"
             /> 
         </td> 
     </tr>
@@ -562,6 +602,17 @@ const handleAddRemarks = (index, value) => {
     </>
     )}
   </div>
+  {/* Add Remarks */}
+  <div className="form-group col-md-6">
+            <label>Dealer Remarks</label>
+            <input 
+            type="text"
+            className="form-control m-2"
+            value={addrRmarks}
+            placeholder="Enter Remarks"
+            onChange={(e) => handleAddRemarks(e.target.value)}
+            />
+        </div>
    
 <div>
   <p><strong>Technician Quotation</strong></p>
@@ -581,7 +632,7 @@ const handleAddRemarks = (index, value) => {
 
   <tbody>
     {technicianDetails.map((technician, index) => (
-      <tr key={index}>
+      <tr key={index} className='text-end'>
         <td>{technician.technicianId}</td>
         <td>{technician.enterQuoteAmount}</td>
         <td>{technician.fixedDiscount
@@ -630,6 +681,18 @@ const handleAddRemarks = (index, value) => {
         </table>
         </div>
 
+        {/* Technician Remarks */}
+       <div className="form-group col-md-6">
+            <label>Technician Remarks</label>
+            <input 
+            type="text"
+            className="form-control"
+            value={techRemarks}
+            placeholder="Enter Remarks"
+            onChange={(e) => handleTechRemarks(e.target.value)}
+            />
+        </div>
+
         <p><strong>ABSTRACT</strong></p>
         <table className="table table-bordered">
         <thead>
@@ -644,66 +707,41 @@ const handleAddRemarks = (index, value) => {
         <tbody>
           <tr>
             <td>Required Material Quotation Bid Amount</td>
-            <td>Customer Care</td>
-            <td>{charges.grandtotal
-              ? Number(charges.grandtotal).toFixed(2)
+            <td className='text-center'>{dealerId}</td>
+            <td className='text-end'>{lowestGrandTotal
+              ? Number(lowestGrandTotal).toFixed(2)
               : '0.00'}</td>
             <td>
-              <input type="radio" name="materialApproval" className="form-check-input" value="approved" checked /> Approved
+              <input type="radio" name="materialApproval" className="form-check-input" value="approved" checked={isMaterialApproved}  onClick={() => setIsMaterialApproved(!isMaterialApproved)}/> Approved
             </td>
           </tr>
           <tr>
             <td>Technical Agency Quotation Bid Amount</td>
-            <td>{technicianId}</td>
-            <td>{Number(totalAmount || 0).toFixed(2)}</td>
+            <td className='text-center'>{technicianId}</td>
+            <td className='text-end'>{Number(totalAmount || 0).toFixed(2)}</td> 
             <td>
-              <input type="radio" name="agencyApproval" className="form-check-input" value="approved" checked/> Approved
+              <input type="radio" name="agencyApproval" className="form-check-input" value="approved" checked={isAgencyApproved}
+                  onChange={() =>
+                    setIsAgencyApproved(!isAgencyApproved)
+                  } 
+                  /> Approved
             </td>
           </tr>
           <tr>
             <td>Total Amount</td>
             <td></td>
-            <td>{(Number(materialQuotation[0]?.grandtotal || 0) + Number(totalAmount || 0)).toFixed(2)}</td>
+            <td className='text-end'>{Number(total || 0).toFixed(2)}</td> 
             <td></td>
           </tr>
           <tr className="blinking-row">
             <td className='fs-5'>Approved Acceptance Total Amount</td>
             <td></td>
-            <td></td>
+            <td className='text-end'>{Number(approvedAcceptanceTotal).toFixed(2)}</td>
             <td></td>
           </tr>
         </tbody>
       </table>
     
-        {/* Assigned To */}
-        <Row>
-        <Col md={6}>
-            <Form.Group>
-              <label>Assigned To</label>
-              <Form.Control
-                as="select"
-                name="assignedTo"
-                value={ticketData.assignedTo}
-                onChange={(e) => setAssignedTo(e.target.value)}
-                required
-              >
-                <option value="">Select</option>
-                <option value="Customer Care">Customer Care</option>
-              </Form.Control>
-            </Form.Group>
-          </Col>
-        </Row>
-       {/* Add Remarks */}
-       <div className="form-group col-md-6">
-            <label>Add Remarks</label>
-            <input 
-            type="text"
-            className="form-control"
-            value={addrRmarks}
-            placeholder="Enter Remarks"
-            onChange={(e) => handleAddRemarks(e.target.value)}
-            />
-        </div>
         <div className='mt-4'>
             <label>
                 <input
@@ -719,17 +757,10 @@ const handleAddRemarks = (index, value) => {
         {/* Send Quote Button */}
         <div className="mt-4 ">
           <Button onClick={handleBothActions} className="btn btn-warning text-white mx-2" title='submit'>
-            Send Quote
+            Acceptance
           </Button>
         </div>
       </Form>
-
-      {/* Success Alert */}
-      {showAlert && (
-        <div className="mt-4 alert alert-info" role="alert">
-          {alertMessage}
-        </div>
-      )}
     </div>
   </div>
   );

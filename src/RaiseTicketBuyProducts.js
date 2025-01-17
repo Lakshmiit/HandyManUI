@@ -8,11 +8,12 @@ import AdminSidebar from './AdminSidebar';
 import ForwardIcon from '@mui/icons-material/Forward';
 // import SaveAsIcon from '@mui/icons-material/SaveAs';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
-import {Link, useParams} from 'react-router-dom';
+import {Link, useParams, useNavigate} from 'react-router-dom';
 
 
 const RaiseQuotation = () => {
-  // const Navigate = useNavigate();
+  const [error, setError] = useState("");
+  const Navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const {raiseTicketId} = useParams();
@@ -55,16 +56,15 @@ const RaiseQuotation = () => {
     const [material, setMaterialQuotation] = useState([{discounts: "", fixedDiscounts: "", deliveryCharges: "", fixedDeliveryCharges: "", serviceCharges: "", fixedServiceCharges: "", gsts: "", fixedGSTS: "", grandtotal: ""}])
     const [category, setCategory] = useState('');
     const {userType} = useParams();
-    const [newPhotoCount, setPhotoCount] = useState('');
 
     useEffect(() => {
-      console.log(subject, loading, isWithMaterial, id, raiseAQuoteId, totalAmount, enterQuoteAmount, fixedQuote, newPhotoCount);
-    }, [subject, loading, isWithMaterial, id, raiseAQuoteId, totalAmount, enterQuoteAmount, fixedQuote, newPhotoCount]);
+      console.log(subject, loading, isWithMaterial, id, raiseAQuoteId, totalAmount, enterQuoteAmount, fixedQuote);
+    }, [subject, loading, isWithMaterial, id, raiseAQuoteId, totalAmount, enterQuoteAmount, fixedQuote]);
  
     // Fetch data from API on component mount
     useEffect(() => {
       // API URL 
-      const apiUrl = `https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
+      const apiUrl = `https://localhost:7091/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
       // Fetching the data from the API
       const fetchData = async () => {
         try {
@@ -178,7 +178,7 @@ useEffect(() => {
   useEffect(() => {
         const fetchticketData = async () => {
           try {
-            const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+            const response = await fetch(`https://localhost:7091/api/RaiseTicket/GetTicket/${raiseTicketId}`);
             if (!response.ok) {
               throw new Error('Failed to fetch ticket data');
             }
@@ -202,7 +202,7 @@ useEffect(() => {
             const imageRequests =
               data.attachments?.map((photo) => 
                fetch(
-                  `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+                  `https://localhost:7091/api/FileUpload/download?generatedfilename=${photo}`
                 )
                 .then((res) => res.json())
                 .then((data) => ({
@@ -211,8 +211,6 @@ useEffect(() => {
                 }))
               ) || [];
             const images = await Promise.all(imageRequests);
-            setAttachments(images);
-            setPhotoCount(images.length);
             setAttachments(images);
           } catch (error) {
             console.error('Error fetching ticket data:', error);
@@ -292,7 +290,6 @@ useEffect(() => {
 
   const handleSaveTicket = async (e) => {
     e.preventDefault();
-    
    
     const payload = {
       RaiseTicketId: ticketData.raiseTicketId,
@@ -313,7 +310,6 @@ useEffect(() => {
       ZipCode: zipCode,
       RequestType: requestType,
       attachments:attachments.map((file) => file.src),
-
       materials: specifications.map((spec) => ({
           material: spec.material,
           quantity: spec.quantity,
@@ -325,10 +321,11 @@ useEffect(() => {
           CommentText: comment.commentText,
       })),
       LowestBidderTechnicainId: lowestBidder,
+      LowestBidderDealerId: "",
     };
     try {
       
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://localhost:7091/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -404,7 +401,7 @@ useEffect(() => {
 //     //alert(JSON.stringify(payload3));
 //     //console.log(JSON.stringify(payload3));
 //   try {
-//     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/id?id=${id}`, {
+//     const response = await fetch(`https://localhost:7091/api/RaiseAQuote/id?id=${id}`, {
 //       method: 'PUT',
 //       headers: {
 //         'Content-Type': 'application/json',
@@ -423,66 +420,150 @@ useEffect(() => {
 //   }
 // };
 
+// const handleUpdateTicket = async (e) => {
+//   e.preventDefault();
+//   const payload1 = {
+//     id :"string",
+//     ticketId: ticketData.raiseTicketId,
+//     CustomerId: ticketData.customerId,
+//     dealerId: "Customer Care",
+//     raiseTicketId: raiseTicketId,
+//     raiseAQuoteDate: new Date().toISOString(), 
+//     raiseAQuoteByDealerId: "string",
+//     addrRmarks: addrRmarks.map((comment) => ({
+//       requestedDate: comment.requestedDate,
+//       remarks: comment.remarks,
+//   })),
+//   materials: specifications.map((spec) => ({
+//     material: spec.material,
+//     quantity: spec.quantity,
+//     price: spec.price.toString()|| "",
+//     total: spec.total.toString() || "",
+// })),
+// materialQuotation: material.map((mat) => ({
+//   discount: mat.discounts.toString() || "",
+//   fixedDiscount: mat.fixedDiscounts.toString() || "",
+//   deliveryCharges: mat.deliveryCharges.toString() || "",
+//   fixedDeliveryChargs: mat.fixedDeliveryCharges.toString() || "",
+//   serviceCharge: mat.serviceCharges.toString(),
+//   fixedServicecharges: mat.fixedServiceCharges.toString() || "",
+//   gst: mat.gsts.toString()|| "",
+//   fixedGST: mat.fixedGSTS.toString() || "",
+//   grandtotal: mat.grandtotal.toString() || "",
+// })),
+//   }; 
+//   try {
+  
+//     const response = await fetch(`https://localhost:7091/api/RaiseAQuoteByDealer/CreateRaiseAQuoteByDealer`, {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify(payload1),
+//     });
+  
+//     if (!response.ok) {
+//       throw new Error('Failed to save Dealer ticket data');
+//     }
+   
+//     alert('Ticket  Dealer saved Successfully!');
+//   } catch (error) {
+//     console.error('Error saving Dealer ticket data:', error);
+//     window.alert('Failed to save the Dealer ticket data. Please try again later.')
+//   }
+// };
+
 const handleUpdateTicket = async (e) => {
   e.preventDefault();
   const payload1 = {
-    id :"string",
+    id: "string",
     ticketId: ticketData.raiseTicketId,
     CustomerId: ticketData.customerId,
-    dealerId: "",
+    dealerId: "Customer Care",
     raiseTicketId: raiseTicketId,
-    raiseAQuoteDate: new Date().toISOString(), 
+    raiseAQuoteDate: new Date().toISOString(),
     raiseAQuoteByDealerId: "string",
     addrRmarks: addrRmarks.map((comment) => ({
       requestedDate: comment.requestedDate,
       remarks: comment.remarks,
-  })),
-  materials: specifications.map((spec) => ({
-    material: spec.material,
-    quantity: spec.quantity,
-    price: spec.price.toString(),
-    total: spec.total.toString(),
-})),
-materialQuotation: material.map((mat) => ({
-  discount: mat.discounts.toString(),
-  fixedDiscount: mat.fixedDiscounts.toString(),
-  deliveryCharges: mat.deliveryCharges.toString(),
-  fixedDeliveryChargs: mat.fixedDeliveryCharges.toString(),
-  serviceCharge: mat.serviceCharges.toString(),
-  fixedServicecharges: mat.fixedServiceCharges.toString(),
-  gst: mat.gsts.toString(),
-  fixedGST: mat.fixedGSTS.toString(),
-  grandtotal: mat.grandtotal.toString(),
-})),
-  }; 
+    })),
+    materials: specifications.map((spec) => ({
+      material: spec.material || "",
+      quantity: spec.quantity || "",
+      price: spec.price !== undefined && spec.price !== null ? String(spec.price) : "",
+      total: spec.total !== undefined && spec.total !== null ? String(spec.total) : "",
+    })),
+    materialQuotation: material.map((mat) => ({
+      discount: mat.discounts !== undefined && mat.discounts !== null ? String(mat.discounts) : "",
+      fixedDiscount: mat.fixedDiscounts !== undefined && mat.fixedDiscounts !== null ? String(mat.fixedDiscounts) : "",
+      deliveryCharges: mat.deliveryCharges !== undefined && mat.deliveryCharges !== null ? String(mat.deliveryCharges) : "",
+      fixedDeliveryChargs: mat.fixedDeliveryCharges !== undefined && mat.fixedDeliveryCharges !== null ? String(mat.fixedDeliveryCharges) : "",
+      serviceCharge: mat.serviceCharges !== undefined && mat.serviceCharges !== null ? String(mat.serviceCharges) : "",
+      fixedServicecharges: mat.fixedServiceCharges !== undefined && mat.fixedServiceCharges !== null ? String(mat.fixedServiceCharges) : "",
+      gst: mat.gsts !== undefined && mat.gsts !== null ? String(mat.gsts) : "",
+      fixedGST: mat.fixedGSTS !== undefined && mat.fixedGSTS !== null ? String(mat.fixedGSTS) : "",
+      grandtotal: mat.grandtotal !== undefined && mat.grandtotal !== null ? String(mat.grandtotal) : "",
+    })),
+  };
+
   try {
-  
-    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuoteByDealer/CreateRaiseAQuoteByDealer`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload1),
-    });
-  
+    const response = await fetch(
+      `https://localhost:7091/api/RaiseAQuoteByDealer/CreateRaiseAQuoteByDealer`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload1),
+      }
+    );
+
     if (!response.ok) {
-      throw new Error('Failed to save Dealer ticket data');
+      throw new Error("Failed to save Dealer ticket data");
     }
-   
-    alert('Ticket  Dealer saved Successfully!');
+
+    alert("Ticket Dealer saved Successfully!");
   } catch (error) {
-    console.error('Error saving Dealer ticket data:', error);
-    window.alert('Failed to save the Dealer ticket data. Please try again later.')
+    console.error("Error saving Dealer ticket data:", error);
+    window.alert(
+      "Failed to save the Dealer ticket data. Please try again later."
+    );
   }
 };
 
 
-  const handleBothActions =  (e) => {
+  // const handleBothActions =  (e) => {
+  //   e.preventDefault();
+  //   handleSaveTicket(e);
+  //  handleUpdateTicket(e);
+  //  if (!category) {
+  //   setError("Must select a category");
+  // } else {
+  //   setError(""); // Clear error
+  //   console.log("Category selected:", category);
+  // }
+  //   // Navigate(`/adminNotifications`);
+  // }
+
+  const handleBothActions = (e) => {
     e.preventDefault();
+  
+    // Validate the category
+    if (!category) {
+      setError("Must select a category");
+      return; // Stop execution if validation fails
+    }
+  
+    setError(""); // Clear error if validation passes
+  
+    // Perform both actions
     handleSaveTicket(e);
-   handleUpdateTicket(e);
-    // Navigate(`/adminNotifications`);
-  }
+    handleUpdateTicket(e);
+  
+    // Navigate or perform further actions
+    console.log("Category selected:", category);
+     Navigate(`/adminNotifications`);
+  };
 
   // Detect screen size for responsiveness
   useEffect(() => {
@@ -586,29 +667,30 @@ materialQuotation: material.map((mat) => ({
         </Form.Group>
 
         {/* Category */}
-        <Row>
-        <Col md={6}>
-            <Form.Group>
-              <label>Category</label>
-              <Form.Control
-                as="select"
-                name="category"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                required
-              >
-                <option value="">Select</option>
-                <option value="Electrical items">Electrical items</option>
-                <option value="Plumbing Materials">Plumbing Materials</option>
-                <option value="Sanitary items">Sanitary items</option>
-                <option value="Electronics appliances">Electronics appliances</option>
-                <option value="Paints">Paints</option>
-                <option value="Hardware items">Hardware items</option>
-                <option value="Civil Waterproofing Materials">Civil Waterproofing Materials</option>
-              </Form.Control>
-            </Form.Group>
-          </Col>
-        </Row>
+  <Row>
+    <Col md={6}>
+      <Form.Group>
+        <label>Category</label>
+        <Form.Control
+          as="select"
+          name="category"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          required
+        >
+          <option value="">Select</option>
+          <option value="Electrical items">Electrical items</option>
+          <option value="Plumbing Materials">Plumbing Materials</option>
+          <option value="Sanitary items">Sanitary items</option>
+          <option value="Electronics appliances">Electronics appliances</option>
+          <option value="Paints">Paints</option>
+          <option value="Hardware items">Hardware items</option>
+          <option value="Civil Waterproofing Materials">Civil Waterproofing Materials</option>
+        </Form.Control>
+        {error && <div style={{ color: "red", marginTop: "5px" }}>{error}</div>}
+      </Form.Group>
+    </Col>
+  </Row>
         {/* Assigned To */}
         <Row>
         <Col md={6}>
@@ -653,15 +735,20 @@ materialQuotation: material.map((mat) => ({
           <label>Required (Optional)</label>
           {specifications.map((spec, index) => (
             <div className="d-flex gap-3 mb-2" key={index}>
-              {/* {isDealerSelected && (
-                <div className="form-check">
-                <input 
-                type="radio"
-                className="form-check-input mt-3"
-                value={spec.material}
-                />
-                </div>
-            )} */}
+              {/* <div className='d-flex gap-3 mb-2'>
+          <div style={{ flex: 4 }}>
+            <label className="fw-bold">Material</label>
+          </div>
+          <div style={{ flex: 4 }}>
+            <label className="fw-bold">Quantity</label>
+          </div>
+          <div style={{ flex: 4 }}>
+            <label className="fw-bold">Price</label>
+          </div>
+          <div style={{ flex: 4 }}>
+            <label className="fw-bold">Total</label>
+          </div>
+          </div> */}
               <input
                 type="text"
                 className="form-control"
@@ -671,21 +758,21 @@ materialQuotation: material.map((mat) => ({
               />
               <input
                 type="text"
-                className="form-control"
+                className="form-control text-center"
                 placeholder="Enter Quantity"
                 value={spec.quantity}
                 onChange={(e) => handleMaterialChange(index, "quantity", e.target.value)}
               />
               <input
                 type="text"
-                className="form-control"
+                className="form-control text-end"
                 placeholder="Enter Price"
                 value={spec.price}
                 onChange={(e) => handleMaterialChange(index, "price", e.target.value)}
               />
               <input
                 type="text"
-                className="form-control"
+                className="form-control text-end"
                 placeholder="Total"
                 value={spec.total}
                 onChange={(e) => handleMaterialChange(index, "total", e.target.value)}
@@ -719,7 +806,7 @@ materialQuotation: material.map((mat) => ({
     <td colSpan="2">
       <input
         type="number"
-        className="form-control"
+        className="form-control text-end"
         value={material[0]?.discounts}
         onChange={(e) =>
           setMaterialQuotation((prev) => {
@@ -734,8 +821,8 @@ materialQuotation: material.map((mat) => ({
     <td colSpan="2">
       <input
         type="number"
-        className="form-control"
-        value={material[0]?.fixedDiscounts}
+        className="form-control text-end"
+        value={Number(material[0]?.fixedDiscounts).toFixed(2)}
         readOnly
         placeholder="Fixed Discount"
       />
@@ -750,7 +837,7 @@ materialQuotation: material.map((mat) => ({
     <td colSpan="2">
       <input
         type="number"
-        className="form-control"
+        className="form-control text-end"
         value={material[0]?.deliveryCharges}
         onChange={(e) =>
           setMaterialQuotation((prev) => {
@@ -765,7 +852,7 @@ materialQuotation: material.map((mat) => ({
     <td colSpan="2">
       <input
         type="number"
-        className="form-control"
+        className="form-control text-end"
         value={material[0]?.fixedDeliveryCharges}
         readOnly
         placeholder="Fixed Delivery Amount"
@@ -781,12 +868,12 @@ materialQuotation: material.map((mat) => ({
     <td colSpan="2">
       <input
         type="number"
-        className="form-control"
+        className="form-control text-end"
         value={material[0]?.serviceCharges}
         onChange={(e) =>
           setMaterialQuotation((prev) => {
             const updated = [...prev];
-            updated[0].serviceCharges = parseFloat(e.target.value) || 0;
+            updated[0].serviceCharges = parseFloat(e.target.value) ;
             return updated;
           })
         }
@@ -796,8 +883,8 @@ materialQuotation: material.map((mat) => ({
     <td colSpan="2">
       <input
         type="number"
-        className="form-control"
-        value={material[0]?.fixedServiceCharges}
+        className="form-control text-end"
+        value={Number(material[0]?.fixedServiceCharges).toFixed(2)}
         readOnly
         placeholder="Fixed Service Charges"
       />
@@ -812,7 +899,7 @@ materialQuotation: material.map((mat) => ({
     <td colSpan="2">
       <input
         type="number"
-        className="form-control"
+        className="form-control text-end"
         value={material[0]?.gsts }
         onChange={(e) =>
           setMaterialQuotation((prev) => {
@@ -827,8 +914,8 @@ materialQuotation: material.map((mat) => ({
     <td colSpan="2">
       <input
         type="number"
-        className="form-control"
-        value={material[0]?.fixedGSTS}
+        className="form-control text-end"
+        value={Number(material[0]?.fixedGSTS).toFixed(2)}
         readOnly
         placeholder="Fixed GST"
       />
@@ -844,7 +931,7 @@ materialQuotation: material.map((mat) => ({
       <input
         type="number"
         className="form-control text-end"
-        value={material[0]?.grandtotal}
+        value={Number(material[0]?.grandtotal).toFixed(2)}
         readOnly
         placeholder="Grand Total"
       />

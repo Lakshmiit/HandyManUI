@@ -1050,6 +1050,7 @@ textarea {
   display: flex;
   justify-content: space-around;
   padding: 8px;
+  color: black;
 }
 
 .tab-item {
@@ -1057,8 +1058,10 @@ textarea {
   padding: 8px 16px;
   cursor: pointer;
   border-radius: 6px;
-  transition: all 0.3s ease; 
+  border: none; 
+  transition: all 0.3s ease;
   background-color: #FFB300;
+  color: #000000;
 }
 
 .tab-item:hover {
@@ -1183,4 +1186,84 @@ textarea {
   100% {
     background-color: yellow;
   }
+}
+
+.calendar-section {
+  margin: 20px 0;
+}
+
+.date-picker {
+  margin: 10px 0;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.time-slot-section {
+  margin: 20px 0;
+}
+
+.time-slot-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.time-slots {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+}
+
+.time-slot-button {
+  background-color: #ffb300;
+  border: none;
+  color: #fff;
+  padding: 10px 20px;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.time-slot-button:hover {
+  background-color: #e69a00;
+}
+
+.time-slot-button.selected {
+  background-color: #f0f0f0;
+  color: #000;
+  border: 1px solid #ffb300;
+}
+
+.note {
+  font-size: 12px;
+  margin-top: 20px;
+  color: #666;
+}
+
+.date-container {
+  display: inline-block;
+  padding: 10px;
+  border: 3px solid #cccccc; 
+  border-radius: 8px;
+}
+
+.date-display {
+  color: #ffb300;
+  font-weight: bold;
+  font-size: 20px;
+  margin: 0;
+}
+
+.date-display .day,
+.date-display .year {
+  font-size: 16px;
+  color: #000; 
+}
+
+.date-display .date {
+  font-size: 24px;
+  color: #ffb300;
 }

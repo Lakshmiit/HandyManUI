@@ -37,7 +37,7 @@ const AdminUpdate = () => {
           const fetchProductData = async () => {
               try {
                   setLoading(true);
-                  const productResponse = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/${id}`);
+                  const productResponse = await fetch(`https://localhost:7091/api/Product/${id}`);
                   if (!productResponse.ok) {
                       throw new Error('Product not found');
                   }
@@ -150,7 +150,7 @@ const handleRemoveFile = (index) => {
       formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
       formData.append('fileName', fileName);
 
-      const response = await fetch('https://handymanapiv2.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
+      const response = await fetch('https://localhost:7091/api/FileUpload/upload?filename=' + fileName, {
         method: 'POST',
         headers: {
           'Accept': 'text/plain',
@@ -195,7 +195,7 @@ const handleRemoveFile = (index) => {
     };
 
     try {
-      const response = await fetch("https://handymanapiv2.azurewebsites.net/api/Product/productupload", {
+      const response = await fetch("https://localhost:7091/api/Product/productupload", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

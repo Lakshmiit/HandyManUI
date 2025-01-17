@@ -81,7 +81,7 @@ const Notification = () => {
     const fetchNotifications = async () => {
       try {
         const getQuoteResponse = await fetch(
-          `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByDistrict?district=${district}&category=${category}`
+          `https://localhost:7091/api/RaiseTicket/GetNotificationsByDistrict?district=${district}&category=${category}`
         );
         if (!getQuoteResponse.ok) {
           throw new Error("Failed to fetch quote notifications");

@@ -8,14 +8,15 @@ import Sidebar from './Sidebar';
 import ForwardIcon from '@mui/icons-material/Forward';
 // import SaveAsIcon from '@mui/icons-material/SaveAs';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
-import {Link, useParams} from 'react-router-dom';
-
+import {Link, useParams, useNavigate} from 'react-router-dom';
 
 const RaiseQuotation = () => {
-  // const Navigate = useNavigate();
+  // const [error, setError] = useState(''); 
+  const Navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const {raiseTicketId} = useParams();
+
   const [id, setId] = useState('');
   const [ticketData, setTicketData] = useState('');
   const [subject, setSubject] = useState('');
@@ -26,100 +27,101 @@ const RaiseQuotation = () => {
   const [requestType, setRequestType] = useState('');
   const [customerId, setCustomerId] = useState(''); 
   const [status, setStatus] = useState('');  
-  const [gst, setGST] = useState("");
-  const [fixedOtherCharge, setFixedOtherCharge] = useState('');
-  const [raiseAQuoteId,setRaiseAQuoteId]=useState('');
-  const [fixedGST, setFixedGSTs] = useState('');
-  const [lowestBidder, setLowestBidder] = useState("");
-  const [othercharges, setOtherCharge] = useState("");
+  // const [gst, setGST] = useState("");
+  // const [fixedOtherCharge, setFixedOtherCharge] = useState('');
+  const [raiseAQuoteId]=useState('');
+  // const [fixedGST, setFixedGSTs] = useState('');
+  const [lowestBidder] = useState("");
+  // const [othercharges, setOtherCharge] = useState("");
   const [addrRmarks, setAddRemarks] = useState([{requestedDate: new Date(), remarks: ""}]);
-  const [assignedTo, setAssignedTo] = useState('');
+  // const [assignedTo, setAssignedTo] = useState('');
   const [isWithMaterial, setIsWithMaterial] = useState(false);
   // const [newPhotoCount , setPhotoCount] = useState(0);
     // Initial state for technician details
-    const [technicianDetails, setTechnicianDetails] = useState([]);
-    const [fixedServiceCharge, setFixedServiceCharge] = useState('');
-    const [discount, setDiscount] = useState("");
-    const [fixedDiscount, setFixedDiscount] = useState('');
-    const [totalAmount, setTotalAmount] = useState('');
-    const [serviceCharges, setServiceCharge] = useState('');
+    // const [technicianDetails, setTechnicianDetails] = useState([]);
+    // const [fixedServiceCharge, setFixedServiceCharge] = useState('');
+    // const [discount, setDiscount] = useState("");
+    // const [fixedDiscount, setFixedDiscount] = useState('');
+    // const [totalAmount, setTotalAmount] = useState(''); 
+    // const [serviceCharges, setServiceCharge] = useState('');
     //const [internalRaiseQuoteid,setInternalRaiseQuoteid]=useState('');
-    const [enterQuoteAmount, setQuote] = useState('');
-    const [fixedQuote, setFixedQuote] = useState('');
+    // const [enterQuoteAmount, setQuote] = useState('');
+    // const [fixedQuote, setFixedQuote] = useState('');
     const [state, setState] = useState('');
     const [district, setDistrict] = useState('')
     const [zipCode, setZipcode] = useState('');
     const [address, setAddress] = useState('');
-    const [rateQuotedBy, setRateQuotedBy] = useState("Customer Care");
+    // const [rateQuotedBy, setRateQuotedBy] = useState("Customer Care");
     // const [isDealerSelected, setIsDealerSelected] = useState(false);
-    const [material, setMaterialQuotation] = useState([{discounts: "", fixedDiscounts: "", deliveryCharges: "", fixedDeliveryCharges: "", serviceCharges: "", fixedServiceCharges: "", gsts: "", fixedGSTS: "", grandtotal: ""}])
-    const [category, setCategory] = useState('');
+    const [material, setMaterialQuotation] = useState([{discount: "", fixedDiscount: "", deliverycharges: "", fixedDeliveryChargs: "", servicecharges: "", fixedServicecharges: "", gst: "", fixedGST: "", grandtotal: ""}])
+    const {category} = useParams();
+    const [dealerData, setDealerData] = useState({});
     const {userType} = useParams();
-    const {dealerId} = useParams();
-
+    // const [dealerId, setDealerId] = useState('');
+ const {dealerId} = useParams();
     useEffect(() => {
-      console.log(subject, loading, isWithMaterial, id, raiseAQuoteId, totalAmount, enterQuoteAmount, fixedQuote );
-    }, [subject, loading, isWithMaterial, id, raiseAQuoteId, totalAmount, enterQuoteAmount, fixedQuote]);
+      console.log(subject, loading, isWithMaterial, id, raiseAQuoteId, dealerData, customerId);
+    }, [subject, loading, isWithMaterial, id, raiseAQuoteId, dealerData, customerId]);
  
-    // Fetch data from API on component mount
-    useEffect(() => {
-      // API URL 
-      const apiUrl = `https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
-      // Fetching the data from the API
-      const fetchData = async () => {
-        try {
-          const response = await fetch(apiUrl);
-          const quotedata = await response.json();
-          // Map the data to match your technician details structure 
-          // const mappedData = data.map(item => ({
-          //   id: item.id,
-          //   technicianId: item.technicianId,
-          //   quotedAmount: parseFloat(item.enterQuoteAmount),
-          //   discount: parseFloat(item.discount),
-          //   fixedDiscount: parseFloat(item.fixedDiscount),
+    // // Fetch data from API on component mount
+    // useEffect(() => {
+    //   // API URL 
+    //   const apiUrl = `https://localhost:7091/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
+    //   // Fetching the data from the API
+    //   const fetchData = async () => {
+    //     try {
+    //       const response = await fetch(apiUrl);
+    //       const quotedata = await response.json();
+    //       // Map the data to match your technician details structure 
+    //       // const mappedData = data.map(item => ({
+    //       //   id: item.id,
+    //       //   technicianId: item.technicianId,
+    //       //   quotedAmount: parseFloat(item.enterQuoteAmount),
+    //       //   discount: parseFloat(item.discount),
+    //       //   fixedDiscount: parseFloat(item.fixedDiscount),
 
-          //   othercharges: parseFloat(item.othercharges),
-          //   fixedOtherCharge: parseFloat(item.fixedOtherCharge),
+    //       //   othercharges: parseFloat(item.othercharges),
+    //       //   fixedOtherCharge: parseFloat(item.fixedOtherCharge),
 
-          //   serviceCharges: parseFloat(item.serviceCharges),
-          //   fixedServiceCharge: parseFloat(item.fixedServiceCharge),
+    //       //   serviceCharges: parseFloat(item.serviceCharges),
+    //       //   fixedServiceCharge: parseFloat(item.fixedServiceCharge),
 
-          //   gst: parseFloat(item.gst),
-          //   fixedGST: parseFloat(item.fixedGST),
+    //       //   gst: parseFloat(item.gst),
+    //       //   fixedGST: parseFloat(item.fixedGST),
 
-          //   totalQuotedAmount: parseFloat(item.totalAmount),
-          //   addrRmarks:item.addrRmarks,
-          //   materials: item.materials,
-          // }));
-          setTechnicianDetails(quotedata);
-          //alert(JSON.stringify(technicianDetails));
-          setRaiseAQuoteId(quotedata.raiseAQuoteId);
-          setQuote(quotedata.enterQuoteAmount);
+    //       //   totalQuotedAmount: parseFloat(item.totalAmount),
+    //       //   addrRmarks:item.addrRmarks,
+    //       //   materials: item.materials,
+    //       // }));
+    //       setTechnicianDetails(quotedata);
+    //       //alert(JSON.stringify(technicianDetails));
+    //       setRaiseAQuoteId(quotedata.raiseAQuoteId);
+    //       setQuote(quotedata.enterQuoteAmount);
   
-          setFixedQuote(quotedata.fixedQuote);
-          setDiscount(quotedata.discount);
-          setFixedDiscount(quotedata.fixedDiscount);
-          setId(quotedata.id);
+    //       setFixedQuote(quotedata.fixedQuote);
+    //       setDiscount(quotedata.discount);
+    //       setFixedDiscount(quotedata.fixedDiscount);
+    //       setId(quotedata.id);
           
-          setGST(quotedata.gst);
-          setFixedGSTs(quotedata.fixedGST);
-          // setTotalAmount(quotedata.totalAmount);
-          //  alert(quotedata.totalAmount);
-          setOtherCharge(quotedata.othercharges);
-          // alert(otherCharge);
-          setServiceCharge(quotedata.serviceCharges);
-          setFixedServiceCharge(quotedata.fixedServiceCharge);
-          setFixedOtherCharge(quotedata.fixedOtherCharge);
-        //  setSpecifications(quotedata.materials);         
-          // setAddRemarks(quotedata.addrRmarks);
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
-      };
+    //       setGST(quotedata.gst);
+    //       setFixedGSTs(quotedata.fixedGST);
+    //       // setTotalAmount(quotedata.totalAmount);
+    //       //  alert(quotedata.totalAmount);
+    //       setOtherCharge(quotedata.othercharges);
+    //       // alert(otherCharge);
+    //       setServiceCharge(quotedata.serviceCharges);
+    //       setFixedServiceCharge(quotedata.fixedServiceCharge);
+    //       setFixedOtherCharge(quotedata.fixedOtherCharge);
+    //     //  setSpecifications(quotedata.materials);         
+    //       // setAddRemarks(quotedata.addrRmarks);
+    //     } catch (error) {
+    //       console.error('Error fetching data:', error);
+    //     }
+    //   };
   
-      // Call the fetchData function
-      fetchData();
-    }, [raiseTicketId]); 
+    //   // Call the fetchData function
+    //   fetchData();
+    // }, [raiseTicketId]); 
 
     const handleMaterialChange = (index, field, value) => {
       const updatedSpecifications = [...specifications];
@@ -134,10 +136,20 @@ const RaiseQuotation = () => {
       setSpecifications(updatedSpecifications);
     };
 
-    const handleRateQuotedByChange = (value) => {
-      setRateQuotedBy(value);
-      // setIsDealerSelected(value === "Dealer/Trader");
-    };  
+
+    // const handleMaterialChange = (index, key, value) => {
+    //   setSpecifications((prev) => {
+    //     const updated = [...prev];
+    //     updated[index][key] = value;
+    //     return updated;
+    //   });
+    // };
+  
+
+    // const handleRateQuotedByChange = (value) => {
+    //   setRateQuotedBy(value);
+    //   // setIsDealerSelected(value === "Dealer/Trader");
+    // };  
   
     const materialAmount = () => specifications.reduce((sum, spec) => sum + Number(spec.total), 0);
 
@@ -145,25 +157,25 @@ const calculateTotalPrice = () => {
   
   setMaterialQuotation((prev) => {
     const updated = [...prev];
-    const discount = updated[0]?.discounts;
-    const deliveryCharges = updated[0]?.deliveryCharges;
-    const serviceCharges = updated[0]?.serviceCharges; 
-    const gst = updated[0]?.gsts;
+    const discount = updated[0]?.discount;
+    const deliveryCharges = updated[0]?.deliverycharges;
+    const serviceCharges = updated[0]?.servicecharges; 
+    const gst = updated[0]?.gst;
     const baseAmount = materialAmount();
   
-    const fixedDiscounts = baseAmount * (discount / 100); // Percentage discount
-    const fixedDeliveryCharges = deliveryCharges;
-    const fixedServiceCharges = ((baseAmount - fixedDiscounts + deliveryCharges) * serviceCharges) / 100;;
-    const fixedGSTS = ((baseAmount - fixedDiscounts + deliveryCharges + serviceCharges) * gst) / 100;
+    const fixedDiscount = baseAmount * (discount / 100); // Percentage discount
+    const fixedDeliveryChargs = deliveryCharges;
+    const fixedServicecharges = ((baseAmount - fixedDiscount + deliveryCharges) * serviceCharges) / 100;;
+    const fixedGST = ((baseAmount - fixedDiscount + deliveryCharges + serviceCharges) * gst) / 100;
     const grandtotal =
-      baseAmount - fixedDiscounts + fixedDeliveryCharges + fixedServiceCharges + fixedGSTS;
+      baseAmount - fixedDiscount + fixedDeliveryChargs + fixedServicecharges + fixedGST;
   
     updated[0] = {
       ...updated[0],
-      fixedDiscounts,
-      fixedDeliveryCharges,
-      fixedServiceCharges,
-      fixedGSTS,
+      fixedDiscount,
+      fixedDeliveryChargs,
+      fixedServicecharges,
+      fixedGST,
       grandtotal,
     };
     return updated;
@@ -175,10 +187,20 @@ useEffect(() => {
   calculateTotalPrice();
 });
  
+
+
+// const handleQuotationChange = (key, value) => {
+//   setMaterialQuotation((prev) => {
+//     const updated = [...prev];
+//     updated[0][key] = value;
+//     return updated;
+//   });
+// };
+
   useEffect(() => {
         const fetchticketData = async () => {
           try {
-            const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+            const response = await fetch(`https://localhost:7091/api/RaiseTicket/GetTicket/${raiseTicketId}`);
             if (!response.ok) {
               throw new Error('Failed to fetch ticket data');
             }
@@ -192,17 +214,30 @@ useEffect(() => {
             setId(data.id);
             setCustomerId(data.customerId);
             setIsWithMaterial(data.isMaterialType);
-            setAssignedTo(data.assignedTo);
+            // setAssignedTo(data.assignedTo);
             setStatus(data.status);
             setRequestType(data.requestType || 'Without Material');
             setAttachments(data.attachments);
-            setSpecifications(data.materials || [{ material: "", quantity: ""}]);
+            setSpecifications(data.materials || [{ material: "", quantity: "", price: "", total: ""}]);
+            
             setMaterialQuotation(data.materialQuotation || [{ discounts: "", fixedDiscounts: "", deliveryCharges: "", fixedDeliveryCharges: "", serviceCharges: "", fixedServiceCharges: "", gsts: "", fixedGSTS: "", grandtotal: ""}])
             setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: ""}])
-            // setAttachments(images);
+            const imageRequests =
+              data.attachments?.map((photo) => 
+               fetch(
+                  `https://localhost:7091/api/FileUpload/download?generatedfilename=${photo}`
+                )
+                .then((res) => res.json())
+                .then((data) => ({
+                  src: photo,
+                  imageData: data.imageData,
+                }))
+              ) || [];
+            const images = await Promise.all(imageRequests);
+            setAttachments(images);
           } catch (error) {
             console.error('Error fetching ticket data:', error);
-            // window.alert('Failed to load ticket data. Please try again later.');
+          //   // window.alert('Failed to load ticket data. Please try again later.');
           } finally {
             setLoading(false);
           }
@@ -211,53 +246,82 @@ useEffect(() => {
       }, [raiseTicketId]);
 
       useEffect(() => {
-        if (technicianDetails.length > 0) {
-          const lowest = technicianDetails.reduce((prev, current) => {
-            const prevAmount = parseFloat(prev.totalAmount);
-            const currentAmount = parseFloat(current.totalAmount);
-            return currentAmount < prevAmount ? current : prev;
-          });
-          setTotalAmount(lowest.totalAmount);
-          // alert(lowest.totalAmount);
-          // setTechnicianId(lowest.technicianId);
-          setQuote(lowest.enterQuoteAmount);
-          setRaiseAQuoteId(lowest.raiseAQuoteId);
-          setId(lowest.id);
-          setFixedQuote(lowest.fixedQuote);
-          setDiscount(lowest.discount);
-          setFixedDiscount(lowest.fixedDiscount);
-          setGST(lowest.gst);
-          setFixedGSTs(lowest.fixedGST);
-          setOtherCharge(lowest.othercharges);
-          setFixedOtherCharge(lowest.fixedOtherCharge);
-          setServiceCharge(lowest.serviceCharges);
-          setFixedServiceCharge(lowest.fixedServiceCharge);
-          setLowestBidder(lowest.technicianId);
-          setSpecifications(lowest.materials);
-          setMaterialQuotation(lowest.materialQuotation);
-          // if (lowest.addrRmarks?.length > 0) {
-          //   setAddRemarks(lowest.addrRmarks[0].remarks);
-          // } else {
-          //   setAddRemarks("");
-          // }
+        const fetchDealerData = async () => {
+          try {
+            const response = await fetch(`https://localhost:7091/api/RaiseAQuoteByDealer/GetRaiseAQuoteDealerDetailsByid?raiseAQuotetId=${raiseTicketId}`);
+            if (!response.ok) {
+              throw new Error('Failed to fetch ticket data');
+            }
+            const dataDealer = await  response.json();
+            // alert(JSON.stringify(dataDealer));
+            // console.log(JSON.stringify(dataDealer));
+            setDealerData(dataDealer[0]);
+            setId(dataDealer.id);
+            // setDealerId(dataDealer.dealerId);
+            // alert(dataDealer.dealerId);
+            setCustomerId(dataDealer.customerId);
+            setAddRemarks(dataDealer[0].addrRmarks || []);
+            // setSpecifications(dataDealer[0].materials || []);
+           
+            // setMaterialQuotation(dataDealer[0].materialQuotation || []);
+          } catch (error) {
+            console.error('Error fetching dealer data:', error);
+          } finally {
+            setLoading(false);
+          }
+        };
+        fetchDealerData();
+      }, [raiseTicketId]);
+      
+
+      // useEffect(() => {
+      //   if (technicianDetails.length > 0) {
+      //     const lowest = technicianDetails.reduce((prev, current) => {
+      //       const prevAmount = parseFloat(prev.totalAmount);
+      //       const currentAmount = parseFloat(current.totalAmount);
+      //       return currentAmount < prevAmount ? current : prev;
+      //     });
+      //     setTotalAmount(lowest.totalAmount);
+      //     // alert(lowest.totalAmount);
+      //     // setTechnicianId(lowest.technicianId);
+      //     setQuote(lowest.enterQuoteAmount);
+      //     setRaiseAQuoteId(lowest.raiseAQuoteId);
+      //     setId(lowest.id);
+      //     setFixedQuote(lowest.fixedQuote);
+      //     setDiscount(lowest.discount);
+      //     setFixedDiscount(lowest.fixedDiscount);
+      //     setGST(lowest.gst);
+      //     setFixedGSTs(lowest.fixedGST);
+      //     setOtherCharge(lowest.othercharges);
+      //     setFixedOtherCharge(lowest.fixedOtherCharge);
+      //     setServiceCharge(lowest.serviceCharges);
+      //     setFixedServiceCharge(lowest.fixedServiceCharge);
+      //     setLowestBidder(lowest.technicianId);
+      //     setSpecifications(lowest.materials);
+      //     setMaterialQuotation(lowest.materialQuotation);
+      //     // if (lowest.addrRmarks?.length > 0) {
+      //     //   setAddRemarks(lowest.addrRmarks[0].remarks);
+      //     // } else {
+      //     //   setAddRemarks("");
+      //     // }
           
-        } else {
-          // setTechnicianId('');
-          setLowestBidder('');
-          setTotalAmount('');
-          setQuote('');
-          setFixedQuote('');
-          setDiscount('');
-          setFixedDiscount('');
-          setServiceCharge('');
-          setOtherCharge('')
-          setFixedOtherCharge('');
-          setFixedServiceCharge('');
-          setGST('');
-          setFixedGSTs('');
-          // setAddRemarks("");
-        }
-      }, [technicianDetails, discount, fixedDiscount, othercharges, fixedOtherCharge, serviceCharges,fixedServiceCharge, gst, fixedGST]);
+      //   } else {
+      //     // setTechnicianId('');
+      //     setLowestBidder('');
+      //     setTotalAmount('');
+      //     setQuote('');
+      //     setFixedQuote('');
+      //     setDiscount('');
+      //     setFixedDiscount('');
+      //     setServiceCharge('');
+      //     setOtherCharge('')
+      //     setFixedOtherCharge('');
+      //     setFixedServiceCharge('');
+      //     setGST('');
+      //     setFixedGSTs('');
+      //     setAddRemarks("");
+      //   }
+      // }, [technicianDetails, discount, fixedDiscount, othercharges, fixedOtherCharge, serviceCharges,fixedServiceCharge, gst, fixedGST]);
       
 
   // Handle form data changes
@@ -269,17 +333,18 @@ useEffect(() => {
     }));
   };
 
-  const handleAddRemarks = (index, field, value) => {
-    const updatedRemarks = [...addrRmarks];
-    updatedRemarks[index][field] = value;
-    setAddRemarks(updatedRemarks);
+  const handleRemarksChange = (index, key, value) => {
+    setAddRemarks((prev) => {
+      const updated = [...prev];
+      updated[index][key] = value;
+      return updated;
+    });
   };
-  
 
   const handleSaveTicket = async (e) => {
     e.preventDefault();
-    
-   
+    // alert("handleSaveTicket");
+    // alert(category);
     const payload = {
       RaiseTicketId: ticketData.raiseTicketId,
       date: new Date().toISOString(),
@@ -290,16 +355,15 @@ useEffect(() => {
       assignedTo: "Dealer/Trader",
       id : raiseTicketId,
       status: status,
-      InternalStatus: "Assigned",
+      InternalStatus: "Pending",
       TicketOwner: ticketData.customerId,
-      CustomerId: customerId,
+      CustomerId: ticketData.customerId,
       state: state,
       // isMaterialType: isMaterialType,
       district: district,
       ZipCode: zipCode,
       RequestType: requestType,
       attachments:attachments.map((file) => file.src),
-
       materials: specifications.map((spec) => ({
           material: spec.material,
           quantity: spec.quantity,
@@ -311,10 +375,11 @@ useEffect(() => {
           CommentText: comment.commentText,
       })),
       LowestBidderTechnicainId: lowestBidder,
+      LowestBidderDealerId: "",
     };
     try {
-      
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+      // alert(JSON.stringify(payload));
+      const response = await fetch(`https://localhost:7091/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -331,83 +396,6 @@ useEffect(() => {
     }
   };
 
-//   const handleValuesTicket = async (e) => {
-//     e.preventDefault();
-//     // var techData = technicianDetails[0];
-//     // alert(techData);
-//     // var techData = JSON.stringify(technicianDetails);
-//     // alert(techData);
-//     //alert(enterQuoteAmount);
-//     // console.log(techData);
-    
-//     const payload3 = {
-//       id: id,
-//       quotedDate: new Date().toISOString(),
-//       RaiseAQuoteId:raiseAQuoteId ,
-//       //raiseAQuote: ticketData.raiseAQuote,
-//       RaiseTicketId: raiseTicketId,
-//       CustomerId: customerId,
-//       TicketId: ticketData.raiseTicketId,
-//       TechnicianId: technicianId,
-//       enterQuoteAmount: enterQuoteAmount,
-//       Discount: discount, 
-//       othercharges: othercharges,
-//       serviceCharges: serviceCharges,
-//       GST: gst,
-//       totalAmount: totalAmount,
-//       fixedQuote: fixedQuote,
-//       fixedDiscount:fixedDiscount,
-//       fixedOtherCharge:fixedOtherCharge,
-//       fixedServiceCharge: fixedServiceCharge,
-//       fixedGST: fixedGST,
-//       addrRmarks: Array.isArray(addrRmarks)
-//       ? addrRmarks.map((comment) => ({
-//           requestedDate: comment.requestedDate,
-//           remarks: comment.remarks ,
-//         }))
-//       : [],
-//     materials: specifications.map((spec) => ({
-//       material: spec.material,
-//       quantity: spec.quantity,
-//       price: spec.price.toString(),
-//       Total: spec.total.toString(),
-//     })),
-//     materialQuotation: material.map((quote) => ({
-//       discount: quote.discounts.toString(),
-//       deliverycharges: quote.deliveryCharges.toString(),
-//       servicecharges: quote.serviceCharges.toString(),
-//       gst: quote.gsts.toString(),
-//       grandtotal: quote.grandtotal.toString(), 
-      
-//       fixedDiscount: quote.fixedDiscounts.toString(),
-//       fixedDeliveryChargs: quote.fixedDeliveryCharges.toString(),
-//       fixedServicecharges: quote.fixedServiceCharges.toString(),
-//       fixedGST: quote.fixedGSTS.toString(),
-//     })),
-//     // LowestBidderTechnicianId: lowestBidder,
-//   };
-//   // var techData = JSON.stringify(payload3);
-//     //alert(JSON.stringify(payload3));
-//     //console.log(JSON.stringify(payload3));
-//   try {
-//     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/id?id=${id}`, {
-//       method: 'PUT',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify(payload3),
-//     });
-     
-//     if (!response.ok) {
-//       throw new Error('Failed to Update RaiseAQuote data');
-//     }
-
-//     alert('RaiseAQuote Updated Successfully!');
-//   } catch (error) {
-//     console.error('Error Update RaiseAQuote ticket data:', error);
-//     window.alert('Failed to Update the RaiseAQuote ticket data. Please try again later.');
-//   }
-// };
 
 const handleUpdateTicket = async (e) => {
   e.preventDefault();
@@ -415,7 +403,7 @@ const handleUpdateTicket = async (e) => {
     id :"string",
     ticketId: ticketData.raiseTicketId,
     CustomerId: ticketData.customerId,
-    dealerId: "",
+    DealerId: dealerId,
     raiseTicketId: raiseTicketId,
     raiseAQuoteDate: new Date().toISOString(), 
     raiseAQuoteByDealerId: "string",
@@ -430,20 +418,21 @@ const handleUpdateTicket = async (e) => {
     total: spec.total.toString(),
 })),
 materialQuotation: material.map((mat) => ({
-  discount: mat.discounts.toString(),
-  fixedDiscount: mat.fixedDiscounts.toString(),
-  deliveryCharges: mat.deliveryCharges.toString(),
-  fixedDeliveryChargs: mat.fixedDeliveryCharges.toString(),
-  serviceCharge: mat.serviceCharges.toString(),
-  fixedServicecharges: mat.fixedServiceCharges.toString(),
-  gst: mat.gsts.toString(),
-  fixedGST: mat.fixedGSTS.toString(),
+  discount: mat.discount.toString(),
+  fixedDiscount: mat.fixedDiscount.toString(),
+  deliveryCharges: mat.deliverycharges.toString(),
+  fixedDeliveryChargs: mat.fixedDeliveryChargs.toString(),
+  serviceCharge: mat.servicecharges.toString(),
+  fixedServicecharges: mat.fixedServicecharges.toString(),
+  gst: mat.gst.toString(),
+  fixedGST: mat.fixedGST.toString(),
   grandtotal: mat.grandtotal.toString(),
 })),
+ 
   }; 
+// alert(JSON.stringify(payload1));
   try {
-  
-    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuoteByDealer/CreateRaiseAQuoteByDealer`, {
+    const response = await fetch(`https://localhost:7091/api/RaiseAQuoteByDealer/CreateRaiseAQuoteByDealer`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -462,13 +451,18 @@ materialQuotation: material.map((mat) => ({
   }
 };
 
-
   const handleBothActions =  (e) => {
     e.preventDefault();
+    // if (!category) {
+    //   setError("Must select a category");
+    //   return; 
+    // }
+  
+    // setError("");
     handleSaveTicket(e);
    handleUpdateTicket(e);
-    // Navigate(`/adminNotifications`);
-  }
+    Navigate(`/dealerNotifications/${userType}/${category}/${district}/${dealerId}`);
+  };
 
   // Detect screen size for responsiveness
   useEffect(() => {
@@ -571,7 +565,7 @@ materialQuotation: material.map((mat) => ({
           />
         </Form.Group>
 
-        {/* Category */}
+        {/* Category
         <Row>
         <Col md={6}>
             <Form.Group>
@@ -592,11 +586,12 @@ materialQuotation: material.map((mat) => ({
                 <option value="Hardware items">Hardware items</option>
                 <option value="Civil Waterproofing Materials">Civil Waterproofing Materials</option>
               </Form.Control>
+              {error && <div style={{color: "red", marginTop: "5px"}}>{error}</div>}
             </Form.Group>
           </Col>
-        </Row>
+        </Row> */}
         {/* Assigned To */}
-        <Row>
+        {/* <Row>
         <Col md={6}>
             <Form.Group>
               <label>Assigned To</label>
@@ -612,10 +607,10 @@ materialQuotation: material.map((mat) => ({
               </Form.Control>
             </Form.Group>
           </Col>
-        </Row>
+        </Row> */}
           {/* Radio Buttons */}
           <div className="radio">
-                  <div className="form-group">
+                  {/* <div className="form-group">
               <label>Rate Quoted By<span className="req_star">*</span></label>
               <div className="radio">
                 <label className="m-1">
@@ -631,24 +626,14 @@ materialQuotation: material.map((mat) => ({
                   Dealer/Trader
                 </label>
               </div>
-            </div> 
+            </div>  */}
 
           {/* Material Input Fields */}
-      {requestType === "With Material" && (
         <div className="form-group">
           <label>Required (Optional)</label>
           {specifications.map((spec, index) => (
             <div className="d-flex gap-3 mb-2" key={index}>
-              {/* {isDealerSelected && (
-                <div className="form-check">
-                <input 
-                type="radio"
-                className="form-check-input mt-3"
-                value={spec.material}
-                />
-                </div>
-            )} */}
-              <input
+               <input
                 type="text"
                 className="form-control"
                 value={spec.material}
@@ -657,21 +642,21 @@ materialQuotation: material.map((mat) => ({
               />
               <input
                 type="text"
-                className="form-control"
+                className="form-control text-center"
                 placeholder="Enter Quantity"
                 value={spec.quantity}
                 onChange={(e) => handleMaterialChange(index, "quantity", e.target.value)}
               />
               <input
                 type="text"
-                className="form-control"
+                className="form-control text-end"
                 placeholder="Enter Price"
                 value={spec.price}
                 onChange={(e) => handleMaterialChange(index, "price", e.target.value)}
               />
               <input
                 type="text"
-                className="form-control"
+                className="form-control text-end"
                 placeholder="Total"
                 value={spec.total}
                 onChange={(e) => handleMaterialChange(index, "total", e.target.value)}
@@ -679,12 +664,11 @@ materialQuotation: material.map((mat) => ({
             </div>
           ))}
         </div>
-      )}
     </div>
 
     <table className="table table-bordered m-1">
     <tbody>
-  {/* Quote Amount */}
+  {/* Material Total */}
   <tr>
     <td>
       <label className="mb-0 fw-bold">Total</label>
@@ -705,12 +689,12 @@ materialQuotation: material.map((mat) => ({
     <td colSpan="2">
       <input
         type="number"
-        className="form-control"
-        value={material[0]?.discounts}
+        className="form-control text-end"
+        value={material[0]?.discount}
         onChange={(e) =>
           setMaterialQuotation((prev) => {
             const updated = [...prev];
-            updated[0].discounts = parseFloat(e.target.value) || 0;
+            updated[0].discount = parseFloat(e.target.value);
             return updated;
           })
         }
@@ -720,8 +704,8 @@ materialQuotation: material.map((mat) => ({
     <td colSpan="2">
       <input
         type="number"
-        className="form-control"
-        value={material[0]?.fixedDiscounts}
+        className="form-control text-end"
+        value={Number(material[0]?.fixedDiscount).toFixed(2)}
         readOnly
         placeholder="Fixed Discount"
       />
@@ -736,12 +720,12 @@ materialQuotation: material.map((mat) => ({
     <td colSpan="2">
       <input
         type="number"
-        className="form-control"
-        value={material[0]?.deliveryCharges}
+        className="form-control text-end"
+        value={material[0]?.deliverycharges}
         onChange={(e) =>
           setMaterialQuotation((prev) => {
             const updated = [...prev];
-            updated[0].deliveryCharges = parseFloat(e.target.value) || 0;
+            updated[0].deliverycharges = parseFloat(e.target.value);
             return updated;
           })
         }
@@ -751,8 +735,8 @@ materialQuotation: material.map((mat) => ({
     <td colSpan="2">
       <input
         type="number"
-        className="form-control"
-        value={material[0]?.fixedDeliveryCharges}
+        className="form-control text-end"
+        value={material[0]?.fixedDeliveryChargs}
         readOnly
         placeholder="Fixed Delivery Amount"
       />
@@ -767,12 +751,12 @@ materialQuotation: material.map((mat) => ({
     <td colSpan="2">
       <input
         type="number"
-        className="form-control"
-        value={material[0]?.serviceCharges}
+        className="form-control text-end"
+        value={material[0]?.servicecharges}
         onChange={(e) =>
           setMaterialQuotation((prev) => {
             const updated = [...prev];
-            updated[0].serviceCharges = parseFloat(e.target.value) || 0;
+            updated[0].servicecharges = parseFloat(e.target.value);
             return updated;
           })
         }
@@ -782,8 +766,8 @@ materialQuotation: material.map((mat) => ({
     <td colSpan="2">
       <input
         type="number"
-        className="form-control"
-        value={material[0]?.fixedServiceCharges}
+        className="form-control text-end"
+        value={Number(material[0]?.fixedServicecharges).toFixed(2)}
         readOnly
         placeholder="Fixed Service Charges"
       />
@@ -798,12 +782,12 @@ materialQuotation: material.map((mat) => ({
     <td colSpan="2">
       <input
         type="number"
-        className="form-control"
-        value={material[0]?.gsts }
+        className="form-control text-end"
+        value={material[0]?.gst }
         onChange={(e) =>
           setMaterialQuotation((prev) => {
             const updated = [...prev];
-            updated[0].gsts = parseFloat(e.target.value) || 0;
+            updated[0].gst = parseFloat(e.target.value);
             return updated;
           })
         }
@@ -813,8 +797,8 @@ materialQuotation: material.map((mat) => ({
     <td colSpan="2">
       <input
         type="number"
-        className="form-control"
-        value={material[0]?.fixedGSTS}
+        className="form-control text-end"
+        value={Number(material[0]?.fixedGST).toFixed(2)}
         readOnly
         placeholder="Fixed GST"
       />
@@ -830,7 +814,7 @@ materialQuotation: material.map((mat) => ({
       <input
         type="number"
         className="form-control text-end"
-        value={material[0]?.grandtotal}
+        value={Number(material[0]?.grandtotal).toFixed(2)}
         readOnly
         placeholder="Grand Total"
       />
@@ -841,19 +825,21 @@ materialQuotation: material.map((mat) => ({
 
 
        {/* Dealer Remarks */}
-       <div className="form-group col-md-6">
-          <label>Dealer Remarks</label>
-          {addrRmarks.map((remarks, index) => (
-            <div className="d-flex gap-3 mb-2" key={index}>
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Remarks"
-                value={remarks.remarks}
-                onChange={(e) => handleAddRemarks(index,"remarks", e.target.value)}
-              />
-            </div>
-          ))}
+      <div className="form-group">
+        <label>Dealer Remarks</label>
+        {addrRmarks.map((remark, index) => (
+          <div key={index} className="d-flex gap-3 mb-2">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Remarks"
+              value={remark.remarks}
+              onChange={(e) =>
+                handleRemarksChange(index, "remarks", e.target.value)
+              }
+            />
+          </div>
+        ))}
         </div>
 
         {/* Send Quote Button */}

@@ -34,6 +34,9 @@ import ViewDealerRaiseTicket from './ViewDealerRaiseTicket.js';
 import CustomerRaiseTicketQuotation from './CustomerRaiseTicketQuotation.js';
 import DealerNotifications from './DealerNotifications.js';
 import DealerNotificationsGrid from './DealerNotificationsGrid.js';
+import DealerGrid from './DealerGrid.js';
+import BidderTicketQuotation from './BidderTicketQuotation.js';
+import TimeSlotBooking from './TimeSlotBooking.js';
 
 function App() {
   return (
@@ -76,7 +79,10 @@ function App() {
             <Route path="/customerRaiseTicketQuotation/:userType/:raiseTicketId" element={<CustomerRaiseTicketQuotation />} />
             <Route path="/dealerNotifications/:userType/:category/:district/:dealerId" element={<DealerNotifications />} /> 
             <Route path="/dealerNotificationsGrid/:userType/:category/:district/:dealerId" element={<DealerNotificationsGrid />} />
-            <Route path="/viewDealerRaiseTicket/:raiseTicketId/:userType/:dealerId" element={<ViewDealerRaiseTicket />} />
+            <Route path="/viewDealerRaiseTicket/:raiseTicketId/:userType/:category/:dealerId" element={<ViewDealerRaiseTicket />} />
+            <Route path="/dealerGrid" element={<DealerGrid /> } />
+            <Route path="/bidderTicketQuotation/:raiseTicketId" element={<BidderTicketQuotation /> } />
+            <Route path="/timeSlotBooking" element={<TimeSlotBooking />} />
           </Routes>
         </main>
       </div>

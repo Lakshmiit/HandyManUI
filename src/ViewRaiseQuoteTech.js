@@ -12,7 +12,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import './App.css';
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
-const RaiseActionView = () => {
+const RaiseQuoteTechnician = () => {
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -64,7 +64,7 @@ const RaiseActionView = () => {
   useEffect(() => {
     const fetchticketData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+        const response = await fetch(`https://localhost:7091/api/RaiseTicket/GetTicket/${raiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
@@ -85,12 +85,11 @@ const RaiseActionView = () => {
         setAssignedTo(data.assignedTo);
         setStatus(data.status);
         setRequestType(data.requestType || 'Without Material');
-        setSpecifications(data.materials || [{material: "", quantity: ""}]);
+        // setSpecifications(data.materials || [{material: "", quantity: ""}]);
         setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: ""}]);
-        
         const imageRequests =
           data.attachments?.map((photo) => fetch(
-              `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+              `https://localhost:7091/api/FileUpload/download?generatedfilename=${photo}`
             )
             .then((res) => res.json())
               .then((data) => ({
@@ -177,16 +176,19 @@ const RaiseActionView = () => {
       materials: specifications.map((spec) => ({
           material: spec.material,
           quantity: spec.quantity,
+          price: "",
+          total: "",
       })),
       comments: commentsList.map((comment) => ({
           updatedDate: comment.updatedDate,
           commentText: comment.commentText,
       })),
       LowestBidderTechnicainId: "",
+      LowestBidderDealerId: "",
     };
     try {
       
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://localhost:7091/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -250,7 +252,7 @@ const RaiseActionView = () => {
     }; 
     try {
       //imageUrls="";
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/CreateRaiseAQuote`, {
+      const response = await fetch(`https://localhost:7091/api/RaiseAQuote/CreateRaiseAQuote`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -274,7 +276,7 @@ const RaiseActionView = () => {
       const fetchtechnicianData = async () => {
         try {
           const technicianResponse = await fetch(
-            `https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByTechnicianId?raiseAQuotetId=${raiseTicketId}&TechnicianId=${technicianId}`
+            `https://localhost:7091/api/RaiseAQuote/GetRaiseAQuoteDetailsByTechnicianId?raiseAQuotetId=${raiseTicketId}&TechnicianId=${technicianId}`
           );
           if (!technicianResponse.ok) {
             throw new Error('Failed to fetch technician data');
@@ -341,7 +343,7 @@ const RaiseActionView = () => {
 //   })), 
 //   };
 //   try {
-//     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+//     const response = await fetch(`https://localhost:7091/api/RaiseTicket/${raiseTicketId}`, {
 //       method: 'PUT',
 //       headers: {
 //         'Content-Type': 'application/json',
@@ -731,7 +733,7 @@ const RaiseActionView = () => {
               />
               <input
                 type="text"
-                className="form-control"
+                className="form-control text-center"
                 placeholder="Enter Quantity"
                 value={spec.quantity}
                 onChange={(e) => handleMaterialChange(index,"quantity", e.target.value)}
@@ -761,7 +763,7 @@ const RaiseActionView = () => {
       <td colSpan="2">
         <input
             type="number"
-            className="form-control"
+            className="form-control text-end"
             value={enterQuoteAmount}
             // onBlur={calculateTotal}
             onChange={handleFixedChange(setQuote, setFixedQuote)}
@@ -771,7 +773,7 @@ const RaiseActionView = () => {
         <td colSpan="2">
         <input
           type="number"
-          className="form-control"
+          className="form-control text-end"
           value={fixedQuote}
           disabled
           placeholder="Fixed Quote Amount"
@@ -787,7 +789,7 @@ const RaiseActionView = () => {
       <td colSpan="2">
         <input
           type="number"
-          className="form-control"
+          className="form-control text-end"
           value={discount}
           // onBlur={calculateTotal}
           onChange={handleFixedChange(setDiscount, setFixedDiscount)}
@@ -797,8 +799,8 @@ const RaiseActionView = () => {
       <td colSpan="2">
         <input
           type="number"
-          className="form-control"
-          value={fixedDiscount}
+          className="form-control text-end"
+          value={Number(fixedDiscount).toFixed(2)}
           disabled
           placeholder="Fixed Discount"
         />
@@ -813,7 +815,7 @@ const RaiseActionView = () => {
       <td colSpan="2">
         <input
           type="number"
-          className="form-control"
+          className="form-control text-end"
           value={othercharges}
           // onBlur={calculateTotal}
           onChange={handleFixedChange(setOtherCharge, setFixedOtherCharge)}
@@ -823,8 +825,8 @@ const RaiseActionView = () => {
       <td colSpan="2">
         <input
           type="number"
-          className="form-control"
-          value={fixedOtherCharge}
+          className="form-control text-end"
+          value={Number(fixedOtherCharge).toFixed(2)}
           disabled
           placeholder="Fixed Other Charges"
         />
@@ -839,7 +841,7 @@ const RaiseActionView = () => {
       <td colSpan="2">
         <input
           type="number"
-          className="form-control"
+          className="form-control text-end"
           value={serviceCharges}
           // onBlur={calculateTotal}
           onChange={handleFixedChange(setServiceCharge, setFixedServiceCharge)}
@@ -849,8 +851,8 @@ const RaiseActionView = () => {
       <td colSpan="2">
         <input
           type="number"
-          className="form-control"
-          value={fixedServiceCharge}
+          className="form-control text-end"
+          value={Number(fixedServiceCharge).toFixed(2)}
           disabled
           placeholder="Fixed Service Charges"
         />
@@ -865,7 +867,7 @@ const RaiseActionView = () => {
       <td colSpan="2">
         <input
           type="number"
-          className="form-control"
+          className="form-control text-end"
           value={gst}
           // onBlur={calculateTotal}
           onChange={handleFixedChange(setGST, setFixedGST)}
@@ -875,8 +877,8 @@ const RaiseActionView = () => {
       <td colSpan="2">
         <input
           type="number"
-          className="form-control"
-          value={fixedGST}
+          className="form-control text-end"
+          value={Number(fixedGST).toFixed(2)}
           disabled
           placeholder="Fixed GST"
         />
@@ -892,7 +894,7 @@ const RaiseActionView = () => {
             <input
             type="number"
             className="form-control text-end"
-            value={totalAmount}
+            value={Number(totalAmount).toFixed(2)}
             readOnly
             placeholder="Total Amount"
             />
@@ -924,13 +926,6 @@ const RaiseActionView = () => {
             <label>Add Remarks</label>
             {addrRmarks.map((comment, index) => (
               <div className="d-flex gap-3 mb-2" key={index}>
-              {/* <input
-                type="date"
-                className="form-control"
-                value={comment.requestedDate || ''} 
-                // placeholder='dd-mm-yyyy hh:mm'
-                onChange={(e) => handleAddRemarks(index, "requestedDate", e.target.value)} 
-              /> */}
             <input 
             type="text"
             className="form-control"
@@ -986,4 +981,4 @@ const RaiseActionView = () => {
   );
 };
 
-export default RaiseActionView;
+export default RaiseQuoteTechnician;

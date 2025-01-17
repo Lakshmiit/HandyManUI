@@ -11,7 +11,7 @@ import {
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import "./App.css";
  
-const QuoteNotification = () => {
+const DealerNotification = () => {
   // const navigate = useNavigate();
   //const [status, setStatus] = useState("");
   const [assignedTo, setAssignedTo] = useState("");
@@ -32,14 +32,14 @@ const QuoteNotification = () => {
 
   useEffect(() => {
     setLoading(true);
-    const url = `https://localhost:7091/api/RaiseTicket/GetTicketsNotifications`
+    const url = `https://localhost:7091/api/RaiseTicket/GetRaiseTicketsForDealers`
     axios.get(url)
       .then(response => {
         const tickets = response.data.map((ticket) => ({
           ...ticket,
         }));
-        const pendingTickets = tickets.filter((ticket) => ticket.internalStatus === "Pending");
-        console.log("Pending Tickets:", pendingTickets);
+        const pendingTickets = tickets.filter((ticket) => ticket.internalStatus === "Assigned");
+        // console.log("Pending Tickets:", pendingTickets);
         setFilteredData(pendingTickets);
         setTicketData(tickets);
 
@@ -146,8 +146,8 @@ const QuoteNotification = () => {
       )}
 
       <div className={`container m-1 ${isMobile ? "w-100" : "w-75"}`}>
-        <h2 className="text-center mb-4">Raise a Quote Notifications</h2>
-        <h4 className="text-center mb-4">District Wise Quote Summary</h4>
+        <h2 className="text-center mb-4">Raise a Quote Dealer Notifications</h2>
+        {/* <h4 className="text-center mb-4">District Wise Quote Summary</h4> */}
         <div className="d-flex align-items-center justify-content-between">
           <div className="form-group text-start col-md-2 ml-2 m-5 mb-2">
             <label>State</label>
@@ -230,7 +230,7 @@ const QuoteNotification = () => {
                 <td>{ticket.assignedTo}</td>
                 <td className="d-flex align-items-center">
                   <Link
-                    to={`/raiseTicketQuotation/${ticket.id}`}
+                    to={`/bidderTicketQuotation/${ticket.id}`}
                     className="btn btn-info mx-2"
                   >
                     <FaEye />   
@@ -253,7 +253,7 @@ const QuoteNotification = () => {
           <Link to='/adminNotifications' className="btn btn-warning text-white mx-2" title='Back'>
             <ArrowLeftIcon />
           </Link>
-        </div>
+        </div> 
         {/* Pagination */}
         <div className="d-flex justify-content-center mt-3">
           <nav aria-label="Page navigation">
@@ -302,4 +302,4 @@ const QuoteNotification = () => {
   );
 };
 
-export default QuoteNotification;
+export default DealerNotification;
