@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import AdminSidebar from './AdminSidebar';
 import { Button } from 'react-bootstrap';
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
-import { useParams } from 'react-router-dom';
+// import { useParams } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import './App.css';
@@ -10,9 +10,9 @@ import './App.css';
 const TimeSlotBooking = () => {
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
-    const [isMobile, setIsMobile] = useState(false);
+    const [isMobile] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
-    const {selectedUserType} = useParams();
+    // const {selectedUserType} = useParams();
     const [activeTab, setActiveTab] = useState("");
 
     const timeSlots = [
