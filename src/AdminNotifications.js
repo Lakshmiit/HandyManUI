@@ -13,7 +13,7 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
   const navigate = useNavigate();
 
   const raiseTicketNotifications = notifications.filter(
-    (item) => item.internalStatus === "open"
+    (item) => item.internalStatus === "Open"
   );
 
   const getQuoteNotifications = notifications.filter(
@@ -185,7 +185,7 @@ const Notification = () => {
 
       const raiseTicketData = await raiseTicketResponse.json();
       const raiseTicketFiltered = raiseTicketData.filter(
-        (item) => item.internalStatus === "open"
+        (item) => item.internalStatus === "Open"
       );
       const raiseTicketCount = raiseTicketFiltered.length;
 
