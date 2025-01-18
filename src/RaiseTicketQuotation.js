@@ -61,7 +61,7 @@ const RaiseTicketQuotation = () => {
     // Fetch data from API on component mount
     useEffect(() => {
       // API URL
-      const apiUrl = `https://localhost:7091/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
+      const apiUrl = `https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
       // Fetching the data from the API
       const fetchData = async () => {
         try {
@@ -197,7 +197,7 @@ useEffect(() => {
   useEffect(() => {
         const fetchticketData = async () => {
           try {
-            const response = await fetch(`https://localhost:7091/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+            const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
             if (!response.ok) {
               throw new Error('Failed to fetch ticket data');
             }
@@ -221,7 +221,7 @@ useEffect(() => {
             const imageRequests =
               data.attachments?.map((photo) => 
                fetch(
-                  `https://localhost:7091/api/FileUpload/download?generatedfilename=${photo}`
+                  `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
                 )
                 .then((res) => res.json())
                 .then((data) => ({
@@ -375,7 +375,7 @@ useEffect(() => {
     };
     try {
       
-      const response = await fetch(`https://localhost:7091/api/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -451,7 +451,7 @@ useEffect(() => {
     //alert(JSON.stringify(payload3));
     //console.log(JSON.stringify(payload3));
   try {
-    const response = await fetch(`https://localhost:7091/api/RaiseAQuote/id?id=${id}`, {
+    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/id?id=${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -693,7 +693,7 @@ useEffect(() => {
           <div className="radio">
       <label className="m-1">
         <input
-          className="form-check-input"
+          className="form-check-input m-2 border-dark"
           type="radio"
           name="RequestType"
           value="With Material"
@@ -706,7 +706,7 @@ useEffect(() => {
 
       <label className="m-1">
         <input
-          className="form-check-input"
+          className="form-check-input m-2 border-dark"
           type="radio"
           name="RequestType"
           value="Without Material"
@@ -721,7 +721,7 @@ useEffect(() => {
               <label>Rate Quoted By<span className="req_star">*</span></label>
               <div className="radio">
                 <label className="m-1">
-                  <input className="form-check-input m-2"
+                  <input className="form-check-input m-2 border-dark"
                   type="radio"
                   name="RateQuotedBy"
                   value="Customer Care"
@@ -733,7 +733,7 @@ useEffect(() => {
                 </label>
                 <label className="m-1">
                   <input
-                  className="form-check-input m-2"
+                  className="form-check-input m-2 border-dark"
                   type="radio"
                   name="RateQuotedBy"
                   value="Dealer/Trader"

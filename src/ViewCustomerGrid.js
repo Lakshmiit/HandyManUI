@@ -31,7 +31,7 @@ const RaiseTicketNotification = () => {
   }, [ticketData, loading]);
   useEffect(() => {
     setLoading(true);
-    const url = `https://localhost:7091/api/RaiseTicket/GetRaiseTicketNotificationsByCustomerId?customerId=${customerId}`
+    const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetRaiseTicketNotificationsByCustomerId?customerId=${customerId}`
 
     axios.get(url)
       .then(response => {
@@ -52,7 +52,7 @@ const RaiseTicketNotification = () => {
   const handleDelete = (ticketId) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this ticket?');
     if (confirmDelete) {
-      axios.delete(`https://localhost:7091/api/RaiseTicket/${ticketId}`)
+      axios.delete(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${ticketId}`)
         .then(() => {
           setTicketData(prevData => prevData.filter(ticket => ticket.id !== ticketId));
           setFilteredData(prevData => prevData.filter(ticket => ticket.id !== ticketId));
@@ -87,7 +87,7 @@ const RaiseTicketNotification = () => {
   return (
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
-        <div className="ml-0 m-4 p-0 sde_mnu">
+        <div className="ml-0 p-0 sde_mnu">
           <Sidebar />
         </div>
       )}

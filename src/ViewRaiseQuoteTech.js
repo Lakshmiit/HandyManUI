@@ -64,7 +64,7 @@ const RaiseQuoteTechnician = () => {
   useEffect(() => {
     const fetchticketData = async () => {
       try {
-        const response = await fetch(`https://localhost:7091/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
@@ -89,7 +89,7 @@ const RaiseQuoteTechnician = () => {
         setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: ""}]);
         const imageRequests =
           data.attachments?.map((photo) => fetch(
-              `https://localhost:7091/api/FileUpload/download?generatedfilename=${photo}`
+              `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
             )
             .then((res) => res.json())
               .then((data) => ({
@@ -188,7 +188,7 @@ const RaiseQuoteTechnician = () => {
     };
     try {
       
-      const response = await fetch(`https://localhost:7091/api/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -252,7 +252,7 @@ const RaiseQuoteTechnician = () => {
     }; 
     try {
       //imageUrls="";
-      const response = await fetch(`https://localhost:7091/api/RaiseAQuote/CreateRaiseAQuote`, {
+      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/CreateRaiseAQuote`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -276,7 +276,7 @@ const RaiseQuoteTechnician = () => {
       const fetchtechnicianData = async () => {
         try {
           const technicianResponse = await fetch(
-            `https://localhost:7091/api/RaiseAQuote/GetRaiseAQuoteDetailsByTechnicianId?raiseAQuotetId=${raiseTicketId}&TechnicianId=${technicianId}`
+            `https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByTechnicianId?raiseAQuotetId=${raiseTicketId}&TechnicianId=${technicianId}`
           );
           if (!technicianResponse.ok) {
             throw new Error('Failed to fetch technician data');
@@ -343,7 +343,7 @@ const RaiseQuoteTechnician = () => {
 //   })), 
 //   };
 //   try {
-//     const response = await fetch(`https://localhost:7091/api/RaiseTicket/${raiseTicketId}`, {
+//     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
 //       method: 'PUT',
 //       headers: {
 //         'Content-Type': 'application/json',
@@ -695,7 +695,7 @@ const RaiseQuoteTechnician = () => {
       <div className="radio">
       <label className="m-1">
         <input
-          className="form-check-input"
+          className="form-check-input m-2 border-dark"
           type="radio"
           name="RequestType"
           value="With Material"
@@ -708,7 +708,7 @@ const RaiseQuoteTechnician = () => {
 
       <label className="m-1">
         <input
-          className="form-check-input"
+          className="form-check-input m-2 border-dark"
           type="radio"
           name="RequestType"
           value="Without Material"

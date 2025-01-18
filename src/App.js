@@ -82,7 +82,7 @@ function App() {
             <Route path="/viewDealerRaiseTicket/:raiseTicketId/:userType/:category/:dealerId" element={<ViewDealerRaiseTicket />} />
             <Route path="/dealerGrid" element={<DealerGrid /> } />
             <Route path="/bidderTicketQuotation/:raiseTicketId" element={<BidderTicketQuotation /> } />
-            <Route path="/timeSlotBooking" element={<TimeSlotBooking />} />
+            <Route path="/timeSlotBooking/:userType" element={<TimeSlotBooking />} />
           </Routes>
         </main>
       </div>

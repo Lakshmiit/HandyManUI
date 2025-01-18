@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import AdminSidebar from './AdminSidebar';
+import Sidebar from './Sidebar';
 import { Button } from 'react-bootstrap';
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
 // import { useParams } from 'react-router-dom';
@@ -12,7 +12,7 @@ const TimeSlotBooking = () => {
     const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
     const [isMobile] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
-    // const {selectedUserType} = useParams();
+  //  const {selectedUserType} = useParams();
     const [activeTab, setActiveTab] = useState("");
 
     const timeSlots = [
@@ -42,8 +42,8 @@ const handleTimeSlotClick = (slot) => {
 
     <div className="d-flex">
         {!isMobile && (
-        <div className="ml-0 p-0 adm_mnu">
-          <AdminSidebar />
+        <div className="ml-0 p-0 sde_mnu">
+          <Sidebar />
         </div>
       )}
 
@@ -60,7 +60,7 @@ const handleTimeSlotClick = (slot) => {
 
           {showMenu && (
               <div className="sidebar-container">
-                <AdminSidebar />
+                <Sidebar />
               </div>
           )}
         </div>
@@ -102,7 +102,7 @@ const handleTimeSlotClick = (slot) => {
         </h3>
         </div>
     </div>
-        <h3 className="text-center">Select Your Time Slot</h3>
+        <h5 className="text-center">Select Your Time Slot</h5>
         <div className="time-slots">
           {timeSlots.map((slot, index) => (
             <button
@@ -115,6 +115,20 @@ const handleTimeSlotClick = (slot) => {
               {slot}
             </button>
           ))}
+        </div>
+        <div className="note">
+          <p><span className="fw-bold">Note: </span> <br/> Is a dummy or placeholder text commonly used in graphic design, publishing, and web development to fill empty
+          spaces in a layout that does not yet have content.</p>
+          <label>
+            <input 
+            type="checkbox" 
+            className="form-check-input border-dark fw-bold m-2"/>
+            Terms and conditions (T&C) are a legally binding document that outlines the rules and expectations for using a product or service.
+          </label>
+          <div className="button">
+            <button className="btn-back">Back</button>
+            <button className="btn-continue">Continue</button>
+          </div>
         </div>
     </div>
   </div>  

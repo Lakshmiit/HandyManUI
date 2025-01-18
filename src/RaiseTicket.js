@@ -47,7 +47,7 @@ const AddressManager = () => {
  // const [alertMessage, setAlertMessage] = useState('');
   const [confirmationModal, setConfirmationModal] = useState(false);
 
-  const API_URL = 'https://localhost:7091/api/Address/GetAddressById/';
+  const API_URL = 'https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/';
 
   // Fetch customer profile data
   useEffect(() => {
@@ -201,7 +201,7 @@ useEffect(() => {
       formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
       formData.append('fileName', fileName);
 
-      const response = await fetch('https://localhost:7091/api/FileUpload/upload?filename=' + fileName, {
+      const response = await fetch('https://handymanapiv2.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
         method: 'POST',
         headers: {
           'Accept': 'text/plain',
@@ -253,7 +253,7 @@ useEffect(() => {
       zipcode:pincode,
       requestType: requestType,
       status:'open',
-      internalStatus:'open',
+      internalStatus:'Open',
       SupportTicketId: uuidv4(),
       id: uuidv4(),// Unique identifier for the API call
       customerId: customerId, // Replace with actual customer ID logic
@@ -271,7 +271,7 @@ useEffect(() => {
     };
   
     try {
-      const response = await fetch('https://localhost:7091/api/RaiseTicket/CreateRaiseTicket', {
+      const response = await fetch('https://handymanapiv2.azurewebsites.net/api/RaiseTicket/CreateRaiseTicket', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -601,7 +601,7 @@ useEffect(() => {
         <div className="radio">
       <label className="m-1">
         <input
-          className="form-check-input"
+          className="form-check-input m-2 border-dark"
           type="radio"
           name="RequestType"
           value="With Material" // Unique value
@@ -614,7 +614,7 @@ useEffect(() => {
 
       <label className="m-1">
         <input
-          className="form-check-input"
+          className="form-check-input m-2 border-dark"
           type="radio"
           name="RequestType"
           value="Without Material" // Unique value

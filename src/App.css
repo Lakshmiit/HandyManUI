@@ -380,6 +380,7 @@ footer.footer {
   flex-direction: column;  
 }
 
+
 ._mnu_dv{
   display: flex;
   align-items: center;
@@ -1115,7 +1116,7 @@ textarea {
 }
 
 .adm_mnu {
-  box-shadow: var(--bxsdw);
+  /* box-shadow: var(--bxsdw); */
   border-radius: 0 6px 6px 0;
   background-color: #FAFAFA;
   width: 100%;
@@ -1201,6 +1202,12 @@ textarea {
 
 .time-slot-section {
   margin: 20px 0;
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  width: 120%;
+  max-width: 1800px;
+  margin: 20px auto;
+  padding: 8px;
 }
 
 .time-slot-title {
@@ -1238,9 +1245,8 @@ textarea {
 }
 
 .note {
-  font-size: 12px;
-  margin-top: 20px;
-  color: #666;
+  font-size: 18px;
+  margin-bottom: 20px;
 }
 
 .date-container {
@@ -1267,3 +1273,28 @@ textarea {
   font-size: 24px;
   color: #ffb300;
 }
+
+.button {
+  display: flex;
+  justify-content: center;
+  
+}
+
+.btn-back,
+.btn-continue {
+  padding: 10px;
+  border: none;
+  background-color: #ffffff;
+  color:#ffc107;
+  font-weight: normal;
+  cursor: pointer;
+  border-radius: 10px;
+  border: 2px solid #ffc107;
+  transition: background-color 0.3s;
+  margin: 5px;
+}
+
+/* .btn-back:hover,
+.btn-continue:hover {
+  background-color: #ff6600;
+} */

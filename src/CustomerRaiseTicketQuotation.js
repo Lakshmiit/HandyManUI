@@ -67,7 +67,7 @@ const RaiseQuotation = () => {
   useEffect(() => {
     const fetchticketData = async () => {
       try {
-        const response = await fetch(`https://localhost:7091/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
@@ -102,7 +102,7 @@ const RaiseQuotation = () => {
 
     // Fetch data from API on component mount
     useEffect(() => {
-      const apiUrl = `https://localhost:7091/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
+      const apiUrl = `https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
       // Fetching the data from the API
       const fetchData = async () => {
         try {
@@ -176,7 +176,7 @@ const RaiseQuotation = () => {
       useEffect(() => {
         const fetchDealerData = async () => {
           try {
-            const response = await fetch(`https://localhost:7091/api/RaiseAQuoteByDealer/GetRaiseAQuoteLowestDealerByid?raiseAQuotetDealerId=${raiseTicketId}`);
+            const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuoteByDealer/GetRaiseAQuoteLowestDealerByid?raiseAQuotetDealerId=${raiseTicketId}`);
             if (!response.ok) {
               throw new Error('Failed to fetch ticket data');
             }
@@ -295,7 +295,7 @@ const handleTechRemarks = (index, value) => {
     // alert(JSON.stringify(payload));
     try {
       
-      const response = await fetch(`https://localhost:7091/api/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -360,7 +360,7 @@ const handleTechRemarks = (index, value) => {
 //     })),
 //   };
 //   try {
-//     const response = await fetch(`https://localhost:7091/api/RaiseAQuote/id?id=03dd6bbc-36ba-4795-b39c-b40d58991d87`, {
+//     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/id?id=03dd6bbc-36ba-4795-b39c-b40d58991d87`, {
 //       method: 'PUT',
 //       headers: {
 //         'Content-Type': 'application/json',
@@ -469,7 +469,7 @@ const handleTechRemarks = (index, value) => {
       <div className="radio m-1">
         <label className="m-1">
           <input 
-          className='form-check-input m-1'
+          className='form-check-input m-2 border-dark'
           type='radio'
           name="RequestType"
           value="With Material"
@@ -482,7 +482,7 @@ const handleTechRemarks = (index, value) => {
 
           <label className="m-1">
           <input 
-          className='form-check-input m-1'
+          className='form-check-input  m-2 border-dark'
           type='radio'
           name="RequestType"
           value="Without Material"
@@ -712,7 +712,7 @@ const handleTechRemarks = (index, value) => {
               ? Number(lowestGrandTotal).toFixed(2)
               : '0.00'}</td>
             <td>
-              <input type="radio" name="materialApproval" className="form-check-input" value="approved" checked={isMaterialApproved}  onClick={() => setIsMaterialApproved(!isMaterialApproved)}/> Approved
+              <input type="radio" name="materialApproval" className="form-check-input border-dark" value="approved" checked={isMaterialApproved}  onClick={() => setIsMaterialApproved(!isMaterialApproved)}/> Approved
             </td>
           </tr>
           <tr>
@@ -720,7 +720,7 @@ const handleTechRemarks = (index, value) => {
             <td className='text-center'>{technicianId}</td>
             <td className='text-end'>{Number(totalAmount || 0).toFixed(2)}</td> 
             <td>
-              <input type="radio" name="agencyApproval" className="form-check-input" value="approved" checked={isAgencyApproved}
+              <input type="radio" name="agencyApproval" className="form-check-input border-dark" value="approved" checked={isAgencyApproved}
                   onChange={() =>
                     setIsAgencyApproved(!isAgencyApproved)
                   } 
@@ -748,7 +748,7 @@ const handleTechRemarks = (index, value) => {
                 type='checkbox'
                 name='terms'
                 value="accepted"
-                className="form-check-input m-2"
+                className="form-check-input m-2 border-dark"
             /> 
             Terms and Conditions Apply
             </label>

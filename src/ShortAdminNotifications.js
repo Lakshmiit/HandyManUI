@@ -97,7 +97,7 @@ const Notification = () => {
     const fetchNotifications = async () => {
       try {
         const response = await fetch(
-          "https://localhost:7091/api/RaiseTicket/GetTicketsNotifications"
+          "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications"
         );
         const data = await response.json();
 
