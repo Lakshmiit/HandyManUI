@@ -53,10 +53,13 @@ const RaiseQuoteTechnician = () => {
   const { selectedUserType} = useParams();
   const {category} = useParams();
   const {technicianId} = useParams();
+  const [fullName, setFullName] = useState('');
   // const [internalStatus, setInternalStatus] = useState('');
   const [ticketId, setTicketId] = useState('');
       const [materialQuotation] = useState([{discount: "", fixedDiscount: "", deliveryCharges: "", fixedDeliveryChargs: "", servicecharges: "", fixedServicecharges: "", gst: "", fixedGST: "", gradntotal: ""}])
-  
+  // const [anyOtherCharge, setAnyOtherCharges] = useState('100');
+  // const [serviceCharge, setServiceCharges] = useState('10');
+  // const [gstCharge, setGSTCharge] = useState('18');
   useEffect(() => {
     console.log(ticketData, status, id, technicianData, customerId, ticketId);
   }, [ticketData, status, id, technicianData, customerId, ticketId]); 
@@ -73,6 +76,9 @@ const RaiseQuoteTechnician = () => {
        // alert(data);
 
         setTicketId(data.ticketId);
+        setOtherCharge('100');
+        setServiceCharge('10');
+        setGST('18');
        // alert(ticketId);
         setTicketData(data);
         setState(data.state);
@@ -84,6 +90,7 @@ const RaiseQuoteTechnician = () => {
         setIsWithMaterial(data.isMaterialType);
         setAssignedTo(data.assignedTo);
         setStatus(data.status);
+        setFullName(data.customerName);
         setRequestType(data.requestType || 'Without Material');
         // setSpecifications(data.materials || [{material: "", quantity: ""}]);
         setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: ""}]);
@@ -157,7 +164,7 @@ const RaiseQuoteTechnician = () => {
     const payload = {
       id: id,
       RaiseTicketId: ticketData.raiseTicketId,
-      date: new Date().toISOString(),
+      date: new Date(),
       address: address,
       subject: ticketData.subject,
       details: ticketData.details,
@@ -185,6 +192,12 @@ const RaiseQuoteTechnician = () => {
       })),
       LowestBidderTechnicainId: "",
       LowestBidderDealerId: "",
+      ApprovedAmount: "",
+      customerName: fullName,
+      Option1Day: "", 
+      Option1Time: "",
+      Option2Day: "",
+      Option2Time: "",
     };
     try {
       
@@ -211,7 +224,7 @@ const RaiseQuoteTechnician = () => {
    // alert(technicianId);
     const payload1 = {
       id :"string",
-      quotedDate: new Date().toISOString(), 
+      quotedDate: new Date(), 
       raiseAQuoteId: "string",
       CustomerId: ticketData.customerId,
       ticketId: ticketData.raiseTicketId,
@@ -306,7 +319,7 @@ const RaiseQuoteTechnician = () => {
           setFixedServiceCharge(techDataItem.fixedServiceCharge);
           setGST(techDataItem.gst);
           setFixedGST(techDataItem.fixedGST);
-          setTotalAmount(techDataItem.totalAmount);
+          // setTotalAmount(techDataItem.totalAmount);
           setAddrRmarks(techDataItem.addrRmarks || [{ requestedDate: new Date(), remarks: "" }]);
           alert("Hello");
           alert(JSON.stringify(techDataItem));
@@ -404,7 +417,7 @@ const RaiseQuoteTechnician = () => {
     const discountAmount = quote * (discountPercentage / 100); 
     const priceAfterDiscount = quote - discountAmount; 
     const priceAfterOtherCharges = priceAfterDiscount + otherCharges; 
-    const serviceCharge = priceAfterOtherCharges * (serviceChargePercentage / 100); 
+    const serviceCharge = (quote - discountAmount + priceAfterOtherCharges ) * (serviceChargePercentage / 100); 
     const priceAfterServiceCharge = priceAfterOtherCharges + serviceCharge;
     const gst = priceAfterServiceCharge * (gstPercentage / 100);
     const total = priceAfterServiceCharge + gst; 
@@ -416,7 +429,7 @@ const RaiseQuoteTechnician = () => {
     setter(value); 
     
 
-    const { total, discountAmount, serviceCharge: calculatedServiceCharge, gst: calculatedGST } = calculateTotalPrice(
+    const { discountAmount, serviceCharge: calculatedServiceCharge, gst: calculatedGST } = calculateTotalPrice(
       enterQuoteAmount, 
       discount, 
       othercharges, 
@@ -429,11 +442,11 @@ const RaiseQuoteTechnician = () => {
     if (setter === setServiceCharge) fixedSetter(calculatedServiceCharge); 
     if (setter === setGST) fixedSetter(calculatedGST); 
    
-    setTotalAmount(total);
+    // setTotalAmount(total);
   };
 
   useEffect(() => {
-    const { total, discountAmount, serviceCharge: calculatedServiceCharge, gst:calculatedGST} = calculateTotalPrice(
+    const { discountAmount} = calculateTotalPrice(
       enterQuoteAmount,
       discount,
       othercharges,
@@ -443,11 +456,44 @@ const RaiseQuoteTechnician = () => {
     setFixedQuote(enterQuoteAmount);
     setFixedDiscount(discountAmount);
     setFixedOtherCharge(othercharges);
-    setFixedServiceCharge(calculatedServiceCharge);
-    setFixedGST(calculatedGST);
-    setTotalAmount(total);
+    // setFixedServiceCharge();
+    // setFixedGST(calculatedGST);
+    // setTotalAmount(total);
   }, [enterQuoteAmount, discount, othercharges, serviceCharges, gst]);
 
+
+  const handleDiscountCharges = (setter) => (e) => {
+    const value = parseFloat(e.target.value); 
+    setter(value); 
+    
+
+    // const { total, discountAmount, serviceCharge: calculatedServiceCharge, gst: calculatedGST } = calculateTotalPrice(
+    //   enterQuoteAmount, 
+    //   discount, 
+    //   othercharges, 
+    //   serviceCharges, 
+    //   gst
+    // );
+    // alert(enterQuoteAmount);
+    // alert(value);
+    // alert(othercharges);
+    // alert(serviceCharges);
+var CalculatedDiscount = enterQuoteAmount * (value / 100); 
+var calculatedServiceCharges = ((enterQuoteAmount - CalculatedDiscount) * (serviceCharges / 100));
+var calculateGST = (calculatedServiceCharges * gst) / 100;
+var GrandTotal = enterQuoteAmount - CalculatedDiscount + Number(othercharges) + calculatedServiceCharges + calculateGST;
+var roundedGrandTotal = Math.round(GrandTotal * 100) / 100;  
+setFixedServiceCharge(calculatedServiceCharges);
+setFixedGST(calculateGST);
+setTotalAmount(roundedGrandTotal);
+
+    // if (setter === setDiscount) fixedSetter(discountAmount); 
+    // if (setter === setOtherCharge) fixedSetter(othercharges); 
+    // if (setter === setServiceCharge) fixedSetter(calculatedServiceCharge); 
+    // if (setter === setGST) fixedSetter(calculatedGST); 
+   
+    // setTotalAmount(total);
+  };
   const handleAddComment = (index, field, value) => {
     const updatedComments = [...commentsList];
     updatedComments[index][field] = value;
@@ -730,6 +776,7 @@ const RaiseQuoteTechnician = () => {
                 value={spec.material}
                 placeholder="Enter Material"
                 onChange={(e) => handleMaterialChange(index, "material", e.target.value)}
+                required
               />
               <input
                 type="text"
@@ -737,6 +784,7 @@ const RaiseQuoteTechnician = () => {
                 placeholder="Enter Quantity"
                 value={spec.quantity}
                 onChange={(e) => handleMaterialChange(index,"quantity", e.target.value)}
+                required
               />
               <button
                 type="button"
@@ -792,7 +840,7 @@ const RaiseQuoteTechnician = () => {
           className="form-control text-end"
           value={discount}
           // onBlur={calculateTotal}
-          onChange={handleFixedChange(setDiscount, setFixedDiscount)}
+          onChange={handleDiscountCharges(setDiscount, setFixedDiscount)}
           placeholder="Enter Discount"
         />
       </td>
@@ -817,9 +865,10 @@ const RaiseQuoteTechnician = () => {
           type="number"
           className="form-control text-end"
           value={othercharges}
-          // onBlur={calculateTotal}
-          onChange={handleFixedChange(setOtherCharge, setFixedOtherCharge)}
+          disabled
+          // onChange={handleFixedChange(setOtherCharge, setFixedOtherCharge)}
           placeholder="Enter Other Charges"
+          
         />
       </td>
       <td colSpan="2">
@@ -828,7 +877,7 @@ const RaiseQuoteTechnician = () => {
           className="form-control text-end"
           value={Number(fixedOtherCharge).toFixed(2)}
           disabled
-          placeholder="Fixed Other Charges"
+          placeholder="Fixed Other Charges"    
         />
       </td>
     </tr>
@@ -843,8 +892,8 @@ const RaiseQuoteTechnician = () => {
           type="number"
           className="form-control text-end"
           value={serviceCharges}
-          // onBlur={calculateTotal}
-          onChange={handleFixedChange(setServiceCharge, setFixedServiceCharge)}
+          disabled
+          // onChange={handleFixedChange(setServiceCharge, setFixedServiceCharge)}
           placeholder="Enter Service Charges"
         />
       </td>
@@ -869,8 +918,8 @@ const RaiseQuoteTechnician = () => {
           type="number"
           className="form-control text-end"
           value={gst}
-          // onBlur={calculateTotal}
-          onChange={handleFixedChange(setGST, setFixedGST)}
+          disabled
+          // onChange={handleFixedChange(setGST, setFixedGST)}
           placeholder="Enter GST"
         />
       </td>
@@ -895,7 +944,8 @@ const RaiseQuoteTechnician = () => {
             type="number"
             className="form-control text-end"
             value={Number(totalAmount).toFixed(2)}
-            readOnly
+            disabled
+            
             placeholder="Total Amount"
             />
         </td>

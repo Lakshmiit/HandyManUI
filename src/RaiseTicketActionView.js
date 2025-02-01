@@ -33,6 +33,7 @@ const RaiseActionView = () => {
   const [status, setStatus] = useState("");
   const [assignedTo, setAssignedTo] = useState('');
   const [newPhotoCount , setPhotoCount] = useState(0);
+  const [fullName, setFullName] = useState('');
   
   useEffect(() => {
     console.log(ticketData, status);
@@ -46,6 +47,7 @@ const RaiseActionView = () => {
           throw new Error('Failed to fetch ticket data');
         }
         const data = await response.json();
+        //  alert(JSON.stringify(data));
         setTicketData(data);
         setState(data.state);
         setDistrict(data.district);
@@ -56,6 +58,7 @@ const RaiseActionView = () => {
         setIsWithMaterial(data.isMaterialType);
         setAssignedTo(data.assignedTo);
         setStatus(data.status);
+        setFullName(data.customerName);
         setRequestType(data.requestType || 'Without Material');
         // setAttachments(data.attachments || []);
         setSpecifications(data.materials || [{ material: "", quantity: "" }]);
@@ -164,7 +167,7 @@ const RaiseActionView = () => {
     
     const payload = {
       RaiseTicketId: ticketData.raiseTicketId,
-      date: new Date().toISOString(),
+      date: new Date(),
       address: address,
       subject: ticketData.subject,
       details: ticketData.details,
@@ -191,6 +194,12 @@ const RaiseActionView = () => {
       })),
       LowestBidderTechnicainId: "",
       LowestBidderDealerId: "",
+      ApprovedAmount: "",
+      customerName: fullName,
+      Option1Day: "", 
+      Option1Time: "",
+      Option2Day: "",
+      Option2Time: "",
     };
     try {
       

@@ -28,6 +28,7 @@ const AddressManager = () => {
   const [state, setState] = useState('');
   const [district, setDistrict] = useState('');
   const [pincode, setPincode] = useState('');
+  const [fullName, setFullName] = useState('');
   const [assignedTo, setAssignedTo] = useState('');
   const [requestType, setRequestType] = useState('');
   const [loading, setLoading] = useState(false); 
@@ -43,12 +44,9 @@ const AddressManager = () => {
     details: '',
     category: '',
   });
- // const [showAlert, setShowAlert] = useState(false);
- // const [alertMessage, setAlertMessage] = useState('');
   const [confirmationModal, setConfirmationModal] = useState(false);
 
   const API_URL = 'https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/';
-
   // Fetch customer profile data
   useEffect(() => {
     const fetchCustomerData = async () => {
@@ -59,7 +57,6 @@ const AddressManager = () => {
         }
         const data = await response.json();
         console.log(data);
-        // Assuming data contains an array of addresses, wrap the data in an array if it's not an array
         const addresses = Array.isArray(data) ? data : [data];
         
         // Format addresses if necessary
@@ -69,11 +66,14 @@ const AddressManager = () => {
           address: addr.address,
           state: addr.state,
           district: addr.district,
-          zipCode: addr.zipCode, // Correct key from pinCode
+          zipCode: addr.zipCode, 
+          // fullName: addr.FullName,
         }));
-  
-        // Set the addresses state
         setAddresses(formattedAddresses);
+        const customerName = Array.isArray(data) ? data[0]?.fullName || '' : data.fullName || '';
+        setFullName(customerName);
+        // setFullName(data.fullName);
+        // alert(JSON.stringify(data));
       } catch (error) {
         console.error('Error fetching customer data:', error);
       }
@@ -132,6 +132,7 @@ useEffect(() => {
       state,
       district,
       pincode,
+      // name,
     };
 
     setAddresses((prevAddresses) => [...prevAddresses, newAddr]);
@@ -146,6 +147,7 @@ useEffect(() => {
     setState('');
     setDistrict('');
     setPincode('');
+    // setFullName('');
   };
 
   // Handle file upload
@@ -163,6 +165,7 @@ useEffect(() => {
   const handleUploadFiles = async () => {
     setLoading(true);
     setShowAlert(false);
+    
     const uploadedFilesList=[];
     for (let i = 0; i < ticketPhotos.length; i++) {
       const file = ticketPhotos[i];
@@ -242,7 +245,7 @@ useEffect(() => {
 
     const payload = {
       RaiseTicketId:ticketId,
-      date: new Date().toISOString(),
+      date: new Date(),
       address: addresses.find((addr) => addr.type === 'primary')?.address || '',
       subject: formData.subject,
       details: formData.details,
@@ -251,6 +254,7 @@ useEffect(() => {
       state:state,
       district:district,
       zipcode:pincode,
+      
       requestType: requestType,
       status:'open',
       internalStatus:'Open',
@@ -268,8 +272,15 @@ useEffect(() => {
       })),
       LowestBidderTechnicainId: "",
       LowestBidderDealerId: "",
+      ApprovedAmount: "",
+      CustomerName: fullName, 
+      Option1Day: "",
+      Option1Time: "",
+      Option2Day: "",
+      Option2Time: "",
+     
     };
-  
+  //alert(JSON.stringify(payload));
     try {
       const response = await fetch('https://handymanapiv2.azurewebsites.net/api/RaiseTicket/CreateRaiseTicket', {
         method: 'POST',
@@ -288,7 +299,7 @@ useEffect(() => {
   
       // Show alert message and navigate to CustomerProfilePage
       window.alert(`Ticket has been submitted successfully! Your reference number is ${ticketId}. Get Quote will contact you shortly.`);
-      window.location.href = 'https://handymanserviceproviders.com/CustomerProfilePage';
+       window.location.href = 'https://handymanserviceproviders.com/CustomerProfilePage';
     } catch (error) {
       console.error('Error:', error);
       window.alert('Failed to create the ticket. Please try again later.');
@@ -323,6 +334,7 @@ useEffect(() => {
       setState(addressToEdit.state);
       setDistrict(addressToEdit.district);
       setPincode(addressToEdit.pincode);
+      setFullName(addressToEdit.fullName);
       setShowModal(true);
       handleAddressDelete(id); // Remove the address to re-add it after edit
     }

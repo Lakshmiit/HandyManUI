@@ -11,14 +11,20 @@ import "./App.css";
 
 const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) => {
   const navigate = useNavigate();
+  const {category} = useParams();
   const {userType} = useParams();
   const {technicianId} = useParams();
 
   const handleQuoteClick = (ticketId) => {
-    navigate(`/viewRaiseQuote/${ticketId}/${userType}/${technicianId}`, { state: { ticketId } });
+    navigate(`/viewRaiseQuote/${ticketId}/${category}/${userType}/${technicianId}`, { state: { ticketId } });
   };
 
+  // const handleOrderClick = (ticketId) => {
+  //   navigate(`/ticketConfirmation/${ticketId}/${userType}/${technicianId}`, { state: { ticketId } });
+  // };
+
   return (
+    <div>
     <div className="notification-list">
       {notifications.map((notification) => (
         <div
@@ -52,6 +58,40 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
         </div>
       ))}
     </div>
+    {/* <div className="notification-list">
+    {notifications.map((notification) => (
+      <div
+        key={notification.raiseAQuoteId}
+        className={`notification-item ${
+          notification.raiseAQuoteId === highlightedItem ? "highlight" : ""
+        }`}
+      >
+        <div className="notification-header">
+          <strong>Ticket ID: </strong>
+          <span
+            // onClick={() => handleOrderClick(notification.id)}
+            style={{
+              color: "blue",
+              cursor: "pointer",
+              textDecoration: "underline",
+            }}
+          >
+            {notification.raiseTicketId}
+          </span>
+        </div>
+        <div>
+          <strong>Details:</strong> {notification.details}
+        </div>
+        <div>
+          <strong>Subject:</strong> {notification.subject}
+        </div>
+        <div className="notification-date">
+          <strong>Date:</strong> {new Date(notification.date).toLocaleString()}
+        </div>
+      </div>
+    ))}
+  </div> */}
+  </div>
   );  
 };
 
@@ -59,12 +99,16 @@ const Notification = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [quoteNotifications, setQuoteNotifications] = useState([]);
+  const [orderNotifications, setOrderNotifications] = useState([]);
   const [newQuoteCount, setNewQuoteCount] = useState(0);
+  const [newOrderCount, setNewOrderCount] = useState(0);
   const [newNotificationCount, setNewNotificationCount] = useState(0);
   const [highlightedQuote, setHighlightedQuote] = useState(null);
+  const [highlightedOrder, setHighlightedOrder] = useState(null);
   const [activeTab, setActiveTab] = useState("");
   const [glow, setGlow] = useState(false);
   const [glowQuote, setGlowQuote] = useState(false);
+  const [glowOrder, setGlowOrder] = useState(false);
   const { district, category } = useParams();
   const { userType } = useParams();
   const { technicianId } = useParams();
@@ -77,15 +121,17 @@ const Notification = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []); 
 
-  useEffect(() => {
+ 
     const fetchNotifications = async () => {
       try {
-        const getQuoteResponse = await fetch(
+        const [getQuoteResponse, QuoteOrdersResponse] = await  Promise.all([
+          fetch(
           `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByDistrict?district=${district}&category=${category}`
-        );
-        if (!getQuoteResponse.ok) {
-          throw new Error("Failed to fetch quote notifications");
-        }
+        ), 
+        // fetch(
+        //   ``
+        // ),
+      ]);
 
         const getQuoteData = await getQuoteResponse.json();
         const getQuoteCount = getQuoteData.length;
@@ -97,20 +143,41 @@ const Notification = () => {
           setHighlightedQuote(getQuoteData[0].raiseAQuoteId);
         }
 
-        setNewNotificationCount(getQuoteCount);
-        setGlow(getQuoteCount > 0);
+        const quoteOrdersData = await QuoteOrdersResponse.json();
+        const quoteOrderCount = quoteOrdersData.length;
+
+        setOrderNotifications(quoteOrdersData);
+        setNewOrderCount(quoteOrderCount);
+        setGlowOrder(quoteOrderCount > 0);
+        if (quoteOrderCount > 0) {
+          setHighlightedOrder(quoteOrdersData[0].raiseAQuoteId);
+        }
+
+        const totalNotifications = getQuoteCount + quoteOrderCount;
+        setNewNotificationCount(totalNotifications);
+        setGlow(totalNotifications > 0);
       } catch (error) {
         console.error("Failed to fetch notifications:", error);
       }
     };
 
+
+  useEffect(() => {
     fetchNotifications();
+    const interval = setInterval(fetchNotifications, 60000);
+    return () => clearInterval(interval);
   }, [district, category]);
 
   const handleClearQuoteNotifications = () => {
     setNewQuoteCount(0);
     setGlowQuote(false);
     setHighlightedQuote(null);
+  };
+
+  const handleClearOrderNotifications = () => {
+    setNewOrderCount(0);
+    setGlowOrder(false);
+    setHighlightedOrder(null);
   };
 
   const handleTabClick = (tab) => setActiveTab(tab);
@@ -156,18 +223,31 @@ const Notification = () => {
 
         <div className="notifications-container d-flex bg-white border rounded shadow-sm m-4 p-3">
           <div className="tabs d-flex mb-3">
-            {["Raise A Quote"].map((tab) => (
+            {["Raise A Quote", "Raise A Quote Orders"].map((tab) => (
               <span
                 key={tab}
-                className={`tab-item ${activeTab === tab ? "active" : ""} ${
-                  tab === "Raise A Quote" && glowQuote ? "glow" : ""
+                className={`tab-item ${activeTab === tab ? "active" : ""} 
+                ${tab === "Raise A Quote" && glowQuote ? "glow" : ""}
+                  ${tab === "Raise A Quote Orders" && glowOrder ? "glow" : ""
                 }`}
                 onClick={() => handleTabClick(tab)}
                 style={{ cursor: "pointer" }}
               >
+                {tab === "Raise A Quote" && (
+                  <>
                 Raise A Quote{" "}
                 {newQuoteCount > 0 && (
                   <span className="badge bg-danger">{newQuoteCount}</span>
+                )}
+                </>
+                )}
+                {tab === "Raise A Quote Orders" && (
+                  <>
+                    Raise A Quote Orders{" "}
+                    {newOrderCount > 0 && (
+                      <span className="badge bg-danger">{newOrderCount}</span>
+                    )}
+                  </>
                 )}
               </span>
             ))}
@@ -179,13 +259,33 @@ const Notification = () => {
                 <NotificationsList
                   notifications={quoteNotifications}
                   highlightedItem={highlightedQuote}
-                  handleItemClick={(id) => navigate(`/technicianQuoteNotification/${userType}`, { state: { id } })}
                 />
                 <div
                   className="view-notifications text-info mx-2"
                   onClick={() => {
                     navigate(`/technicianQuoteNotification/${userType}/${category}/${district}/${technicianId}`);
                     handleClearQuoteNotifications();
+                  }}
+                  style={{ cursor: "pointer" }}
+                >
+                  View All Notifications
+                </div>
+              </>
+            )}
+          </div>
+          
+          <div>
+            {activeTab === "Raise A Quote Orders" && (
+              <>
+                <NotificationsList
+                  notifications={orderNotifications}
+                  highlightedItem={highlightedOrder}
+                />
+                <div
+                  className="view-notifications text-info mx-2"
+                  onClick={() => {
+                    navigate(`/ticketConfirmation/${userType}`);
+                    handleClearOrderNotifications();
                   }}
                   style={{ cursor: "pointer" }}
                 >

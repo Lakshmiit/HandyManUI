@@ -53,6 +53,7 @@ const RaiseTicketQuotation = () => {
     const [district, setDistrict] = useState('')
     const [zipCode, setZipcode] = useState('');
     const [address, setAddress] = useState('');
+    const [fullName, setFullName] = useState('');
     const [rateQuotedBy, setRateQuotedBy] = useState("Customer Care");
     // const [isDealerSelected, setIsDealerSelected] = useState(false);
     const [material, setMaterialQuotation] = useState([{discounts: "", fixedDiscounts: "", deliveryCharges: "", fixedDeliveryCharges: "", serviceCharges: "", fixedServiceCharges: "", gsts: "", fixedGSTS: "", grandtotal: ""}])
@@ -108,7 +109,7 @@ const RaiseTicketQuotation = () => {
           setFixedServiceCharge(quotedata.fixedServiceCharge);
           setFixedOtherCharge(quotedata.fixedOtherCharge);
           setSpecifications(quotedata.materials || [{material: "", quantity: "", price: "", total: ""}]);         
-          setAddRemarks(quotedata.addrRmarks);
+          setAddRemarks(Array.isArray(quotedata.addrRmarks) ? quotedata.addrRmarks : []);
         } catch (error) {
           console.error('Error fetching data:', error);
         }
@@ -213,11 +214,12 @@ useEffect(() => {
             setIsWithMaterial(data.isMaterialType);
             setAssignedTo(data.assignedTo);
             setStatus(data.status);
+            setFullName(data.customerName);
             setRequestType(data.requestType || 'Without Material');
             setAttachments(data.attachments);
             // setSpecifications(data.materials || [{ material: "", quantity: "", price: "", total: "" }]);
             setMaterialQuotation(data.materialQuotation || [{ discounts: "", fixedDiscounts: "", deliveryCharges: "", fixedDeliveryCharges: "", serviceCharges: "", fixedServiceCharges: "", gsts: "", fixedGSTS: "", grandtotal: ""}])
-            setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: ""}])
+            setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: ""}]);
             const imageRequests =
               data.attachments?.map((photo) => 
                fetch(
@@ -267,10 +269,10 @@ useEffect(() => {
           setLowestBidder(lowest.technicianId);
           setSpecifications(lowest.materials);
           setMaterialQuotation(lowest.materialQuotation);
-          if (lowest.addrRmarks?.length > 0) {
-            setAddRemarks(lowest.addrRmarks[0].remarks);
+          if (Array.isArray(lowest.addrRmarks) && lowest.addrRmarks.length > 0) {
+            setAddRemarks(lowest.addrRmarks); 
           } else {
-            setAddRemarks("");
+            setAddRemarks([]);
           }
           
         } else {
@@ -303,7 +305,7 @@ useEffect(() => {
 
   const handleAddRemarks = (index, value) => {
     setAddRemarks((prev) =>
-      prev.map((item, i) => (i === index ? { ...item, addrRmarks: value } : item))
+      prev.map((item, i) => (i === index ? { ...item, remarks: value } : item))
     );
   };
   const handleDownloadAllAttachments = async () => {
@@ -342,7 +344,7 @@ useEffect(() => {
    
     const payload = {
       RaiseTicketId: ticketData.raiseTicketId,
-      date: new Date().toISOString(),
+      date: new Date(),
       address: address,
       subject: ticketData.subject,
       details: ticketData.details,
@@ -359,7 +361,6 @@ useEffect(() => {
       ZipCode: zipCode,
       RequestType: requestType,
       attachments:attachments.map((file) => file.src),
-
       materials: specifications.map((spec) => ({
           material: spec.material,
           quantity: spec.quantity,
@@ -372,6 +373,12 @@ useEffect(() => {
       })),
       LowestBidderTechnicainId: lowestBidder,
       LowestBidderDealerId: "",
+      ApprovedAmount: "",
+      customerName: fullName,
+      Option1Day: "",
+      Option1Time: "",
+      Option2Day: "",
+      Option2Time: "",
     };
     try {
       
@@ -421,12 +428,10 @@ useEffect(() => {
       fixedOtherCharge:fixedOtherCharge,
       fixedServiceCharge: fixedServiceCharge,
       fixedGST: fixedGST,
-      addrRmarks: Array.isArray(addrRmarks)
-      ? addrRmarks.map((comment) => ({
+      addrRmarks:addrRmarks.map((comment) => ({
           requestedDate: comment.requestedDate,
           remarks: comment.remarks ,
-        }))
-      : [],
+      })),
     materials: specifications.map((spec) => ({
       material: spec.material,
       quantity: spec.quantity,
@@ -445,11 +450,7 @@ useEffect(() => {
       fixedServicecharges: quote.fixedServiceCharges.toString(),
       fixedGST: quote.fixedGSTS.toString(),
     })),
-    // LowestBidderTechnicianId: lowestBidder,
   };
-  // var techData = JSON.stringify(payload3);
-    //alert(JSON.stringify(payload3));
-    //console.log(JSON.stringify(payload3));
   try {
     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/id?id=${id}`, {
       method: 'PUT',
@@ -1025,15 +1026,21 @@ useEffect(() => {
        {/* Add Remarks */}
        <div className="form-group col-md-6">
           <label>Technician Remarks</label>
-              <div className="d-flex gap-3">
+          {Array.isArray(addrRmarks) && addrRmarks.length > 0 ? (
+          addrRmarks.map((item, index) =>(
+              <div key={index} className="d-flex gap-3">
                 <input
                   type="text"
                   className="form-control"
-                  value={addrRmarks} 
+                  value={item.remarks} 
                   onChange={(e) => handleAddRemarks(e.target.value)}
                   readOnly
                 />
               </div>
+              ))
+            ) : (
+              <p>No remarks available</p>
+            )}
         </div>
 
         {/* Send Quote Button */}

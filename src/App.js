@@ -37,6 +37,14 @@ import DealerNotificationsGrid from './DealerNotificationsGrid.js';
 import DealerGrid from './DealerGrid.js';
 import BidderTicketQuotation from './BidderTicketQuotation.js';
 import TimeSlotBooking from './TimeSlotBooking.js';
+import BookingConfirmation from './BookingConfirmation.js';
+import PaymentConfirmation from './PaymentConfirmation.js';
+import TicketConfirmation from './TicketConfirmation.js';
+import TraderConfirmation from './TraderConfirmation.js';
+import RaiseOrdersGrid from './RaiseOrdersGrid.js';
+import CustomerCareConfirmation from './CustomerCareConfirmation.js';
+import CustomerRaiseTicketTrack from './CustomerRaiseTicketTrack.js';
+
 
 function App() {
   return (
@@ -44,7 +52,7 @@ function App() {
       <div className="App"> 
         {/* Header Component */}
         <Header />
-
+        
         {/* Main content */}
         <main className="container py-3 mt_100px">
           <Routes>
@@ -68,7 +76,7 @@ function App() {
             <Route path="/raiseTicketNotification" element={<RaiseTicketNotifications />} />
             <Route path="/addTechnician/:userType" element={<AddTechnician />} />
             <Route path="/technicianQuoteNotification/:userType/:category/:district/:technicianId" element={<TechnicianQuoteNotifications />} />
-            <Route path="/viewRaiseQuote/:raiseTicketId/:userType/:technicianId" element={<ViewRaiseQuoteTech />} />
+            <Route path="/viewRaiseQuote/:raiseTicketId/:category/:userType/:technicianId" element={<ViewRaiseQuoteTech />} />
             <Route path="/raiseTicketQuotation/:raiseTicketId" element={<RaiseTicketQuotation />} />
             <Route path="/raiseTicketBuyProducts/:raiseTicketId" element={<RaiseTicketBuyProducts />} /> 
             <Route path="/quoteNotification" element={<QuoteNotifications />} />
@@ -82,7 +90,15 @@ function App() {
             <Route path="/viewDealerRaiseTicket/:raiseTicketId/:userType/:category/:dealerId" element={<ViewDealerRaiseTicket />} />
             <Route path="/dealerGrid" element={<DealerGrid /> } />
             <Route path="/bidderTicketQuotation/:raiseTicketId" element={<BidderTicketQuotation /> } />
-            <Route path="/timeSlotBooking/:userType" element={<TimeSlotBooking />} />
+            <Route path="/timeSlotBooking/:raiseTicketId/:userType" element={<TimeSlotBooking />} />
+            <Route path="/bookingConfirmation/:raiseTicketId/:userType" element={<BookingConfirmation />} />
+            <Route path="/paymentConfirmation/:raiseTicketId/:userType" element={<PaymentConfirmation />} />
+            <Route path="/ticketConfirmation/:raiseTicketId/:userType" element={<TicketConfirmation />} />
+            <Route path="/traderConfirmation/:raiseTicketId/:userType" element={<TraderConfirmation />} />
+            <Route path="/raiseOrders/:userType" element={<RaiseOrdersGrid />} />
+            <Route path="/customerCareConfirmation/:raiseTicketId/:userType" element={<CustomerCareConfirmation />} />
+            <Route path="/customerTrack/:raiseTicketId/:userType" element={<CustomerRaiseTicketTrack />} />
+
           </Routes>
         </main>
       </div>

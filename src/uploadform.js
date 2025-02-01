@@ -144,7 +144,7 @@ useEffect(() => {
       specifications: specifications.map(spec => ({
         label: spec.label,
         value: spec.value,
-      })),
+      })), 
       specificationDesc: specificationDesc,
       warranty: warranty,
       Category: category,

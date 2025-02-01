@@ -50,6 +50,17 @@ const Sidebar = ({ userType }) => {
       { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: "/raiseTicket/:customerId/:userType" },
       { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: "/TrackTicket"},
     ],
+    trader: [
+      { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", TargetUrl: "https://handymanserviceproviders.com/" },
+      { MenuIcon: <UploadIcon />, MenuTitle: "Upload Products", TargetUrl: "/product-list" },
+      { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: "/raiseQuote/:userType" },
+      { MenuIcon: <NotificationsActiveIcon />, MenuTitle: "Notifications", TargetUrl: "/Notifications" },
+      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: "/buyProducts"},
+      { MenuIcon: <AccountCircleIcon />, MenuTitle: "My Account", TargetUrl: "/Account" },
+      { MenuIcon: <AccountBalanceIcon />, MenuTitle: "Add Bank Account", TargetUrl: "/AddAccount" },
+      { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: "/raiseTicket/:customerId/:userType" },
+      { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: "/TrackTicket"},
+    ],
     estimator: [
       { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", TargetUrl: "https://handymanserviceproviders.com/" },
       { MenuIcon: <PersonAddIcon />, MenuTitle: "Add Member", TargetUrl: "/addMember" },

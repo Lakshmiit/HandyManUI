@@ -33,6 +33,7 @@ const RaiseQuotation = () => {
   const [fixedGST, setFixedGSTs] = useState('');
   const [lowestBidder, setLowestBidder] = useState("");
   const [othercharges, setOtherCharge] = useState("");
+  const [fullName, setFullName] = useState('');
   const [addrRmarks, setAddRemarks] = useState([{requestedDate: new Date(), remarks: ""}]);
   const [assignedTo, setAssignedTo] = useState('');
   const [isWithMaterial, setIsWithMaterial] = useState(false);
@@ -110,7 +111,7 @@ const RaiseQuotation = () => {
           setServiceCharge(quotedata.serviceCharges);
           setFixedServiceCharge(quotedata.fixedServiceCharge);
           setFixedOtherCharge(quotedata.fixedOtherCharge);
-        //  setSpecifications(quotedata.materials);         
+          setSpecifications(quotedata.materials || [{material: "", quantity: ""}]);         
           // setAddRemarks(quotedata.addrRmarks);
         } catch (error) {
           console.error('Error fetching data:', error);
@@ -183,6 +184,7 @@ useEffect(() => {
               throw new Error('Failed to fetch ticket data');
             }
             const data = await response.json();
+            //alert(JSON.stringify(data));
             setTicketData(data);
             setState(data.state);
             setDistrict(data.district);
@@ -194,9 +196,10 @@ useEffect(() => {
             setIsWithMaterial(data.isMaterialType);
             setAssignedTo(data.assignedTo);
             setStatus(data.status);
+            setFullName(data.customerName);
             setRequestType(data.requestType || 'Without Material');
             setAttachments(data.attachments);
-            setSpecifications(data.materials || [{ material: "", quantity: ""}]);
+            // setSpecifications(data.materials || [{ material: "", quantity: ""}]);
             setMaterialQuotation(data.materialQuotation || [{ discounts: "", fixedDiscounts: "", deliveryCharges: "", fixedDeliveryCharges: "", serviceCharges: "", fixedServiceCharges: "", gsts: "", fixedGSTS: "", grandtotal: ""}])
             setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: ""}]);
             const imageRequests =
@@ -245,7 +248,7 @@ useEffect(() => {
           setServiceCharge(lowest.serviceCharges);
           setFixedServiceCharge(lowest.fixedServiceCharge);
           setLowestBidder(lowest.technicianId);
-          setSpecifications(lowest.materials);
+          setSpecifications(lowest.materials || [{material: "", quantity: ""}]);
           setMaterialQuotation(lowest.materialQuotation);
           // if (lowest.addrRmarks?.length > 0) {
           //   setAddRemarks(lowest.addrRmarks[0].remarks);
@@ -261,7 +264,7 @@ useEffect(() => {
           setFixedQuote('');
           setDiscount('');
           setFixedDiscount('');
-          setServiceCharge('');
+          setServiceCharge('');    
           setOtherCharge('')
           setFixedOtherCharge('');
           setFixedServiceCharge('');
@@ -322,6 +325,12 @@ useEffect(() => {
       })),
       LowestBidderTechnicainId: lowestBidder,
       LowestBidderDealerId: "",
+      ApprovedAmount: "",
+      customerName: fullName,
+      Option1Day: "",
+      Option1Time: "",
+      Option2Day: "",
+      Option2Time: "",
     };
     try {
       
@@ -481,7 +490,7 @@ const handleUpdateTicket = async (e) => {
     CustomerId: ticketData.customerId,
     dealerId: "Customer Care",
     raiseTicketId: raiseTicketId,
-    raiseAQuoteDate: new Date().toISOString(),
+    raiseAQuoteDate: new Date(),
     raiseAQuoteByDealerId: "string",
     addrRmarks: addrRmarks.map((comment) => ({
       requestedDate: comment.requestedDate,
@@ -490,7 +499,7 @@ const handleUpdateTicket = async (e) => {
     materials: specifications.map((spec) => ({
       material: spec.material || "",
       quantity: spec.quantity || "",
-      price: spec.price !== undefined && spec.price !== null ? String(spec.price) : "",
+      price: spec.price !== undefined && spec.total !== null ? String(spec.total) : "",
       total: spec.total !== undefined && spec.total !== null ? String(spec.total) : "",
     })),
     materialQuotation: material.map((mat) => ({
@@ -716,7 +725,7 @@ const handleUpdateTicket = async (e) => {
               <div className="radio">
                 <label className="m-1">
                   <input
-                  className="form-check-input m-2"
+                  className="form-check-input m-2 border-dark"
                   type="radio"
                   name="RateQuotedBy"
                   value="Dealer/Trader"

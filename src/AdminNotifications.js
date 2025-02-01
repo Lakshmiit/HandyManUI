@@ -13,7 +13,7 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
   const navigate = useNavigate();
 
   const raiseTicketNotifications = notifications.filter(
-    (item) => item.internalStatus === "open"
+    (item) => item.internalStatus === "Open"
   );
 
   const getQuoteNotifications = notifications.filter(
@@ -155,6 +155,9 @@ const Notification = () => {
   const [newDealerCount, setNewDealerCount] = useState(0);
   const [newNotificationCount, setNewNotificationCount] = useState(0);
   const [glow, setGlow] = useState(false);
+  const [glowTicket, setGlowTicket] = useState(false);
+  const [glowQuote, setGlowQuote] = useState(false);
+  const [glowDealer, setGlowDealer] = useState(false);
   const [highlightedTicket, setHighlightedTicket] = useState(null);
   const [highlightedQuote, setHighlightedQuote] = useState(null);
   const [highlightedDealer, setHighlightedDealer] = useState(null);
@@ -185,12 +188,13 @@ const Notification = () => {
 
       const raiseTicketData = await raiseTicketResponse.json();
       const raiseTicketFiltered = raiseTicketData.filter(
-        (item) => item.internalStatus === "open"
+        (item) => item.internalStatus === "Open"
       );
       const raiseTicketCount = raiseTicketFiltered.length;
 
       setTicketNotifications(raiseTicketFiltered);
       setNewTicketCount(raiseTicketCount);
+      setGlowTicket(raiseTicketCount > 0);
 
       if (raiseTicketCount > 0) {
         setHighlightedTicket(raiseTicketFiltered[0].raiseTicketId);
@@ -204,6 +208,7 @@ const Notification = () => {
 
       setQuoteNotifications(quoteTicketFiltered);
       setNewQuoteCount(getQuoteCount);
+      setGlowQuote(getQuoteCount > 0);
 
       if (getQuoteCount > 0) {
         setHighlightedQuote(quoteTicketFiltered[0].raiseAQuoteId);
@@ -217,6 +222,7 @@ const Notification = () => {
 
       setDealerNotifications(dealerTicketFiltered);
       setNewDealerCount(getDealerCount);
+      setGlowDealer(getDealerCount > 0);
 
       if (getDealerCount > 0) {
         setHighlightedQuote(dealerTicketFiltered[0].raiseTicketId);
@@ -238,16 +244,19 @@ const Notification = () => {
 
   const handleClearTicketNotifications = () => {
     setNewTicketCount(0);
+    setGlowTicket(false);
     setHighlightedTicket(null);
   };
 
   const handleClearQuoteNotifications = () => {
     setNewQuoteCount(0);
+    setGlowQuote(false);
     setHighlightedQuote(null);
   };
 
   const handleClearDealerNotifications = () => {
     setNewDealerCount(0);
+    setGlowDealer(false);
     setHighlightedDealer(null);
   };
 
@@ -297,9 +306,12 @@ const Notification = () => {
             {["Raise Ticket", "Technician Get Quote", "Dealer Get Quote"].map((tab) => (
               <span
                 key={tab}
-                className={`tab-item ${activeTab === tab ? "active" : ""}`}
+                className={`tab-item ${activeTab === tab ? "active" : ""} 
+                ${tab === "Raise Ticket" && glowTicket ? "glow" : ""}
+                ${tab === "Technician Get Quote" && glowQuote ? "glow" : ""}
+                ${tab === "Dealer Get Quote" && glowDealer ? "glow" : ""}`}
                 onClick={() => handleTabClick(tab)}
-                style={{ cursor: "pointer" }}
+                style={{ cursor: "pointer" }}    
               >
                 {tab === "Raise Ticket" && (
                   <>

@@ -8,10 +8,11 @@ import Sidebar from './Sidebar';
 // import ForwardIcon from '@mui/icons-material/Forward';
 // import SaveAsIcon from '@mui/icons-material/SaveAs';
 // import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
-import { useParams} from 'react-router-dom';
+import { useParams, useNavigate} from 'react-router-dom';
 
 const RaiseQuotation = () => {
-//   const Navigate = useNavigate();
+ const navigate = useNavigate();
+ const {userType} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const { raiseTicketId } = useParams();
@@ -28,7 +29,6 @@ const RaiseQuotation = () => {
   const [specifications, setSpecifications] = useState([{ material: "", quantity: "", price: "", total: "" }]);
   const [requestType, setRequestType] = useState('');
   const [customerId, setCustomerId] = useState(''); 
-  const [details] = useState(''); 
   const [status, setStatus] = useState(''); 
   const [technicianId, setTechnicianId] = useState(""); 
   const [serviceCharges, setServiceCharge] = useState("");
@@ -49,14 +49,16 @@ const RaiseQuotation = () => {
   const [raiseAQuoteId, setRaiseAQuoteId] = useState('');
   const [enterQuoteAmount, setQuote] = useState('');
   const [discount, setDiscount] = useState('');
-  // const [isChecked, setIsChecked] = useState(false);
-  const [isMaterialApproved, setIsMaterialApproved] = useState(false);
-  const [isAgencyApproved, setIsAgencyApproved] = useState(false);
+  const [details, setDetails] = useState('');
+  const [isMaterialApproved, setIsMaterialApproved] = useState(true);
+  const [isAgencyApproved, setIsAgencyApproved] = useState(true);
   const [materialQuotation, setMaterialQuotation] = useState([{discounts: "", fixedDiscounts: "", deliveryCharges: "", fixedDeliveryCharges: "", serviceCharges: "", fixedServiceCharges: "", gsts: "", fixedGSTS: "", grandtotal: ""}]);
   const [lowestGrandTotal, setLowestGrandTotal] = useState('');
   const [dealerDetails, setDealerDetails] = useState([]);
   const [lowestDealerBidder, setLowestDealerBidder] = useState("");
   const [dealerId, setDealerId] = useState("");
+  const [fullName, setFullName] = useState('');
+  const [isChecked, setIsChecked] = useState(false);
   
 
   useEffect(() => {
@@ -75,8 +77,7 @@ const RaiseQuotation = () => {
         setTicketData(data);
         setId(data.id);
         setStatus(data.status);
-        // setDetails(data.Details);
-        setCustomerId(data.CustomerId);
+        setDetails(data.details);
         setState(data.state);
         setAddress(data.address);
         setDistrict(data.district);
@@ -86,6 +87,7 @@ const RaiseQuotation = () => {
         setCustomerId(data.customerId);
         setAssignedTo(data.assignedTo);
         setIsWithMaterial(data.isMaterialType);
+        setFullName(data.customerName);
         setRequestType(data.requestType || 'Without Material');
         // setSpecifications(data.materials || [{ material: "", quantity: "", price: "", total: ""}]);
         setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: ""}]);
@@ -253,14 +255,20 @@ const handleTechRemarks = (index, value) => {
 };
   
   const handleSaveTicket = async (e) => {
+    if (!isChecked) {
     e.preventDefault();
-    
+      alert("You must accept the terms and conditions before submitting.");
+      return;
+    }
+    // } else {
+    //   alert("Form submitted successfully!");
+
     const payload = {
       RaiseTicketId: ticketData.raiseTicketId,
-      date: new Date().toISOString(),
+      date: new Date(),
       address: address,
       subject: subject,
-      details: details,
+      Details: details,
       category: category,
       assignedTo: assignedTo,
       id : raiseTicketId,
@@ -291,10 +299,14 @@ const handleTechRemarks = (index, value) => {
       // : [],
       LowestBidderTechnicainId: lowestBidder,
       LowestBidderDealerId: dealerId,
+      ApprovedAmount: approvedAcceptanceTotal.toFixed(2).toString(),
+      customerName: fullName,
+      Option1Day: "",
+      Option1Time: "",
+      Option2Day: "",
+      Option2Time: "",
     };
-    // alert(JSON.stringify(payload));
     try {
-      
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
@@ -306,6 +318,7 @@ const handleTechRemarks = (index, value) => {
         throw new Error('Failed to save ticket data');
       }
       alert('Ticket saved Successfully!');
+      navigate(`/timeSlotBooking/${raiseTicketId}/${userType}`);
     } catch (error) {
       console.error('Error saving ticket data:', error);
       window.alert('Failed to save the ticket data. Please try again later.')
@@ -383,7 +396,6 @@ const handleTechRemarks = (index, value) => {
   const handleBothActions =  (e) => {
     e.preventDefault();
     handleSaveTicket(e);
-    // handleValuesTicket(e);
   }
   
   // Detect screen size for responsiveness
@@ -391,7 +403,6 @@ const handleTechRemarks = (index, value) => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     handleResize(); // Set initial state
     window.addEventListener('resize', handleResize);
-  
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
@@ -430,9 +441,9 @@ const handleTechRemarks = (index, value) => {
   // const calculateGrandTotal = () => specifications.reduce((sum, spec) => sum + spec.total, 0);
  
   return (
-    <div className="d-flex flex-row justify-content-start align-items-start">
+    <div className="d-flex">
       {!isMobile && (
-        <div className=" ml-0 m-4 p-0 sde_mnu h-90">
+        <div className=" ml-0 p-0 sde_mnu">
           <Sidebar />
         </div>
       )}
@@ -558,6 +569,7 @@ const handleTechRemarks = (index, value) => {
     <td>Service Charges</td>
     <td>GST</td>
     <td>Grand Total</td>
+    <td>Lowest Bidder</td>
     </tr>
     </thead> 
     <tbody>
@@ -712,7 +724,9 @@ const handleTechRemarks = (index, value) => {
               ? Number(lowestGrandTotal).toFixed(2)
               : '0.00'}</td>
             <td>
-              <input type="radio" name="materialApproval" className="form-check-input border-dark" value="approved" checked={isMaterialApproved}  onClick={() => setIsMaterialApproved(!isMaterialApproved)}/> Approved
+              <input type="radio" name="materialApproval" className="form-check-input border-dark"
+               value="approved" checked={isMaterialApproved}  
+               onClick={() => setIsMaterialApproved(!isMaterialApproved)}/> Approved
             </td>
           </tr>
           <tr>
@@ -720,9 +734,9 @@ const handleTechRemarks = (index, value) => {
             <td className='text-center'>{technicianId}</td>
             <td className='text-end'>{Number(totalAmount || 0).toFixed(2)}</td> 
             <td>
-              <input type="radio" name="agencyApproval" className="form-check-input border-dark" value="approved" checked={isAgencyApproved}
-                  onChange={() =>
-                    setIsAgencyApproved(!isAgencyApproved)
+              <input type="radio" name="agencyApproval" className="form-check-input border-dark" 
+              value="approved" checked={isAgencyApproved}
+              onClick={() =>setIsAgencyApproved(!isAgencyApproved)
                   } 
                   /> Approved
             </td>
@@ -746,9 +760,9 @@ const handleTechRemarks = (index, value) => {
             <label>
                 <input
                 type='checkbox'
-                name='terms'
-                value="accepted"
                 className="form-check-input m-2 border-dark"
+                checked={isChecked}
+                onChange={(e) => setIsChecked(e.target.checked)}
             /> 
             Terms and Conditions Apply
             </label>

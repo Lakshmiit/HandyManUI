@@ -26,7 +26,8 @@ const RaiseQuotation = () => {
   const [commentsList, setCommentsList] = useState([{updatedDate: new Date(), commentText: ""}]); 
   const [requestType, setRequestType] = useState('');
   const [customerId, setCustomerId] = useState(''); 
-  const [status, setStatus] = useState('');  
+  const [status, setStatus] = useState('');
+  const [fullName, setFullName] = useState('');  
   // const [gst, setGST] = useState("");
   // const [fixedOtherCharge, setFixedOtherCharge] = useState('');
   const [raiseAQuoteId]=useState('');
@@ -53,12 +54,19 @@ const RaiseQuotation = () => {
     const [address, setAddress] = useState('');
     // const [rateQuotedBy, setRateQuotedBy] = useState("Customer Care");
     // const [isDealerSelected, setIsDealerSelected] = useState(false);
-    const [material, setMaterialQuotation] = useState([{discount: "", fixedDiscount: "", deliverycharges: "", fixedDeliveryChargs: "", servicecharges: "", fixedServicecharges: "", gst: "", fixedGST: "", grandtotal: ""}])
+    const [material, setMaterialQuotation] = useState([{discount: "", fixedDiscount: "", deliverycharges: '', fixedDeliveryChargs: "", servicecharges: '', fixedServicecharges: "", gst: '', fixedGST: "", grandtotal: ""}])
     const {category} = useParams();
     const [dealerData, setDealerData] = useState({});
     const {userType} = useParams();
     // const [dealerId, setDealerId] = useState('');
  const {dealerId} = useParams();
+ const [fixedDeliveryCharge] = useState('100'); 
+ const [fixedServiceCharges] = useState('10');
+ const [gsts] = useState('18');
+ const [calculatedGrandTotal, setCalculatedGrandTotal] = useState('');
+
+ const [calculatedServiceCharge, setCalculatedServiceCharge] = useState('0');
+ const [calculatedGSTS, setCalculatedGSTS] = useState('0');
     useEffect(() => {
       console.log(subject, loading, isWithMaterial, id, raiseAQuoteId, dealerData, customerId);
     }, [subject, loading, isWithMaterial, id, raiseAQuoteId, dealerData, customerId]);
@@ -165,11 +173,13 @@ const calculateTotalPrice = () => {
   
     const fixedDiscount = baseAmount * (discount / 100); // Percentage discount
     const fixedDeliveryChargs = deliveryCharges;
-    const fixedServicecharges = ((baseAmount - fixedDiscount + deliveryCharges) * serviceCharges) / 100;;
-    const fixedGST = ((baseAmount - fixedDiscount + deliveryCharges + serviceCharges) * gst) / 100;
+    const fixedServicecharges = (deliveryCharges * serviceCharges) / 100;;
+    const fixedGST = ((serviceCharges) * gst) / 100;
+    //const fixedGST = ((baseAmount - fixedDiscount + deliveryCharges + serviceCharges) * gst) / 100;
+  
     const grandtotal =
       baseAmount - fixedDiscount + fixedDeliveryChargs + fixedServicecharges + fixedGST;
-  
+   
     updated[0] = {
       ...updated[0],
       fixedDiscount,
@@ -216,6 +226,7 @@ useEffect(() => {
             setIsWithMaterial(data.isMaterialType);
             // setAssignedTo(data.assignedTo);
             setStatus(data.status);
+            setFullName(data.customerName);
             setRequestType(data.requestType || 'Without Material');
             setAttachments(data.attachments);
             setSpecifications(data.materials || [{ material: "", quantity: "", price: "", total: ""}]);
@@ -376,6 +387,12 @@ useEffect(() => {
       })),
       LowestBidderTechnicainId: lowestBidder,
       LowestBidderDealerId: "",
+      ApprovedAmount: "",
+      customerName: fullName,
+      Option1Day: "",
+      Option1Time: "",
+      Option2Day: "",
+      Option2Time: "",
     };
     try {
       // alert(JSON.stringify(payload));
@@ -399,38 +416,59 @@ useEffect(() => {
 
 const handleUpdateTicket = async (e) => {
   e.preventDefault();
+  // alert(material);
   const payload1 = {
     id :"string",
     ticketId: ticketData.raiseTicketId,
     CustomerId: ticketData.customerId,
     DealerId: dealerId,
     raiseTicketId: raiseTicketId,
-    raiseAQuoteDate: new Date().toISOString(), 
+    raiseAQuoteDate: new Date(), 
     raiseAQuoteByDealerId: "string",
     addrRmarks: addrRmarks.map((comment) => ({
       requestedDate: comment.requestedDate,
       remarks: comment.remarks,
   })),
-  materials: specifications.map((spec) => ({
-    material: spec.material,
-    quantity: spec.quantity,
-    price: spec.price.toString(),
-    total: spec.total.toString(),
+//   materials: specifications.map((spec) => ({
+//     material: spec.material,
+//     quantity: spec.quantity,
+//     price: spec.price.toString(),
+//     total: spec.total.toString(),
+// })),
+// materialQuotation: material.map((mat) => ({
+//   discount: mat.discount.toString(),
+//   fixedDiscount: mat.fixedDiscount.toString(),
+//   deliveryCharges: mat.deliverycharges,
+//   fixedDeliveryChargs: mat.fixedDeliveryChargs.toString(),
+//   serviceCharge: mat.servicecharges,
+//   fixedServicecharges: mat.fixedServicecharges.toString(),
+//   gst: mat.gst,
+//   fixedGST: mat.fixedGST.toString(),
+//   grandtotal: mat.grandtotal.toString(),
+
+
+materials: specifications.map((spec) => ({
+  material: spec.material || "",
+  quantity: spec.quantity || 0,
+  price: spec.price ? spec.price.toString() : "0",
+  total: spec.total ? spec.total.toString() : "0",
 })),
 materialQuotation: material.map((mat) => ({
-  discount: mat.discount.toString(),
-  fixedDiscount: mat.fixedDiscount.toString(),
-  deliveryCharges: mat.deliverycharges.toString(),
-  fixedDeliveryChargs: mat.fixedDeliveryChargs.toString(),
-  serviceCharge: mat.servicecharges.toString(),
-  fixedServicecharges: mat.fixedServicecharges.toString(),
-  gst: mat.gst.toString(),
-  fixedGST: mat.fixedGST.toString(),
-  grandtotal: mat.grandtotal.toString(),
+  
+  discount: mat.discount ? mat.discount.toString() : "0",
+  fixedDiscount: mat.fixedDiscount ? mat.fixedDiscount.toString() : "0",
+  deliveryCharges:fixedDeliveryCharge,
+  fixedDeliveryChargs:fixedDeliveryCharge,
+  serviceCharge: fixedServiceCharges,
+  fixedServiceCharges: calculatedServiceCharge.toString(),
+  gsts: gsts,
+  fixedGST: calculatedGSTS,
+  grandtotal:calculatedGrandTotal.toString(),
 })),
  
   }; 
-// alert(JSON.stringify(payload1));
+alert(JSON.stringify(payload1));
+alert(fixedDeliveryCharge);
   try {
     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuoteByDealer/CreateRaiseAQuoteByDealer`, {
       method: 'POST',
@@ -678,70 +716,87 @@ materialQuotation: material.map((mat) => ({
         type="number"
         className="form-control text-end"
         value={materialAmount()}
-        readOnly
+        disabled
       />
     </td>
   </tr>
   <tr>
-    <td>
-      <label>Discount</label>
-    </td>
-    <td colSpan="2">
-      <input
-        type="number"
-        className="form-control text-end"
-        value={material[0]?.discount}
-        onChange={(e) =>
-          setMaterialQuotation((prev) => {
-            const updated = [...prev];
-            updated[0].discount = parseFloat(e.target.value);
-            return updated;
-          })
-        }
-        placeholder="Enter Discount"
-      />
-    </td>
-    <td colSpan="2">
-      <input
-        type="number"
-        className="form-control text-end"
-        value={Number(material[0]?.fixedDiscount).toFixed(2)}
-        readOnly
-        placeholder="Fixed Discount"
-      />
-    </td>
-  </tr>
+  <td>
+    <label>Discount</label>
+  </td>
+  <td colSpan="2">
+    <input
+      type="number"
+      className="form-control text-end"
+      value={material[0]?.discount}
+      onChange={(e) =>
+        setMaterialQuotation((prev) => {
+          const updated = [...prev];
+          updated[0].discount = parseFloat(e.target.value);
+          alert(material[0].deliverycharges);
+           //setFixedDeliveryCharge(material[0].deliverycharges);
+           //alert(materialAmount() - e.target.value);
+           //(material[0].servicecharges);
+           const calculateserviceCharge = ((materialAmount() - e.target.value) * fixedServiceCharges)/100;           
+           setCalculatedServiceCharge(calculateserviceCharge);
+           setCalculatedGSTS(((calculateserviceCharge * gsts) / 100).toFixed(2));
+           var CalculateTotal = (materialAmount() - e.target.value) + Number(fixedDeliveryCharge) + Number(calculateserviceCharge) + Number(calculatedGSTS);
+          alert(CalculateTotal);
+           setCalculatedGrandTotal(Number(CalculateTotal));
+          return updated;
+        })
+      }
+      placeholder="Enter Discount"
+    />
+  </td>
+  <td colSpan="2">
+    <input
+      type="number"
+      className="form-control text-end"
+      value={Number(material[0]?.fixedDiscount).toFixed(2)}
+      readOnly
+      placeholder="Fixed Discount"
+      disabled
+    />
+  </td>
+</tr>
 
-  {/* Delivery Charges */}
-  <tr>
-    <td>
-      <label htmlFor="deliveryCharges">Delivery Charges</label>
-    </td>
-    <td colSpan="2">
-      <input
-        type="number"
-        className="form-control text-end"
-        value={material[0]?.deliverycharges}
-        onChange={(e) =>
-          setMaterialQuotation((prev) => {
-            const updated = [...prev];
-            updated[0].deliverycharges = parseFloat(e.target.value);
-            return updated;
-          })
-        }
-        placeholder="Enter Delivery Charges"
-      />
-    </td>
-    <td colSpan="2">
-      <input
-        type="number"
-        className="form-control text-end"
-        value={material[0]?.fixedDeliveryChargs}
-        readOnly
-        placeholder="Fixed Delivery Amount"
-      />
-    </td>
-  </tr>
+{/* Delivery Charges */}
+<tr>
+  <td>
+    <label htmlFor="deliveryCharges">Delivery Charges</label>
+  </td>
+  <td colSpan="2">
+    <input
+      type="number"
+      className="form-control text-end"
+      value={fixedDeliveryCharge}
+      // onChange={(e) =>
+      //   setFixedDeliveryCharge((prev) => {
+      //     const updated = [...prev];
+      //     updated[0].deliverycharges = parseFloat(e.target.value);
+          
+      //     // Ensure fixedDeliveryChargs is updated when deliverycharges change
+         
+          
+      //     return updated;
+      //   })
+      // }
+      // placeholder="Enter Delivery Charges"
+      disabled
+    />
+  </td>
+  <td colSpan="2">
+    <input
+      type="number"
+      className="form-control text-end"
+      value={fixedDeliveryCharge}
+      readOnly
+      disabled
+    />
+  </td>
+</tr>
+
 
   {/* Service Charges */}
   <tr>
@@ -752,24 +807,26 @@ materialQuotation: material.map((mat) => ({
       <input
         type="number"
         className="form-control text-end"
-        value={material[0]?.servicecharges}
-        onChange={(e) =>
-          setMaterialQuotation((prev) => {
-            const updated = [...prev];
-            updated[0].servicecharges = parseFloat(e.target.value);
-            return updated;
-          })
-        }
-        placeholder="Enter Service Charges"
+        value={fixedServiceCharges}
+        // onChange={(e) =>
+        //   setMaterialQuotation((prev) => {
+        //     const updated = [...prev];
+        //     updated[0].servicecharges = parseFloat(e.target.value);
+        //     return updated;
+        //   })
+        // }
+        // placeholder="Enter Service Charges"
+        disabled
       />
     </td>
     <td colSpan="2">
       <input
         type="number"
         className="form-control text-end"
-        value={Number(material[0]?.fixedServicecharges).toFixed(2)}
+        value={calculatedServiceCharge}
         readOnly
-        placeholder="Fixed Service Charges"
+        // placeholder="Fixed Service Charges"
+        disabled
       />
     </td>
   </tr>
@@ -783,24 +840,26 @@ materialQuotation: material.map((mat) => ({
       <input
         type="number"
         className="form-control text-end"
-        value={material[0]?.gst }
-        onChange={(e) =>
-          setMaterialQuotation((prev) => {
-            const updated = [...prev];
-            updated[0].gst = parseFloat(e.target.value);
-            return updated;
-          })
-        }
-        placeholder="Enter GST"
+        value={gsts}
+        // onChange={(e) =>
+        //   setMaterialQuotation((prev) => {
+        //     const updated = [...prev];
+        //     updated[0].gst = parseFloat(e.target.value);
+        //     return updated;
+        //   })
+        // }
+        // placeholder="Enter GST"
+        disabled
       />
     </td>
     <td colSpan="2">
       <input
         type="number"
         className="form-control text-end"
-        value={Number(material[0]?.fixedGST).toFixed(2)}
+        value={calculatedGSTS}
         readOnly
-        placeholder="Fixed GST"
+        // placeholder="Fixed GST"
+        disabled
       />
     </td>
   </tr>
@@ -814,9 +873,10 @@ materialQuotation: material.map((mat) => ({
       <input
         type="number"
         className="form-control text-end"
-        value={Number(material[0]?.grandtotal).toFixed(2)}
-        readOnly
-        placeholder="Grand Total"
+         value={calculatedGrandTotal}
+        // placeholder="Grand Total"
+        // onChange={(e) => calculatedGrandTotal(e)}
+        disabled
       />
     </td>
   </tr>

@@ -35,7 +35,7 @@ const BidderTicketQuotation = () => {
   const [lowestBidder, setLowestBidder] = useState("");
   const [othercharges, setOtherCharge] = useState("");
   const [addrRmarks, setAddRemarks] = useState([{requestedDate: new Date(), remarks: ""}]);
-  const [techRemarks, setRemarks] = useState('');
+  const [techRemarks, setRemarks] = useState([{requestedDate: new Date(), remarks: ""}]);
   const [assignedTo, setAssignedTo] = useState('');
   // const [uploadedFiles] = useState([]);
   const [isWithMaterial, setIsWithMaterial] = useState(false);
@@ -57,25 +57,12 @@ const BidderTicketQuotation = () => {
     const [district, setDistrict] = useState('')
     const [zipCode, setZipcode] = useState('');
     const [address, setAddress] = useState('');
+    const [fullName, setFullName] = useState('');
     const [rateQuotedBy, setRateQuotedBy] = useState("Customer Care");
-    // const [isDealerSelected, setIsDealerSelected] = useState(false);
    const [lowestGrandTotal, setLowestGrandTotal] = useState('');
+   const [details, setDetails] = useState('');
     const [materialQuotation, setMaterialQuotation] = useState([{discount: "", fixedDiscount: "", deliverycharges: "", fixedDeliveryChargs: "", servicecharges: "", fixedServicecharges: "", gst: "", fixedGST: "", grandtotal: ""}])
-    // const [dealerData, setDealerData] = useState({});
-    //  const [isMaterialApproved, setIsMaterialApproved] = useState(false);
-    // const [isAgencyApproved, setIsAgencyApproved] = useState(false);
-    // const charges = materialQuotation[0] || {
-    //   discount: "",
-    //   fixedDiscount: "",
-    //   deliveryCharges: "",
-    //   fixedDeliveryChargs: "",
-    //   serviceCharges: "",
-    //   fixedServicharges: "",
-    //   gsts: "",
-    //   fixedGST: "",
-    //   grandtotal: "",
-    // };
-
+  
     useEffect(() => {
         console.log(subject, loading, isWithMaterial, enterQuoteAmount, fixedQuote, materialQuotation, raiseAQuoteId, id);
       }, [subject, loading, isWithMaterial, enterQuoteAmount, fixedQuote, materialQuotation, raiseAQuoteId, id]);
@@ -84,32 +71,26 @@ const BidderTicketQuotation = () => {
     useEffect(() => {
       // API URL
       const apiUrl = `https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
-      // Fetching the data from the API
       const fetchData = async () => {
         try {
           const response = await fetch(apiUrl);
           const quotedata = await response.json()
           setTechnicianDetails(quotedata);
-          //alert(JSON.stringify(technicianDetails));
           setRaiseAQuoteId(quotedata.raiseAQuoteId);
           setQuote(quotedata.enterQuoteAmount);
-  
           setFixedQuote(quotedata.fixedQuote);
           setDiscount(quotedata.discount);
           setFixedDiscount(quotedata.fixedDiscount);
           setId(quotedata.id);
-          
           setGST(quotedata.gst);
           setFixedGSTs(quotedata.fixedGST);
           setTotalAmount(quotedata.totalAmount);
-          //  alert(quotedata.totalAmount);
           setOtherCharge(quotedata.othercharges);
-          // alert(otherCharge);
           setServiceCharge(quotedata.serviceCharges);
           setFixedServiceCharge(quotedata.fixedServiceCharge);
           setFixedOtherCharge(quotedata.fixedOtherCharge);
+          setRemarks(quotedata.addrRmarks || [{ requestedDate: new Date(), remarks: ""}]);
           setSpecifications(quotedata.materials || [{material: "", quantity: "", price: "", total: ""}]);         
-          // setAddRemarks(quotedata.addrRmarks);
         } catch (error) {
           console.error('Error fetching data:', error);
         }
@@ -193,6 +174,8 @@ const BidderTicketQuotation = () => {
             setIsWithMaterial(data.isMaterialType);
             setAssignedTo(data.assignedTo);
             setStatus(data.status);
+            setDetails(data.details);
+            setFullName(data.customerName);
             setRequestType(data.requestType || 'Without Material');
             setAttachments(data.attachments);
             // setSpecifications(data.materials || [{ material: "", quantity: "", price: "", total: "" }]);
@@ -231,15 +214,7 @@ const BidderTicketQuotation = () => {
               throw new Error('Failed to fetch ticket data');
             }
             const dataDealer = await  response.json();
-            
-
-            
-            // alert(JSON.stringify(dataDealer));
-            // console.log(JSON.stringify(dataDealer));
             setDealerDetails(dataDealer);
-            // setId(dataDealer.id);
-            // setDealerId(dataDealer.dealerId);
-            // setCustomerId(dataDealer.customerId);
             setAddRemarks(dataDealer[0].addrRmarks || []);
              setSpecifications(dataDealer[0].materials || []);
            setMaterialQuotation(dataDealer[0]?.materialQuotation || []);
@@ -414,10 +389,10 @@ const BidderTicketQuotation = () => {
 
     const payload = {
       RaiseTicketId: ticketData.raiseTicketId,
-      date: new Date().toISOString(),
+      date: new Date(),
       address: address,
       subject: ticketData.subject,
-      details: ticketData.details,
+      details: details,
       category: ticketData.category,
       assignedTo: "Customer",
       id : raiseTicketId,
@@ -444,6 +419,12 @@ const BidderTicketQuotation = () => {
       })),
       LowestBidderTechnicainId: lowestBidder,
       LowestBidderDealerId: dealerId,
+      ApprovedAmount: "",
+      customerName: fullName,
+      Option1Day: "",
+      Option1Time: "",
+      Option2Day: "",
+      Option2Time: "",
     };
     try {
       
@@ -667,7 +648,7 @@ const BidderTicketQuotation = () => {
                 required
               >
                 <option value="">Select</option>
-                <option value="Customer Care">Customer Care</option>
+                <option value="Customer Care">Customer</option>
               </Form.Control>
             </Form.Group>
           </Col>
@@ -1015,11 +996,11 @@ const BidderTicketQuotation = () => {
             <td className='text-end'>{Number(total || 0).toFixed(2)}</td> 
             
           </tr>
-          <tr className="blinking-row">
+          {/* <tr className="blinking-row">
             <td className='fs-5'>Approved Acceptance Total Amount</td>
             <td></td>
             <td className='text-end'></td>
-          </tr>
+          </tr> */}
         </tbody>
       </table>
 
