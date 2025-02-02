@@ -69,7 +69,7 @@ const BookingConfirmation = () => {
   // useEffect(() => {
   //   const fetchticketData = async () => {
   //     try {
-  //       const response = await fetch(`https://localhost:7091/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+  //       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
   //       if (!response.ok) {
   //         throw new Error('Failed to fetch ticket data');
   //       }
@@ -115,7 +115,8 @@ const BookingConfirmation = () => {
     useEffect(() => {
       const fetchticketData = async () => {
         try {
-          const response = await fetch(`https://localhost:7091/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+          const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
+/RaiseTicket/GetTicket/${raiseTicketId}`);
           if (!response.ok) {
             throw new Error('Failed to fetch ticket data');
           }
@@ -158,7 +159,7 @@ const BookingConfirmation = () => {
   //     if (!ticketId) return;  
   //     const fetchDeliveryData = async () => {
   //       try {
-  //         const response = await fetch(`https://localhost:7091/api/DeliveryNote/GetRaiseTicketForDealer?RaiseTicketId=${ticketId}`);
+  //         const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/DeliveryNote/GetRaiseTicketForDealer?RaiseTicketId=${ticketId}`);
   //         if (!response.ok) {
   //           throw new Error('Failed to fetch delivery data');
   //         }
@@ -190,7 +191,7 @@ const BookingConfirmation = () => {
       setLoading(true); // Set loading to true before fetching
       try {
         const response = await fetch(
-          `https://localhost:7091/api/DeliveryNote/GetRaiseTicketForDealer?RaiseTicketId=${ticketId}`
+          `https://handymanapiv2.azurewebsites.net/api/DeliveryNote/GetRaiseTicketForDealer?RaiseTicketId=${ticketId}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch delivery data");
@@ -219,7 +220,7 @@ const BookingConfirmation = () => {
   useEffect(() => {
     const fetchtechnicianData = async () => {
       try {
-        const response = await fetch(`https://localhost:7091/api/Technician/GetTechnicianDetailsForInvoice?TechnicianId=${lowestBidder}`);
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Technician/GetTechnicianDetailsForInvoice?TechnicianId=${lowestBidder}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
@@ -242,7 +243,7 @@ const BookingConfirmation = () => {
   useEffect(() => {
     const fetchdealerData = async () => {
       try {
-        const response = await fetch(`https://localhost:7091/api/Dealer/GetDealerDetailsForInvoice?DealerId=${lowestDealerBidder}`);
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Dealer/GetDealerDetailsForInvoice?DealerId=${lowestDealerBidder}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
@@ -265,7 +266,8 @@ const BookingConfirmation = () => {
   // Fetch data from API on component mount
       useEffect(() => {
         // API URL
-        const apiUrl = `https://localhost:7091/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
+        const apiUrl = `https://handymanapiv2.azurewebsites.net/api
+/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
         // Fetching the data from the API
         const fetchData = async () => {
           try {
@@ -314,7 +316,8 @@ const BookingConfirmation = () => {
             useEffect(() => {
               const fetchPaymentData = async () => {
                 try {
-                  const response = await fetch(`https://localhost:7091/api/Payment/GetPaymentDetailsByRaiseTicketId?RaiseTicketId=${ticketId}`);
+                  const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
+/Payment/GetPaymentDetailsByRaiseTicketId?RaiseTicketId=${ticketId}`);
                   if (!response.ok) {
                     throw new Error('Failed to fetch ticket data');
                   }
@@ -402,7 +405,8 @@ const handleRemarksChange = (newRemarks) => {
     };
   
     try {
-      const response = await fetch(`https://localhost:7091/api/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
+/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -481,7 +485,8 @@ const handleRemarksChange = (newRemarks) => {
   };
 
   try {
-    const response = await fetch(`https://localhost:7091/api/DeliveryNote/CreateDeliveryNote`, {
+    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
+/DeliveryNote/CreateDeliveryNote`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -553,7 +558,8 @@ const payload2 = {
 };
 
 try {
-  const response = await fetch(`https://localhost:7091/api/DeliveryNote/${id}`, {
+  const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
+/DeliveryNote/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -615,7 +621,8 @@ const payload3 = {
 try {
 
 
-  const response = await fetch(`https://localhost:7091/api/DeliveryNote/${id}`, {
+  const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
+/DeliveryNote/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',

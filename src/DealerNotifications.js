@@ -126,7 +126,8 @@ const Notification = () => {
     const fetchNotifications = async () => {
       try {
         const getQuoteResponse = await fetch(
-          `https://localhost:7091/api/RaiseTicket/GetRaiseTicketNotificationsByStateAndDistrictForDealer?district=${district}&category=${category}`
+          `https://handymanapiv2.azurewebsites.net/api
+/RaiseTicket/GetRaiseTicketNotificationsByStateAndDistrictForDealer?district=${district}&category=${category}`
         );
         const getQuoteData = await getQuoteResponse.json();
           const getQuoteCount = getQuoteData.length;
