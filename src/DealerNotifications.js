@@ -100,16 +100,16 @@ const Notification = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [quoteNotifications, setQuoteNotifications] = useState([]);
-  const [orderNotifications, setOrderNotifications] = useState([]);
+  // const [orderNotifications, setOrderNotifications] = useState([]);
   const [newQuoteCount, setNewQuoteCount] = useState(0);
-  const [newOrdersCount, setNewOrderCount] = useState(0);
+  // const [newOrdersCount, setNewOrderCount] = useState(0);
   const [newNotificationCount, setNewNotificationCount] = useState(0);
   const [highlightedQuote, setHighlightedQuote] = useState(null);
-  const [highlightedOrder, setHighlightedOrder] = useState(null);
+  // const [highlightedOrder, setHighlightedOrder] = useState(null);
   const [activeTab, setActiveTab] = useState("");
   const [glow, setGlow] = useState(false);
   const [glowQuote, setGlowQuote] = useState(false);
-  const [glowOrder, setGlowOrder] = useState(false);
+  // const [glowOrder, setGlowOrder] = useState(false);
   const { district, category } = useParams();
   const { userType } = useParams();
   const { dealerId } = useParams();
@@ -122,50 +122,31 @@ const Notification = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []); 
 
+  useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const [getQuoteResponse, quoteOrdersResponse] = await Promise.all([
-          fetch(
+        const getQuoteResponse = await fetch(
           `https://localhost:7091/api/RaiseTicket/GetRaiseTicketNotificationsByStateAndDistrictForDealer?district=${district}&category=${category}`
-        ),
-        fetch(
-          ``
-        ),
-      ]);
-
+        );
         const getQuoteData = await getQuoteResponse.json();
-        const getQuoteCount = getQuoteData.length;
-
-        setQuoteNotifications(getQuoteData);
-        setNewQuoteCount(getQuoteCount);
-        setGlowQuote(getQuoteCount > 0);
-        if (getQuoteCount > 0) {
-          setHighlightedQuote(getQuoteData[0].raiseAQuoteId);
+          const getQuoteCount = getQuoteData.length;
+  
+          setQuoteNotifications(getQuoteData);
+          setNewQuoteCount(getQuoteCount);
+          setGlowQuote(getQuoteCount > 0);
+          if (getQuoteCount > 0) {
+            setHighlightedQuote(getQuoteData[0].raiseAQuoteId);
+          }
+          const totalNotifications = getQuoteCount;
+          setNewNotificationCount(totalNotifications);
+          setGlow(totalNotifications > 0);
+        } catch (error) {
+          console.error("Failed to fetch notifications:", error);
         }
-
-        const quoteOrdersData = await quoteOrdersResponse.json();
-        const quoteOrderCount = quoteOrdersData.length;
-
-        setOrderNotifications(quoteOrdersData);
-        setNewOrderCount(quoteOrderCount);
-        setGlowOrder(quoteOrderCount > 0);
-        if (quoteOrderCount > 0) {
-          setHighlightedOrder(quoteOrdersData[0].raiseAQuoteId);
-        }
-
-        const totalNotifications = getQuoteCount + quoteOrderCount;
-        setNewNotificationCount(totalNotifications);
-        setGlow(totalNotifications > 0);
-      } catch (error) {
-        console.error("Failed to fetch notifications:", error);
-      }
-    };
-
-    useEffect(() => {   
+      };
       fetchNotifications();
-      const interval = setInterval(fetchNotifications, 60000);
-      return () => clearInterval(interval);
-    }, [district, category]);
+   }, [district, category]);
+  
 
   const handleClearQuoteNotifications = () => {
     setNewQuoteCount(0);
@@ -173,11 +154,11 @@ const Notification = () => {
     setHighlightedQuote(null);
   };
 
-  const handleClearOrdersNotifications = () => {
-    setNewOrderCount(0);
-    setGlowOrder(false);
-    setHighlightedOrder(null);
-  };
+  // const handleClearOrdersNotifications = () => {
+  //   setNewOrderCount(0);
+  //   setGlowOrder(false);
+  //   setHighlightedOrder(null);
+  // };
 
   const handleTabClick = (tab) => setActiveTab(tab);
 
@@ -227,7 +208,6 @@ const Notification = () => {
                 key={tab}
                 className={`tab-item ${activeTab === tab ? "active" : ""} 
                 ${tab === "Raise A Quote Buy Products" && glowQuote ? "glow" : ""}
-                ${tab === "Raise A Quote Orders" && glowOrder ? "glow" : ""}
                 `}
                 onClick={() => handleTabClick(tab)}
                 style={{ cursor: "pointer" }}
@@ -243,9 +223,9 @@ const Notification = () => {
                 {tab === "Raise A Quote Orders" && (
                 <>
                 Raise A Quote Orders{" "}
-                {newOrdersCount > 0 && (
-                  <span className="badge bg-danger">{newOrdersCount}</span>
-                )}
+                
+                  <span className="badge bg-danger">{}</span>
+               
                 </>
                 )}
               </span>
@@ -271,7 +251,7 @@ const Notification = () => {
                 </div>
               </>
             )}
-            {activeTab === "Raise A Quote Orders" && (
+            {/* {activeTab === "Raise A Quote Orders" && (
               <>
                 <NotificationsList
                   notifications={orderNotifications}
@@ -288,7 +268,7 @@ const Notification = () => {
                   View All Notifications
                 </div>
               </>
-            )}
+            )} */}
           </div>
         </div>
       </div>

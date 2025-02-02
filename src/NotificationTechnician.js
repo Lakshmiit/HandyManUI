@@ -99,16 +99,16 @@ const Notification = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [quoteNotifications, setQuoteNotifications] = useState([]);
-  const [orderNotifications, setOrderNotifications] = useState([]);
+  // const [orderNotifications, setOrderNotifications] = useState([]);
   const [newQuoteCount, setNewQuoteCount] = useState(0);
-  const [newOrderCount, setNewOrderCount] = useState(0);
+  // const [newOrderCount, setNewOrderCount] = useState(0);
   const [newNotificationCount, setNewNotificationCount] = useState(0);
   const [highlightedQuote, setHighlightedQuote] = useState(null);
-  const [highlightedOrder, setHighlightedOrder] = useState(null);
+  // const [highlightedOrder, setHighlightedOrder] = useState(null);
   const [activeTab, setActiveTab] = useState("");
   const [glow, setGlow] = useState(false);
   const [glowQuote, setGlowQuote] = useState(false);
-  const [glowOrder, setGlowOrder] = useState(false);
+  // const [glowOrder, setGlowOrder] = useState(false);
   const { district, category } = useParams();
   const { userType } = useParams();
   const { technicianId } = useParams();
@@ -121,19 +121,13 @@ const Notification = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []); 
 
- 
-    const fetchNotifications = async () => {
-      try {
-        const [getQuoteResponse, QuoteOrdersResponse] = await  Promise.all([
-          fetch(
-          `https://localhost:7091/api/RaiseTicket/GetNotificationsByDistrict?district=${district}&category=${category}`
-        ), 
-        // fetch(
-        //   ``
-        // ),
-      ]);
-
-        const getQuoteData = await getQuoteResponse.json();
+ useEffect(() => {
+  const fetchNotifications = async () => {
+    try {
+      const getQuoteResponse = await fetch(
+        `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByDistrict?district=${district}&category=${category}`
+      );
+      const getQuoteData = await getQuoteResponse.json();
         const getQuoteCount = getQuoteData.length;
 
         setQuoteNotifications(getQuoteData);
@@ -142,33 +136,16 @@ const Notification = () => {
         if (getQuoteCount > 0) {
           setHighlightedQuote(getQuoteData[0].raiseAQuoteId);
         }
-
-        const quoteOrdersData = await QuoteOrdersResponse.json();
-        const quoteOrderCount = quoteOrdersData.length;
-
-        setOrderNotifications(quoteOrdersData);
-        setNewOrderCount(quoteOrderCount);
-        setGlowOrder(quoteOrderCount > 0);
-        if (quoteOrderCount > 0) {
-          setHighlightedOrder(quoteOrdersData[0].raiseAQuoteId);
-        }
-
-        const totalNotifications = getQuoteCount + quoteOrderCount;
+        const totalNotifications = getQuoteCount;
         setNewNotificationCount(totalNotifications);
         setGlow(totalNotifications > 0);
       } catch (error) {
         console.error("Failed to fetch notifications:", error);
       }
     };
-
-
-  useEffect(() => {
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 60000);
-    return () => clearInterval(interval);
-  }, [district, category]);
-
-  console.log(fetchNotifications());
+ }, [district, category]);
+    
 
   const handleClearQuoteNotifications = () => {
     setNewQuoteCount(0);
@@ -176,11 +153,11 @@ const Notification = () => {
     setHighlightedQuote(null);
   };
 
-  const handleClearOrderNotifications = () => {
-    setNewOrderCount(0);
-    setGlowOrder(false);
-    setHighlightedOrder(null);
-  };
+  // const handleClearOrderNotifications = () => {
+  //   setNewOrderCount(0);
+  //   setGlowOrder(false);
+  //   setHighlightedOrder(null);
+  // };
 
   const handleTabClick = (tab) => setActiveTab(tab);
 
@@ -230,7 +207,6 @@ const Notification = () => {
                 key={tab}
                 className={`tab-item ${activeTab === tab ? "active" : ""} 
                 ${tab === "Raise A Quote" && glowQuote ? "glow" : ""}
-                  ${tab === "Raise A Quote Orders" && glowOrder ? "glow" : ""
                 }`}
                 onClick={() => handleTabClick(tab)}
                 style={{ cursor: "pointer" }}
@@ -246,9 +222,9 @@ const Notification = () => {
                 {tab === "Raise A Quote Orders" && (
                   <>
                     Raise A Quote Orders{" "}
-                    {newOrderCount > 0 && (
-                      <span className="badge bg-danger">{newOrderCount}</span>
-                    )}
+                  
+                      <span className="badge bg-danger">{}</span>
+                  
                   </>
                 )}
               </span>
@@ -276,7 +252,7 @@ const Notification = () => {
             )}
           </div>
           
-          <div>
+          {/* <div>
             {activeTab === "Raise A Quote Orders" && (
               <>
                 <NotificationsList
@@ -295,7 +271,7 @@ const Notification = () => {
                 </div>
               </>
             )}
-          </div>
+          </div> */}
         </div>
       </div>
       <style jsx>{`
