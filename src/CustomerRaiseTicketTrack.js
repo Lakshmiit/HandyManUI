@@ -6,11 +6,11 @@ import { Dashboard as MoreVertIcon } from '@mui/icons-material';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import './App.css';
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 const CustomerTicketTrack = () => {
-  const Navigate = useNavigate();
-  const {userType} = useParams();
+  // const Navigate = useNavigate();
+  // const {userType} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const {raiseTicketId} = useParams();
@@ -67,7 +67,7 @@ const CustomerTicketTrack = () => {
 //   useEffect(() => {
 //     const fetchticketData = async () => {
 //       try {
-//         const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+//         const response = await fetch(`https://localhost:7091/api/RaiseTicket/GetTicket/${raiseTicketId}`);
 //         if (!response.ok) {
 //           throw new Error('Failed to fetch ticket data');
 //         }
@@ -111,7 +111,7 @@ const CustomerTicketTrack = () => {
 useEffect(() => {
     const fetchticketData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+        const response = await fetch(`https://localhost:7091/api/RaiseTicket/GetTicket/${raiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
@@ -151,7 +151,7 @@ useEffect(() => {
 
     const fetchDeliveryData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/DeliveryNote/GetRaiseTicketForDealer?RaiseTicketId=${ticketId}`);
+        const response = await fetch(`https://localhost:7091/api/DeliveryNote/GetRaiseTicketForDealer?RaiseTicketId=${ticketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch delivery data');
         }
@@ -183,7 +183,7 @@ useEffect(() => {
   useEffect(() => {
     const fetchtechnicianData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Technician/GetTechnicianDetailsForInvoice?TechnicianId=${lowestBidder}`);
+        const response = await fetch(`https://localhost:7091/api/Technician/GetTechnicianDetailsForInvoice?TechnicianId=${lowestBidder}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
@@ -203,7 +203,7 @@ useEffect(() => {
   }, [lowestBidder]);
 
 useEffect(() => {
-  const apiUrl = `https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
+  const apiUrl = `https://localhost:7091/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
   const fetchData = async () => {
     try {
       const response = await fetch(apiUrl);
@@ -235,7 +235,7 @@ useEffect(() => {
         useEffect(() => {
         const fetchPaymentData = async () => {
           try {
-            const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Payment/GetPaymentDetailsByRaiseTicketId?RaiseTicketId=${ticketId}`);
+            const response = await fetch(`https://localhost:7091/api/Payment/GetPaymentDetailsByRaiseTicketId?RaiseTicketId=${ticketId}`);
             if (!response.ok) {
               throw new Error('Failed to fetch ticket data');
             }
@@ -294,8 +294,8 @@ useEffect(() => {
       Materials: specifications.map((spec) => ({
         material: spec.material,
         Quantity: spec.quantity,
-        price: spec.price.toString(),
-        Total: spec.total.toString(),
+        price: spec.price,
+        Total: spec.total,
       })),
       comments: commentsList.map((Comment) => ({
         updatedDate: Comment.updatedDate,
@@ -304,7 +304,7 @@ useEffect(() => {
     };
   
     try {
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://localhost:7091/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -315,7 +315,7 @@ useEffect(() => {
         throw new Error('Failed to save ticket data');
       }
       alert('Ticket saved Successfully!');
-      Navigate(`/paymentConfirmation/${raiseTicketId}/${userType}`)
+      // Navigate(`/paymentConfirmation/${raiseTicketId}/${userType}`)
     } catch (error) {
       console.error('Error saving ticket data:', error);
       window.alert('Failed to save the ticket data. Please try again later.');
@@ -369,7 +369,7 @@ useEffect(() => {
   };
 
   try {
-    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/DeliveryNote/${id}`, {
+    const response = await fetch(`https://localhost:7091/api/DeliveryNote/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -693,8 +693,8 @@ const handleBothActions =  (e) => {
         <div>
         <h4 className="section-title fs-5">Rating</h4>
         <input className="form-control w-50 mb-2 fs-5"
-        value={assignedTo}
-        onChange={(e) => setAssignedTo(e.target.value)}
+        // value={assignedTo}
+        // onChange={(e) => setAssignedTo(e.target.value)}
         required
         />
           </div>

@@ -19,9 +19,9 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
     navigate(`/viewDealerRaiseTicket/${ticketId}/${userType}/${category}/${dealerId}`, { state: { ticketId } });
   };
 
-  const handleOrdersClick = (ticketId) => {
-    navigate(`/traderConfirmation/${ticketId}/dealer/${category}/${dealerId}`, { state: { ticketId } });
-  };
+  // const handleOrdersClick = (ticketId) => {
+  //   navigate(`/traderConfirmation/${ticketId}/dealer/${category}/${dealerId}`, { state: { ticketId } });
+  // };
 
   return (
     <div>
@@ -126,7 +126,7 @@ const Notification = () => {
       try {
         const [getQuoteResponse, quoteOrdersResponse] = await Promise.all([
           fetch(
-          `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetRaiseTicketNotificationsByStateAndDistrictForDealer?district=${district}&category=${category}`
+          `https://localhost:7091/api/RaiseTicket/GetRaiseTicketNotificationsByStateAndDistrictForDealer?district=${district}&category=${category}`
         ),
         fetch(
           ``

@@ -126,7 +126,7 @@ const Notification = () => {
       try {
         const [getQuoteResponse, QuoteOrdersResponse] = await  Promise.all([
           fetch(
-          `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByDistrict?district=${district}&category=${category}`
+          `https://localhost:7091/api/RaiseTicket/GetNotificationsByDistrict?district=${district}&category=${category}`
         ), 
         // fetch(
         //   ``
@@ -167,6 +167,8 @@ const Notification = () => {
     const interval = setInterval(fetchNotifications, 60000);
     return () => clearInterval(interval);
   }, [district, category]);
+
+  console.log(fetchNotifications());
 
   const handleClearQuoteNotifications = () => {
     setNewQuoteCount(0);

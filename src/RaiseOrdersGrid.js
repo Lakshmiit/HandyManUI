@@ -32,8 +32,8 @@ useEffect(() => {
   }, [ticketData, states,districts,pinCodes,assigned]);
   useEffect(() => {
     setLoading(true);
-    // const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications`;
-    const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByDistrict?district=${district}&category=${category}`;
+    // const url = `https://localhost:7091/api/RaiseTicket/GetTicketsNotifications`;
+    const url = `https://localhost:7091/api/RaiseTicket/GetNotificationsByDistrict?district=${district}&category=${category}`;
     axios
       .get(url)
       .then((response) => {
@@ -79,7 +79,7 @@ useEffect(() => {
   //   );
   //   if (confirmDelete) {
   //     axios
-  //       .delete(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${ticketId}`)
+  //       .delete(`https://localhost:7091/api/RaiseTicket/${ticketId}`)
   //       .then(() => {
   //         setTicketData((prevData) =>
   //           prevData.filter((ticket) => ticket.id !== ticketId)
