@@ -307,7 +307,7 @@ const handleTechRemarks = (index, value) => {
       Option2Time: "",
     };
     try {
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/ap/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
