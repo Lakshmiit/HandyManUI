@@ -15,12 +15,12 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 import { useParams } from 'react-router-dom';
 // Sidebar component
-const Sidebar = ({userType}) => { 
+const Sidebar = ({customerId, userType}) => { 
 
   const menuConfig = {
     customer: [
       { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", 
-        TargetUrl: `https://handymanserviceproviders.com/CustomerProfilePage`},
+        TargetUrl: `https://handymanserviceproviders.com/CustomerProfilePage?ReactToken=${customerId}${userType}`},
       { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: "/raiseTicket/:customerId/:userType" },
       { MenuIcon: <PersonAddIcon />, MenuTitle: "Add Member", TargetUrl: "/addMember" },
       { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: "/TrackTicket" },
@@ -31,7 +31,7 @@ const Sidebar = ({userType}) => {
       { MenuIcon: <AccountCircleIcon />, MenuTitle: "Accounts", TargetUrl: "/Accounts" },
     ],
     builder: [
-      { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", TargetUrl: `https://handymanserviceproviders.com/CustomerProfilePage` },
+      { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", TargetUrl: `https://handymanserviceproviders.com/CustomerProfilePage?ReactToken=${customerId}${userType}` },
       { MenuIcon: <PersonAddIcon />, MenuTitle: "Add Member", TargetUrl: "/addMember" },
       { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: "/raiseQuote" },
       { MenuIcon: <NotificationsActiveIcon />, MenuTitle: "Notifications", TargetUrl: "/Notifications" },
@@ -42,7 +42,7 @@ const Sidebar = ({userType}) => {
       { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: "/TrackTicket" },
     ],
     dealer: [
-      { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", TargetUrl: `https://handymanserviceproviders.com/CustomerProfilePage` },
+      { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", TargetUrl: `https://handymanserviceproviders.com/CustomerProfilePage?ReactToken=${customerId}${userType}` },
       { MenuIcon: <UploadIcon />, MenuTitle: "Upload Products", TargetUrl: "/product-list" },
       { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: "/raiseQuote/:userType" },
       { MenuIcon: <NotificationsActiveIcon />, MenuTitle: "Notifications", TargetUrl: "/Notifications" },
@@ -53,7 +53,7 @@ const Sidebar = ({userType}) => {
       { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: "/TrackTicket"},
     ],
     trader: [
-      { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", TargetUrl: `https://handymanserviceproviders.com/CustomerProfilePage` },
+      { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", TargetUrl: `https://handymanserviceproviders.com/CustomerProfilePage?ReactToken=${customerId}${userType}` },
       { MenuIcon: <UploadIcon />, MenuTitle: "Upload Products", TargetUrl: "/product-list" },
       { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: "/raiseQuote/:userType" },
       { MenuIcon: <NotificationsActiveIcon />, MenuTitle: "Notifications", TargetUrl: "/Notifications" },
@@ -64,7 +64,7 @@ const Sidebar = ({userType}) => {
       { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: "/TrackTicket"},
     ],
     estimator: [
-      { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", TargetUrl: `https://handymanserviceproviders.com/CustomerProfilePage` },
+      { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", TargetUrl: `https://handymanserviceproviders.com/CustomerProfilePage?ReactToken=${customerId}${userType}` },
       { MenuIcon: <PersonAddIcon />, MenuTitle: "Add Member", TargetUrl: "/addMember" },
       { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: "/raiseQuote" },
       { MenuIcon: <NotificationsActiveIcon />, MenuTitle: "Notifications", TargetUrl: "/Notifications" },
@@ -75,7 +75,7 @@ const Sidebar = ({userType}) => {
       { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: "/TrackTicket" },
     ],
     technician: [
-      { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", TargetUrl: `https://handymanserviceproviders.com/CustomerProfilePage` },
+      { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", TargetUrl: `https://handymanserviceproviders.com/CustomerProfilePage?ReactToken=${customerId}${userType}` },
       { MenuIcon: <PersonAddIcon />, MenuTitle: "Add Technician", TargetUrl: "/addTechnician" },
       { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: "/raiseQuote" },
       { MenuIcon: <NotificationsActiveIcon />, MenuTitle: "Notifications", TargetUrl: "/Notifications" },
