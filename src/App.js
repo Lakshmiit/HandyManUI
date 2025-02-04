@@ -63,7 +63,7 @@ function App() {
             <Route path="/product-edit/:id/:ProductOwnedBy/:userType" element={<EditUploadForm />} />           
             <Route path="/RaiseTicket/:customerId/:userType" element={<RaiseTicket />} />
             <Route path="/buyProducts/:userId/:userType" element={<BuyProduct />} />
-            <Route path="/sidebar/:userType" element={<Sidebar />} />
+            <Route path="/sidebar/:customerId/:userType" element={<Sidebar />} />
             <Route path="/buyproduct-view/:id/:userId/:userType" element={<BuyProductView />} />
             <Route path="/adminUploadForm/Admin" element={<AdminUploadForm />} />
             <Route path="/adminProductApproval/:id/Admin" element={<AdminProductApproval />} />
