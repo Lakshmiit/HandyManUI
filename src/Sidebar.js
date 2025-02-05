@@ -15,7 +15,7 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 import { useParams } from 'react-router-dom';
 // Sidebar component
-const Sidebar = ({ }) => { 
+const Sidebar = () => { 
 const {userType} = useParams();
 const {customerId} = useParams();
   const menuConfig = {
