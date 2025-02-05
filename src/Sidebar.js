@@ -15,12 +15,13 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 import { useParams } from 'react-router-dom';
 // Sidebar component
-const Sidebar = ({customerId, userType}) => { 
-
+const Sidebar = ({ }) => { 
+const {userType} = useParams();
+const {customerId} = useParams();
   const menuConfig = {
     customer: [
       { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", 
-        TargetUrl: `https://localhost:7155/CustomerProfilePage?ReactToken=${customerId}${userType}`},
+        TargetUrl: `https://handymanserviceproviders.com/CustomerProfilePage?ReactToken=${customerId}$${userType}`},
       { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: "/raiseTicket/:customerId/:userType" },
       { MenuIcon: <PersonAddIcon />, MenuTitle: "Add Member", TargetUrl: "/addMember" },
       { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: "/TrackTicket" },
