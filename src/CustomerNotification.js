@@ -124,7 +124,7 @@ const Notification = () => {
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
+ 
   // API Call to fetch notifications
   useEffect(() => {
     const fetchNotifications = async () => {
