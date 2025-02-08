@@ -346,7 +346,7 @@ useEffect(() => {
       AssignedTo: assignedTo,
       id: raiseTicketId,
       status: status,
-      internalStatus: "Dealer Approved",
+      internalStatus: "Pending",
       CustomerId: customerId,
       State: state,
       LowestBidderTechnicainId: lowestBidder,
