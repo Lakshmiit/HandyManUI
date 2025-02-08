@@ -45,7 +45,7 @@ const BookingConfirmation = () => {
   const [technicianFullName, setTechnicianName] = useState('');
   const [technicianAddress, setTechnicianAddress] = useState('');
   const [aadharNumber, setAadharNumber] = useState('');
-  const [technicianPhotoId, setTechnicianPhotoId] = useState('');
+  // const [technicianPhotoId, setTechnicianPhotoId] = useState('');
   const [ticketId, setTicketId] = useState('');
   
   useEffect(() => {
@@ -56,8 +56,7 @@ const BookingConfirmation = () => {
   useEffect(() => {
     const fetchticketData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
-/RaiseTicket/GetTicket/${raiseTicketId}`);
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
@@ -102,8 +101,7 @@ const BookingConfirmation = () => {
   useEffect(() => {
     const fetchtechnicianData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
-/Technician/GetTechnicianDetailsForInvoice?TechnicianId=${lowestBidder}`);
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Technician/GetTechnicianDetailsForInvoice?TechnicianId=${lowestBidder}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
@@ -113,7 +111,7 @@ const BookingConfirmation = () => {
         setTechnicianName(invoiceData.technicianFullName);
         setAadharNumber(invoiceData.aadharNumber);
         setTechnicianAddress(invoiceData.address);
-        setTechnicianPhotoId(invoiceData.technicianPhotoId);
+        // setTechnicianPhotoId(invoiceData.technicianPhotoId);
         } catch (error) {
         console.error('Error fetching ticket data:', error);
       } finally {
@@ -175,8 +173,7 @@ const BookingConfirmation = () => {
       })),
     };
     try {
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
-/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -266,11 +263,11 @@ const BookingConfirmation = () => {
       <table className="customer-details-table">
         <tbody>
             <tr>
-            <td><strong>Customer Name:</strong></td>
+            <td><strong>Customer Name</strong></td>
             <td>{fullName}</td>
             </tr>
             <tr>
-            <td><strong>Address:</strong></td>
+            <td><strong>Address</strong></td>
             <td>{address}</td>
             </tr>
         </tbody>
@@ -281,26 +278,26 @@ const BookingConfirmation = () => {
       <div className="technician-details-container">
   <table className="technician-details-table">
     <tr>
-      <td><strong>Technician Name:</strong></td>
+      <td><strong>Technician Name</strong></td>
       <td>{technicianFullName}</td>
     </tr>
     <tr>
-      <td><strong>Aadhar Number:</strong></td>
+      <td><strong>Aadhar Number</strong></td>
       <td>{aadharNumber}</td>
     </tr>
     <tr>
-      <td className='fw-bold'><strong>Address:</strong></td>
+      <td className='fw-bold'><strong>Address</strong></td>
       <td>{technicianAddress}</td>
     </tr>
   </table>
-  <div className="technician-image-wrapper" style={{ textAlign: "center", marginTop: "10px" }}>
+  {/* <div className="technician-image-wrapper" style={{ textAlign: "center", marginTop: "10px" }}>
     <img
       src={technicianPhotoId}   
       alt="Technician"
       className="technician-image"
       style={{ width: "150px", height: "auto" }}
     />
-  </div>
+  </div> */}
   </div>
 
       <div className="note m-2">

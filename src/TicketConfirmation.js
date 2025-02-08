@@ -2,7 +2,6 @@ import React, { useEffect, useState} from 'react';
 import Sidebar from './Sidebar';
 import { Button } from 'react-bootstrap';
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
-// import image from './img/technician.png';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import './App.css';
@@ -22,7 +21,7 @@ const BookingConfirmation = () => {
   const [attachments, setAttachments] = useState([]);
   const [specifications, setSpecifications] = useState([{ material: "", quantity: "", receivedQuantity: "", remainingQuantity: "", isSelected: false}]);
   const [commentsList, setCommentsList] = useState([{updatedDate: new Date(), commentText: ""}]); 
-  const [technicianAcceptance, setTechnicianAcceptance] = useState([{type: "", technicianRemarks: ""}]); 
+  const [technicianAcceptance] = useState([{type: "", technicianRemarks: ""}]); 
   const [dealerAcceptance] = useState([{type: "", dealerRemarks: ""}]); 
   const [requestType, setRequestType] = useState('');
   const [customerId, setCustomerId] = useState(''); 
@@ -58,13 +57,16 @@ const BookingConfirmation = () => {
   const [paymentData, setPaymentData] = useState('');
   const [paymentMode, SetPaymentMode] = useState('');
   const [customerCode, setCustomerCode] = useState('');
-  const [paymentDataTime, setPaymentDateTime]=useState('');
+ const [paymentDataTime, setPaymentDateTime]=useState('');
   const [deliveryNoteId, setDeliveryNoteId]=useState('');
-  // const [invoice, setInvoice] = useState([{ InvoiceNumber: "", InvoiceDate: ""}]);
+  const [deliveryId, setDeliveryId] = useState('');
+  const [paymentId, setPaymentId] = useState('');
+  const [technicianAmount, setTechnicianAmount] = useState('');
+  const [dealerAmont, setDealerAmount] = useState('');
   
   useEffect(() => {
-      console.log(ticketData, loading,id,technicianData, selectedSlot, deliveryData, dealerStatus, paymentData, dealerData);
-    }, [ticketData, loading,id,technicianData, selectedSlot, deliveryData,dealerStatus, paymentData, dealerData]);
+  console.log(ticketData,deliveryNoteId,loading,id,technicianData, selectedSlot, deliveryData, dealerStatus, paymentData, dealerData);
+    }, [ticketData, deliveryNoteId, loading,id,technicianData, selectedSlot, deliveryData,dealerStatus, paymentData, dealerData]);
 
   // useEffect(() => {
   //   const fetchticketData = async () => {
@@ -115,12 +117,12 @@ const BookingConfirmation = () => {
     useEffect(() => {
       const fetchticketData = async () => {
         try {
-          const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
-/RaiseTicket/GetTicket/${raiseTicketId}`);
+          const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
           if (!response.ok) {
             throw new Error('Failed to fetch ticket data');
           }
           const data = await response.json();
+          // alert(JSON.stringify(data));
           setTicketData(data);
           setState(data.state);
           setTicketId(data.raiseTicketId);  
@@ -138,9 +140,9 @@ const BookingConfirmation = () => {
           setFullName(data.customerName);
           setApprovedAmount(data.approvedAmount);
           setOption1Day(data.option1Day);
-          setOption2Day(data.option2Day || '');
-          setOption1Time(data.option1Time || '');
-          setOption2Time(data.option2Time || '');
+          setOption2Day(data.option2Day);
+          setOption1Time(data.option1Time);
+          setOption2Time(data.option2Time);
           setLowestBidder(data.lowestBidderTechnicainId);
           setLowestDealerBidder(data.lowestBidderDealerId);
           setRequestType(data.requestType || 'Without Material');
@@ -196,24 +198,25 @@ const BookingConfirmation = () => {
         if (!response.ok) {
           throw new Error("Failed to fetch delivery data");
         }
-        const data = await response.json();
-        setDeliveryData(data);
-        setId(data.id); 
-        setDeliveryNoteId(data.deliveryNoteId);
-        // setOption1Day(data.option1Day || '');
-        // setOption2Day(data.option2Day || '');
-        // setOption1Time(data.option1Time || '');
-        // setOption2Time(data.option2Time || '');
-        // setSpecifications(data.materialCollection || [{ material: "", quantity: "", receivedQuantity: "", remainingQuantity: "" }]);
+        const deliveryData = await response.json();
+        setDeliveryData(deliveryData);
+        // alert(JSON.stringify(deliveryData));
+        setDeliveryId(deliveryData.id); 
+        setDeliveryNoteId(deliveryData.deliveryNoteId);
+        // setOption1Day(deliveryData.option1Day || '');
+        // setOption2Day(deliveryData.option2Day || '');
+        // setOption1Time(deliveryData.option1Time || '');
+        // setOption2Time(deliveryData.option2Time || '');
+        setSpecifications(deliveryData.materialCollection || [{ material: "", quantity: "", receivedQuantity: "", remainingQuantity: "" }]);
       } catch (error) {
         console.error("Error fetching delivery data:", error);
       } finally {
-        setLoading(false); // Set loading to false after fetching
+        setLoading(false); 
       }
     };
   
     fetchDeliveryData();
-  }, [ticketId]); // Runs only when ticketId updates
+  }, [ticketId]); 
   
 
 
@@ -226,11 +229,7 @@ const BookingConfirmation = () => {
         }
         const invoiceData = await response.json();
         setTechnicianData(invoiceData);
-        // alert(JSON.stringify(invoiceData));  
         setTechnicianName(invoiceData.technicianFullName);
-        // setAadharNumber(invoiceData.aadharNumber);
-        // setTechnicianAddress(invoiceData.address);
-        // setTechnicianPhotoId(invoiceData.technicianPhotoId);
         } catch (error) {
         console.error('Error fetching ticket data:', error);
       } finally {
@@ -249,7 +248,7 @@ const BookingConfirmation = () => {
         }
         const dealerData = await response.json();
         setDealerData(dealerData);
-        // alert(JSON.stringify(invoiceData));  
+        // alert(JSON.stringify(dealerData));  
         setDealerAddress(dealerData.address);
         // setAadharNumber(invoiceData.aadharNumber);
         // setTechnicianAddress(invoiceData.address);
@@ -266,8 +265,7 @@ const BookingConfirmation = () => {
   // Fetch data from API on component mount
       useEffect(() => {
         // API URL
-        const apiUrl = `https://handymanapiv2.azurewebsites.net/api
-/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
+        const apiUrl = `https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
         // Fetching the data from the API
         const fetchData = async () => {
           try {
@@ -316,8 +314,7 @@ const BookingConfirmation = () => {
             useEffect(() => {
               const fetchPaymentData = async () => {
                 try {
-                  const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
-/Payment/GetPaymentDetailsByRaiseTicketId?RaiseTicketId=${ticketId}`);
+                  const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Payment/GetPaymentDetailsByRaiseTicketId?RaiseTicketId=${ticketId}`);
                   if (!response.ok) {
                     throw new Error('Failed to fetch ticket data');
                   }
@@ -326,9 +323,11 @@ const BookingConfirmation = () => {
                   // alert(JSON.stringify(invoiceData));  
                   SetPaymentMode(paymentData.paymentMode);
                   setCustomerCode(paymentData.technicianConfirmationCode);
+                  setPaymentId(paymentData.id);
+                  setApprovedAmount(paymentData.approvedAmount);
+                  setTechnicianAmount(paymentData.technicianAmount);
+                  setDealerAmount(paymentData.dealerAmont);
                   setPaymentDateTime(paymentData.paymentDataTime);
-                  // setTechnicianAddress(invoiceData.address);
-                  // setTechnicianPhotoId(invoiceData.technicianPhotoId);
                   } catch (error) {
                   console.error('Error fetching payment data:', error);
                 } finally {
@@ -353,17 +352,17 @@ const BookingConfirmation = () => {
     setSelectedSlot(slot);
 }; 
 
-const handleTypeChange = (newType) => {
-  setTechnicianAcceptance([
-    { ...technicianAcceptance[0], type: newType },
-  ]);
-};
+// const handleTypeChange = (newType) => {
+//   setTechnicianAcceptance([
+//     { ...technicianAcceptance[0], type: newType },
+//   ]);
+// };
 
-const handleRemarksChange = (newRemarks) => {
-  setTechnicianAcceptance([
-    { ...technicianAcceptance[0], technicianRemarks: newRemarks },
-  ]);
-};
+// const handleRemarksChange = (newRemarks) => {
+//   setTechnicianAcceptance([
+//     { ...technicianAcceptance[0], technicianRemarks: newRemarks },
+//   ]);
+// };
 
   const handleSaveTicket = async (e) => {
     e.preventDefault();
@@ -405,8 +404,7 @@ const handleRemarksChange = (newRemarks) => {
     };
   
     try {
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
-/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -459,6 +457,8 @@ const handleRemarksChange = (newRemarks) => {
     option2Time: selectedSlot === "option2" ? option2Time : "",
     deliveryTime: DeliveryDataTime,
     UploadInvoice: [],
+    InvoiceNumber: "",
+    InvoiceDate: "",
     deliveryInvoiceId: "string",
     internalStatus: "string",
     technicianStatus: "",
@@ -478,15 +478,10 @@ const handleRemarksChange = (newRemarks) => {
       receivedQuantity: collection.receivedQuantity,
       remainingQuantity: collection.remainingQuantity,
     })),
-    // InvoiceDetails : invoice.map((details) => ({
-    //   InvoiceNumber: details.InvoiceNumber,
-    //   InvoiceDate: details.InvoiceDate, 
-    // })),
   };
 
   try {
-    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
-/DeliveryNote/CreateDeliveryNote`, {
+    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/DeliveryNote/CreateDeliveryNote`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -527,27 +522,23 @@ if (selectedSpecifications.length === 0) {
 
 const payload2 = {
 
-  id: id,
+  id: deliveryId,
   ticketId: ticketId,
   deliveryNoteId: "string",
-  option1Day: option1Day ,
-  option1Time: option1Time,
-  option2Day: option2Day,
-  option2Time: option2Time,
+  option1Day: selectedSlot === "option1" ? option1Day : "",
+  option1Time: selectedSlot === "option1" ? option1Time : "",
+  option2Day: selectedSlot === "option2" ? option2Day : "",
+  option2Time: selectedSlot === "option2" ? option2Time : "",
   deliveryTime: DeliveryDataTime,
   UploadInvoice: [],
+  InvoiceNumber: "",
+  InvoiceDate: "",
   deliveryInvoiceId: "string",
   internalStatus: "string",
-  technicianStatus: "",
+  technicianStatus: selectedStatus,
   dealerStatus: "string",
-  technicianAcceptance: technicianAcceptance.map((remarks) => ({
-    type: remarks.type,
-    technicianRemarks: remarks.technicianRemarks,
-  })),
-  dealerAcceptance: dealerAcceptance.map((remarks) => ({
-    type: remarks.type,
-    dealerRemarks: remarks.dealerRemarks,
-  })),
+  technicianAcceptance: [],
+  dealerAcceptance: [],
   assignedTo: assignedTo,
   materialCollection: selectedSpecifications.map((collection) => ({
     material: collection.material,
@@ -556,12 +547,11 @@ const payload2 = {
     remainingQuantity: collection.remainingQuantity,
   })),
 };
-
+// alert(payload2);
 try {
-  const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
-/DeliveryNote/${id}`, {
+  const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/DeliveryNote/${deliveryId}`, {
     method: 'PUT',
-    headers: {
+    headers: { 
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(payload2),
@@ -576,73 +566,113 @@ try {
 }
 };
 
-const handleDeliveryNoteUpdate = async (e) => {
+// const handleDeliveryNoteUpdate = async (e) => {
+//   e.preventDefault();
+
+//   if (!selectedStatus) {
+//     alert("Please select a ticket status.");
+//     return;
+//   }
+//   // const selectedSpecifications = specifications.filter((spec) => spec.isSelected);
+
+// const payload3 = {
+
+//   id: id,
+//   ticketId: ticketId,
+//   deliveryNoteId: deliveryNoteId,
+//   option1Day: selectedSlot === "option1" ? option1Day : "",
+//   option1Time: selectedSlot === "option1" ? option1Time : "",
+//   option2Day: selectedSlot === "option2" ? option2Day : "",
+//   option2Time: selectedSlot === "option2" ? option2Time : "",
+//   deliveryTime: DeliveryDataTime,
+//   UploadInvoice: [],
+//   deliveryInvoiceId: "string",
+
+//   internalStatus: status,
+//   technicianStatus: selectedStatus, 
+//   dealerStatus: "string",
+//   technicianAcceptance: technicianAcceptance.map((remarks) => ({
+//     type: remarks.type,
+//     technicianRemarks: remarks.technicianRemarks,
+//   })),
+//   dealerAcceptance: dealerAcceptance.map((remarks) => ({
+//     type: remarks.type,
+//     dealerRemarks: remarks.dealerRemarks,
+//   })),
+//   assignedTo: assignedTo,
+//   materialCollection: specifications.map((collection) => ({
+//     material: collection.material,
+//     quantity: collection.quantity,
+//     receivedQuantity: collection.receivedQuantity,
+//     remainingQuantity: collection.remainingQuantity,
+//   }))
+// };
+
+// try {
+//   const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/DeliveryNote/${deliveryId}`, {
+//     method: 'PUT',
+//     headers: {
+//       'Content-Type': 'application/json',
+//     },
+//     body: JSON.stringify(payload3),
+//   });
+
+//   if (!response.ok) {
+//     throw new Error('Failed to create a Technician Note.');
+//   }
+//   alert('Technician Note saved Successfully!');
+// } catch (error) {
+//   console.error('Error:', error);
+//   window.alert('Failed to create the Technician Note. Please try again later.');
+// }
+// };
+
+
+const handlePaymentTicket = async (e) => {
   e.preventDefault();
 
-  if (!selectedStatus) {
-    alert("Please select a ticket status.");
-    return;
+  const payload4 = {
+    id: paymentId,
+    RaiseTicketId: ticketData.raiseTicketId,
+    paymentId: "string",
+    paymentMode: paymentMode,
+    approvedAmount: approvedAmount,
+    paidAmount: "string",
+    balancedAmount: "string",
+    paymentDataTime: paymentDataTime,
+    technicianAmount: technicianAmount,
+    dealerAmont: dealerAmont,
+    customerCareAmount: "string",
+    utrTransactionNumber: transactionDetails,
+    technicianConfirmationCode: customerCode,
+  };
+  try {
+    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Payment/${paymentId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload4),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to create payment.');
+    }
+    alert('Payment Details Saved successfully!');
+  } catch (error) {
+    console.error('Error:', error);
+    window.alert('Failed to create the payment details saved. Please try again later.');
   }
-  const selectedSpecifications = specifications.filter((spec) => spec.isSelected);
-
-const payload3 = {
-
-  id: id,
-  ticketId: ticketId,
-  deliveryNoteId: deliveryNoteId,
-  option1Day: selectedSlot === "option1" ? option1Day : "",
-  option1Time: selectedSlot === "option1" ? option1Time : "",
-  option2Day: selectedSlot === "option2" ? option2Day : "",
-  option2Time: selectedSlot === "option2" ? option2Time : "",
-  deliveryTime: DeliveryDataTime,
-  UploadInvoice: [],
-  deliveryInvoiceId: "string",
-
-  internalStatus: status,
-  technicianStatus: selectedStatus, 
-  dealerStatus: "string",
-  technicianAcceptance: technicianAcceptance.map((remarks) => ({
-    type: remarks.type,
-    technicianRemarks: remarks.technicianRemarks,
-  })),
-  dealerAcceptance: dealerAcceptance.map((remarks) => ({
-    type: remarks.type,
-    dealerRemarks: remarks.dealerRemarks,
-  })),
-  assignedTo: assignedTo,
-  materialCollection: selectedSpecifications.map((collection) => ({
-    material: collection.material,
-    quantity: collection.quantity,
-    receivedQuantity: collection.receivedQuantity,
-    remainingQuantity: collection.remainingQuantity,
-  }))
 };
 
-try {
-
-
-  const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
-/DeliveryNote/${id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(payload3),
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to create a Technician Note.');
-  }
-  alert('Technician Note saved Successfully!');
-} catch (error) {
-  console.error('Error:', error);
-  window.alert('Failed to create the Technician Note. Please try again later.');
-}
-};
 const handleBothActions =  (e) => {
   e.preventDefault();
   handleSaveTicket(e);
-  handleDeliveryNoteUpdate(e);
+  // handleDeliveryNoteUpdate(e)
+  handleMaterialUpdate(e);
+
+  //handleTimeSlotSave(e)
+  handlePaymentTicket(e);
 };
 
 // const handleCheckboxChange = (mode) => {
@@ -686,18 +716,18 @@ const handleBothActions =  (e) => {
     setSelectedStatus(event.target.value);
   };
 
-  const handleAssignedChange = (e) => {
-    const value = e.target.value;
-    setAssignedTo(value);
+  // const handleAssignedChange = (e) => {
+  //   const value = e.target.value;
+  //   setAssignedTo(value);
 
-    if (value === "Customer Care") {
-      setStatus("Draft");
-    } else if (value === "Closed Ticket") {
-      setStatus("Reviewed");
-    } else {
-      setStatus(""); 
-    }
-  };
+  //   if (value === "Customer Care") {
+  //     setStatus("Draft");
+  //   } else if (value === "Closed Ticket") {
+  //     setStatus("Reviewed");
+  //   } else {
+  //     setStatus(""); 
+  //   }
+  // };
 
 
 const total = Number(enterQuoteAmount) + Number(othercharges);
@@ -829,7 +859,7 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
   <p>Loading materials...</p>
 ) : (
   <div className="form-group m-2">
-    <label className="fs-5">Required Materials Details</label>
+    <label className="section-title">Required Materials Details</label>
     {specifications.length > 0 ? (
       specifications.map((spec, index) => (
         <div className="d-flex gap-3 mb-2" key={index}>
@@ -838,14 +868,14 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
             className="form-control"
             value={spec.material}
             placeholder="Enter Material"
-            onChange={(e) => handleMaterialChange(index, "material", e.target.value)}
+            // onChange={(e) => handleMaterialChange(index, "material", e.target.value)}
           />
           <input
             type="text"
             className="form-control text-center"
             placeholder="Enter Quantity"
             value={spec.quantity}
-            onChange={(e) => handleMaterialChange(index, "quantity", e.target.value)}
+            // onChange={(e) => handleMaterialChange(index, "quantity", e.target.value)}
           />
           <input
             type="text"
@@ -895,7 +925,7 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
             </label>
             <button className='btn btn-warning m-1 fs-5' title='save' onClick={handleMaterialUpdate}>Save</button> 
         </div>
-        <div className="radio">
+        {/* <div className="radio">
           <h3 className='section-title mb-0'>Technician Acceptance</h3>
          <label className='fs-6 m-1'>
             <input 
@@ -931,7 +961,7 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
             </label>
             </div>
             )}
-            </div>
+            </div> */}
 
             {/* <div className="form-group">
           <label className="section-title fs-5 m-1">Upload Invoice</label>
@@ -968,11 +998,11 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
       <table className="customer-details-table">
         <tbody>
             <tr>
-            <td><strong>Customer Name:</strong></td>
+            <td><strong>Customer Name</strong></td>
             <td>{fullName}</td>
             </tr>
             <tr>
-            <td><strong>Address:</strong></td>
+            <td><strong>Address</strong></td>
             <td>{address}</td>
             </tr>
         </tbody>
@@ -1013,7 +1043,7 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
           onChange={(e) => setTransactionDetails(e.target.value)}
           />
           </div>
-          <div className='d-flex flex-row align-items-center gap-5'>
+          {/* <div className='d-flex flex-row align-items-center gap-5'>
             <div className='d-flex align-items-center'>
             <strong className='fs-5 m-1'>Date</strong>
                 <input
@@ -1031,9 +1061,9 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
                 placeholder='Enter Time'
                 // value={}
                 readOnly
-                /> */}
+                /> 
             </div>
-          </div>
+          </div> */}
                   
           {/* <div className="form-group">
           <label className="section-title fs-5 m-1">Upload Invoice</label>
@@ -1076,7 +1106,7 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
              />
             Job Completed
             </label>
-          <label  className='fs-5'>
+          {/* <label  className='fs-5'>
             <input 
             type="checkbox" 
             className="form-check-input border-secondary  m-2 border-dark"
@@ -1106,11 +1136,11 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
           <option>Closed Ticket</option>
           <option>Customer Care</option>
         </select>
-          </div>
+          </div> */}
           </div>
           <div className='d-flex flex-row align-items-center gap-5'> 
           <button className='btn btn-warning fs-5' title='save' onClick={handleBothActions}>Save</button>
-          <button className='btn btn-warning fs-5'title='forward' >Forward</button>
+          {/* <button className='btn btn-warning fs-5'title='forward' >Forward</button> */}
           </div>
       </div>
     </div>

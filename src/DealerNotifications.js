@@ -126,16 +126,17 @@ const Notification = () => {
     const fetchNotifications = async () => {
       try {
         const getQuoteResponse = await fetch(
-          `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetRaiseTicketNotificationsByStateAndDistrictForDealer?district=${district}&category=${category}`
+          `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistDealerId?category=${category}&district=${district}&dealerId=${dealerId}`
         );
         const getQuoteData = await getQuoteResponse.json();
-          const getQuoteCount = getQuoteData.length;
+        const tickets = getQuoteData.tickets || [];
+          const getQuoteCount = tickets.length;
   
-          setQuoteNotifications(getQuoteData);
+          setQuoteNotifications(tickets);
           setNewQuoteCount(getQuoteCount);
           setGlowQuote(getQuoteCount > 0);
           if (getQuoteCount > 0) {
-            setHighlightedQuote(getQuoteData[0].raiseAQuoteId);
+            setHighlightedQuote(tickets[0].raiseAQuoteId);
           }
           const totalNotifications = getQuoteCount;
           setNewNotificationCount(totalNotifications);
@@ -145,9 +146,44 @@ const Notification = () => {
         }
       };
       fetchNotifications();
-   }, [district, category]);
+   }, [district, category,dealerId]);
   
 
+  // useEffect(() => {
+  //   const fetchNotifications = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistDealerId?category=${category}&district=${district}&dealerId=${dealerId}`,
+  //         {
+  //           method: "GET",
+  //           mode: "cors", // Ensure CORS mode is enabled
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //           },
+  //         }
+  //       );
+  
+  //       if (!response.ok) {
+  //         throw new Error(`HTTP error! Status: ${response.status}`);
+  //       }
+  
+  //       const data = await response.json();
+  //       setQuoteNotifications(data);
+  //       setNewQuoteCount(data.length);
+  //       setGlowQuote(data.length > 0);
+  //       if (data.length > 0) {
+  //         setHighlightedQuote(data[0].raiseAQuoteId);
+  //       }
+  //       setNewNotificationCount(data.length);
+  //       setGlow(data.length > 0);
+  //     } catch (error) {
+  //       console.error("Failed to fetch notifications:", error);
+  //     }
+  //   };
+  
+  //   fetchNotifications();
+  // }, [district, category, dealerId]);
+  
   const handleClearQuoteNotifications = () => {
     setNewQuoteCount(0);
     setGlowQuote(false);

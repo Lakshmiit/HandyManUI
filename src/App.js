@@ -23,6 +23,7 @@ import RaiseTicketNotifications from './RaiseTicketNotifications.js';
 import AddTechnician from './AddTechnician.js';
 import TechnicianQuoteNotifications from './TechnicianQuoteNotifications.js';
 import ViewRaiseQuoteTech from './ViewRaiseQuoteTech.js';
+import ViewDetailsRaiseQuote from './ViewDetailsRaiseQuote.js';
 import RaiseTicketQuotation from './RaiseTicketQuotation';
 import RaiseTicketBuyProducts from './RaiseTicketBuyProducts.js';
 import QuoteNotifications from './QuoteNotifications';
@@ -31,6 +32,7 @@ import CustomerNotification from './CustomerNotification.js';
 import ViewCustomerGrid from './ViewCustomerGrid.js';
 import ShortAdminNotifications from './ShortAdminNotifications.js';
 import ViewDealerRaiseTicket from './ViewDealerRaiseTicket.js';
+import ViewDealerDetailsRaiseTicket from './ViewDealerDetailsRaiseTicket.js'; 
 import CustomerRaiseTicketQuotation from './CustomerRaiseTicketQuotation.js';
 import DealerNotifications from './DealerNotifications.js';
 import DealerNotificationsGrid from './DealerNotificationsGrid.js';
@@ -44,7 +46,8 @@ import TraderConfirmation from './TraderConfirmation.js';
 import RaiseOrdersGrid from './RaiseOrdersGrid.js';
 import CustomerCareConfirmation from './CustomerCareConfirmation.js';
 import CustomerRaiseTicketTrack from './CustomerRaiseTicketTrack.js';
-
+import TrackStatusNotifications from './TrackStatusNotifications.js';
+import TrackStatusGrid from './TrackStatusGrid.js';
 
 function App() {
   return (
@@ -63,7 +66,7 @@ function App() {
             <Route path="/product-edit/:id/:ProductOwnedBy/:userType" element={<EditUploadForm />} />           
             <Route path="/RaiseTicket/:customerId/:userType" element={<RaiseTicket />} />
             <Route path="/buyProducts/:userId/:userType" element={<BuyProduct />} />
-            <Route path="/sidebar/:customerId/:userType" element={<Sidebar />} />
+            <Route path="/sidebar/:userType" element={<Sidebar />} />
             <Route path="/buyproduct-view/:id/:userId/:userType" element={<BuyProductView />} />
             <Route path="/adminUploadForm/Admin" element={<AdminUploadForm />} />
             <Route path="/adminProductApproval/:id/Admin" element={<AdminProductApproval />} />
@@ -77,6 +80,7 @@ function App() {
             <Route path="/addTechnician/:userType" element={<AddTechnician />} />
             <Route path="/technicianQuoteNotification/:userType/:category/:district/:technicianId" element={<TechnicianQuoteNotifications />} />
             <Route path="/viewRaiseQuote/:raiseTicketId/:category/:userType/:technicianId" element={<ViewRaiseQuoteTech />} />
+            <Route path="/viewDetailsRaiseQuote/:raiseTicketId/:category/:userType/:technicianId" element={<ViewDetailsRaiseQuote />} />
             <Route path="/raiseTicketQuotation/:raiseTicketId" element={<RaiseTicketQuotation />} />
             <Route path="/raiseTicketBuyProducts/:raiseTicketId" element={<RaiseTicketBuyProducts />} /> 
             <Route path="/quoteNotification" element={<QuoteNotifications />} />
@@ -88,6 +92,7 @@ function App() {
             <Route path="/dealerNotifications/:userType/:category/:district/:dealerId" element={<DealerNotifications />} /> 
             <Route path="/dealerNotificationsGrid/:userType/:category/:district/:dealerId" element={<DealerNotificationsGrid />} />
             <Route path="/viewDealerRaiseTicket/:raiseTicketId/:userType/:category/:dealerId" element={<ViewDealerRaiseTicket />} />
+            <Route path="/viewDealerDetailsRaiseTicket/:raiseTicketId/:userType/:category/:dealerId" element={<ViewDealerDetailsRaiseTicket />} />
             <Route path="/dealerGrid" element={<DealerGrid /> } />
             <Route path="/bidderTicketQuotation/:raiseTicketId" element={<BidderTicketQuotation /> } />
             <Route path="/timeSlotBooking/:raiseTicketId/:userType" element={<TimeSlotBooking />} />
@@ -98,7 +103,8 @@ function App() {
             <Route path="/raiseOrders/:userType" element={<RaiseOrdersGrid />} />
             <Route path="/customerCareConfirmation/:raiseTicketId/:userType" element={<CustomerCareConfirmation />} />
             <Route path="/customerTrack/:raiseTicketId/:userType" element={<CustomerRaiseTicketTrack />} />
-
+            <Route path="/trackStatusNotifications/:userType" element={<TrackStatusNotifications />} />
+            <Route path="/trackStatus/:userType" element={<TrackStatusGrid />} />
           </Routes>
         </main>
       </div>

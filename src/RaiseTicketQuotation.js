@@ -63,6 +63,7 @@ const RaiseTicketQuotation = () => {
     useEffect(() => {
       // API URL
       const apiUrl = `https://handymanapiv2.azurewebsites.net/api
+
 /RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
       // Fetching the data from the API
       const fetchData = async () => {
@@ -200,6 +201,7 @@ useEffect(() => {
         const fetchticketData = async () => {
           try {
             const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
+
 /RaiseTicket/GetTicket/${raiseTicketId}`);
             if (!response.ok) {
               throw new Error('Failed to fetch ticket data');
@@ -226,6 +228,7 @@ useEffect(() => {
               data.attachments?.map((photo) => 
                fetch(
                   `https://handymanapiv2.azurewebsites.net/api
+
 /FileUpload/download?generatedfilename=${photo}`
                 )
                 .then((res) => res.json())
@@ -386,6 +389,7 @@ useEffect(() => {
     try {
       
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
+
 /RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
@@ -457,6 +461,7 @@ useEffect(() => {
   };
   try {
     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
+
 /RaiseAQuote/id?id=${id}`, {
       method: 'PUT',
       headers: {
@@ -688,7 +693,7 @@ useEffect(() => {
       type="button"
       data-bs-target="#ticketCarousel"
       data-bs-slide="next"
-    >
+    > 
       <span className="carousel-control-next-icon" aria-hidden="true"></span>
       <span className="visually-hidden">Next</span>
     </button>

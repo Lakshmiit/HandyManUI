@@ -3,42 +3,59 @@ import { Button } from "react-bootstrap";
 import axios from "axios";
 import Sidebar from "./Sidebar";
 import { Link, useParams } from "react-router-dom";
-import { FaEye, FaTrash } from "react-icons/fa";
+import { FaEye } from "react-icons/fa";
 import {
   Dashboard as MoreVertIcon,
-  Forward as ForwardIcon,
+  // Forward as ForwardIcon,
 } from "@mui/icons-material";
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import "./App.css";
 
-const RaiseTicketNotification = () => {
+const TrackStatus = () => {
   const { userType } = useParams();
   const { selectedUserType } = useParams();
-  const {dealerId} = useParams();
+  const {technicianId} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [ticketData, setTicketData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
-  // const [states, setStates] = useState([]);
-  // const [districts, setDistricts] = useState([]);
-  // const [pinCodes, setPinCodes] = useState([]);
-  // const [assigned, setAssigned] = useState([]);
+  const [states, setStates] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [pinCodes, setPinCodes] = useState([]);
+  const [assigned, setAssigned] = useState([]);
    const { district, category } = useParams();
   const rowsPerPage = 15;
 useEffect(() => {
-    console.log(ticketData);
-  }, [ticketData]);
+    console.log(ticketData, states,districts,pinCodes,assigned);
+  }, [ticketData, states,districts,pinCodes,assigned]);
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingDealerId?category=${category}&district=${district}&dealerId=${dealerId}`;
+    const url = ``;
     axios
       .get(url)
       .then((response) => {
-        const tickets = response.data.tickets || [];
+        const tickets = response.data.map((ticket) => ({
+          ...ticket,
+          
+        }));
         setTicketData(tickets);
         setFilteredData(tickets);
+
+        // Extract unique categories and catalogues
+        const uniqueStates = [...new Set(tickets.map((ticket) => ticket.state))];
+        const uniqueDistricts = [
+          ...new Set(tickets.map((ticket) => ticket.district)),
+        ];
+        const uniquePinCode = [...new Set(tickets.map((ticket) => ticket.zipCode))];
+        const uniqueAssigned = [
+          ...new Set(tickets.map((ticket) => ticket.assignedTo)),
+        ];
+        setStates(uniqueStates);
+        setDistricts(uniqueDistricts);
+        setPinCodes(uniquePinCode);
+        setAssigned(uniqueAssigned);
       })
       .catch((error) => {
         console.error("Error fetching ticket data:", error);
@@ -46,7 +63,7 @@ useEffect(() => {
       .finally(() => {
         setLoading(false);
       });
-  }, [district, category, dealerId]);
+  }, [setAssigned, setDistricts, setPinCodes, setStates, setTicketData, district, category]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -56,26 +73,26 @@ useEffect(() => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleDelete = (ticketId) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this ticket?"
-    );
-    if (confirmDelete) {
-      axios
-        .delete(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${ticketId}`)
-        .then(() => {
-          setTicketData((prevData) =>
-            prevData.filter((ticket) => ticket.id !== ticketId)
-          );
-          setFilteredData((prevData) =>
-            prevData.filter((ticket) => ticket.id !== ticketId)
-          );
-        })
-        .catch((error) => {
-          console.error("Error deleting ticket:", error);
-        });
-    }
-  };
+  // const handleDelete = (ticketId) => {
+  //   const confirmDelete = window.confirm(
+  //     "Are you sure you want to delete this ticket?"
+  //   );
+  //   if (confirmDelete) {
+  //     axios
+  //       .delete(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${ticketId}`)
+  //       .then(() => {
+  //         setTicketData((prevData) =>
+  //           prevData.filter((ticket) => ticket.id !== ticketId)
+  //         );
+  //         setFilteredData((prevData) =>
+  //           prevData.filter((ticket) => ticket.id !== ticketId)
+  //         );
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error deleting ticket:", error);
+  //       });
+  //   }
+  // };
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -121,10 +138,10 @@ useEffect(() => {
       )}
 
       <div className={`container m-1 ${isMobile ? "w-100" : "w-75"}`}>
-        <h2 className="text-center mb-4">Dealer Notifications</h2>
+        <h2 className="text-center mb-4">Raise Ticket Status</h2>
         <table className="table table-bordered">
           <thead>
-            <tr>
+            <tr> 
               <th>Customer ID</th>
               <th>Ticket ID</th>
               <th>Category</th>
@@ -145,12 +162,12 @@ useEffect(() => {
                 <td>{ticket.assignedTo}</td>
                 <td className="d-flex align-items-center">
                   <Link
-                    to={`/viewDealerDetailsRaiseTicket/${ticket.id}/${userType}/${category}/${dealerId}`}
+                    to={`/viewRaiseQuote/${ticket.id}/${userType}/${technicianId}`}
                     className="btn btn-info mx-2"
                   >
                     <FaEye />
                   </Link>
-                  <Link
+                  {/* <Link
                     onClick={() => handleDelete(ticket.id)}
                     className="btn btn-danger mx-2"
                   >
@@ -158,14 +175,14 @@ useEffect(() => {
                   </Link>
                   <Link to="#" className="btn btn-success mx-2">
                     <ForwardIcon />
-                  </Link>
+                  </Link> */}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
         <div className="mt-4 text-end">
-          <Link to={`/dealerNotifications/dealer/${category}/${district}/${dealerId}`} className="btn btn-warning text-white mx-2" title='Back'>
+          <Link to={`/notificationTechnician/technician/${category}/${district}/${technicianId}`} className="btn btn-warning text-white mx-2" title='Back'>
             <ArrowLeftIcon />
           </Link>
         </div>
@@ -215,7 +232,7 @@ useEffect(() => {
         }
       `}</style>
     </div>
-  );
+  ); 
 };
 
-export default RaiseTicketNotification;
+export default TrackStatus;

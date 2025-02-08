@@ -79,8 +79,7 @@ const [showConfirmation, setShowConfirmation] = useState(false);
   useEffect(() => {
     const fetchticketData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
-/RaiseTicket/GetTicket/${raiseTicketId}`);
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
@@ -276,11 +275,11 @@ const [showConfirmation, setShowConfirmation] = useState(false);
         updatedDate: Comment.updatedDate,
         commentText: Comment.commentText,
       })),
+
     };
   
     try {
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
-/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -364,7 +363,8 @@ const handlePaymentTicket = async (e) => {
   
 
   try {
-    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Payment/CreatePayment`, {
+    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
+/Payment/CreatePayment`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -505,12 +505,8 @@ const handlePaymentTicket = async (e) => {
         <label className='fs-2 bg-warning fw-bold w-100 p-2'>
             Technician Confirmation Code is: {technicianConfirmationCode}
         </label>
-    </div>
-
-
-)}
-
-      
+    </div> 
+)} 
     </div>
     </div>
     </div>

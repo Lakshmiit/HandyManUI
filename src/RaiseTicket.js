@@ -8,10 +8,14 @@ import Sidebar from './Sidebar';
 import { useParams } from 'react-router-dom';
 const AddressManager = () => {
   const {selectedUserType} = useParams();
+  const {userType} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const { customerId } = useParams(); 
  const [addresses, setAddresses] = useState([]);
+ const [ticketId, setTicketId] = useState('');
+//  const [showConfirmation, setShowConfirmation] = useState(false);
+
     
  // {
   //  "fullName": "K R V Satyanarayn ",
@@ -45,6 +49,10 @@ const AddressManager = () => {
     category: '',
   });
   const [confirmationModal, setConfirmationModal] = useState(false);
+
+  useEffect(() => {
+    console.log(ticketId);
+  }, [ticketId]);
 
   const API_URL = 'https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/';
   // Fetch customer profile data
@@ -233,18 +241,17 @@ useEffect(() => {
       return;
     }
   
-    // Generate ticket ID in the format VSKPAKP002
-    const ticketIdPrefix = "VSKPAKP";
-    const ticketIdSuffix = String(Math.floor(Math.random() * 999) + 1).padStart(3, "0");
-    const ticketId = `${ticketIdPrefix}${ticketIdSuffix}`;
-  
+    // // Generate ticket ID in the format VSKPAKP002
+    // const ticketIdPrefix = "VSKPAKP";
+    // const ticketIdSuffix = String(Math.floor(Math.random() * 999) + 1).padStart(3, "0");
+    // const ticketId = `${ticketIdPrefix}${ticketIdSuffix}`;
     const primaryAddress = addresses.find((addr) => addr.type === "primary");
     const state = primaryAddress?.state || "";
     const district = primaryAddress?.district || "";
     const pincode = primaryAddress?.zipCode || primaryAddress?.pincode || "";
 
     const payload = {
-      RaiseTicketId:ticketId,
+      RaiseTicketId:"string",
       date: new Date(),
       address: addresses.find((addr) => addr.type === 'primary')?.address || '',
       subject: formData.subject,
@@ -254,7 +261,6 @@ useEffect(() => {
       state:state,
       district:district,
       zipcode:pincode,
-      
       requestType: requestType,
       status:'open',
       internalStatus:'Open',
@@ -280,32 +286,62 @@ useEffect(() => {
       Option2Time: "",
      
     };
-  //alert(JSON.stringify(payload));
-    try {
-      const response = await fetch('https://handymanapiv2.azurewebsites.net/api/RaiseTicket/CreateRaiseTicket', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
+  // //alert(JSON.stringify(payload));
+  //   try {
+  //     const response = await fetch('https://handymanapiv2.azurewebsites.net/api/RaiseTicket/CreateRaiseTicket', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(payload),
+  //     });
   
-      if (!response.ok) {
-        throw new Error('Failed to create a ticket.');
-      }
+  //     if (!response.ok) {
+  //       throw new Error('Failed to create a ticket.');
+  //     }
   
-      const data = await response.json();
-      console.log('Ticket created:', data);
+  //     const data = await response.json();
+  //     setTicketId(data.ticketId);
+  //     console.log('Ticket created:', data);
   
-      // Show alert message and navigate to CustomerProfilePage
-      window.alert(`Ticket has been submitted successfully! Your reference number is ${ticketId}. Get Quote will contact you shortly.`);
-       window.location.href = 'https://handymanserviceproviders.com/CustomerProfilePage';
-    } catch (error) {
-      console.error('Error:', error);
-      window.alert('Failed to create the ticket. Please try again later.');
-    }
-  };
+  //     // Show alert message and navigate to CustomerProfilePage
+  //     window.alert(`Ticket has been submitted successfully! Your reference number is ${ticketId}. Get Quote will contact you shortly.`);
+  //      window.location.href = 'https://handymanserviceproviders.com/CustomerProfilePage';
+  //   } catch (error) {
+  //     console.error('Error:', error);
+  //     window.alert('Failed to create the ticket. Please try again later.');
+  //   }
+  // };
 
+  try {
+    const response = await fetch('https://handymanapiv2.azurewebsites.net/api/RaiseTicket/CreateRaiseTicket', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+  
+    if (!response.ok) {
+      throw new Error('Failed to create a ticket.');
+    }
+  
+    const data = await response.json(); 
+  
+    setTicketId(data.ticketId); 
+   
+    // Show alert message with the correct ticketId
+    window.alert(`Ticket has been submitted successfully! Your reference number is ${data.ticketId}. Get Quote will contact you shortly.`);
+  
+    // Redirect to CustomerProfilePage
+    window.location.href = `https://localhost:7155/CustomerProfilePage?ReactToken=${customerId}$${userType}`;
+  
+  } catch (error) {
+    console.error('Error:', error);
+    window.alert('Failed to create the ticket. Please try again later.');
+  }
+  };
+  
   // Handle secondary address selection
   const handleSecondaryAddressSelect = (id) => {
     const updatedAddresses = addresses.map((address) =>

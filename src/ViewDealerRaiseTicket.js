@@ -63,7 +63,7 @@ const RaiseQuotation = () => {
  const [fixedDeliveryCharge] = useState('100'); 
  const [fixedServiceCharges] = useState('10');
  const [gsts] = useState('18');
- const [calculatedGrandTotal, setCalculatedGrandTotal] = useState('');
+ const [CalculateTotal, setCalculatedGrandTotal] = useState('');
 
  const [calculatedServiceCharge, setCalculatedServiceCharge] = useState('0');
  const [calculatedGSTS, setCalculatedGSTS] = useState('0');
@@ -260,22 +260,19 @@ useEffect(() => {
       useEffect(() => {
         const fetchDealerData = async () => {
           try {
-            const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuoteByDealer/GetRaiseAQuoteDealerDetailsByid?raiseAQuotetId=${raiseTicketId}`);
+            const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuoteByDealer/GetRaiseAQuoteDealerDetailsByid?raiseTicketId=${raiseTicketId}&dealerId=${dealerId}`);
             if (!response.ok) {
               throw new Error('Failed to fetch ticket data');
             }
             const dataDealer = await  response.json();
             // alert(JSON.stringify(dataDealer));
-            // console.log(JSON.stringify(dataDealer));
             setDealerData(dataDealer[0]);
             setId(dataDealer.id);
-            // setDealerId(dataDealer.dealerId);
             // alert(dataDealer.dealerId);
             setCustomerId(dataDealer.customerId);
             setAddRemarks(dataDealer[0].addrRmarks || []);
-            // setSpecifications(dataDealer[0].materials || []);
-           
-            // setMaterialQuotation(dataDealer[0].materialQuotation || []);
+            setSpecifications(dataDealer[0].materials || []);
+            setMaterialQuotation(dataDealer[0].materialQuotation || []);
           } catch (error) {
             console.error('Error fetching dealer data:', error);
           } finally {
@@ -283,59 +280,8 @@ useEffect(() => {
           }
         };
         fetchDealerData();
-      }, [raiseTicketId]);
+      }, [raiseTicketId, dealerId]);
       
-
-      // useEffect(() => {
-      //   if (technicianDetails.length > 0) {
-      //     const lowest = technicianDetails.reduce((prev, current) => {
-      //       const prevAmount = parseFloat(prev.totalAmount);
-      //       const currentAmount = parseFloat(current.totalAmount);
-      //       return currentAmount < prevAmount ? current : prev;
-      //     });
-      //     setTotalAmount(lowest.totalAmount);
-      //     // alert(lowest.totalAmount);
-      //     // setTechnicianId(lowest.technicianId);
-      //     setQuote(lowest.enterQuoteAmount);
-      //     setRaiseAQuoteId(lowest.raiseAQuoteId);
-      //     setId(lowest.id);
-      //     setFixedQuote(lowest.fixedQuote);
-      //     setDiscount(lowest.discount);
-      //     setFixedDiscount(lowest.fixedDiscount);
-      //     setGST(lowest.gst);
-      //     setFixedGSTs(lowest.fixedGST);
-      //     setOtherCharge(lowest.othercharges);
-      //     setFixedOtherCharge(lowest.fixedOtherCharge);
-      //     setServiceCharge(lowest.serviceCharges);
-      //     setFixedServiceCharge(lowest.fixedServiceCharge);
-      //     setLowestBidder(lowest.technicianId);
-      //     setSpecifications(lowest.materials);
-      //     setMaterialQuotation(lowest.materialQuotation);
-      //     // if (lowest.addrRmarks?.length > 0) {
-      //     //   setAddRemarks(lowest.addrRmarks[0].remarks);
-      //     // } else {
-      //     //   setAddRemarks("");
-      //     // }
-          
-      //   } else {
-      //     // setTechnicianId('');
-      //     setLowestBidder('');
-      //     setTotalAmount('');
-      //     setQuote('');
-      //     setFixedQuote('');
-      //     setDiscount('');
-      //     setFixedDiscount('');
-      //     setServiceCharge('');
-      //     setOtherCharge('')
-      //     setFixedOtherCharge('');
-      //     setFixedServiceCharge('');
-      //     setGST('');
-      //     setFixedGSTs('');
-      //     setAddRemarks("");
-      //   }
-      // }, [technicianDetails, discount, fixedDiscount, othercharges, fixedOtherCharge, serviceCharges,fixedServiceCharge, gst, fixedGST]);
-      
-
   // Handle form data changes
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -465,12 +411,10 @@ materialQuotation: material.map((mat) => ({
   fixedServiceCharges: calculatedServiceCharge.toString(),
   gsts: gsts,
   fixedGST: calculatedGSTS,
-  grandtotal:calculatedGrandTotal.toString(),
+  grandtotal:CalculateTotal.toString(),
 })),
  
-  }; 
-// alert(JSON.stringify(payload1));
-// alert(fixedDeliveryCharge);
+  };  
   try {
     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
 /RaiseAQuoteByDealer/CreateRaiseAQuoteByDealer`, {
@@ -736,18 +680,14 @@ materialQuotation: material.map((mat) => ({
         setMaterialQuotation((prev) => {
           const updated = [...prev];
           updated[0].discount = parseFloat(e.target.value);
-          // alert(material[0].deliverycharges);
-           //setFixedDeliveryCharge(material[0].deliverycharges);
-           //alert(materialAmount() - e.target.value);
-           //(material[0].servicecharges);
            const calculateserviceCharge = ((materialAmount() - e.target.value) * fixedServiceCharges)/100;           
            setCalculatedServiceCharge(calculateserviceCharge);
            setCalculatedGSTS(((calculateserviceCharge * gsts) / 100).toFixed(2));
            var CalculateTotal = (materialAmount() - e.target.value) + Number(fixedDeliveryCharge) + Number(calculateserviceCharge) + Number(calculatedGSTS);
-          alert(CalculateTotal);
-           setCalculatedGrandTotal(Number(CalculateTotal));
+          // alert(CalculateTotal);
+           setCalculatedGrandTotal(Number(CalculateTotal).toFixed(2));
           return updated;
-        })
+        }) 
       }
       placeholder="Enter Discount"
     />
@@ -876,7 +816,7 @@ materialQuotation: material.map((mat) => ({
       <input
         type="number"
         className="form-control text-end"
-         value={calculatedGrandTotal}
+         value={CalculateTotal}
         // placeholder="Grand Total"
         // onChange={(e) => calculatedGrandTotal(e)}
         disabled
@@ -903,7 +843,7 @@ materialQuotation: material.map((mat) => ({
             />
           </div>
         ))}
-        </div>
+        </div>   
 
         {/* Send Quote Button */}
         <div className="mt-4 text-end">

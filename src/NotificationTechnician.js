@@ -25,12 +25,12 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
 
   return (
     <div>
-    <div className="notification-list">
+    {/* <div className="notification-list">
       {notifications.map((notification) => (
         <div
-          key={notification.raiseAQuoteId}
+          key={notification.raiseTicketId}
           className={`notification-item ${
-            notification.raiseAQuoteId === highlightedItem ? "highlight" : ""
+            notification.raiseTicketId === highlightedItem ? "highlight" : ""
           }`}
         >
           <div className="notification-header">
@@ -57,7 +57,43 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
           </div>
         </div>
       ))}
+    </div> */}
+
+
+<div className="notification-list">
+  {notifications.map((notification) => (
+    <div
+      key={notification.raiseQuoteId}
+      className={`notification-item ${
+        notification.raiseQuoteId === highlightedItem ? "highlight" : ""
+      }`}
+    >
+      <div className="notification-header">
+        <strong>Ticket ID: </strong>
+        <span
+          onClick={() => handleQuoteClick(notification.id)}
+          style={{
+            color: "blue",
+            cursor: "pointer",
+            textDecoration: "underline",
+          }}
+        >
+          {notification.raiseTicketId}
+        </span>
+      </div>
+      <div>
+        <strong>Details:</strong> {notification.details}
+      </div>
+      <div>
+        <strong>Subject:</strong> {notification.subject}
+      </div>
+      <div className="notification-date">
+        <strong>Quoted Date:</strong> {new Date(notification.date).toLocaleString()}
+      </div>
     </div>
+  ))}
+</div>
+
     {/* <div className="notification-list">
     {notifications.map((notification) => (
       <div
@@ -99,16 +135,12 @@ const Notification = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [quoteNotifications, setQuoteNotifications] = useState([]);
-  // const [orderNotifications, setOrderNotifications] = useState([]);
   const [newQuoteCount, setNewQuoteCount] = useState(0);
-  // const [newOrderCount, setNewOrderCount] = useState(0);
   const [newNotificationCount, setNewNotificationCount] = useState(0);
   const [highlightedQuote, setHighlightedQuote] = useState(null);
-  // const [highlightedOrder, setHighlightedOrder] = useState(null);
   const [activeTab, setActiveTab] = useState("");
   const [glow, setGlow] = useState(false);
   const [glowQuote, setGlowQuote] = useState(false);
-  // const [glowOrder, setGlowOrder] = useState(false);
   const { district, category } = useParams();
   const { userType } = useParams();
   const { technicianId } = useParams();
@@ -121,31 +153,62 @@ const Notification = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []); 
 
- useEffect(() => {
+//  useEffect(() => {
+//   const fetchNotifications = async () => {
+//     try {
+//       const getQuoteResponse = await fetch(
+        
+//         `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistTechnicianId?district=${district}&category=${category}&technicianId=${technicianId}`
+//       );
+//       const getQuoteData = await getQuoteResponse.json();
+//         const getQuoteCount = getQuoteData.length;
+        
+//         setQuoteNotifications(getQuoteData);
+//         setNewQuoteCount(getQuoteCount);
+//         setGlowQuote(getQuoteCount > 0);
+//         if (getQuoteCount > 0) {
+//           setHighlightedQuote(getQuoteData[0].raiseAQuoteId);
+//         }
+//         const totalNotifications = getQuoteCount;
+//         setNewNotificationCount(totalNotifications);
+//         setGlow(totalNotifications > 0);
+//       } catch (error) {
+//         console.error("Failed to fetch notifications:", error);
+//       }
+//     };
+//     fetchNotifications();
+//  }, [district, category, technicianId]);
+    
+useEffect(() => {
   const fetchNotifications = async () => {
     try {
       const getQuoteResponse = await fetch(
-        `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByDistrict?district=${district}&category=${category}`
+        `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistTechnicianId?category=${category}&district=${district}&technicianId=${technicianId}`
       );
       const getQuoteData = await getQuoteResponse.json();
-        const getQuoteCount = getQuoteData.length;
 
-        setQuoteNotifications(getQuoteData);
-        setNewQuoteCount(getQuoteCount);
-        setGlowQuote(getQuoteCount > 0);
-        if (getQuoteCount > 0) {
-          setHighlightedQuote(getQuoteData[0].raiseAQuoteId);
-        }
-        const totalNotifications = getQuoteCount;
-        setNewNotificationCount(totalNotifications);
-        setGlow(totalNotifications > 0);
-      } catch (error) {
-        console.error("Failed to fetch notifications:", error);
+      // Ensure we extract the "tickets" array from the response
+      const tickets = getQuoteData.tickets || [];
+      const getQuoteCount = tickets.length;
+
+      setQuoteNotifications(tickets);  // Setting only tickets
+      setNewQuoteCount(getQuoteCount);
+      setGlowQuote(getQuoteCount > 0);
+
+      if (getQuoteCount > 0) {
+        setHighlightedQuote(tickets[0].raiseTicketId);
       }
-    };
-    fetchNotifications();
- }, [district, category]);
-    
+
+      const totalNotifications = getQuoteCount;
+      setNewNotificationCount(totalNotifications);
+      setGlow(totalNotifications > 0);
+    } catch (error) {
+      console.error("Failed to fetch notifications:", error);
+    }
+  };
+
+  fetchNotifications();
+}, [district, category, technicianId]);
 
   const handleClearQuoteNotifications = () => {
     setNewQuoteCount(0);

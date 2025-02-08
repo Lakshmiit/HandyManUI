@@ -204,6 +204,7 @@ const formattedDate = selectedDate ? formatDate(selectedDate) : null;
     const fetchticketData = async () => {
       try {
         const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
+
 /RaiseTicket/GetTicket/${raiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
@@ -314,7 +315,7 @@ const formattedDate = selectedDate ? formatDate(selectedDate) : null;
       status: status,
       internalStatus: "Pending",
       CustomerId: customerId,
-      State: state,
+      State: state, 
       LowestBidderTechnicainId: lowestBidder,
       LowestBidderDealerId: lowestDealerBidder,
       ApprovedAmount: approvedAmount,
@@ -340,6 +341,7 @@ const formattedDate = selectedDate ? formatDate(selectedDate) : null;
   
     try {
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
+
 /RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {

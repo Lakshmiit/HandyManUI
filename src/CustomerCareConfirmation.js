@@ -7,6 +7,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import './App.css';
 import { useParams } from "react-router-dom";
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
 
 const CustomerCareConfirmation = () => {
   // const Navigate = useNavigate();
@@ -52,15 +54,29 @@ const CustomerCareConfirmation = () => {
   // const [selectedSlot] = useState('');
   const [technicianDetails, setTechnicianDetails] = useState([]);
   const [enterQuoteAmount, setQuote] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState('');
+  // const [selectedStatus] = useState('');
   const [paymentData, setPaymentData] = useState('');
   const [customerCode, setCustomerCode] = useState('');
   const [deliveryNoteId, setDeliveryNoteId]=useState('');
   const [dealerAcceptance, setDealerAcceptance] = useState([{type: "", dealerRemarks: ""}]); 
+ const [dealerInvoice, setDealerInvoice] = useState([]);
+   const [showAlert, setShowAlert] = useState(false);
+  const [invoiceNumber, setInvoiceNumber] = useState('');
+  const [invoiceDate, setInvoiceDate] = useState(''); 
+  const [uploadInvoice, setUploadInvoice] = useState([]);
+  const [deliveryId, setDeliveryId] = useState('');
+  const [transactionDetails, setTransactionDetails] = useState("");
+  const [paymentMode, SetPaymentMode] = useState('');
+  const [dealerAddress, setDealerAddress] = useState('');
+  const [dealerData, setDealerData] = useState('');
+  const [dealerName,setDealerName] = useState('');
+
+
+  
   
   useEffect(() => {
-        console.log(technicianFullName, loading,id,technicianData, deliveryData, technicianAddress, paymentData, dealerStatus);
-      }, [technicianFullName, loading,id,technicianData, deliveryData, technicianAddress, paymentData, dealerStatus]);
+        console.log(technicianFullName, dealerData,deliveryId, loading,id,technicianData, deliveryData, technicianAddress, paymentData, dealerStatus);
+      }, [technicianFullName,dealerData, deliveryId, loading,id,technicianData, deliveryData, technicianAddress, paymentData, dealerStatus]);
   
 
   // useEffect(() => {
@@ -111,8 +127,7 @@ const CustomerCareConfirmation = () => {
   useEffect(() => {
     const fetchticketData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
-/RaiseTicket/GetTicket/${raiseTicketId}`);
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
@@ -158,8 +173,26 @@ useEffect(() => {
         }
         const data = await response.json();
         setDeliveryData(data);
-        setId(data.id);
+        // alert(JSON.stringify(data));
+        setDeliveryId(data.id);
         setDeliveryNoteId(data.deliveryNoteId);
+        setTechnicianStatus(data.technicianStatus);
+        setDealerStatus(data.dealerStatus);
+        const imageRequests =
+        data.uploadInvoice?.map((photo) => fetch(
+            `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+          )
+          .then((res) => res.json())
+            .then((data) => ({
+            
+              src: photo,
+              imageData: data.imageData,
+            }))
+        ) || [];
+        const images = await Promise.all(imageRequests);
+        setUploadInvoice(images);
+        setInvoiceNumber(data.invoiceNumber);
+        setInvoiceDate(data.invoiceDate);
         setOption1Day(data.option1Day || '');
         setOption2Day(data.option2Day || '');
         setOption1Time(data.option1Time || '');
@@ -243,8 +276,10 @@ useEffect(() => {
               }
               const paymentData = await response.json();
               setPaymentData(paymentData); 
-              // SetPaymentMode(paymentData.paymentMode);
-              setCustomerCode(paymentData.technicianConfirmationCode)
+              SetPaymentMode(paymentData.paymentMode);
+              // setPaymentDateTime(paymentData.paymentDataTime);
+              setCustomerCode(paymentData.technicianConfirmationCode);
+              setTransactionDetails(paymentData.utrTransactionNumber)
               } catch (error) {
               console.error('Error fetching payment data:', error);
             } finally {
@@ -253,8 +288,134 @@ useEffect(() => {
           };
           fetchPaymentData();
         }, [ticketId]);
+
+        useEffect(() => {
+          const fetchdealerData = async () => {
+            try {
+              const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Dealer/GetDealerDetailsForInvoice?DealerId=${lowestDealerBidder}`);
+              if (!response.ok) {
+                throw new Error('Failed to fetch ticket data');
+              }
+              const dealerData = await response.json();
+              setDealerData(dealerData);
+              // alert(JSON.stringify(dealerData));  
+              setDealerAddress(dealerData.address);
+               setDealerName(dealerData.dealerFirmName);
+                     } catch (error) {
+              console.error('Error fetching ticket data:', error);
+            } finally {
+              setLoading(false);
+            } 
+          };
+          fetchdealerData();
+        }, [lowestDealerBidder]);
+       
   
-              
+const handleFileChange = (e) => {
+const files = Array.from(e.target.files);
+if (files.length + dealerInvoice.length > 1) {
+  alert("You can upload up to 1 file.");
+  return;
+}
+setDealerInvoice([...dealerInvoice, ...files]);
+setShowAlert(true);
+};
+
+      const handleUploadFiles = async () => {
+        setLoading(true);
+        setShowAlert(false);
+        
+        const uploadedFilesList=[];
+        for (let i = 0; i < dealerInvoice.length; i++) {
+          const file = dealerInvoice[i];
+          const fileName = file.name;
+          const mimetype = file.type;
+          const byteArray = await getFileByteArray(file);
+          const response = await uploadFile(byteArray, fileName, mimetype, file);
+          if (response) {
+            uploadedFilesList.push({
+              src: response,
+              alt: fileName
+            });
+          } else {
+            alert("Failed Upload Invoice");
+          }
+        }
+        setUploadInvoice(uploadedFilesList);
+        setLoading(false);
+      };
+    
+      // Convert the file to a byte array
+      const getFileByteArray = (file) => {
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const byteArray = new Uint8Array(reader.result);
+            resolve(byteArray);
+          };
+          reader.readAsArrayBuffer(file);
+        });
+      };
+    
+      const uploadFile = async (byteArray, fileName, mimeType, file) => {
+        try {
+          const formData = new FormData();
+          formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
+          formData.append('fileName', fileName);
+    
+          const response = await fetch('https://handymanapiv2.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
+            method: 'POST',
+            headers: {
+              'Accept': 'text/plain',
+            },
+            body: formData,
+          });
+    
+          const responseData = await response.text();
+          return responseData || ''; 
+        } catch (error) {
+          console.error('Error uploading file:', error);
+          return '';
+        }
+      };
+    
+      useEffect(() => {
+        return () => {
+          uploadInvoice.forEach((file) => URL.revokeObjectURL(file));
+        };
+      }, [uploadInvoice]);
+
+
+      const handleDownloadAllAttachments = async () => {
+        if (uploadInvoice.length === 0) {
+          alert("No files to download");
+          return;
+        }
+      
+        const zip = new JSZip();
+        const folder = zip.folder("Download Invoice"); // Optional folder name inside ZIP
+      
+        // Add files to ZIP
+        for (const invoice of uploadInvoice) {
+          try {
+            const response = await fetch(`data:image/jpeg;base64,${invoice.imageData}`);
+            const blob = await response.blob();
+            folder.file(invoice.src.split("/").pop(), blob); // Add file to the ZIP folder
+          } catch (error) {
+            console.error("Error fetching attachment:", error);
+          }
+        }
+      
+        // Generate ZIP and download
+        try {
+          const content = await zip.generateAsync({ type: "blob" });
+          saveAs(content, "Download Invoice.zip");
+        } catch (error) {
+          console.error("Error generating ZIP:", error);
+          alert("Failed to download attachments. Please try again.");
+        }
+      };
+  
     // Detect screen size for responsiveness
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -306,8 +467,7 @@ useEffect(() => {
     };
   
     try {
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
-/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -349,10 +509,13 @@ useEffect(() => {
     option2Day: option2Day,
     option2Time:  option2Time,
     deliveryTime: new Date().toISOString(),
-    deliveryInvoiceId: "string",
+    UploadInvoice: uploadInvoice.map((file) => file.src),
+    InvoiceNumber: invoiceNumber,
+    InvoiceDate: invoiceDate,
+    deliveryInvoiceId: "string", 
     internalStatus: status,
     technicianStatus: technicianStatus,
-    dealerStatus: selectedStatus,
+    dealerStatus: dealerStatus,
     technicianAcceptance: technicianAcceptance.map((remarks) => ({
       type: remarks.type,
       technicianRemarks: remarks.technicianRemarks,
@@ -371,8 +534,7 @@ useEffect(() => {
   };
 
   try {
-    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
-/DeliveryNote/${id}`, {
+    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/DeliveryNote/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -389,15 +551,72 @@ useEffect(() => {
   }
 };
 
+// const handleUploadInvoice = async (e) => {
+//   e.preventDefault();
+
+
+// const payload2 = {
+
+//   id: deliveryId,
+//   ticketId: ticketId,
+//   deliveryNoteId: deliveryNoteId,
+//   option1Day: option1Day,
+//   option1Time: option1Time,
+//   option2Day: option2Day,
+//   option2Time:  option2Time,
+//   deliveryTime: new Date().toISOString(),
+//   UploadInvoice: uploadInvoice.map((file) => file.src),
+//   InvoiceNumber: invoiceNumber,
+//   InvoiceDate: invoiceDate,
+//   deliveryInvoiceId: "string", 
+//   internalStatus: status,
+//   technicianStatus: technicianStatus,
+//   dealerStatus: selectedStatus,
+//   technicianAcceptance: technicianAcceptance.map((remarks) => ({
+//     type: remarks.type,
+//     technicianRemarks: remarks.technicianRemarks,
+//   })),
+//   dealerAcceptance: dealerAcceptance.map((remarks) => ({
+//     type: remarks.type,
+//     dealerRemarks: remarks.dealerRemarks,
+//   })),
+//   assignedTo: assignedTo,
+//   materialCollection: specifications.map((collection) => ({
+//     material: collection.material,
+//     quantity: collection.quantity,
+//     receivedQuantity: collection.receivedQuantity,
+//     remainingQuantity: collection.remainingQuantity,
+//   }))
+// };
+
+// try {
+//   const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/DeliveryNote/${deliveryId}`, {
+//     method: 'PUT',
+//     headers: {
+//       'Content-Type': 'application/json',
+//     },
+//     body: JSON.stringify(payload2),
+//   });
+//   if (!response.ok) {
+//     throw new Error('Failed to create a Invoice.');
+//   }
+//   alert('Uploaded Invoice saved Successfully!');
+// } catch (error) {
+//   console.error('Error:', error);
+//   window.alert('Failed to create the Invoice. Please try again later.');
+// }
+// };
+
+
 const handleBothActions =  (e) => {
   e.preventDefault();
   handleSaveTicket(e);
   handleUpdateTicket(e);
 };
 
-  const handleStatusChange = (event) => {
-    setSelectedStatus(event.target.value);
-  }; 
+  // const handleStatusChange = (event) => {
+  //   setSelectedStatus(event.target.value);
+  // }; 
 
   // const handleMaterialChange = (index, field, value) => {
   //   const updatedMaterials = [...specifications];
@@ -416,6 +635,7 @@ const handleBothActions =  (e) => {
   //   setSpecifications(updatedMaterials);
   //   };
 
+  const isChecked = technicianStatus === "Job Completed";
 
   return (
     <div className="d-flex">
@@ -531,7 +751,7 @@ const handleBothActions =  (e) => {
       </table>
     
         <div className="form-group m-2">
-          <label className='fs-5'>Required Materials Details</label>
+          <label className='section-title'>Required Materials Details</label>
           {specifications.map((spec, index) => (
             <div className="d-flex gap-3 mb-2" key={index}>
               
@@ -540,7 +760,6 @@ const handleBothActions =  (e) => {
                 className="form-control"
                 value={spec.material}
                 placeholder="Enter Material"
-              //  onChange={(e) => handleMaterialChange(index, "material", e.target.value)}
                readOnly
               />
               <input
@@ -548,7 +767,6 @@ const handleBothActions =  (e) => {
                 className="form-control text-center"
                 placeholder="Enter Quantity"
                 value={spec.quantity}
-                // onChange={(e) => handleMaterialChange(index, "quantity", e.target.value)}
                 readOnly
               />
               <input
@@ -556,7 +774,6 @@ const handleBothActions =  (e) => {
                 className="form-control text-end"
                 placeholder="Received Quantity"
                 value={spec.receivedQuantity}
-                // onChange={(e) => handleMaterialChange(index, "receivedQuantity", e.target.value)}
                 readOnly
               />
               <input
@@ -564,13 +781,8 @@ const handleBothActions =  (e) => {
                 className="form-control text-end"
                 placeholder="Remaining Quantity"
                 value={spec.remainingQuantity}
-                // onChange={(e) => handleMaterialChange(index, "remainingQuantity", e.target.value)}
                 readonly
               />
-              {/* <input
-              type='radio'
-              className='form-check-input m-2 border-dark'
-              /> */}
             </div>
           ))}
 
@@ -579,28 +791,62 @@ const handleBothActions =  (e) => {
         <tbody>
             <tr>
             <td><strong>Invoice Number</strong></td>
-            <td></td>
+            <td><input type='text' name='invoiceNumber' 
+            className="form-control text-end"
+            placeholder='Enter Invoice Number'
+            onChange={(e) => setInvoiceNumber(e.target.value)}/></td>
             </tr>
             <tr>
             <td><strong>Invoice Date</strong></td>
-            <td></td>
+            <td ><input type='date' name="invoiceDate"
+            className="form-control text-end w-50"
+            onChange={(e) => setInvoiceDate(e.target.value)}/></td>
             </tr>
         </tbody>
       </table>
-      <button className='btn btn-warning fs-5 m-2'>Upload Invoice</button>
-      <button className='btn btn-warning m-2 fs-5' title='save'>Save</button>
-        </div>
+      <div className="form-group">
+          <label className="section-title fs-5 m-1">Upload Invoice</label>
+          <input
+                type="file"
+                className="form-control"
+                multiple
+                onChange={handleFileChange}
+                required
+              />
+              {showAlert && (
+                <div className="alert alert-danger  mt-2">
+                  Please click the <strong>Upload Files</strong> button to upload the selected images.
+                </div>
+              )}
+              <div className="mt-1">
+                {dealerInvoice.map((file, index) => (
+                <p key={index}>{file.name}</p>
+                ))}
+              </div>
+              <button
+                type="button"
+                className="btn btn-primary mt-1"
+                onClick={handleUploadFiles}
+                disabled={loading || dealerInvoice.length === 0}
+              >
+                {loading ? 'Uploading...' : 'Upload Invoice'}
+              </button>
+              <button className='btn btn-warning m-1' 
+              // onClick={handleUploadInvoice}
+              >Save</button>
+          </div>
+        </div> 
         <div className='payment'>
             <label className='section-title'>Material Collection Point</label>
             <table className='customer-details-table'>
                 <tbody>
                     <tr>
                         <td><strong>Trader Firm Name</strong></td>
-                        <td>Trader Firm Name</td>
+                        <td>{dealerName}</td>
                     </tr>
                     <tr>
                         <td><strong>Trader Address</strong></td>
-                        <td>Trader Address</td>
+                        <td>{dealerAddress}</td>
                     </tr>
                     {/* <tr>
                         <td><strong>Address</strong></td>
@@ -621,15 +867,21 @@ const handleBothActions =  (e) => {
         <tbody>
             <tr>
             <td><strong>Invoice Number</strong></td>
-            <td></td>
+            <td><input type="text" name="invoiceNumber" value={invoiceNumber}
+            className="form-control text-end" placeholder="Enter Invoice Number" 
+            // onChange={(e) => setInvoiceNumber(e.target.value)}
+            /></td>
             </tr>
             <tr>
             <td><strong>Invoice Date</strong></td>
-            <td></td>
+            <td><input type="date" name="invoiceDate" value={invoiceDate}
+            className="form-control text-end"
+            // onChange={(e) => setInvoiceDate(e.target.value)} 
+            /></td>
             </tr>
         </tbody>
       </table>
-      <button className='btn btn-warning fs-5 m-2'>Download Invoice</button>
+      <button className='btn btn-warning fs-5 m-2' onClick={handleDownloadAllAttachments}>Download Invoice</button>
 
         <div className='payment'>
             <label className='section-title'>Technician Details</label>
@@ -649,12 +901,12 @@ const handleBothActions =  (e) => {
                     </tr>
                 </tbody>
             </table>
-            <label className='fs-5'>
+            {/* <label className='fs-5'>
             <input
             type='checkbox'
             className='form-check-input m-2 border-dark' />
             Material Handover to Customer
-            </label>
+            </label> */}
         </div>
         
       <h3 className="section-title">Customer Details</h3>
@@ -671,6 +923,60 @@ const handleBothActions =  (e) => {
         </tbody>
       </table>
 
+      {/* <div className='payment'> */}
+        <label className='section-title text-dark bg-warning fw-bold w-100 p-1'>Payment Mode</label>
+        <div className='d-flex flex-column m-1'>
+        <label className='fs-5'>
+            <input 
+            type="checkbox" 
+            className="form-check-input border-secondary m-2 border-dark"
+            checked={paymentMode === 'online'}
+            readOnly
+             />
+            Pay Through Online
+          </label>
+          <label className='fs-5'>
+            <input 
+            type="checkbox" 
+            className="form-check-input border-secondary m-2 border-dark"
+            checked={paymentMode === 'technician'}
+            readOnly
+            />
+            Pay On In Presence of Technician
+          </label>
+          </div>
+          <div className='d-flex align-items-center'>
+          <h3 className='section-title m-2'>Payment Transaction Details</h3>
+          <input
+          type='text'
+          className='form-control m-1'
+          placeholder='Enter Payment Transaction Details'
+          value={transactionDetails}
+          // onChange={(e) => setTransactionDetails(e.target.value)}
+          />
+          </div>
+          {/* <div className='d-flex flex-row align-items-center gap-5'>
+            <div className='d-flex align-items-center'>
+            <strong className='fs-5 m-1'>Date</strong>
+                <input
+                type='text'
+                className='form-control m-1'
+                Placeholder='DD/MM/YY'
+            value={paymentDataTime}
+                readOnly
+                />
+            
+            {/* <strong className='fs-5 m-1'>Time</strong> 
+                <input
+                type='text'
+                className='form-control m-1'
+                placeholder='Enter Time'
+                // value={}
+                readOnly
+                /> 
+            </div>
+          </div> */}
+
       <div className='payment'>
         
           <h3 className='section-title mt-2'>Ticket Closing Status</h3>
@@ -678,9 +984,9 @@ const handleBothActions =  (e) => {
           <label className="fs-5">
           <input type="checkbox" 
           className="form-check-input m-2 border-dark"
-          value='Material Delivered'
-          checked={selectedStatus === 'Material Delivered'}
-          onChange={handleStatusChange}
+          value={dealerStatus}
+          checked={dealerStatus === 'Material Delivered'}
+          // onChange={handleStatusChange}
           />
           Material Delivered
           </label>
@@ -688,12 +994,12 @@ const handleBothActions =  (e) => {
           <input type="checkbox" 
           className="form-check-input m-2 border-dark"
           value='Technician Work Completed'
-          checked={selectedStatus === 'Technician Work Completed'}
-          onChange={handleStatusChange}
+          checked={isChecked}
+          // onChange={handleStatusChange}
            />
           Technician Work Completed
           </label>
-          <label className="fs-5">
+          {/* <label className="fs-5">
           <input type="checkbox" 
           className="form-check-input m-2 border-dark"
           value='Pending Technician Issues'
@@ -710,9 +1016,9 @@ const handleBothActions =  (e) => {
           onChange={handleStatusChange}
           />
           Pending Ticket Araised Customer Issues
-          </label>
+          </label> */}
         </div>
-        <div>
+        {/* <div>
         <h4 className="section-title fs-5">Assigned To</h4>
         <select className="form-control w-50 mb-2 fs-5"
         value={assignedTo}
@@ -721,7 +1027,7 @@ const handleBothActions =  (e) => {
           <option>Select Assigned</option>
           <option>Closed Ticket</option>
         </select>
-          </div>
+          </div> */} 
           <div className='d-flex flex-row align-items-center gap-5'> 
           <button className='btn btn-warning me-2 fs-5' title='save' onClick={handleBothActions}>Save</button>
           </div>

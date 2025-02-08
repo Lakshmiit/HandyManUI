@@ -7,6 +7,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import './App.css';
 import { useParams } from "react-router-dom";
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
 
 const CustomerTicketTrack = () => {
   // const Navigate = useNavigate();
@@ -30,6 +32,7 @@ const CustomerTicketTrack = () => {
   const [zipCode, setZipcode] = useState('');
   const [address, setAddress] = useState('');
   const [assignedTo, setAssignedTo] = useState('');
+  const [rating, setRating] = useState('');
   const [isWithMaterial, setIsWithMaterial] = useState(false);
   const [category, setCategory] = useState('');
   const [lowestDealerBidder, setLowestDealerBidder] = useState('');
@@ -48,7 +51,7 @@ const CustomerTicketTrack = () => {
   const [selectedSlot] = useState('');
   const [technicianDetails, setTechnicianDetails] = useState([]);
   const [totalAmount, setTotalAmount] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState('');
+  const [selectedStatus] = useState('');
   const [technicianAcceptance, setTechnicianAcceptance] = useState([{type: "", technicianRemarks: ""}]); 
   const [technicianStatus, setTechnicianStatus] = useState('');
   const [deliveryData, setDeliveryData] = useState('');
@@ -57,11 +60,16 @@ const CustomerTicketTrack = () => {
   const [customerCode, setCustomerCode] = useState('');
   const [deliveryNoteId, setDeliveryNoteId]=useState('');
   const [dealerAcceptance, setDealerAcceptance] = useState([{type: "", dealerRemarks: ""}]); 
-    
+  const [invoiceNumber, setInvoiceNumber] = useState('');
+  const [invoiceDate, setInvoiceDate] = useState(''); 
+  const [uploadInvoice, setUploadInvoice] = useState([]);
+  const [dealerAddress, setDealerAddress] = useState('');
+  const [dealerData, setDealerData] = useState('');
+  const [dealerName,setDealerName] = useState('');
 
   useEffect(() => {
-        console.log(technicianFullName, loading,id,technicianData, deliveryData, dealerStatus, technicianAddress, selectedSlot, paymentData);
-      }, [technicianFullName, loading,id,technicianData, deliveryData, dealerStatus, technicianAddress, selectedSlot, paymentData]);
+        console.log(technicianFullName,dealerData, loading,id,technicianData, deliveryData, dealerStatus, technicianAddress, selectedSlot, paymentData);
+      }, [technicianFullName,dealerData, loading,id,technicianData, deliveryData, dealerStatus, technicianAddress, selectedSlot, paymentData]);
   
 
 //   useEffect(() => {
@@ -111,8 +119,7 @@ const CustomerTicketTrack = () => {
 useEffect(() => {
     const fetchticketData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
-/RaiseTicket/GetTicket/${raiseTicketId}`);
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
@@ -165,6 +172,22 @@ useEffect(() => {
         setOption1Time(data.option1Time || '');
         setOption2Time(data.option2Time || '');
         setTechnicianStatus(data.technicianStatus);
+        const imageRequests =
+        data.uploadInvoice?.map((photo) => fetch(
+            `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+          )
+          .then((res) => res.json())
+            .then((data) => ({
+            
+              src: photo,
+              imageData: data.imageData,
+            }))
+        ) || [];
+        const images = await Promise.all(imageRequests);
+        setUploadInvoice(images);
+        setInvoiceNumber(data.invoiceNumber);
+        setInvoiceDate(data.invoiceDate);
+        setTechnicianStatus(data.technicianStatus);
         setTechnicianAcceptance(data.technicianAcceptance || [{ type: "", technicianRemarks: "" }]);
         setDealerAcceptance(data.dealerAcceptance || [{ type: "", dealerRemarks: "" }]);
         setDealerStatus(data.dealerStatus);
@@ -176,16 +199,15 @@ useEffect(() => {
       }
     };
     fetchDeliveryData();
-}, [ticketId]);   //  Runs only when ticketId updates
+}, [ticketId]);  
 
 
-
+const isChecked = technicianStatus === "Job Completed";
 
   useEffect(() => {
     const fetchtechnicianData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
-/Technician/GetTechnicianDetailsForInvoice?TechnicianId=${lowestBidder}`);
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Technician/GetTechnicianDetailsForInvoice?TechnicianId=${lowestBidder}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
@@ -203,6 +225,28 @@ useEffect(() => {
     };
     fetchtechnicianData();
   }, [lowestBidder]);
+
+  useEffect(() => {
+    const fetchdealerData = async () => {
+      try {
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Dealer/GetDealerDetailsForInvoice?DealerId=${lowestDealerBidder}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch ticket data');
+        }
+        const dealerData = await response.json();
+        setDealerData(dealerData);
+        // alert(JSON.stringify(dealerData));  
+        setDealerAddress(dealerData.address);
+         setDealerName(dealerData.dealerFirmName);
+               } catch (error) {
+        console.error('Error fetching ticket data:', error);
+      } finally {
+        setLoading(false);
+      } 
+    };
+    fetchdealerData();
+  }, [lowestDealerBidder]);
+
 
 useEffect(() => {
   const apiUrl = `https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
@@ -254,6 +298,35 @@ useEffect(() => {
         fetchPaymentData();
       }, [ticketId]);
 
+      const handleDownloadAllAttachments = async () => {
+        if (uploadInvoice.length === 0) {
+          alert("No files to download");
+          return;
+        }
+      
+        const zip = new JSZip();
+        const folder = zip.folder("Download Invoice"); // Optional folder name inside ZIP
+      
+        // Add files to ZIP
+        for (const invoice of uploadInvoice) {
+          try {
+            const response = await fetch(`data:image/jpeg;base64,${invoice.imageData}`);
+            const blob = await response.blob();
+            folder.file(invoice.src.split("/").pop(), blob); // Add file to the ZIP folder
+          } catch (error) {
+            console.error("Error fetching Invoice:", error);
+          }
+        }
+      
+        // Generate ZIP and download
+        try {
+          const content = await zip.generateAsync({ type: "blob" });
+          saveAs(content, "Download Invoice.zip");
+        } catch (error) {
+          console.error("Error generating ZIP:", error);
+          alert("Failed to download Invoice. Please try again.");
+        }
+      };
               
     // Detect screen size for responsiveness
   useEffect(() => {
@@ -306,8 +379,7 @@ useEffect(() => {
     };
   
     try {
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
-/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -350,6 +422,9 @@ useEffect(() => {
     option2Day: selectedSlot === "option2" ? option2Day : "",
     option2Time: selectedSlot === "option2" ? option2Time : "",
     deliveryTime: new Date().toISOString(),
+    UploadInvoice: uploadInvoice.map((file) => file.src),
+    InvoiceNumber: invoiceNumber,
+    InvoiceDate: invoiceDate,
     deliveryInvoiceId: "string",
     internalStatus: status,
     technicianStatus: technicianStatus,
@@ -395,9 +470,9 @@ const handleBothActions =  (e) => {
   handleUpdateTicket(e);
 };
 
-  const handleStatusChange = (event) => {
-    setSelectedStatus(event.target.value);
-  }; 
+  // const handleStatusChange = (event) => {
+  //   setSelectedStatus(event.target.value);
+  // }; 
 
   return (
     <div className="d-flex">
@@ -479,8 +554,8 @@ const handleBothActions =  (e) => {
                         className='form-check-input m-1 border-dark'
                         name='timeslot' 
                         value='option1' 
-                        checked={option1Day && option1Time ? true : false}  // Select if data exists
-                        readOnly  // Make it read-only
+                        checked={option1Day && option1Time ? true : false} 
+                        readOnly 
                     />
                     Option 1
                 </strong> 
@@ -496,8 +571,8 @@ const handleBothActions =  (e) => {
                         className='form-check-input m-1 border-dark' 
                         name='timeslot' 
                         value='option2' 
-                        checked={option2Day && option2Time ? true : false}  // Select if data exists
-                        readOnly  // Make it read-only
+                        checked={option2Day && option2Time ? true : false} 
+                        readOnly  
                     />
                     Option 2
                 </strong>
@@ -512,46 +587,38 @@ const handleBothActions =  (e) => {
       </table>
     
         <div className="form-group m-2">
-          <label className='fs-5'>Required Materials Details</label>
+          <label className='section-title'>Required Materials Details</label>
           {specifications.map((spec, index) => (
-            <div className="d-flex gap-3 mb-2" key={index}>
+            <div className="d-flex gap-3" key={index}>
               
               <input
                 type="text"
                 className="form-control"
                 value={spec.material}
                 placeholder="Enter Material"
-              //  onChange={(e) => handleMaterialChange(index, "material", e.target.value)}
-               readOnly
+                readOnly
               />
               <input
                 type="text"
                 className="form-control text-center"
-                placeholder="Received Quantity"
                 value={spec.quantity}
-                // onChange={(e) => handleMaterialChange(index, "quantity", e.target.value)}
+                placeholder="Enter Quantity"
                 readOnly
               />
               <input
                 type="text"
                 className="form-control text-end"
-                placeholder="Received Quantity"
                 value={spec.receivedQuantity}
-                // onChange={(e) => handleMaterialChange(index, "receivedQuantity", e.target.value)}
+                placeholder="Received Quantity"
                 readOnly
               />
               <input
                 type="text"
                 className="form-control text-end"
-                placeholder="Remaining Quantity"
                 value={spec.remainingQuantity}
-                // onChange={(e) => handleMaterialChange(index, "remainingQuantity", e.target.value)}
+                placeholder="Remaining Quantity"
                 readOnly
               />
-              {/* <input
-              type='radio'
-              className='form-check-input m-2 border-dark'
-              /> */}
             </div>
           ))}
 
@@ -577,16 +644,12 @@ const handleBothActions =  (e) => {
                 <tbody>
                     <tr>
                         <td><strong>Trader Firm Name</strong></td>
-                        <td>Trader Firm Name</td>
+                        <td>{dealerName}</td>
                     </tr>
                     <tr>
                         <td><strong>Trader Address</strong></td>
-                        <td>Trader Address</td>
-                    </tr>
-                    {/* <tr>
-                        <td><strong>Address</strong></td>
-                        <td>{address}</td>
-                    </tr> */}
+                        <td>{dealerAddress}</td>
+                    </tr> 
                 </tbody>
             </table>
             {/* <label className='fs-5'>
@@ -602,15 +665,18 @@ const handleBothActions =  (e) => {
         <tbody>
             <tr>
             <td><strong>Invoice Number</strong></td>
-            <td></td>
+            <td><input type='text' name='invoiceNumber' 
+            className="form-control text-end" value={invoiceNumber}/></td>
             </tr>
             <tr>
             <td><strong>Invoice Date</strong></td>
-            <td></td>
+            <td ><input type='date' name="invoiceDate"
+            className="form-control text-end w-50"
+            value={invoiceDate}/></td>
             </tr>
         </tbody>
       </table>
-      <button className='btn btn-warning fs-5 m-2'>Download Invoice</button>
+      <button className='btn btn-warning fs-5 m-2' onClick={handleDownloadAllAttachments}>Download Invoice</button>
 
         <div className='payment'>
             <label className='section-title'>Technician Details</label>
@@ -630,13 +696,7 @@ const handleBothActions =  (e) => {
                     </tr>
                 </tbody>
             </table>
-            <label className='fs-5'>
-            <input
-            type='checkbox'
-            className='form-check-input m-2 border-dark' />
-            Material Handover to Customer
-            </label>
-        </div>
+        </div> 
         
       {/* <h3 className="section-title">Customer Details</h3>
       <table className="customer-details-table">
@@ -659,9 +719,8 @@ const handleBothActions =  (e) => {
           <label className="fs-5">
           <input type="checkbox" 
           className="form-check-input m-2 border-dark"
-          value='Material Delivered'
+          value={technicianStatus}
           checked={selectedStatus === 'Material Delivered'}
-          onChange={handleStatusChange}
           />
           Material Delivered
           </label>
@@ -669,12 +728,11 @@ const handleBothActions =  (e) => {
           <input type="checkbox" 
           className="form-check-input m-2 border-dark"
           value='Technician Work Completed'
-          checked={selectedStatus === 'Technician Work Completed'}
-          onChange={handleStatusChange}
+          checked={isChecked}
            />
           Technician Work Completed
           </label>
-          <label className="fs-5">
+          {/* <label className="fs-5">
           <input type="checkbox" 
           className="form-check-input m-2 border-dark"
           value='Pending Technician Issues'
@@ -691,16 +749,22 @@ const handleBothActions =  (e) => {
           onChange={handleStatusChange}
           />
           Pending Ticket Araised Customer Issues
-          </label>
+          </label> */}
         </div>
         <div>
-        <h4 className="section-title fs-5">Rating</h4>
-        <input className="form-control w-50 mb-2 fs-5"
-        // value={assignedTo}
-        // onChange={(e) => setAssignedTo(e.target.value)}
-        required
-        />
-          </div>
+      <label className="section-title fs-5 m-0">Rating</label>
+      <div className="star-rating">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <span
+            key={star}
+            className={`star ${star <= rating ? "filled" : ""}`}
+            onClick={() => setRating(star)}
+          >
+            ★
+          </span>
+        ))}
+      </div>
+    </div>
           <div className='d-flex flex-row align-items-center gap-5'> 
           <button className='btn btn-warning me-2 fs-5' title='save' onClick={handleBothActions}>Save</button>
           </div>

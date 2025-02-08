@@ -90,7 +90,7 @@ const BidderTicketQuotation = () => {
           setFixedServiceCharge(quotedata.fixedServiceCharge);
           setFixedOtherCharge(quotedata.fixedOtherCharge);
           setRemarks(quotedata.addrRmarks || [{ requestedDate: new Date(), remarks: ""}]);
-          setSpecifications(quotedata.materials || [{material: "", quantity: "", price: "", total: ""}]);         
+          // setSpecifications(quotedata.materials || [{material: "", quantity: "", price: "", total: ""}]);         
         } catch (error) {
           console.error('Error fetching data:', error);
         }
@@ -316,8 +316,8 @@ const BidderTicketQuotation = () => {
             setServiceCharge(lowest.serviceCharges);
             setFixedServiceCharge(lowest.fixedServiceCharge);
             setLowestBidder(lowest.technicianId);
-            setSpecifications(lowest.materials);
-            setMaterialQuotation(lowest.materialQuotation);
+            // setSpecifications(lowest.materials);
+            // setMaterialQuotation(lowest.materialQuotation);
             if (lowest.addrRmarks?.length > 0) {
               setRemarks(lowest.addrRmarks[0].remarks);
             } else {
@@ -428,8 +428,7 @@ const BidderTicketQuotation = () => {
     };
     try {
       
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
-/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

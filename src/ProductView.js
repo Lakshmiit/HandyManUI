@@ -23,6 +23,7 @@ const ProductAdmin = () => {
     const fetchData = async () => {
       try {
         const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
+
 /Product/${id}`);
         const data = await response.json();
         setProductData(data);
@@ -31,6 +32,7 @@ const ProductAdmin = () => {
           data.productPhotos?.map((photo) =>
             fetch(
               `https://handymanapiv2.azurewebsites.net/api
+
 /FileUpload/download?generatedfilename=${photo}`
             )
               .then((res) => res.json())

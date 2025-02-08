@@ -4,24 +4,20 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import Sidebar from './Sidebar';
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
-// import { FaEdit} from 'react-icons/fa'; // Correct icon import
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
-// import SaveAsIcon from '@mui/icons-material/SaveAs';
-import ForwardIcon from '@mui/icons-material/Forward';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import './App.css';
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
-const RaiseQuoteTechnician = () => {
-  const navigate = useNavigate();
+const RaiseQuoteTechnicianDetails = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const {raiseTicketId} = useParams();
-  const { enableForward } = useParams();
-  // const [isDisabled, setIsDisabled] = useState(false);
   const [state, setState] = useState('');
   const [district, setDistrict] = useState('')
   const [id, setId] = useState('');
+  const [subject, setSubject] = useState('');
+  const [details, setDetails] = useState('');
   const [address, setAddress] = useState('');
   const [isMaterialType, setIsWithMaterial] = useState('');
   const [ticketData, setTicketData] = useState(''); 
@@ -29,7 +25,6 @@ const RaiseQuoteTechnician = () => {
   const [requestType, setRequestType] = useState('Without Material');
   const [specifications, setSpecifications] = useState([{ material: "", quantity: "", price: "", total: ""}]); 
   const [commentsList, setCommentsList] = useState([{updatedDate: new Date(), commentText: ""}]);
-  // const [requiredMaterials, setRequiredMaterials] = useState([{material: "", quantity: "", price: ""}]); 
   const [loading, setLoading] = useState(true);
   const [attachments, setAttachments] = useState([]);
   const [customerId, setCustomerId] = useState(''); 
@@ -44,9 +39,7 @@ const RaiseQuoteTechnician = () => {
   const [gst, setGST] = useState('');
   const [fixedGST, setFixedGST] = useState('');
   const [totalAmount, setTotalAmount] = useState();
-  // const [uploadedFiles, setUploadedFiles] = useState([]);
   const [enterQuoteAmount, setQuote] = useState('');
-  // const [isAmountPosted, setIsAmountPosted] = useState(false);
   const [fixedQuote, setFixedQuote] = useState('');
   const [discount, setDiscount] = useState('');
   const [fixedDiscount, setFixedDiscount] = useState('');
@@ -58,38 +51,26 @@ const RaiseQuoteTechnician = () => {
   const [fullName, setFullName] = useState('');
   // const [internalStatus, setInternalStatus] = useState('');
   const [ticketId, setTicketId] = useState('');
-      const [materialQuotation] = useState([{discount: "", fixedDiscount: "", deliveryCharges: "", fixedDeliveryChargs: "", servicecharges: "", fixedServicecharges: "", gst: "", fixedGST: "", gradntotal: ""}])
-  // const [anyOtherCharge, setAnyOtherCharges] = useState('100');
-  // const [serviceCharge, setServiceCharges] = useState('10');
-  // const [gstCharge, setGSTCharge] = useState('18');
   useEffect(() => {
-    console.log(ticketData, status, id, technicianData, customerId, ticketId);
-  }, [ticketData, status, id, technicianData, customerId, ticketId]); 
-
-  // alert(enableForward);
+    console.log(ticketData, status, technicianData, customerId, ticketId);
+  }, [ticketData, status, technicianData, customerId, ticketId]); 
 
   useEffect(() => {
     const fetchticketData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
-/RaiseTicket/GetTicket/${raiseTicketId}`);
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
         const data = await response.json();
-        // console.log("Testing ticket code data");
-       // alert(data);
-
-        setTicketId(data.ticketId);
-        setOtherCharge('100');
-        setServiceCharge('10');
-        setGST('18');
-       // alert(ticketId);
         setTicketData(data);
+        setTicketId(data.raiseTicketId);
         setState(data.state);
         setDistrict(data.district);
         setzipCode(data.zipCode);
         setAddress(data.address);
+        setDetails(data.details);
+        setSubject(data.subject);
         setId(data.id);
         setCustomerId(data.customerId);
         setIsWithMaterial(data.isMaterialType);
@@ -97,12 +78,10 @@ const RaiseQuoteTechnician = () => {
         setStatus(data.status);
         setFullName(data.customerName);
         setRequestType(data.requestType || 'Without Material');
-        // setSpecifications(data.materials || [{material: "", quantity: ""}]);
         setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: ""}]);
         const imageRequests =
           data.attachments?.map((photo) => fetch(
-              `https://handymanapiv2.azurewebsites.net/api
-/FileUpload/download?generatedfilename=${photo}`
+              `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
             )
             .then((res) => res.json())
               .then((data) => ({
@@ -116,12 +95,12 @@ const RaiseQuoteTechnician = () => {
         setPhotoCount(images.length);
       } catch (error) {
         console.error('Error fetching ticket data:', error);
-        // window.alert('Failed to load ticket data. Please try again later.');
+        window.alert('Failed to load ticket data. Please try again later.');
       } finally {
         setLoading(false);
       }
     };
-    fetchticketData(); 
+    fetchticketData();
   }, [raiseTicketId]); 
 
   const handleDownloadAllAttachments = async () => {
@@ -169,12 +148,12 @@ const RaiseQuoteTechnician = () => {
     
     const payload = {
       id: id,
-      RaiseTicketId: ticketData.raiseTicketId,
+      RaiseTicketId: ticketId,
       date: new Date(),
       address: address,
-      subject: ticketData.subject,
-      details: ticketData.details,
-      status: ticketData.status,
+      subject: subject,
+      details: details,
+      status: status,
       category: ticketData.category,
       assignedTo:"Technical Agency",
       InternalStatus: "Pending",
@@ -207,8 +186,7 @@ const RaiseQuoteTechnician = () => {
     };
     try {
       
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
-/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -226,113 +204,99 @@ const RaiseQuoteTechnician = () => {
     }
   }; 
 
-  const handleSaveTicket = async (e) => {
-    e.preventDefault();
-   // alert(technicianId);
-    const payload1 = {
-      id :"string",
-      quotedDate: new Date(), 
-      raiseAQuoteId: "string",
-      CustomerId: ticketData.customerId,
-      ticketId: ticketData.raiseTicketId,
-      technicianId: technicianId,
-      enterQuoteAmount: enterQuoteAmount.toString(),
-      fixedQuote: fixedQuote.toString(),
-      discount: discount.toString(),
-      fixedDiscount: fixedDiscount.toString(),
-      othercharges: othercharges.toString(),
-      fixedOtherCharge: fixedOtherCharge.toString(),
-      serviceCharges: serviceCharges.toString(),
-      fixedServiceCharge: fixedServiceCharge.toString(),
-      gst: gst.toString(),
-      fixedGST: fixedGST.toString(),
-      totalAmount: totalAmount.toString(),
-      raiseTicketId: raiseTicketId,
-      addrRmarks: addrRmarks.map((comment) => ({
-        requestedDate: comment.requestedDate,
-        remarks: comment.remarks,
-    })),
-    materials: specifications.map((spec) => ({
-      material: spec.material,
-      quantity: spec.quantity,
-      price: "",
-      total: "",
-  })),
-  materialQuotation: materialQuotation.map((mat) => ({
-    discount: "",
-    fixedDiscount: "",
-    deliveryCharges: "",
-    fixedDeliveryChargs: "",
-    serviceCharge: "",
-    fixedServicecharges: "",
-    gst: "",
-    fixedGST: "",
-    grandtotal: "",
-  })),
-    }; 
-    try {
-      //imageUrls="";
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
-/RaiseAQuote/CreateRaiseAQuote`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload1),
-      });
+//   const handleSaveTicket = async (e) => {
+//     e.preventDefault();
+//    // alert(technicianId);
+//     const payload1 = {
+//       id :"string",
+//       quotedDate: new Date(), 
+//       raiseAQuoteId: "string",
+//       CustomerId: ticketData.customerId,
+//       ticketId: ticketId,
+//       technicianId: technicianId,
+//       enterQuoteAmount: enterQuoteAmount.toString(),
+//       fixedQuote: fixedQuote.toString(),
+//       discount: discount.toString(),
+//       fixedDiscount: fixedDiscount.toString(),
+//       othercharges: othercharges.toString(),
+//       fixedOtherCharge: fixedOtherCharge.toString(),
+//       serviceCharges: serviceCharges.toString(),
+//       fixedServiceCharge: fixedServiceCharge.toString(),
+//       gst: gst.toString(),
+//       fixedGST: fixedGST.toString(),
+//       totalAmount: totalAmount.toString(),
+//       raiseTicketId: raiseTicketId,
+//       addrRmarks: addrRmarks.map((comment) => ({
+//         requestedDate: comment.requestedDate,
+//         remarks: comment.remarks,
+//     })),
+//     materials: specifications.map((spec) => ({
+//       material: spec.material,
+//       quantity: spec.quantity,
+//       price: "",
+//       total: "",
+//   })),
+//   materialQuotation: materialQuotation.map((mat) => ({
+//     discount: "",
+//     fixedDiscount: "",
+//     deliveryCharges: "",
+//     fixedDeliveryChargs: "",
+//     serviceCharge: "",
+//     fixedServicecharges: "",
+//     gst: "",
+//     fixedGST: "",
+//     grandtotal: "",
+//   })),
+//     }; 
+//     try {
+//       //imageUrls="";
+//       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
+// /RaiseAQuote/CreateRaiseAQuote`, {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify(payload1),
+//       });
     
-      if (!response.ok) {
-        throw new Error('Failed to save Technician ticket data');
-      }
+//       if (!response.ok) {
+//         throw new Error('Failed to save Technician ticket data');
+//       }
      
-      alert('Ticket  Technician  saved Successfully!');
-    } catch (error) {
-      console.error('Error saving Technician ticket data:', error);
-      window.alert('Failed to save the Technician ticket data. Please try again later.')
-    }
-  };
+//       alert('Ticket  Technician  saved Successfully!');
+//     } catch (error) {
+//       console.error('Error saving Technician ticket data:', error);
+//       window.alert('Failed to save the Technician ticket data. Please try again later.')
+//     }
+//   };
 
   useEffect(() => {
     if (raiseTicketId && technicianId) {
       const fetchtechnicianData = async () => {
         try {
           const technicianResponse = await fetch(
-            `https://handymanapiv2.azurewebsites.net/api
-/RaiseAQuote/GetRaiseAQuoteDetailsByTechnicianId?raiseAQuotetId=${raiseTicketId}&TechnicianId=${technicianId}`
+            `https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByTechnicianId?raiseTicketId=${raiseTicketId}&TechnicianId=${technicianId}`
           );
           if (!technicianResponse.ok) {
             throw new Error('Failed to fetch technician data');
           }
           const techData = await technicianResponse.json();
-          const techDataItem = techData[0];
-          //  alert(techDataItem.id);
-          // const techdetails = JSON.stringify(techData);
-         // alert(techData);
-        //   console.log("testing ticket code data");
-        //   alert(JSON.stringify(techData));
-        // console.log(JSON.stringify(techData));
-          setTechnicianData(JSON.stringify(techData));
-          setId(techDataItem.id);
-          setCustomerId(techDataItem.customerId);
-          setQuote(techDataItem.enterQuoteAmount);
-       
-          setSpecifications(techDataItem.materials || [{ material: "", quantity: "", price: "", total: ""}])
-          // setIsAmountPosted(true);
-          setQuote(techDataItem.enterQuoteAmount);
-          setFixedQuote(techDataItem.fixedQuote);
-          setDiscount(techDataItem.discount);
-          setFixedDiscount(techDataItem.fixedDiscount);
-          setOtherCharge(techDataItem.othercharges);
-          setFixedOtherCharge(techDataItem.fixedOtherCharge);
-          setServiceCharge(techDataItem.serviceCharges);
-          setFixedServiceCharge(techDataItem.fixedServiceCharge);
-          setGST(techDataItem.gst);
-          setFixedGST(techDataItem.fixedGST);
-          // setTotalAmount(techDataItem.totalAmount);
-          setAddrRmarks(techDataItem.addrRmarks || [{ requestedDate: new Date(), remarks: "" }]);
-          alert("Hello");
-          alert(JSON.stringify(techDataItem));
-          console.log(JSON.stringify(techDataItem.addrRmarks));
+          setTechnicianData(techData); 
+          // alert(JSON.stringify(techData));
+          setQuote(techData.enterQuoteAmount);
+          setSpecifications(techData.materials || [{ material: "", quantity: ""}])
+          setQuote(techData.enterQuoteAmount);
+          setFixedQuote(techData.fixedQuote);
+          setDiscount(techData.discount);
+          setFixedDiscount(techData.fixedDiscount);
+          setOtherCharge(techData.othercharges);
+          setFixedOtherCharge(techData.fixedOtherCharge);
+          setServiceCharge(techData.serviceCharges);
+          setFixedServiceCharge(techData.fixedServiceCharge);
+          setGST(techData.gst);
+          setFixedGST(techData.fixedGST);
+          setTotalAmount(techData.totalAmount);
+          setAddrRmarks(techData.addrRmarks || [{ requestedDate: new Date(), remarks: "" }]);
         } catch (error) {
           console.error('Error fetching technician data:', error);
         } finally {
@@ -382,146 +346,29 @@ const RaiseQuoteTechnician = () => {
 //   }
 // };
 
-  const handleBothActions = (e) => {
-    e.preventDefault();
-    handleUpdateTicket(e);
-    handleSaveTicket(e);
-    navigate(`/notificationTechnician/${userType}/${category}/${district}/${technicianId}`);
-    //handleTechnicianTicket(e);
-  }
+//   const handleBothActions = (e) => {
+//     e.preventDefault();
+//     handleUpdateTicket(e);
+//     handleSaveTicket(e);
+//     navigate(`/notificationTechnician/${userType}/${category}/${district}/${technicianId}`);
+//     //handleTechnicianTicket(e);
+//   }
 
-  // const handleForwardTicket = async () => {
-  //   try {
-  //     const updatedTicket = {
-  //       ...ticketData,
-  //       status: "Assigned",
-  //       assignedTo: "Technical Agency",
-  //     };
-  //     setTicketData(updatedTicket);
-  //     alert("Ticket Forwarded successfully to Technician");
-  //   } catch (error) {
-  //     console.error("Error Forwarding ticket:", error);
-  //     alert("Failed to forward the ticket. Please try again.")
-  //   }
-  // }
-
-  // Handle material input change
-  const handleMaterialChange = (index, field, value) => {
-    const updatedMaterials = [...specifications];
-    updatedMaterials[index][field] = value;
-    setSpecifications(updatedMaterials);
-  };
-
-  // Add new material and quantity fields
-  const handleAddMaterial = () => {
-    setSpecifications([...specifications, { material: "", quantity: "" }]);
-  };
-
-  // Remove a material and its corresponding quantity
-  const handleRemoveMaterial = (index) => {
-    setSpecifications(specifications.filter((_, i) => i !== index));
-  };
-
-  const calculateTotalPrice = (quote, discountPercentage, otherCharges, serviceChargePercentage, gstPercentage) => {
-    const discountAmount = quote * (discountPercentage / 100); 
-    const priceAfterDiscount = quote - discountAmount; 
-    const priceAfterOtherCharges = priceAfterDiscount + otherCharges; 
-    const serviceCharge = (quote - discountAmount + priceAfterOtherCharges ) * (serviceChargePercentage / 100); 
-    const priceAfterServiceCharge = priceAfterOtherCharges + serviceCharge;
-    const gst = priceAfterServiceCharge * (gstPercentage / 100);
-    const total = priceAfterServiceCharge + gst; 
-    return { total, discountAmount, serviceCharge, gst }; 
-  };
-
-  const handleFixedChange = (setter, fixedSetter) => (e) => {
-    const value = parseFloat(e.target.value); 
-    setter(value); 
-    
-
-    const { discountAmount, serviceCharge: calculatedServiceCharge, gst: calculatedGST } = calculateTotalPrice(
-      enterQuoteAmount, 
-      discount, 
-      othercharges, 
-      serviceCharges, 
-      gst
-    );
-    
-    if (setter === setDiscount) fixedSetter(discountAmount); 
-    if (setter === setOtherCharge) fixedSetter(othercharges); 
-    if (setter === setServiceCharge) fixedSetter(calculatedServiceCharge); 
-    if (setter === setGST) fixedSetter(calculatedGST); 
-   
-    // setTotalAmount(total);
-  };
-
-  useEffect(() => {
-    const { discountAmount} = calculateTotalPrice(
-      enterQuoteAmount,
-      discount,
-      othercharges,
-      serviceCharges,
-      gst
-    );
-    setFixedQuote(enterQuoteAmount);
-    setFixedDiscount(discountAmount);
-    setFixedOtherCharge(othercharges);
-    // setFixedServiceCharge();
-    // setFixedGST(calculatedGST);
-    // setTotalAmount(total);
-  }, [enterQuoteAmount, discount, othercharges, serviceCharges, gst]);
-
-
-  const handleDiscountCharges = (setter) => (e) => {
-    const value = parseFloat(e.target.value); 
-    setter(value); 
-    
-
-    // const { total, discountAmount, serviceCharge: calculatedServiceCharge, gst: calculatedGST } = calculateTotalPrice(
-    //   enterQuoteAmount, 
-    //   discount, 
-    //   othercharges, 
-    //   serviceCharges, 
-    //   gst
-    // );
-    // alert(enterQuoteAmount);
-    // alert(value);
-    // alert(othercharges);
-    // alert(serviceCharges);
-var CalculatedDiscount = enterQuoteAmount * (value / 100); 
-var calculatedServiceCharges = ((enterQuoteAmount - CalculatedDiscount) * (serviceCharges / 100));
-var calculateGST = (calculatedServiceCharges * gst) / 100;
-var GrandTotal = enterQuoteAmount - CalculatedDiscount + Number(othercharges) + calculatedServiceCharges + calculateGST;
-var roundedGrandTotal = Math.round(GrandTotal * 100) / 100;  
-setFixedServiceCharge(calculatedServiceCharges);
-setFixedGST(calculateGST);
-setTotalAmount(roundedGrandTotal);
-
-    // if (setter === setDiscount) fixedSetter(discountAmount); 
-    // if (setter === setOtherCharge) fixedSetter(othercharges); 
-    // if (setter === setServiceCharge) fixedSetter(calculatedServiceCharge); 
-    // if (setter === setGST) fixedSetter(calculatedGST); 
-   
-    // setTotalAmount(total);
-  };
-  const handleAddComment = (index, field, value) => {
-    const updatedComments = [...commentsList];
-    updatedComments[index][field] = value;
-    setCommentsList(updatedComments);
-  }; 
+//   // Handle material input change
+//   const handleMaterialChange = (index, field, value) => {
+//     const updatedMaterials = [...specifications];
+//     updatedMaterials[index][field] = value;
+//     setSpecifications(updatedMaterials);
+//   };
    // Handle form data changes
-   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setTicketData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
- 
-  const handleAddRemarks = (index, field, value) => {
-    const updatedComments = [...addrRmarks];
-    updatedComments[index][field] = value;
-    setAddrRmarks(updatedComments);
-  };
+  //  const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setTicketData((prevData) => ({
+  //     ...prevData,
+  //     [name]: value,
+  //   }));
+  // };
+
 
   if (loading) {
     return <div>Loading...</div>;
@@ -563,8 +410,7 @@ setTotalAmount(roundedGrandTotal);
                 <Form.Control
                 type="text"
                 name="ticketID"
-                value={ticketData.raiseTicketId}
-                onChange={handleChange}
+                value={ticketId}
                 readOnly
                 />
             </Form.Group>
@@ -577,9 +423,8 @@ setTotalAmount(roundedGrandTotal);
                       <Form.Control
                         as="select"
                         name="status"
-                        value={ticketData.status}
-                        onChange={handleChange}
-                        required
+                        value={status}
+                        readOnly
                       >
                         <option value="">Select Status</option>
                         <option>Open Tickets</option>
@@ -598,9 +443,7 @@ setTotalAmount(roundedGrandTotal);
               <Form.Control
                 type="text"
                 name="subject"
-                value={ticketData.subject}
-                onChange={handleChange}
-                placeholder="Subject"
+                value={subject}
                 readOnly
               />
             </Form.Group>
@@ -613,10 +456,8 @@ setTotalAmount(roundedGrandTotal);
           <Form.Control
             as="textarea"
             name="details"
-            value={ticketData.details}
-            onChange={handleChange}
+            value={details}
             rows="4"
-            placeholder="Details"
             readOnly
           />
         </Form.Group>
@@ -630,8 +471,6 @@ setTotalAmount(roundedGrandTotal);
                 type="text"
                 name="ticketOwner"
                 value={ticketData.customerId}
-                onChange={handleChange}
-                placeholder="Ticket Owner"
                 readOnly
               />
             </Form.Group>
@@ -647,8 +486,6 @@ setTotalAmount(roundedGrandTotal);
                 type="text"
                 name="category"
                 value={ticketData.category}
-                onChange={handleChange}
-                placeholder="Category"
                 readOnly
               >
               </Form.Control>
@@ -735,8 +572,7 @@ setTotalAmount(roundedGrandTotal);
                 as="select"
                 name="assignedTo"
                 value={assignedTo}
-                onChange={(e) => setAssignedTo(e.target.value)}
-                required
+                readOnly
               >
                 <option>Select Assigned</option>
                 <option>Customer Care</option>
@@ -750,13 +586,11 @@ setTotalAmount(roundedGrandTotal);
       <div className="radio">
       <label className="m-1">
         <input
-          className="form-check-input m-2 border-dark"
+          className="form-check-input m-2 border-dark "
           type="radio"
           name="RequestType"
           value="With Material"
           checked={requestType === "With Material"}
-          onChange={(e) => setRequestType(e.target.value)}
-          required
         />
         With Material
       </label>
@@ -768,7 +602,6 @@ setTotalAmount(roundedGrandTotal);
           name="RequestType"
           value="Without Material"
           checked={requestType === "Without Material"}
-          onChange={(e) => setRequestType(e.target.value)}
         />
         Without Material
       </label>
@@ -783,30 +616,19 @@ setTotalAmount(roundedGrandTotal);
                 type="text"
                 className="form-control"
                 value={spec.material}
-                placeholder="Enter Material"
-                onChange={(e) => handleMaterialChange(index, "material", e.target.value)}
-                required
+                readOnly
               />
               <input
                 type="text"
                 className="form-control text-center"
-                placeholder="Enter Quantity"
                 value={spec.quantity}
-                onChange={(e) => handleMaterialChange(index,"quantity", e.target.value)}
-                required
+                placeholder="Enter Quantity"
+                readOnly
               />
-              <button
-                type="button"
-                className="btn btn-danger"
-                onClick={() => handleRemoveMaterial(index)}
-              >
-                Remove
-              </button>
+              
             </div>
           ))}
-          <button type="button" className="btn btn-primary" onClick={handleAddMaterial}>
-            Add Material
-          </button>
+          
         </div>
       )}
     </div>
@@ -822,9 +644,6 @@ setTotalAmount(roundedGrandTotal);
             type="number"
             className="form-control text-end"
             value={enterQuoteAmount}
-            // onBlur={calculateTotal}
-            onChange={handleFixedChange(setQuote, setFixedQuote)}
-            placeholder="Enter Quote Amount"
         />
       </td>
         <td colSpan="2">
@@ -833,7 +652,6 @@ setTotalAmount(roundedGrandTotal);
           className="form-control text-end"
           value={fixedQuote}
           disabled
-          placeholder="Fixed Quote Amount"
         />
       </td>
     </tr>
@@ -848,9 +666,6 @@ setTotalAmount(roundedGrandTotal);
           type="number"
           className="form-control text-end"
           value={discount}
-          // onBlur={calculateTotal}
-          onChange={handleDiscountCharges(setDiscount, setFixedDiscount)}
-          placeholder="Enter Discount"
         />
       </td>
       <td colSpan="2">
@@ -859,7 +674,6 @@ setTotalAmount(roundedGrandTotal);
           className="form-control text-end"
           value={Number(fixedDiscount).toFixed(2)}
           disabled
-          placeholder="Fixed Discount"
         />
       </td>
     </tr>
@@ -875,9 +689,6 @@ setTotalAmount(roundedGrandTotal);
           className="form-control text-end"
           value={othercharges}
           disabled
-          // onChange={handleFixedChange(setOtherCharge, setFixedOtherCharge)}
-          placeholder="Enter Other Charges"
-          
         />
       </td>
       <td colSpan="2">
@@ -885,8 +696,7 @@ setTotalAmount(roundedGrandTotal);
           type="number"
           className="form-control text-end"
           value={Number(fixedOtherCharge).toFixed(2)}
-          disabled
-          placeholder="Fixed Other Charges"    
+          disabled   
         />
       </td>
     </tr>
@@ -902,8 +712,6 @@ setTotalAmount(roundedGrandTotal);
           className="form-control text-end"
           value={serviceCharges}
           disabled
-          // onChange={handleFixedChange(setServiceCharge, setFixedServiceCharge)}
-          placeholder="Enter Service Charges"
         />
       </td>
       <td colSpan="2">
@@ -912,7 +720,6 @@ setTotalAmount(roundedGrandTotal);
           className="form-control text-end"
           value={Number(fixedServiceCharge).toFixed(2)}
           disabled
-          placeholder="Fixed Service Charges"
         />
       </td>
     </tr>
@@ -928,8 +735,6 @@ setTotalAmount(roundedGrandTotal);
           className="form-control text-end"
           value={gst}
           disabled
-          // onChange={handleFixedChange(setGST, setFixedGST)}
-          placeholder="Enter GST"
         />
       </td>
       <td colSpan="2">
@@ -938,7 +743,6 @@ setTotalAmount(roundedGrandTotal);
           className="form-control text-end"
           value={Number(fixedGST).toFixed(2)}
           disabled
-          placeholder="Fixed GST"
         />
       </td>
     </tr>
@@ -954,8 +758,6 @@ setTotalAmount(roundedGrandTotal);
             className="form-control text-end"
             value={Number(totalAmount).toFixed(2)}
             disabled
-            
-            placeholder="Total Amount"
             />
         </td>
         </tr>
@@ -971,10 +773,8 @@ setTotalAmount(roundedGrandTotal);
               <input
                 type="text"
                 className="form-control"
-                placeholder="Comment Text"
                 value={comment.commentText}
-                 onChange={(e) => handleAddComment(index,"commentText", e.target.value)}
-                // readOnly
+                 readOnly
               />
             </div>
           ))}
@@ -989,25 +789,24 @@ setTotalAmount(roundedGrandTotal);
             type="text"
             className="form-control"
             value={comment.remarks}
-            placeholder="Remarks Text"
-            onChange={(e) => handleAddRemarks(index, "remarks", e.target.value)}
+            readOnly
             />
             </div>
-          ))}
+          ))} 
         </div>
       
         {/* Save Button */}
         <div className="mt-4 text-end">
-          <Link to={`/technicianQuoteNotification/${userType}/${category}/${district}/${technicianId}/${enableForward}`} className="btn btn-warning text-white mx-2" title='Back'>
+          <Link to={`/technicianQuoteNotification/${userType}/${category}/${district}/${technicianId}`} className="btn btn-warning text-white mx-2" title='Back'>
             <ArrowLeftIcon />
           </Link>
           {/* <Link to='/raiseTicketActionView/{ticketId}' className="btn btn-warning text-white mx-2" title='Edit'> 
           <FaEdit />
           </Link> */}
-          <Button onClick={handleBothActions} disabled={enableForward === "Enable"} className="btn btn-warning text-white mx-2" title='Forward'
+          {/* <Button onClick={handleBothActions} className="btn btn-warning text-white mx-2" title='Forward'
           >
             <ForwardIcon />
-          </Button>
+          </Button> */}
           {/* <Button onClick={handleUpdateTicket} type="submit" className="btn btn-warning text-white mx-2" title="Save" 
           disabled={status === "Assigned" && assignedTo === "Technical Agency"}
           >
@@ -1040,4 +839,4 @@ setTotalAmount(roundedGrandTotal);
   );
 };
 
-export default RaiseQuoteTechnician;
+export default RaiseQuoteTechnicianDetails;

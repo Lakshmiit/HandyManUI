@@ -27,6 +27,7 @@ const ProductView = () => {
   useEffect(() => {
     setLoading(true);
     const url = `https://handymanapiv2.azurewebsites.net/api
+
 /Product/GetProductList?ProductOwnedBy=Admin`
     axios.get(url)
       .then(response => {
@@ -59,8 +60,7 @@ const ProductView = () => {
   const handleDelete = (productId) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this product?');
     if (confirmDelete) {
-      axios.delete(`https://handymanapiv2.azurewebsites.net/api
-/Product/${productId}`)
+      axios.delete(`https://handymanapiv2.azurewebsites.net/api/Product/${productId}`)
         .then(() => {
           setProductData(prevData => prevData.filter(product => product.id !== productId));
           setFilteredData(prevData => prevData.filter(product => product.id !== productId));

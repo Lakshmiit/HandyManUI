@@ -150,7 +150,7 @@ useEffect(() => {
               <th>Actions</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody> 
             {currentRaiseTicket.map((ticket, index) => (
               <tr key={index}>
                 <td>{ticket.customerId}</td>

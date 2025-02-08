@@ -32,6 +32,7 @@ const RaiseTicketNotification = () => {
   useEffect(() => {
     setLoading(true);
     const url = `https://handymanapiv2.azurewebsites.net/api
+
 /RaiseTicket/GetRaiseTicketNotificationsByCustomerId?customerId=${customerId}`
 
     axios.get(url)
@@ -54,6 +55,7 @@ const RaiseTicketNotification = () => {
     const confirmDelete = window.confirm('Are you sure you want to delete this ticket?');
     if (confirmDelete) {
       axios.delete(`https://handymanapiv2.azurewebsites.net/api
+
 /RaiseTicket/${ticketId}`)
         .then(() => {
           setTicketData(prevData => prevData.filter(ticket => ticket.id !== ticketId));
@@ -86,7 +88,7 @@ const RaiseTicketNotification = () => {
 //    return <div>Loading...</div>; // Show loading message while data is fetching
 //  }
 
-  return (
+  return ( 
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className="ml-0 p-0 sde_mnu">

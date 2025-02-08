@@ -39,8 +39,7 @@ const ProductUpload = () => {
         const fetchProductData = async () => {
             try {
                 setLoading(true);
-                const productResponse = await fetch(`https://handymanapiv2.azurewebsites.net/api
-/Product/${id}`);
+                const productResponse = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/${id}`);
                 if (!productResponse.ok) {
                     throw new Error('Product not found');
                 }

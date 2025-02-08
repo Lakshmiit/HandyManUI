@@ -157,7 +157,7 @@ const RaiseQuotation = () => {
           setServiceCharge(lowest.serviceCharges);
           setFixedServiceCharge(lowest.fixedServiceCharge);
           setTotalAmount(lowest.totalAmount); 
-          setSpecifications(lowest.materials);
+          // setSpecifications(lowest.materials);
           setMaterialQuotation(lowest.materialQuotation);
           if (lowest.addrRmarks?.length > 0) {
             setRemarks(lowest.addrRmarks[0].remarks);
