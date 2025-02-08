@@ -251,7 +251,7 @@ const [showConfirmation, setShowConfirmation] = useState(false);
       AssignedTo: assignedTo,
       id: raiseTicketId,
       status: status,
-      internalStatus: "Pending",
+      internalStatus: "Customer Approved",
       CustomerId: customerId,
       State: state,
       LowestBidderTechnicainId: lowestBidder,
@@ -360,11 +360,8 @@ const handlePaymentTicket = async (e) => {
     technicianConfirmationCode: "",
   };
 
-  
-
   try {
-    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
-/Payment/CreatePayment`, {
+    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Payment/CreatePayment`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -448,7 +445,7 @@ const handlePaymentTicket = async (e) => {
           </tr>
         </tbody>
       </table>
-
+      
       <div className='payment m-2'>
         <label className='bg-warning fw-bold w-100 p-2'>Payment Mode</label>
         <div className='d-flex flex-column m-4'>

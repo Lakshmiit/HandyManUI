@@ -9,19 +9,20 @@ import {
 import { Button } from "react-bootstrap";
 import "./App.css";
 
-const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) => {
+const NotificationsList = ({ notifications, highlightedItem }) => {
   const navigate = useNavigate();
   const {userType} = useParams();
   const {dealerId} = useParams();
   const {category} = useParams();
+  const {district} = useParams();
 
   const handleQuoteClick = (ticketId) => {
     navigate(`/viewDealerRaiseTicket/${ticketId}/${userType}/${category}/${dealerId}`, { state: { ticketId } });
   };
 
-  // const handleOrdersClick = (ticketId) => {
-  //   navigate(`/traderConfirmation/${ticketId}/dealer/${category}/${dealerId}`, { state: { ticketId } });
-  // };
+  const handleOrdersClick = (ticketId) => {
+    navigate(`/traderConfirmation/${ticketId}/dealer/${district}/${dealerId}`, { state: { ticketId } });
+  };
 
   return (
     <div>
@@ -59,7 +60,7 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
       ))}
     </div>
 
-{/* <div className="notification-list">
+<div className="notification-list">
 {notifications.map((notification) => (
   <div
     key={notification.raiseTicketId}
@@ -91,7 +92,7 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
     </div>
   </div>
 ))}
-</div> */}
+</div>
 </div>
   );  
 };
@@ -100,19 +101,20 @@ const Notification = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [quoteNotifications, setQuoteNotifications] = useState([]);
-  // const [orderNotifications, setOrderNotifications] = useState([]);
+ const [orderNotifications, setOrderNotifications] = useState([]);
   const [newQuoteCount, setNewQuoteCount] = useState(0);
-  // const [newOrdersCount, setNewOrderCount] = useState(0);
+ const [newOrdersCount, setNewOrderCount] = useState(0);
   const [newNotificationCount, setNewNotificationCount] = useState(0);
   const [highlightedQuote, setHighlightedQuote] = useState(null);
-  // const [highlightedOrder, setHighlightedOrder] = useState(null);
+  const [highlightedOrder, setHighlightedOrder] = useState(null);
   const [activeTab, setActiveTab] = useState("");
   const [glow, setGlow] = useState(false);
   const [glowQuote, setGlowQuote] = useState(false);
-  // const [glowOrder, setGlowOrder] = useState(false);
+  const [glowOrder, setGlowOrder] = useState(false);
   const { district, category } = useParams();
   const { userType } = useParams();
   const { dealerId } = useParams();
+  const { raiseTicketId } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -125,9 +127,12 @@ const Notification = () => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const getQuoteResponse = await fetch(
+        const [getQuoteResponse, orderResponse] = await Promise.all([
+        fetch(
           `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistDealerId?category=${category}&district=${district}&dealerId=${dealerId}`
-        );
+        ),
+        fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingDealerId?category=${category}&district=${district}&dealerId=${dealerId}`),
+      ]);
         const getQuoteData = await getQuoteResponse.json();
         const tickets = getQuoteData.tickets || [];
           const getQuoteCount = tickets.length;
@@ -138,7 +143,17 @@ const Notification = () => {
           if (getQuoteCount > 0) {
             setHighlightedQuote(tickets[0].raiseAQuoteId);
           }
-          const totalNotifications = getQuoteCount;
+
+          const getOrderData = await orderResponse.json();
+          const getOrderFiltered = getOrderData.filter((item) => item.internalStatus === "Technician Approved");
+          const getOrderCount = getOrderFiltered.length;
+          setOrderNotifications(getOrderFiltered);
+          setNewOrderCount(getOrderCount);
+          setGlowOrder(getOrderCount > 0);
+          if (getOrderCount > 0) {
+            setHighlightedOrder(getOrderFiltered[0].raiseAQuoteId);
+          }
+          const totalNotifications = getQuoteCount + getOrderCount;
           setNewNotificationCount(totalNotifications);
           setGlow(totalNotifications > 0);
         } catch (error) {
@@ -190,11 +205,11 @@ const Notification = () => {
     setHighlightedQuote(null);
   };
 
-  // const handleClearOrdersNotifications = () => {
-  //   setNewOrderCount(0);
-  //   setGlowOrder(false);
-  //   setHighlightedOrder(null);
-  // };
+  const handleClearOrdersNotifications = () => {
+    setNewOrderCount(0);
+    setGlowOrder(false);
+    setHighlightedOrder(null);
+  };
 
   const handleTabClick = (tab) => setActiveTab(tab);
 
@@ -244,6 +259,7 @@ const Notification = () => {
                 key={tab}
                 className={`tab-item ${activeTab === tab ? "active" : ""} 
                 ${tab === "Raise A Quote Buy Products" && glowQuote ? "glow" : ""}
+                ${tab === "Raise A Quote Orders" && glowOrder ? "glow" : ""}
                 `}
                 onClick={() => handleTabClick(tab)}
                 style={{ cursor: "pointer" }}
@@ -259,9 +275,9 @@ const Notification = () => {
                 {tab === "Raise A Quote Orders" && (
                 <>
                 Raise A Quote Orders{" "}
-                
-                  <span className="badge bg-danger">{}</span>
-               
+                {newOrdersCount > 0 && (
+                  <span className="badge bg-danger">{newOrdersCount}</span>
+                )}
                 </>
                 )}
               </span>
@@ -287,7 +303,7 @@ const Notification = () => {
                 </div>
               </>
             )}
-            {/* {activeTab === "Raise A Quote Orders" && (
+            {activeTab === "Raise A Quote Orders" && (
               <>
                 <NotificationsList
                   notifications={orderNotifications}
@@ -296,7 +312,7 @@ const Notification = () => {
                 <div
                   className="view-notifications text-info mx-2"
                   onClick={() => {
-                    navigate(`/raiseOrders/${userType}`);
+                    navigate(`/traderConfirmation/${raiseTicketId}/${district}/${userType}/${dealerId}`);
                     handleClearOrdersNotifications();
                   }}
                   style={{ cursor: "pointer" }}
@@ -304,7 +320,7 @@ const Notification = () => {
                   View All Notifications
                 </div>
               </>
-            )} */}
+            )}
           </div>
         </div>
       </div>

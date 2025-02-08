@@ -377,7 +377,7 @@ const BookingConfirmation = () => {
       AssignedTo: assignedTo,
       id: raiseTicketId,
       status: status,
-      internalStatus: "Pending",
+      internalStatus: "Technician Approved",
       CustomerId: customerId,
       State: state,
       LowestBidderTechnicainId: lowestBidder,

@@ -1,5 +1,5 @@
 import React, { useEffect, useState} from 'react';
-import Sidebar from './Sidebar';
+import AdminSidebar from './AdminSidebar';
 import { Button } from 'react-bootstrap';
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
 // import image from './img/technician.png';
@@ -640,8 +640,8 @@ const handleBothActions =  (e) => {
   return (
     <div className="d-flex">
         {!isMobile && (
-        <div className="ml-0 p-0 sde_mnu">
-          <Sidebar />
+        <div className="ml-0 p-0 adm_mnu">
+          <AdminSidebar />
         </div>
       )}
 
@@ -658,7 +658,7 @@ const handleBothActions =  (e) => {
 
           {showMenu && (
               <div className="sidebar-container">
-                <Sidebar />
+                <AdminSidebar />
               </div>
           )}
         </div>

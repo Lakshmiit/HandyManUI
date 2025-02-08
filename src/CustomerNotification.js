@@ -98,15 +98,19 @@ const Notification = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [ticketNotifications, setTicketNotifications] = useState([]);
+  // const [orderNotifications, setOrderNotifications] = useState([]);
   // const [quoteNotifications, setQuoteNotifications] = useState([]);
   const [newTicketCount, setNewTicketCount] = useState(0);
   const [newQuoteCount] = useState(0);
+  // const [newOrderCount, setNewOrderCount] = useState(0);
   const [newNotificationCount, setNewNotificationCount] = useState(0);
   const [glow, setGlow] = useState(false);
   const [glowTicket, setGlowTicket] = useState(false);
   const [glowQuote] = useState(false);
   const [glowGet] = useState(false);
+  // const [glowOrder, setGlowOrder] = useState(false);
   const [highlightedTicket, setHighlightedTicket] = useState(null);
+  // const [highlightedOrder, setHighlightedOrder] = useState(null);
   // const [highlightedQuote, setHighlightedQuote] = useState(null);
   const [activeTab, setActiveTab] = useState("Raise Ticket");
   const navigate = useNavigate();
@@ -173,6 +177,12 @@ const Notification = () => {
     setHighlightedTicket(null);
   };
 
+
+  // const handleClearOrderNotifications = () => {
+  //   setNewOrderCount(0);
+  //   setGlowOrder(false);
+  //   setHighlightedOrder(null);
+  // }
   // const handleClearQuoteNotifications = () => {
   //   setNewQuoteCount(0);
   //   setGlowQuote(false);
@@ -180,11 +190,6 @@ const Notification = () => {
   // };
 
   const handleTabClick = (tab) => setActiveTab(tab);
-
-  const handleItemClick = (id) => {
-    const ticket = `/viewCustomer/${userType}`;
-    navigate(ticket, { state: { id } });
-  };
 
   return (
     <div className="d-flex flex-row justify-content-start align-items-start">
@@ -225,20 +230,15 @@ const Notification = () => {
           )}
         </h2>
 
-        <div className="notifications-container d-flex bg-white border rounded shadow-sm m-4 p-3">
+        <div className="notifications-container d-flex bg-white border rounded shadow-sm p-1">
           <div className="tabs">
             {["Raise Ticket Quotations", "Buy Product Quotations", "General  Notifications"].map((tab) => (
               <span
                 key={tab}
-                className={`tab-item ${activeTab === tab ? "active" : ""} ${
-                  tab === "Raise Ticket Quotations" && glowTicket
-                    ? "glow"
-                    : tab === "Buy Product Quotations" && glowQuote
-                    ? "glow"
-                    : tab === "General  Notifications" && glowGet
-                    ? "glow"
-                    : ""
-                }`}
+                className={`tab-item ${activeTab === tab ? "active" : ""} 
+                ${tab === "Raise Ticket Quotations" && glowTicket ? "glow" : ""}
+                ${tab === "Buy Product Quotations" && glowQuote ? "glow" : ""}
+                ${tab === "General  Notifications" && glowGet ? "glow": ""}`}
                 onClick={() => handleTabClick(tab)}
                 style={{ cursor: "pointer" }}
               >
@@ -275,7 +275,6 @@ const Notification = () => {
                 <NotificationsList
                   notifications={ticketNotifications}
                   highlightedItem={highlightedTicket}
-                  handleItemClick={(id) => handleItemClick(id, "Ticket")}
                 />
                 <div
                   className=" view-notifications text-info mx-2"

@@ -98,10 +98,10 @@ function App() {
             <Route path="/timeSlotBooking/:raiseTicketId/:userType" element={<TimeSlotBooking />} />
             <Route path="/bookingConfirmation/:raiseTicketId/:userType" element={<BookingConfirmation />} />
             <Route path="/paymentConfirmation/:raiseTicketId/:userType" element={<PaymentConfirmation />} />
-            <Route path="/ticketConfirmation/:raiseTicketId/:userType" element={<TicketConfirmation />} />
-            <Route path="/traderConfirmation/:raiseTicketId/:userType" element={<TraderConfirmation />} />
+            <Route path="/ticketConfirmation/:raiseTicketId/:district/:userType/:technicianId" element={<TicketConfirmation />} />
+            <Route path="/traderConfirmation/:raiseTicketId/:district/:userType/:dealerId" element={<TraderConfirmation />} />
             <Route path="/raiseOrders/:userType" element={<RaiseOrdersGrid />} />
-            <Route path="/customerCareConfirmation/:raiseTicketId/:userType" element={<CustomerCareConfirmation />} />
+            <Route path="/customerCareConfirmation/:raiseTicketId" element={<CustomerCareConfirmation />} />
             <Route path="/customerTrack/:raiseTicketId/:userType" element={<CustomerRaiseTicketTrack />} />
             <Route path="/trackStatusNotifications/:userType" element={<TrackStatusNotifications />} />
             <Route path="/trackStatus/:userType" element={<TrackStatusGrid />} />
