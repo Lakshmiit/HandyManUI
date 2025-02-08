@@ -334,7 +334,7 @@ useEffect(() => {
     window.alert(`Ticket has been submitted successfully! Your reference number is ${data.ticketId}. Get Quote will contact you shortly.`);
   
     // Redirect to CustomerProfilePage
-    window.location.href = `https://localhost:7155/CustomerProfilePage?ReactToken=${customerId}$${userType}`;
+    window.location.href = `https://handymanserviceproviders.com/CustomerProfilePage?ReactToken=${customerId}$${userType}`;
   
   } catch (error) {
     console.error('Error:', error);
