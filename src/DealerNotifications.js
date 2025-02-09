@@ -33,9 +33,9 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
     <div className="notification-list">
       {getQuoteNotifications.map((notification) => (
         <div
-          key={notification.RaiseAQuoteByDealerId}
+          key={notification.raiseTicketId}
           className={`notification-item ${
-            notification.RaiseAQuoteByDealerId === highlightedItem ? "highlight" : ""
+            notification.raiseTicketId === highlightedItem ? "highlight" : ""
           }`}
         >
           <div className="notification-header">
@@ -67,9 +67,9 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
 <div className="notification-list">
 {getOrdersNotifications.map((notification) => (
   <div
-    key={notification.RaiseAQuoteByDealerId}
+    key={notification.raiseTicketId}
     className={`notification-item ${
-      notification.RaiseAQuoteByDealerId === highlightedItem ? "highlight" : ""
+      notification.raiseTicketId === highlightedItem ? "highlight" : ""
     }`}
   >
     <div className="notification-header">
@@ -146,7 +146,7 @@ const Notification = () => {
           setNewQuoteCount(getQuoteCount);
           setGlowQuote(getQuoteCount > 0);
           if (getQuoteCount > 0) {
-            setHighlightedQuote(getQuoteFiltered[0].RaiseAQuoteByDealerId);
+            setHighlightedQuote(getQuoteFiltered[0].raiseTicketId);
           }
 
           const getOrderData = await orderResponse.json();
@@ -161,7 +161,7 @@ const Notification = () => {
           setNewOrderCount(getOrderCount);
           setGlowOrder(getOrderCount > 0);
           if (getOrderCount > 0) {
-            setHighlightedOrder(getOrderFiltered[0].RaiseAQuoteByDealerId);
+            setHighlightedOrder(getOrderFiltered[0].raiseTicketId);
           }
           const totalNotifications = getQuoteCount + getOrderCount;
           setNewNotificationCount(totalNotifications);
