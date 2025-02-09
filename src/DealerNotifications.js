@@ -141,7 +141,6 @@ const Notification = () => {
         const tickets = getQuoteData.tickets || [];
         const getQuoteFiltered = tickets.filter((item) => item.assignedTo === "Dealer/Trader");
         const getQuoteCount = getQuoteFiltered.length;
-        // alert(getQuoteCount);
   
           setQuoteNotifications(getQuoteFiltered);
           setNewQuoteCount(getQuoteCount);
@@ -314,6 +313,9 @@ const Notification = () => {
                 </div>
               </>
             )}
+            </div>
+
+            <div>
             {activeTab === "Raise A Quote Orders" && (
               <>
                 <NotificationsList
