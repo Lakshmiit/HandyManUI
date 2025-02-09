@@ -33,15 +33,15 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
     <div className="notification-list">
       {getQuoteNotifications.map((notification) => (
         <div
-          key={notification.raiseTicketId}
+          key={notification.raiseAQuoteId}
           className={`notification-item ${
-            notification.raiseTicketId === highlightedItem ? "highlight" : ""
+            notification.raiseAQuoteId === highlightedItem ? "highlight" : ""
           }`}
         >
           <div className="notification-header">
             <strong>Ticket ID: </strong>
-            <span
-              onClick={() => handleQuoteClick(notification.id)}
+            <span 
+              onClick={() => handleQuoteClick(notification.raiseTicketId)}
               style={{
                 color: "blue",
                 cursor: "pointer",
@@ -75,7 +75,7 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
     <div className="notification-header">
       <strong>Ticket ID: </strong>
       <span
-        onClick={() => handleOrdersClick(notification.id)}
+        onClick={() => handleOrdersClick(notification.raiseTicketId)}
         style={{
           color: "blue",
           cursor: "pointer",
@@ -146,7 +146,7 @@ const Notification = () => {
           setNewQuoteCount(getQuoteCount);
           setGlowQuote(getQuoteCount > 0);
           if (getQuoteCount > 0) {
-            setHighlightedQuote(getQuoteFiltered[0].raiseTicketId);
+            setHighlightedQuote(getQuoteFiltered[0].raiseQuoteId);
           }
 
           const getOrderData = await orderResponse.json();
