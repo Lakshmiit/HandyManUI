@@ -23,6 +23,12 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
   const dealerQuoteNotifications = notifications.filter(
     (item) => item.internalStatus === "Pending" && item.assignedTo === "Dealer/Trader"
   );
+
+  
+ const orderTicketNotifications = notifications.filter(
+  (item) => item.internalStatus === "Dealer Approved"
+);
+
   
   const handleTicketClick = (ticketId) => {
     navigate(`/raiseTicketActionView/${ticketId}`, { state: { ticketId } });
@@ -144,7 +150,7 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
         ))}
       </div>
       <div className="notification-list">
-        {notifications.map((notification) => (
+        {orderTicketNotifications.map((notification) => (
           <div
             key={notification.raiseTicketId}
             className={`notification-item ${

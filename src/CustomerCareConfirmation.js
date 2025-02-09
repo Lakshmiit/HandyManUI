@@ -635,7 +635,11 @@ const handleBothActions =  (e) => {
   //   setSpecifications(updatedMaterials);
   //   };
 
-  const isChecked = technicianStatus === "Job Completed";
+const isTechnicianChecked = technicianStatus === "Job Completed";
+const isDealerChecked = dealerStatus === "Material Delivered";
+
+const atLeastOneChecked = isTechnicianChecked || isDealerChecked;
+
 
   return (
     <div className="d-flex">
@@ -978,15 +982,14 @@ const handleBothActions =  (e) => {
           </div> */}
 
       <div className='payment'>
-        
           <h3 className='section-title mt-2'>Ticket Closing Status</h3>
           <div className='d-flex flex-column m-1'>
           <label className="fs-5">
           <input type="checkbox" 
           className="form-check-input m-2 border-dark"
-          value={dealerStatus}
-          checked={dealerStatus === 'Material Delivered'}
-          // onChange={handleStatusChange}
+          value="Material Delivered"
+          checked={isDealerChecked || !atLeastOneChecked}
+          readOnly
           />
           Material Delivered
           </label>
@@ -994,8 +997,8 @@ const handleBothActions =  (e) => {
           <input type="checkbox" 
           className="form-check-input m-2 border-dark"
           value='Technician Work Completed'
-          checked={isChecked}
-          // onChange={handleStatusChange}
+          checked={isTechnicianChecked || !atLeastOneChecked}
+          readOnly
            />
           Technician Work Completed
           </label>

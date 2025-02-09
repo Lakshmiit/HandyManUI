@@ -16,18 +16,22 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
   const {category} = useParams();
   const {district} = useParams();
 
+  const getQuoteNotifications = notifications.filter((item) => item.assignedTo === "Dealer/Trader");
+
+  const getOrdersNotifications = notifications.filter((item) => item.internalStatus === "Technician Approved");
+
   const handleQuoteClick = (ticketId) => {
     navigate(`/viewDealerRaiseTicket/${ticketId}/${userType}/${category}/${dealerId}`, { state: { ticketId } });
   };
 
   const handleOrdersClick = (ticketId) => {
-    navigate(`/traderConfirmation/${ticketId}/dealer/${district}/${dealerId}`, { state: { ticketId } });
+    navigate(`/traderConfirmation/${ticketId}/${userType}/${district}/${dealerId}`, { state: { ticketId } });
   };
 
   return (
     <div>
     <div className="notification-list">
-      {notifications.map((notification) => (
+      {getQuoteNotifications.map((notification) => (
         <div
           key={notification.raiseTicketId}
           className={`notification-item ${
@@ -61,7 +65,7 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
     </div>
 
 <div className="notification-list">
-{notifications.map((notification) => (
+{getOrdersNotifications.map((notification) => (
   <div
     key={notification.raiseTicketId}
     className={`notification-item ${
@@ -135,23 +139,30 @@ const Notification = () => {
       ]);
         const getQuoteData = await getQuoteResponse.json();
         const tickets = getQuoteData.tickets || [];
-          const getQuoteCount = tickets.length;
+        const getQuoteFiltered = tickets.filter((item) => item.assignedTo === "Dealer/Trader");
+        const getQuoteCount = getQuoteFiltered.length;
+        // alert(getQuoteCount);
   
-          setQuoteNotifications(tickets);
+          setQuoteNotifications(getQuoteFiltered);
           setNewQuoteCount(getQuoteCount);
           setGlowQuote(getQuoteCount > 0);
           if (getQuoteCount > 0) {
-            setHighlightedQuote(tickets[0].raiseAQuoteId);
+            setHighlightedQuote(getQuoteFiltered[0].raiseTicketId);
           }
 
           const getOrderData = await orderResponse.json();
-          const getOrderFiltered = getOrderData.filter((item) => item.internalStatus === "Technician Approved");
+          // alert(JSON.stringify(getOrderData));
+          // alert(JSON.stringify(tickets));
+          const orderTickets = getOrderData.tickets || [];
+          const getOrderFiltered = orderTickets.filter((item) => item.internalStatus === "Technician Approved");
+          
           const getOrderCount = getOrderFiltered.length;
+          // alert(getOrderCount);
           setOrderNotifications(getOrderFiltered);
           setNewOrderCount(getOrderCount);
           setGlowOrder(getOrderCount > 0);
           if (getOrderCount > 0) {
-            setHighlightedOrder(getOrderFiltered[0].raiseAQuoteId);
+            setHighlightedOrder(getOrderFiltered[0].raiseTicketId);
           }
           const totalNotifications = getQuoteCount + getOrderCount;
           setNewNotificationCount(totalNotifications);

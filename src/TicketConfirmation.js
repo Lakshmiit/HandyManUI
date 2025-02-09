@@ -63,6 +63,7 @@ const BookingConfirmation = () => {
   const [paymentId, setPaymentId] = useState('');
   const [technicianAmount, setTechnicianAmount] = useState('');
   const [dealerAmont, setDealerAmount] = useState('');
+  const [internalStatus, setInternalStatus] = useState('');
   
   useEffect(() => {
   console.log(ticketData,deliveryNoteId,loading,id,technicianData, selectedSlot, deliveryData, dealerStatus, paymentData, dealerData);
@@ -132,6 +133,7 @@ const BookingConfirmation = () => {
           setSubject(data.subject);
           setDetails(data.details);
           setId(data.id);
+          setInternalStatus(data.internalStatus);
           setCategory(data.category);
           setCustomerId(data.customerId);
           setIsWithMaterial(data.isMaterialType);
@@ -374,8 +376,8 @@ const BookingConfirmation = () => {
       Subject: subject,
       Details: details,
       Category: category,
-      AssignedTo: assignedTo,
-      id: raiseTicketId,
+      AssignedTo: "Dealer/Trader",
+      id: raiseTicketId, 
       status: status,
       internalStatus: "Technician Approved",
       CustomerId: customerId,
@@ -422,6 +424,63 @@ const BookingConfirmation = () => {
     }
   };
 
+  const handleRaiseTicket = async (e) => {
+    e.preventDefault();
+  
+    const payload = {
+      RaiseTicketId: ticketData.raiseTicketId,
+      Date: new Date(),
+      Address: address,
+      Subject: subject,
+      Details: details,
+      Category: category,
+      AssignedTo: "Customer Care",
+      id: raiseTicketId, 
+      status: status,
+      internalStatus: "Technician Approved",
+      CustomerId: customerId,
+      State: state,
+      LowestBidderTechnicainId: lowestBidder,
+      LowestBidderDealerId: lowestDealerBidder,
+      ApprovedAmount: approvedAmount,
+      customerName: fullName,
+      Option1Day: option1Day,
+      Option1Time: option1Time,
+      Option2Day: option2Day,
+      Option2Time: option2Time,
+      IsMaterialType: isWithMaterial,
+      District: district,
+      ZipCode: zipCode,
+      RequestType: requestType,
+      Attachments: attachments,
+      Materials: specifications.map((spec) => ({
+        material: spec.material,
+        Quantity: spec.quantity,
+      })),
+      comments: commentsList.map((Comment) => ({
+        updatedDate: Comment.updatedDate,
+        commentText: Comment.commentText,
+      })),
+    };
+  
+    try {
+      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to save ticket data');
+      }
+      alert('Ticket saved Successfully!');
+      // Navigate(``)
+    } catch (error) {
+      console.error('Error saving ticket data:', error);
+      window.alert('Failed to save the ticket data. Please try again later.');
+    }
+  };
 
   const DeliveryDataTime = new Date().toLocaleString("en-IN", {
     timeZone: "Asia/Kolkata",
@@ -497,6 +556,7 @@ const BookingConfirmation = () => {
     window.alert('Failed to create the Technician TimeSlot. Please try again later.');
   }
 };
+
 
 
 const handleMaterialUpdate = async (e) => {
@@ -665,9 +725,15 @@ const handlePaymentTicket = async (e) => {
   }
 };
 
-const handleBothActions =  (e) => {
+const handleStatusAction = (e) => {
   e.preventDefault();
   handleSaveTicket(e);
+  handleTimeSlotSave(e);
+}
+
+const handleBothActions =  (e) => {
+  e.preventDefault();
+  handleRaiseTicket(e);
   // handleDeliveryNoteUpdate(e)
   handleMaterialUpdate(e);
 
@@ -804,7 +870,7 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
                 </div>
                 </div>
                 <div className='text-center'>
-                <button className='btn btn-warning fs-5' onClick={handleTimeSlotSave}>Save</button>
+                <button className='btn btn-warning fs-5' onClick={handleStatusAction} disabled={internalStatus !== "Customer Approved" && assignedTo === "Technical Agency"}>Save</button>
                 </div>
             </td>
           </tr>
@@ -923,7 +989,7 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
             className='form-check-input m-2 border-dark' />
             Material Collected to Trader/Customer Care
             </label>
-            <button className='btn btn-warning m-1 fs-5' title='save' onClick={handleMaterialUpdate}>Save</button> 
+            <button className='btn btn-warning m-1 fs-5' title='save' onClick={handleMaterialUpdate} disabled={internalStatus !== "Technician Approved L1"}>Save</button> 
         </div>
         {/* <div className="radio">
           <h3 className='section-title mb-0'>Technician Acceptance</h3>
@@ -1139,7 +1205,7 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
           </div> */}
           </div>
           <div className='d-flex flex-row align-items-center gap-5'> 
-          <button className='btn btn-warning fs-5' title='save' onClick={handleBothActions}>Save</button>
+          <button className='btn btn-warning fs-5' title='save' onClick={handleBothActions} disabled={internalStatus !== "Technician Approved L1"}>Save</button>
           {/* <button className='btn btn-warning fs-5'title='forward' >Forward</button> */}
           </div>
       </div>

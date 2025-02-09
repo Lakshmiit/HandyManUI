@@ -16,6 +16,10 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
   const {technicianId} = useParams();
   const {district} = useParams();
 
+  const getQuoteNotifications = notifications.filter((item) => item.assignedTo === "Technical Agency");
+
+  const getOrderNotifications = notifications.filter((item) => item.internalStatus === "Customer Approved");
+
 
   const handleQuoteClick = (ticketId) => {
     navigate(`/viewRaiseQuote/${ticketId}/${category}/${userType}/${technicianId}`, { state: { ticketId } });
@@ -28,11 +32,11 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
   return (
     <div>
 <div className="notification-list">
-  {notifications.map((notification) => (
+  {getQuoteNotifications.map((notification) => (
     <div
-      key={notification.raiseQuoteId}
+      key={notification.raiseAQuoteId}
       className={`notification-item ${
-        notification.raiseQuoteId === highlightedItem ? "highlight" : ""
+        notification.raiseAQuoteId === highlightedItem ? "highlight" : ""
       }`}
     >
       <div className="notification-header">
@@ -62,7 +66,7 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
 </div>
 
     <div className="notification-list">
-    {notifications.map((notification) => (
+    {getOrderNotifications.map((notification) => (
       <div
         key={notification.raiseAQuoteId}
         className={`notification-item ${
@@ -162,23 +166,28 @@ useEffect(() => {
     ]);
 
       const getQuoteData = await getQuoteResponse.json();
-
-      // Ensure we extract the "tickets" array from the response
       const tickets = getQuoteData.tickets || [];
-      const getQuoteCount = tickets.length;
+      const getTicketsFiltered = tickets.filter((item) => item.assignedTo ==="Technical Agency");
+  
 
-      setQuoteNotifications(tickets);  // Setting only tickets
+      const getQuoteCount = getTicketsFiltered.length;
+
+      setQuoteNotifications(getTicketsFiltered);  
       setNewQuoteCount(getQuoteCount);
       setGlowQuote(getQuoteCount > 0);
 
       if (getQuoteCount > 0) {
-        setHighlightedQuote(tickets[0].raiseTicketId);
+        setHighlightedQuote(getTicketsFiltered[0].raiseAQuoteId);
       }
 
-      const getOrderData = await orderResponse.json();
-      const ordersFiltered = getOrderData.filter((item) =>
+       const getOrderData = await orderResponse.json();
+      //  alert(JSON.stringify(getOrderData));
+       const orderTickets = getOrderData.tickets || [];
+      const ordersFiltered = orderTickets.filter((item) =>
          item.internalStatus === "Customer Approved");
+
       const getOrderCount = ordersFiltered.length;
+      // alert(ordersFiltered);
 
       setOrderNotifications(ordersFiltered);
       setNewOrderCount(getOrderCount);
@@ -188,6 +197,7 @@ useEffect(() => {
       }
 
       const totalNotifications = getQuoteCount + getOrderCount;
+      
       setNewNotificationCount(totalNotifications);
       setGlow(totalNotifications > 0);
     } catch (error) {
@@ -199,6 +209,61 @@ useEffect(() => {
     return () => clearInterval(interval);
   }, [category, district, technicianId]);
 
+
+// useEffect(() => {
+//   const fetchNotifications = async () => {
+//     try {
+//       const [getQuoteResponse, orderResponse] = await Promise.all([
+//         fetch(
+//           `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistTechnicianId?category=${category}&district=${district}&technicianId=${technicianId}`
+//         ),
+//         fetch(
+//           `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingTechnicianId?category=${category}&district=${district}&technicianId=${technicianId}`
+//         ),
+//       ]);
+
+//       const getQuoteData = await getQuoteResponse.json();
+//       const orderData = await orderResponse.json();
+//       // alert(JSON.stringify(orderData)); 
+//       const getTicketsFiltered = getQuoteData.tickets?.filter(
+//         (item) => item.assignedTo === "Technical Agency"
+//       ) || [];
+
+//         const ordersFiltered = orderData?.filter(
+//         (item) => item.internalStatus === "Customer Approved"
+//       ) || [];
+//       //  alert(JSON.stringify(ordersFiltered));
+
+//       setQuoteNotifications(getTicketsFiltered);
+//       setOrderNotifications(ordersFiltered);
+
+//       const getQuoteCount = getTicketsFiltered.length;
+//       const getOrderCount = ordersFiltered.length;
+
+//       setNewQuoteCount(getQuoteCount);
+//       setNewOrderCount(getOrderCount);
+//       setNewNotificationCount(getQuoteCount + getOrderCount);
+
+//       setGlowQuote(getQuoteCount > 0);
+//       setGlowOrder(getOrderCount > 0);
+//       setGlow(getQuoteCount + getOrderCount > 0);
+
+//       if (getQuoteCount > 0) {
+//         setHighlightedQuote(getTicketsFiltered[0].raiseAQuoteId);
+//       }
+
+//       if (getOrderCount > 0) {
+//         setHighlightedOrder(ordersFiltered[0].raiseTicketId);
+//       }
+//     } catch (error) {
+//       console.error("Failed to fetch notifications:", error);
+//     }
+//   };
+
+//   fetchNotifications();
+//   const interval = setInterval(fetchNotifications, 6000);
+//   return () => clearInterval(interval);
+// }, [category, district, technicianId]);
 
 
   const handleClearQuoteNotifications = () => {

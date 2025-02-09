@@ -202,8 +202,9 @@ useEffect(() => {
 }, [ticketId]);  
 
 
-const isChecked = technicianStatus === "Job Completed";
-
+const isTechnicianChecked = technicianStatus === "Job Completed";
+const isDealerChecked = dealerStatus === "Material Delivered";
+const atLeastOneChecked = isTechnicianChecked || isDealerChecked;
   useEffect(() => {
     const fetchtechnicianData = async () => {
       try {
@@ -719,17 +720,17 @@ const handleBothActions =  (e) => {
           <label className="fs-5">
           <input type="checkbox" 
           className="form-check-input m-2 border-dark"
-          value={technicianStatus}
-          checked={selectedStatus === 'Material Delivered'}
-          />
+          value="Material Delivered"
+          checked={isDealerChecked || !atLeastOneChecked} 
+          readOnly          />
           Material Delivered
           </label>
           <label className="fs-5">
           <input type="checkbox" 
           className="form-check-input m-2 border-dark"
           value='Technician Work Completed'
-          checked={isChecked}
-           />
+          checked={isTechnicianChecked || !atLeastOneChecked} 
+          readOnly           />
           Technician Work Completed
           </label>
           {/* <label className="fs-5">
