@@ -16,7 +16,7 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
   const {category} = useParams();
   const {district} = useParams();
 
-  const getQuoteNotifications = notifications.filter((item) => item.assignedTo === "Dealer/Trader" && item.internalStatus === "Technical Agency");
+  const getQuoteNotifications = notifications.filter((item) => item.assignedTo === "Dealer/Trader" && item.internalStatus === "Assigned");
 
   const getOrdersNotifications = notifications.filter((item) => item.internalStatus === "Technician Approved" && item.assignedTo === "Dealer/Trader" );
 
@@ -33,9 +33,9 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
     <div className="notification-list">
       {getQuoteNotifications.map((notification) => (
         <div
-          key={notification.raiseTicketId}
+          key={notification.RaiseAQuoteByDealerId}
           className={`notification-item ${
-            notification.raiseTicketId === highlightedItem ? "highlight" : ""
+            notification.RaiseAQuoteByDealerId === highlightedItem ? "highlight" : ""
           }`}
         >
           <div className="notification-header">
@@ -67,9 +67,9 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
 <div className="notification-list">
 {getOrdersNotifications.map((notification) => (
   <div
-    key={notification.raiseTicketId}
+    key={notification.RaiseAQuoteByDealerId}
     className={`notification-item ${
-      notification.raiseTicketId === highlightedItem ? "highlight" : ""
+      notification.RaiseAQuoteByDealerId === highlightedItem ? "highlight" : ""
     }`}
   >
     <div className="notification-header">
@@ -139,14 +139,14 @@ const Notification = () => {
       ]);
         const getQuoteData = await getQuoteResponse.json();
         const tickets = getQuoteData.tickets || [];
-        const getQuoteFiltered = tickets.filter((item) => item.assignedTo === "Dealer/Trader"  && item.internalStatus === "Technical Agency");
+        const getQuoteFiltered = tickets.filter((item) => item.assignedTo === "Dealer/Trader"  && item.internalStatus === "Assigned");
         const getQuoteCount = getQuoteFiltered.length;
   
           setQuoteNotifications(getQuoteFiltered);
           setNewQuoteCount(getQuoteCount);
           setGlowQuote(getQuoteCount > 0);
           if (getQuoteCount > 0) {
-            setHighlightedQuote(getQuoteFiltered[0].raiseTicketId);
+            setHighlightedQuote(getQuoteFiltered[0].RaiseAQuoteByDealerId);
           }
 
           const getOrderData = await orderResponse.json();
@@ -161,7 +161,7 @@ const Notification = () => {
           setNewOrderCount(getOrderCount);
           setGlowOrder(getOrderCount > 0);
           if (getOrderCount > 0) {
-            setHighlightedOrder(getOrderFiltered[0].raiseTicketId);
+            setHighlightedOrder(getOrderFiltered[0].RaiseAQuoteByDealerId);
           }
           const totalNotifications = getQuoteCount + getOrderCount;
           setNewNotificationCount(totalNotifications);
