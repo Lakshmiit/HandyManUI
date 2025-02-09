@@ -211,6 +211,7 @@ useEffect(() => {
         const fetchticketData = async () => {
           try {
             const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+            // alert(raiseTicketId); 
             if (!response.ok) {
               throw new Error('Failed to fetch ticket data');
             }

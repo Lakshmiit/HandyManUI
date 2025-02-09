@@ -26,7 +26,7 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
 
   
  const orderTicketNotifications = notifications.filter(
-  (item) => item.internalStatus === "Dealer Approved"
+  (item) => item.internalStatus === "Dealer Approved" && item.assignedTo === "Customer Care"
 );
 
   
@@ -277,7 +277,7 @@ const Notification = () => {
         setHighlightedQuote(dealerTicketFiltered[0].raiseTicketId);
       }
      const getOrderData = await getOrderResponse.json();
-     const orderFiltered = getOrderData.filter((item) => item.internalStatus === "Dealer Approved");
+     const orderFiltered = getOrderData.filter((item) => item.internalStatus === "Dealer Approved" && item.assignedTo === "Customer Care");
      const getOrderCount = orderFiltered.length;
      setOrderNotifications(orderFiltered);
      setNewOrderCount(getOrderCount);

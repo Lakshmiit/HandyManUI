@@ -16,9 +16,9 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
   const {category} = useParams();
   const {district} = useParams();
 
-  const getQuoteNotifications = notifications.filter((item) => item.assignedTo === "Dealer/Trader");
+  const getQuoteNotifications = notifications.filter((item) => item.assignedTo === "Dealer/Trader" && item.internalStatus === "Technical Agency");
 
-  const getOrdersNotifications = notifications.filter((item) => item.internalStatus === "Technician Approved");
+  const getOrdersNotifications = notifications.filter((item) => item.internalStatus === "Technician Approved" && item.assignedTo === "Dealer/Trader" );
 
   const handleQuoteClick = (ticketId) => {
     navigate(`/viewDealerRaiseTicket/${ticketId}/${userType}/${category}/${dealerId}`, { state: { ticketId } });
@@ -40,7 +40,7 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
         >
           <div className="notification-header">
             <strong>Ticket ID: </strong>
-            <span
+            <span 
               onClick={() => handleQuoteClick(notification.id)}
               style={{
                 color: "blue",
@@ -139,9 +139,8 @@ const Notification = () => {
       ]);
         const getQuoteData = await getQuoteResponse.json();
         const tickets = getQuoteData.tickets || [];
-        const getQuoteFiltered = tickets.filter((item) => item.assignedTo === "Dealer/Trader");
+        const getQuoteFiltered = tickets.filter((item) => item.assignedTo === "Dealer/Trader"  && item.internalStatus === "Technical Agency");
         const getQuoteCount = getQuoteFiltered.length;
-        // alert(getQuoteCount);
   
           setQuoteNotifications(getQuoteFiltered);
           setNewQuoteCount(getQuoteCount);
@@ -154,7 +153,7 @@ const Notification = () => {
           // alert(JSON.stringify(getOrderData));
           // alert(JSON.stringify(tickets));
           const orderTickets = getOrderData.tickets || [];
-          const getOrderFiltered = orderTickets.filter((item) => item.internalStatus === "Technician Approved");
+          const getOrderFiltered = orderTickets.filter((item) => item.internalStatus === "Technician Approved" && item.assignedTo === "Dealer/Trader");
           
           const getOrderCount = getOrderFiltered.length;
           // alert(getOrderCount);
@@ -314,6 +313,9 @@ const Notification = () => {
                 </div>
               </>
             )}
+            </div>
+
+            <div>
             {activeTab === "Raise A Quote Orders" && (
               <>
                 <NotificationsList

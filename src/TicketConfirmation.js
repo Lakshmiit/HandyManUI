@@ -989,7 +989,9 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
             className='form-check-input m-2 border-dark' />
             Material Collected to Trader/Customer Care
             </label>
-            <button className='btn btn-warning m-1 fs-5' title='save' onClick={handleMaterialUpdate} disabled={internalStatus !== "Technician Approved L1"}>Save</button> 
+            <button className='btn btn-warning m-1 fs-5' title='save' onClick={handleMaterialUpdate}
+            //  disabled={internalStatus !== "Technician Approved L1"}
+             >Save</button> 
         </div>
         {/* <div className="radio">
           <h3 className='section-title mb-0'>Technician Acceptance</h3>
@@ -1205,7 +1207,9 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
           </div> */}
           </div>
           <div className='d-flex flex-row align-items-center gap-5'> 
-          <button className='btn btn-warning fs-5' title='save' onClick={handleBothActions} disabled={internalStatus !== "Technician Approved L1"}>Save</button>
+          <button className='btn btn-warning fs-5' title='save' onClick={handleBothActions} 
+          // disabled={internalStatus !== "Technician Approved L1"}
+          >Save</button>
           {/* <button className='btn btn-warning fs-5'title='forward' >Forward</button> */}
           </div>
       </div>
