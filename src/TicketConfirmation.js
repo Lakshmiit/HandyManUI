@@ -1271,7 +1271,7 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
             Pending Ticket Araised Customer Issues
           </label>
           <div>
-          <label className="fs-5 section-title">Assigned To</label>
+          <label className="fs-5 section-title">Assigned To</label> 
         <select className="form-control w-50 mb-3 fs-5"
         value={assignedTo}
         onChange={handleAssignedChange}
