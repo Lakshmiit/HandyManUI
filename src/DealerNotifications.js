@@ -118,7 +118,7 @@ const Notification = () => {
   const { district, category } = useParams();
   const { userType } = useParams();
   const { dealerId } = useParams();
-  const { raiseTicketId } = useParams();
+  // const { raiseTicketId } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -325,7 +325,7 @@ const Notification = () => {
                 <div
                   className="view-notifications text-info mx-2"
                   onClick={() => {
-                    navigate(`/traderConfirmation/${raiseTicketId}/${district}/${userType}/${dealerId}`);
+                    navigate(`/traderConfirmationGrid/${userType}/${district}/${dealerId}`);
                     handleClearOrdersNotifications();
                   }}
                   style={{ cursor: "pointer" }}

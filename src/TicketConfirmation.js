@@ -1065,8 +1065,10 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
             Material Collected to Trader/Customer Care
             </label>
             <button className='btn btn-warning m-1 fs-5' title='save' onClick={handleBothMaterialActions}
-            disabled={!(internalStatus === "Dealer Approved" && assignedTo === "Technical Agency") &&
-              (internalStatus === "Technician Approved" && assignedTo === "Dealer/Trader")}
+            // disabled={!(internalStatus === "Dealer Approved" && assignedTo === "Technical Agency") &&
+            //   (internalStatus === "Technician Approved" && assignedTo === "Dealer/Trader")}
+
+            disabled={internalStatus === "Customer Approved"}
              >Save</button> 
         </div>
         {/* <div className="radio">
@@ -1271,7 +1273,7 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
             Pending Ticket Araised Customer Issues
           </label>
           <div>
-          <label className="fs-5 section-title">Assigned To</label> 
+          <label className="fs-5 section-title">Assigned To</label>
         <select className="form-control w-50 mb-3 fs-5"
         value={assignedTo}
         onChange={handleAssignedChange}
@@ -1285,6 +1287,7 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
           <div className='d-flex flex-row align-items-center gap-5'> 
           <button className='btn btn-warning fs-5' title='save' onClick={handleBothActions} 
           // disabled={internalStatus !== "Technician Approved L1"}
+          disabled={internalStatus === "Customer Approved"}
           >Save</button>
           {/* <button className='btn btn-warning fs-5'title='forward' >Forward</button> */}
           </div>

@@ -49,6 +49,8 @@ import CustomerRaiseTicketTrack from './CustomerRaiseTicketTrack.js';
 import TrackStatusNotifications from './TrackStatusNotifications.js';
 import TrackStatusGrid from './TrackStatusGrid.js';
 import TicketConfirmationGrid from './TicketConfirmationGrid.js';
+import TraderConfirmationGrid from './TraderConfirmationGrid.js';
+
 
 function App() {
   return (
@@ -105,7 +107,9 @@ function App() {
             <Route path="/customerCareConfirmation/:raiseTicketId" element={<CustomerCareConfirmation />} />
             <Route path="/customerTrack/:raiseTicketId/:userType" element={<CustomerRaiseTicketTrack />} />
             <Route path="/trackStatusNotifications/:userType" element={<TrackStatusNotifications />} />
-            <Route path="/ticketConfirmationGrid/:raiseTicketId/:userType" element={<TicketConfirmationGrid />} />
+            <Route path="/ticketConfirmationGrid/:userType/:district/:technicianId" element={<TicketConfirmationGrid />} />
+            <Route path="/traderConfirmationGrid/:userType/:district/:dealerId" element={<TraderConfirmationGrid />} />
+
             <Route path="/trackStatus/:userType" element={<TrackStatusGrid />} />
           </Routes>
         </main>

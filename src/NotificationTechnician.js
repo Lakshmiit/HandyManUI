@@ -118,7 +118,7 @@ const Notification = () => {
    const [glowOrder, setGlowOrder] = useState(false);
   const { district, category } = useParams();
   const { userType } = useParams();
-  const {raiseTicketId} = useParams();
+  // const {raiseTicketId} = useParams();
   const { technicianId } = useParams();
   const navigate = useNavigate();
 
@@ -382,7 +382,7 @@ useEffect(() => {
                 <div
                   className="view-notifications text-info mx-2"
                   onClick={() => {
-                    navigate(`/ticketConfirmation/${raiseTicketId}/${district}/${userType}/${technicianId}`);
+                    navigate(`/ticketConfirmationGrid/${userType}/${district}/${technicianId}`);
                     handleClearOrderNotifications();
                   }} 
                   style={{ cursor: "pointer" }}

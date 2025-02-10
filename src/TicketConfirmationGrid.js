@@ -10,7 +10,6 @@ import  ArrowLeftIcon  from '@mui/icons-material/ArrowLeft';
 const TicketConfirmationNotification = () => {
   const { userType } = useParams();
   const { selectedUserType } = useParams();
-  // const [enableForward] = useState('Disable');
   const {technicianId} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -24,8 +23,6 @@ useEffect(() => {
     console.log(ticketData);
   }, [ticketData]);
 
-  // alert(enableForward);
-
   useEffect(() => {
     setLoading(true);
     const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingTechnicianId?category=${category}&district=${district}&technicianId=${technicianId}`;
@@ -34,9 +31,11 @@ useEffect(() => {
       .then((response) => {
         console.log("API Response:", response.data); 
 
-        const tickets = response.data.tickets || []; 
-        setTicketData(tickets);
-        setFilteredData(tickets);
+        const tickets = response.data.tickets || [];
+        const filteredTickets = tickets.filter((ticket) => ticket.internalStatus === "Technician Approved L1");
+        
+        setTicketData(filteredTickets);
+        setFilteredData(filteredTickets);
       })
       .catch((error) => {
         console.error("Error fetching ticket data:", error);
@@ -95,7 +94,7 @@ useEffect(() => {
       )}
 
       <div className={`container m-1 ${isMobile ? "w-100" : "w-75"}`}>
-      <h2 className="text-center mb-4">Technician Quote Notifications</h2>
+      <h2 className="text-center mb-4">Technician Confirmation Notifications</h2>
       
       <table className="table table-bordered">
         <thead>
@@ -120,7 +119,7 @@ useEffect(() => {
                 <td>{ticket.assignedTo}</td>
                 <td className="d-flex align-items-center">
                   <Link
-                    to={`/viewDetailsRaiseQuote/${ticket.id}/${category}/${userType}/${technicianId}`}
+                    to={`/ticketConfirmation/${ticket.id}/${district}/${userType}/${technicianId}`}
                     className="btn btn-info mx-2"
                     title="View"
                   >
