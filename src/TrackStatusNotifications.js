@@ -9,14 +9,14 @@ import {
 import { Button } from "react-bootstrap";
 import "./App.css";
 
-const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) => {
+const NotificationsList = ({ notifications, highlightedItem }) => {
   const navigate = useNavigate();
 //   const {category} = useParams();
   const {userType} = useParams();
 //   const {raiseTicketId} = useParams();
 
   const handleTicketClick = (ticketId) => {
-    navigate(`/customerTrack/${ticketId}${userType}`, { state: { ticketId } });
+    navigate(`/customerTrackConfirmation/${ticketId}/${userType}`, { state: { ticketId } });
   };
 
   return (
@@ -68,8 +68,10 @@ const TrackNotification = () => {
   const [activeTab, setActiveTab] = useState("");
   const [glow, setGlow] = useState(false);
   const [glowTrack, setGlowTrack] = useState(false);
-  const { userType } = useParams();
-  const navigate = useNavigate();
+  // const { userType } = useParams();
+  // const { raiseTicketId } = useParams('');
+  const { customerId } = useParams('');
+  // const navigate = useNavigate();
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -82,7 +84,8 @@ const TrackNotification = () => {
   const fetchNotifications = async () => {
     try {
       const trackTicketResponse = await fetch(
-        ``
+        `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTrackTicketsByCustomerId?customerId=${customerId}
+`
       );
       const trackData = await trackTicketResponse.json();
         const trackCount = trackData.length;
@@ -101,14 +104,14 @@ const TrackNotification = () => {
       }
     };
     fetchNotifications();
- }, []);
+ }, [customerId]);
     
 
-  const handleClearTrackNotifications = () => {
-    setNewTrackCount(0);
-    setGlowTrack(false);
-    setHighlightedTrack(null);
-  };
+  // const handleClearTrackNotifications = () => {
+  //   setNewTrackCount(0);
+  //   setGlowTrack(false);
+  //   setHighlightedTrack(null);
+  // };
 
   const handleTabClick = (tab) => setActiveTab(tab);
 
@@ -145,7 +148,7 @@ const TrackNotification = () => {
             fontSize="large"
             className={glow ? "glow" : ""}
           />{" "}
-          Notifications{" "}
+          My Tickets{" "}
           {newNotificationCount > 0 && (
             <span className="badge bg-danger">{newNotificationCount}</span>
           )}
@@ -181,16 +184,16 @@ const TrackNotification = () => {
                   notifications={trackNotifications}
                   highlightedItem={highlightedTrack}
                 />
-                <div
+                {/* <div
                   className="view-notifications text-info mx-2"
                   onClick={() => {
-                    navigate(`/trackStatusGrid/${userType}`);
+                    navigate(`/customerTrackConfirmation/${raiseTicketId}/${userType}`);
                     handleClearTrackNotifications();
                   }}
                   style={{ cursor: "pointer" }}
                 >
                   View All Notifications
-                </div>
+                </div> */}
               </>
             )}
           </div>

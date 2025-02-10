@@ -25,9 +25,9 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
   );
 
   
- const orderTicketNotifications = notifications.filter(
-  (item) => item.internalStatus === "Dealer Approved" && item.assignedTo === "Customer Care"
-);
+//  const orderTicketNotifications = notifications.filter(
+//   (item) => item.internalStatus === "Dealer Approved" && item.assignedTo === "Customer Care"
+// );
 
   
   const handleTicketClick = (ticketId) => {
@@ -150,7 +150,7 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
         ))}
       </div>
       <div className="notification-list">
-        {orderTicketNotifications.map((notification) => (
+        {notifications.map((notification) => (
           <div
             key={notification.raiseTicketId}
             className={`notification-item ${
@@ -277,14 +277,14 @@ const Notification = () => {
         setHighlightedQuote(dealerTicketFiltered[0].raiseTicketId);
       }
      const getOrderData = await getOrderResponse.json();
-     const orderFiltered = getOrderData.filter((item) => item.internalStatus === "Dealer Approved" && item.assignedTo === "Customer Care");
-     const getOrderCount = orderFiltered.length;
-     setOrderNotifications(orderFiltered);
+    //  const orderFiltered = getOrderData.filter((item) => item.internalStatus === "Dealer Approved" && item.assignedTo === "Customer Care");
+     const getOrderCount = getOrderData.length;
+     setOrderNotifications(getOrderData);
      setNewOrderCount(getOrderCount);
      setGlowOrder(getOrderCount > 0);
 
      if (getOrderCount > 0) {
-      setHighlightedOrder(orderFiltered[0].raiseTicketId);
+      setHighlightedOrder(getOrderData[0].raiseTicketId);
      }
       const totalNotifications = raiseTicketCount + getQuoteCount + getDealerCount + getOrderCount;
       setNewNotificationCount(totalNotifications);

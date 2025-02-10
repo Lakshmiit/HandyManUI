@@ -105,8 +105,8 @@ function App() {
             <Route path="/traderConfirmation/:raiseTicketId/:district/:userType/:dealerId" element={<TraderConfirmation />} />
             <Route path="/raiseOrders/:userType" element={<RaiseOrdersGrid />} />
             <Route path="/customerCareConfirmation/:raiseTicketId" element={<CustomerCareConfirmation />} />
-            <Route path="/customerTrack/:raiseTicketId/:userType" element={<CustomerRaiseTicketTrack />} />
-            <Route path="/trackStatusNotifications/:userType" element={<TrackStatusNotifications />} />
+            <Route path="/customerTrackConfirmation/:raiseTicketId/:userType" element={<CustomerRaiseTicketTrack />} />
+            <Route path="/trackStatusNotifications/:userType/:customerId" element={<TrackStatusNotifications />} />
             <Route path="/ticketConfirmationGrid/:userType/:district/:technicianId" element={<TicketConfirmationGrid />} />
             <Route path="/traderConfirmationGrid/:userType/:district/:dealerId" element={<TraderConfirmationGrid />} />
 
