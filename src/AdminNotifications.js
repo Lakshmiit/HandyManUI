@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar";
 import {
   Dashboard as MoreVertIcon,
@@ -42,9 +42,9 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
     navigate(`/bidderTicketQuotation/${raiseTicketId}`, { state: { raiseTicketId } });
   };
 
-  const handleOrderClick = (raiseTicketId) => {
-    navigate(`/customerCareConfirmation/${raiseTicketId}`, { state: { raiseTicketId}});
-  }
+  // const handleOrderClick = (raiseTicketId) => {
+  //   navigate(`/customerCareConfirmation/${raiseTicketId}`, { state: { raiseTicketId}});
+  // }
 
   return (
     <div>
@@ -193,23 +193,23 @@ const Notification = () => {
   const [ticketNotifications, setTicketNotifications] = useState([]);
   const [quoteNotifications, setQuoteNotifications] = useState([]);
   const [dealerNotifications, setDealerNotifications] = useState([]);
-  const [orderNotifications, setOrderNotifications] = useState([]);
+  // const [orderNotifications, setOrderNotifications] = useState([]);
   const [newTicketCount, setNewTicketCount] = useState(0);
   const [newQuoteCount, setNewQuoteCount] = useState(0);
   const [newDealerCount, setNewDealerCount] = useState(0);
-  const [newOrderCount, setNewOrderCount] = useState(0); 
+  // const [newOrderCount, setNewOrderCount] = useState(0); 
   const [newNotificationCount, setNewNotificationCount] = useState(0);
   const [glow, setGlow] = useState(false);
   const [glowTicket, setGlowTicket] = useState(false);
   const [glowQuote, setGlowQuote] = useState(false);
   const [glowDealer, setGlowDealer] = useState(false);
-  const [glowOrder, setGlowOrder] = useState(false);
+  // const [glowOrder, setGlowOrder] = useState(false);
   const [highlightedTicket, setHighlightedTicket] = useState(null);
   const [highlightedQuote, setHighlightedQuote] = useState(null);
   const [highlightedDealer, setHighlightedDealer] = useState(null);
-  const [highlightedOrder, setHighlightedOrder] = useState(null);
+  // const [highlightedOrder, setHighlightedOrder] = useState(null);
   const [activeTab, setActiveTab] = useState("");
-  const {raiseTicketId} = useParams();
+  // const {raiseTicketId} = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -222,9 +222,9 @@ const Notification = () => {
 
   const fetchNotifications = async () => {
     try {
-      const [raiseTicketResponse, getQuoteResponse, getDealerResponse, getOrderResponse] = await Promise.all([
+      const [raiseTicketResponse, getQuoteResponse, getDealerResponse] = await Promise.all([
         fetch(
-          "https://localhost:7091/api/RaiseTicket/GetTicketsNotifications"
+          "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications"
         ),
         fetch(
           "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotificationsForTechnician"
@@ -232,7 +232,7 @@ const Notification = () => {
         fetch(
           "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetRaiseTicketsForDealers"
         ),
-        fetch(`https://localhost:7091/api/RaiseTicket/GetTicketsNotifications`),
+        // fetch(`https://localhost:7091/api/RaiseTicket/GetTicketsNotifications`),
       ]);
 
       const raiseTicketData = await raiseTicketResponse.json();
@@ -276,17 +276,17 @@ const Notification = () => {
       if (getDealerCount > 0) {
         setHighlightedQuote(dealerTicketFiltered[0].raiseTicketId);
       }
-     const getOrderData = await getOrderResponse.json();
-    //  const orderFiltered = getOrderData.filter((item) => item.internalStatus === "Dealer Approved" && item.assignedTo === "Customer Care");
-     const getOrderCount = getOrderData.length;
-     setOrderNotifications(getOrderData);
-     setNewOrderCount(getOrderCount);
-     setGlowOrder(getOrderCount > 0);
+    //  const getOrderData = await getOrderResponse.json();
+    // //  const orderFiltered = getOrderData.filter((item) => item.internalStatus === "Dealer Approved" && item.assignedTo === "Customer Care");
+    //  const getOrderCount = getOrderData.length;
+    //  setOrderNotifications(getOrderData);
+    //  setNewOrderCount(getOrderCount);
+    //  setGlowOrder(getOrderCount > 0);
 
-     if (getOrderCount > 0) {
-      setHighlightedOrder(getOrderData[0].raiseTicketId);
-     }
-      const totalNotifications = raiseTicketCount + getQuoteCount + getDealerCount + getOrderCount;
+    //  if (getOrderCount > 0) {
+    //   setHighlightedOrder(getOrderData[0].raiseTicketId);
+    //  }
+      const totalNotifications = raiseTicketCount + getQuoteCount + getDealerCount;
       setNewNotificationCount(totalNotifications);
       setGlow(totalNotifications > 0);
     } catch (error) {
@@ -318,11 +318,11 @@ const Notification = () => {
     setHighlightedDealer(null);
   };
 
-  const handleClearOrderNotifications = () => {
-    setNewOrderCount(0);
-    setGlowOrder(false);
-    setHighlightedOrder(null);
-  };
+  // const handleClearOrderNotifications = () => {
+  //   setNewOrderCount(0);
+  //   setGlowOrder(false);
+  //   setHighlightedOrder(null);
+  // };
 
   const handleTabClick = (tab) => setActiveTab(tab);
 
@@ -374,7 +374,7 @@ const Notification = () => {
                 ${tab === "Raise Ticket" && glowTicket ? "glow" : ""}
                 ${tab === "Technician Get Quote" && glowQuote ? "glow" : ""}
                 ${tab === "Dealer Get Quote" && glowDealer ? "glow" : ""}
-                ${tab === "Raise Ticket Orders" && glowOrder ? "glow" : ""}`}
+                `}
                 onClick={() => handleTabClick(tab)}
                 style={{ cursor: "pointer" }}    
               >
