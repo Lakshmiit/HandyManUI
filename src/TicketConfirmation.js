@@ -64,10 +64,12 @@ const BookingConfirmation = () => {
   const [technicianAmount, setTechnicianAmount] = useState('');
   const [dealerAmont, setDealerAmount] = useState('');
   const [internalStatus, setInternalStatus] = useState('');
-  
+  const [deliveryAssigned, setDeliveryAssigned] = useState('');
+  const [deliveryInternalStatus, setDeliveryInternalStatus] = useState('');
+   
   useEffect(() => {
-  console.log(ticketData,deliveryNoteId,loading,id,technicianData, selectedSlot, deliveryData, dealerStatus, paymentData, dealerData);
-    }, [ticketData, deliveryNoteId, loading,id,technicianData, selectedSlot, deliveryData,dealerStatus, paymentData, dealerData]);
+  console.log(ticketData,deliveryAssigned,deliveryNoteId,loading,id,technicianData, selectedSlot, deliveryData, dealerStatus, paymentData, dealerData);
+    }, [ticketData, deliveryAssigned, deliveryNoteId, loading,id,technicianData, selectedSlot, deliveryData,dealerStatus, paymentData, dealerData]);
 
   // useEffect(() => {
   //   const fetchticketData = async () => {
@@ -205,10 +207,12 @@ const BookingConfirmation = () => {
         // alert(JSON.stringify(deliveryData));
         setDeliveryId(deliveryData.id); 
         setDeliveryNoteId(deliveryData.deliveryNoteId);
-        // setOption1Day(deliveryData.option1Day || '');
-        // setOption2Day(deliveryData.option2Day || '');
-        // setOption1Time(deliveryData.option1Time || '');
-        // setOption2Time(deliveryData.option2Time || '');
+        setOption1Day(deliveryData.option1Day || '');
+        setOption2Day(deliveryData.option2Day || '');
+        setOption1Time(deliveryData.option1Time || '');
+        setOption2Time(deliveryData.option2Time || '');
+        setDeliveryAssigned(deliveryData.assignedTo);
+        setDeliveryInternalStatus(deliveryData.internalStatus);
         setSpecifications(deliveryData.materialCollection || [{ material: "", quantity: "", receivedQuantity: "", remainingQuantity: "" }]);
       } catch (error) {
         console.error("Error fetching delivery data:", error);
@@ -216,7 +220,6 @@ const BookingConfirmation = () => {
         setLoading(false); 
       }
     };
-  
     fetchDeliveryData();
   }, [ticketId]); 
   
@@ -482,6 +485,71 @@ const BookingConfirmation = () => {
     }
   };
 
+  const handleMaterialUpdateRaiseTicket = async (e) => {
+    e.preventDefault();
+  
+    const payload4 = {
+      RaiseTicketId: ticketData.raiseTicketId,
+      Date: new Date(),
+      Address: address,
+      Subject: subject,
+      Details: details,
+      Category: category,
+      AssignedTo: "Dealer/Trader",
+      id: raiseTicketId, 
+      status: status,
+      internalStatus: "Technician Approved",
+      CustomerId: customerId,
+      State: state,
+      LowestBidderTechnicainId: lowestBidder,
+      LowestBidderDealerId: lowestDealerBidder,
+      ApprovedAmount: approvedAmount,
+      customerName: fullName,
+      Option1Day: option1Day,
+      Option1Time: option1Time,
+      Option2Day: option2Day,
+      Option2Time: option2Time,
+      IsMaterialType: isWithMaterial,
+      District: district,
+      ZipCode: zipCode,
+      RequestType: requestType,
+      Attachments: attachments,
+      Materials: specifications.map((spec) => ({
+        material: spec.material,
+        Quantity: spec.quantity,
+      })),
+      comments: commentsList.map((Comment) => ({
+        updatedDate: Comment.updatedDate,
+        commentText: Comment.commentText,
+      })),
+    };
+  
+    try {
+      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload4),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to save ticket data');
+      }
+      alert('Ticket saved Successfully!');
+      // Navigate(``)
+    } catch (error) {
+      console.error('Error saving ticket data:', error);
+      window.alert('Failed to save the ticket data. Please try again later.');
+    }
+  };
+
+
+  const handleBothMaterialActions = (e) => {
+    e.preventDefault();
+    handleMaterialUpdateRaiseTicket(e);
+    handleMaterialUpdate(e);
+  };
+
   const DeliveryDataTime = new Date().toLocaleString("en-IN", {
     timeZone: "Asia/Kolkata",
     day: "2-digit",
@@ -625,6 +693,9 @@ try {
   window.alert('Failed to create the Material. Please try again later.');
 }
 };
+
+
+
 
 // const handleDeliveryNoteUpdate = async (e) => {
 //   e.preventDefault();
@@ -857,7 +928,8 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
                 <div className='timeslots-option d-flex flex-row'>
                 <div className='slot m-2 p-2'>
                      <strong><input type='radio' className='form-check-input m-1 border-dark' 
-                     name='timeslot' value='option1' onClick={() => handleSlotSelection('option1')}/>
+                     name='timeslot' value='option1'
+                      onClick={() => handleSlotSelection('option1')}/>
                      Option 1</strong> 
                      <div><span style={{ fontWeight: "bold" }}>Date: </span>{option1Day}</div>
                      <div><span style={{ fontWeight: "bold" }}>Time: </span>{option1Time}</div>
@@ -870,7 +942,10 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
                 </div>
                 </div>
                 <div className='text-center'>
-                <button className='btn btn-warning fs-5' onClick={handleStatusAction} disabled={internalStatus !== "Customer Approved" && assignedTo === "Technical Agency"}>Save</button>
+                <button className='btn btn-warning fs-5' onClick={handleStatusAction} 
+                // disabled={internalStatus !== "Customer Approved" && assignedTo === "Technical Agency"}
+                disabled={deliveryInternalStatus === "Technician Approved L1"}
+                >Save</button>
                 </div>
             </td>
           </tr>
@@ -989,8 +1064,9 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
             className='form-check-input m-2 border-dark' />
             Material Collected to Trader/Customer Care
             </label>
-            <button className='btn btn-warning m-1 fs-5' title='save' onClick={handleMaterialUpdate}
-            //  disabled={internalStatus !== "Technician Approved L1"}
+            <button className='btn btn-warning m-1 fs-5' title='save' onClick={handleBothMaterialActions}
+            disabled={!(internalStatus === "Dealer Approved" && assignedTo === "Technical Agency") &&
+              (internalStatus === "Technician Approved" && assignedTo === "Dealer/Trader")}
              >Save</button> 
         </div>
         {/* <div className="radio">

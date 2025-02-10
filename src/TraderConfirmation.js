@@ -135,13 +135,12 @@ useEffect(() => {
 
     const fetchDeliveryData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
-/DeliveryNote/GetRaiseTicketForDealer?RaiseTicketId=${ticketId}`);
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/DeliveryNote/GetRaiseTicketForDealer?RaiseTicketId=${ticketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch delivery data');
         }
         const data = await response.json();
-        // alert(JSON.stringify(data));
+      //  alert(JSON.stringify(data));
         setDeliveryData(data);
         setId(data.id);
         setDeliveryNoteId(data.deliveryNoteId);
@@ -150,6 +149,8 @@ useEffect(() => {
         setOption1Time(data.option1Time);
         setOption2Time(data.option2Time);
         setTechnicianStatus(data.technicianStatus);
+        setInvoiceDate(data.invoiceDate);
+        SetInvoiceNumber(data.invoiceNumber);
         setTechnicianAcceptance(data.technicianAcceptance || [{ type: "", technicianRemarks: "" }]);
         setDealerStatus(data.dealerStatus);
         setSpecifications(data.materialCollection || [{ material: "", quantity: "", receivedQuantity: "", remainingQuantity: "" }]);
@@ -343,10 +344,10 @@ useEffect(() => {
       Subject: subject,
       Details: details,
       Category: category,
-      AssignedTo: "Customer Care",
+      AssignedTo: "Technical Agency",
       id: raiseTicketId,
       status: status,
-      internalStatus: "Dealer Approved",
+      internalStatus: "Technician Approved L1",
       CustomerId: customerId,
       State: state,
       LowestBidderTechnicainId: lowestBidder,
@@ -726,12 +727,14 @@ const handleStatusChange = (event) => {
             <td><input type='text' name='invoiceNumber' 
             className="form-control text-end"
             placeholder='Enter Invoice Number'
+            value={invoiceNumber}
             onChange={(e) => SetInvoiceNumber(e.target.value)}/></td>
             </tr>
             <tr>
             <td><strong>Invoice Date</strong></td>
             <td ><input type='date' name="invoiceDate"
             className="form-control text-end w-50"
+            value={invoiceDate}
             onChange={(e) => setInvoiceDate(e.target.value)}/></td>
             </tr>
         </tbody>

@@ -16,7 +16,7 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
   const {category} = useParams();
   const {district} = useParams();
 
-  const getQuoteNotifications = notifications.filter((item) => item.assignedTo === "Dealer/Trader" && item.internalStatus === "Technical Agency");
+  const getQuoteNotifications = notifications.filter((item) => item.assignedTo === "Dealer/Trader" && item.internalStatus === "Assigned");
 
   const getOrdersNotifications = notifications.filter((item) => item.internalStatus === "Technician Approved" && item.assignedTo === "Dealer/Trader" );
 
@@ -139,7 +139,7 @@ const Notification = () => {
       ]);
         const getQuoteData = await getQuoteResponse.json();
         const tickets = getQuoteData.tickets || [];
-        const getQuoteFiltered = tickets.filter((item) => item.assignedTo === "Dealer/Trader"  && item.internalStatus === "Technical Agency");
+        const getQuoteFiltered = tickets.filter((item) => item.assignedTo === "Dealer/Trader"  && item.internalStatus === "Assigned");
         const getQuoteCount = getQuoteFiltered.length;
   
           setQuoteNotifications(getQuoteFiltered);
