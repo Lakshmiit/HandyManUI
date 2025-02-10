@@ -9,13 +9,13 @@ import {
 import { Button } from "react-bootstrap";
 import "./App.css";
 
-const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) => {
+const NotificationsList = ({ notifications, highlightedItem }) => {
   const navigate = useNavigate();
 
   const raiseTicketNotifications = notifications.filter(
-    (item) => item.internalStatus === "Open"
+    (item) => item.internalStatus === "Open" && item.assignedTo === "Customer Care" 
   );
-
+ 
   const getQuoteNotifications = notifications.filter(
     (item) => item.internalStatus === "Pending" && item.assignedTo === "Technical Agency"
   );
@@ -149,7 +149,7 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
           </div>
         ))}
       </div>
-      <div className="notification-list">
+      {/* <div className="notification-list">
         {notifications.map((notification) => (
           <div
             key={notification.raiseTicketId}
@@ -181,7 +181,7 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
             </div>
           </div>
         ))}
-      </div>
+      </div> */}
 
     </div>
   );
@@ -224,7 +224,7 @@ const Notification = () => {
     try {
       const [raiseTicketResponse, getQuoteResponse, getDealerResponse, getOrderResponse] = await Promise.all([
         fetch(
-          "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications"
+          "https://localhost:7091/api/RaiseTicket/GetTicketsNotifications"
         ),
         fetch(
           "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotificationsForTechnician"
@@ -232,12 +232,12 @@ const Notification = () => {
         fetch(
           "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetRaiseTicketsForDealers"
         ),
-        fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications`),
+        fetch(`https://localhost:7091/api/RaiseTicket/GetTicketsNotifications`),
       ]);
 
       const raiseTicketData = await raiseTicketResponse.json();
       const raiseTicketFiltered = raiseTicketData.filter(
-        (item) => item.internalStatus === "Open"
+        (item) => item.internalStatus === "Open" && item.assignedTo === "Customer Care"
       );
       const raiseTicketCount = raiseTicketFiltered.length;
 
@@ -367,7 +367,7 @@ const Notification = () => {
 
         <div className="notifications-container d-flex bg-white border rounded shadow-sm p-1">
           <div className="tabs">
-            {["Raise Ticket", "Technician Get Quote", "Dealer Get Quote", "Raise Ticket Orders"].map((tab) => (
+            {["Raise Ticket", "Technician Get Quote", "Dealer Get Quote"].map((tab) => (
               <span
                 key={tab}
                 className={`tab-item ${activeTab === tab ? "active" : ""} 
@@ -402,17 +402,18 @@ const Notification = () => {
                     )} 
                   </>
                 )}
-                {tab === "Raise Ticket Orders" && (
+                {/* {tab === "Raise Ticket Orders" && (
                   <>
                   Raise Ticket Orders{" "}
                   {newOrderCount > 0 && (
                     <span className="badge bg-danger">{newOrderCount}</span>
                   )}
                   </>
-                )}
+                )} */}
               </span>
             ))}
           </div>
+          <div>
           {activeTab === "Raise Ticket" && (
             <>
               <NotificationsList
@@ -432,6 +433,8 @@ const Notification = () => {
               </div>
             </>
           )}
+          </div>
+          <div>
           {activeTab === "Technician Get Quote" && (
             <>
               <NotificationsList
@@ -450,7 +453,8 @@ const Notification = () => {
               </div>
             </>
           )}
-
+          </div>
+          <div>
 {activeTab === "Dealer Get Quote" && (
               <>
                 <NotificationsList
@@ -469,7 +473,8 @@ const Notification = () => {
                 </div>
               </>
             )}
-
+            </div>
+            {/* <div>
 {activeTab === "Raise Ticket Orders" && (
             <>
               <NotificationsList
@@ -488,6 +493,7 @@ const Notification = () => {
               </div>
             </>
           )}
+          </div> */}
         </div>
       </div>
     </div>
