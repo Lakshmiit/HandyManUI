@@ -133,9 +133,9 @@ const Notification = () => {
       try {
         const [getQuoteResponse, orderResponse] = await Promise.all([
         fetch(
-          `https://localhost:7091/api/RaiseTicket/GetNotificationsByNotExistDealerId?category=${category}&district=${district}&dealerId=${dealerId}`
+          `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistDealerId?category=${category}&district=${district}&dealerId=${dealerId}`
         ),
-        fetch(`https://localhost:7091/api/RaiseTicket/GetNotificationsByExistingDealerId?category=${category}&district=${district}&dealerId=${dealerId}`),
+        fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingDealerId?category=${category}&district=${district}&dealerId=${dealerId}`),
       ]);
         const getQuoteData = await getQuoteResponse.json();
         const tickets = getQuoteData.tickets || [];
@@ -178,7 +178,7 @@ const Notification = () => {
   //   const fetchNotifications = async () => {
   //     try {
   //       const response = await fetch(
-  //         `https://localhost:7091/api/RaiseTicket/GetNotificationsByNotExistDealerId?category=${category}&district=${district}&dealerId=${dealerId}`,
+  //         `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistDealerId?category=${category}&district=${district}&dealerId=${dealerId}`,
   //         {
   //           method: "GET",
   //           mode: "cors", // Ensure CORS mode is enabled

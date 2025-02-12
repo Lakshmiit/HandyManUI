@@ -54,7 +54,7 @@ const AddressManager = () => {
     console.log(ticketId);
   }, [ticketId]);
 
-  const API_URL = 'https://localhost:7091/api/Address/GetAddressById/';
+  const API_URL = 'https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/';
   // Fetch customer profile data
   useEffect(() => {
     const fetchCustomerData = async () => {
@@ -212,7 +212,7 @@ useEffect(() => {
       formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
       formData.append('fileName', fileName);
 
-      const response = await fetch('https://localhost:7091/api/FileUpload/upload?filename=' + fileName, {
+      const response = await fetch('https://handymanapiv2.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
         method: 'POST',
         headers: {
           'Accept': 'text/plain',
@@ -289,7 +289,7 @@ useEffect(() => {
     };
   // //alert(JSON.stringify(payload));
   //   try {
-  //     const response = await fetch('https://localhost:7091/api/RaiseTicket/CreateRaiseTicket', {
+  //     const response = await fetch('https://handymanapiv2.azurewebsites.net/api/RaiseTicket/CreateRaiseTicket', {
   //       method: 'POST',
   //       headers: {
   //         'Content-Type': 'application/json',
@@ -315,7 +315,7 @@ useEffect(() => {
   // };
 
   try {
-    const response = await fetch('https://localhost:7091/api/RaiseTicket/CreateRaiseTicket', {
+    const response = await fetch('https://handymanapiv2.azurewebsites.net/api/RaiseTicket/CreateRaiseTicket', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -201,7 +201,7 @@ const formattedDate = selectedDate ? formatDate(selectedDate) : null;
   useEffect(() => {
     const fetchticketData = async () => {
       try {
-        const response = await fetch(`https://localhost:7091/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
@@ -340,7 +340,7 @@ const formattedDate = selectedDate ? formatDate(selectedDate) : null;
     };
   
     try {
-      const response = await fetch(`https://localhost:7091/api/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -83,7 +83,7 @@ const CustomerCareConfirmation = () => {
   // useEffect(() => {
   //   const fetchticketData = async () => {
   //     try {
-  //       const response = await fetch(`https://localhost:7091/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+  //       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
   //       if (!response.ok) {
   //         throw new Error('Failed to fetch ticket data');
   //       }
@@ -128,7 +128,7 @@ const CustomerCareConfirmation = () => {
   useEffect(() => {
     const fetchticketData = async () => {
       try {
-        const response = await fetch(`https://localhost:7091/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
@@ -170,7 +170,7 @@ useEffect(() => {
 
     const fetchDeliveryData = async () => {
       try {
-        const response = await fetch(`https://localhost:7091/api/DeliveryNote/GetRaiseTicketForDealer?RaiseTicketId=${ticketId}`);
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/DeliveryNote/GetRaiseTicketForDealer?RaiseTicketId=${ticketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch delivery data');
         }
@@ -185,7 +185,7 @@ useEffect(() => {
         
         const imageRequests =
         data.uploadInvoice?.map((photo) => fetch(
-            `https://localhost:7091/api/FileUpload/download?generatedfilename=${photo}`
+            `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
           )
           .then((res) => res.json())
             .then((data) => ({
@@ -221,7 +221,7 @@ useEffect(() => {
   useEffect(() => {
     const fetchtechnicianData = async () => {
       try {
-        const response = await fetch(`https://localhost:7091/api/Technician/GetTechnicianDetailsForInvoice?TechnicianId=${lowestBidder}`);
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Technician/GetTechnicianDetailsForInvoice?TechnicianId=${lowestBidder}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
@@ -242,7 +242,7 @@ useEffect(() => {
 // Fetch data from API on component mount
 useEffect(() => {
 // API URL
-const apiUrl = `https://localhost:7091/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
+const apiUrl = `https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
 // Fetching the data from the API
 const fetchData = async () => {
   try {
@@ -275,7 +275,7 @@ useEffect(() => {
     useEffect(() => {
           const fetchPaymentData = async () => {
             try {
-              const response = await fetch(`https://localhost:7091/api/Payment/GetPaymentDetailsByRaiseTicketId?RaiseTicketId=${ticketId}`);
+              const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Payment/GetPaymentDetailsByRaiseTicketId?RaiseTicketId=${ticketId}`);
               if (!response.ok) {
                 throw new Error('Failed to fetch ticket data');
               }
@@ -297,7 +297,7 @@ useEffect(() => {
         useEffect(() => {
           const fetchdealerData = async () => {
             try {
-              const response = await fetch(`https://localhost:7091/api/Dealer/GetDealerDetailsForInvoice?DealerId=${lowestDealerBidder}`);
+              const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Dealer/GetDealerDetailsForInvoice?DealerId=${lowestDealerBidder}`);
               if (!response.ok) {
                 throw new Error('Failed to fetch ticket data');
               }
@@ -368,7 +368,7 @@ setShowAlert(true);
           formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
           formData.append('fileName', fileName);
     
-          const response = await fetch('https://localhost:7091/api/FileUpload/upload?filename=' + fileName, {
+          const response = await fetch('https://handymanapiv2.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
             method: 'POST',
             headers: {
               'Accept': 'text/plain',
@@ -474,7 +474,7 @@ setShowAlert(true);
     };
   
     try {
-      const response = await fetch(`https://localhost:7091/api/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -541,7 +541,7 @@ setShowAlert(true);
 //   };
 
 //   try {
-//     const response = await fetch(`https://localhost:7091/api/DeliveryNote/${id}`, {
+//     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/DeliveryNote/${id}`, {
 //       method: 'PUT',
 //       headers: {
 //         'Content-Type': 'application/json',
@@ -597,7 +597,7 @@ setShowAlert(true);
 // };
 
 // try {
-//   const response = await fetch(`https://localhost:7091/api/DeliveryNote/${deliveryId}`, {
+//   const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/DeliveryNote/${deliveryId}`, {
 //     method: 'PUT',
 //     headers: {
 //       'Content-Type': 'application/json',

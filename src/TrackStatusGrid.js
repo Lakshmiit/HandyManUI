@@ -79,7 +79,7 @@ useEffect(() => {
   //   );
   //   if (confirmDelete) {
   //     axios
-  //       .delete(`https://localhost:7091/api/RaiseTicket/${ticketId}`)
+  //       .delete(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${ticketId}`)
   //       .then(() => {
   //         setTicketData((prevData) =>
   //           prevData.filter((ticket) => ticket.id !== ticketId)

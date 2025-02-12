@@ -32,7 +32,7 @@ useEffect(() => {
   }, [ticketData]);
   useEffect(() => {
     setLoading(true);
-    const url = `https://localhost:7091/api/RaiseTicket/GetNotificationsByExistingDealerId?category=${category}&district=${district}&dealerId=${dealerId}`;
+    const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingDealerId?category=${category}&district=${district}&dealerId=${dealerId}`;
     axios
       .get(url)
       .then((response) => {
@@ -64,7 +64,7 @@ useEffect(() => {
     );
     if (confirmDelete) {
       axios
-        .delete(`https://localhost:7091/api/RaiseTicket/${ticketId}`)
+        .delete(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${ticketId}`)
         .then(() => {
           setTicketData((prevData) =>
             prevData.filter((ticket) => ticket.id !== ticketId)

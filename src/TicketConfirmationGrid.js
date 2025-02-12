@@ -25,7 +25,7 @@ useEffect(() => {
 
   useEffect(() => {
     setLoading(true);
-    const url = `https://localhost:7091/api/RaiseTicket/GetNotificationsByExistingTechnicianId?category=${category}&district=${district}&technicianId=${technicianId}`;
+    const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingTechnicianId?category=${category}&district=${district}&technicianId=${technicianId}`;
     
     axios.get(url)
       .then((response) => {

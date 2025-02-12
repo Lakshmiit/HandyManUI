@@ -71,7 +71,7 @@ const RaiseQuoteTechnician = () => {
   useEffect(() => {
     const fetchticketData = async () => {
       try {
-        const response = await fetch(`https://localhost:7091/api
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
 /RaiseTicket/GetTicket/${raiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
@@ -101,7 +101,7 @@ const RaiseQuoteTechnician = () => {
         setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: ""}]);
         const imageRequests =
           data.attachments?.map((photo) => fetch(
-              `https://localhost:7091/api
+              `https://handymanapiv2.azurewebsites.net/api
 /FileUpload/download?generatedfilename=${photo}`
             )
             .then((res) => res.json())
@@ -209,7 +209,7 @@ const RaiseQuoteTechnician = () => {
     };
     try {
       
-      const response = await fetch(`https://localhost:7091/api/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -273,7 +273,7 @@ const RaiseQuoteTechnician = () => {
     }; 
     try {
       //imageUrls="";
-      const response = await fetch(`https://localhost:7091/api
+      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
 /RaiseAQuote/CreateRaiseAQuote`, {
         method: 'POST',
         headers: {
@@ -298,7 +298,7 @@ const RaiseQuoteTechnician = () => {
       const fetchtechnicianData = async () => {
         try {
           const technicianResponse = await fetch(
-            `https://localhost:7091/api
+            `https://handymanapiv2.azurewebsites.net/api
 /RaiseAQuote/GetRaiseAQuoteDetailsByTechnicianId?raiseAQuotetId=${raiseTicketId}&TechnicianId=${technicianId}`
           );
           if (!technicianResponse.ok) {
@@ -366,7 +366,7 @@ const RaiseQuoteTechnician = () => {
 //   })), 
 //   };
 //   try {
-//     const response = await fetch(`https://localhost:7091/api/RaiseTicket/${raiseTicketId}`, {
+//     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
 //       method: 'PUT',
 //       headers: {
 //         'Content-Type': 'application/json',

@@ -224,15 +224,15 @@ const Notification = () => {
     try {
       const [raiseTicketResponse, getQuoteResponse, getDealerResponse, getOrderResponse] = await Promise.all([
         fetch(
-          "https://localhost:7091/api/RaiseTicket/GetTicketsNotifications"
+          "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications"
         ),
         fetch(
-          "https://localhost:7091/api/RaiseTicket/GetTicketsNotificationsForTechnician"
+          "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotificationsForTechnician"
         ),
         fetch(
-          "https://localhost:7091/api/RaiseTicket/GetRaiseTicketsForDealers"
+          "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetRaiseTicketsForDealers"
         ),
-        fetch(`https://localhost:7091/api/RaiseTicket/GetTicketsNotifications`),
+        fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications`),
       ]);
 
       const raiseTicketData = await raiseTicketResponse.json();

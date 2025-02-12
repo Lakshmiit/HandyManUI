@@ -134,7 +134,7 @@ const Notification = () => {
 //     try {
 //       const getQuoteResponse = await fetch(
         
-//         `https://localhost:7091/api/RaiseTicket/GetNotificationsByNotExistTechnicianId?district=${district}&category=${category}&technicianId=${technicianId}`
+//         `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistTechnicianId?district=${district}&category=${category}&technicianId=${technicianId}`
 //       );
 //       const getQuoteData = await getQuoteResponse.json();
 //         const getQuoteCount = getQuoteData.length;
@@ -160,9 +160,9 @@ useEffect(() => {
     try {
       const [getQuoteResponse, orderResponse] = await Promise.all([
       fetch(
-        `https://localhost:7091/api/RaiseTicket/GetNotificationsByNotExistTechnicianId?category=${category}&district=${district}&technicianId=${technicianId}`
+        `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistTechnicianId?category=${category}&district=${district}&technicianId=${technicianId}`
       ),
-      fetch(`https://localhost:7091/api/RaiseTicket/GetNotificationsByExistingTechnicianId?category=${category}&district=${district}&technicianId=${technicianId}`),
+      fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingTechnicianId?category=${category}&district=${district}&technicianId=${technicianId}`),
     ]);
 
       const getQuoteData = await getQuoteResponse.json();
@@ -215,10 +215,10 @@ useEffect(() => {
 //     try {
 //       const [getQuoteResponse, orderResponse] = await Promise.all([
 //         fetch(
-//           `https://localhost:7091/api/RaiseTicket/GetNotificationsByNotExistTechnicianId?category=${category}&district=${district}&technicianId=${technicianId}`
+//           `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistTechnicianId?category=${category}&district=${district}&technicianId=${technicianId}`
 //         ),
 //         fetch(
-//           `https://localhost:7091/api/RaiseTicket/GetNotificationsByExistingTechnicianId?category=${category}&district=${district}&technicianId=${technicianId}`
+//           `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingTechnicianId?category=${category}&district=${district}&technicianId=${technicianId}`
 //         ),
 //       ]);
 

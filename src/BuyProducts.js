@@ -63,7 +63,7 @@ const BuyProduct = () => {
   useEffect(() => {
     const fetchProfileType = async () => {
       try {
-        const API_URL = "https://localhost:7091/api/Address/GetAddressById/";
+        const API_URL = "https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/";
         const response = await fetch(`${API_URL}${userId}`);
         if (!response.ok) {
           throw new Error("Failed to fetch customer profile data");
@@ -125,7 +125,7 @@ const BuyProduct = () => {
   
     try {
       const response = await axios.post(
-        "https://localhost:7091/api/BuyProduct/BuyProductUpload",
+        "https://handymanapiv2.azurewebsites.net/api/BuyProduct/BuyProductUpload",
         payload
       );
       if (response.status === 200) {
@@ -277,7 +277,7 @@ useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get(
-          `https://localhost:7091/api/Product/GetProductsByCategory?category=${category}`
+          `https://handymanapiv2.azurewebsites.net/api/Product/GetProductsByCategory?category=${category}`
         );
         setAllProducts(response.data);
         setProductSuggestions(response.data.map((product) => product.productName));

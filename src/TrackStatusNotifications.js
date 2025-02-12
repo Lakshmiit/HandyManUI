@@ -78,13 +78,13 @@ const TrackNotification = () => {
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);  
+  }, []); 
 
  useEffect(() => {
   const fetchNotifications = async () => {
     try {
       const trackTicketResponse = await fetch(
-        `https://localhost:7091/api/RaiseTicket/GetTrackTicketsByCustomerId?customerId=${customerId}
+        `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTrackTicketsByCustomerId?customerId=${customerId}
 `
       );
       const trackData = await trackTicketResponse.json();

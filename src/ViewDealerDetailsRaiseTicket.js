@@ -82,7 +82,7 @@ const [technicianId, setTechnicianId] = useState('');
   useEffect(() => {
         const fetchticketData = async () => {
           try {
-            const response = await fetch(`https://localhost:7091/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+            const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
             if (!response.ok) {
               throw new Error('Failed to fetch ticket data');
             }
@@ -105,7 +105,7 @@ const [technicianId, setTechnicianId] = useState('');
             const imageRequests =
               data.attachments?.map((photo) => 
                fetch(
-                  `https://localhost:7091/api/FileUpload/download?generatedfilename=${photo}`
+                  `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
                 )
                 .then((res) => res.json())
                 .then((data) => ({
@@ -127,7 +127,7 @@ const [technicianId, setTechnicianId] = useState('');
       useEffect(() => {
         const fetchDealerData = async () => {
           try {
-            const response = await fetch(`https://localhost:7091/api/RaiseAQuoteByDealer/GetRaiseAQuoteDealerDetailsByid?raiseTicketId=${raiseTicketId}&dealerId=${dealerId}`);
+            const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuoteByDealer/GetRaiseAQuoteDealerDetailsByid?raiseTicketId=${raiseTicketId}&dealerId=${dealerId}`);
             if (!response.ok) {
               throw new Error('Failed to fetch ticket data');
             }
@@ -191,7 +191,7 @@ const [technicianId, setTechnicianId] = useState('');
       DealerList: dealerId,
     };
     try { 
-      const response = await fetch(`https://localhost:7091/api/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
