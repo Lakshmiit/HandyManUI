@@ -22,7 +22,7 @@ const ProductAdmin = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
+        const response = await fetch(`https://localhost:7091/api
 
 /Product/${id}`);
         const data = await response.json();
@@ -31,7 +31,7 @@ const ProductAdmin = () => {
         const imageRequests =
           data.productPhotos?.map((photo) =>
             fetch(
-              `https://handymanapiv2.azurewebsites.net/api
+              `https://localhost:7091/api
 
 /FileUpload/download?generatedfilename=${photo}`
             )
@@ -72,7 +72,7 @@ const ProductAdmin = () => {
   //   };
 
   //   try {
-  //     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/${id}`, {
+  //     const response = await fetch(`https://localhost:7091/api/Product/${id}`, {
   //       method: "PUT",
   //       headers: {
   //         "Content-Type": "application/json",

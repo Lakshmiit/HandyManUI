@@ -48,6 +48,8 @@ const {category} = useParams();
 const [dealerData, setDealerData] = useState('');
 const {userType} = useParams();
 const {dealerId} = useParams();
+const [technicianId, setTechnicianId] = useState('');
+
 // const [fixedDeliveryCharge] = useState('100'); 
 // const [fixedServiceCharges] = useState('10');
 // const [gsts] = useState('18');
@@ -80,7 +82,7 @@ const {dealerId} = useParams();
   useEffect(() => {
         const fetchticketData = async () => {
           try {
-            const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+            const response = await fetch(`https://localhost:7091/api/RaiseTicket/GetTicket/${raiseTicketId}`);
             if (!response.ok) {
               throw new Error('Failed to fetch ticket data');
             }
@@ -92,6 +94,7 @@ const {dealerId} = useParams();
             setAddress(data.address);
             setSubject(data.subject);
             setId(data.id);
+            setTechnicianId(data.technicianList);
             setCustomerId(data.customerId);
             setIsWithMaterial(data.isMaterialType);
             setStatus(data.status);
@@ -102,7 +105,7 @@ const {dealerId} = useParams();
             const imageRequests =
               data.attachments?.map((photo) => 
                fetch(
-                  `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+                  `https://localhost:7091/api/FileUpload/download?generatedfilename=${photo}`
                 )
                 .then((res) => res.json())
                 .then((data) => ({
@@ -124,7 +127,7 @@ const {dealerId} = useParams();
       useEffect(() => {
         const fetchDealerData = async () => {
           try {
-            const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuoteByDealer/GetRaiseAQuoteDealerDetailsByid?raiseTicketId=${raiseTicketId}&dealerId=${dealerId}`);
+            const response = await fetch(`https://localhost:7091/api/RaiseAQuoteByDealer/GetRaiseAQuoteDealerDetailsByid?raiseTicketId=${raiseTicketId}&dealerId=${dealerId}`);
             if (!response.ok) {
               throw new Error('Failed to fetch ticket data');
             }
@@ -184,9 +187,11 @@ const {dealerId} = useParams();
       Option1Time: "",
       Option2Day: "",
       Option2Time: "",
+      TechnicianList: technicianId,
+      DealerList: dealerId,
     };
     try { 
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://localhost:7091/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

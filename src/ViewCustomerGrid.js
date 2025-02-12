@@ -6,18 +6,14 @@ import { Link, useParams } from "react-router-dom";
 import { FaTrash, FaEye } from "react-icons/fa";
 import {
   Dashboard as MoreVertIcon,
-  // Forward as ForwardIcon,
 } from "@mui/icons-material";
 
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import "./App.css";
 
 const RaiseTicketNotification = () => {
-  // const navigate = useNavigate();
-  //const [status, setStatus] = useState("");
-  // const { raiseTicketId } = useParams();
   const { userType } = useParams();
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [showMenu, setShowMenu] = useState(false);
   const [ticketData, setTicketData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -27,13 +23,11 @@ const RaiseTicketNotification = () => {
   const { customerId } = useParams();
  
   useEffect(() => {
-    console.log(ticketData, loading);
-  }, [ticketData, loading]);
+    console.log(ticketData);
+  }, [ticketData]);
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv2.azurewebsites.net/api
-
-/RaiseTicket/GetRaiseTicketNotificationsByCustomerId?customerId=${customerId}`
+    const url = `https://localhost:7091/api/RaiseTicket/GetRaiseTicketNotificationsByCustomerId?customerId=${customerId}`
 
     axios.get(url)
       .then(response => {
@@ -54,9 +48,7 @@ const RaiseTicketNotification = () => {
   const handleDelete = (ticketId) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this ticket?');
     if (confirmDelete) {
-      axios.delete(`https://handymanapiv2.azurewebsites.net/api
-
-/RaiseTicket/${ticketId}`)
+      axios.delete(`https://localhost:7091/api/RaiseTicket/${ticketId}`)
         .then(() => {
           setTicketData(prevData => prevData.filter(ticket => ticket.id !== ticketId));
           setFilteredData(prevData => prevData.filter(ticket => ticket.id !== ticketId));
@@ -84,9 +76,9 @@ const RaiseTicketNotification = () => {
  const indexOfFirstTicket = indexOfLastTicket - rowsPerPage;
  const currentRaiseTicket = filteredData.slice(indexOfFirstTicket, indexOfLastTicket);
 
-//  if (loading) {
-//    return <div>Loading...</div>; // Show loading message while data is fetching
-//  }
+ if (loading) {
+   return <div>Loading...</div>; // Show loading message while data is fetching
+ }
 
   return ( 
     <div className="d-flex flex-row justify-content-start align-items-start">
@@ -117,6 +109,8 @@ const RaiseTicketNotification = () => {
 
       <div className={`container m-1 ${isMobile ? "w-100" : "w-75"}`}>
         <h2 className="text-center m-4">Customer Raise a Ticket Notifications</h2>
+        <>
+        {!isMobile ? (
         <table className="table table-bordered">
           <thead>
             <tr>
@@ -157,7 +151,33 @@ const RaiseTicketNotification = () => {
             ))}
           </tbody>
         </table>
+        ) : (
+          <div className="mobile-ticket-grid">
+  {currentRaiseTicket.map((ticket, index) => (
+    <div key={index} className="ticket-card">
+      <div className="ticket-header">
+        <strong>Ticket ID:</strong> {ticket.raiseTicketId}
+      </div>
+      <div className="ticket-body">
+        <p><strong>Category:</strong> {ticket.category}</p>
+        <p><strong>Description:</strong> {ticket.details}</p>
+        <p><strong>Status:</strong> {ticket.status}</p>
+        <p><strong>Assigned To:</strong> {ticket.assignedTo}</p>
+      </div>
+      <div className="ticket-actions">
+        <Link to={`/customerRaiseTicketQuotation/${userType}/${ticket.id}`} className="btn btn-info mx-2">
+          <FaEye />
+        </Link>
+        <Button onClick={() => handleDelete(ticket.id)} className="btn btn-danger mx-2">
+          <FaTrash />
+        </Button>
+      </div>
+    </div>
+  ))}
+</div>
 
+        )}
+      </>
         <div className="mt-4 text-end">
           <Link to={`/customerNotification/${userType}/${customerId}`} className="btn btn-warning text-white mx-2" title='Back'>
             <ArrowLeftIcon />
@@ -189,6 +209,7 @@ const RaiseTicketNotification = () => {
           </nav>
         </div>
       </div>
+    
       {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {

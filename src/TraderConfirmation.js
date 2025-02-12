@@ -65,8 +65,9 @@ const TraderConfirmation = () => {
   const [invoiceDate, setInvoiceDate] = useState('');  
   const [dealer, setDealerData] = useState('');
   const [dealerName,setDealerName] = useState('');
+  const [technicianId, setTechnicianId] = useState('');
+  const [dealerId, setDealerId] = useState('');
   
-
  useEffect(() => {
       console.log(loading, dealer, id,technicianData, technicianFullName,deliveryData, dealerStatus,paymentData,showAlert, technicianAddress, technicianPhotoId, selectedSlot);
     }, [loading, dealer, id,technicianData, technicianFullName, deliveryData,dealerStatus,paymentData,showAlert, technicianAddress, technicianPhotoId, selectedSlot]);
@@ -74,7 +75,7 @@ const TraderConfirmation = () => {
     useEffect(() => {
       const fetchdealerData = async () => {
         try {
-          const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Dealer/GetDealerDetailsForInvoice?DealerId=${lowestDealerBidder}`);
+          const response = await fetch(`https://localhost:7091/api/Dealer/GetDealerDetailsForInvoice?DealerId=${lowestDealerBidder}`);
           if (!response.ok) {
             throw new Error('Failed to fetch ticket data');
           }
@@ -95,7 +96,7 @@ const TraderConfirmation = () => {
   useEffect(() => {
     const fetchticketData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+        const response = await fetch(`https://localhost:7091/api/RaiseTicket/GetTicket/${raiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
@@ -109,6 +110,8 @@ const TraderConfirmation = () => {
         setSubject(data.subject);
         setDetails(data.details);
         setId(data.id);
+        setTechnicianId(data.technicianList);
+        setDealerId(data.dealerList);
         setCategory(data.category);
         setCustomerId(data.customerId);
         setIsWithMaterial(data.isMaterialType);
@@ -135,7 +138,7 @@ useEffect(() => {
 
     const fetchDeliveryData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/DeliveryNote/GetRaiseTicketForDealer?RaiseTicketId=${ticketId}`);
+        const response = await fetch(`https://localhost:7091/api/DeliveryNote/GetRaiseTicketForDealer?RaiseTicketId=${ticketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch delivery data');
         }
@@ -167,7 +170,7 @@ useEffect(() => {
   useEffect(() => {
     const fetchtechnicianData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
+        const response = await fetch(`https://localhost:7091/api
 
 /Technician/GetTechnicianDetailsForInvoice?TechnicianId=${lowestBidder}`);
         if (!response.ok) {
@@ -190,7 +193,7 @@ useEffect(() => {
 
         useEffect(() => {
           // API URL
-          const apiUrl = `https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
+          const apiUrl = `https://localhost:7091/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
           const fetchData = async () => {
             try {
               const response = await fetch(apiUrl);
@@ -220,7 +223,7 @@ useEffect(() => {
               useEffect(() => {
                 const fetchPaymentData = async () => {
                   try {
-                    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Payment/GetPaymentDetailsByRaiseTicketId?RaiseTicketId=${ticketId}`);
+                    const response = await fetch(`https://localhost:7091/api/Payment/GetPaymentDetailsByRaiseTicketId?RaiseTicketId=${ticketId}`);
                     if (!response.ok) {
                       throw new Error('Failed to fetch ticket data');
                     }
@@ -291,7 +294,7 @@ useEffect(() => {
                   formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
                   formData.append('fileName', fileName);
             
-                  const response = await fetch('https://handymanapiv2.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
+                  const response = await fetch('https://localhost:7091/api/FileUpload/upload?filename=' + fileName, {
                     method: 'POST',
                     headers: {
                       'Accept': 'text/plain',
@@ -347,7 +350,7 @@ useEffect(() => {
       AssignedTo: "Technical Agency",
       id: raiseTicketId,
       status: status,
-      internalStatus: "Technician Approved L1",
+      internalStatus: "Closed",
       CustomerId: customerId,
       State: state,
       LowestBidderTechnicainId: lowestBidder,
@@ -371,10 +374,12 @@ useEffect(() => {
         updatedDate: Comment.updatedDate,
         commentText: Comment.commentText,
       })),
+      TechnicianList: technicianId,
+      DealerList: dealerId,
     };
   
     try {
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://localhost:7091/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -441,7 +446,7 @@ useEffect(() => {
   };
 
   try {
-    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/DeliveryNote/${id}`, {
+    const response = await fetch(`https://localhost:7091/api/DeliveryNote/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -496,7 +501,7 @@ const payload2 = {
 };
 
 try {
-  const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/DeliveryNote/${id}`, {
+  const response = await fetch(`https://localhost:7091/api/DeliveryNote/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -512,6 +517,7 @@ try {
   window.alert('Failed to create the Uploaded Invoice. Please try again later.');
 }
 };
+
 
 const handleBothActions =  (e) => {
   e.preventDefault();
@@ -566,30 +572,10 @@ const handleStatusChange = (event) => {
             <td>{details}</td>
           </tr>
           <tr>
-            <td><strong>Quoted Amount</strong></td>
-            <td>{enterQuoteAmount}</td>
+            <td><strong>Approved Amount</strong></td>
+            <td>{approvedAmount}</td>
           </tr>
-          {/* <tr> 
-            <td><strong>Customer Time Slots </strong></td>
-            <td className='time-slot-booking'>
-                <div className='timeslots-option d-flex flex-row'>
-                <div className='slot m-2 p-2'>
-                     <strong><input type='radio' className='form-check-input m-1 border-dark'
-                     name='timeslot' value='option1' onClick={() => handleSlotSelection('option1')} />
-                     Option 1</strong> 
-                     <div><span style={{ fontWeight: "bold" }}>Date: </span>{option1Day}</div>
-                     <div><span style={{ fontWeight: "bold" }}>Time: </span>{option1Time}</div>
-                </div>
-                <div className='slot m-2 p-2'>
-                    <strong><input type='radio' className='form-check-input m-1 border-dark' 
-                    name='timeslot' value='option2' onClick={() => handleSlotSelection('option2')}/>Option 2</strong>
-                    <div><span style={{ fontWeight: "bold" }}>Date: </span>{option2Day}</div>
-                    <div><span style={{ fontWeight: "bold" }}>Time: </span>{option2Time}</div>
-                </div>
-                </div>
-            </td>
-          </tr> */}
-
+          
 
 <tr> 
     <td><strong>Customer Time Slots </strong></td>

@@ -16,9 +16,9 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
   const {category} = useParams();
   const {district} = useParams();
 
-  const getQuoteNotifications = notifications.filter((item) => item.assignedTo === "Dealer/Trader" && item.internalStatus === "Assigned");
+  const getQuoteNotifications = notifications.filter((item) => item.assignedTo === "Dealer/Trader" && item.internalStatus !== "Technician Approved");
 
-  const getOrdersNotifications = notifications.filter((item) => item.internalStatus === "Technician Approved" && item.assignedTo === "Dealer/Trader" );
+  const getOrdersNotifications = notifications.filter((item) => item.internalStatus === "Customer Approved");
 
   const handleQuoteClick = (ticketId) => {
     navigate(`/viewDealerRaiseTicket/${ticketId}/${userType}/${category}/${dealerId}`, { state: { ticketId } });
@@ -133,13 +133,13 @@ const Notification = () => {
       try {
         const [getQuoteResponse, orderResponse] = await Promise.all([
         fetch(
-          `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistDealerId?category=${category}&district=${district}&dealerId=${dealerId}`
+          `https://localhost:7091/api/RaiseTicket/GetNotificationsByNotExistDealerId?category=${category}&district=${district}&dealerId=${dealerId}`
         ),
-        fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingDealerId?category=${category}&district=${district}&dealerId=${dealerId}`),
+        fetch(`https://localhost:7091/api/RaiseTicket/GetNotificationsByExistingDealerId?category=${category}&district=${district}&dealerId=${dealerId}`),
       ]);
         const getQuoteData = await getQuoteResponse.json();
         const tickets = getQuoteData.tickets || [];
-        const getQuoteFiltered = tickets.filter((item) => item.assignedTo === "Dealer/Trader"  && item.internalStatus === "Assigned");
+        const getQuoteFiltered = tickets.filter((item) => item.assignedTo === "Dealer/Trader" && item.internalStatus !== "Technician Approved");
         const getQuoteCount = getQuoteFiltered.length;
   
           setQuoteNotifications(getQuoteFiltered);
@@ -153,7 +153,7 @@ const Notification = () => {
           // alert(JSON.stringify(getOrderData));
           // alert(JSON.stringify(tickets));
           const orderTickets = getOrderData.tickets || [];
-          const getOrderFiltered = orderTickets.filter((item) => item.internalStatus === "Technician Approved" && item.assignedTo === "Dealer/Trader");
+          const getOrderFiltered = orderTickets.filter((item) => item.internalStatus === "Customer Approved");
           
           const getOrderCount = getOrderFiltered.length;
           // alert(getOrderCount);
@@ -178,7 +178,7 @@ const Notification = () => {
   //   const fetchNotifications = async () => {
   //     try {
   //       const response = await fetch(
-  //         `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistDealerId?category=${category}&district=${district}&dealerId=${dealerId}`,
+  //         `https://localhost:7091/api/RaiseTicket/GetNotificationsByNotExistDealerId?category=${category}&district=${district}&dealerId=${dealerId}`,
   //         {
   //           method: "GET",
   //           mode: "cors", // Ensure CORS mode is enabled

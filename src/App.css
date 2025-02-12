@@ -1607,3 +1607,41 @@ textarea {
 }
 
 
+.mobile-ticket-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsive grid */
+  gap: 15px;
+  padding: 10px;
+}
+
+.ticket-card {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.ticket-header {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.ticket-body p {
+  margin: 5px 0;
+}
+
+.ticket-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.ticket-actions .btn {
+  font-size: 14px;
+  padding: 5px 10px;
+}

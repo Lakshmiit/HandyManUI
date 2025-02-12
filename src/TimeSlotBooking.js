@@ -10,6 +10,8 @@ const TimeSlotBooking = () => {
   const {userType} = useParams();
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
+    const [technicianId, setTechnicianId] = useState();
+    const [dealerId, setDealerId] = useState('');
     const [isMobile, setIsMobile] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
     const [activeTab, setActiveTab] = useState("Option 1");
@@ -60,11 +62,7 @@ const TimeSlotBooking = () => {
   const [option2Selection, setOption2Selection] = useState({day:"", time: ""});
   const [approvedAmount, setApprovedAmount] = useState('');
   const [isChecked, setIsChecked] = useState(false);
-  // const [option1Day, setOption1Day] = useState('');
-  // const [option1Time, setOption1Time] = useState('');
-  // const [option2Day, setOption2Day] = useState('');
-  // const [option2Time, setOption2Time] = useState('');
-
+  // const [errorMessage, setErrorMessage] = useState("");
   
   useEffect(() => {
     console.log(loading, id);
@@ -203,9 +201,7 @@ const formattedDate = selectedDate ? formatDate(selectedDate) : null;
   useEffect(() => {
     const fetchticketData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
-
-/RaiseTicket/GetTicket/${raiseTicketId}`);
+        const response = await fetch(`https://localhost:7091/api/RaiseTicket/GetTicket/${raiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
@@ -219,6 +215,8 @@ const formattedDate = selectedDate ? formatDate(selectedDate) : null;
         setSubject(data.subject);
         setDetails(data.details);
         setId(data.id);
+        setTechnicianId(data.technicianList);
+        setDealerId(data.dealerList);
         setCategory(data.category);;;
         setCustomerId(data.customerId);
         setIsWithMaterial(data.isMaterialType);
@@ -337,12 +335,12 @@ const formattedDate = selectedDate ? formatDate(selectedDate) : null;
         updatedDate: Comment.updatedDate,
         commentText: Comment.commentText,
       })),
+     TechnicianList: technicianId,
+     DealerList: dealerId,
     };
   
     try {
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
-
-/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://localhost:7091/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -463,8 +461,9 @@ const formattedDate = selectedDate ? formatDate(selectedDate) : null;
 
     <div className="selected-details d-flex flex-row">
     <p className="m-1">
-      <strong><span style={{ color: "black" }}>Date:</span></strong> {formattedDate ? `${formattedDate.date} ${formattedDate.month} ${formattedDate.year}` : "Not selected"}
-    </p>
+        <strong><span style={{ color: "black" }}>Date:</span></strong>{" "}
+        {formattedDate ? `${formattedDate.date} ${formattedDate.month} ${formattedDate.year}` : "Not selected"}    
+      </p>      
     <p className="m-1">
       <strong><span style={{ color: "black" }}>Time Slot:</span></strong> {selectedTimeSlot || "Not selected"}
     </p>

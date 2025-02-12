@@ -25,14 +25,14 @@ useEffect(() => {
 
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingTechnicianId?category=${category}&district=${district}&technicianId=${technicianId}`;
+    const url = `https://localhost:7091/api/RaiseTicket/GetNotificationsByExistingTechnicianId?category=${category}&district=${district}&technicianId=${technicianId}`;
     
     axios.get(url)
       .then((response) => {
         console.log("API Response:", response.data); 
 
         const tickets = response.data.tickets || [];
-        const filteredTickets = tickets.filter((ticket) => ticket.internalStatus === "Technician Approved");
+        const filteredTickets = tickets.filter((ticket) => ticket.internalStatus === "Technician Approved L1");
         
         setTicketData(filteredTickets);
         setFilteredData(filteredTickets);

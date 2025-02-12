@@ -30,7 +30,7 @@ const RaiseTicketNotification = () => {
 
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications`
+    const url = `https://localhost:7091/api/RaiseTicket/GetTicketsNotifications`
  
     axios.get(url)
       .then(response => {
@@ -61,9 +61,7 @@ const RaiseTicketNotification = () => {
   const handleDelete = (ticketId) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this ticket?');
     if (confirmDelete) {
-      axios.delete(`https://handymanapiv2.azurewebsites.net/api
-
-/RaiseTicket/${ticketId}`)
+      axios.delete(`https://localhost:7091/api/RaiseTicket/${ticketId}`)
         .then(() => {
           setTicketData(prevData => prevData.filter(ticket => ticket.id !== ticketId));
           setFilteredData(prevData => prevData.filter(ticket => ticket.id !== ticketId));

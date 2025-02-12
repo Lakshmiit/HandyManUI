@@ -62,7 +62,7 @@ const RaiseTicketQuotation = () => {
     // Fetch data from API on component mount
     useEffect(() => {
       // API URL
-      const apiUrl = `https://handymanapiv2.azurewebsites.net/api
+      const apiUrl = `https://localhost:7091/api
 
 /RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
       // Fetching the data from the API
@@ -200,7 +200,7 @@ useEffect(() => {
   useEffect(() => {
         const fetchticketData = async () => {
           try {
-            const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
+            const response = await fetch(`https://localhost:7091/api
 
 /RaiseTicket/GetTicket/${raiseTicketId}`);
             if (!response.ok) {
@@ -227,7 +227,7 @@ useEffect(() => {
             const imageRequests =
               data.attachments?.map((photo) => 
                fetch(
-                  `https://handymanapiv2.azurewebsites.net/api
+                  `https://localhost:7091/api
 
 /FileUpload/download?generatedfilename=${photo}`
                 )
@@ -385,12 +385,12 @@ useEffect(() => {
       Option1Time: "",
       Option2Day: "",
       Option2Time: "",
+      TechnicianList: [technicianId],
+      DealerList: [],
     };
     try {
       
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
-
-/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://localhost:7091/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -460,7 +460,7 @@ useEffect(() => {
     })),
   };
   try {
-    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
+    const response = await fetch(`https://localhost:7091/api
 
 /RaiseAQuote/id?id=${id}`, {
       method: 'PUT',

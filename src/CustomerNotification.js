@@ -130,7 +130,7 @@ const Notification = () => {
     const fetchNotifications = async () => {
       try {
         const raiseTicketResponse = await fetch(
-          `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetRaiseTicketNotificationsByCustomerId?customerId=${customerId}`
+          `https://localhost:7091/api/RaiseTicket/GetRaiseTicketNotificationsByCustomerId?customerId=${customerId}`
         );
         const raiseTicketData = await raiseTicketResponse.json();
 
@@ -148,7 +148,7 @@ const Notification = () => {
         }
  
         // const getQuoteResponse = await fetch(
-        //   "https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetails"
+        //   "https://localhost:7091/api/RaiseAQuote/GetRaiseAQuoteDetails"
         // );
         // const getQuoteData = await getQuoteResponse.json();
         // const getQuoteCount = getQuoteData.length;

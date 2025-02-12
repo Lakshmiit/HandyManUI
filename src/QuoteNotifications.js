@@ -32,7 +32,7 @@ const QuoteNotification = () => {
 
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv2.azurewebsites.net/api
+    const url = `https://localhost:7091/api
 
 /RaiseTicket/GetTicketsNotifications`
     axios.get(url)
@@ -66,7 +66,7 @@ const QuoteNotification = () => {
   const handleDelete = (ticketId) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this ticket?');
     if (confirmDelete) {
-      axios.delete(`https://handymanapiv2.azurewebsites.net/api
+      axios.delete(`https://localhost:7091/api
 
 /RaiseTicket/${ticketId}`)
         .then(() => {

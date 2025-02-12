@@ -47,6 +47,9 @@ const BookingConfirmation = () => {
   const [aadharNumber, setAadharNumber] = useState('');
   // const [technicianPhotoId, setTechnicianPhotoId] = useState('');
   const [ticketId, setTicketId] = useState('');
+  const [technicianId, setTechnicianId] = useState('');
+  const [dealerId, setDealerId] = useState('');
+
   
   useEffect(() => {
       console.log(loading,id, technicianData);
@@ -56,7 +59,7 @@ const BookingConfirmation = () => {
   useEffect(() => {
     const fetchticketData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+        const response = await fetch(`https://localhost:7091/api/RaiseTicket/GetTicket/${raiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
@@ -71,6 +74,8 @@ const BookingConfirmation = () => {
         setSubject(data.subject);
         setDetails(data.details);
         setId(data.id);
+        setTechnicianId(data.technicianList);
+        setDealerId(data.dealerList);
         setCategory(data.category);
         setCustomerId(data.customerId);
         setIsWithMaterial(data.isMaterialType);
@@ -101,7 +106,7 @@ const BookingConfirmation = () => {
   useEffect(() => {
     const fetchtechnicianData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Technician/GetTechnicianDetailsForInvoice?TechnicianId=${lowestBidder}`);
+        const response = await fetch(`https://localhost:7091/api/Technician/GetTechnicianDetailsForInvoice?TechnicianId=${lowestBidder}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
@@ -171,9 +176,11 @@ const BookingConfirmation = () => {
         updatedDate: Comment.updatedDate,
         commentText: Comment.commentText,
       })),
+      TechnicianList: technicianId,
+      DealerList: dealerId,
     };
     try {
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://localhost:7091/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -301,7 +308,7 @@ const BookingConfirmation = () => {
   </div>
 
       <div className="note m-2">
-           <label>
+           <label className='fs-6'>
             <input 
             type="checkbox" 
             className="form-check-input border-secondary m-1"

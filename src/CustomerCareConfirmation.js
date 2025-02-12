@@ -27,7 +27,7 @@ const CustomerCareConfirmation = () => {
   const [specifications, setSpecifications] = useState([{ material: "", quantity: "", receivedQuantity: "", remainingQuantity: "", isSelected: false}]);
   const [commentsList, setCommentsList] = useState([{updatedDate: new Date(), commentText: ""}]); 
   const [requestType, setRequestType] = useState('');
-  const [technicianAcceptance, setTechnicianAcceptance] = useState([{type: "", technicianRemarks: ""}]); 
+  // const [technicianAcceptance, setTechnicianAcceptance] = useState([{type: "", technicianRemarks: ""}]); 
   const [deliveryData, setDeliveryData] = useState('');
   const [customerId, setCustomerId] = useState(''); 
   const [status, setStatus] = useState(''); 
@@ -57,8 +57,8 @@ const CustomerCareConfirmation = () => {
   // const [selectedStatus] = useState('');
   const [paymentData, setPaymentData] = useState('');
   const [customerCode, setCustomerCode] = useState('');
-  const [deliveryNoteId, setDeliveryNoteId]=useState('');
-  const [dealerAcceptance, setDealerAcceptance] = useState([{type: "", dealerRemarks: ""}]); 
+  // const [deliveryNoteId, setDeliveryNoteId]=useState('');
+  // const [dealerAcceptance, setDealerAcceptance] = useState([{type: "", dealerRemarks: ""}]); 
  const [dealerInvoice, setDealerInvoice] = useState([]);
    const [showAlert, setShowAlert] = useState(false);
   const [invoiceNumber, setInvoiceNumber] = useState('');
@@ -70,7 +70,8 @@ const CustomerCareConfirmation = () => {
   const [dealerAddress, setDealerAddress] = useState('');
   const [dealerData, setDealerData] = useState('');
   const [dealerName,setDealerName] = useState('');
-
+  const [technicianId, setTechnicianId] = useState('');
+  const [dealerId, setDealerId] = useState('');
 
   
   
@@ -82,7 +83,7 @@ const CustomerCareConfirmation = () => {
   // useEffect(() => {
   //   const fetchticketData = async () => {
   //     try {
-  //       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+  //       const response = await fetch(`https://localhost:7091/api/RaiseTicket/GetTicket/${raiseTicketId}`);
   //       if (!response.ok) {
   //         throw new Error('Failed to fetch ticket data');
   //       }
@@ -127,7 +128,7 @@ const CustomerCareConfirmation = () => {
   useEffect(() => {
     const fetchticketData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+        const response = await fetch(`https://localhost:7091/api/RaiseTicket/GetTicket/${raiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
@@ -141,6 +142,8 @@ const CustomerCareConfirmation = () => {
         setSubject(data.subject);
         setDetails(data.details);
         setId(data.id);
+        setTechnicianId(data.technicianList);
+        setDealerId(data.dealerList);
         setCategory(data.category);
         setCustomerId(data.customerId);
         setIsWithMaterial(data.isMaterialType);
@@ -167,7 +170,7 @@ useEffect(() => {
 
     const fetchDeliveryData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/DeliveryNote/GetRaiseTicketForDealer?RaiseTicketId=${ticketId}`);
+        const response = await fetch(`https://localhost:7091/api/DeliveryNote/GetRaiseTicketForDealer?RaiseTicketId=${ticketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch delivery data');
         }
@@ -175,12 +178,14 @@ useEffect(() => {
         setDeliveryData(data);
         // alert(JSON.stringify(data));
         setDeliveryId(data.id);
-        setDeliveryNoteId(data.deliveryNoteId);
+        // setDeliveryNoteId(data.deliveryNoteId);
         setTechnicianStatus(data.technicianStatus);
+        // alert(technicianStatus);
         setDealerStatus(data.dealerStatus);
+        
         const imageRequests =
         data.uploadInvoice?.map((photo) => fetch(
-            `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+            `https://localhost:7091/api/FileUpload/download?generatedfilename=${photo}`
           )
           .then((res) => res.json())
             .then((data) => ({
@@ -198,8 +203,8 @@ useEffect(() => {
         setOption1Time(data.option1Time || '');
         setOption2Time(data.option2Time || '');
         setTechnicianStatus(data.technicianStatus);
-        setTechnicianAcceptance(data.technicianAcceptance || [{ type: "", technicianRemarks: "" }]);
-        setDealerAcceptance(data.dealerAcceptance || [{type: "", dealerRemarks: "" }])
+        // setTechnicianAcceptance(data.technicianAcceptance || [{ type: "", technicianRemarks: "" }]);
+        // setDealerAcceptance(data.dealerAcceptance || [{type: "", dealerRemarks: "" }])
         setDealerStatus(data.dealerStatus);
         setSpecifications(data.materialCollection || [{ material: "", quantity: "", receivedQuantity: "", remainingQuantity: "" }]);
       } catch (error) {
@@ -216,7 +221,7 @@ useEffect(() => {
   useEffect(() => {
     const fetchtechnicianData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Technician/GetTechnicianDetailsForInvoice?TechnicianId=${lowestBidder}`);
+        const response = await fetch(`https://localhost:7091/api/Technician/GetTechnicianDetailsForInvoice?TechnicianId=${lowestBidder}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
@@ -237,7 +242,7 @@ useEffect(() => {
 // Fetch data from API on component mount
 useEffect(() => {
 // API URL
-const apiUrl = `https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
+const apiUrl = `https://localhost:7091/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
 // Fetching the data from the API
 const fetchData = async () => {
   try {
@@ -270,7 +275,7 @@ useEffect(() => {
     useEffect(() => {
           const fetchPaymentData = async () => {
             try {
-              const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Payment/GetPaymentDetailsByRaiseTicketId?RaiseTicketId=${ticketId}`);
+              const response = await fetch(`https://localhost:7091/api/Payment/GetPaymentDetailsByRaiseTicketId?RaiseTicketId=${ticketId}`);
               if (!response.ok) {
                 throw new Error('Failed to fetch ticket data');
               }
@@ -292,7 +297,7 @@ useEffect(() => {
         useEffect(() => {
           const fetchdealerData = async () => {
             try {
-              const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Dealer/GetDealerDetailsForInvoice?DealerId=${lowestDealerBidder}`);
+              const response = await fetch(`https://localhost:7091/api/Dealer/GetDealerDetailsForInvoice?DealerId=${lowestDealerBidder}`);
               if (!response.ok) {
                 throw new Error('Failed to fetch ticket data');
               }
@@ -363,7 +368,7 @@ setShowAlert(true);
           formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
           formData.append('fileName', fileName);
     
-          const response = await fetch('https://handymanapiv2.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
+          const response = await fetch('https://localhost:7091/api/FileUpload/upload?filename=' + fileName, {
             method: 'POST',
             headers: {
               'Accept': 'text/plain',
@@ -438,7 +443,7 @@ setShowAlert(true);
       AssignedTo: assignedTo,
       id: raiseTicketId,
       status: status,
-      internalStatus: "Pending",
+      internalStatus: "Closed",
       CustomerId: customerId,
       State: state,
       LowestBidderTechnicainId: lowestBidder,
@@ -464,10 +469,12 @@ setShowAlert(true);
         updatedDate: Comment.updatedDate,
         commentText: Comment.commentText,
       })),
+      TechnicianList: technicianId,
+      DealerList: dealerId,
     };
   
     try {
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://localhost:7091/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -485,71 +492,71 @@ setShowAlert(true);
     }
   };
 
-  const handleUpdateTicket = async (e) => {
-    e.preventDefault();
+//   const handleUpdateTicket = async (e) => {
+//     e.preventDefault();
 
-    // if (!selectedSlot) {
-    //   alert("Please select a time slot.");
-    //   return;
-    // }
+//     // if (!selectedSlot) {
+//     //   alert("Please select a time slot.");
+//     //   return;
+//     // }
   
-    // if (!selectedStatus) {
-    //   alert("Please select a ticket status.");
-    //   return;
-    // }
-    // const selectedSpecifications = specifications.filter((spec) => spec.isSelected);
+//     // if (!selectedStatus) {
+//     //   alert("Please select a ticket status.");
+//     //   return;
+//     // }
+//     // const selectedSpecifications = specifications.filter((spec) => spec.isSelected);
   
-  const payload1 = {
+//   const payload1 = {
 
-    id: id,
-    ticketId: ticketId,
-    deliveryNoteId: deliveryNoteId,
-    option1Day: option1Day,
-    option1Time: option1Time,
-    option2Day: option2Day,
-    option2Time:  option2Time,
-    deliveryTime: new Date().toISOString(),
-    UploadInvoice: uploadInvoice.map((file) => file.src),
-    InvoiceNumber: invoiceNumber,
-    InvoiceDate: invoiceDate,
-    deliveryInvoiceId: "string", 
-    internalStatus: status,
-    technicianStatus: technicianStatus,
-    dealerStatus: dealerStatus,
-    technicianAcceptance: technicianAcceptance.map((remarks) => ({
-      type: remarks.type,
-      technicianRemarks: remarks.technicianRemarks,
-    })),
-    dealerAcceptance: dealerAcceptance.map((remarks) => ({
-      type: remarks.type,
-      dealerRemarks: remarks.dealerRemarks,
-    })),
-    assignedTo: assignedTo,
-    materialCollection: specifications.map((collection) => ({
-      material: collection.material,
-      quantity: collection.quantity,
-      receivedQuantity: collection.receivedQuantity,
-      remainingQuantity: collection.remainingQuantity,
-    }))
-  };
+//     id: id,
+//     ticketId: ticketId,
+//     deliveryNoteId: deliveryNoteId,
+//     option1Day: option1Day,
+//     option1Time: option1Time,
+//     option2Day: option2Day,
+//     option2Time:  option2Time,
+//     deliveryTime: new Date().toISOString(),
+//     UploadInvoice: uploadInvoice.map((file) => file.src),
+//     InvoiceNumber: invoiceNumber,
+//     InvoiceDate: invoiceDate,
+//     deliveryInvoiceId: "string", 
+//     internalStatus: status,
+//     technicianStatus: technicianStatus,
+//     dealerStatus: dealerStatus,
+//     technicianAcceptance: technicianAcceptance.map((remarks) => ({
+//       type: remarks.type,
+//       technicianRemarks: remarks.technicianRemarks,
+//     })),
+//     dealerAcceptance: dealerAcceptance.map((remarks) => ({
+//       type: remarks.type,
+//       dealerRemarks: remarks.dealerRemarks,
+//     })),
+//     assignedTo: assignedTo,
+//     materialCollection: specifications.map((collection) => ({
+//       material: collection.material,
+//       quantity: collection.quantity,
+//       receivedQuantity: collection.receivedQuantity,
+//       remainingQuantity: collection.remainingQuantity,
+//     }))
+//   };
 
-  try {
-    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/DeliveryNote/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload1),
-    });
-    if (!response.ok) {
-      throw new Error('Failed to create a ticket.');
-    }
-    alert('Delivery saved Successfully!');
-  } catch (error) {
-    console.error('Error:', error);
-    window.alert('Failed to create the delivery. Please try again later.');
-  }
-};
+//   try {
+//     const response = await fetch(`https://localhost:7091/api/DeliveryNote/${id}`, {
+//       method: 'PUT',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify(payload1),
+//     });
+//     if (!response.ok) {
+//       throw new Error('Failed to create a ticket.');
+//     }
+//     alert('Delivery saved Successfully!');
+//   } catch (error) {
+//     console.error('Error:', error);
+//     window.alert('Failed to create the delivery. Please try again later.');
+//   }
+// };
 
 // const handleUploadInvoice = async (e) => {
 //   e.preventDefault();
@@ -590,7 +597,7 @@ setShowAlert(true);
 // };
 
 // try {
-//   const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/DeliveryNote/${deliveryId}`, {
+//   const response = await fetch(`https://localhost:7091/api/DeliveryNote/${deliveryId}`, {
 //     method: 'PUT',
 //     headers: {
 //       'Content-Type': 'application/json',
@@ -608,11 +615,11 @@ setShowAlert(true);
 // };
 
 
-const handleBothActions =  (e) => {
-  e.preventDefault();
-  handleSaveTicket(e);
-  handleUpdateTicket(e);
-};
+// const handleBothActions =  (e) => {
+//   e.preventDefault();
+//   handleSaveTicket(e);
+//   // handleUpdateTicket(e);
+// };
 
   // const handleStatusChange = (event) => {
   //   setSelectedStatus(event.target.value);
@@ -635,10 +642,9 @@ const handleBothActions =  (e) => {
   //   setSpecifications(updatedMaterials);
   //   };
 
-const isTechnicianChecked = technicianStatus === "Job Completed";
-const isDealerChecked = dealerStatus === "Material Delivered";
-
-const atLeastOneChecked = isTechnicianChecked || isDealerChecked;
+  const isTechnicianChecked = technicianStatus === "Job Completed";
+  const isDealerChecked = dealerStatus === "Material Delivered";
+  // const isCloseDisabled = !(isTechnicianChecked && isDealerChecked);
 
 
   return (
@@ -684,8 +690,8 @@ const atLeastOneChecked = isTechnicianChecked || isDealerChecked;
             <td>{details}</td>
           </tr>
           <tr>
-            <td><strong>Quoted Amount</strong></td>
-            <td>{enterQuoteAmount}</td>
+            <td><strong>Approved Amount</strong></td>
+            <td>{approvedAmount}</td>
           </tr>
           {/* <tr> 
           <td><strong>Customer Time Slots </strong></td>
@@ -905,12 +911,6 @@ const atLeastOneChecked = isTechnicianChecked || isDealerChecked;
                     </tr>
                 </tbody>
             </table>
-            {/* <label className='fs-5'>
-            <input
-            type='checkbox'
-            className='form-check-input m-2 border-dark' />
-            Material Handover to Customer
-            </label> */}
         </div>
         
       <h3 className="section-title">Customer Details</h3>
@@ -959,36 +959,16 @@ const atLeastOneChecked = isTechnicianChecked || isDealerChecked;
           // onChange={(e) => setTransactionDetails(e.target.value)}
           />
           </div>
-          {/* <div className='d-flex flex-row align-items-center gap-5'>
-            <div className='d-flex align-items-center'>
-            <strong className='fs-5 m-1'>Date</strong>
-                <input
-                type='text'
-                className='form-control m-1'
-                Placeholder='DD/MM/YY'
-            value={paymentDataTime}
-                readOnly
-                />
-            
-            {/* <strong className='fs-5 m-1'>Time</strong> 
-                <input
-                type='text'
-                className='form-control m-1'
-                placeholder='Enter Time'
-                // value={}
-                readOnly
-                /> 
-            </div>
-          </div> */}
-
+         
       <div className='payment'>
           <h3 className='section-title mt-2'>Ticket Closing Status</h3>
           <div className='d-flex flex-column m-1'>
           <label className="fs-5">
           <input type="checkbox" 
           className="form-check-input m-2 border-dark"
-          value="Material Delivered"
-          checked={isDealerChecked || !atLeastOneChecked}
+          // value={dealerStatus}
+          checked={isDealerChecked}
+          // onChange={(e) =>setDealerStatus(e.target.checked ? "Material Delivered" : "")}
           readOnly
           />
           Material Delivered
@@ -996,46 +976,22 @@ const atLeastOneChecked = isTechnicianChecked || isDealerChecked;
           <label className="fs-5">
           <input type="checkbox" 
           className="form-check-input m-2 border-dark"
-          value='Technician Work Completed'
-          checked={isTechnicianChecked || !atLeastOneChecked}
+          // value={technicianStatus}
+          checked={isTechnicianChecked}
+          // onChange={(e) => setTechnicianStatus(e.target.checked ? "Job Completed" : "")}
           readOnly
            />
           Technician Work Completed
           </label>
-          {/* <label className="fs-5">
-          <input type="checkbox" 
-          className="form-check-input m-2 border-dark"
-          value='Pending Technician Issues'
-          checked={selectedStatus === 'Pending Technician Issues'}
-          onChange={handleStatusChange} 
-          />
-          Pending Ticket Araised Technician Issues
-          </label>
-          <label className="fs-5">
-          <input type="checkbox" 
-          className="form-check-input m-2 border-dark"
-          value='Pending Customer Issues'
-          checked={selectedStatus === 'Pending Customer Issues'}
-          onChange={handleStatusChange}
-          />
-          Pending Ticket Araised Customer Issues
-          </label> */}
         </div>
-        {/* <div>
-        <h4 className="section-title fs-5">Assigned To</h4>
-        <select className="form-control w-50 mb-2 fs-5"
-        value={assignedTo}
-        onChange={(e) => setAssignedTo(e.target.value)}
-        required>
-          <option>Select Assigned</option>
-          <option>Closed Ticket</option>
-        </select>
-          </div> */} 
           <div className='d-flex flex-row align-items-center gap-5'> 
-          <button className='btn btn-warning me-2 fs-5' title='save' onClick={handleBothActions}>Save</button>
+          <button className='btn btn-warning me-2 fs-5' title='close' 
+          onClick={handleSaveTicket} 
+          // disabled={isCloseDisabled}
+          >Close</button> 
           </div>
       </div>
-    </div>
+    </div> 
     </div>
     </div>
   );

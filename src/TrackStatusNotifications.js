@@ -84,7 +84,7 @@ const TrackNotification = () => {
   const fetchNotifications = async () => {
     try {
       const trackTicketResponse = await fetch(
-        `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTrackTicketsByCustomerId?customerId=${customerId}
+        `https://localhost:7091/api/RaiseTicket/GetTrackTicketsByCustomerId?customerId=${customerId}
 `
       );
       const trackData = await trackTicketResponse.json();

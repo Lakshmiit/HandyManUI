@@ -9,15 +9,15 @@ import {
 import { Button } from "react-bootstrap";
 import "./App.css";
 
-const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) => {
+const NotificationsList = ({ notifications, highlightedItem }) => {
   const navigate = useNavigate();
 
   const raiseTicketNotifications = notifications.filter(
-    (item) => item.internalStatus === "Open"
+    (item) => item.internalStatus === "Open" && item.assignedTo === "Customer Care" 
   );
-
+ 
   const getQuoteNotifications = notifications.filter(
-    (item) => item.internalStatus === "Pending" && item.assignedTo === "Technical Agency"
+    (item) =>  item.assignedTo === "Technical Agency" && item.status === "Assigned" && item.assignedTo !== "Dealer/Trader" 
   );
     
   const dealerQuoteNotifications = notifications.filter(
@@ -25,9 +25,9 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
   );
 
   
-//  const orderTicketNotifications = notifications.filter(
-//   (item) => item.internalStatus === "Dealer Approved" && item.assignedTo === "Customer Care"
-// );
+ const orderTicketNotifications = notifications.filter(
+  (item) => item.internalStatus === "Customer Approved"
+);
 
   
   const handleTicketClick = (ticketId) => {
@@ -150,7 +150,7 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
         ))}
       </div>
       <div className="notification-list">
-        {notifications.map((notification) => (
+        {orderTicketNotifications.map((notification) => (
           <div
             key={notification.raiseTicketId}
             className={`notification-item ${
@@ -224,20 +224,20 @@ const Notification = () => {
     try {
       const [raiseTicketResponse, getQuoteResponse, getDealerResponse, getOrderResponse] = await Promise.all([
         fetch(
-          "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications"
+          "https://localhost:7091/api/RaiseTicket/GetTicketsNotifications"
         ),
         fetch(
-          "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotificationsForTechnician"
+          "https://localhost:7091/api/RaiseTicket/GetTicketsNotificationsForTechnician"
         ),
         fetch(
-          "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetRaiseTicketsForDealers"
+          "https://localhost:7091/api/RaiseTicket/GetRaiseTicketsForDealers"
         ),
-        fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications`),
+        fetch(`https://localhost:7091/api/RaiseTicket/GetTicketsNotifications`),
       ]);
 
       const raiseTicketData = await raiseTicketResponse.json();
       const raiseTicketFiltered = raiseTicketData.filter(
-        (item) => item.internalStatus === "Open"
+        (item) => item.internalStatus === "Open" && item.assignedTo === "Customer Care"
       );
       const raiseTicketCount = raiseTicketFiltered.length;
 
@@ -251,7 +251,7 @@ const Notification = () => {
 
       const getQuoteData = await getQuoteResponse.json();
       const quoteTicketFiltered = getQuoteData.filter(
-        (item) => item.internalStatus === "Pending" && item.assignedTo === "Technical Agency"
+        (item) => item.assignedTo === "Technical Agency" && item.status === "Assigned" && item.assignedTo !== "Dealer/Trader"
       );
       const getQuoteCount = quoteTicketFiltered.length;
 
@@ -277,14 +277,14 @@ const Notification = () => {
         setHighlightedQuote(dealerTicketFiltered[0].raiseTicketId);
       }
      const getOrderData = await getOrderResponse.json();
-    //  const orderFiltered = getOrderData.filter((item) => item.internalStatus === "Dealer Approved" && item.assignedTo === "Customer Care");
-     const getOrderCount = getOrderData.length;
-     setOrderNotifications(getOrderData);
+   const orderFiltered = getOrderData.filter((item) => item.internalStatus === "Customer Approved");
+     const getOrderCount = orderFiltered.length;
+     setOrderNotifications(orderFiltered);
      setNewOrderCount(getOrderCount);
      setGlowOrder(getOrderCount > 0);
 
      if (getOrderCount > 0) {
-      setHighlightedOrder(getOrderData[0].raiseTicketId);
+      setHighlightedOrder(orderFiltered[0].raiseTicketId);
      }
       const totalNotifications = raiseTicketCount + getQuoteCount + getDealerCount + getOrderCount;
       setNewNotificationCount(totalNotifications);
@@ -374,7 +374,9 @@ const Notification = () => {
                 ${tab === "Raise Ticket" && glowTicket ? "glow" : ""}
                 ${tab === "Technician Get Quote" && glowQuote ? "glow" : ""}
                 ${tab === "Dealer Get Quote" && glowDealer ? "glow" : ""}
-                ${tab === "Raise Ticket Orders" && glowOrder ? "glow" : ""}`}
+                ${tab === "Raise Ticket Orders" && glowOrder ? "glow" : ""}
+
+                `}
                 onClick={() => handleTabClick(tab)}
                 style={{ cursor: "pointer" }}    
               >
@@ -413,6 +415,7 @@ const Notification = () => {
               </span>
             ))}
           </div>
+          <div>
           {activeTab === "Raise Ticket" && (
             <>
               <NotificationsList
@@ -432,6 +435,8 @@ const Notification = () => {
               </div>
             </>
           )}
+          </div>
+          <div>
           {activeTab === "Technician Get Quote" && (
             <>
               <NotificationsList
@@ -450,7 +455,8 @@ const Notification = () => {
               </div>
             </>
           )}
-
+          </div>
+          <div>
 {activeTab === "Dealer Get Quote" && (
               <>
                 <NotificationsList
@@ -469,7 +475,8 @@ const Notification = () => {
                 </div>
               </>
             )}
-
+            </div>
+            <div>
 {activeTab === "Raise Ticket Orders" && (
             <>
               <NotificationsList
@@ -488,6 +495,7 @@ const Notification = () => {
               </div>
             </>
           )}
+          </div>
         </div>
       </div>
     </div>
