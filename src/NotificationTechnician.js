@@ -18,7 +18,7 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
 
   const getQuoteNotifications = notifications.filter((item) => item.assignedTo === "Technical Agency");
 
-  const getOrderNotifications = notifications.filter((item) => item.internalStatus === "Customer Approved");
+  const getOrderNotifications = notifications.filter((item) => item.internalStatus === "Customer Approved" && item.LowestBidderTechnicainId === technicianId);
 
 
   const handleQuoteClick = (ticketId) => {
@@ -184,7 +184,7 @@ useEffect(() => {
       //  alert(JSON.stringify(getOrderData));
        const orderTickets = getOrderData.tickets || [];
       const ordersFiltered = orderTickets.filter((item) =>
-         item.internalStatus === "Customer Approved");
+         item.internalStatus === "Customer Approved" && item.LowestBidderTechnicainId === technicianId);
 
       const getOrderCount = ordersFiltered.length;
       // alert(ordersFiltered);
