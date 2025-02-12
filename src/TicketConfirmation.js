@@ -540,6 +540,8 @@ const handleSlotSave = () => {
         updatedDate: Comment.updatedDate,
         commentText: Comment.commentText,
       })),
+      TechnicianList: technicianId,
+      DealerList: dealerId,
     };
   
     try {
