@@ -78,7 +78,7 @@ const TrackNotification = () => {
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []); 
+  }, []);  
 
  useEffect(() => {
   const fetchNotifications = async () => {
