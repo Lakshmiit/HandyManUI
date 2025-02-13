@@ -561,58 +561,57 @@ const handleTechRemarks = (index, value) => {
           ))}
     </div>
 
-  <table className="table table-bordered">
-  <thead>
-    <tr>
-    <td>Trader ID</td>
-    <td>Total</td>
-    <td>Discount</td>
-    <td>Delivery Charges</td>
-    <td>Service Charges</td>
-    <td>GST</td>
-    <td>Grand Total</td>
-    <td>Lowest Bidder</td>
-    </tr>
-    </thead> 
-    <tbody>
-    {dealerDetails.map((dealer, index) => (
-        <tr key = {index} className="text-end">
-            <td>{dealer.dealerId}</td>
-            <td> {specifications.reduce((acc, spec) => acc + (spec.quantity * spec.price || 0), 0)}</td>
-            <td>{Number(dealer.materialQuotation[0].fixedDiscount).toFixed(2)}</td>
-            <td>{dealer.materialQuotation[0].fixedDeliveryChargs}</td>
-            <td>{Number(dealer.materialQuotation[0].fixedServicecharges).toFixed(2)}</td>
-            <td>{Number(dealer.materialQuotation[0].fixedGST).toFixed(2)}</td>
-            <td>{Number(dealer.materialQuotation[0].grandtotal).toFixed(2)}</td>
-            <td>{dealer.dealerId === lowestDealerBidder ? 'Yes' : 'No'}</td>
+    <>
+  {!isMobile ? (
+    <table className="table table-bordered">
+      <thead>
+        <tr>
+          {['Trader ID', 'Total', 'Discount', 'Delivery Charges', 'Service Charges', 'GST', 'Grand Total', 'Lowest Bidder'].map((header, idx) => (
+            <th key={idx}>{header}</th>
+          ))}
         </tr>
-    ))}
-    </tbody>
-     {/* Dealer ID and Total Amount */}
-    <tbody>
-    <tr>
-    <td colSpan="3">
-            <input
-            type="text"
-            className='form-control text-end'
-            value= {dealerId}
-            readOnly
-            placeholder='Lowest Bidder Trader ID'
-            /> 
-        </td>
-        <td className="m-4">Quotation Amount</td>
-        <td colspan="4">
-            <input
-            type="number"
-            className="form-control text-end"
-            value={Number(lowestGrandTotal).toFixed(2)}
-            readOnly
-            placeholder="Quotation Amount"
-            /> 
-        </td> 
-    </tr>
-    </tbody>
+      </thead>
+      <tbody>
+        {dealerDetails.map((dealer, index) => (
+          <tr key={index} className="text-end">
+            {[
+              dealer.dealerId,
+              specifications.reduce((acc, spec) => acc + (spec.quantity * spec.price || 0), 0),
+              Number(dealer.materialQuotation[0].fixedDiscount).toFixed(2),
+              dealer.materialQuotation[0].fixedDeliveryChargs,
+              Number(dealer.materialQuotation[0].fixedServicecharges).toFixed(2),
+              Number(dealer.materialQuotation[0].fixedGST).toFixed(2),
+              Number(dealer.materialQuotation[0].grandtotal).toFixed(2),
+              dealer.dealerId === lowestDealerBidder ? 'Yes' : 'No'
+            ].map((value, i) => (
+              <td key={i}>{value}</td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
     </table>
+  ) : (
+    <div className="mobile-view">
+      {dealerDetails.map((dealer, index) => (
+        <div key={index} className="card border p-2 mb-3">
+          {[
+            ['Trader ID', dealer.dealerId],
+            ['Total', specifications.reduce((acc, spec) => acc + (spec.quantity * spec.price || 0), 0)],
+            ['Discount', Number(dealer.materialQuotation[0].fixedDiscount).toFixed(2)],
+            ['Delivery Charges', dealer.materialQuotation[0].fixedDeliveryChargs],
+            ['Service Charges', Number(dealer.materialQuotation[0].fixedServicecharges).toFixed(2)],
+            ['GST', Number(dealer.materialQuotation[0].fixedGST).toFixed(2)],
+            ['Grand Total', Number(dealer.materialQuotation[0].grandtotal).toFixed(2)],
+            ['Lowest Bidder', dealer.dealerId === lowestDealerBidder ? 'Yes' : 'No']
+          ].map(([label, value], i) => (
+            <p key={i}><strong>{label}:</strong> {value}</p>
+          ))}
+        </div>
+      ))}
+      <p style={{ fontWeight: 'bold', fontSize: '1.2rem', color: '#007bff' }}><strong>Quotation Amount: </strong>{Number(lowestGrandTotal).toFixed(2)}</p>
+    </div>
+  )}
+</>
     </>
     )}
   </div>

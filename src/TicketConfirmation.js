@@ -74,8 +74,8 @@ const BookingConfirmation = () => {
 const [isMaterialSaved, setIsMaterialSaved] = useState(false);
 
   useEffect(() => {
-  console.log(ticketData,isTimeSlotSaved, internalStatus, deliveryNoteId,loading,id,technicianData, selectedSlot, deliveryData, dealerStatus, paymentData, dealerData);
-    }, [ticketData,isTimeSlotSaved, internalStatus,  deliveryNoteId, loading,id,technicianData, selectedSlot, deliveryData,dealerStatus, paymentData, dealerData]);
+  console.log(ticketData,isTimeSlotSaved,deliveryId, internalStatus, deliveryNoteId,loading,id,technicianData, selectedSlot, deliveryData, dealerStatus, paymentData, dealerData);
+    }, [ticketData,isTimeSlotSaved, deliveryId,internalStatus,  deliveryNoteId, loading,id,technicianData, selectedSlot, deliveryData,dealerStatus, paymentData, dealerData]);
 
   // useEffect(() => {
   //   const fetchticketData = async () => {
@@ -131,7 +131,7 @@ const [isMaterialSaved, setIsMaterialSaved] = useState(false);
             throw new Error('Failed to fetch ticket data');
           }
           const data = await response.json();
-          // alert(JSON.stringify(data));
+          //alert(JSON.stringify(data));
           setTicketData(data);
           setState(data.state);
           setTicketId(data.raiseTicketId);  
@@ -212,10 +212,12 @@ const [isMaterialSaved, setIsMaterialSaved] = useState(false);
         }
         const deliveryData = await response.json();
         setDeliveryData(deliveryData);
-        // alert(JSON.stringify(deliveryData));
+         alert(JSON.stringify(deliveryData));
         setDeliveryId(deliveryData.id); 
+        // alert(deliveryId);
         setDeliveryNoteId(deliveryData.deliveryNoteId);
-        // setOption1Day(deliveryData.option1Day || '');
+         //alert(id);
+        // // setOption1Day(deliveryData.option1Day || '');
         // setOption2Day(deliveryData.option2Day || '');
         // setOption1Time(deliveryData.option1Time || '');
         // setOption2Time(deliveryData.option2Time || '');
@@ -456,7 +458,7 @@ const handleSlotSave = () => {
       AssignedTo: "Customer Care",
       id: raiseTicketId, 
       status: status,
-      internalStatus: "Closed",
+      internalStatus: "Customer Approved",
       CustomerId: customerId,
       State: state,
       LowestBidderTechnicainId: lowestBidder,
@@ -516,7 +518,7 @@ const handleSlotSave = () => {
       AssignedTo: "Dealer/Trader",
       id: raiseTicketId, 
       status: status,
-      internalStatus: "Technician Approved",
+      internalStatus: "Customer Approved",
       CustomerId: customerId,
       State: state,
       LowestBidderTechnicainId: lowestBidder,
@@ -580,18 +582,10 @@ const handleSlotSave = () => {
     minute: "2-digit",
     hour12: false
   }).replace(",", "");
+  
   const handleTimeSlotSave = async (e) => {
     e.preventDefault();
 
-    // if (!selectedSlot) {
-    //   alert("Please select a time slot.");
-    //   return;
-    // }
-  
-    // if (!selectedStatus) {
-    //   alert("Please select a ticket status.");
-    //   return;
-    // }
     const selectedSpecifications = specifications.filter((spec) => spec.isSelected);
   
   const payload1 = {
@@ -609,7 +603,7 @@ const handleSlotSave = () => {
     InvoiceDate: "",
     deliveryInvoiceId: "string",
     internalStatus: "string",
-    technicianStatus: "",
+    technicianStatus: selectedStatus,
     dealerStatus: "string",
     technicianAcceptance: technicianAcceptance.map((remarks) => ({
       type: remarks.type,
@@ -669,9 +663,11 @@ if (selectedSpecifications.length === 0) {
   return;
 }
 
+
+
 const payload2 = {
 
-  id: deliveryId,
+  id:deliveryId,
   ticketId: ticketId,
   deliveryNoteId: "string",
   option1Day: selectedSlot === "option1" ? option1Day : "",
@@ -1094,7 +1090,7 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
           <h3 className='section-title'>Ticket Completion Status</h3>
           <div className='d-flex flex-column m-1'>
         <label className='fs-5'>
-            <input 
+            <input  
             type="checkbox" 
             className="form-check-input border-secondary m-2 border-dark"
             value='Job Completed'

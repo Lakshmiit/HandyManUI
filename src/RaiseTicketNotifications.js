@@ -146,7 +146,7 @@ const RaiseTicketNotification = () => {
         <h2 className="text-center mb-4">Raise a Ticket Notifications</h2>
         <h4 className="text-center mb-4">District Wise Ticket Summary</h4>
         <div className="d-flex align-items-center justify-content-between">
-          <div className="form-group text-start col-md-2 ml-2 m-5 mb-2">
+          <div className="form-group col-12 col-md-2 m-2">
             <label>State</label>
             <select
               className="form-control"
@@ -159,7 +159,7 @@ const RaiseTicketNotification = () => {
               ))}
             </select>
           </div>
-          <div className="form-group col-md-2 m-5 mb-2">
+          <div className="form-group col-12 col-md-2 m-2">
             <label>District</label>
             <select
               className="form-control"
@@ -173,7 +173,7 @@ const RaiseTicketNotification = () => {
             </select>
           </div>
           {/* Pin Code */}
-          <div className="form-group col-md-2 m-5 mb-2">
+          <div className="form-group col-12 col-md-2 m-2">
             <label>Pin Code</label>
             <select
               className="form-control"
@@ -188,7 +188,7 @@ const RaiseTicketNotification = () => {
           </div>
 
           {/* Assigned To */}
-          <div className="form-group col-md-2 m-5 mb-2">
+          <div className="form-group col-12 col-md-2 m-2">
             <label>Assigned To</label>
             <select
               className="form-control"
@@ -202,7 +202,8 @@ const RaiseTicketNotification = () => {
             </select>
           </div>
         </div>
-
+        <>
+        {!isMobile ? (
         <table className="table table-bordered">
           <thead>
             <tr>
@@ -210,7 +211,6 @@ const RaiseTicketNotification = () => {
               <th>Ticket ID</th>
               <th>Category</th>
               <th>Description</th>
-              {/* <th>View/Download Attachment</th> */}
               <th>Status</th>
               <th>Assigned To</th>
               <th>Actions</th>
@@ -223,25 +223,6 @@ const RaiseTicketNotification = () => {
                 <td>{ticket.raiseTicketId}</td>
                 <td>{ticket.category}</td>
                 <td>{ticket.details}</td>
-                {/* <td>
-                  {ticket.attachments.length > 0 ? (
-                    ticket.attachments.map((attachment, i) => (
-                      <div key={i} className="d-flex align-items-center">
-                        <a
-                          href={attachment.fileUrl}
-                          download={attachment.fileName}
-                          className="text-primary text-decoration-underline me-2"
-                          style={{ cursor: "pointer", display: 'flex', alignItems: 'center' }}
-                        >
-                          <FileDownloadIcon className="me-2" style={{ cursor: "pointer" }} />
-                          <span>{attachment.fileName}</span>
-                        </a>
-                      </div>
-                    ))
-                  ) : (
-                    <span>No Attachments</span>
-                  )}
-                </td> */}
                 <td>{ticket.status}</td>
                 <td>{ticket.assignedTo}</td>
                 <td className="d-flex align-items-center">
@@ -265,6 +246,35 @@ const RaiseTicketNotification = () => {
             ))}
           </tbody>
         </table>
+        ) : (
+          <div className="mobile-ticket-grid">
+  {currentRaiseTicket.map((ticket, index) => (
+    <div key={index} className="ticket-card">
+      <div className="ticket-header">
+      <strong>Customer ID:</strong> {ticket.customerId} <br />
+      <strong>Ticket ID:</strong> {ticket.raiseTicketId}
+      </div>
+      <div className="ticket-body">
+        <p><strong>Category:</strong> {ticket.category}</p>
+        <p><strong>Description:</strong> {ticket.details}</p>
+        <p><strong>Status:</strong> {ticket.status}</p>
+        <p><strong>Assigned To:</strong> {ticket.assignedTo}</p>
+      </div>
+      <div className="ticket-actions">
+        <Link to={`/raiseTicketActionView/${ticket.id}`} className="btn btn-info mx-2">
+          <FaEye />
+        </Link>
+        <Button onClick={() => handleDelete(ticket.id)} className="btn btn-danger mx-2">
+          <FaTrash />
+        </Button>
+      </div>
+    </div>
+  ))}
+</div>
+
+        )}
+      </>
+
         <div className="mt-4 text-end">
           <Link to='/adminNotifications' className="btn btn-warning text-white mx-2" title='Back'>
             <ArrowLeftIcon />

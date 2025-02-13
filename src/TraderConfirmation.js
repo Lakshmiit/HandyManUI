@@ -67,6 +67,7 @@ const TraderConfirmation = () => {
   const [dealerName,setDealerName] = useState('');
   const [technicianId, setTechnicianId] = useState('');
   const [dealerId, setDealerId] = useState('');
+  const [deliveryId, setDeliveryId] = useState('');
   
  useEffect(() => {
       console.log(loading, dealer, id,technicianData, technicianFullName,deliveryData, dealerStatus,paymentData,showAlert, technicianAddress, technicianPhotoId, selectedSlot);
@@ -145,13 +146,16 @@ useEffect(() => {
         const data = await response.json();
       //  alert(JSON.stringify(data));
         setDeliveryData(data);
-        setId(data.id);
+        setDeliveryId(data.id);
+        // alert(deliveryId);
         setDeliveryNoteId(data.deliveryNoteId);
         setOption1Day(data.option1Day);
         setOption2Day(data.option2Day);
         setOption1Time(data.option1Time);
+        
         setOption2Time(data.option2Time);
         setTechnicianStatus(data.technicianStatus);
+        // alert(technicianStatus);
         setInvoiceDate(data.invoiceDate);
         SetInvoiceNumber(data.invoiceNumber);
         setTechnicianAcceptance(data.technicianAcceptance || [{ type: "", technicianRemarks: "" }]);
@@ -350,7 +354,7 @@ useEffect(() => {
       AssignedTo: "Technical Agency",
       id: raiseTicketId,
       status: status,
-      internalStatus: "Closed",
+      internalStatus: "Customer Care",
       CustomerId: customerId,
       State: state,
       LowestBidderTechnicainId: lowestBidder,
@@ -413,7 +417,7 @@ useEffect(() => {
   
   const payload1 = {
 
-    id: id,
+    id: deliveryId,
     ticketId: ticketId,
     deliveryNoteId: deliveryNoteId,
     option1Day: option1Day,
@@ -446,7 +450,7 @@ useEffect(() => {
   };
 
   try {
-    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/DeliveryNote/${id}`, {
+    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/DeliveryNote/${deliveryId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

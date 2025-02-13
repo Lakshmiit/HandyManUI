@@ -68,7 +68,8 @@ const CustomerTicketTrack = () => {
   const [dealerName,setDealerName] = useState('');
   const [technicianId, setTechnicianId] = useState('');
   const [dealerId, setDealerId] = useState('');
-
+  const [isDealerChecked, setIsDealerChecked] = useState(false);
+  const [isTechnicianChecked, setIsTechnicianChecked] = useState(false);
 
   useEffect(() => {
         console.log(technicianFullName,dealerData, loading,id,technicianData, deliveryData, dealerStatus, technicianAddress, selectedSlot, paymentData);
@@ -176,7 +177,6 @@ useEffect(() => {
         setOption2Day(data.option2Day || '');
         setOption1Time(data.option1Time || '');
         setOption2Time(data.option2Time || '');
-        setTechnicianStatus(data.technicianStatus);
         const imageRequests =
         data.uploadInvoice?.map((photo) => fetch(
             `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
@@ -196,6 +196,8 @@ useEffect(() => {
         setTechnicianAcceptance(data.technicianAcceptance || [{ type: "", technicianRemarks: "" }]);
         setDealerAcceptance(data.dealerAcceptance || [{ type: "", dealerRemarks: "" }]);
         setDealerStatus(data.dealerStatus);
+        setIsDealerChecked(data.dealerStatus === "Material Delivered");
+        setIsTechnicianChecked(data.technicianStatus === "Job Completed");
         setSpecifications(data.materialCollection || [{ material: "", quantity: "", receivedQuantity: "", remainingQuantity: "" }]);
       } catch (error) {
         console.error('Error fetching delivery data:', error);
@@ -207,9 +209,7 @@ useEffect(() => {
 }, [ticketId]);  
 
 
-const isTechnicianChecked = technicianStatus === "Job Completed";
-const isDealerChecked = dealerStatus === "Material Delivered";
-const atLeastOneChecked = isTechnicianChecked || isDealerChecked;
+// const atLeastOneChecked = isTechnicianChecked || isDealerChecked;
   useEffect(() => {
     const fetchtechnicianData = async () => {
       try {
@@ -436,7 +436,7 @@ useEffect(() => {
     deliveryInvoiceId: "string",
     internalStatus: status,
     technicianStatus: technicianStatus,
-    dealerStatus: selectedStatus,
+    dealerStatus: dealerStatus,
     technicianAcceptance: technicianAcceptance.map((remarks) => ({
       type: remarks.type,
       technicianRemarks: remarks.technicianRemarks,
@@ -727,16 +727,16 @@ const handleBothActions =  (e) => {
           <label className="fs-5">
           <input type="checkbox" 
           className="form-check-input m-2 border-dark"
-          value="Material Delivered"
-          checked={isDealerChecked || !atLeastOneChecked} 
+          // value="Material Delivered"
+          checked={isDealerChecked} 
           readOnly          />
           Material Delivered
           </label>
           <label className="fs-5">
           <input type="checkbox" 
           className="form-check-input m-2 border-dark"
-          value='Technician Work Completed'
-          checked={isTechnicianChecked || !atLeastOneChecked} 
+          // value='Technician Work Completed'
+          checked={isTechnicianChecked} 
           readOnly           />
           Technician Work Completed
           </label>

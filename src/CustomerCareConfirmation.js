@@ -72,12 +72,13 @@ const CustomerCareConfirmation = () => {
   const [dealerName,setDealerName] = useState('');
   const [technicianId, setTechnicianId] = useState('');
   const [dealerId, setDealerId] = useState('');
+  const [isDealerChecked, setIsDealerChecked] = useState(false);
+  const [isTechnicianChecked, setIsTechnicianChecked] = useState(false);
 
   
-  
   useEffect(() => {
-        console.log(technicianFullName, dealerData,deliveryId, loading,id,technicianData, deliveryData, technicianAddress, paymentData, dealerStatus);
-      }, [technicianFullName,dealerData, deliveryId, loading,id,technicianData, deliveryData, technicianAddress, paymentData, dealerStatus]);
+        console.log(technicianFullName, dealerData,deliveryId,id,technicianData, deliveryData, technicianAddress, paymentData,technicianStatus, dealerStatus);
+      }, [technicianFullName,dealerData, deliveryId,id,technicianData, deliveryData, technicianAddress, paymentData,technicianStatus, dealerStatus]);
   
 
   // useEffect(() => {
@@ -178,11 +179,6 @@ useEffect(() => {
         setDeliveryData(data);
         // alert(JSON.stringify(data));
         setDeliveryId(data.id);
-        // setDeliveryNoteId(data.deliveryNoteId);
-        setTechnicianStatus(data.technicianStatus);
-        // alert(technicianStatus);
-        setDealerStatus(data.dealerStatus);
-        
         const imageRequests =
         data.uploadInvoice?.map((photo) => fetch(
             `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
@@ -203,9 +199,9 @@ useEffect(() => {
         setOption1Time(data.option1Time || '');
         setOption2Time(data.option2Time || '');
         setTechnicianStatus(data.technicianStatus);
-        // setTechnicianAcceptance(data.technicianAcceptance || [{ type: "", technicianRemarks: "" }]);
-        // setDealerAcceptance(data.dealerAcceptance || [{type: "", dealerRemarks: "" }])
         setDealerStatus(data.dealerStatus);
+        setIsDealerChecked(data.dealerStatus === "Material Delivered");
+        setIsTechnicianChecked(data.technicianStatus === "Job Completed");
         setSpecifications(data.materialCollection || [{ material: "", quantity: "", receivedQuantity: "", remainingQuantity: "" }]);
       } catch (error) {
         console.error('Error fetching delivery data:', error);
@@ -642,9 +638,9 @@ setShowAlert(true);
   //   setSpecifications(updatedMaterials);
   //   };
 
-  const isTechnicianChecked = technicianStatus === "Job Completed";
-  const isDealerChecked = dealerStatus === "Material Delivered";
-  // const isCloseDisabled = !(isTechnicianChecked && isDealerChecked);
+  // const isTechnicianChecked = technicianStatus === "Job Completed";
+  // const isDealerChecked = dealerStatus === "Material Delivered";
+ const isCloseDisabled = !(isDealerChecked && isTechnicianChecked);
 
 
   return (
@@ -966,9 +962,7 @@ setShowAlert(true);
           <label className="fs-5">
           <input type="checkbox" 
           className="form-check-input m-2 border-dark"
-          // value={dealerStatus}
           checked={isDealerChecked}
-          // onChange={(e) =>setDealerStatus(e.target.checked ? "Material Delivered" : "")}
           readOnly
           />
           Material Delivered
@@ -976,9 +970,7 @@ setShowAlert(true);
           <label className="fs-5">
           <input type="checkbox" 
           className="form-check-input m-2 border-dark"
-          // value={technicianStatus}
           checked={isTechnicianChecked}
-          // onChange={(e) => setTechnicianStatus(e.target.checked ? "Job Completed" : "")}
           readOnly
            />
           Technician Work Completed
@@ -987,7 +979,7 @@ setShowAlert(true);
           <div className='d-flex flex-row align-items-center gap-5'> 
           <button className='btn btn-warning me-2 fs-5' title='close' 
           onClick={handleSaveTicket} 
-          // disabled={isCloseDisabled}
+          disabled={isCloseDisabled}
           >Close</button> 
           </div>
       </div>

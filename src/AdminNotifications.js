@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar";
 import {
   Dashboard as MoreVertIcon,
@@ -209,7 +209,7 @@ const Notification = () => {
   const [highlightedDealer, setHighlightedDealer] = useState(null);
   const [highlightedOrder, setHighlightedOrder] = useState(null);
   const [activeTab, setActiveTab] = useState("");
-  const {raiseTicketId} = useParams();
+  // const {raiseTicketId} = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -318,11 +318,11 @@ const Notification = () => {
     setHighlightedDealer(null);
   };
 
-  const handleClearOrderNotifications = () => {
-    setNewOrderCount(0);
-    setGlowOrder(false);
-    setHighlightedOrder(null);
-  };
+  // const handleClearOrderNotifications = () => {
+  //   setNewOrderCount(0);
+  //   setGlowOrder(false);
+  //   setHighlightedOrder(null);
+  // };
 
   const handleTabClick = (tab) => setActiveTab(tab);
 
@@ -483,7 +483,7 @@ const Notification = () => {
                 notifications={orderNotifications}
                 highlightedItem={highlightedOrder}
               />
-              <div
+              {/* <div
                 className="view-notifications text-info mx-2"
                 onClick={() => {
                   navigate(`/customerCareConfirmation/${raiseTicketId}`);
@@ -492,7 +492,7 @@ const Notification = () => {
                 style={{ cursor: "pointer" }}
               >
                 View All Notifications
-              </div>
+              </div> */}
             </>
           )}
           </div>
