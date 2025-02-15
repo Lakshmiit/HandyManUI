@@ -830,8 +830,7 @@ const handleBothActions =  (e) => {
   e.preventDefault();
   handleRaiseTicket(e);
   // handleDeliveryNoteUpdate(e)
-  handleMaterialUpdate(e);
-
+  // handleMaterialUpdate(e);
   //handleTimeSlotSave(e)
   handlePaymentTicket(e);
 };
@@ -1155,6 +1154,7 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
             value='Job Completed'
             checked={selectedStatus === 'Job Completed'}
             onChange={handleStatusChange}
+            readOnly
              />
             Job Completed
             </label>

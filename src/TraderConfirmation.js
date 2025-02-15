@@ -56,6 +56,7 @@ const TraderConfirmation = () => {
   const [deliveryData, setDeliveryData] = useState('');
    const [dealerStatus, setDealerStatus] = useState('');
    const [technicianStatus, setTechnicianStatus] = useState('');
+
   const [dealerInvoice, setDealerInvoice] = useState([]);
   const [showAlert, setShowAlert] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
@@ -71,8 +72,8 @@ const TraderConfirmation = () => {
   const [deliveryId, setDeliveryId] = useState('');
   
  useEffect(() => {
-      console.log(loading, dealer,technicianData, technicianFullName,deliveryData, dealerStatus,paymentData,showAlert, technicianAddress, technicianPhotoId, selectedSlot);
-    }, [loading, dealer,technicianData, technicianFullName, deliveryData,dealerStatus,paymentData,showAlert, technicianAddress, technicianPhotoId, selectedSlot]);
+      console.log(loading, dealer, technicianStatus,technicianData, technicianFullName,deliveryData, dealerStatus,paymentData,showAlert, technicianAddress, technicianPhotoId, selectedSlot);
+    }, [loading, dealer,technicianData,technicianStatus, technicianFullName, deliveryData,dealerStatus,paymentData,showAlert, technicianAddress, technicianPhotoId, selectedSlot]);
 
     useEffect(() => {
       const fetchdealerData = async () => {
@@ -357,7 +358,7 @@ useEffect(() => {
       AssignedTo: "Technical Agency",
       id: updateRaiseTicketId,
       status: status,
-      internalStatus: "Customer Care",
+      internalStatus: "Customer Approved",
       CustomerId: customerId,
       State: state,
       TechnicianList: technicianId,
@@ -432,7 +433,7 @@ useEffect(() => {
     InvoiceDate: invoiceDate,
     deliveryInvoiceId: "string",
     internalStatus: status,
-    technicianStatus: technicianStatus,
+    technicianStatus: deliveryData.technicianStatus,
     dealerStatus: selectedStatus,
     technicianAcceptance: technicianAcceptance.map((remarks) => ({
       type: remarks.type,
@@ -487,7 +488,7 @@ const payload2 = {
   InvoiceDate: invoiceDate,
   deliveryInvoiceId: "string",
   internalStatus: status,
-  technicianStatus: technicianStatus,
+  technicianStatus: deliveryData.technicianStatus,
   dealerStatus: selectedStatus,
   technicianAcceptance: technicianAcceptance.map((remarks) => ({
     type: remarks.type,
@@ -852,6 +853,7 @@ const handleStatusChange = (event) => {
             value='Material Delivered'
             checked={selectedStatus === 'Material Delivered'}
             onChange={handleStatusChange}
+            readOnly
              />
             Material Delivered
             </label>

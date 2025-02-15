@@ -72,8 +72,8 @@ const CustomerTicketTrack = () => {
   const [isTechnicianChecked, setIsTechnicianChecked] = useState(false);
 
   useEffect(() => {
-        console.log(technicianFullName,dealerData, loading,id,technicianData, deliveryData, dealerStatus, technicianAddress, selectedSlot, paymentData);
-      }, [technicianFullName,dealerData, loading,id,technicianData, deliveryData, dealerStatus, technicianAddress, selectedSlot, paymentData]);
+        console.log(technicianFullName,technicianStatus,dealerData, loading,id,technicianData, deliveryData, dealerStatus, technicianAddress, selectedSlot, paymentData);
+      }, [technicianFullName,technicianStatus,dealerData, loading,id,technicianData, deliveryData, dealerStatus, technicianAddress, selectedSlot, paymentData]);
   
 
 //   useEffect(() => {
@@ -356,7 +356,7 @@ useEffect(() => {
       AssignedTo: assignedTo,
       id: raiseTicketId,
       status: status,
-      internalStatus: "Pending",
+      internalStatus: "Closed",
       CustomerId: customerId,
       State: state,
       LowestBidderTechnicainId: lowestBidder,
@@ -435,8 +435,8 @@ useEffect(() => {
     InvoiceDate: invoiceDate,
     deliveryInvoiceId: "string",
     internalStatus: status,
-    technicianStatus: technicianStatus,
-    dealerStatus: dealerStatus,
+    technicianStatus: "",
+    dealerStatus: "",
     technicianAcceptance: technicianAcceptance.map((remarks) => ({
       type: remarks.type,
       technicianRemarks: remarks.technicianRemarks,
