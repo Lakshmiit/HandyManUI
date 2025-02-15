@@ -32,12 +32,12 @@ useEffect(() => {
         console.log("API Response:", response.data); 
 
         const tickets = response.data.tickets || [];
-        const filteredTickets = tickets.filter((ticket) => ticket.internalStatus === "Technician Approved L1");
+        const filteredTickets = tickets.filter((ticket) => ticket.internalStatus === "Customer Approved" || ticket.internalStatus === "Closed");
         
         setTicketData(filteredTickets);
         setFilteredData(filteredTickets);
       })
-      .catch((error) => {
+      .catch((error) => { 
         console.error("Error fetching ticket data:", error);
       })
       .finally(() => {
@@ -95,7 +95,8 @@ useEffect(() => {
 
       <div className={`container m-1 ${isMobile ? "w-100" : "w-75"}`}>
       <h2 className="text-center mb-4">Technician Confirmation Notifications</h2>
-      
+      <>
+        {!isMobile ? (
       <table className="table table-bordered">
         <thead>
           <tr>
@@ -130,7 +131,35 @@ useEffect(() => {
             ))}
         </tbody>
       </table>
+      ) : (
+        <div className="mobile-ticket-grid">
+  {currentRaiseTicket.map((ticket, index) => (
+    <div key={index} className="ticket-card">
+      <div className="ticket-header">
+      <strong>Customer ID:</strong> {ticket.customerId} <br />
+      <strong>Ticket ID:</strong> {ticket.raiseTicketId}
+      </div>
+      <div className="ticket-body">
+        <p><strong>Category:</strong> {ticket.category}</p>
+        <p><strong>Description:</strong> {ticket.details}</p>
+        <p><strong>Status:</strong> {ticket.status}</p>
+        <p><strong>Assigned To:</strong> {ticket.assignedTo}</p>
+      </div>
+      <div className="ticket-actions">
+      <Link
+        to={`/ticketConfirmation/${ticket.id}/${district}/${userType}/${technicianId}`}
+        className="btn btn-info mx-2"
+        title="View"
+      >
+        <FaEye />
+      </Link>
+      </div>
+    </div>
+  ))}
+</div>
 
+        )}
+      </>
       <div className="mt-4 text-end">
         <Link
           to={`/notificationTechnician/technician/${category}/${district}/${technicianId}`}

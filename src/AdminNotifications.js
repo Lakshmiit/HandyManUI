@@ -326,10 +326,10 @@ const Notification = () => {
 
   const handleTabClick = (tab) => setActiveTab(tab);
 
-  return (
+  return ( 
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
-        <div className="ml-0 m-4 p-0 adm_mnu">
+        <div className="ml-0 p-0 adm_mnu">
           <AdminSidebar />
         </div>
       )}
@@ -430,7 +430,7 @@ const Notification = () => {
                 }}
                 style={{ cursor: "pointer" }}
 
-              >
+              > 
                 View All Notifications
               </div>
             </>

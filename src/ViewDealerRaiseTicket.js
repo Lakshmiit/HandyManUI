@@ -217,7 +217,13 @@ useEffect(() => {
               throw new Error('Failed to fetch ticket data');
             }
             const data = await response.json();
-            setTicketData(data);
+            // setTicketData(data);
+            const normalizedDealerList = Array.isArray(data.dealerList) ? 
+            data.dealerList.flatMap(item => item.includes(",") ? 
+            item.split(",").map(id => id.trim()) : item) : [];
+            setTicketData({
+              ...data, dealerList: normalizedDealerList,
+            });
             setState(data.state);
             setDistrict(data.district);
             setZipcode(data.zipCode);
@@ -226,8 +232,7 @@ useEffect(() => {
             setId(data.id);
             setCustomerId(data.customerId);
             setIsWithMaterial(data.isMaterialType);
-            setTechnicianId(data.technicianList);
-            // setAssignedTo(data.assignedTo);
+            setTechnicianId(data.technicianList || []);
             setStatus(data.status);
             setFullName(data.customerName);
             setRequestType(data.requestType || 'Without Material');
@@ -304,9 +309,15 @@ useEffect(() => {
 
   const handleSaveTicket = async (e) => {
     e.preventDefault();
-    // alert("handleSaveTicket");
-    // alert(category);
+
+    try {
+      const existingDealerList = ticketData.dealerList || [];
+
+      const newDealers = dealerId ? dealerId.split(",").map(id => id.trim()) : [];
+      const updatedDealerList = Array.from(new Set([...existingDealerList, ...newDealers]));
+    
     const payload = {
+      ...ticketData,
       RaiseTicketId: ticketData.raiseTicketId,
       date: new Date().toISOString(),
       address: address,
@@ -344,9 +355,9 @@ useEffect(() => {
       Option2Day: "",
       Option2Time: "",
      TechnicianList: technicianId,
-     DealerList: [dealerId],
+     DealerList: updatedDealerList,
     };
-    try {
+    
       // alert(JSON.stringify(payload));
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
@@ -532,7 +543,7 @@ materialQuotation: material.map((mat) => ({
                 type="text"
                 name="subject"
                 value={ticketData.subject}
-                onChange={handleChange}
+                // onChange={handleChange}
                 placeholder="Enter subject"
                 required
               />
@@ -547,7 +558,7 @@ materialQuotation: material.map((mat) => ({
             as="textarea"
             name="details"
             value={ticketData.details}
-            onChange={handleChange}
+            // onChange={handleChange}
             rows="4"
             placeholder="Enter details"
             required
@@ -618,8 +629,22 @@ materialQuotation: material.map((mat) => ({
             </div>  */}
 
           {/* Material Input Fields */}
-        <div className="form-group">
+        <div className="form-group m-1">
           <label>Required (Optional)</label>
+          <div className='d-flex gap-3 mb-2 text-center'>
+      <div style={{ flex: 4 }}>
+        <label className="fw-bold">Material</label>
+      </div>
+      <div style={{ flex: 4 }}>
+        <label className="fw-bold">Quantity</label>
+      </div>
+      <div style={{ flex: 4 }}>
+        <label className="fw-bold">Price</label>
+      </div>
+      <div style={{ flex: 4 }}>
+        <label className="fw-bold">Total</label>
+      </div>
+    </div>
           {specifications.map((spec, index) => (
             <div className="d-flex gap-3 mb-2" key={index}>
                <input
@@ -627,14 +652,14 @@ materialQuotation: material.map((mat) => ({
                 className="form-control"
                 value={spec.material}
                 placeholder="Enter Material"
-                onChange={(e) => handleMaterialChange(index, "material", e.target.value)}
+                // onChange={(e) => handleMaterialChange(index, "material", e.target.value)}
               />
               <input
                 type="text"
                 className="form-control text-center"
                 placeholder="Enter Quantity"
                 value={spec.quantity}
-                onChange={(e) => handleMaterialChange(index, "quantity", e.target.value)}
+                // onChange={(e) => handleMaterialChange(index, "quantity", e.target.value)}
               />
               <input
                 type="text"

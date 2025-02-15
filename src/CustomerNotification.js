@@ -18,7 +18,7 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
   );
   const handleTicketClick = (ticketId) => {
     navigate(`/customerRaiseTicketQuotation/${userType}/${ticketId}`, { state: { ticketId } });
-  };
+  }; 
 
   return (
     <div>
@@ -72,7 +72,7 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
                   color: "blue",
                   cursor: "pointer",
                   textDecoration: "underline",
-                }}
+                }} 
               >
                 {notification.ticketId}
               </span>

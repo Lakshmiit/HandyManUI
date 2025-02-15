@@ -49,7 +49,7 @@ const BookingConfirmation = () => {
   const [ticketId, setTicketId] = useState('');
   const [technicianId, setTechnicianId] = useState('');
   const [dealerId, setDealerId] = useState('');
-
+ 
   
   useEffect(() => {
       console.log(loading,id, technicianData);
@@ -74,8 +74,8 @@ const BookingConfirmation = () => {
         setSubject(data.subject);
         setDetails(data.details);
         setId(data.id);
-        setTechnicianId(data.technicianList);
-        setDealerId(data.dealerList);
+        setTechnicianId(data.technicianList || []);
+        setDealerId(data.dealerList || []);
         setCategory(data.category);
         setCustomerId(data.customerId);
         setIsWithMaterial(data.isMaterialType);
@@ -320,7 +320,7 @@ const BookingConfirmation = () => {
             <button className="btn-back">Back</button>
             <button className="btn-continue" onClick={handleSaveTicket}>Continue</button>
           </div>
-    </div>
+    </div> 
     </div>
     </div>
     </div>

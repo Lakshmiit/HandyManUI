@@ -61,8 +61,8 @@ const [showConfirmation, setShowConfirmation] = useState(false);
   const [materialQuotation, setMaterialQuotation] = useState([{discount: "", fixedDiscount: "", deliverycharges: "", fixedDeliveryChargs: "", servicecharges: "", fixedServicecharges: "", gst: "", fixedGST: "", grandtotal: ""}])
   const [dealerDetails, setDealerDetails] = useState([]);
   const [lowestGrandTotal, setLowestGrandTotal] = useState('');
-  const [technicianId, setTechnicianId] = useState('');
-  const [dealerId, setDealerId] = useState('');
+  const [technicianId, setTechnicianId] = useState([]);
+  const [dealerId, setDealerId] = useState([]);
 
 
   const paymentDataTime = new Date().toLocaleString("en-IN", {
@@ -96,8 +96,8 @@ const [showConfirmation, setShowConfirmation] = useState(false);
         setSubject(data.subject);
         setDetails(data.details);
         setId(data.id);
-        setTechnicianId(data.technicianList);
-        setDealerId(data.dealerList);
+        setTechnicianId(data.technicianList || []);
+        setDealerId(data.dealerList || []);
         setCategory(data.category);
         setCustomerId(data.customerId);
         setIsWithMaterial(data.isMaterialType);
@@ -283,7 +283,7 @@ const [showConfirmation, setShowConfirmation] = useState(false);
       DealerList: dealerId,
     };
   
-    try {
+    try { 
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {

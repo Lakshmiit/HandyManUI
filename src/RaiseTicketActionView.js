@@ -235,12 +235,12 @@ const RaiseActionView = () => {
   //     console.error("Error Forwarding ticket:", error);
   //     alert("Failed to forward the ticket. Please try again.")
   //   }
-  // };
+  // }; 
 
   return (
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
-        <div className=" ml-0 m-4 p-0 adm_mnu h-90">
+        <div className=" ml-0 p-0 adm_mnu h-90">
           <AdminSidebar />
         </div>
       )}
@@ -312,6 +312,7 @@ const RaiseActionView = () => {
                 onChange={handleChange}
                 placeholder="Subject"
                 required
+                readOnly
               />
             </Form.Group>
           </Col>
@@ -328,6 +329,7 @@ const RaiseActionView = () => {
             rows="4"
             placeholder="Details"
             required
+            readOnly
           />
         </Form.Group>
 
@@ -343,6 +345,7 @@ const RaiseActionView = () => {
                 onChange={handleChange}
                 placeholder="Ticket Owner"
                 required
+                readOnly
               />
             </Form.Group>
           </Col>
@@ -360,6 +363,7 @@ const RaiseActionView = () => {
                 onChange={handleChange}
                 placeholder="Category"
                 required
+                readOnly
               >
               </Form.Control>
             </Form.Group>
@@ -465,7 +469,7 @@ const RaiseActionView = () => {
           name="RequestType"
           value="With Material"
           checked={requestType === "With Material"}
-          onChange={(e) => setRequestType(e.target.value)}
+          // onChange={(e) => setRequestType(e.target.value)}
           required
         />
         With Material
@@ -478,7 +482,7 @@ const RaiseActionView = () => {
           name="RequestType"
           value="Without Material"
           checked={requestType === "Without Material"}
-          onChange={(e) => setRequestType(e.target.value)}
+          // onChange={(e) => setRequestType(e.target.value)}
         />
         Without Material
       </label>
@@ -495,6 +499,7 @@ const RaiseActionView = () => {
                 value={spec.material}
                 placeholder="Enter Material"
                 onChange={(e) => handleMaterialChange(index, "material", e.target.value)}
+                readOnly
               />
               <input
                 type="text"
@@ -502,6 +507,7 @@ const RaiseActionView = () => {
                 placeholder="Enter Quantity"
                 value={spec.quantity}
                 onChange={(e) => handleMaterialChange(index,"quantity", e.target.value)}
+                readOnly
               />
               <button
                 type="button"
@@ -531,6 +537,7 @@ const RaiseActionView = () => {
                 placeholder="Comment Text"
                 value={comment.commentText}
                 onChange={(e) => handleAddComment(index,"commentText", e.target.value)}
+                readOnly
               />
             </div>
           ))}

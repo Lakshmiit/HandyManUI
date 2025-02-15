@@ -16,7 +16,7 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
   const {category} = useParams();
   const {district} = useParams();
 
-  const getQuoteNotifications = notifications.filter((item) => item.assignedTo === "Dealer/Trader" && item.internalStatus !== "Technician Approved");
+  const getQuoteNotifications = notifications.filter((item) => item.assignedTo === "Dealer/Trader" && item.internalStatus !== "Customer Approved");
 
   const getOrdersNotifications = notifications.filter((item) => item.internalStatus === "Customer Approved" && item.lowestBidderDealerId === dealerId);
 
@@ -28,7 +28,7 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
     navigate(`/traderConfirmation/${ticketId}/${userType}/${district}/${dealerId}`, { state: { ticketId } });
   };
 
-  return (
+  return ( 
     <div>
     <div className="notification-list">
       {getQuoteNotifications.map((notification) => (

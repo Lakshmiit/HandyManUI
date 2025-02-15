@@ -187,7 +187,7 @@ useEffect(() => {
          item.internalStatus === "Customer Approved" && item.lowestBidderTechnicainId === technicianId);
 
       const getOrderCount = ordersFiltered.length;
-      // alert(ordersFiltered);
+      // alert(ordersFiltered); 
 
       setOrderNotifications(ordersFiltered);
       setNewOrderCount(getOrderCount);

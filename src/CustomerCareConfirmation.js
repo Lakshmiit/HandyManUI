@@ -70,8 +70,8 @@ const CustomerCareConfirmation = () => {
   const [dealerAddress, setDealerAddress] = useState('');
   const [dealerData, setDealerData] = useState('');
   const [dealerName,setDealerName] = useState('');
-  const [technicianId, setTechnicianId] = useState('');
-  const [dealerId, setDealerId] = useState('');
+  const [technicianId, setTechnicianId] = useState([]);
+  const [dealerId, setDealerId] = useState([]);
   const [isDealerChecked, setIsDealerChecked] = useState(false);
   const [isTechnicianChecked, setIsTechnicianChecked] = useState(false);
 
@@ -143,8 +143,8 @@ const CustomerCareConfirmation = () => {
         setSubject(data.subject);
         setDetails(data.details);
         setId(data.id);
-        setTechnicianId(data.technicianList);
-        setDealerId(data.dealerList);
+        setTechnicianId(data.technicianList || []);
+        setDealerId(data.dealerList || []);
         setCategory(data.category);
         setCustomerId(data.customerId);
         setIsWithMaterial(data.isMaterialType);
@@ -636,7 +636,7 @@ setShowAlert(true);
   //     }
   //   }
   //   setSpecifications(updatedMaterials);
-  //   };
+  //   }; 
 
   // const isTechnicianChecked = technicianStatus === "Job Completed";
   // const isDealerChecked = dealerStatus === "Material Delivered";
@@ -646,7 +646,7 @@ setShowAlert(true);
   return (
     <div className="d-flex">
         {!isMobile && (
-        <div className="ml-0 p-0 adm_mnu">
+        <div className="ml-0 p-0 adm_mnu h-90">
           <AdminSidebar />
         </div>
       )}
@@ -988,5 +988,5 @@ setShowAlert(true);
     </div>
   );
 };
-
+ 
 export default CustomerCareConfirmation;

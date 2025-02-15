@@ -52,13 +52,13 @@ const BookingConfirmation = () => {
   const [transactionDetails, setTransactionDetails] = useState("");
   const [dealerAddress, setDealerAddress] = useState('');
   const [dealerData, setDealerData] = useState('');
-  const [deliveryData, setDeliveryData] = useState('');
+  // const [deliveryData, setDeliveryData] = useState('');
   const [dealerStatus] = useState('');
   const [paymentData, setPaymentData] = useState('');
   const [paymentMode, SetPaymentMode] = useState('');
   const [customerCode, setCustomerCode] = useState('');
  const [paymentDataTime, setPaymentDateTime]=useState('');
-  const [deliveryNoteId, setDeliveryNoteId]=useState('');
+  // const [deliveryNoteId, setDeliveryNoteId]=useState('');
   const [deliveryId, setDeliveryId] = useState('');
   const [paymentId, setPaymentId] = useState('');
   const [technicianAmount, setTechnicianAmount] = useState('');
@@ -68,14 +68,14 @@ const BookingConfirmation = () => {
   const [isTimeSlotSaved, setIsTimeSlotSaved] = useState(false);
   // const [deliveryAssigned, setDeliveryAssigned] = useState('');
   // const [deliveryInternalStatus, setDeliveryInternalStatus] = useState('');
-  const [technicianId, setTechnicianId] = useState('');
-  const [dealerId, setDealerId] = useState('');
+  const [technicianId, setTechnicianId] = useState([]);
+  const [dealerId, setDealerId] = useState([]);
   const [isMaterialCollected, setIsMaterialCollected] = useState(false);
 const [isMaterialSaved, setIsMaterialSaved] = useState(false);
 
   useEffect(() => {
-  console.log(ticketData,isTimeSlotSaved,deliveryId, internalStatus, deliveryNoteId,loading,id,technicianData, selectedSlot, deliveryData, dealerStatus, paymentData, dealerData);
-    }, [ticketData,isTimeSlotSaved, deliveryId,internalStatus,  deliveryNoteId, loading,id,technicianData, selectedSlot, deliveryData,dealerStatus, paymentData, dealerData]);
+  console.log(ticketData,isTimeSlotSaved,deliveryId, internalStatus,loading,id,technicianData, selectedSlot, dealerStatus, paymentData, dealerData);
+    }, [ticketData,isTimeSlotSaved, deliveryId,internalStatus, loading,id,technicianData, selectedSlot,dealerStatus, paymentData, dealerData]);
 
   // useEffect(() => {
   //   const fetchticketData = async () => {
@@ -141,8 +141,8 @@ const [isMaterialSaved, setIsMaterialSaved] = useState(false);
           setSubject(data.subject);
           setDetails(data.details);
           setId(data.id);
-          setTechnicianId(data.technicianList);
-          setDealerId(data.dealerList);
+          setTechnicianId(data.technicianList || []);
+          setDealerId(data.dealerList || []);
           setInternalStatus(data.internalStatus);
           setCategory(data.category);
           setCustomerId(data.customerId);
@@ -198,40 +198,40 @@ const [isMaterialSaved, setIsMaterialSaved] = useState(false);
   // }, [ticketId]);   
   
   
-  useEffect(() => { 
-    if (!ticketId) return; // Ensure ticketId is available before fetching
+  // useEffect(() => { 
+  //   if (!ticketId) return; // Ensure ticketId is available before fetching
   
-    const fetchDeliveryData = async () => {
-      setLoading(true); // Set loading to true before fetching
-      try {
-        const response = await fetch(
-          `https://handymanapiv2.azurewebsites.net/api/DeliveryNote/GetRaiseTicketForDealer?RaiseTicketId=${ticketId}`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch delivery data");
-        }
-        const deliveryData = await response.json();
-        setDeliveryData(deliveryData);
-         alert(JSON.stringify(deliveryData));
-        setDeliveryId(deliveryData.id); 
-        // alert(deliveryId);
-        setDeliveryNoteId(deliveryData.deliveryNoteId);
-         //alert(id);
-        // // setOption1Day(deliveryData.option1Day || '');
-        // setOption2Day(deliveryData.option2Day || '');
-        // setOption1Time(deliveryData.option1Time || '');
-        // setOption2Time(deliveryData.option2Time || '');
-        // setDeliveryAssigned(deliveryData.assignedTo);
-        // setDeliveryInternalStatus(deliveryData.internalStatus);
-        setSpecifications(deliveryData.materialCollection || [{ material: "", quantity: "", receivedQuantity: "", remainingQuantity: "" }]);
-      } catch (error) {
-        console.error("Error fetching delivery data:", error);
-      } finally {
-        setLoading(false); 
-      }
-    };
-    fetchDeliveryData();
-  }, [ticketId]); 
+  //   const fetchDeliveryData = async () => {
+  //     setLoading(true); // Set loading to true before fetching
+  //     try {
+  //       const response = await fetch(
+  //         `https://handymanapiv2.azurewebsites.net/api/DeliveryNote/GetRaiseTicketForDealer?RaiseTicketId=${ticketId}`
+  //       );
+  //       if (!response.ok) {
+  //         throw new Error("Failed to fetch delivery data");
+  //       }
+  //       const deliveryData = await response.json();
+  //       setDeliveryData(deliveryData);
+  //        alert(JSON.stringify(deliveryData));
+  //       setDeliveryId(deliveryData.id); 
+  //       // alert(deliveryId);
+  //       setDeliveryNoteId(deliveryData.deliveryNoteId);
+  //       // alert(deliveryNoteId);
+  //       // // setOption1Day(deliveryData.option1Day || '');
+  //       // setOption2Day(deliveryData.option2Day || '');
+  //       // setOption1Time(deliveryData.option1Time || '');
+  //       // setOption2Time(deliveryData.option2Time || '');
+  //       // setDeliveryAssigned(deliveryData.assignedTo);
+  //       // setDeliveryInternalStatus(deliveryData.internalStatus);
+  //       setSpecifications(deliveryData.materialCollection || [{ material: "", quantity: "", receivedQuantity: "", remainingQuantity: "" }]);
+  //     } catch (error) {
+  //       console.error("Error fetching delivery data:", error);
+  //     } finally {
+  //       setLoading(false); 
+  //     }
+  //   };
+  //   fetchDeliveryData();
+  // }, [ticketId]); 
   
 
 
@@ -633,6 +633,12 @@ const handleSlotSave = () => {
     if (!response.ok) {
       throw new Error('Failed to create a Technician TimeSlot.');
     }
+
+    const postData = await response.json();
+        console.log("POST Response:", postData);
+        // const deliveryId = postData.deliveryNoteId;
+        setDeliveryId(postData.deliveryNoteId);
+        // alert(postData.deliveryNoteId);
     alert('Technician TimeSlot saved Successfully!');
   } catch (error) {
     console.error('Error:', error);
@@ -887,7 +893,7 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
         {!isMobile && (
         <div className="ml-0 p-0 sde_mnu">
           <Sidebar />
-        </div>
+        </div> 
       )}
 
       {/* Floating menu for mobile */}
@@ -965,10 +971,52 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
         </tbody>
       </table> 
     
+
+
+{/* {isMobile ? (
+        <div className="mobile-view">
+          <div><strong>Ticket Number:</strong> {ticketId}</div>
+          <div><strong>Description:</strong> {details}</div>
+          <div><strong>Quoted Amount:</strong> {enterQuoteAmount}</div>
+          <div><strong>Delivery Charges:</strong> {othercharges}</div>
+          <div><strong>Total Amount:</strong> {total}</div>
+          <div><strong>Customer Time Slots:</strong>
+            <div onClick={() => handleSlotSelection('option1')}>
+              Option 1 - {option1Day}, {option1Time}
+            </div>
+            <div onClick={() => handleSlotSelection('option2')}>
+              Option 2 - {option2Day}, {option2Time}
+            </div>
+          </div>
+        </div>
+      ) : (
+        <table className="booking-table">
+          <tbody>
+            <tr><td>Ticket Number</td><td>{ticketId}</td></tr>
+            <tr><td>Description</td><td>{details}</td></tr>
+            <tr><td>Quoted Amount</td><td>{enterQuoteAmount}</td></tr>
+            <tr><td>Delivery Charges</td><td>{othercharges}</td></tr>
+            <tr><td>Total Amount</td><td>{total}</td></tr>
+            <tr>
+              <td>Customer Time Slots</td>
+              <td>
+                <div className='time-slot-options'>
+                  <div onClick={() => handleSlotSelection('option1')}>Option 1: {option1Day}, {option1Time}</div>
+                  <div onClick={() => handleSlotSelection('option2')}>Option 2: {option2Day}, {option2Time}</div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      )}
+      <button className='btn btn-warning' onClick={handleStatusAction} disabled={!selectedSlot}>
+        Save
+      </button> */}
         
   <div className="form-group m-2">
     <label className="section-title">Required Materials Details</label>
-    {specifications.map((spec, index) => (
+    {isMobile ? (
+    specifications.map((spec, index) => (
         <div className="d-flex gap-3 mb-2" key={index}>
           <input
             type="text"
@@ -1006,7 +1054,18 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
             onChange={() => handleRadioChange(index)}
           />
         </div>
-      ))}
+      ))
+    ) : (
+      specifications.map((spec, index) => (
+        <div className="d-flex gap-3 mb-2" key={index}>
+          <input type="text" className="form-control" placeholder="Enter Material" value={spec.material} />
+          <input type="text" className="form-control text-center" placeholder="Enter Quantity" value={spec.quantity} />
+          <input type="text" className="form-control" placeholder="Received Quantity" value={spec.receivedQuantity} onChange={(e) => handleMaterialChange(index, "receivedQuantity", e.target.value)} />
+          <input type="text" className="form-control" placeholder="Remaining Quantity" value={spec.remainingQuantity} readOnly />
+          <input type="checkbox" className="form-check-input border-dark" checked={spec.isSelected} onChange={() => handleRadioChange(index)} />
+        </div>
+      ))
+    )}
     </div>
       
         <div className='payment m-1'>

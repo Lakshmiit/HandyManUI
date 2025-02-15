@@ -145,8 +145,8 @@ const RaiseTicketNotification = () => {
       <div className={`container m-1 ${isMobile ? "w-100" : "w-75"}`}>
         <h2 className="text-center mb-4">Raise a Ticket Notifications</h2>
         <h4 className="text-center mb-4">District Wise Ticket Summary</h4>
-        <div className="d-flex align-items-center justify-content-between">
-          <div className="form-group col-12 col-md-2 m-2">
+        <div className={`d-flex ${isMobile ? "flex-column" : "flex-wrap"} align-items-center justify-content-between`}>
+          <div className={`form-group ${isMobile ? "col-12" : "col-12 col-md-2"}`}>
             <label>State</label>
             <select
               className="form-control"
@@ -206,7 +206,7 @@ const RaiseTicketNotification = () => {
         {!isMobile ? (
         <table className="table table-bordered">
           <thead>
-            <tr>
+            <tr> 
               <th>Customer ID</th>
               <th>Ticket ID</th>
               <th>Category</th>

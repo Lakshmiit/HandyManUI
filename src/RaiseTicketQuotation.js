@@ -57,7 +57,7 @@ const RaiseTicketQuotation = () => {
     const [rateQuotedBy, setRateQuotedBy] = useState("Customer Care");
     // const [isDealerSelected, setIsDealerSelected] = useState(false);
     const [material, setMaterialQuotation] = useState([{discounts: "", fixedDiscounts: "", deliveryCharges: "", fixedDeliveryCharges: "", serviceCharges: "", fixedServiceCharges: "", gsts: "", fixedGSTS: "", grandtotal: ""}])
-
+    const [technicianList, setTechnicianList] = useState([]);
  
     // Fetch data from API on component mount
     useEffect(() => {
@@ -200,9 +200,7 @@ useEffect(() => {
   useEffect(() => {
         const fetchticketData = async () => {
           try {
-            const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
-
-/RaiseTicket/GetTicket/${raiseTicketId}`);
+            const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
             if (!response.ok) {
               throw new Error('Failed to fetch ticket data');
             }
@@ -219,6 +217,7 @@ useEffect(() => {
             setAssignedTo(data.assignedTo);
             setStatus(data.status);
             setFullName(data.customerName);
+            setTechnicianList(data.technicianList || []);
             setRequestType(data.requestType || 'Without Material');
             setAttachments(data.attachments);
             // setSpecifications(data.materials || [{ material: "", quantity: "", price: "", total: "" }]);
@@ -385,7 +384,7 @@ useEffect(() => {
       Option1Time: "",
       Option2Day: "",
       Option2Time: "",
-      TechnicianList: [technicianId],
+      TechnicianList: technicianList,
       DealerList: [],
     };
     try {
@@ -576,6 +575,7 @@ useEffect(() => {
                 onChange={handleChange}
                 placeholder="Enter subject"
                 required
+                readOnly
               />
             </Form.Group>
           </Col>
@@ -592,6 +592,7 @@ useEffect(() => {
             rows="4"
             placeholder="Enter details"
             required
+            readOnly
           />
         </Form.Group>
 
@@ -607,6 +608,7 @@ useEffect(() => {
                 onChange={handleChange}
                 placeholder='Category'
                 required
+                readOnly
               >
               </Form.Control>
             </Form.Group>
@@ -709,7 +711,7 @@ useEffect(() => {
           name="RequestType"
           value="With Material"
           checked={requestType === "With Material"}
-          onChange={(e) => setRequestType(e.target.value)}
+          // onChange={(e) => setRequestType(e.target.value)}
           required
         />
         With Material
@@ -722,7 +724,7 @@ useEffect(() => {
           name="RequestType"
           value="Without Material"
           checked={requestType === "Without Material"}
-          onChange={(e) => setRequestType(e.target.value)}
+          // onChange={(e) => setRequestType(e.target.value)}
         />
         Without Material
       </label>
@@ -762,15 +764,29 @@ useEffect(() => {
       {requestType === "With Material" && (
         <div className="form-group">
           <label>Required (Optional)</label>
+          <div className='d-flex gap-3 mb-2 '>
+      <div style={{ flex: 4 }}>
+        <label className="fw-bold">Material</label>
+      </div>
+      <div style={{ flex: 4 }}>
+        <label className="fw-bold">Quantity</label>
+      </div>
+      <div style={{ flex: 4 }}>
+        <label className="fw-bold">Price</label>
+      </div>
+      <div style={{ flex: 4 }}>
+        <label className="fw-bold">Total</label>
+      </div>
+    </div>
           {specifications.map((spec, index) => (
             <div className="d-flex gap-3 mb-2" key={index}>
-              
               <input
                 type="text"
                 className="form-control"
                 value={spec.material}
                 placeholder="Enter Material"
                 onChange={(e) => handleMaterialChange(index, "material", e.target.value)}
+                readOnly
               />
               <input
                 type="text"
@@ -778,7 +794,8 @@ useEffect(() => {
                 placeholder="Enter Quantity"
                 value={spec.quantity}
                 onChange={(e) => handleMaterialChange(index, "quantity", e.target.value)}
-              />
+                readOnly
+              /> 
               <input
                 type="text"
                 className="form-control text-end"
@@ -972,66 +989,84 @@ useEffect(() => {
 </tbody>
  </table>
 
-<div>
+ <div>
+  <p><strong>Technician Quotation</strong></p>
+  <>
+  {!isMobile ? (
 <table className="table table-bordered">
   <thead>
     <tr>
-      <td>Technician ID</td>
-      <td>Quoted Amount</td>
-      <td>Discount</td>
-      <td>Any Other Charges</td>
-      <td> Service Charges</td>
-      <td> GST</td>
-      <td>Total Quoted Amount</td>
-      <td>Lowest Bidder</td>
+      {['Technician ID', 'Quoted Amount', 'Discount', 'Other Charges', 'Service Charges', 'GST', 'Total Quoted Amount', 'Lowest Bidder'].map((header, idx) => (
+        <th key={idx}>{header}</th>
+      ))}
     </tr>
   </thead>
-
   <tbody>
     {technicianDetails.map((technician, index) => (
       <tr key={index} className='text-end'>
-        <td>{technician.technicianId}</td>
-        <td>{Number(technician.enterQuoteAmount).toFixed(2)}</td>
-        <td>{Number(technician.fixedDiscount).toFixed(2)}</td>
-        <td>{technician.fixedOtherCharge}</td>
-        {/* <td>{technician.serviceCharges}</td> */}
-        <td>{Number(technician.fixedServiceCharge).toFixed(2)}</td>
-        {/* <td>{technician.gst}</td> */}
-        <td>{Number(technician.fixedGST).toFixed(2)}</td>
-        <td>{Number(technician.totalAmount).toFixed(2)}</td>
-        <td>{technician.technicianId === lowestBidder ? 'Yes' : 'No'}</td>
-      </tr>
-    ))}  
-  </tbody>
-    {/* Technician ID and Total Amount */}
-
-    <tbody>
-        <tr>
-        <td>Technician ID</td>
+        {[technician.technicianId, technician.enterQuoteAmount, technician.fixedDiscount
+    ? Number(technician.fixedDiscount).toFixed(2)
+    : '0.00', technician.fixedOtherCharge
+    ? Number(technician.fixedOtherCharge).toFixed(2)
+    : '0.00', technician.fixedServiceCharge
+    ? Number(technician.fixedServiceCharge).toFixed(2)
+    : '0.00', technician.fixedGST
+    ? Number(technician.fixedGST).toFixed(2)
+    : '0.00', technician.totalAmount
+    ? Number(technician.totalAmount).toFixed(2)
+    : '0.00', technician.technicianId === lowestBidder ? 'Yes' : 'No'].map((value, i) => (
+      <td key={i}>{value}</td>
+    ))}
+    </tr>
+  ))} 
+  <tr>
         <td colSpan="3">
             <input
             type="text"
             className='form-control text-end'
             value={technicianId}
             readOnly
-            placeholder='Technician ID'
+            placeholder='Lowest Bidder Technician ID'
             /> 
         </td>
-        <td>Total Amount</td>
+        <td>Lowest Bidder Amount</td>
         
-        <td colspan="3">
+        <td colspan="4">
             <input
             type="number"
             className="form-control text-end"
-            value={Number(totalAmount).toFixed(2)}
+            value={Number(totalAmount || 0).toFixed(2)}
             readOnly
-            placeholder="Total Amount"
+            placeholder="Lowest Bidder Amount"
             />
         </td>
-        </tr>
-        </tbody>
-        </table>
+        </tr> 
+  </tbody>
+  </table>
+  ) : (
+    <div className="mobile-view">
+      {technicianDetails.map((technician, index) => (
+        <div key={index} className="card border p-2 mb-3">
+          {[
+            ['Technician ID', technician.technicianId],
+            ['Quoted Amount', technician.enterQuoteAmount],
+            ['Discount', technician.fixedDiscount ? Number(technician.fixedDiscount).toFixed(2) : '0.00'],
+            ['Other Charges', technician.fixedOtherCharge ? Number(technician.fixedOtherCharge).toFixed(2) : '0.00'],
+            ['Service Charges',technician.fixedServiceCharge ? Number(technician.fixedServiceCharge).toFixed(2) : '0.00'],
+            ['GST', technician.fixedGST ? Number(technician.fixedGST).toFixed(2) : '0.00'],
+            ['Total Quoted Amount', technician.totalAmount ? Number(technician.totalAmount).toFixed(2) : '0.00'],
+            ['Lowest Bidder', technician.technicianId === lowestBidder ? 'Yes' : 'No']
+          ].map(([label, value], i) => (
+            <p key={i}><strong>{label}:</strong> {value}</p>
+          ))}
         </div>
+      ))}
+      <p style={{ fontWeight: 'bold', fontSize: '1.2rem', color: '#198754' }}>Lowest Bidder Amount: {Number(totalAmount || 0).toFixed(2)}</p>
+    </div>
+  )}
+</>
+</div>
+    
 
        {/* Add Remarks */}
        <div className="form-group col-md-6">
@@ -1066,6 +1101,24 @@ useEffect(() => {
           </Link>
         </div>
       </Form>
+      <style jsx>{`
+        .floating-menu {
+          position: fixed;
+          top: 80px; /* Increased from 20px to avoid overlapping with the logo */
+          left: 20px; /* Adjusted for placement on the left side */
+          z-index: 1000;
+        }
+        .menu-popup {
+          position: absolute;
+          top: 50px; /* Keeps the popup aligned below the floating menu */
+          left: 0; /* Aligns the popup to the left */
+          background: white;
+          border: 1px solid #ddd;
+          border-radius: 5px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          width: 200px;
+        }
+      `}</style>
     </div>
   </div>
   );

@@ -193,7 +193,7 @@ useEffect(() => {
             setAddress(data.address);
             setSubject(data.subject);
             setId(data.id);
-            setTechnicianId(data.technicianList);
+            setTechnicianId(data.technicianList || []);
             // alert(data.technicianList);
             setCustomerId(data.customerId);
             setIsWithMaterial(data.isMaterialType);
@@ -285,6 +285,14 @@ useEffect(() => {
       ...prevData,
       [name]: value,
     }));
+  };
+
+  const handleCategoryChange = (e) => {
+    const selectedCategory = e.target.value;
+    setCategory(selectedCategory);
+    if (selectedCategory) {
+      setError('');
+    }
   };
 
   const handleAddRemarks = (index, field, value) => {
@@ -660,9 +668,10 @@ const handleUpdateTicket = async (e) => {
                 type="text"
                 name="subject"
                 value={ticketData.subject}
-                onChange={handleChange}
+                // onChange={handleChange}
                 placeholder="Enter subject"
                 required
+
               />
             </Form.Group>
           </Col>
@@ -675,7 +684,7 @@ const handleUpdateTicket = async (e) => {
             as="textarea"
             name="details"
             value={ticketData.details}
-            onChange={handleChange}
+            // onChange={handleChange}
             rows="4"
             placeholder="Enter details"
             required
@@ -691,9 +700,9 @@ const handleUpdateTicket = async (e) => {
           as="select"
           name="category"
           value={category}
-          onChange={(e) => setCategory(e.target.value)}
+          onChange={handleCategoryChange}
           required
-        >
+        > 
           <option value="">Select</option>
           <option value="Electrical items">Electrical items</option>
           <option value="Plumbing Materials">Plumbing Materials</option>
@@ -749,9 +758,7 @@ const handleUpdateTicket = async (e) => {
       {requestType === "With Material" && (
         <div className="form-group">
           <label>Required (Optional)</label>
-          {specifications.map((spec, index) => (
-            <div className="d-flex gap-3 mb-2" key={index}>
-              {/* <div className='d-flex gap-3 mb-2'>
+          <div className='d-flex gap-3 mb-2 text-center'>
           <div style={{ flex: 4 }}>
             <label className="fw-bold">Material</label>
           </div>
@@ -764,13 +771,16 @@ const handleUpdateTicket = async (e) => {
           <div style={{ flex: 4 }}>
             <label className="fw-bold">Total</label>
           </div>
-          </div> */}
+          </div> 
+          {specifications.map((spec, index) => (
+             <div className="d-flex gap-3 mb-2" key={index}>
               <input
                 type="text"
                 className="form-control"
                 value={spec.material}
                 placeholder="Enter Material"
                 onChange={(e) => handleMaterialChange(index, "material", e.target.value)}
+                readOnly
               />
               <input
                 type="text"
@@ -778,6 +788,7 @@ const handleUpdateTicket = async (e) => {
                 placeholder="Enter Quantity"
                 value={spec.quantity}
                 onChange={(e) => handleMaterialChange(index, "quantity", e.target.value)}
+                readOnly
               />
               <input
                 type="text"
@@ -785,6 +796,7 @@ const handleUpdateTicket = async (e) => {
                 placeholder="Enter Price"
                 value={spec.price}
                 onChange={(e) => handleMaterialChange(index, "price", e.target.value)}
+                readOnly
               />
               <input
                 type="text"
@@ -792,6 +804,7 @@ const handleUpdateTicket = async (e) => {
                 placeholder="Total"
                 value={spec.total}
                 onChange={(e) => handleMaterialChange(index, "total", e.target.value)}
+                readOnly
               />
             </div>
           ))}
@@ -831,7 +844,8 @@ const handleUpdateTicket = async (e) => {
             return updated;
           })
         }
-        placeholder="Enter Discount"
+        placeholder="Discount"
+        readOnly
       />
     </td>
     <td colSpan="2">
@@ -839,8 +853,8 @@ const handleUpdateTicket = async (e) => {
         type="number"
         className="form-control text-end"
         value={Number(material[0]?.fixedDiscounts).toFixed(2)}
-        readOnly
         placeholder="Fixed Discount"
+        readOnly
       />
     </td>
   </tr>
@@ -862,7 +876,8 @@ const handleUpdateTicket = async (e) => {
             return updated;
           })
         }
-        placeholder="Enter Delivery Charges"
+        placeholder="Delivery Charges"
+        readOnly
       />
     </td>
     <td colSpan="2">
@@ -870,8 +885,8 @@ const handleUpdateTicket = async (e) => {
         type="number"
         className="form-control text-end"
         value={material[0]?.fixedDeliveryCharges}
-        readOnly
         placeholder="Fixed Delivery Amount"
+        readOnly
       />
     </td>
   </tr>
@@ -893,7 +908,8 @@ const handleUpdateTicket = async (e) => {
             return updated;
           })
         }
-        placeholder="Enter Service Charges"
+        placeholder="Service Charges"
+        readOnly
       />
     </td>
     <td colSpan="2">
@@ -924,7 +940,8 @@ const handleUpdateTicket = async (e) => {
             return updated;
           })
         }
-        placeholder="Enter GST"
+        placeholder="GST"
+        readOnly
       />
     </td>
     <td colSpan="2">
@@ -932,8 +949,8 @@ const handleUpdateTicket = async (e) => {
         type="number"
         className="form-control text-end"
         value={Number(material[0]?.fixedGSTS).toFixed(2)}
-        readOnly
         placeholder="Fixed GST"
+        readOnly
       />
     </td>
   </tr>
@@ -968,6 +985,7 @@ const handleUpdateTicket = async (e) => {
                 placeholder="Remarks"
                 value={remarks.remarks}
                 onChange={(e) => handleAddRemarks(index,"remarks", e.target.value)}
+                readOnly
               />
             </div>
           ))}

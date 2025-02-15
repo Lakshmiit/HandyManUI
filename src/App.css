@@ -1645,3 +1645,14 @@ textarea {
   font-size: 14px;
   padding: 5px 10px;
 }
+
+@media (max-width: 768px) {
+  .booking-table td {
+    font-size: 14px;
+    padding: 6px;
+  }
+  .slot {
+    display: flex;
+    flex-direction: column;
+  }
+}

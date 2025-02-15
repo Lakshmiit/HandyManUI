@@ -14,7 +14,8 @@ const TraderConfirmation = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const {raiseTicketId} = useParams();
-  const [id, setId] = useState('');
+  // const [id, setId] = useState('');
+  const [updateRaiseTicketId, setUpdateRaiseTicketId] = useState('');
   const [ticketData, setTicketData] = useState('');
   const [subject, setSubject] = useState('');
   const [details, setDetails] = useState('');
@@ -65,13 +66,13 @@ const TraderConfirmation = () => {
   const [invoiceDate, setInvoiceDate] = useState('');  
   const [dealer, setDealerData] = useState('');
   const [dealerName,setDealerName] = useState('');
-  const [technicianId, setTechnicianId] = useState('');
-  const [dealerId, setDealerId] = useState('');
+  const [technicianId, setTechnicianId] = useState([]);
+  const [dealerId, setDealerId] = useState([]);
   const [deliveryId, setDeliveryId] = useState('');
   
  useEffect(() => {
-      console.log(loading, dealer, id,technicianData, technicianFullName,deliveryData, dealerStatus,paymentData,showAlert, technicianAddress, technicianPhotoId, selectedSlot);
-    }, [loading, dealer, id,technicianData, technicianFullName, deliveryData,dealerStatus,paymentData,showAlert, technicianAddress, technicianPhotoId, selectedSlot]);
+      console.log(loading, dealer,technicianData, technicianFullName,deliveryData, dealerStatus,paymentData,showAlert, technicianAddress, technicianPhotoId, selectedSlot);
+    }, [loading, dealer,technicianData, technicianFullName, deliveryData,dealerStatus,paymentData,showAlert, technicianAddress, technicianPhotoId, selectedSlot]);
 
     useEffect(() => {
       const fetchdealerData = async () => {
@@ -101,30 +102,30 @@ const TraderConfirmation = () => {
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
-        const data = await response.json();
-        setTicketData(data);
-        setState(data.state);
-        setTicketId(data.raiseTicketId); 
-        setDistrict(data.district);
-        setZipcode(data.zipCode);
-        setAddress(data.address);
-        setSubject(data.subject);
-        setDetails(data.details);
-        setId(data.id);
-        setTechnicianId(data.technicianList);
-        setDealerId(data.dealerList);
-        setCategory(data.category);
-        setCustomerId(data.customerId);
-        setIsWithMaterial(data.isMaterialType);
-        setAssignedTo(data.assignedTo);
-        setStatus(data.status);
-        setFullName(data.customerName);
-        setApprovedAmount(data.approvedAmount); 
-        setLowestBidder(data.lowestBidderTechnicainId);
-        setLowestDealerBidder(data.lowestBidderDealerId);
-        setRequestType(data.requestType || 'Without Material');
-        setAttachments(data.attachments);
-        setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: "" }]);
+        const raiseTicketData = await response.json();
+        setTicketData(raiseTicketData);
+        setState(raiseTicketData.state);
+        setTicketId(raiseTicketData.raiseTicketId); 
+        setDistrict(raiseTicketData.district);
+        setZipcode(raiseTicketData.zipCode);
+        setAddress(raiseTicketData.address);
+        setSubject(raiseTicketData.subject);
+        setDetails(raiseTicketData.details);
+        setUpdateRaiseTicketId(raiseTicketData.id);
+        setTechnicianId(raiseTicketData.technicianList || []);
+        setDealerId(raiseTicketData.dealerList || []);
+        setCategory(raiseTicketData.category);
+        setCustomerId(raiseTicketData.customerId);
+        setIsWithMaterial(raiseTicketData.isMaterialType);
+        setAssignedTo(raiseTicketData.assignedTo);
+        setStatus(raiseTicketData.status);
+        setFullName(raiseTicketData.customerName);
+        setApprovedAmount(raiseTicketData.approvedAmount); 
+        setLowestBidder(raiseTicketData.lowestBidderTechnicainId);
+        setLowestDealerBidder(raiseTicketData.lowestBidderDealerId);
+        setRequestType(raiseTicketData.requestType || 'Without Material');
+        setAttachments(raiseTicketData.attachments);
+        setCommentsList(raiseTicketData.comments || [{ updatedDate: new Date(), commentText: "" }]);
       } catch (error) {
         console.error('Error fetching ticket data:', error);
       } finally {
@@ -143,24 +144,24 @@ useEffect(() => {
         if (!response.ok) {
           throw new Error('Failed to fetch delivery data');
         }
-        const data = await response.json();
+        const deliveryNoteData = await response.json();
       //  alert(JSON.stringify(data));
-        setDeliveryData(data);
-        setDeliveryId(data.id);
+        setDeliveryData(deliveryNoteData);
+        setDeliveryId(deliveryNoteData.id);
         // alert(deliveryId);
-        setDeliveryNoteId(data.deliveryNoteId);
-        setOption1Day(data.option1Day);
-        setOption2Day(data.option2Day);
-        setOption1Time(data.option1Time);
+        setDeliveryNoteId(deliveryNoteData.deliveryNoteId);
+        setOption1Day(deliveryNoteData.option1Day);
+        setOption2Day(deliveryNoteData.option2Day);
+        setOption1Time(deliveryNoteData.option1Time);
         
-        setOption2Time(data.option2Time);
-        setTechnicianStatus(data.technicianStatus);
+        setOption2Time(deliveryNoteData.option2Time);
+        setTechnicianStatus(deliveryNoteData.technicianStatus);
         // alert(technicianStatus);
-        setInvoiceDate(data.invoiceDate);
-        SetInvoiceNumber(data.invoiceNumber);
-        setTechnicianAcceptance(data.technicianAcceptance || [{ type: "", technicianRemarks: "" }]);
-        setDealerStatus(data.dealerStatus);
-        setSpecifications(data.materialCollection || [{ material: "", quantity: "", receivedQuantity: "", remainingQuantity: "" }]);
+        setInvoiceDate(deliveryNoteData.invoiceDate);
+        SetInvoiceNumber(deliveryNoteData.invoiceNumber);
+        setTechnicianAcceptance(deliveryNoteData.technicianAcceptance || [{ type: "", technicianRemarks: "" }]);
+        setDealerStatus(deliveryNoteData.dealerStatus);
+        setSpecifications(deliveryNoteData.materialCollection || [{ material: "", quantity: "", receivedQuantity: "", remainingQuantity: "" }]);
       } catch (error) {
         console.error('Error fetching delivery data:', error);
       } finally {
@@ -347,24 +348,22 @@ useEffect(() => {
     const payload = {
       RaiseTicketId: ticketData.raiseTicketId,
       Date: new Date(),
+      ApprovedAmount: approvedAmount,
+      customerName: fullName, 
       Address: address,
       Subject: subject,
       Details: details,
       Category: category,
       AssignedTo: "Technical Agency",
-      id: raiseTicketId,
+      id: updateRaiseTicketId,
       status: status,
       internalStatus: "Customer Care",
       CustomerId: customerId,
       State: state,
+      TechnicianList: technicianId,
+      DealerList: dealerId,
       LowestBidderTechnicainId: lowestBidder,
       LowestBidderDealerId: lowestDealerBidder,
-      ApprovedAmount: approvedAmount,
-      customerName: fullName, 
-      Option1Day: option1Day,
-      Option1Time: option1Time,
-      Option2Day: option2Day,
-      Option2Time: option2Time,
       IsMaterialType: isWithMaterial,
       District: district,
       ZipCode: zipCode,
@@ -378,12 +377,15 @@ useEffect(() => {
         updatedDate: Comment.updatedDate,
         commentText: Comment.commentText,
       })),
-      TechnicianList: technicianId,
-      DealerList: dealerId,
+      Option1Day: option1Day,
+      Option1Time: option1Time,
+      Option2Day: option2Day,
+      Option2Time: option2Time, 
+      
     };
   
     try {
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${updateRaiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -472,7 +474,7 @@ const handleUploadInvoice = async (e) => {
 
 const payload2 = {
 
-  id: id,
+  id: deliveryId,
   ticketId: ticketId,
   deliveryNoteId: deliveryNoteId,
   option1Day: option1Day,
@@ -505,7 +507,7 @@ const payload2 = {
 };
 
 try {
-  const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/DeliveryNote/${id}`, {
+  const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/DeliveryNote/${deliveryId}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',

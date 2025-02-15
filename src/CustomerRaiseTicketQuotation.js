@@ -44,7 +44,7 @@ const RaiseQuotation = () => {
   const [assignedTo, setAssignedTo] = useState('');
   const [category, setCategory] = useState("");
   const [technicianDetails, setTechnicianDetails] = useState([]);
-  const [techRemarks, setRemarks] = useState('');
+  const [techRemarks, setRemarks] = useState([]);
   const [addrRmarks, setAddrRmarks] = useState([{requestedDate: new Date(), remarks: ""}]);
   const [raiseAQuoteId, setRaiseAQuoteId] = useState('');
   const [enterQuoteAmount, setQuote] = useState('');
@@ -59,6 +59,8 @@ const RaiseQuotation = () => {
   const [dealerId, setDealerId] = useState("");
   const [fullName, setFullName] = useState('');
   const [isChecked, setIsChecked] = useState(false);
+  const [technicianList, setTechnicianList] = useState([]);
+  const [dealerList, setDealerList] = useState([]);
   
 
   useEffect(() => {
@@ -86,6 +88,8 @@ const RaiseQuotation = () => {
         setCategory(data.category);
         setCustomerId(data.customerId);
         setAssignedTo(data.assignedTo);
+        setTechnicianList(data.technicianList || []);
+        setDealerList(data.dealerList || []);
         setIsWithMaterial(data.isMaterialType);
         setFullName(data.customerName);
         setRequestType(data.requestType || 'Without Material');
@@ -242,17 +246,17 @@ const RaiseQuotation = () => {
 //     }));
 //   };
 
-const handleAddRemarks = (index, value) => {
-  setAddrRmarks((prev) =>
-    prev.map((item, i) => (i === index ? { ...item, addrRmarks: value } : item))
-  );
-};
+// const handleAddRemarks = (index, value) => {
+//   setAddrRmarks((prev) =>
+//     prev.map((item, i) => (i === index ? { ...item, techRemarks: value } : item))
+//   );
+// };
 
-const handleTechRemarks = (index, value) => {
-  setRemarks((prev) =>
-    prev.map((item, i) => (i === index ? { ...item, addrRmarks: value } : item))
-  );
-};
+// const handleTechRemarks = (index, value) => {
+//   setRemarks((prev) =>
+//     prev.map((item, i) => (i === index ? { ...item, addrRmarks: value } : item))
+//   );
+// }; 
   
   const handleSaveTicket = async (e) => {
     if (!isChecked) {
@@ -305,8 +309,8 @@ const handleTechRemarks = (index, value) => {
       Option1Time: "",
       Option2Day: "",
       Option2Time: "",
-      TechnicianList: [technicianId],
-      DealerList: [dealerId],
+      TechnicianList: technicianList,
+      DealerList: dealerList,
     };
     try {
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
@@ -408,18 +412,18 @@ const handleTechRemarks = (index, value) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleMaterialChange = (index, field, value) => {
-    const updatedSpecifications = [...specifications];
-    updatedSpecifications[index][field] = field === "quantity" || field === "price" ? parseFloat(value) : value;
+  // const handleMaterialChange = (index, field, value) => {
+  //   const updatedSpecifications = [...specifications];
+  //   updatedSpecifications[index][field] = field === "quantity" || field === "price" ? parseFloat(value) : value;
   
-    if (field === "quantity" || field === "price") {
-      const quantity = parseFloat(updatedSpecifications[index].quantity);
-      const price = parseFloat(updatedSpecifications[index].price);
-      updatedSpecifications[index].total = quantity * price;
-    }
+  //   if (field === "quantity" || field === "price") {
+  //     const quantity = parseFloat(updatedSpecifications[index].quantity);
+  //     const price = parseFloat(updatedSpecifications[index].price);
+  //     updatedSpecifications[index].total = quantity * price;
+  //   }
   
-    setSpecifications(updatedSpecifications);
-  };
+  //   setSpecifications(updatedSpecifications);
+  // };
 
   const materialCharge = parseFloat(lowestGrandTotal);
   const technicalAmount = parseFloat(Number(totalAmount || 0).toFixed(2));
@@ -487,7 +491,7 @@ const handleTechRemarks = (index, value) => {
           name="RequestType"
           value="With Material"
           checked={requestType === "With Material"}
-          onChange={(e) => setRequestType(e.target.value)}
+          // onChange={(e) => setRequestType(e.target.value)}
           required
           />
           With Material
@@ -500,7 +504,7 @@ const handleTechRemarks = (index, value) => {
           name="RequestType"
           value="Without Material"
           checked={requestType === "Without Material"}
-          onChange={(e) => setRequestType(e.target.value)}
+          // onChange={(e) => setRequestType(e.target.value)}
           required
           />
           Without Material
@@ -509,7 +513,7 @@ const handleTechRemarks = (index, value) => {
         {/* Material Input Fields */}
         {requestType === "With Material" && (
         <>
-        <div className="form-group">
+        {/* <div className="form-group">
           <p><strong>Required Material</strong></p>
           <div className='d-flex gap-3 mb-2'>
           <div style={{ flex: 4 }}>
@@ -531,24 +535,27 @@ const handleTechRemarks = (index, value) => {
                 type="text"
                 className="form-control"
                 value={spec.material}
-                placeholder="Material"
-                onChange={(e) => handleMaterialChange(index, "material", e.target.value)}
+                readOnly
+                // placeholder="Material"
+                // onChange={(e) => handleMaterialChange(index, "material", e.target.value)}
               />
               
               <input
                 type="text"
                 className="form-control text-center"
-                placeholder="Quantity"
+                // placeholder="Quantity"
                 value={spec.quantity}
-               onChange={(e) => handleMaterialChange(index,"quantity", e.target.value)}
+                readOnly
+              //  onChange={(e) => handleMaterialChange(index,"quantity", e.target.value)}
                 
               />
               <input
                 type="number"
                 className="form-control text-end"
-                placeholder="Price"
+                // placeholder="Price"
                 value={spec.price}
-                onChange={(e) => handleMaterialChange(index,"price", e.target.value)}
+                readOnly
+                // onChange={(e) => handleMaterialChange(index,"price", e.target.value)}
               />
               <input
                 type="number"
@@ -559,9 +566,49 @@ const handleTechRemarks = (index, value) => {
               />
             </div>
           ))}
-    </div>
+    </div> */}
 
-    <>
+<div className='form-group'>
+  <p><strong>Required Material</strong></p>
+  {!isMobile ? (
+    <div>
+      <div className='d-flex gap-3 mb-2 text-center'>
+        {['Material', 'Quantity', 'Price', 'Total'].map((label, idx) => (
+          <div key={idx} style={{flex:4}}>
+            <label className='fw-bold'>{label}</label>
+          </div>
+        ))}
+      </div>
+      {specifications.map((spec, index) => (
+        <div className='d-flex gap-3 mb-2' key={index}>
+          {['material', 'quantity', 'price', 'total'].map((field, i) => (
+            <input
+            key={i}
+            type={field === 'price' || field === 'total' ? 'number' : 'text'}
+            className='form-control text-end'
+            value={spec[field] || ''}
+            readOnly
+            />
+          ))}
+          </div>
+      ))}
+      </div>
+  ) : (
+    <div className='mobile-view'>
+      {specifications.map((spec, index) => (
+        <div key={index} className='card border p-2 mb-2'>
+          {Object.entries(spec).map(([key, value]) => (
+           <p key={key}><strong>{key.charAt(0).toUpperCase() + key.slice(1)}: </strong>{value}</p> 
+          ))}
+          </div>
+      ))}
+      </div>
+  )}
+</div>
+
+
+<p><strong>Trader Quotation</strong></p>
+  <>
   {!isMobile ? (
     <table className="table table-bordered">
       <thead>
@@ -588,6 +635,27 @@ const handleTechRemarks = (index, value) => {
             ))}
           </tr>
         ))}
+        <tr>
+    <td colSpan="3">
+            <input
+            type="text"
+            className='form-control text-end'
+            value= {dealerId}
+            readOnly
+            placeholder='Lowest Bidder Trader ID'
+            /> 
+        </td>
+        <td className="m-4">Quotation Amount</td>
+        <td colspan="4">
+            <input
+            type="number"
+            className="form-control text-end"
+            value={Number(lowestGrandTotal).toFixed(2)}
+            readOnly
+            placeholder="Quotation Amount"
+            /> 
+        </td> 
+    </tr>
       </tbody>
     </table>
   ) : (
@@ -608,67 +676,56 @@ const handleTechRemarks = (index, value) => {
           ))}
         </div>
       ))}
-      <p style={{ fontWeight: 'bold', fontSize: '1.2rem', color: '#007bff' }}><strong>Quotation Amount: </strong>{Number(lowestGrandTotal).toFixed(2)}</p>
+      <p style={{ fontWeight: 'bold', fontSize: '1.2rem', color: '#198754' }}>Quotation Amount: {Number(lowestGrandTotal).toFixed(2)}</p>
     </div>
   )}
 </>
     </>
     )}
-  </div>
+  </div> 
   {/* Add Remarks */}
   <div className="form-group col-md-6">
-            <label>Dealer Remarks</label>
+            <label className='fw-bold'>Dealer Remarks</label>
             <input 
             type="text"
             className="form-control m-2"
             value={addrRmarks}
             placeholder="Enter Remarks"
-            onChange={(e) => handleAddRemarks(e.target.value)}
+            // onChange={(e) => handleAddRemarks(e.target.value)}
             />
         </div>
    
 <div>
   <p><strong>Technician Quotation</strong></p>
+  <>
+  {!isMobile ? (
 <table className="table table-bordered">
   <thead>
     <tr>
-      <td>Technician ID</td>
-      <td>Quoted Amount</td>
-      <td>Discount</td>
-      <td>Other Charges</td>
-      <td>Service Charges</td>
-      <td>GST</td>
-      <td>Total Quoted Amount</td>
-      <td>Lowest Bidder</td>
+      {['Technician ID', 'Quoted Amount', 'Discount', 'Other Charges', 'Service Charges', 'GST', 'Total Quoted Amount', 'Lowest Bidder'].map((header, idx) => (
+        <th key={idx}>{header}</th>
+      ))}
     </tr>
   </thead>
-
   <tbody>
     {technicianDetails.map((technician, index) => (
       <tr key={index} className='text-end'>
-        <td>{technician.technicianId}</td>
-        <td>{technician.enterQuoteAmount}</td>
-        <td>{technician.fixedDiscount
+        {[technician.technicianId, technician.enterQuoteAmount, technician.fixedDiscount
     ? Number(technician.fixedDiscount).toFixed(2)
-    : '0.00'}</td>
-        <td>{technician.fixedOtherCharge
+    : '0.00', technician.fixedOtherCharge
     ? Number(technician.fixedOtherCharge).toFixed(2)
-    : '0.00'}</td>
-        <td>{technician.fixedServiceCharge
+    : '0.00', technician.fixedServiceCharge
     ? Number(technician.fixedServiceCharge).toFixed(2)
-    : '0.00'}</td>
-        <td>{technician.fixedGST
+    : '0.00', technician.fixedGST
     ? Number(technician.fixedGST).toFixed(2)
-    : '0.00'}</td>
-        <td>{technician.totalAmount
+    : '0.00', technician.totalAmount
     ? Number(technician.totalAmount).toFixed(2)
-    : '0.00'}</td>
-        <td>{technician.technicianId === lowestBidder ? 'Yes' : 'No'}</td>
-      </tr>
-    ))}  
-  </tbody>
-    <tbody>
-        <tr>
+    : '0.00', technician.technicianId === lowestBidder ? 'Yes' : 'No'].map((value, i) => (
+      <td key={i}>{value}</td>
+    ))}
+    </tr>
+  ))} 
+  <tr>
         <td colSpan="3">
             <input
             type="text"
@@ -689,24 +746,45 @@ const handleTechRemarks = (index, value) => {
             placeholder="Lowest Bidder Amount"
             />
         </td>
-        </tr>
-        </tbody>
-        </table>
+        </tr> 
+  </tbody>
+  </table>
+  ) : (
+    <div className="mobile-view">
+      {technicianDetails.map((technician, index) => (
+        <div key={index} className="card border p-2 mb-3">
+          {[
+            ['Technician ID', technician.technicianId],
+            ['Quoted Amount', technician.enterQuoteAmount],
+            ['Discount', technician.fixedDiscount ? Number(technician.fixedDiscount).toFixed(2) : '0.00'],
+            ['Other Charges', technician.fixedOtherCharge ? Number(technician.fixedOtherCharge).toFixed(2) : '0.00'],
+            ['Service Charges',technician.fixedServiceCharge ? Number(technician.fixedServiceCharge).toFixed(2) : '0.00'],
+            ['GST', technician.fixedGST ? Number(technician.fixedGST).toFixed(2) : '0.00'],
+            ['Total Quoted Amount', technician.totalAmount ? Number(technician.totalAmount).toFixed(2) : '0.00'],
+            ['Lowest Bidder', technician.technicianId === lowestBidder ? 'Yes' : 'No']
+          ].map(([label, value], i) => (
+            <p key={i}><strong>{label}:</strong> {value}</p>
+          ))}
         </div>
-
+      ))}
+      <p style={{ fontWeight: 'bold', fontSize: '1.2rem', color: '#198754' }}>Lowest Bidder Amount: {Number(totalAmount || 0).toFixed(2)}</p>
+    </div>
+  )}
+</>
+</div>
         {/* Technician Remarks */}
        <div className="form-group col-md-6">
-            <label>Technician Remarks</label>
+            <label className='fw-bold'>Technician Remarks</label>
             <input 
             type="text"
             className="form-control"
             value={techRemarks}
             placeholder="Enter Remarks"
-            onChange={(e) => handleTechRemarks(e.target.value)}
+            // onChange={(e) => handleTechRemarks(e.target.value)}
             />
         </div>
 
-        <p><strong>ABSTRACT</strong></p>
+        {/* <p><strong>ABSTRACT</strong></p>
         <table className="table table-bordered">
         <thead>
           <tr>
@@ -756,7 +834,91 @@ const handleTechRemarks = (index, value) => {
           </tr>
         </tbody>
       </table>
-    
+     */}
+
+     <p className='m-2'><strong>ABSTRACT</strong></p>
+     <>
+     {!isMobile ? (
+      <table className='table table-bordered'>
+        <thead>
+          <tr>
+            {['Description', 'Lowest Bidder ID', 'Lowest Amount Including Charges and Taxes', 
+              'Actions'].map((header, idx) => (
+                <th key={idx}>{header}</th>
+              ))}
+          </tr>
+        </thead>
+        <tbody>
+          {[{
+            description: 'Required Material Quotation Bid Amount', id: dealerId,
+            amount: lowestGrandTotal ? Number(lowestGrandTotal).toFixed(2) : '0.00',
+            checked: isMaterialApproved,
+            onClick: () => setIsMaterialApproved(!isMaterialApproved) 
+          }, {
+            description: 'Technical Agency Quotation Bid Amount', id: technicianId,
+            amount: Number(totalAmount).toFixed(2),
+            checked: isAgencyApproved,
+            onClick: () => setIsAgencyApproved(!isAgencyApproved) 
+          }].map(({description, id, amount, checked, onClick}, index) => (
+            <tr key={index}>
+              <td>{description} Bid Amount</td>
+              <td>{id}</td>
+              <td>{amount}</td>
+              <td>
+                <input
+                type='radio'
+                name={`${description}-approval`}
+                className='form-check-input border-dark'
+                checked={checked}
+                onClick={onClick}
+              />
+              Approved
+              </td>
+            </tr>
+          ))}
+          <tr><td>Total Amount</td><td></td><td className='text-end'>{Number(total || 0).toFixed(2)}</td><td></td></tr>
+      <tr className="blinking-row">
+        <td className='fs-5'>Approved Acceptance Total Amount</td>
+        <td></td>
+        <td className='text-end'>{Number(approvedAcceptanceTotal).toFixed(2)}</td>
+        <td></td>
+      </tr>
+        </tbody>
+      </table>
+     ) : (
+      <div className="mobile-view">
+    {[{
+      label: 'Required Material',
+      id: dealerId,
+      amount: lowestGrandTotal ? Number(lowestGrandTotal).toFixed(2) : '0.00',
+      approved: isMaterialApproved, toggle: () => setIsMaterialApproved(!isMaterialApproved)
+    }, {
+      label: 'Technical Agency',
+      id: technicianId,
+      amount: Number(totalAmount || 0).toFixed(2),
+      approved: isAgencyApproved, toggle: () => setIsAgencyApproved(!isAgencyApproved) 
+    }].map(({label, id, amount, approved, toggle}, i) => (
+      <div key={i} className="card border p-2 mb-3">
+        <p><strong>Description: </strong>{label} Quotation</p>
+        <p><strong>Lowest Bidder ID:</strong> {id}</p>
+        <p><strong>Lowest Amount Including Charges and Taxes:</strong> {amount}</p>
+        <p><strong>Actions:</strong>
+        <input
+        type='radio'
+        name={`${label}-mobile-approval`}
+        className='form-check-input border-dark ms-2'
+        checked={approved}
+        onClick={toggle}
+        /> Approved
+        </p>
+      </div>
+    ))}
+    <p style={{ fontWeight: 'bold', fontSize: '1.2rem', color: '#198754' }}>
+      Approved Acceptance Total Amount: {Number(approvedAcceptanceTotal).toFixed(2)}
+    </p>
+  </div>
+     )}
+     </>
         <div className='mt-4'>
             <label>
                 <input

@@ -37,7 +37,7 @@ useEffect(() => {
       .get(url)
       .then((response) => {
         const tickets = response.data.tickets || [];
-        const filteredTickets = tickets.filter((ticket) => ticket.internalStatus === "Technician Approved" && ticket.assignedTo === "Dealer/Trader");
+        const filteredTickets = tickets.filter((ticket) => ticket.internalStatus === "Customer Approved" || ticket.internalStatus === "Closed");
 
         setTicketData(filteredTickets);
         setFilteredData(filteredTickets);
@@ -124,6 +124,8 @@ useEffect(() => {
 
       <div className={`container m-1 ${isMobile ? "w-100" : "w-75"}`}>
         <h2 className="text-center mb-4">Dealer Confirmation Notifications</h2>
+        <>
+        {!isMobile ? (
         <table className="table table-bordered">
           <thead>
             <tr>
@@ -166,6 +168,43 @@ useEffect(() => {
             ))}
           </tbody>
         </table>
+        ) : (
+          <div className="mobile-ticket-grid">
+  {currentRaiseTicket.map((ticket, index) => (
+    <div key={index} className="ticket-card">
+      <div className="ticket-header">
+      <strong>Customer ID:</strong> {ticket.customerId} <br />
+      <strong>Ticket ID:</strong> {ticket.raiseTicketId}
+      </div>
+      <div className="ticket-body">
+        <p><strong>Category:</strong> {ticket.category}</p>
+        <p><strong>Description:</strong> {ticket.details}</p>
+        <p><strong>Status:</strong> {ticket.status}</p>
+        <p><strong>Assigned To:</strong> {ticket.assignedTo}</p>
+      </div>
+      <div className="ticket-actions">
+      <Link
+        to={`/traderConfirmation/${ticket.id}/${district}/${userType}/${dealerId}`}
+        className="btn btn-info mx-2"
+      >
+        <FaEye />
+      </Link>
+      <Link
+        onClick={() => handleDelete(ticket.id)}
+        className="btn btn-danger mx-2"
+      >
+        <FaTrash />
+      </Link>
+      <Link to="#" className="btn btn-success mx-2">
+        <ForwardIcon />
+      </Link>
+      </div>
+    </div>
+  ))}
+</div>
+
+        )}
+      </>
         <div className="mt-4 text-end">
           <Link to={`/dealerNotifications/${userType}/${category}/${district}/${dealerId}`} className="btn btn-warning text-white mx-2" title='Back'>
             <ArrowLeftIcon />

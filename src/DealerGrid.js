@@ -148,8 +148,8 @@ const DealerNotification = () => {
       <div className={`container m-1 ${isMobile ? "w-100" : "w-75"}`}>
         <h2 className="text-center mb-4">Raise a Quote Dealer Notifications</h2>
         {/* <h4 className="text-center mb-4">District Wise Quote Summary</h4> */}
-        <div className="d-flex align-items-center justify-content-between">
-          <div className="form-group text-start col-md-2 ml-2 m-5 mb-2">
+        <div className={`d-flex ${isMobile ? "flex-column" : "flex-wrap"} align-items-center justify-content-between`}>
+          <div className={`form-group ${isMobile ? "col-12" : "col-12 col-md-2"} m-2`}>
             <label>State</label>
             <select
               className="form-control"
@@ -162,7 +162,7 @@ const DealerNotification = () => {
               ))}
             </select>
           </div>
-          <div className="form-group col-md-2 m-5 mb-2">
+          <div className="form-group col-12 col-md-2 m-2">
             <label>District</label>
             <select
               className="form-control"
@@ -176,7 +176,7 @@ const DealerNotification = () => {
             </select>
           </div>
           {/* Pin Code */}
-          <div className="form-group col-md-2 m-5 mb-2">
+          <div className="form-group col-12 col-md-2 m-2">
             <label>Pin Code</label>
             <select
               className="form-control"
@@ -191,7 +191,7 @@ const DealerNotification = () => {
           </div>
 
           {/* Assigned To */}
-          <div className="form-group col-md-2 m-5 mb-2">
+          <div className="form-group col-12 col-md-2 m-2">
             <label>Assigned To</label>
             <select
               className="form-control"
@@ -206,6 +206,8 @@ const DealerNotification = () => {
           </div>
         </div>
 
+        <>
+        {!isMobile ? (
         <table className="table table-bordered">
           <thead>
             <tr>
@@ -213,7 +215,6 @@ const DealerNotification = () => {
               <th>Ticket ID</th>
               <th>Category</th>
               <th>Description</th>
-              
               <th>Status</th>
               <th>Assigned To</th>
               <th>Actions</th>
@@ -249,6 +250,43 @@ const DealerNotification = () => {
             ))}
           </tbody>
         </table>
+        ) : (
+          <div className="mobile-ticket-grid">
+  {currentRaiseTicket.map((ticket, index) => (
+    <div key={index} className="ticket-card">
+      <div className="ticket-header">
+      <strong>Customer ID:</strong> {ticket.customerId} <br />
+      <strong>Ticket ID:</strong> {ticket.raiseTicketId}
+      </div>
+      <div className="ticket-body">
+        <p><strong>Category:</strong> {ticket.category}</p>
+        <p><strong>Description:</strong> {ticket.details}</p>
+        <p><strong>Status:</strong> {ticket.status}</p>
+        <p><strong>Assigned To:</strong> {ticket.assignedTo}</p>
+      </div>
+      <div className="ticket-actions">
+      <Link
+        to={`/bidderTicketQuotation/${ticket.id}`}
+        className="btn btn-info mx-2"
+      >
+        <FaEye />   
+      </Link>
+      <Link
+        onClick={() => handleDelete(ticket.id)}
+        className="btn btn-danger mx-2"
+      >   
+        <FaTrash /> 
+      </Link>
+      <Link to="#" className="btn btn-success mx-2">
+        <ForwardIcon />
+      </Link>
+      </div>
+    </div>
+  ))}
+</div>
+        )}
+      </>
+
         <div className="mt-4 text-end">
           <Link to='/adminNotifications' className="btn btn-warning text-white mx-2" title='Back'>
             <ArrowLeftIcon />

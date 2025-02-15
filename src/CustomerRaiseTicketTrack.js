@@ -51,7 +51,7 @@ const CustomerTicketTrack = () => {
   const [selectedSlot] = useState('');
   const [technicianDetails, setTechnicianDetails] = useState([]);
   const [totalAmount, setTotalAmount] = useState('');
-  const [selectedStatus] = useState('');
+  // const [selectedStatus] = useState('');
   const [technicianAcceptance, setTechnicianAcceptance] = useState([{type: "", technicianRemarks: ""}]); 
   const [technicianStatus, setTechnicianStatus] = useState('');
   const [deliveryData, setDeliveryData] = useState('');
@@ -66,8 +66,8 @@ const CustomerTicketTrack = () => {
   const [dealerAddress, setDealerAddress] = useState('');
   const [dealerData, setDealerData] = useState('');
   const [dealerName,setDealerName] = useState('');
-  const [technicianId, setTechnicianId] = useState('');
-  const [dealerId, setDealerId] = useState('');
+  const [technicianId, setTechnicianId] = useState([]);
+  const [dealerId, setDealerId] = useState([]);
   const [isDealerChecked, setIsDealerChecked] = useState(false);
   const [isTechnicianChecked, setIsTechnicianChecked] = useState(false);
 
@@ -137,8 +137,8 @@ useEffect(() => {
         setSubject(data.subject);
         setDetails(data.details);
         setId(data.id);
-        setTechnicianId(data.technicianList);
-        setDealerId(data.dealerList);
+        setTechnicianId(data.technicianList || []);
+        setDealerId(data.dealerList || []);
         setCategory(data.category);
         setCustomerId(data.customerId);
         setIsWithMaterial(data.isMaterialType);
@@ -719,7 +719,7 @@ const handleBothActions =  (e) => {
             </tr>
         </tbody>
       </table> */}
-
+ 
       <div className='payment'>
         
           <h3 className='section-title mt-2'>Ticket Closing Status</h3>
