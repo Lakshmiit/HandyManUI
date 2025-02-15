@@ -505,70 +505,70 @@ const handleSlotSave = () => {
     }
   };
 
-  const handleMaterialUpdateRaiseTicket = async (e) => {
-    e.preventDefault();
+  // const handleMaterialUpdateRaiseTicket = async (e) => {
+  //   e.preventDefault();
   
-    const payload4 = {
-      RaiseTicketId: ticketData.raiseTicketId,
-      Date: new Date(),
-      Address: address,
-      Subject: subject,
-      Details: details,
-      Category: category,
-      AssignedTo: "Dealer/Trader",
-      id: raiseTicketId, 
-      status: status,
-      internalStatus: "Customer Approved",
-      CustomerId: customerId,
-      State: state,
-      LowestBidderTechnicainId: lowestBidder,
-      LowestBidderDealerId: lowestDealerBidder,
-      ApprovedAmount: approvedAmount,
-      customerName: fullName,
-      Option1Day: option1Day,
-      Option1Time: option1Time,
-      Option2Day: option2Day,
-      Option2Time: option2Time,
-      IsMaterialType: isWithMaterial,
-      District: district,
-      ZipCode: zipCode,
-      RequestType: requestType,
-      Attachments: attachments,
-      Materials: specifications.map((spec) => ({
-        material: spec.material,
-        Quantity: spec.quantity,
-      })),
-      comments: commentsList.map((Comment) => ({
-        updatedDate: Comment.updatedDate,
-        commentText: Comment.commentText,
-      })),
-      TechnicianList: technicianId,
-      DealerList: dealerId,
-    };
+  //   const payload4 = {
+  //     RaiseTicketId: ticketData.raiseTicketId,
+  //     Date: new Date(),
+  //     Address: address,
+  //     Subject: subject,
+  //     Details: details,
+  //     Category: category,
+  //     AssignedTo: "Dealer/Trader",
+  //     id: raiseTicketId, 
+  //     status: status,
+  //     internalStatus: "Customer Approved",
+  //     CustomerId: customerId,
+  //     State: state,
+  //     LowestBidderTechnicainId: lowestBidder,
+  //     LowestBidderDealerId: lowestDealerBidder,
+  //     ApprovedAmount: approvedAmount,
+  //     customerName: fullName,
+  //     Option1Day: option1Day,
+  //     Option1Time: option1Time,
+  //     Option2Day: option2Day,
+  //     Option2Time: option2Time,
+  //     IsMaterialType: isWithMaterial,
+  //     District: district,
+  //     ZipCode: zipCode,
+  //     RequestType: requestType,
+  //     Attachments: attachments,
+  //     Materials: specifications.map((spec) => ({
+  //       material: spec.material,
+  //       Quantity: spec.quantity,
+  //     })),
+  //     comments: commentsList.map((Comment) => ({
+  //       updatedDate: Comment.updatedDate,
+  //       commentText: Comment.commentText,
+  //     })),
+  //     TechnicianList: technicianId,
+  //     DealerList: dealerId,
+  //   };
   
-    try {
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload4),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to save ticket data');
-      }
-      alert('Ticket saved Successfully!');
-      // Navigate(``)
-    } catch (error) {
-      console.error('Error saving ticket data:', error);
-      window.alert('Failed to save the ticket data. Please try again later.');
-    }
-  };
+  //   try {
+  //     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+  //       method: 'PUT',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(payload4),
+  //     });
+  //     if (!response.ok) {
+  //       throw new Error('Failed to save ticket data');
+  //     }
+  //     alert('Ticket saved Successfully!');
+  //     // Navigate(``)
+  //   } catch (error) {
+  //     console.error('Error saving ticket data:', error);
+  //     window.alert('Failed to save the ticket data. Please try again later.');
+  //   }
+  // };
 
 
   const handleBothMaterialActions = (e) => {
     e.preventDefault();
-    handleMaterialUpdateRaiseTicket(e);
+    // handleMaterialUpdateRaiseTicket(e);
     handleMaterialUpdate(e);
     handleMaterialSave(e);
   };

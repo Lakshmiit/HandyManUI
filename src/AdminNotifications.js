@@ -326,6 +326,17 @@ const Notification = () => {
 
   const handleTabClick = (tab) => setActiveTab(tab);
 
+  // const renderTab = (tab, count, glow) => (
+  //   <button
+  //     key={tab}
+  //     className={`tab-item ${activeTab === tab ? "active" : ""} ${glow ? "glow" : ""}`}
+  //     onClick={() => handleTabClick(tab)}
+  //   >
+  //     {tab} {count > 0 && (<span className="badge bg-danger">{count}</span>)}
+  //   </button>
+  // );
+
+
   return ( 
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
@@ -352,7 +363,7 @@ const Notification = () => {
         </div>
       )}
 
-      <div className={`container m-1 ${isMobile ? "w-100" : "w-75"}`}>
+      <div className={`container m-2  ${isMobile ? "w-100" : "w-75"}`}>
         <h2 className="text-start mb-2 fs-20">
           <ArrowBackIcon fontSize="large" />{" "}
           <NotificationsNoneIcon
@@ -416,6 +427,24 @@ const Notification = () => {
             ))}
           </div>
           <div>
+
+{/* <div className="d-flex flex-column justify-content-start align-items-start">
+      {isMobile ? (
+        <div className="mobile-tabs d-flex flex-column gap-2">
+          {renderTab("Raise Ticket", newTicketCount, glowTicket)}
+          {renderTab("Technician Get Quote", newQuoteCount, glowQuote)}
+          {renderTab("Dealer Get Quote", newDealerCount, glowDealer)}
+          {renderTab("Raise Ticket Orders", newOrderCount, glowOrder)}
+        </div>
+      ) : (
+        <div className="desktop-tabs d-flex flex-row gap-3">
+          {renderTab("Raise Ticket", newTicketCount, glowTicket)}
+          {renderTab("Technician Get Quote", newQuoteCount, glowQuote)}
+          {renderTab("Dealer Get Quote", newDealerCount, glowDealer)}
+          {renderTab("Raise Ticket Orders", newOrderCount, glowOrder)}
+        </div>
+      )}
+    </div> */}
           {activeTab === "Raise Ticket" && (
             <>
               <NotificationsList
@@ -497,9 +526,9 @@ const Notification = () => {
           )}
           </div>
         </div>
+        </div>
       </div>
-    </div>
   );
-};
+}; 
 
 export default Notification;
