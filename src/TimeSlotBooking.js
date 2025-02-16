@@ -254,7 +254,7 @@ const formattedDate = selectedDate ? formatDate(selectedDate) : null;
       });
       setActiveTab("Option 2");  
     } else {
-      //alert("Please select date and time for Option 1.");
+      //alert("Please select date and time for Option 2.");
     }
   } else if (activeTab === "Option 2") {
     if (selectedDate && selectedTimeSlot) {

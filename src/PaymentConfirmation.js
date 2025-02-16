@@ -454,7 +454,9 @@ const handlePaymentTicket = async (e) => {
       <div className='payment m-2'>
         <label className='bg-warning fw-bold w-100 p-2'>Payment Mode</label>
         <div className='d-flex flex-column m-4'>
-        <label>
+        {isMobile ? (
+        <div className='mobile-view d-flex flex-column gap-3 p-2'>
+        <label >
             <input 
             type="checkbox" 
             className="form-check-input border-secondary m-3"
@@ -462,7 +464,7 @@ const handlePaymentTicket = async (e) => {
             onChange={() => handleCheckboxChange('online')}/>
             Pay Through Online
           </label>
-          <label>
+          <label >
             <input 
             type="checkbox" 
             className="form-check-input border-secondary m-3"
@@ -471,7 +473,30 @@ const handlePaymentTicket = async (e) => {
             Pay On In Presence of Technician
           </label>
           </div>
-      </div>
+        ) : (
+          <div className="desktop-view d-flex flex-column">
+      <label className="me-4">
+        <input 
+          type="checkbox" 
+          className="form-check-input border-secondary me-2"
+          checked={selectedPayment === 'online'}
+          onChange={() => handleCheckboxChange('online')}
+        />
+        Pay Through Online
+      </label>
+      <label>
+        <input 
+          type="checkbox" 
+          className="form-check-input border-secondary me-2"
+          checked={selectedPayment === 'technician'}
+          onChange={() => handleCheckboxChange('technician')}
+        />
+        Pay On In Presence of Technician
+      </label>
+    </div>
+  )}
+</div>
+</div>
 
       <div className="note m-2">
            <label>

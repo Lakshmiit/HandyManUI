@@ -230,9 +230,10 @@ const Notification = () => {
           )}
         </h2>
 
-        <div className="notifications-container d-flex bg-white border rounded shadow-sm p-1">
-          <div className="tabs">
-            {["Raise Ticket Quotations", "Buy Product Quotations", "General  Notifications"].map((tab) => (
+        <div className="notifications-container d-flex bg-white p-2">
+        {isMobile ? (
+  <div className="tabs-mobile d-flex flex-column">
+    {["Raise Ticket Quotations", "Buy Product Quotations", "General  Notifications"].map((tab) => (
               <span
                 key={tab}
                 className={`tab-item ${activeTab === tab ? "active" : ""} 
@@ -268,7 +269,34 @@ const Notification = () => {
                 )}
               </span>
             ))}
-          </div>
+  </div>
+) : (
+  <div className="tabs d-flex">
+    {["Raise Ticket Quotations", "Buy Product Quotations", "General  Notifications"].map((tab) => (
+      <span
+        key={tab}
+        className={`tab-item ${activeTab === tab ? "active" : ""} 
+          ${tab === "Raise Ticket Quotations" && glowTicket ? "glow" : ""} 
+          ${tab === "Buy Product Quotations" && glowQuote ? "glow" : ""} 
+          ${tab === "General  Notifications" && glowGet ? "glow" : ""} `}
+        onClick={() => handleTabClick(tab)}
+        style={{ cursor: "pointer", marginRight: "15px" }}
+      >
+        {tab}{" "}
+        {tab === "Raise Ticket Quotations" && newTicketCount > 0 && (
+          <span className="badge bg-danger">{newTicketCount}</span>
+        )}
+        {tab === "Buy Product Quotations" && newQuoteCount > 0 && (
+          <span className="badge bg-danger">{newQuoteCount}</span>
+        )}
+        {tab === "General  Notifications" && newQuoteCount > 0 && (
+          <span className="badge bg-danger">{newQuoteCount}</span>
+        )}
+      </span>
+    ))}
+  </div>
+)}
+
           <div>
             {activeTab === "Raise Ticket Quotations" && (
               <>

@@ -376,57 +376,67 @@ const Notification = () => {
           )}
         </h2>
 
-        <div className="notifications-container d-flex bg-white border rounded shadow-sm p-1">
-          <div className="tabs">
-            {["Raise Ticket", "Technician Get Quote", "Dealer Get Quote", "Raise Ticket Orders"].map((tab) => (
-              <span
-                key={tab}
-                className={`tab-item ${activeTab === tab ? "active" : ""} 
-                ${tab === "Raise Ticket" && glowTicket ? "glow" : ""}
-                ${tab === "Technician Get Quote" && glowQuote ? "glow" : ""}
-                ${tab === "Dealer Get Quote" && glowDealer ? "glow" : ""}
-                ${tab === "Raise Ticket Orders" && glowOrder ? "glow" : ""}
-
-                `}
-                onClick={() => handleTabClick(tab)}
-                style={{ cursor: "pointer" }}    
-              >
-                {tab === "Raise Ticket" && (
-                  <>
-                    Raise Ticket{" "}
-                    {newTicketCount > 0 && (
-                      <span className="badge bg-danger">{newTicketCount}</span>
-                    )}
-                  </>
-                )}
-                {tab === "Technician Get Quote" && (
-                  <>
-                    Technician Get Quote{" "}
-                    {newQuoteCount > 0 && (
-                      <span className="badge bg-danger">{newQuoteCount}</span>
-                    )}
-                  </>
-                )}
-                {tab === "Dealer Get Quote" && (
-                  <>
-                    Dealer Get Quote{" "}
-                    {newDealerCount > 0 && (
-                      <span className="badge bg-danger">{newDealerCount}</span>
-                    )} 
-                  </>
-                )}
-                {tab === "Raise Ticket Orders" && (
-                  <>
-                  Raise Ticket Orders{" "}
-                  {newOrderCount > 0 && (
-                    <span className="badge bg-danger">{newOrderCount}</span>
-                  )}
-                  </>
-                )}
-              </span>
-            ))}
-          </div>
-          <div>
+<div className="notifications-container d-flex bg-white p-1">
+{isMobile ? (
+  <div className="tabs-mobile d-flex flex-column">
+    {["Raise Ticket", "Technician Get Quote", "Dealer Get Quote", "Raise Ticket Orders"].map((tab) => (
+      <div
+        key={tab}
+        className={`tab-item ${activeTab === tab ? "active" : ""} 
+          ${tab === "Raise Ticket" && glowTicket ? "glow" : ""} 
+          ${tab === "Technician Get Quote" && glowQuote ? "glow" : ""} 
+          ${tab === "Dealer Get Quote" && glowDealer ? "glow" : ""} 
+          ${tab === "Raise Ticket Orders" && glowOrder ? "glow" : ""}`}
+        onClick={() => handleTabClick(tab)}
+        style={{ cursor: "pointer" }}
+      >
+        {tab}{" "}
+        {tab === "Raise Ticket" && newTicketCount > 0 && (
+          <span className="badge bg-danger">{newTicketCount}</span>
+        )}
+        {tab === "Technician Get Quote" && newQuoteCount > 0 && (
+          <span className="badge bg-danger">{newQuoteCount}</span>
+        )}
+        {tab === "Dealer Get Quote" && newDealerCount > 0 && (
+          <span className="badge bg-danger">{newDealerCount}</span>
+        )}
+        {tab === "Raise Ticket Orders" && newOrderCount > 0 && (
+          <span className="badge bg-danger">{newOrderCount}</span>
+        )}
+      </div>
+    ))}
+  </div>
+) : (
+  <div className="tabs d-flex">
+    {["Raise Ticket", "Technician Get Quote", "Dealer Get Quote", "Raise Ticket Orders"].map((tab) => (
+      <span
+        key={tab}
+        className={`tab-item ${activeTab === tab ? "active" : ""} 
+          ${tab === "Raise Ticket" && glowTicket ? "glow" : ""} 
+          ${tab === "Technician Get Quote" && glowQuote ? "glow" : ""} 
+          ${tab === "Dealer Get Quote" && glowDealer ? "glow" : ""} 
+          ${tab === "Raise Ticket Orders" && glowOrder ? "glow" : ""}`}
+        onClick={() => handleTabClick(tab)}
+        style={{ cursor: "pointer", marginRight: "15px" }}
+      >
+        {tab}{" "}
+        {tab === "Raise Ticket" && newTicketCount > 0 && (
+          <span className="badge bg-danger">{newTicketCount}</span>
+        )}
+        {tab === "Technician Get Quote" && newQuoteCount > 0 && (
+          <span className="badge bg-danger">{newQuoteCount}</span>
+        )}
+        {tab === "Dealer Get Quote" && newDealerCount > 0 && (
+          <span className="badge bg-danger">{newDealerCount}</span>
+        )}
+        {tab === "Raise Ticket Orders" && newOrderCount > 0 && (
+          <span className="badge bg-danger">{newOrderCount}</span>
+        )}
+      </span>
+    ))}
+  </div>
+)}
+<div>
 
 {/* <div className="d-flex flex-column justify-content-start align-items-start">
       {isMobile ? (

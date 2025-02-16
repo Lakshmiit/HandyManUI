@@ -54,7 +54,7 @@ const CustomerCareConfirmation = () => {
   // const [selectedSlot] = useState('');
   const [technicianDetails, setTechnicianDetails] = useState([]);
   const [enterQuoteAmount, setQuote] = useState('');
-  // const [selectedStatus] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState('');
   const [paymentData, setPaymentData] = useState('');
   const [customerCode, setCustomerCode] = useState('');
   // const [deliveryNoteId, setDeliveryNoteId]=useState('');
@@ -72,8 +72,8 @@ const CustomerCareConfirmation = () => {
   const [dealerName,setDealerName] = useState('');
   const [technicianId, setTechnicianId] = useState([]);
   const [dealerId, setDealerId] = useState([]);
-  const [isDealerChecked, setIsDealerChecked] = useState(false);
-  const [isTechnicianChecked, setIsTechnicianChecked] = useState(false);
+  // const [isDealerChecked, setIsDealerChecked] = useState(false);
+  // const [isTechnicianChecked, setIsTechnicianChecked] = useState(false);
 
   
   useEffect(() => {
@@ -200,8 +200,8 @@ useEffect(() => {
         setOption2Time(data.option2Time || '');
         setTechnicianStatus(data.technicianStatus);
         setDealerStatus(data.dealerStatus);
-        setIsDealerChecked(data.dealerStatus === "Material Delivered");
-        setIsTechnicianChecked(data.technicianStatus === "Job Completed");
+        // setIsDealerChecked(data.dealerStatus === "Material Delivered");
+        // setIsTechnicianChecked(data.technicianStatus === "Job Completed");
         setSpecifications(data.materialCollection || [{ material: "", quantity: "", receivedQuantity: "", remainingQuantity: "" }]);
       } catch (error) {
         console.error('Error fetching delivery data:', error);
@@ -499,6 +499,7 @@ setShowAlert(true);
 //     // if (!selectedStatus) {
 //     //   alert("Please select a ticket status.");
 //     //   return;
+
 //     // }
 //     // const selectedSpecifications = specifications.filter((spec) => spec.isSelected);
   
@@ -617,9 +618,12 @@ setShowAlert(true);
 //   // handleUpdateTicket(e);
 // };
 
-  // const handleStatusChange = (event) => {
-  //   setSelectedStatus(event.target.value);
-  // }; 
+const handleStatusChange = (event) => {
+  const { value } = event.target;
+  setSelectedStatus((prev) =>
+    prev.includes(value) ? prev.filter((status) => status !== value) : [...prev, value]
+  );
+};
 
   // const handleMaterialChange = (index, field, value) => {
   //   const updatedMaterials = [...specifications];
@@ -640,7 +644,7 @@ setShowAlert(true);
 
   // const isTechnicianChecked = technicianStatus === "Job Completed";
   // const isDealerChecked = dealerStatus === "Material Delivered";
- const isCloseDisabled = !(isDealerChecked && isTechnicianChecked);
+//  const isCloseDisabled = !(isDealerChecked && isTechnicianChecked);
 
 
   return (
@@ -962,7 +966,9 @@ setShowAlert(true);
           <label className="fs-5">
           <input type="checkbox" 
           className="form-check-input m-2 border-dark"
-          checked={isDealerChecked}
+          value="Material Delivered"
+          checked={selectedStatus.includes('Material Delivered')}
+          onChange={handleStatusChange}
           readOnly
           />
           Material Delivered
@@ -970,7 +976,9 @@ setShowAlert(true);
           <label className="fs-5">
           <input type="checkbox" 
           className="form-check-input m-2 border-dark"
-          checked={isTechnicianChecked}
+          value="Technician Work Completed"
+          checked={selectedStatus.includes('Technician Work Completed')}
+          onChange={handleStatusChange}
           readOnly
            />
           Technician Work Completed
@@ -979,7 +987,7 @@ setShowAlert(true);
           <div className='d-flex flex-row align-items-center gap-5'> 
           <button className='btn btn-warning me-2 fs-5' title='close' 
           onClick={handleSaveTicket} 
-          disabled={isCloseDisabled}
+          // disabled={isCloseDisabled}
           >Close</button> 
           </div>
       </div>

@@ -51,7 +51,7 @@ const CustomerTicketTrack = () => {
   const [selectedSlot] = useState('');
   const [technicianDetails, setTechnicianDetails] = useState([]);
   const [totalAmount, setTotalAmount] = useState('');
-  // const [selectedStatus] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState('');
   const [technicianAcceptance, setTechnicianAcceptance] = useState([{type: "", technicianRemarks: ""}]); 
   const [technicianStatus, setTechnicianStatus] = useState('');
   const [deliveryData, setDeliveryData] = useState('');
@@ -68,8 +68,8 @@ const CustomerTicketTrack = () => {
   const [dealerName,setDealerName] = useState('');
   const [technicianId, setTechnicianId] = useState([]);
   const [dealerId, setDealerId] = useState([]);
-  const [isDealerChecked, setIsDealerChecked] = useState(false);
-  const [isTechnicianChecked, setIsTechnicianChecked] = useState(false);
+  // const [isDealerChecked, setIsDealerChecked] = useState(false);
+  // const [isTechnicianChecked, setIsTechnicianChecked] = useState(false);
 
   useEffect(() => {
         console.log(technicianFullName,technicianStatus,dealerData, loading,id,technicianData, deliveryData, dealerStatus, technicianAddress, selectedSlot, paymentData);
@@ -196,8 +196,8 @@ useEffect(() => {
         setTechnicianAcceptance(data.technicianAcceptance || [{ type: "", technicianRemarks: "" }]);
         setDealerAcceptance(data.dealerAcceptance || [{ type: "", dealerRemarks: "" }]);
         setDealerStatus(data.dealerStatus);
-        setIsDealerChecked(data.dealerStatus === "Material Delivered");
-        setIsTechnicianChecked(data.technicianStatus === "Job Completed");
+        // setIsDealerChecked(data.dealerStatus === "Material Delivered");
+        // setIsTechnicianChecked(data.technicianStatus === "Job Completed");
         setSpecifications(data.materialCollection || [{ material: "", quantity: "", receivedQuantity: "", remainingQuantity: "" }]);
       } catch (error) {
         console.error('Error fetching delivery data:', error);
@@ -478,9 +478,12 @@ const handleBothActions =  (e) => {
   handleUpdateTicket(e);
 };
 
-  // const handleStatusChange = (event) => {
-  //   setSelectedStatus(event.target.value);
-  // }; 
+const handleStatusChange = (event) => {
+  const { value } = event.target;
+  setSelectedStatus((prev) =>
+    prev.includes(value) ? prev.filter((status) => status !== value) : [...prev, value]
+  );
+};
 
   return (
     <div className="d-flex">
@@ -727,17 +730,19 @@ const handleBothActions =  (e) => {
           <label className="fs-5">
           <input type="checkbox" 
           className="form-check-input m-2 border-dark"
-          // value="Material Delivered"
-          checked={isDealerChecked} 
-          readOnly          />
+          value="Material Delivered"
+          checked={selectedStatus.includes('Material Delivered')}
+          onChange={handleStatusChange}          
+          />
           Material Delivered
           </label>
           <label className="fs-5">
           <input type="checkbox" 
           className="form-check-input m-2 border-dark"
-          // value='Technician Work Completed'
-          checked={isTechnicianChecked} 
-          readOnly           />
+          value='Technician Work Completed'
+          checked={selectedStatus.includes('Technician Work Completed')}
+          onChange={handleStatusChange}         
+           />
           Technician Work Completed
           </label>
           {/* <label className="fs-5">

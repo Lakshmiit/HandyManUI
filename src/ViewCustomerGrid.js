@@ -34,8 +34,9 @@ const RaiseTicketNotification = () => {
         const tickets = response.data.map((ticket) => ({
           ...ticket,
         }));
-        setTicketData(tickets);
-        setFilteredData(tickets);
+        const filteredTickets = tickets.filter((ticket) => ticket.internalStatus === "Customer Approved");
+        setTicketData(filteredTickets);
+        setFilteredData(filteredTickets);
       })
       .catch(error => {
         console.error("Error fetching ticket data:", error);

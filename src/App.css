@@ -1045,6 +1045,9 @@ textarea {
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
+  /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);  */
+  border-radius: 25px;
+  padding: 1rem;
 }
 
 .tabs {
@@ -1058,10 +1061,11 @@ textarea {
   margin: 10px;
   padding: 8px 16px;
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: 50px;
   border: none; 
   transition: all 0.3s ease;
   background-color: #f0f0f0;
+  padding: 0.5rem 1rem;
   color: #000000;
 }
 
@@ -1421,10 +1425,10 @@ textarea {
 .booking-confirmation {
   font-family: Arial, sans-serif;
   max-width: 900px;
-  margin: 30px;
+  margin: 20px;
   padding: 20px;
   border: 1px solid #ddd;
-  border-radius: 5px;
+  border-radius: 25px;
   background-color: #fff;
 }
 
@@ -1656,3 +1660,49 @@ textarea {
     flex-direction: column;
   }
 }
+
+.notifications-mobile .tab-item-mobile {
+  font-size: 14px;
+  padding: 8px 12px;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  transition: background-color 0.3s;
+}
+
+.notifications-mobile .tab-item-mobile:hover {
+  background-color: #e2e6ea;
+}
+
+.tab-item-mobile.active {
+  font-weight: bold;
+  border-left: 5px solid #007bff;
+}
+
+.badge {
+  font-size: 12px;
+  padding: 2px 5px;
+}
+
+
+@media (max-width: 768px) {
+  .notifications-mobile .tab-item-mobile {
+    background-color: yellow;
+    color: black;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    transition: background-color 0.3s;
+  }
+
+  .notifications-mobile .tab-item-mobile:hover {
+    background-color: #ffe066; /* Lighter yellow on hover */
+  }
+
+  .tab-item-mobile.active {
+    font-weight: bold;
+    border-left: 5px solid #007bff;
+  }
+}
+
+

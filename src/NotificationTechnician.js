@@ -319,9 +319,10 @@ useEffect(() => {
           )}
         </h2>
 
-        <div className="notifications-container d-flex bg-white border rounded shadow-sm m-4 p-3">
-          <div className="tabs d-flex mb-3">
-            {["Raise A Quote", "Raise A Quote Orders"].map((tab) => (
+        <div className="notifications-container d-flex bg-white p-2">
+          {isMobile ? (
+  <div className="tabs-mobile d-flex flex-column">
+    {["Raise A Quote", "Raise A Quote Orders"].map((tab) => (
               <span
                 key={tab}
                 className={`tab-item ${activeTab === tab ? "active" : ""} 
@@ -349,8 +350,29 @@ useEffect(() => {
                 )}
               </span>
             ))}
-          </div>
-
+  </div>
+) : (
+  <div className="tabs d-flex">
+    {["Raise A Quote", "Raise A Quote Orders"].map((tab) => (
+      <span
+        key={tab}
+        className={`tab-item ${activeTab === tab ? "active" : ""} 
+          ${tab === "Raise A Quote" && glowQuote ? "glow" : ""} 
+          ${tab === "Raise A Quote Orders" && glowOrder ? "glow" : ""}`}
+        onClick={() => handleTabClick(tab)}
+        style={{ cursor: "pointer", marginRight: "15px" }}
+      >
+        {tab}{" "}
+        {tab === "Raise A Quote" && newQuoteCount > 0 && (
+          <span className="badge bg-danger">{newQuoteCount}</span>
+        )}
+        {tab === "Raise A Quote Orders" && newOrderCount > 0 && (
+          <span className="badge bg-danger">{newOrderCount}</span>
+        )}
+      </span>
+    ))}
+  </div>
+)}
           <div>
             {activeTab === "Raise A Quote" && (
               <>
