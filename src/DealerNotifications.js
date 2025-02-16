@@ -25,7 +25,7 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
   };
 
   const handleOrdersClick = (ticketId) => {
-    navigate(`/traderConfirmation/${ticketId}/${userType}/${district}/${dealerId}`, { state: { ticketId } });
+    navigate(`/traderConfirmation/${ticketId}/${district}/${userType}/${dealerId}`, { state: { ticketId } });
   };
 
   return ( 
