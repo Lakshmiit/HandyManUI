@@ -1696,7 +1696,7 @@ textarea {
   }
 
   .notifications-mobile .tab-item-mobile:hover {
-    background-color: #ffe066; /* Lighter yellow on hover */
+    background-color: #ffe066; 
   }
 
   .tab-item-mobile.active {
@@ -1704,5 +1704,4 @@ textarea {
     border-left: 5px solid #007bff;
   }
 }
-
 

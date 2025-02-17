@@ -232,7 +232,7 @@ const BookingConfirmation = () => {
     <div className="booking-confirmation">
       <p className='text-center'><strong className='name'>{fullName}</strong> Thank you for the service your time slot has booked at</p>
 
-      <table className="booking-table">
+      <table className="booking-table w-100">
         <tbody>
           <tr>
             <td><strong>Ticket Number</strong></td>
@@ -249,6 +249,43 @@ const BookingConfirmation = () => {
           <tr> 
             <td><strong>Time Slot Booking</strong></td>
             <td className='time-slot-booking'>
+            {isMobile ? (
+              <div className='timeslots-option d-flex flex-column'>
+              {/* Option 1 */}
+              <div className='slot mb-3 p-2 border rounded'>
+                <strong>
+                  {/* <input 
+                    type='radio' 
+                    className='form-check-input m-1 border-dark' 
+                    name='timeslot' 
+                    value='option1' 
+                    checked={option1Day && option1Time ? true : false} 
+                    readOnly  
+                  /> */}
+                  Option 1
+                </strong>
+                <div><span style={{ fontWeight: "bold" }}>Date:</span> {option1Day || 'N/A'}</div>
+                <div><span style={{ fontWeight: "bold" }}>Time:</span> {option1Time || 'N/A'}</div>
+              </div>
+      
+              {/* Option 2 */}
+              <div className='slot p-2 border rounded'>
+                <strong>
+                  {/* <input 
+                    type='radio' 
+                    className='form-check-input m-1 border-dark' 
+                    name='timeslot' 
+                    value='option2' 
+                    checked={option2Day && option2Time ? true : false} 
+                    readOnly  
+                  />
+                  Option 2 */}
+                </strong>
+                <div><span style={{ fontWeight: "bold" }}>Date:</span> {option2Day || 'N/A'}</div>
+                <div><span style={{ fontWeight: "bold" }}>Time:</span> {option2Time || 'N/A'}</div>
+              </div>
+            </div>
+          ) : (      
                 <div className='timeslots-option d-flex flex-row'>
                 <div className='slot m-2 p-2'>
                      <strong>Option 1</strong> 
@@ -261,6 +298,7 @@ const BookingConfirmation = () => {
                     <div><span style={{ fontWeight: "bold" }}>Time: </span>{option2Time}</div>
                 </div>
                 </div>
+          )}
             </td>
           </tr>
         </tbody>

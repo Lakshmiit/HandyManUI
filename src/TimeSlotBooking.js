@@ -109,7 +109,7 @@ const TimeSlotBooking = () => {
     const tomorrow = new Date(todayDate);
   tomorrow.setDate(todayDate.getDate() + 1);
 
-  const isPastDate = cellDate < today;
+  const isPastDate = cellDate < today || cellDate.getTime() === today.getTime();
   const isTomorrowDate = cellDate.getDate() === tomorrow.getDate() && cellDate.getMonth() === tomorrow.getMonth();
   
     return {
@@ -140,27 +140,34 @@ const TimeSlotBooking = () => {
 
 const formattedDate = selectedDate ? formatDate(selectedDate) : null;
     
-      const handleDateClick = (day) => {
-        const selectedDateObj = new Date(currentYear, currentMonth, day);
-        selectedDateObj.setHours(0, 0, 0, 0);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+const handleDateClick = (day) => {
+  const selectedDateObj = new Date(currentYear, currentMonth, day);
+  selectedDateObj.setHours(0, 0, 0, 0);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-        const tomorrow = new Date(today);
-        tomorrow.setDate(today.getDate() + 1);
-      
-        if (selectedDateObj < tomorrow) {
-          alert("You cannot select today or past dates.");
-          return;
-        }
-      
-        if (activeTab === "Option 1") {
-          setOption1Selection((prev) => ({ ...prev, date: formatDate(selectedDateObj) }));
-        } else if (activeTab === "Option 2") {
-          setOption2Selection((prev) => ({ ...prev, date: formatDate(selectedDateObj) }));
-        }
-        setSelectedDate(selectedDateObj);
-      };            
+  if (selectedDateObj < today) {
+    alert("You cannot select today or past dates.");
+    return;
+  }
+
+  if (activeTab === "Option 1") {
+    setOption1Selection((prev) => ({ ...prev, date: formatDate(selectedDateObj) }));
+  } else if (activeTab === "Option 2") {
+    setOption2Selection((prev) => ({ ...prev, date: formatDate(selectedDateObj) }));
+  }
+  setSelectedDate(selectedDateObj);
+};            
+
+
+const handleDateChange = (event) => {
+  const newDate = new Date(event.target.value);
+  if (isNaN(newDate.getTime())) {
+    console.error('Invalid date selected');
+    return;
+  }
+  setSelectedDate(newDate);
+};
 
       useEffect(() => {
         if (activeTab === "Option 1" && selectedTimeSlot) {
@@ -404,7 +411,27 @@ const formattedDate = selectedDate ? formatDate(selectedDate) : null;
 </div>
 
 <div className="calendar-section">
-    <div className="calendar-header">
+    {/* <div className="calendar-header d-flex justify-content-between align-items-center">
+      <span>{months[currentMonth]} {currentYear}</span>
+      <div className="m-2">
+      <button className="nav-btn" onClick={handlePrevMonth}>&#60;</button>
+       <button className="nav-btn" onClick={handleNextMonth}>&#62;</button> 
+       </div>
+    </div> */}
+    {isMobile ? (
+        <div className="calendar-header1 d-flex w-100">
+        <label><strong>Select Date</strong></label>
+        <input
+          type="date"
+          value={selectedDate && !isNaN(selectedDate.getTime()) ? selectedDate.toISOString().split('T')[0] : ""}
+          onChange={handleDateChange}
+          className="date-input"
+          min={new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0]}  
+        />
+      </div>
+      ) : (
+      <>
+      <div className="calendar-header d-flex justify-content-between align-items-center">
       <span>{months[currentMonth]} {currentYear}</span>
       <div className="m-2">
       <button className="nav-btn" onClick={handlePrevMonth}>&#60;</button>
@@ -425,6 +452,8 @@ const formattedDate = selectedDate ? formatDate(selectedDate) : null;
           </div>
         ))}
     </div>
+    </>
+   )}
 </div>
 
 <div className="time-slot-section">

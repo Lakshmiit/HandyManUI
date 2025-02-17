@@ -431,7 +431,7 @@ const handlePaymentTicket = async (e) => {
 
 <div className={`container m-1 ${isMobile ? "w-100" : "w-75"}`}>
 <h2 className="title">PAYMENT CONFIRMATION</h2>
-    <div className="booking-confirmation">
+    <div className="booking-confirmation w-100">
       <p className='text-center fs-4'><strong className='name'>{fullName}</strong> Thank you for Choosing the HandyMan Services</p>
 
       <table className="booking-table">
