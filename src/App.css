@@ -1425,8 +1425,8 @@ textarea {
 .booking-confirmation {
   font-family: Arial, sans-serif;
   max-width: 900px;
-  margin: 20px;
-  padding: 20px;
+  margin: 15px;
+  padding: 15px;
   border: 1px solid #ddd;
   border-radius: 25px;
   background-color: #fff;
@@ -1447,13 +1447,13 @@ textarea {
 }
 
 .booking-table {
-  width: 100%;
+  width: 90%;
   border-collapse: collapse;
   font-size: 18px;
 }
 
 .booking-table td {
-  padding: 10px;
+  padding: 8px;
   border: 1px solid #ffeb99;
 }
 

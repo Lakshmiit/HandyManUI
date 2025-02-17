@@ -918,7 +918,7 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
     <div className="booking-confirmation">
       <p className='text-center fs-5'><strong className='name'>{technicianFullName}</strong> Your Lowest Quotation Accepted By Customer</p>
 
-      <table className="booking-table">
+      <table className="booking-table w-100">
         <tbody>
           <tr>
             <td><strong>Ticket Number</strong></td>
@@ -943,6 +943,23 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
           <tr> 
             <td><strong>Customer Time Slots </strong></td>
             <td className='time-slot-booking'>
+            {isMobile ? (
+              <div className="dropdown mb-3">
+                <select 
+                  className="form-select border-dark" 
+                  onChange={(e) => handleSlotSelection(e.target.value)}
+                  defaultValue=""
+                >
+                  <option value="" disabled>Select a time slot</option>
+                  <option value="option1">
+                    Option 1 - Date: {option1Day}, Time: {option1Time}
+                  </option>
+                  <option value="option2">
+                    Option 2 - Date: {option2Day}, Time: {option2Time}
+                  </option>
+                </select>
+              </div>
+            ) : (
                 <div className='timeslots-option d-flex flex-row'>
                 <div className='slot m-2 p-2'>
                      <strong><input type='radio' className='form-check-input m-1 border-dark' 
@@ -959,6 +976,7 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
                     <div><span style={{ fontWeight: "bold" }}>Time: </span>{option2Time}</div>
                 </div>
                 </div>
+            )}
                 <div className='text-center'>
                 <button className='btn btn-warning fs-5' onClick={handleStatusAction} disabled={!selectedSlot}
                 //  disabled={internalStatus !== "Customer Approved" && assignedTo === "Technical Agency"}
@@ -970,52 +988,10 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
         </tbody>
       </table> 
     
-
-
-{/* {isMobile ? (
-        <div className="mobile-view">
-          <div><strong>Ticket Number:</strong> {ticketId}</div>
-          <div><strong>Description:</strong> {details}</div>
-          <div><strong>Quoted Amount:</strong> {enterQuoteAmount}</div>
-          <div><strong>Delivery Charges:</strong> {othercharges}</div>
-          <div><strong>Total Amount:</strong> {total}</div>
-          <div><strong>Customer Time Slots:</strong>
-            <div onClick={() => handleSlotSelection('option1')}>
-              Option 1 - {option1Day}, {option1Time}
-            </div>
-            <div onClick={() => handleSlotSelection('option2')}>
-              Option 2 - {option2Day}, {option2Time}
-            </div>
-          </div>
-        </div>
-      ) : (
-        <table className="booking-table">
-          <tbody>
-            <tr><td>Ticket Number</td><td>{ticketId}</td></tr>
-            <tr><td>Description</td><td>{details}</td></tr>
-            <tr><td>Quoted Amount</td><td>{enterQuoteAmount}</td></tr>
-            <tr><td>Delivery Charges</td><td>{othercharges}</td></tr>
-            <tr><td>Total Amount</td><td>{total}</td></tr>
-            <tr>
-              <td>Customer Time Slots</td>
-              <td>
-                <div className='time-slot-options'>
-                  <div onClick={() => handleSlotSelection('option1')}>Option 1: {option1Day}, {option1Time}</div>
-                  <div onClick={() => handleSlotSelection('option2')}>Option 2: {option2Day}, {option2Time}</div>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      )}
-      <button className='btn btn-warning' onClick={handleStatusAction} disabled={!selectedSlot}>
-        Save
-      </button> */}
-        
+     
   <div className="form-group m-2">
     <label className="section-title">Required Materials Details</label>
-    {isMobile ? (
-    specifications.map((spec, index) => (
+    {specifications.map((spec, index) => (
         <div className="d-flex gap-3 mb-2" key={index}>
           <input
             type="text"
@@ -1053,18 +1029,7 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
             onChange={() => handleRadioChange(index)}
           />
         </div>
-      ))
-    ) : (
-      specifications.map((spec, index) => (
-        <div className="d-flex gap-3 mb-2" key={index}>
-          <input type="text" className="form-control" placeholder="Enter Material" value={spec.material} />
-          <input type="text" className="form-control text-center" placeholder="Enter Quantity" value={spec.quantity} />
-          <input type="text" className="form-control" placeholder="Received Quantity" value={spec.receivedQuantity} onChange={(e) => handleMaterialChange(index, "receivedQuantity", e.target.value)} />
-          <input type="text" className="form-control" placeholder="Remaining Quantity" value={spec.remainingQuantity} readOnly />
-          <input type="checkbox" className="form-check-input border-dark" checked={spec.isSelected} onChange={() => handleRadioChange(index)} />
-        </div>
-      ))
-    )}
+    ))}
     </div>
       
         <div className='payment m-1'>

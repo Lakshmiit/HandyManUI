@@ -447,6 +447,7 @@ const handleUpdateTicket = async (e) => {
       }
      
       alert('Ticket  Technician  saved Successfully!');
+      // window.location.href = `https://handymanserviceproviders.com/CustomerProfilePage?ReactToken=${technicianId}$${userType}`;
     } catch (error) {
       console.error('Error saving Technician ticket data:', error);
       window.alert('Failed to save the Technician ticket data. Please try again later.')

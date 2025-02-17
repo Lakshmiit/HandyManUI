@@ -266,19 +266,19 @@ const Notification = () => {
         <div className="notifications-container d-flex bg-white p-2">
         {isMobile ? (
   <div className="tabs-mobile d-flex flex-column">
-    {["Raise A Quote Products", "Raise A Quote Orders"].map((tab) => (
+    {["Raise A Quote Buy Products", "Raise A Quote Orders"].map((tab) => (
               <span
                 key={tab}
                 className={`tab-item ${activeTab === tab ? "active" : ""} 
-                ${tab === "Raise A Quote Products" && glowQuote ? "glow" : ""}
+                ${tab === "Raise A Quote Buy Products" && glowQuote ? "glow" : ""}
                 ${tab === "Raise A Quote Orders" && glowOrder ? "glow" : ""}
                 `}
                 onClick={() => handleTabClick(tab)}
                 style={{ cursor: "pointer" }}
               >
-                {tab === "Raise A Quote Products" && (
+                {tab === "Raise A Quote Buy Products" && (
                 <>
-                Raise A Quote Products{" "}
+                Raise A Quote Buy Products{" "}
                 {newQuoteCount > 0 && (
                   <span className="badge bg-danger">{newQuoteCount}</span>
                 )}

@@ -537,7 +537,7 @@ const RaiseActionView = () => {
                 placeholder="Comment Text"
                 value={comment.commentText}
                 onChange={(e) => handleAddComment(index,"commentText", e.target.value)}
-                readOnly
+                
               />
             </div>
           ))}

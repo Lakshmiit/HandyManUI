@@ -517,7 +517,7 @@ const handleStatusChange = (event) => {
     <div className="booking-confirmation p-4">
       <p className='text-center fs-5'><strong className='name'>Track Ticket Status</strong></p>
 
-      <table className="booking-table">
+      <table className="booking-table w-100">
         <tbody>
           <tr>
             <td><strong>Ticket Number</strong></td>
@@ -556,6 +556,43 @@ const handleStatusChange = (event) => {
 <tr> 
     <td><strong>Customer Time Slots </strong></td>
     <td className='time-slot-booking'>
+    {isMobile ? (
+      <div className='timeslots-option d-flex flex-column'>
+        {/* Option 1 */}
+        <div className='slot mb-3 p-2 border rounded'>
+          <strong>
+            <input 
+              type='radio' 
+              className='form-check-input m-1 border-dark' 
+              name='timeslot' 
+              value='option1' 
+              checked={option1Day && option1Time ? true : false} 
+              readOnly  
+            />
+            Option 1
+          </strong>
+          <div><span style={{ fontWeight: "bold" }}>Date:</span> {option1Day || 'N/A'}</div>
+          <div><span style={{ fontWeight: "bold" }}>Time:</span> {option1Time || 'N/A'}</div>
+        </div>
+
+        {/* Option 2 */}
+        <div className='slot p-2 border rounded'>
+          <strong>
+            <input 
+              type='radio' 
+              className='form-check-input m-1 border-dark' 
+              name='timeslot' 
+              value='option2' 
+              checked={option2Day && option2Time ? true : false} 
+              readOnly  
+            />
+            Option 2
+          </strong>
+          <div><span style={{ fontWeight: "bold" }}>Date:</span> {option2Day || 'N/A'}</div>
+          <div><span style={{ fontWeight: "bold" }}>Time:</span> {option2Time || 'N/A'}</div>
+        </div>
+      </div>
+    ) : (
         <div className='timeslots-option d-flex flex-row'>
             {/* Option 1 */}
             <div className='slot m-2 p-2'>
@@ -591,6 +628,7 @@ const handleStatusChange = (event) => {
                 <div><span style={{ fontWeight: "bold" }}>Time: </span>{option2Time || 'N/A'}</div>
             </div>
         </div>
+    )}
     </td>
 </tr>
 
