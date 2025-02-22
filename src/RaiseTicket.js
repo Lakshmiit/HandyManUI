@@ -360,7 +360,7 @@ useEffect(() => {
     const whatsappapiurl = `https://app-server.wati.io/api/v1/sendSessionMessage/917989328864?messageText=Dear Customer Care a New Ticket Requested by Customer ${data.ticketId}`;
         const headers = {
           'accept': '/',
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJmNmUzZDJlNi01NTBjLTQxZGQtOWM1NS0xOWQyNDMwOWZiOWQiLCJ1bmlxdWVfbmFtZSI6ImxzY29tcHV0ZXJzY29hY2hpbmdjZW50ZXJAZ21haWwuY29tIiwibmFtZWlkIjoibHNjb21wdXRlcnNjb2FjaGluZ2NlbnRlckBnbWFpbC5jb20iLCJlbWFpbCI6ImxzY29tcHV0ZXJzY29hY2hpbmdjZW50ZXJAZ21haWwuY29tIiwiYXV0aF90aW1lIjoiMDIvMjIvMjAyNSAxMzowMDowMyIsImRiX25hbWUiOiJ3YXRpX2FwcF90cmlhbCIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IlRSSUFMIiwiZXhwIjoxNzQwODczNjAwLCJpc3MiOiJDbGFyZV9BSSIsImF1ZCI6IkNsYXJlX0FJIn0.UdVggTIAK9GDK3FYvNdn16AZSPmrOIwOdJP7AqK4z_Y',
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjNzcxNjhiMC1mYzQ1LTRmMTctOTlmNi1hMzRmNDA3YTczZTgiLCJ1bmlxdWVfbmFtZSI6ImxzY29tcHV0ZXJjb2FjaGluZ2NlbnRlckBnbWFpbC5jb20iLCJuYW1laWQiOiJsc2NvbXB1dGVyY29hY2hpbmdjZW50ZXJAZ21haWwuY29tIiwiZW1haWwiOiJsc2NvbXB1dGVyY29hY2hpbmdjZW50ZXJAZ21haWwuY29tIiwiYXV0aF90aW1lIjoiMDIvMjIvMjAyNSAxNDo0MDoyMCIsImRiX25hbWUiOiJ3YXRpX2FwcF90cmlhbCIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IlRSSUFMIiwiZXhwIjoxNzQwODczNjAwLCJpc3MiOiJDbGFyZV9BSSIsImF1ZCI6IkNsYXJlX0FJIn0.Rd4aOt8KS2wY9lobQmtDIYae7V2hNKpqo0yzdT8CGYo',
         };
         try {
           const res = await fetch(whatsappapiurl, {
@@ -374,7 +374,7 @@ useEffect(() => {
         }
   
     // Redirect to CustomerProfilePage
-    window.location.href = `https://handymanserviceproviders.com/CustomerProfilePage?ReactToken=${customerId}$${userType}`;
+    window.location.href = `https://localhost:7155/CustomerProfilePage?ReactToken=${customerId}$${userType}`;
   
   } catch (error) {
     console.error('Error:', error);
