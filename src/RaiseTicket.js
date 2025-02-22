@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid'; // To generate unique IDs for addresses
 import {
   Dashboard as MoreVertIcon,
 } from '@mui/icons-material';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import Sidebar from './Sidebar';
 import { useParams } from 'react-router-dom';
 const AddressManager = () => {
@@ -49,10 +50,13 @@ const AddressManager = () => {
     category: '',
   });
   const [confirmationModal, setConfirmationModal] = useState(false);
+  const [response, setResponse] = useState(null);
+  // const [videoRefId, setVideoRefId] = useState('');
+
 
   useEffect(() => {
-    console.log(ticketId);
-  }, [ticketId]);
+    console.log(ticketId, response);
+  }, [ticketId, response]);
 
   const API_URL = 'https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/';
   // Fetch customer profile data
@@ -158,16 +162,49 @@ useEffect(() => {
     // setFullName('');
   };
 
-  // Handle file upload
+  // // Handle file upload
+  // const handleFileChange = (e) => {
+  //   const files = Array.from(e.target.files);
+  //   if (files.length + ticketPhotos.length > 5) {
+  //     alert("You can upload up to 5 files.");
+  //     return;
+  //   }
+  //   setTicketPhotos([...ticketPhotos, ...files]);
+  //   setShowAlert(true);
+  // };
+
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
-    if (files.length + ticketPhotos.length > 5) {
+    const validFiles = [];
+  
+    for (const file of files) {
+      const fileSizeMB = file.size / (1024 * 1024);
+      const isValidType = file.type === "image/jpeg" || file.type === "image/png";
+      const isValidSize = fileSizeMB <= 30; 
+  
+      if (!isValidType) {
+        alert(`Only JPG and PNG formats are allowed: ${file.name}`);
+        continue;
+      }
+  
+      if (!isValidSize) {
+        alert(`File size should be up to 30MB: ${file.name}`);
+        continue;
+      }
+  
+      validFiles.push(file);
+    }
+  
+    if (validFiles.length + ticketPhotos.length > 5) {
       alert("You can upload up to 5 files.");
       return;
     }
-    setTicketPhotos([...ticketPhotos, ...files]);
-    setShowAlert(true);
+  
+    setTicketPhotos([...ticketPhotos, ...validFiles]);
+    setShowAlert(validFiles.length > 0);
   };
+  
+  
 
 
   const handleUploadFiles = async () => {
@@ -205,7 +242,22 @@ useEffect(() => {
       reader.readAsArrayBuffer(file);
     });
   };
+  const phoneNumber = '7989328864';  // Phone number
+  // Generate ticket ID in the format VSKPAKP002
+  const ticketIdPrefix = "VSKPAPREFV";
+  const ticketIdSuffix = String(Math.floor(Math.random() * 999) + 1).padStart(3, "0");
+  const ticketIds = `${ticketIdPrefix}${ticketIdSuffix}`;
 
+  // Generate WhatsApp link with the ticket ID
+  const generateWhatsAppLink = (ticketId, phoneNumber) => {
+    const message = `Hello, I'd like to continue uploading my video for ticket: ${ticketId}`;
+    return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+  };
+  const handleWhatsAppClick = () => {
+    // handleSaveWhatsapp();
+    const link = generateWhatsAppLink(ticketIds, phoneNumber);
+    window.open(link, '_blank');
+  };
   const uploadFile = async (byteArray, fileName, mimeType, file) => {
     try {
       const formData = new FormData();
@@ -241,10 +293,8 @@ useEffect(() => {
       return;
     }
   
-    // // Generate ticket ID in the format VSKPAKP002
-    // const ticketIdPrefix = "VSKPAKP";
-    // const ticketIdSuffix = String(Math.floor(Math.random() * 999) + 1).padStart(3, "0");
-    // const ticketId = `${ticketIdPrefix}${ticketIdSuffix}`;
+  
+
     const primaryAddress = addresses.find((addr) => addr.type === "primary");
     const state = primaryAddress?.state || "";
     const district = primaryAddress?.district || "";
@@ -286,33 +336,8 @@ useEffect(() => {
       Option2Time: "",
       TechnicianList: [],
       DealerList: [],
+      Rating: "",
     };
-  // //alert(JSON.stringify(payload));
-  //   try {
-  //     const response = await fetch('https://handymanapiv2.azurewebsites.net/api/RaiseTicket/CreateRaiseTicket', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify(payload),
-  //     });
-  
-  //     if (!response.ok) {
-  //       throw new Error('Failed to create a ticket.');
-  //     }
-  
-  //     const data = await response.json();
-  //     setTicketId(data.ticketId);
-  //     console.log('Ticket created:', data);
-  
-  //     // Show alert message and navigate to CustomerProfilePage
-  //     window.alert(`Ticket has been submitted successfully! Your reference number is ${ticketId}. Get Quote will contact you shortly.`);
-  //      window.location.href = 'https://handymanserviceproviders.com/CustomerProfilePage';
-  //   } catch (error) {
-  //     console.error('Error:', error);
-  //     window.alert('Failed to create the ticket. Please try again later.');
-  //   }
-  // };
 
   try {
     const response = await fetch('https://handymanapiv2.azurewebsites.net/api/RaiseTicket/CreateRaiseTicket', {
@@ -325,14 +350,28 @@ useEffect(() => {
   
     if (!response.ok) {
       throw new Error('Failed to create a ticket.');
-    }
+    } 
+
   
     const data = await response.json(); 
-  
     setTicketId(data.ticketId); 
-   
     // Show alert message with the correct ticketId
     window.alert(`Ticket has been submitted successfully! Your reference number is ${data.ticketId}. Get Quote will contact you shortly.`);
+    const whatsappapiurl = `https://app-server.wati.io/api/v1/sendSessionMessage/917989328864?messageText=Dear Customer Care a New Ticket Requested by Customer ${data.ticketId}`;
+        const headers = {
+          'accept': '/',
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJmNmUzZDJlNi01NTBjLTQxZGQtOWM1NS0xOWQyNDMwOWZiOWQiLCJ1bmlxdWVfbmFtZSI6ImxzY29tcHV0ZXJzY29hY2hpbmdjZW50ZXJAZ21haWwuY29tIiwibmFtZWlkIjoibHNjb21wdXRlcnNjb2FjaGluZ2NlbnRlckBnbWFpbC5jb20iLCJlbWFpbCI6ImxzY29tcHV0ZXJzY29hY2hpbmdjZW50ZXJAZ21haWwuY29tIiwiYXV0aF90aW1lIjoiMDIvMjIvMjAyNSAxMzowMDowMyIsImRiX25hbWUiOiJ3YXRpX2FwcF90cmlhbCIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IlRSSUFMIiwiZXhwIjoxNzQwODczNjAwLCJpc3MiOiJDbGFyZV9BSSIsImF1ZCI6IkNsYXJlX0FJIn0.UdVggTIAK9GDK3FYvNdn16AZSPmrOIwOdJP7AqK4z_Y',
+        };
+        try {
+          const res = await fetch(whatsappapiurl, {
+            method: 'POST',
+            headers: headers,
+          });
+          const data = await res.json();
+          setResponse(data);
+        } catch (error) {
+          console.error('Error sending message:', error);
+        }
   
     // Redirect to CustomerProfilePage
     window.location.href = `https://handymanserviceproviders.com/CustomerProfilePage?ReactToken=${customerId}$${userType}`;
@@ -343,6 +382,70 @@ useEffect(() => {
   }
   };
   
+  // const handleSaveWhatsapp = async (e) => {
+  //   e.preventDefault();
+  
+  //   const payload = {
+  //     RaiseTicketId:"string",
+  //     raiseTicketIdVideoRef: "string",
+  //     date: new Date(),
+  //     address: addresses.find((addr) => addr.type === 'primary')?.address || '',
+  //     subject: formData.subject,
+  //     details: formData.details,
+  //     category: formData.category,
+  //     assignedTo: assignedTo,
+  //     state:state,
+  //     district:district,
+  //     zipcode:pincode,
+  //     requestType: requestType,
+  //     status:'open',
+  //     internalStatus:'Open',
+  //     id: uuidv4(),// Unique identifier for the API call
+  //     customerId: customerId, // Replace with actual customer ID logic
+  //     attachments: uploadedFiles.map((file) => file.src), 
+  //     comments: commentsList.map((comment) => ({
+  //       UpdatedDate : comment.updatedDate,
+  //       CommentText: comment.commentText,
+  //   })),
+  //     Materials:specifications.map(spec => ({
+  //       material : spec.material,
+  //       Quantity : spec.Quantity ,
+  //     })),
+  //     LowestBidderTechnicainId: "",
+  //     LowestBidderDealerId: "",
+  //     ApprovedAmount: "",
+  //     CustomerName: fullName, 
+  //     Option1Day: "",
+  //     Option1Time: "",
+  //     Option2Day: "",
+  //     Option2Time: "",
+  //     TechnicianList: [],
+  //     DealerList: [],
+  //     Rating: "",
+  //     isMaterialType: 0,
+  //   };
+
+  // try {
+  //   const response = await fetch('https://localhost:7091/api/RaiseTicketExtention/CreateRaiseTicketExtension', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify(payload),
+  //   });
+  
+  //   if (!response.ok) {
+  //     throw new Error('Failed to create a ticket.');
+  //   }
+  //   // const videoData = await response.json();
+  //   // setVideoRefId(videoData.videoRefId);
+  //   // alert(videoRefId);
+
+  // } catch (error) {
+  //   console.error('Error:', error);
+  //   window.alert('Failed to create the ticket. Please try again later.');
+  // }
+  // };
   // Handle secondary address selection
   const handleSecondaryAddressSelect = (id) => {
     const updatedAddresses = addresses.map((address) =>
@@ -580,7 +683,7 @@ useEffect(() => {
 
         {/* File Upload */}
         <div className="form-group mt-4">
-          <label className="text-danger m-2">Upload your Query Photos or Videos <span className="req_star">*</span></label>
+          <label className="text-danger m-2">Upload your Query Photos<span className="req_star">*</span></label>
           <input
                 type="file"
                 className="form-control"
@@ -593,6 +696,16 @@ useEffect(() => {
                   Please click the <strong>Upload Files</strong> button to upload the selected images.
                 </div>
               )}
+          
+    <label className="text-danger m-2 fs-5">
+      If any Videos Forward to Whatsapp Number
+      <br />
+      <span className="text-success" onClick={handleWhatsAppClick} style={{ cursor: 'pointer' }}>
+        <WhatsAppIcon />
+        <strong className="blinking-text m-2" style={{textDecoration: 'underline'}}>{phoneNumber}</strong>
+      </span>
+    </label>
+  
               <div className="mt-2">
                 {ticketPhotos.map((file, index) => (
                 <p key={index}>{file.name}</p>
@@ -779,8 +892,6 @@ useEffect(() => {
 
      
     </div>
-     {/* Styles for floating menu */}
-{/* Styles for floating menu */}
 {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {
