@@ -50,8 +50,8 @@ import TrackStatusNotifications from './TrackStatusNotifications.js';
 import TrackStatusGrid from './TrackStatusGrid.js';
 import TicketConfirmationGrid from './TicketConfirmationGrid.js';
 import TraderConfirmationGrid from './TraderConfirmationGrid.js';
-import TermsandConditions from './TermsandConditions.js';
-import CustomerCareGrid from './CustomerCareGrid.js';
+// import TermsandConditions from './TermsandConditions.js';
+// import CustomerCareGrid from './CustomerCareGrid.js';
 
 
 function App() {
@@ -111,8 +111,8 @@ function App() {
             <Route path="/trackStatusNotifications/:userType/:customerId" element={<TrackStatusNotifications />} />
             <Route path="/ticketConfirmationGrid/:userType/:district/:technicianId" element={<TicketConfirmationGrid />} />
             <Route path="/traderConfirmationGrid/:userType/:district/:dealerId" element={<TraderConfirmationGrid />} />
-            <Route path="/termsandConditions" element={<TermsandConditions />} />
-            <Route path="/customerCareGrid" element={<CustomerCareGrid />} />
+            {/* <Route path="/termsandConditions" element={<TermsandConditions />} />
+            <Route path="/customerCareGrid" element={<CustomerCareGrid />} /> */}
 
             <Route path="/trackStatus/:userType" element={<TrackStatusGrid />} />
           </Routes>
