@@ -63,8 +63,8 @@ const BidderTicketQuotation = () => {
    const [details, setDetails] = useState('');
     const [materialQuotation, setMaterialQuotation] = useState([{discount: "", fixedDiscount: "", deliverycharges: "", fixedDeliveryChargs: "", servicecharges: "", fixedServicecharges: "", gst: "", fixedGST: "", grandtotal: ""}])
   const [technicianList, setTechnicianList] = useState([]);
-
   const [dealerList, setDealerList] = useState([]);
+  const [materialTotal, setMaterialTotal] = useState('');
 
     useEffect(() => {
         console.log(subject, loading, isWithMaterial, enterQuoteAmount, fixedQuote, materialQuotation, raiseAQuoteId, id);
@@ -220,7 +220,10 @@ const BidderTicketQuotation = () => {
             }
             const dataDealer = await  response.json();
             setDealerDetails(dataDealer);
+             alert(JSON.stringify(dataDealer));
             setAddRemarks(dataDealer[0].addrRmarks || []);
+            setMaterialTotal(dataDealer[0].totalAmount);
+            // alert(dataDealer[0].totalAmount);
              setSpecifications(dataDealer[0].materials || []);
            setMaterialQuotation(dataDealer[0]?.materialQuotation || []);
           } catch (error) {
@@ -254,8 +257,8 @@ const BidderTicketQuotation = () => {
           // alert(lowest.dealerId);
           
            
-           if (lowest.addrRmarks?.length > 0) {
-            setAddRemarks(lowest.addrRmarks[0].remarks);
+           if (lowest.addRemarks?.length > 0) {
+            setAddRemarks(lowest.addRemarks[0].remarks);
           } else {
             setAddRemarks("");
           }
@@ -432,6 +435,7 @@ const BidderTicketQuotation = () => {
       Option2Time: "",
       TechnicianList: technicianList,
       DealerList: dealerList,
+      Rating: "", 
     };
     try {
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
@@ -843,7 +847,7 @@ const BidderTicketQuotation = () => {
           <tr key={index} className="text-end">
             {[
               dealer.dealerId,
-              specifications.reduce((acc, spec) => acc + (spec.quantity * spec.price || 0), 0),
+              materialTotal,
               Number(dealer.materialQuotation[0].fixedDiscount).toFixed(2),
               dealer.materialQuotation[0].fixedDeliveryChargs,
               Number(dealer.materialQuotation[0].fixedServicecharges).toFixed(2),
@@ -884,7 +888,7 @@ const BidderTicketQuotation = () => {
         <div key={index} className="card border p-2 mb-3">
           {[
             ['Trader ID', dealer.dealerId],
-            ['Total', specifications.reduce((acc, spec) => acc + (spec.quantity * spec.price || 0), 0)],
+            ['Total', materialTotal],
             ['Discount', Number(dealer.materialQuotation[0].fixedDiscount).toFixed(2)],
             ['Delivery Charges', dealer.materialQuotation[0].fixedDeliveryChargs],
             ['Service Charges', Number(dealer.materialQuotation[0].fixedServicecharges).toFixed(2)],
@@ -1068,6 +1072,15 @@ const BidderTicketQuotation = () => {
         </div>
       </Form>
     </div>
+    {/* Styles for floating menu */}
+<style jsx>{`
+        .floating-menu {
+          position: fixed;
+          top: 80px; /* Increased from 20px to avoid overlapping with the logo */
+          left: 20px; /* Adjusted for placement on the left side */
+          z-index: 1000;
+        }
+      `}</style>
   </div>
   );
 };

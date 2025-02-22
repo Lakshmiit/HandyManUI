@@ -201,6 +201,7 @@ const RaiseActionView = () => {
       Option2Time: "",
       TechnicianList: [],
       DealerList: [],
+      Rating: "",
     };
     try {
       
@@ -491,6 +492,14 @@ const RaiseActionView = () => {
       {requestType === "With Material" && (
         <div className="form-group">
           <label>Required (Optional)</label>
+          <div className="d-flex gap-3 mb-2">
+            <div style={{ flex: 4 }} className="text-start">
+              <label className="fw-bold mb-0">Material</label>
+            </div>
+            <div style={{ flex: 4 }} className="text-start">
+              <label className="fw-bold mb-0">Quantity</label>
+            </div>
+          </div>
           {specifications.map((spec, index) => (
             <div className="d-flex gap-3 mb-2" key={index}>
               <input

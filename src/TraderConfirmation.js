@@ -52,11 +52,10 @@ const TraderConfirmation = () => {
   const [enterQuoteAmount, setQuote] = useState('');
   const [technicianAcceptance, setTechnicianAcceptance] = useState([{type: "", technicianRemarks: ""}]); 
   const [dealerAcceptance] = useState([{type: "", dealerRemarks: ""}]); 
-  const [selectedStatus, setSelectedStatus] = useState('');
+  const [selectedStatus] = useState('');
   const [deliveryData, setDeliveryData] = useState('');
    const [dealerStatus, setDealerStatus] = useState('');
    const [technicianStatus, setTechnicianStatus] = useState('');
-
   const [dealerInvoice, setDealerInvoice] = useState([]);
   const [showAlert, setShowAlert] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
@@ -70,10 +69,13 @@ const TraderConfirmation = () => {
   const [technicianId, setTechnicianId] = useState([]);
   const [dealerId, setDealerId] = useState([]);
   const [deliveryId, setDeliveryId] = useState('');
-  
+  const [isSaved, setIsSaved] = useState(false);
+  const [dealerDetails, setDealerDetails] = useState('');
+  const [materialTotal, setMaterialTotal] = useState('');
+  const [materialQuotation, setMaterialQuotation] = useState([]);
  useEffect(() => {
-      console.log(loading, dealer, technicianStatus,technicianData, technicianFullName,deliveryData, dealerStatus,paymentData,showAlert, technicianAddress, technicianPhotoId, selectedSlot);
-    }, [loading, dealer,technicianData,technicianStatus, technicianFullName, deliveryData,dealerStatus,paymentData,showAlert, technicianAddress, technicianPhotoId, selectedSlot]);
+      console.log(loading, dealerDetails, dealer, technicianStatus,technicianData, technicianFullName,deliveryData, dealerStatus,paymentData,showAlert, technicianAddress, technicianPhotoId, selectedSlot);
+    }, [loading, dealerDetails, dealer,technicianData,technicianStatus, technicianFullName, deliveryData,dealerStatus,paymentData,showAlert, technicianAddress, technicianPhotoId, selectedSlot]);
 
     useEffect(() => {
       const fetchdealerData = async () => {
@@ -176,17 +178,17 @@ useEffect(() => {
   useEffect(() => {
     const fetchtechnicianData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
-
-/Technician/GetTechnicianDetailsForInvoice?TechnicianId=${lowestBidder}`);
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Technician/GetTechnicianDetailsForInvoice?TechnicianId=${lowestBidder}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
+        // alert(lowestBidder);
         const invoiceData = await response.json();
         setTechnicianData(invoiceData);
         setTechnicianName(invoiceData.technicianFullName);
         setAadharNumber(invoiceData.aadharNumber);
         setTechnicianAddress(invoiceData.address);
+        // alert(technicianAddress);
         setTechnicianPhotoId(invoiceData.technicianPhotoId);
         } catch (error) {
         console.error('Error fetching ticket data:', error);
@@ -245,6 +247,31 @@ useEffect(() => {
                 };
                 fetchPaymentData();
               }, [ticketId]);
+
+              useEffect(() => {
+                const fetchDealerData = async () => {
+                  try {
+                    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuoteByDealer/GetRaiseAQuoteLowestDealerByid?raiseAQuotetDealerId=${raiseTicketId}`);
+                    if (!response.ok) {
+                      throw new Error('Failed to fetch ticket data');
+                    }
+                    const dataDealer = await  response.json();
+                    
+                    alert(JSON.stringify(dataDealer));
+                    // console.log(JSON.stringify(dataDealer));
+                    setDealerDetails(dataDealer);
+                    setMaterialTotal(dataDealer.totalAmount);
+                    setMaterialQuotation(dataDealer[0]?.materialQuotation || []);
+                    //  setSpecifications(dataDealer[0].materials || []);
+                  } catch (error) {
+                    console.error('Error fetching dealer data:', error);
+                  } finally {
+                    setLoading(false);
+                  }
+                };
+                fetchDealerData();
+              }, [raiseTicketId]);
+        
             
               
               // Handle file upload
@@ -393,6 +420,7 @@ useEffect(() => {
         },
         body: JSON.stringify(payload),
       });
+
       if (!response.ok) {
         throw new Error('Failed to save ticket data');
       }
@@ -519,6 +547,7 @@ try {
     throw new Error('Failed to create a Uploaded Invoice.');
   }
   alert('Uploaded Invoice saved Successfully!');
+  setIsSaved(true);
 } catch (error) {
   console.error('Error:', error);
   window.alert('Failed to create the Uploaded Invoice. Please try again later.');
@@ -530,11 +559,12 @@ const handleBothActions =  (e) => {
   e.preventDefault();
   handleSaveTicket(e);
   handleUpdateTicket(e);
+  setIsSaved(true);
 };
 
-const handleStatusChange = (event) => {
-  setSelectedStatus(event.target.value);
-};
+// const handleStatusChange = (event) => {
+//   setSelectedStatus(event.target.value);
+// };
 
   return (
     <div className="d-flex">
@@ -579,8 +609,8 @@ const handleStatusChange = (event) => {
             <td>{details}</td>
           </tr>
           <tr>
-            <td><strong>Approved Amount</strong></td>
-            <td>{approvedAmount}</td>
+            <td><strong>Bid Amount</strong></td>
+            <td>{materialTotal - (materialQuotation?.[0]?.fixedDiscount || 0)}</td>
           </tr>
           
 
@@ -716,6 +746,22 @@ const handleStatusChange = (event) => {
 
 <div className="form-group m-2">
   <label className='section-title'>Required Materials Details</label>
+  {!isMobile ? (
+  <div className='mt-3'>
+  <div className='d-flex gap-3 text-center'>
+    <div style={{ flex: 4}}>
+      <label className="fw-bold">Material</label>
+    </div>
+    <div style={{ flex: 4}}>
+      <label className="fw-bold">Quantity</label>
+    </div>
+    <div style={{ flex: 4 }}>
+      <label className="fw-bold">Received Quantity</label>
+    </div>
+    <div style={{ flex: 4 }}>
+      <label className="fw-bold">Remaining Quantity</label>
+    </div>
+  </div>
   {specifications.map((spec, index) => (
     <div className="d-flex gap-3 mb-2" key={index}>
       <input
@@ -748,6 +794,21 @@ const handleStatusChange = (event) => {
       />
     </div>
   ))}
+</div>
+) : (
+  <div>
+      {specifications.map((spec, index) => (
+        <div key={index} className="card mb-3 shadow-sm" style={{ maxWidth: "300px" }}>
+          <div className="card-body">
+            <p className="mb-1"><strong>Material:</strong> {spec.material}</p>
+            <p className="mb-1"><strong>Quantity:</strong> {spec.quantity}</p>
+            <p className="mb-1"><strong>Received Quantity:</strong> {spec.receivedQuantity}</p>
+            <p className="mb-1"><strong>Remaining Quantity:</strong> {spec.remainingQuantity}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
 </div>
 
 <h3 className="section-title">Invoice Details</h3>
@@ -783,7 +844,7 @@ const handleStatusChange = (event) => {
               />
               {showAlert && (
                 <div className="alert alert-danger  mt-2">
-                  Please click the <strong>Upload Files</strong> button to upload the selected images.
+                  Please click the <strong>Upload Invoice</strong> button to upload the selected Invoice.
                 </div>
               )}
               <div className="mt-1">
@@ -799,7 +860,9 @@ const handleStatusChange = (event) => {
               >
                 {loading ? 'Uploading...' : 'Upload Invoice'}
               </button>
-              <button className='btn btn-warning m-1' onClick={handleUploadInvoice}>Save</button>
+              <button className='btn btn-warning m-1' onClick={handleUploadInvoice}
+              disabled={isSaved}
+              >Save</button>
           </div>
           
         <div className='payment'>
@@ -812,7 +875,7 @@ const handleStatusChange = (event) => {
                 <tbody>
                     <tr>
                         <td><strong>Technician Address</strong></td>
-                        <td>{address}</td>
+                        <td>{technicianAddress}</td>
                     </tr>
                     <tr>
                         <td><strong>Aadhar Number</strong></td>
@@ -882,8 +945,8 @@ const handleStatusChange = (event) => {
             </div> */}
   
       <div className='payment m-0'>
-          <h3 className='section-title'>Ticket Closing Status</h3>
-          <div className='d-flex flex-column m-1'>
+          {/* <h3 className='section-title'>Ticket Closing Status</h3> */}
+          {/* <div className='d-flex flex-column m-1'>
         <label className='fs-5'>
             <input 
             type="checkbox" 
@@ -894,7 +957,7 @@ const handleStatusChange = (event) => {
             readOnly
              />
             Material Delivered
-            </label>
+            </label> */}
           {/* <label className='fs-5'>
             <input 
             type="checkbox" 
@@ -915,7 +978,7 @@ const handleStatusChange = (event) => {
             />
             Pending Ticket Araised Customer Issues
           </label> */}
-          </div>
+          {/* </div> */}
           {/* <div>
           <h4 className="mt-2 fs-5 section-title">Assigned To</h4>
         <select className="form-control w-50 mb-3 fs-5"
@@ -927,12 +990,24 @@ const handleStatusChange = (event) => {
         </select>
           </div> */}
           <div className='d-flex flex-row align-items-center gap-5'> 
-          <button className='btn btn-warning fs-5' title='save' onClick={handleBothActions}>Save</button>
+          <button className='btn btn-warning fs-5 m-2' title='save' 
+          onClick={handleBothActions} 
+          // disabled={isSaved}
+          >Save</button>
           {/* <button className='btn btn-warning fs-5'title='forward' >Forward</button> */}
           </div>
       </div>
     </div>
     </div>
+    {/* Styles for floating menu */}
+<style jsx>{`
+        .floating-menu {
+          position: fixed;
+          top: 80px; /* Increased from 20px to avoid overlapping with the logo */
+          left: 20px; /* Adjusted for placement on the left side */
+          z-index: 1000;
+        }
+      `}</style>
     </div>
   );
 };

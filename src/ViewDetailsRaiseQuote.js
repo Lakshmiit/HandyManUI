@@ -186,6 +186,7 @@ const RaiseQuoteTechnicianDetails = () => {
       Option2Time: "",
       TechnicianList: technicianId,
       DealerList: [],
+      Rating: "",
     };
     try {
       
@@ -299,7 +300,7 @@ const RaiseQuoteTechnicianDetails = () => {
           setGST(techData.gst);
           setFixedGST(techData.fixedGST);
           setTotalAmount(techData.totalAmount);
-          setAddrRmarks(techData.addrRmarks || [{ requestedDate: new Date(), remarks: "" }]);
+          setAddrRmarks(techData.addRemarks || [{ requestedDate: new Date(), remarks: "" }]);
         } catch (error) {
           console.error('Error fetching technician data:', error);
         } finally {
@@ -612,8 +613,8 @@ const RaiseQuoteTechnicianDetails = () => {
       {/* Material Input Fields */}
       {requestType === "With Material" && (
         <div className="form-group">
-          <label>Required (Optional)</label>
-          <div className='d-flex gap-3 mb-2'>
+          <label>Required Material(Optional)</label>
+          <div className='d-flex gap-3 mb-2 text-center'>
       <div style={{ flex: 4 }}>
         <label className="fw-bold">Material</label>
       </div>

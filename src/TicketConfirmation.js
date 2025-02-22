@@ -48,7 +48,7 @@ const BookingConfirmation = () => {
   const [technicianDetails, setTechnicianDetails] = useState([]);
   const [enterQuoteAmount, setQuote] = useState('');
   const [othercharges, setOtherCharge] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState('');
+  const [selectedStatus] = useState('');
   const [transactionDetails, setTransactionDetails] = useState("");
   const [dealerAddress, setDealerAddress] = useState('');
   const [dealerData, setDealerData] = useState('');
@@ -72,6 +72,7 @@ const BookingConfirmation = () => {
   const [dealerId, setDealerId] = useState([]);
   const [isMaterialCollected, setIsMaterialCollected] = useState(false);
 const [isMaterialSaved, setIsMaterialSaved] = useState(false);
+const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
   console.log(ticketData,isTimeSlotSaved,deliveryId, internalStatus,loading,id,technicianData, selectedSlot, dealerStatus, paymentData, dealerData);
@@ -571,6 +572,7 @@ const handleSlotSave = () => {
     // handleMaterialUpdateRaiseTicket(e);
     handleMaterialUpdate(e);
     handleMaterialSave(e);
+    setIsMaterialSaved(true);
   };
 
   const DeliveryDataTime = new Date().toLocaleString("en-IN", {
@@ -824,6 +826,7 @@ const handleStatusAction = (e) => {
   handleSlotSave(e)
   // handleSaveTicket(e);
   handleTimeSlotSave(e);
+  setIsSaved(true);
 }
 
 const handleBothActions =  (e) => {
@@ -833,6 +836,7 @@ const handleBothActions =  (e) => {
   // handleMaterialUpdate(e);
   //handleTimeSlotSave(e)
   handlePaymentTicket(e);
+  setIsSaved(true);
 };
 
 // const handleCheckboxChange = (mode) => {
@@ -872,12 +876,12 @@ const handleBothActions =  (e) => {
     
       setSpecifications(updatedSpecifications);
     };
-  const handleStatusChange = (event) => {
-    setSelectedStatus(event.target.value);
+  // const handleStatusChange = (event) => {
+  //   setSelectedStatus(event.target.value);
+  // };
+  const handleMaterialCollectedChange = () => {
+    setIsMaterialCollected((prev) => !prev);
   };
-  const handleMaterialCollectedChange = (e) => {
-    setIsMaterialCollected(e.target.checked);
-    setIsMaterialSaved(false); };
 
 const handleMaterialSave = () => {
     if (isMaterialCollected) {
@@ -978,7 +982,7 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
                 </div>
             )}
                 <div className='text-center'>
-                <button className='btn btn-warning fs-5' onClick={handleStatusAction} disabled={!selectedSlot}
+                <button className='btn btn-warning fs-5' onClick={handleStatusAction} disabled={!selectedSlot || isSaved}
                 //  disabled={internalStatus !== "Customer Approved" && assignedTo === "Technical Agency"}
                 // disabled={deliveryInternalStatus === "Technician Approved L1"}
                 >Save</button>
@@ -991,19 +995,35 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
      
   <div className="form-group m-2">
     <label className="section-title">Required Materials Details</label>
-    {specifications.map((spec, index) => (
+    {!isMobile ? (
+      <div className="mt-3">
+        <div className='d-flex gap-3 text-start'>
+          <div style={{ flex: 4, textAlign: 'center'}}>
+            <label className="fw-bold">Material</label>
+          </div>
+          <div style={{ flex: 4, textAlign: 'center' }}>
+            <label className="fw-bold">Quantity</label>
+          </div>
+          <div style={{ flex: 4 }}>
+            <label className="fw-bold">Received Quantity</label>
+          </div>
+          <div style={{ flex: 4 }}>
+            <label className="fw-bold">Remaining Quantity</label>
+          </div>
+        </div>
+      {specifications.map((spec, index) => (
         <div className="d-flex gap-3 mb-2" key={index}>
           <input
             type="text"
             className="form-control"
             value={spec.material}
-            placeholder="Enter Material"
+            // placeholder="Enter Material"
             // onChange={(e) => handleMaterialChange(index, "material", e.target.value)}
           />
           <input
             type="text"
             className="form-control text-center"
-            placeholder="Enter Quantity"
+            // placeholder="Enter Quantity"
             value={spec.quantity}
             // onChange={(e) => handleMaterialChange(index, "quantity", e.target.value)}
           />
@@ -1018,7 +1038,7 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
             type="text"
             className="form-control"
             value={spec.remainingQuantity}
-            placeholder="Remaining Quantity"
+             placeholder="Remaining Quantity"
             onChange={(e) => handleMaterialChange(index, "remainingQuantity", e.target.value)}
             readOnly
           />
@@ -1030,7 +1050,46 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
           />
         </div>
     ))}
+    </div>    
+    ) : (
+    <div>
+      {specifications.map((spec, index) => (
+        <div key={index} className="card mb-3 shadow-sm" style={{ maxWidth: "300px" }}>
+          <div className="card-body">
+            <p className="mb-1"><strong>Material:</strong> {spec.material}</p>
+            <p className="mb-1"><strong>Quantity:</strong> {spec.quantity}</p>
+              <p className="d-flex align-items-center gap-2 mb-2">
+              <label className="fw-bold">Received Quantity</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Enter Received Quantity"
+                value={spec.receivedQuantity}
+                onChange={(e) => handleMaterialChange(index, "receivedQuantity", e.target.value)}
+              />
+            </p>
+            <p className="d-flex align-items-center gap-2 mb-2">
+              <label className="fw-bold">Remaining Quantity</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Enter Remaining Quantity"
+                value={spec.remainingQuantity}
+                onChange={(e) => handleMaterialChange(index, "remainingQuantity", e.target.value)}
+                readOnly
+              />
+            <input
+            type="checkbox"
+            className="form-check-input m-3 border-dark"
+            checked={spec.isSelected}
+            onChange={() => handleRadioChange(index)}
+          />
+          </p>
+          </div>
+        </div>
+      ))}
     </div>
+  )}
       
         <div className='payment m-1'>
             <label className='section-title'>Material Collection Point</label>
@@ -1050,13 +1109,12 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
             onChange={handleMaterialCollectedChange} />
             Material Collected to Trader/Customer Care
             </label>
-            <button className='btn btn-warning m-1 fs-5' title='save' onClick={handleBothMaterialActions}
+            <button className='btn btn-warning m-1 fs-5' title='save' 
+            onClick={handleBothMaterialActions} disabled={!isMaterialCollected || isMaterialSaved}
             // disabled={!(internalStatus === "Dealer Approved" && assignedTo === "Technical Agency") &&
             //   (internalStatus === "Technician Approved" && assignedTo === "Dealer/Trader")}
 
             // disabled={internalStatus === "Customer Approved"}
-      
-            disabled={!isMaterialCollected}
              >Save</button> 
         </div>
         
@@ -1109,7 +1167,7 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
           onChange={(e) => setTransactionDetails(e.target.value)}
           />
           </div>
-          
+{/*           
           <h3 className='section-title'>Ticket Completion Status</h3>
           <div className='d-flex flex-column m-1'>
         <label className='fs-5'>
@@ -1124,18 +1182,29 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
             Job Completed
             </label>
           
-          </div>
+          </div> */}
           <div className='d-flex flex-row align-items-center gap-5'> 
-          <button className='btn btn-warning fs-5' title='save' onClick={handleBothActions} 
+          <button className='btn btn-warning fs-5' title='save' onClick={handleBothActions}
+          disabled={!isMaterialSaved} 
           // disabled={internalStatus !== "Technician Approved L1"}
           // disabled={internalStatus === "Customer Approved"}
-           disabled={!isMaterialSaved}
           >Save</button>
           {/* <button className='btn btn-warning fs-5'title='forward' >Forward</button> */}
           </div>
       </div>
     </div>
     </div>
+    </div>
+    {/* Styles for floating menu */}
+<style jsx>{`
+        .floating-menu {
+          position: fixed;
+          top: 80px; /* Increased from 20px to avoid overlapping with the logo */
+          left: 20px; /* Adjusted for placement on the left side */
+          z-index: 1000;
+        }
+      `}</style>
+    
     </div>
   );
 };

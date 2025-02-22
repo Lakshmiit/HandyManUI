@@ -364,6 +364,7 @@ const handleUpdateTicket = async (e) => {
           option2Day: "", 
           option2Time: "", 
           dealerList: [], 
+          Rating: "",
       };
 
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
@@ -410,7 +411,7 @@ const handleUpdateTicket = async (e) => {
       fixedGST: fixedGST.toString(),
       totalAmount: totalAmount.toString(),
       raiseTicketId: raiseTicketId,
-      addrRmarks: addrRmarks.map((comment) => ({
+      AddRemarks: addrRmarks.map((comment) => ({
         requestedDate: comment.requestedDate,
         remarks: comment.remarks,
     })),
@@ -922,38 +923,91 @@ setTotalAmount(roundedGrandTotal);
       {/* Material Input Fields */}
       {requestType === "With Material" && (
         <div className="form-group">
-          <label>Required (Optional)</label>
-          {specifications.map((spec, index) => (
-            <div className="d-flex gap-3 mb-2" key={index}>
-              <input
-                type="text"
-                className="form-control"
-                value={spec.material}
-                placeholder="Enter Material"
-                onChange={(e) => handleMaterialChange(index, "material", e.target.value)}
-                required
-              />
-              <input
-                type="text"
-                className="form-control text-center"
-                placeholder="Enter Quantity"
-                value={spec.quantity}
-                onChange={(e) => handleMaterialChange(index,"quantity", e.target.value)}
-                required
-              />
-              <button
-                type="button"
-                className="btn btn-danger"
-                onClick={() => handleRemoveMaterial(index)}
-              >
-                Remove
-              </button>
+        <strong>Required Material(Optional)</strong>
+        {!isMobile ? (
+          <div className="mt-3">
+            <div className="d-flex gap-3 mb-2">
+              <div style={{ flex: 4 }}>
+                <label className="fw-bold">Material</label>
+              </div>
+              <div style={{ flex: 4 }}>
+                <label className="fw-bold">Quantity</label>
+              </div>
             </div>
-          ))}
-          <button type="button" className="btn btn-primary" onClick={handleAddMaterial}>
-            Add Material
-          </button>
-        </div>
+            {specifications.map((spec, index) => (
+              <div className="d-flex gap-3 mb-2" key={index}>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={spec.material}
+                  placeholder="Enter Material"
+                  onChange={(e) => handleMaterialChange(index, "material", e.target.value)}
+                />
+                <input
+                  type="text"
+                  className="form-control text-center"
+                  placeholder="Enter Quantity"
+                  value={spec.quantity}
+                  onChange={(e) => handleMaterialChange(index, "quantity", e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={() => handleRemoveMaterial(index)}
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+            <button type="button" className="btn btn-primary m-1" onClick={handleAddMaterial}>
+              Add Material
+            </button>
+              </div>
+        ) : (
+          <>
+            {specifications.map((spec, index) => (
+              <div key={index} className="card mb-3 shadow-sm">
+                <div className="card-body">
+                  <p className="d-flex align-items-center gap-2 mb-2">
+                    <strong>Material:</strong>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Enter Material"
+                      value={spec.material}
+                      onChange={(e) => handleMaterialChange(index, "material", e.target.value)}
+                    />
+                  </p>
+                  <p className="d-flex align-items-center gap-2 mb-2">
+                    <strong>Quantity:</strong>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Enter Quantity"
+                      value={spec.quantity}
+                      onChange={(e) => handleMaterialChange(index, "quantity", e.target.value)}
+                    />
+                  </p>
+    
+                <div className='text-end'>
+                  <button
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={() => handleRemoveMaterial(index)}
+                >
+                  Remove
+                </button>
+                </div>
+                </div>
+              </div>
+            ))}
+    
+            <button type="button" className="btn btn-primary m-1" onClick={handleAddMaterial}>
+              Add Material
+            </button>
+                </>
+        )}
+      </div>
       )}
     </div>
     <table className="table table-bordered">
@@ -1120,7 +1174,7 @@ setTotalAmount(roundedGrandTotal);
                 placeholder="Comment Text"
                 value={comment.commentText}
                  onChange={(e) => handleAddComment(index,"commentText", e.target.value)}
-                // readOnly
+                 readOnly
               />
             </div>
           ))}

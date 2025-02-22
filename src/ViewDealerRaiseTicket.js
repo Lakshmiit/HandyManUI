@@ -160,7 +160,7 @@ const RaiseQuotation = () => {
     //   // setIsDealerSelected(value === "Dealer/Trader");
     // };  
   
-    const materialAmount = () => specifications.reduce((sum, spec) => sum + Number(spec.total), 0);
+    const TotalAmount = () => specifications.reduce((sum, spec) => sum + Number(spec.total), 0);
 
 const calculateTotalPrice = () => {
   
@@ -170,7 +170,7 @@ const calculateTotalPrice = () => {
     const deliveryCharges = updated[0]?.deliverycharges;
     const serviceCharges = updated[0]?.servicecharges; 
     const gst = updated[0]?.gst;
-    const baseAmount = materialAmount();
+    const baseAmount = TotalAmount();
   
     const fixedDiscount = baseAmount * (discount / 100); // Percentage discount
     const fixedDeliveryChargs = deliveryCharges;
@@ -278,7 +278,7 @@ useEffect(() => {
             setId(dataDealer.id);
             // alert(dataDealer.dealerId);
             setCustomerId(dataDealer.customerId);
-            setAddRemarks(dataDealer[0].addrRmarks || []);
+            setAddRemarks(dataDealer[0].addRemarks || []);
             setSpecifications(dataDealer[0].materials || []);
             setMaterialQuotation(dataDealer[0].materialQuotation || []);
           } catch (error) {
@@ -356,6 +356,7 @@ useEffect(() => {
       Option2Time: "",
      TechnicianList: technicianId,
      DealerList: updatedDealerList,
+     Rating: "", 
     };
     
       // alert(JSON.stringify(payload));
@@ -385,6 +386,7 @@ const handleUpdateTicket = async (e) => {
     ticketId: ticketData.raiseTicketId,
     CustomerId: ticketData.customerId,
     DealerId: dealerId,
+    TotalAmount: TotalAmount().toString(),
     raiseTicketId: raiseTicketId,
     raiseAQuoteDate: new Date(), 
     raiseAQuoteByDealerId: "string",
@@ -416,6 +418,7 @@ materials: specifications.map((spec) => ({
   price: spec.price ? spec.price.toString() : "0",
   total: spec.total ? spec.total.toString() : "0",
 })),
+
 materialQuotation: material.map((mat) => ({
   
   discount: mat.discount ? mat.discount.toString() : "0",
@@ -431,8 +434,7 @@ materialQuotation: material.map((mat) => ({
  
   };  
   try {
-    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
-/RaiseAQuoteByDealer/CreateRaiseAQuoteByDealer`, {
+    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuoteByDealer/CreateRaiseAQuoteByDealer`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -629,37 +631,41 @@ materialQuotation: material.map((mat) => ({
             </div>  */}
 
           {/* Material Input Fields */}
-        <div className="form-group m-1">
-          <label>Required (Optional)</label>
+          <div className="form-group">
+        <strong>Required Material(Optional)</strong>
+        {!isMobile ? (
+      <div className="mt-3">
           <div className='d-flex gap-3 mb-2 text-center'>
-      <div style={{ flex: 4 }}>
-        <label className="fw-bold">Material</label>
-      </div>
-      <div style={{ flex: 4 }}>
-        <label className="fw-bold">Quantity</label>
-      </div>
-      <div style={{ flex: 4 }}>
-        <label className="fw-bold">Price</label>
-      </div>
-      <div style={{ flex: 4 }}>
-        <label className="fw-bold">Total</label>
-      </div>
-    </div>
+          <div style={{ flex: 4 }}>
+            <label className="fw-bold">Material</label>
+          </div>
+          <div style={{ flex: 4 }}>
+            <label className="fw-bold">Quantity</label>
+          </div>
+          <div style={{ flex: 4 }}>
+            <label className="fw-bold">Price</label>
+          </div>
+          <div style={{ flex: 4 }}>
+            <label className="fw-bold">Total</label>
+          </div>
+          </div> 
           {specifications.map((spec, index) => (
-            <div className="d-flex gap-3 mb-2" key={index}>
-               <input
+             <div className="d-flex gap-3 mb-2" key={index}>
+              <input
                 type="text"
                 className="form-control"
                 value={spec.material}
                 placeholder="Enter Material"
-                // onChange={(e) => handleMaterialChange(index, "material", e.target.value)}
+                onChange={(e) => handleMaterialChange(index, "material", e.target.value)}
+                readOnly
               />
               <input
                 type="text"
                 className="form-control text-center"
                 placeholder="Enter Quantity"
                 value={spec.quantity}
-                // onChange={(e) => handleMaterialChange(index, "quantity", e.target.value)}
+                onChange={(e) => handleMaterialChange(index, "quantity", e.target.value)}
+                readOnly
               />
               <input
                 type="text"
@@ -667,6 +673,7 @@ materialQuotation: material.map((mat) => ({
                 placeholder="Enter Price"
                 value={spec.price}
                 onChange={(e) => handleMaterialChange(index, "price", e.target.value)}
+                
               />
               <input
                 type="text"
@@ -674,9 +681,45 @@ materialQuotation: material.map((mat) => ({
                 placeholder="Total"
                 value={spec.total}
                 onChange={(e) => handleMaterialChange(index, "total", e.target.value)}
+                readOnly
               />
             </div>
           ))}
+        </div>
+        ) : (
+          <div>
+            {specifications.map((spec, index) => (
+              <div key={index} className="card mb-3 shadow-sm" style={{ maxWidth: "300px" }}>
+                <div className="card-body">
+                  <p className="mb-1"><strong>Material:</strong> {spec.material}</p>
+                  <p className="mb-1"><strong>Quantity:</strong> {spec.quantity}</p>
+                    <p className="d-flex align-items-center gap-2 mb-2">
+                    <label className="fw-bold">Price: </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Enter Price"
+                      value={spec.price}
+                      onChange={(e) => handleMaterialChange(index, "price", e.target.value)}
+                      
+                    />
+                  </p>
+                  <p className="d-flex align-items-center gap-2 mb-2">
+                    <label className="fw-bold">Total: </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Enter Total"
+                      value={spec.total}
+                      onChange={(e) => handleMaterialChange(index, "total", e.target.value)}
+                      readOnly
+                    />
+                </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
         </div>
     </div>
 
@@ -691,7 +734,7 @@ materialQuotation: material.map((mat) => ({
       <input
         type="number"
         className="form-control text-end"
-        value={materialAmount()}
+        value={TotalAmount()}
         disabled
       />
     </td>
@@ -709,10 +752,10 @@ materialQuotation: material.map((mat) => ({
         setMaterialQuotation((prev) => {
           const updated = [...prev];
           updated[0].discount = parseFloat(e.target.value);
-           const calculateserviceCharge = ((materialAmount() - e.target.value) * fixedServiceCharges)/100;           
+           const calculateserviceCharge = ((TotalAmount() - e.target.value) * fixedServiceCharges)/100;           
            setCalculatedServiceCharge(calculateserviceCharge);
            setCalculatedGSTS(((calculateserviceCharge * gsts) / 100).toFixed(2));
-           var CalculateTotal = (materialAmount() - e.target.value) + Number(fixedDeliveryCharge) + Number(calculateserviceCharge) + Number(calculatedGSTS);
+           var CalculateTotal = (TotalAmount() - e.target.value) + Number(fixedDeliveryCharge) + Number(calculateserviceCharge) + Number(calculatedGSTS);
           // alert(CalculateTotal);
            setCalculatedGrandTotal(Number(CalculateTotal).toFixed(2));
           return updated;
@@ -888,6 +931,15 @@ materialQuotation: material.map((mat) => ({
         </div>
       </Form>
     </div>
+    {/* Styles for floating menu */}
+<style jsx>{`
+        .floating-menu {
+          position: fixed;
+          top: 80px; /* Increased from 20px to avoid overlapping with the logo */
+          left: 20px; /* Adjusted for placement on the left side */
+          z-index: 1000;
+        }
+      `}</style>
   </div>
   );
 };

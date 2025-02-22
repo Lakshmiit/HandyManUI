@@ -111,7 +111,7 @@ const RaiseTicketQuotation = () => {
           setFixedServiceCharge(quotedata.fixedServiceCharge);
           setFixedOtherCharge(quotedata.fixedOtherCharge);
           setSpecifications(quotedata.materials || [{material: "", quantity: "", price: "", total: ""}]);         
-          setAddRemarks(Array.isArray(quotedata.addrRmarks) ? quotedata.addrRmarks : []);
+          setAddRemarks(Array.isArray(quotedata.addRemarks) ? quotedata.addRemarks : []);
         } catch (error) {
           console.error('Error fetching data:', error);
         }
@@ -274,8 +274,8 @@ useEffect(() => {
           setLowestBidder(lowest.technicianId);
           setSpecifications(lowest.materials);
           setMaterialQuotation(lowest.materialQuotation);
-          if (Array.isArray(lowest.addrRmarks) && lowest.addrRmarks.length > 0) {
-            setAddRemarks(lowest.addrRmarks); 
+          if (Array.isArray(lowest.addRemarks) && lowest.addRemarks.length > 0) {
+            setAddRemarks(lowest.addRemarks); 
           } else {
             setAddRemarks([]);
           }
@@ -386,6 +386,7 @@ useEffect(() => {
       Option2Time: "",
       TechnicianList: technicianList,
       DealerList: [],
+      Rating: "",
     };
     try {
       
@@ -435,7 +436,7 @@ useEffect(() => {
       fixedOtherCharge:fixedOtherCharge,
       fixedServiceCharge: fixedServiceCharge,
       fixedGST: fixedGST,
-      addrRmarks:addrRmarks.map((comment) => ({
+      AddRemarks:addrRmarks.map((comment) => ({
           requestedDate: comment.requestedDate,
           remarks: comment.remarks ,
       })),
@@ -731,12 +732,12 @@ useEffect(() => {
 
       {requestType === "With Material" && (
             <div className="form-group">
-              <label>Rate Quoted By<span className="req_star">*</span></label>
+              <strong>Rate Quoted By<span className="req_star">*</span></strong>
               <div className="radio">
                 <label className="m-1">
                   <input className="form-check-input m-2 border-dark"
                   type="radio"
-                  name="RateQuotedBy"
+                  name="rateQuotedBy"
                   value="Customer Care"
                   checked={rateQuotedBy === "Customer Care"}
                   onChange={(e) => handleRateQuotedByChange(e.target.value)}
@@ -748,7 +749,7 @@ useEffect(() => {
                   <input
                   className="form-check-input m-2 border-dark"
                   type="radio"
-                  name="RateQuotedBy"
+                  name="rateQuotedBy"
                   value="Dealer/Trader"
                   checked={rateQuotedBy === "Dealer/Trader"}
                   onChange={(e) => handleRateQuotedByChange(e.target.value)}
@@ -761,76 +762,158 @@ useEffect(() => {
           )}
 
           {/* Material Input Fields */}
-      {requestType === "With Material" && (
-        <div className="form-group">
-          <label>Required (Optional)</label>
-          <div className='d-flex gap-3 mb-2 '>
-      <div style={{ flex: 4 }}>
-        <label className="fw-bold">Material</label>
-      </div>
-      <div style={{ flex: 4 }}>
-        <label className="fw-bold">Quantity</label>
-      </div>
-      <div style={{ flex: 4 }}>
-        <label className="fw-bold">Price</label>
-      </div>
-      <div style={{ flex: 4 }}>
-        <label className="fw-bold">Total</label>
-      </div>
-    </div>
-          {specifications.map((spec, index) => (
-            <div className="d-flex gap-3 mb-2" key={index}>
-              <input
-                type="text"
-                className="form-control"
-                value={spec.material}
-                placeholder="Enter Material"
-                onChange={(e) => handleMaterialChange(index, "material", e.target.value)}
-                readOnly
-              />
-              <input
-                type="text"
-                className="form-control text-center"
-                placeholder="Enter Quantity"
-                value={spec.quantity}
-                onChange={(e) => handleMaterialChange(index, "quantity", e.target.value)}
-                readOnly
-              /> 
-              <input
-                type="text"
-                className="form-control text-end"
-                placeholder="Enter Price"
-                value={spec.price}
-                onChange={(e) => handleMaterialChange(index, "price", e.target.value)}
-              />
-              <input
-                type="text"
-                className="form-control text-end"
-                placeholder="Total"
-                value={spec.total}
-                onChange={(e) => handleMaterialChange(index, "total", e.target.value)}
-              />
+          {requestType === "With Material" && (
+  <div className="form-group">
+    <strong>Required Material(Optional)</strong>
+    {!isMobile ? (
+      <div className="mt-3">
+        <div className="d-flex gap-3 mb-2">
+          <div style={{ flex: 4 }}>
+            <label className="fw-bold">Material</label>
+          </div>
+          <div style={{ flex: 4 }}>
+            <label className="fw-bold">Quantity</label>
+          </div>
+          <div style={{ flex: 4 }}>
+            <label className="fw-bold">Price</label>
+          </div>
+          <div style={{ flex: 4 }}>
+            <label className="fw-bold">Total</label>
+          </div>
+        </div>
+        {specifications.map((spec, index) => (
+          <div className="d-flex gap-3 mb-2" key={index}>
+            <input
+              type="text"
+              className="form-control"
+              value={spec.material}
+              placeholder="Enter Material"
+              onChange={(e) => handleMaterialChange(index, "material", e.target.value)}
+              readOnly
+            />
+            <input
+              type="text"
+              className="form-control text-center"
+              placeholder="Enter Quantity"
+              value={spec.quantity}
+              onChange={(e) => handleMaterialChange(index, "quantity", e.target.value)}
+              readOnly
+            />
+            <input
+              type="text"
+              className="form-control text-end"
+              placeholder="Enter Price"
+              value={spec.price}
+              onChange={(e) => handleMaterialChange(index, "price", e.target.value)}
+            />
+            <input
+              type="text"
+              className="form-control text-end"
+              placeholder="Total"
+              value={spec.total}
+              onChange={(e) => handleMaterialChange(index, "total", e.target.value)}
+            />
 
-              <button
-                type="button"
-                className="btn btn-danger"
-                onClick={() => handleRemoveMaterial(index)}
-              > 
-                Remove
-              </button>
-            </div>
-          ))}
-          <button type="button" className="btn btn-primary m-1" onClick={handleAddMaterial}>
-            Add Material
-          </button>
-          {rateQuotedBy === "Dealer/Trader" && (
-          <button type="button" className="btn btn-primary m-1" onClick={() =>handleGetQuoteClick(raiseTicketId)}>
+            <button
+              type="button"
+              className="btn btn-danger"
+              onClick={() => handleRemoveMaterial(index)}
+            >
+              Remove
+            </button>
+          </div>
+        ))}
+        <button type="button" className="btn btn-primary m-1" onClick={handleAddMaterial}>
+          Add Material
+        </button>
+        {rateQuotedBy === "Dealer/Trader" && (
+          <button
+            type="button"
+            className="btn btn-primary m-1"
+            onClick={() => handleGetQuoteClick(raiseTicketId)}
+          >
             Get Quotation
           </button>
-          )}
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    ) : (
+      <>
+        {specifications.map((spec, index) => (
+          <div key={index} className="card mb-3 shadow-sm">
+            <div className="card-body">
+              <p className="d-flex align-items-center gap-2 mb-2">
+                <strong>Material:</strong>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Enter Material"
+                  value={spec.material}
+                  onChange={(e) => handleMaterialChange(index, "material", e.target.value)}
+                  readOnly
+                />
+              </p>
+              <p className="d-flex align-items-center gap-2 mb-2">
+                <strong>Quantity:</strong>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Enter Quantity"
+                  value={spec.quantity}
+                  onChange={(e) => handleMaterialChange(index, "quantity", e.target.value)}
+                  readOnly
+                />
+              </p>
+
+              <p className="d-flex align-items-center gap-2 mb-2">
+                <label className="fw-bold">Price:</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Enter Price"
+                  value={spec.price}
+                  onChange={(e) => handleMaterialChange(index, "price", e.target.value)}
+                  readOnly
+                />
+              </p>
+
+              <p className="d-flex align-items-center gap-2 mb-2">
+              <label className="fw-bold">Total:</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Enter Total"
+                  value={spec.total}
+                  onChange={(e) => handleMaterialChange(index, "total", e.target.value)}
+                  readOnly
+                />
+              </p>
+
+              <div className="d-flex flex-column align-items-center gap-2"> 
+                <button className="btn btn-danger text-center w-30" onClick={() => handleRemoveMaterial(index)}>
+                  Remove
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+
+        <button className="btn btn-primary text-white w-30 m-1" onClick={handleAddMaterial}>
+          Add Material
+        </button>
+        {rateQuotedBy === "Dealer/Trader" && (
+          <button
+            type="button"
+            className="btn btn-primary m-1"
+            onClick={() => handleGetQuoteClick(raiseTicketId)}
+          >
+            Get Quotation
+          </button>
+        )}
+      </>
+    )}
+  </div>
+)}
+      
 
     <table className="table table-bordered m-1">
     <tbody>
@@ -1099,6 +1182,7 @@ useEffect(() => {
           <Link onClick={handleBothActions} className="btn btn-warning text-white mx-2" title='Forward'>
             <ForwardIcon />
           </Link>
+        </div>
         </div>
       </Form>
       <style jsx>{`

@@ -72,6 +72,9 @@ const CustomerCareConfirmation = () => {
   const [dealerName,setDealerName] = useState('');
   const [technicianId, setTechnicianId] = useState([]);
   const [dealerId, setDealerId] = useState([]);
+  const [rating, setRating] = useState('');
+  const [isFinalized, setIsFinalized]= useState(false);
+  
   // const [isDealerChecked, setIsDealerChecked] = useState(false);
   // const [isTechnicianChecked, setIsTechnicianChecked] = useState(false);
 
@@ -467,6 +470,7 @@ setShowAlert(true);
       })),
       TechnicianList: technicianId,
       DealerList: dealerId,
+      Rating: rating,
     };
   
     try {
@@ -481,6 +485,7 @@ setShowAlert(true);
         throw new Error('Failed to save ticket data');
       }
       alert('Ticket saved Successfully!');
+      setIsFinalized(true);
       // Navigate(`/paymentConfirmation/${raiseTicketId}/${userType}`)
     } catch (error) {
       console.error('Error saving ticket data:', error);
@@ -605,6 +610,7 @@ setShowAlert(true);
 //     throw new Error('Failed to create a Invoice.');
 //   }
 //   alert('Uploaded Invoice saved Successfully!');
+//   setIsFinalized(true);
 // } catch (error) {
 //   console.error('Error:', error);
 //   window.alert('Failed to create the Invoice. Please try again later.');
@@ -800,6 +806,9 @@ const handleStatusChange = (event) => {
     
         <div className="form-group m-2">
           <label className='section-title'>Required Materials Details</label>
+          {!isMobile ? (
+          <div className='mt-3'>
+            
           {specifications.map((spec, index) => (
             <div className="d-flex gap-3 mb-2" key={index}>
               
@@ -833,6 +842,21 @@ const handleStatusChange = (event) => {
               />
             </div>
           ))}
+          </div>
+          ) : (
+            <div>
+      {specifications.map((spec, index) => (
+        <div key={index} className="card mb-3 shadow-sm" style={{ maxWidth: "300px" }}>
+          <div className="card-body">
+            <p className="mb-1"><strong>Material:</strong> {spec.material}</p>
+            <p className="mb-1"><strong>Quantity:</strong> {spec.quantity}</p>
+            <p className="mb-1"><strong>Received Quantity:</strong> {spec.receivedQuantity}</p>
+            <p className="mb-1"><strong>Remaining Quantity:</strong> {spec.remainingQuantity}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
 
 <h3 className="section-title">Invoice Details</h3>
       <table className="customer-details-table">
@@ -879,7 +903,8 @@ const handleStatusChange = (event) => {
               >
                 {loading ? 'Uploading...' : 'Upload Invoice'}
               </button>
-              <button className='btn btn-warning m-1' 
+              <button className='btn btn-warning m-1'
+              disabled={isFinalized} 
               // onClick={handleUploadInvoice}
               >Save</button>
           </div>
@@ -941,7 +966,7 @@ const handleStatusChange = (event) => {
                 <tbody>
                     <tr>
                         <td><strong>Technician Address</strong></td>
-                        <td>{address}</td>
+                        <td>{technicianAddress}</td>
                     </tr>
                     <tr>
                         <td><strong>Aadhar Number</strong></td>
@@ -1022,15 +1047,36 @@ const handleStatusChange = (event) => {
           Technician Work Completed
           </label>
         </div>
+        <label className="section-title fs-5 m-0">Rating</label>
+      <div className="star-rating">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <span
+            key={star}
+            className={`star ${star <= rating ? "filled" : ""}`}
+            onClick={() => setRating(star)}
+          >
+            ★
+          </span>
+        ))}
+      </div>
           <div className='d-flex flex-row align-items-center gap-5'> 
           <button className='btn btn-warning me-2 fs-5' title='close' 
           onClick={handleSaveTicket} 
-          // disabled={isCloseDisabled}
+          disabled={isFinalized}
           >Close</button> 
           </div>
       </div>
     </div> 
     </div>
+    {/* Styles for floating menu */}
+<style jsx>{`
+        .floating-menu {
+          position: fixed;
+          top: 80px; /* Increased from 20px to avoid overlapping with the logo */
+          left: 20px; /* Adjusted for placement on the left side */
+          z-index: 1000;
+        }
+      `}</style>
     </div>
   );
 };

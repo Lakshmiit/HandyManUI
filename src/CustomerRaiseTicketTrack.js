@@ -32,7 +32,7 @@ const CustomerTicketTrack = () => {
   const [zipCode, setZipcode] = useState('');
   const [address, setAddress] = useState('');
   const [assignedTo, setAssignedTo] = useState('');
-  const [rating, setRating] = useState('');
+  const [rating, setRating] = useState(0);
   const [isWithMaterial, setIsWithMaterial] = useState(false);
   const [category, setCategory] = useState('');
   const [lowestDealerBidder, setLowestDealerBidder] = useState('');
@@ -51,7 +51,7 @@ const CustomerTicketTrack = () => {
   const [selectedSlot] = useState('');
   const [technicianDetails, setTechnicianDetails] = useState([]);
   const [totalAmount, setTotalAmount] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState('');
+  // const [selectedStatus, setSelectedStatus] = useState('');
   const [technicianAcceptance, setTechnicianAcceptance] = useState([{type: "", technicianRemarks: ""}]); 
   const [technicianStatus, setTechnicianStatus] = useState('');
   const [deliveryData, setDeliveryData] = useState('');
@@ -68,6 +68,7 @@ const CustomerTicketTrack = () => {
   const [dealerName,setDealerName] = useState('');
   const [technicianId, setTechnicianId] = useState([]);
   const [dealerId, setDealerId] = useState([]);
+  const [isFinalized, setIsFinalized] = useState(false);
   // const [isDealerChecked, setIsDealerChecked] = useState(false);
   // const [isTechnicianChecked, setIsTechnicianChecked] = useState(false);
 
@@ -384,6 +385,7 @@ useEffect(() => {
       })),
       TechnicianList: technicianId,
       DealerList: dealerId,
+      Rating: rating,
     };
   
     try {
@@ -476,14 +478,15 @@ const handleBothActions =  (e) => {
   e.preventDefault();
   handleSaveTicket(e);
   handleUpdateTicket(e);
+  setIsFinalized(true);
 };
 
-const handleStatusChange = (event) => {
-  const { value } = event.target;
-  setSelectedStatus((prev) =>
-    prev.includes(value) ? prev.filter((status) => status !== value) : [...prev, value]
-  );
-};
+// const handleStatusChange = (event) => {
+//   const { value } = event.target;
+//   setSelectedStatus((prev) =>
+//     prev.includes(value) ? prev.filter((status) => status !== value) : [...prev, value]
+//   );
+// };
 
   return (
     <div className="d-flex">
@@ -637,9 +640,24 @@ const handleStatusChange = (event) => {
     
         <div className="form-group m-2">
           <label className='section-title'>Required Materials Details</label>
+          {!isMobile ? (
+          <div className='mt-3'>
+          <div className='d-flex gap-3 text-center'>
+          <div style={{ flex: 4}}>
+            <label className="fw-bold">Material</label>
+          </div>
+          <div style={{ flex: 4}}>
+            <label className="fw-bold">Quantity</label>
+          </div>
+          <div style={{ flex: 4 }}>
+            <label className="fw-bold">Received Quantity</label>
+          </div>
+          <div style={{ flex: 4 }}>
+            <label className="fw-bold">Remaining Quantity</label>
+          </div>
+        </div>
           {specifications.map((spec, index) => (
             <div className="d-flex gap-3" key={index}>
-              
               <input
                 type="text"
                 className="form-control"
@@ -670,6 +688,21 @@ const handleStatusChange = (event) => {
               />
             </div>
           ))}
+          </div>
+          ) : (
+            <div>
+      {specifications.map((spec, index) => (
+        <div key={index} className="card mb-3 shadow-sm" style={{ maxWidth: "300px" }}>
+          <div className="card-body">
+            <p className="mb-1"><strong>Material:</strong> {spec.material}</p>
+            <p className="mb-1"><strong>Quantity:</strong> {spec.quantity}</p>
+            <p className="mb-1"><strong>Received Quantity:</strong> {spec.receivedQuantity}</p>
+            <p className="mb-1"><strong>Remaining Quantity:</strong> {spec.remainingQuantity}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
 
 {/* <h3 className="section-title">Invoice Details</h3>
       <table className="customer-details-table">
@@ -720,7 +753,7 @@ const handleStatusChange = (event) => {
             <tr>
             <td><strong>Invoice Date</strong></td>
             <td ><input type='date' name="invoiceDate"
-            className="form-control text-end w-50"
+            className="form-control text-end w-75"
             value={invoiceDate}/></td>
             </tr>
         </tbody>
@@ -737,7 +770,7 @@ const handleStatusChange = (event) => {
                 <tbody>
                     <tr>
                         <td><strong>Technician Address</strong></td>
-                        <td>{address}</td>
+                        <td>{technicianAddress}</td>
                     </tr>
                     <tr>
                         <td><strong>Aadhar Number</strong></td>
@@ -750,7 +783,7 @@ const handleStatusChange = (event) => {
       {/* <h3 className="section-title">Customer Details</h3>
       <table className="customer-details-table">
         <tbody>
-            <tr>
+            <tr>  
             <td><strong>Customer Name</strong></td>
             <td>{fullName}</td>
             </tr>
@@ -763,7 +796,7 @@ const handleStatusChange = (event) => {
  
       <div className='payment'>
         
-          <h3 className='section-title mt-2'>Ticket Closing Status</h3>
+          {/* <h3 className='section-title mt-2'>Ticket Closing Status</h3>
           <div className='d-flex flex-column m-1'>
           <label className="fs-5">
           <input type="checkbox" 
@@ -800,8 +833,8 @@ const handleStatusChange = (event) => {
           onChange={handleStatusChange}
           />
           Pending Ticket Araised Customer Issues
-          </label> */}
-        </div>
+          </label> 
+        </div> */}
         <div>
       <label className="section-title fs-5 m-0">Rating</label>
       <div className="star-rating">
@@ -817,11 +850,21 @@ const handleStatusChange = (event) => {
       </div>
     </div>
           <div className='d-flex flex-row align-items-center gap-5'> 
-          <button className='btn btn-warning me-2 fs-5' title='save' onClick={handleBothActions}>Save</button>
+          <button className='btn btn-warning me-2 fs-5' title='save' 
+          onClick={handleBothActions} disabled={isFinalized}>Save</button>
           </div>
       </div>
     </div>
     </div>
+    {/* Styles for floating menu */}
+<style jsx>{`
+        .floating-menu {
+          position: fixed;
+          top: 80px; /* Increased from 20px to avoid overlapping with the logo */
+          left: 20px; /* Adjusted for placement on the left side */
+          z-index: 1000;
+        }
+      `}</style>
     </div>
   );
 };

@@ -1127,26 +1127,13 @@ textarea {
 }
 
 .adm_mnu {
-  /* box-shadow: var(--bxsdw); */
-  border-radius: 0 6px 6px 0;
-  background-color: #FAFAFA;
-  width: 100%;
-  max-width: 280px;
-  display: flex;
-  height: 100%;
-  max-height: 900px;
-  flex-direction: column;  
-}
-
-
-.adm_mnu {
   box-shadow: var(--bxsdw);
   border-radius: 0 6px 6px 0;
   background-color: #FAFAFA;
   font-size: 18px;
   width: 100%;
-  max-width: 280px;
-  padding: 1rem;
+  max-width: 250px;
+  /* padding: 1rem; */
   gap: 1rem;
   display: flex;
   height: 100%;
@@ -1208,6 +1195,15 @@ textarea {
   max-width: 1800px;
   margin: 20px auto;
   padding: 8px;
+}
+
+@media (max-width: 768px) {
+  .time-slot-section {
+    width: 70%;
+    max-width: none; 
+    margin: 10px auto;             
+    padding: 10px;  
+  }
 }
 
 .time-slot-title {
@@ -1287,12 +1283,12 @@ textarea {
 
 .date-display .day,
 .date-display .year {
-  font-size: 20px;
+  font-size: 25px;
   color: #ffc107; 
 }
 
 .date-display .date {
-  font-size: 24px;
+  font-size: 25px;
   color: #ffc107;
   font-weight: bold;
 }
@@ -1569,7 +1565,7 @@ textarea {
 }
 
 .blinking-text {
-  animation: blink-animation 1s infinite;
+  animation: blink-animation 2s infinite;
 }
 
 @keyframes blink-animation {
@@ -1705,3 +1701,152 @@ textarea {
   }
 }
 
+.time-slot-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  justify-content: center; 
+  text-align: center;
+  margin: 20px 0;
+}
+
+.time-slot-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.time-slot-dropdown {
+  padding: 8px;
+  font-size: 15px;
+  width: 180px; 
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  text-align: center;
+}
+
+.whatsapp-contact {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px; 
+}
+
+.whatsapp-icon {
+  width: 20px; 
+  height: 20px;
+}
+
+@media (max-width: 768px) {
+  .date-container {
+    padding: 5px;
+    border-width: 2px; 
+    border-radius: 6px;
+    max-width: 100%;
+    font-size: 13px;
+  }
+
+  .time-slot-wrapper {
+    margin: 15px 0;
+    text-align: center;
+  }
+
+  .selected-details {
+    display: flex;
+    flex-direction: column;     
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 90%; 
+    padding: 2px;
+    border-width: 2px;
+    font-size: 14px;   
+  }
+}
+
+@media (max-width: 768px) {
+  .date-display {
+    font-size: 16px;
+    padding: 1px;   
+  }
+
+  .date-display .day,
+  .date-display .year {
+    font-size: 16px;   }
+
+  .date-display .date {
+    font-size: 16px;   }
+}
+
+@media (max-width: 768px) {
+  .button {
+    display: flex;
+    flex-direction: column; 
+    align-items: center;  
+    gap: 10px; 
+    width: 100%;
+  }
+
+  .btn-back, .btn-continue {
+    width: 40%; 
+    padding: 8px; 
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .calendar-header {
+    font-size: 14px; 
+    padding: 5px; 
+    flex-direction: row; 
+    text-align: center; 
+  }
+
+  .calendar-section {
+    width: 70%; 
+    padding: 5px; 
+    /* box-shadow: none;  */
+    border-radius: 5px;
+  }
+}
+
+@media (max-width: 768px) {
+  label {
+    display: flex;
+    align-items: center; 
+    font-size: 14px; 
+    gap: 5px;  
+ }
+
+  .form-check-input {
+    width: 18px;
+    height: 18px;
+    margin: 0; 
+  }
+
+  .text-primary {
+    font-size: 14px;
+    display: block; 
+    margin-top: 5px; 
+  }
+
+  button {
+    font-size: 14px;
+    padding: 2px 0;
+    background: none;
+    border: none;
+    /* text-decoration: underline; */
+    cursor: pointer;
+  }
+}
+
+.terms-container {
+  display: flex;
+  align-items: center;
+  gap: 5px; 
+}
+
+@media (min-width: 768px) {
+  .terms-container {
+    display: block; 
+  }
+}

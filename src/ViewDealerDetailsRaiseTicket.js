@@ -317,6 +317,8 @@ const [technicianId, setTechnicianId] = useState('');
           {/* Material Input Fields */}
         <div className="form-group">
           <label>Required (Optional)</label>
+          {!isMobile ? (
+      <div className="mt-3">
           <div className='d-flex gap-3 mb-2 text-center'>
       <div style={{ flex: 4 }}>
         <label className="fw-bold">Material</label>
@@ -360,7 +362,58 @@ const [technicianId, setTechnicianId] = useState('');
             </div>
           ))}
         </div>
-    </div>
+          ) : (
+            <>
+        {specifications.map((spec, index) => (
+          <div key={index} className="card mb-3 shadow-sm">
+            <div className="card-body">
+              <p className="d-flex align-items-center gap-2 mb-2">
+                <strong>Material:</strong>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Enter Material"
+                  value={spec.material}
+                  readOnly
+                />
+              </p>
+              <p className="d-flex align-items-center gap-2 mb-2">
+                <strong>Quantity:</strong>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Enter Quantity"
+                  value={spec.quantity}
+                  readOnly
+                />
+              </p>
+              <p className='d-flex align-items-center gap-2 mb-2'>
+              <strong>Price:</strong>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Enter Price"
+                  value={spec.price}
+                  readOnly
+                />
+              </p>
+              <p className='d-flex align-items-center gap-2 mb-2'>
+              <strong>Total:</strong>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Enter Total"
+                  value={spec.total}
+                  readOnly
+                />
+              </p>
+            </div>
+          </div>
+        ))}
+            </>
+    )}
+  </div>
+  </div>
 
     <table className="table table-bordered m-1">
     <tbody>
@@ -501,6 +554,15 @@ const [technicianId, setTechnicianId] = useState('');
         </div>
       </Form>
     </div>
+    {/* Styles for floating menu */}
+<style jsx>{`
+        .floating-menu {
+          position: fixed;
+          top: 80px; /* Increased from 20px to avoid overlapping with the logo */
+          left: 20px; /* Adjusted for placement on the left side */
+          z-index: 1000;
+        }
+      `}</style>
   </div>
   );
 };

@@ -141,7 +141,7 @@ const RaiseQuotation = () => {
       // setIsDealerSelected(value === "Dealer/Trader");
     };  
   
-    const materialAmount = () => specifications.reduce((sum, spec) => sum + Number(spec.total), 0);
+    const TotalAmount = () => specifications.reduce((sum, spec) => sum + Number(spec.total), 0);
 
 const calculateTotalPrice = () => {
   
@@ -151,7 +151,7 @@ const calculateTotalPrice = () => {
     const deliveryCharges = updated[0]?.deliveryCharges;
     const serviceCharges = updated[0]?.serviceCharges; 
     const gst = updated[0]?.gsts;
-    const baseAmount = materialAmount();
+    const baseAmount = TotalAmount();
   
     const fixedDiscounts = baseAmount * (discount / 100); // Percentage discount
     const fixedDeliveryCharges = deliveryCharges;
@@ -344,6 +344,7 @@ useEffect(() => {
       Option2Time: "",
       TechnicianList: technicianId,
       DealerList: [],
+      Rating: "",
     };
     try {
       
@@ -526,6 +527,7 @@ const handleUpdateTicket = async (e) => {
       fixedGST: mat.fixedGSTS !== undefined && mat.fixedGSTS !== null ? String(mat.fixedGSTS) : "",
       grandtotal: mat.grandtotal !== undefined && mat.grandtotal !== null ? String(mat.grandtotal) : "",
     })),
+    TotalAmount: TotalAmount().toString(),
   };
 
   try {
@@ -695,7 +697,7 @@ const handleUpdateTicket = async (e) => {
   <Row>
     <Col md={6}>
       <Form.Group>
-        <label>Category</label>
+        <label>Category <span className="req_star">*</span></label>
         <Form.Control
           as="select"
           name="category"
@@ -720,7 +722,7 @@ const handleUpdateTicket = async (e) => {
         <Row>
         <Col md={6}>
             <Form.Group>
-              <label>Assigned To</label>
+              <label>Assigned To <span className="req_star">*</span></label>
               <Form.Control
                 as="select"
                 name="assignedTo"
@@ -737,7 +739,7 @@ const handleUpdateTicket = async (e) => {
           {/* Radio Buttons */}
           <div className="radio">
                   <div className="form-group">
-              <label>Rate Quoted By<span className="req_star">*</span></label>
+              <strong>Rate Quoted By <span className="req_star">*</span></strong>
               <div className="radio">
                 <label className="m-1">
                   <input
@@ -757,7 +759,9 @@ const handleUpdateTicket = async (e) => {
           {/* Material Input Fields */}
       {requestType === "With Material" && (
         <div className="form-group">
-          <label>Required (Optional)</label>
+        <strong>Required Material(Optional)</strong>
+        {!isMobile ? (
+      <div className="mt-3">
           <div className='d-flex gap-3 mb-2 text-center'>
           <div style={{ flex: 4 }}>
             <label className="fw-bold">Material</label>
@@ -809,8 +813,44 @@ const handleUpdateTicket = async (e) => {
             </div>
           ))}
         </div>
+        ) : (
+          <div>
+            {specifications.map((spec, index) => (
+              <div key={index} className="card mb-3 shadow-sm" style={{ maxWidth: "300px" }}>
+                <div className="card-body">
+                  <p className="mb-1"><strong>Material:</strong> {spec.material}</p>
+                  <p className="mb-1"><strong>Quantity:</strong> {spec.quantity}</p>
+                    <p className="d-flex align-items-center gap-2 mb-2">
+                    <label className="fw-bold">Price: </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Enter Price"
+                      value={spec.price}
+                      onChange={(e) => handleMaterialChange(index, "price", e.target.value)}
+                      readOnly
+                    />
+                  </p>
+                  <p className="d-flex align-items-center gap-2 mb-2">
+                    <label className="fw-bold">Total: </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Enter Total"
+                      value={spec.total}
+                      onChange={(e) => handleMaterialChange(index, "total", e.target.value)}
+                      readOnly
+                    />
+                </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        </div>
       )}
     </div>
+
 
     <table className="table table-bordered m-1">
     <tbody>
@@ -823,7 +863,7 @@ const handleUpdateTicket = async (e) => {
       <input
         type="number"
         className="form-control text-end"
-        value={materialAmount()}
+        value={TotalAmount()}
         readOnly
       />
     </td>
@@ -1005,6 +1045,14 @@ const handleUpdateTicket = async (e) => {
         </div>
       </Form>
     </div>
+    <style jsx>{`
+        .floating-menu {
+          position: fixed;
+          top: 80px; /* Increased from 20px to avoid overlapping with the logo */
+          left: 20px; /* Adjusted for placement on the left side */
+          z-index: 1000;
+        }
+       `}</style>
   </div>
   );
 };

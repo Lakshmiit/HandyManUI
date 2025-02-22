@@ -318,11 +318,11 @@ const Notification = () => {
     setHighlightedDealer(null);
   };
 
-  // const handleClearOrderNotifications = () => {
-  //   setNewOrderCount(0);
-  //   setGlowOrder(false);
-  //   setHighlightedOrder(null);
-  // };
+  const handleClearOrderNotifications = () => {
+    setNewOrderCount(0);
+    setGlowOrder(false);
+    setHighlightedOrder(null);
+  };
 
   const handleTabClick = (tab) => setActiveTab(tab);
 
@@ -352,7 +352,7 @@ const Notification = () => {
         </div>
       )}
 
-      <div className={`container m-2  ${isMobile ? "w-100" : "w-75"}`}>
+      <div className={`container m-1  ${isMobile ? "w-100" : "w-75"}`}>
         <h2 className="text-start mb-2 fs-20">
           <ArrowBackIcon fontSize="large" />{" "}
           <NotificationsNoneIcon
@@ -493,21 +493,30 @@ const Notification = () => {
                 notifications={orderNotifications}
                 highlightedItem={highlightedOrder}
               />
-              {/* <div
+              <div
                 className="view-notifications text-info mx-2"
                 onClick={() => {
-                  navigate(`/customerCareConfirmation/${raiseTicketId}`);
+                  navigate(`/customerCareGrid`);
                   handleClearOrderNotifications();
                 }} 
                 style={{ cursor: "pointer" }}
               >
                 View All Notifications
-              </div> */}
+              </div>
             </>
           )}
           </div>
         </div>
         </div>
+        {/* Styles for floating menu */}
+<style jsx>{`
+        .floating-menu {
+          position: fixed;
+          top: 80px; /* Increased from 20px to avoid overlapping with the logo */
+          left: 20px; /* Adjusted for placement on the left side */
+          z-index: 1000;
+        }
+      `}</style>
       </div>
   );
 }; 

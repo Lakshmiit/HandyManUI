@@ -374,7 +374,7 @@ useEffect(() => {
         }
   
     // Redirect to CustomerProfilePage
-    window.location.href = `https://handymanapiv2.azurewebsites.net/CustomerProfilePage?ReactToken=${customerId}$${userType}`;
+    window.location.href = `https://handymanserviceproviders.com/CustomerProfilePage?ReactToken=${customerId}$${userType}`;
   
   } catch (error) {
     console.error('Error:', error);
