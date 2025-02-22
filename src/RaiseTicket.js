@@ -180,7 +180,7 @@ useEffect(() => {
     for (const file of files) {
       const fileSizeMB = file.size / (1024 * 1024);
       const isValidType = file.type === "image/jpeg" || file.type === "image/png";
-      const isValidSize = fileSizeMB <= 30; 
+      const isValidSize = fileSizeMB <= 100; 
   
       if (!isValidType) {
         alert(`Only JPG and PNG formats are allowed: ${file.name}`);
@@ -188,7 +188,7 @@ useEffect(() => {
       }
   
       if (!isValidSize) {
-        alert(`File size should be up to 30MB: ${file.name}`);
+        alert(`File size should be up to 100MB: ${file.name}`);
         continue;
       }
   
