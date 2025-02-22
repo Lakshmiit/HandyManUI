@@ -93,6 +93,7 @@ const BidderTicketQuotation = () => {
           setFixedServiceCharge(quotedata.fixedServiceCharge);
           setFixedOtherCharge(quotedata.fixedOtherCharge);
           setRemarks(quotedata.addrRmarks || [{ requestedDate: new Date(), remarks: ""}]);
+          // alert(quotedata[0]?.remarks);
           // setSpecifications(quotedata.materials || [{material: "", quantity: "", price: "", total: ""}]);         
         } catch (error) {
           console.error('Error fetching data:', error);
@@ -220,7 +221,7 @@ const BidderTicketQuotation = () => {
             }
             const dataDealer = await  response.json();
             setDealerDetails(dataDealer);
-             alert(JSON.stringify(dataDealer));
+            //  alert(JSON.stringify(dataDealer));
             setAddRemarks(dataDealer[0].addrRmarks || []);
             setMaterialTotal(dataDealer[0].totalAmount);
             // alert(dataDealer[0].totalAmount);

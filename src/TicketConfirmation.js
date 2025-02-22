@@ -485,6 +485,7 @@ const handleSlotSave = () => {
       })),
       TechnicianList: technicianId,
       DealerList: dealerId,
+      Rating: "",
     };
   
     try {

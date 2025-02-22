@@ -169,7 +169,8 @@ const RaiseQuotation = () => {
           } else {
             setRemarks("");
           }
-          // alert(lowest.addrRmarks[0].remarks);
+          // alert(lowest?.addrRmarks?.[0]?.remarks || "No remarks available");
+
         } else {
           // Optionally, handle the case where technicianDetails is empty
           setTechnicianId('');

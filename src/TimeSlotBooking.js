@@ -350,6 +350,7 @@ const handleDateChange = (event) => {
       })),
      TechnicianList: technicianId,
      DealerList: dealerId,
+     Rating: "",
     };
   
     try {

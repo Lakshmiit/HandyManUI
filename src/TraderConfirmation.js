@@ -408,7 +408,8 @@ useEffect(() => {
       Option1Day: option1Day,
       Option1Time: option1Time,
       Option2Day: option2Day,
-      Option2Time: option2Time, 
+      Option2Time: option2Time,
+      Rating: "", 
       
     };
   
