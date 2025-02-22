@@ -50,6 +50,8 @@ import TrackStatusNotifications from './TrackStatusNotifications.js';
 import TrackStatusGrid from './TrackStatusGrid.js';
 import TicketConfirmationGrid from './TicketConfirmationGrid.js';
 import TraderConfirmationGrid from './TraderConfirmationGrid.js';
+import TermsandConditions from './TermsandConditions.js';
+import CustomerCareGrid from './CustomerCareGrid.js';
 
 
 function App() {
@@ -98,17 +100,19 @@ function App() {
             <Route path="/viewDealerDetailsRaiseTicket/:raiseTicketId/:userType/:category/:dealerId" element={<ViewDealerDetailsRaiseTicket />} />
             <Route path="/dealerGrid" element={<DealerGrid /> } />
             <Route path="/bidderTicketQuotation/:raiseTicketId" element={<BidderTicketQuotation /> } />
-            <Route path="/timeSlotBooking/:raiseTicketId/:userType" element={<TimeSlotBooking />} />
-            <Route path="/bookingConfirmation/:raiseTicketId/:userType" element={<BookingConfirmation />} />
-            <Route path="/paymentConfirmation/:raiseTicketId/:userType" element={<PaymentConfirmation />} />
+            <Route path="/timeSlotBooking/:raiseTicketId/:userType/:customerId" element={<TimeSlotBooking />} />
+            <Route path="/bookingConfirmation/:raiseTicketId/:userType/:customerId" element={<BookingConfirmation />} />
+            <Route path="/paymentConfirmation/:raiseTicketId/:userType/:customerId" element={<PaymentConfirmation />} />
             <Route path="/ticketConfirmation/:raiseTicketId/:district/:userType/:technicianId" element={<TicketConfirmation />} />
             <Route path="/traderConfirmation/:raiseTicketId/:district/:userType/:dealerId" element={<TraderConfirmation />} />
             <Route path="/raiseOrders/:userType" element={<RaiseOrdersGrid />} />
             <Route path="/customerCareConfirmation/:raiseTicketId" element={<CustomerCareConfirmation />} />
-            <Route path="/customerTrackConfirmation/:raiseTicketId/:userType" element={<CustomerRaiseTicketTrack />} />
+            <Route path="/customerTrackConfirmation/:raiseTicketId/:userType/:customerId" element={<CustomerRaiseTicketTrack />} />
             <Route path="/trackStatusNotifications/:userType/:customerId" element={<TrackStatusNotifications />} />
             <Route path="/ticketConfirmationGrid/:userType/:district/:technicianId" element={<TicketConfirmationGrid />} />
             <Route path="/traderConfirmationGrid/:userType/:district/:dealerId" element={<TraderConfirmationGrid />} />
+            <Route path="/termsandConditions" element={<TermsandConditions />} />
+            <Route path="/customerCareGrid" element={<CustomerCareGrid />} />
 
             <Route path="/trackStatus/:userType" element={<TrackStatusGrid />} />
           </Routes>
