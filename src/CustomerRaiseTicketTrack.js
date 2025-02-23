@@ -32,7 +32,7 @@ const CustomerTicketTrack = () => {
   const [zipCode, setZipcode] = useState('');
   const [address, setAddress] = useState('');
   const [assignedTo, setAssignedTo] = useState('');
-  const [rating, setRating] = useState(0);
+  const [rating, setRating] = useState("");
   const [isWithMaterial, setIsWithMaterial] = useState(false);
   const [category, setCategory] = useState('');
   const [lowestDealerBidder, setLowestDealerBidder] = useState('');
@@ -52,29 +52,29 @@ const CustomerTicketTrack = () => {
   const [technicianDetails, setTechnicianDetails] = useState([]);
   const [totalAmount, setTotalAmount] = useState('');
   // const [selectedStatus, setSelectedStatus] = useState('');
-  const [technicianAcceptance, setTechnicianAcceptance] = useState([{type: "", technicianRemarks: ""}]); 
+  // const [technicianAcceptance, setTechnicianAcceptance] = useState([{type: "", technicianRemarks: ""}]); 
   const [technicianStatus, setTechnicianStatus] = useState('');
   const [deliveryData, setDeliveryData] = useState('');
   const [dealerStatus, setDealerStatus] = useState('');
   const [paymentData, setPaymentData] = useState('');
   const [customerCode, setCustomerCode] = useState('');
-  const [deliveryNoteId, setDeliveryNoteId]=useState('');
-  const [dealerAcceptance, setDealerAcceptance] = useState([{type: "", dealerRemarks: ""}]); 
+  // const [deliveryNoteId, setDeliveryNoteId]=useState('');
+  // const [dealerAcceptance, setDealerAcceptance] = useState([{type: "", dealerRemarks: ""}]); 
   const [invoiceNumber, setInvoiceNumber] = useState('');
   const [invoiceDate, setInvoiceDate] = useState(''); 
   const [uploadInvoice, setUploadInvoice] = useState([]);
   const [dealerAddress, setDealerAddress] = useState('');
   const [dealerData, setDealerData] = useState('');
   const [dealerName,setDealerName] = useState('');
-  const [technicianId, setTechnicianId] = useState([]);
-  const [dealerId, setDealerId] = useState([]);
-  const [isFinalized, setIsFinalized] = useState(false);
+  // const [technicianId, setTechnicianId] = useState([]);
+  // const [dealerId, setDealerId] = useState([]);
+  // const [isFinalized, setIsFinalized] = useState(false);
   // const [isDealerChecked, setIsDealerChecked] = useState(false);
   // const [isTechnicianChecked, setIsTechnicianChecked] = useState(false);
 
   useEffect(() => {
-        console.log(technicianFullName,technicianStatus,dealerData, loading,id,technicianData, deliveryData, dealerStatus, technicianAddress, selectedSlot, paymentData);
-      }, [technicianFullName,technicianStatus,dealerData, loading,id,technicianData, deliveryData, dealerStatus, technicianAddress, selectedSlot, paymentData]);
+        console.log(technicianFullName, isWithMaterial,category, assignedTo,address,zipCode,district,state,status,customerId,requestType,commentsList,attachments, subject, ticketData,fullName,technicianStatus,dealerData, loading,id,technicianData, deliveryData, dealerStatus, technicianAddress, selectedSlot, paymentData);
+      }, [technicianFullName,isWithMaterial,category, assignedTo,address,zipCode,district,state,status,customerId,requestType,commentsList,attachments, subject, ticketData, fullName,technicianStatus,dealerData, loading,id,technicianData, deliveryData, dealerStatus, technicianAddress, selectedSlot, paymentData]);
   
 
 //   useEffect(() => {
@@ -138,8 +138,8 @@ useEffect(() => {
         setSubject(data.subject);
         setDetails(data.details);
         setId(data.id);
-        setTechnicianId(data.technicianList || []);
-        setDealerId(data.dealerList || []);
+        // setTechnicianId(data.technicianList || []);
+        // setDealerId(data.dealerList || []); 
         setCategory(data.category);
         setCustomerId(data.customerId);
         setIsWithMaterial(data.isMaterialType);
@@ -173,7 +173,7 @@ useEffect(() => {
         const data = await response.json();
         setDeliveryData(data);
         setId(data.id);
-        setDeliveryNoteId(data.deliveryNoteId);
+        // setDeliveryNoteId(data.deliveryNoteId);
         setOption1Day(data.option1Day || '');
         setOption2Day(data.option2Day || '');
         setOption1Time(data.option1Time || '');
@@ -194,8 +194,8 @@ useEffect(() => {
         setInvoiceNumber(data.invoiceNumber);
         setInvoiceDate(data.invoiceDate);
         setTechnicianStatus(data.technicianStatus);
-        setTechnicianAcceptance(data.technicianAcceptance || [{ type: "", technicianRemarks: "" }]);
-        setDealerAcceptance(data.dealerAcceptance || [{ type: "", dealerRemarks: "" }]);
+        // setTechnicianAcceptance(data.technicianAcceptance || [{ type: "", technicianRemarks: "" }]);
+        // setDealerAcceptance(data.dealerAcceptance || [{ type: "", dealerRemarks: "" }]);
         setDealerStatus(data.dealerStatus);
         // setIsDealerChecked(data.dealerStatus === "Material Delivered");
         // setIsTechnicianChecked(data.technicianStatus === "Job Completed");
@@ -206,6 +206,7 @@ useEffect(() => {
         setLoading(false);
       }
     };
+    
     fetchDeliveryData();
 }, [ticketId]);  
 
@@ -344,142 +345,142 @@ useEffect(() => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleSaveTicket = async (e) => {
-    e.preventDefault();
+//   const handleSaveTicket = async (e) => {
+//     e.preventDefault();
   
-    const payload = {
-      RaiseTicketId: ticketData.raiseTicketId,
-      Date: new Date(),
-      Address: address,
-      Subject: subject,
-      Details: details,
-      Category: category,
-      AssignedTo: assignedTo,
-      id: raiseTicketId,
-      status: status,
-      internalStatus: "Closed",
-      CustomerId: customerId,
-      State: state,
-      LowestBidderTechnicainId: lowestBidder,
-      LowestBidderDealerId: lowestDealerBidder,
-      ApprovedAmount: approvedAmount,
-      customerName: fullName,
-      Option1Day: option1Day,
-      Option1Time: option1Time,
-      Option2Day: option2Day,
-      Option2Time: option2Time,
-      IsMaterialType: isWithMaterial,
-      District: district,
-      ZipCode: zipCode,
-      RequestType: requestType,
-      Attachments: attachments,
-      Materials: specifications.map((spec) => ({
-        material: spec.material,
-        Quantity: spec.quantity,
-        price: spec.price,
-        Total: spec.total,
-      })),
-      comments: commentsList.map((Comment) => ({
-        updatedDate: Comment.updatedDate,
-        commentText: Comment.commentText,
-      })),
-      TechnicianList: technicianId,
-      DealerList: dealerId,
-      Rating: rating,
-    };
+//     const payload = {
+//       RaiseTicketId: ticketData.raiseTicketId,
+//       Date: new Date(),
+//       Address: address,
+//       Subject: subject,
+//       Details: details,
+//       Category: category,
+//       AssignedTo: assignedTo,
+//       id: raiseTicketId,
+//       status: status,
+//       internalStatus: "Closed",
+//       CustomerId: customerId,
+//       State: state,
+//       LowestBidderTechnicainId: lowestBidder,
+//       LowestBidderDealerId: lowestDealerBidder,
+//       ApprovedAmount: approvedAmount,
+//       customerName: fullName,
+//       Option1Day: option1Day,
+//       Option1Time: option1Time,
+//       Option2Day: option2Day,
+//       Option2Time: option2Time,
+//       IsMaterialType: isWithMaterial,
+//       District: district,
+//       ZipCode: zipCode,
+//       RequestType: requestType,
+//       Attachments: attachments,
+//       Materials: specifications.map((spec) => ({
+//         material: spec.material,
+//         Quantity: spec.quantity,
+//         price: spec.price,
+//         Total: spec.total,
+//       })),
+//       comments: commentsList.map((Comment) => ({
+//         updatedDate: Comment.updatedDate,
+//         commentText: Comment.commentText,
+//       })),
+//       TechnicianList: technicianId,
+//       DealerList: dealerId,
+//       Rating: rating.toString(),
+//     };
   
-    try {
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to save ticket data');
-      }
-      alert('Ticket saved Successfully!');
-      // Navigate(`/paymentConfirmation/${raiseTicketId}/${userType}`)
-    } catch (error) {
-      console.error('Error saving ticket data:', error);
-      window.alert('Failed to save the ticket data. Please try again later.');
-    }
-  };
+//     try {
+//       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+//         method: 'PUT',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify(payload),
+//       });
+//       if (!response.ok) {
+//         throw new Error('Failed to save ticket data');
+//       }
+//       alert('Ticket saved Successfully!');
+//       // Navigate(`/paymentConfirmation/${raiseTicketId}/${userType}`)
+//     } catch (error) {
+//       console.error('Error saving ticket data:', error);
+//       window.alert('Failed to save the ticket data. Please try again later.');
+//     }
+//   };
 
 
-  const handleUpdateTicket = async (e) => {
-    e.preventDefault();
+//   const handleUpdateTicket = async (e) => {
+//     e.preventDefault();
 
-    // if (!selectedSlot) {
-    //   alert("Please select a time slot.");
-    //   return;
-    // }
+//     // if (!selectedSlot) {
+//     //   alert("Please select a time slot.");
+//     //   return;
+//     // }
   
-    // if (!selectedStatus) {
-    //   alert("Please select a ticket status.");
-    //   return;
-    // }
-    //  const selectedSpecifications = specifications.filter((spec) => spec.isSelected);
+//     // if (!selectedStatus) {
+//     //   alert("Please select a ticket status.");
+//     //   return;
+//     // }
+//     //  const selectedSpecifications = specifications.filter((spec) => spec.isSelected);
   
-  const payload1 = {
+//   const payload1 = {
 
-    id: id,
-    ticketId: ticketId,
-    deliveryNoteId: deliveryNoteId,
-    option1Day: selectedSlot === "option1" ? option1Day : "",
-    option1Time: selectedSlot === "option1" ? option1Time : "",
-    option2Day: selectedSlot === "option2" ? option2Day : "",
-    option2Time: selectedSlot === "option2" ? option2Time : "",
-    deliveryTime: new Date().toISOString(),
-    UploadInvoice: uploadInvoice.map((file) => file.src),
-    InvoiceNumber: invoiceNumber,
-    InvoiceDate: invoiceDate,
-    deliveryInvoiceId: "string",
-    internalStatus: status,
-    technicianStatus: "",
-    dealerStatus: "",
-    technicianAcceptance: technicianAcceptance.map((remarks) => ({
-      type: remarks.type,
-      technicianRemarks: remarks.technicianRemarks,
-    })),
-    dealerAcceptance: dealerAcceptance.map((remarks) => ({
-      type: remarks.type,
-      dealerRemarks: remarks.dealerRemarks,
-    })),
-    assignedTo: assignedTo,
-    materialCollection: specifications.map((collection) => ({
-      material: collection.material,
-      quantity: collection.quantity,
-      receivedQuantity: collection.receivedQuantity,
-      remainingQuantity: collection.remainingQuantity,
-    }))
-  };
+//     id: id,
+//     ticketId: ticketId,
+//     deliveryNoteId: deliveryNoteId,
+//     option1Day: selectedSlot === "option1" ? option1Day : "",
+//     option1Time: selectedSlot === "option1" ? option1Time : "",
+//     option2Day: selectedSlot === "option2" ? option2Day : "",
+//     option2Time: selectedSlot === "option2" ? option2Time : "",
+//     deliveryTime: new Date().toISOString(),
+//     UploadInvoice: uploadInvoice.map((file) => file.src),
+//     InvoiceNumber: invoiceNumber,
+//     InvoiceDate: invoiceDate,
+//     deliveryInvoiceId: "string",
+//     internalStatus: status,
+//     technicianStatus: "",
+//     dealerStatus: "",
+//     technicianAcceptance: technicianAcceptance.map((remarks) => ({
+//       type: remarks.type,
+//       technicianRemarks: remarks.technicianRemarks,
+//     })),
+//     dealerAcceptance: dealerAcceptance.map((remarks) => ({
+//       type: remarks.type,
+//       dealerRemarks: remarks.dealerRemarks,
+//     })),
+//     assignedTo: assignedTo,
+//     materialCollection: specifications.map((collection) => ({
+//       material: collection.material,
+//       quantity: collection.quantity,
+//       receivedQuantity: collection.receivedQuantity,
+//       remainingQuantity: collection.remainingQuantity,
+//     }))
+//   };
 
-  try {
-    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/DeliveryNote/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload1),
-    });
-    if (!response.ok) {
-      throw new Error('Failed to create a ticket.');
-    }
-    alert('Delivery saved Successfully!');
-  } catch (error) {
-    console.error('Error:', error);
-    window.alert('Failed to create the delivery. Please try again later.');
-  }
-};
+//   try {
+//     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/DeliveryNote/${id}`, {
+//       method: 'PUT',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify(payload1),
+//     });
+//     if (!response.ok) {
+//       throw new Error('Failed to create a ticket.');
+//     }
+//     alert('Delivery saved Successfully!');
+//   } catch (error) {
+//     console.error('Error:', error);
+//     window.alert('Failed to create the delivery. Please try again later.');
+//   }
+// };
 
-const handleBothActions =  (e) => {
-  e.preventDefault();
-  handleSaveTicket(e);
-  handleUpdateTicket(e);
-  setIsFinalized(true);
-};
+// const handleBothActions =  (e) => {
+//   e.preventDefault();
+//   handleSaveTicket(e);
+//   handleUpdateTicket(e);
+//   setIsFinalized(true);
+// };
 
 // const handleStatusChange = (event) => {
 //   const { value } = event.target;
@@ -849,10 +850,10 @@ const handleBothActions =  (e) => {
         ))}
       </div>
     </div>
-          <div className='d-flex flex-row align-items-center gap-5'> 
+          {/* <div className='d-flex flex-row align-items-center gap-5'> 
           <button className='btn btn-warning me-2 fs-5' title='save' 
           onClick={handleBothActions} disabled={isFinalized}>Save</button>
-          </div>
+          </div> */}
       </div>
     </div>
     </div>

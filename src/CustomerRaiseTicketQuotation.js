@@ -65,8 +65,8 @@ const RaiseQuotation = () => {
   const [materialTotal, setMaterialTotal] = useState('');
 
   useEffect(() => {
-    console.log(category, loading, subject,status, id, fixedQuote, enterQuoteAmount, materialQuotation, raiseAQuoteId);
-  }, [category, loading, subject,status, id, fixedQuote, enterQuoteAmount, materialQuotation, raiseAQuoteId]);
+    console.log(category, materialTotal, loading, subject,status, id, fixedQuote, enterQuoteAmount, materialQuotation, raiseAQuoteId);
+  }, [category, loading, materialTotal, subject,status, id, fixedQuote, enterQuoteAmount, materialQuotation, raiseAQuoteId]);
 
   
   useEffect(() => {
@@ -164,8 +164,8 @@ const RaiseQuotation = () => {
           setTotalAmount(lowest.totalAmount); 
           // setSpecifications(lowest.materials);
           setMaterialQuotation(lowest.materialQuotation);
-          if (lowest.addrRmarks?.length > 0) {
-            setRemarks(lowest.addrRmarks[0].remarks);
+          if (lowest.addRemarks?.length > 0) {
+            setRemarks(lowest.addRemarks[0].remarks);
           } else {
             setRemarks("");
           }
@@ -197,7 +197,7 @@ const RaiseQuotation = () => {
             // setDealerId(dataDealer.dealerId);
             // setCustomerId(dataDealer.customerId);
             setAddrRmarks(dataDealer[0].addrRmarks || []);
-            setMaterialTotal(dataDealer.TotalAmount);
+            setMaterialTotal(dataDealer[0].totalAmount);
             // alert(materialTotal);
             //  setSpecifications(dataDealer[0].materials || []);
            setMaterialQuotation(dataDealer[0]?.materialQuotation || []);
@@ -219,6 +219,7 @@ const RaiseQuotation = () => {
           });
           setLowestDealerBidder(lowest.dealerId);
           setDealerId(lowest.dealerId);
+          setMaterialTotal(lowest.totalAmount);
           setLowestGrandTotal(lowest.materialQuotation[0].grandtotal);
           setSpecifications(lowest.materials);
           setId(lowest.id);
@@ -626,7 +627,7 @@ const RaiseQuotation = () => {
           <tr key={index} className="text-end">
             {[
               dealer.dealerId,
-              materialTotal,
+              dealer.totalAmount,
               Number(dealer.materialQuotation[0].fixedDiscount).toFixed(2),
               dealer.materialQuotation[0].fixedDeliveryChargs,
               Number(dealer.materialQuotation[0].fixedServicecharges).toFixed(2),
@@ -667,7 +668,7 @@ const RaiseQuotation = () => {
         <div key={index} className="card border p-2 mb-3">
           {[
             ['Trader ID', dealer.dealerId],
-            ['Total', materialTotal],
+            ['Total', dealer.totalAmount],
             ['Discount', Number(dealer.materialQuotation[0].fixedDiscount).toFixed(2)],
             ['Delivery Charges', dealer.materialQuotation[0].fixedDeliveryChargs],
             ['Service Charges', Number(dealer.materialQuotation[0].fixedServicecharges).toFixed(2)],

@@ -257,10 +257,11 @@ useEffect(() => {
                     }
                     const dataDealer = await  response.json();
                     
-                    alert(JSON.stringify(dataDealer));
+                    // alert(JSON.stringify(dataDealer));
                     // console.log(JSON.stringify(dataDealer));
                     setDealerDetails(dataDealer);
-                    setMaterialTotal(dataDealer.totalAmount);
+                    setMaterialTotal(dataDealer[0].totalAmount);
+                    // alert(dataDealer[0].totalAmount);
                     setMaterialQuotation(dataDealer[0]?.materialQuotation || []);
                     //  setSpecifications(dataDealer[0].materials || []);
                   } catch (error) {

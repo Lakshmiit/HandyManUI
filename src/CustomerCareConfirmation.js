@@ -153,6 +153,8 @@ const CustomerCareConfirmation = () => {
         setIsWithMaterial(data.isMaterialType);
         setAssignedTo(data.assignedTo);
         setStatus(data.status);
+        setRating(data.rating);
+        // alert(data.rating);
         setFullName(data.customerName);
         setApprovedAmount(data.approvedAmount);
         setLowestBidder(data.lowestBidderTechnicainId);
@@ -470,7 +472,8 @@ setShowAlert(true);
       })),
       TechnicianList: technicianId,
       DealerList: dealerId,
-      Rating: rating,
+      
+      Rating: rating.toString(),
     };
   
     try {
@@ -1053,7 +1056,7 @@ const handleStatusChange = (event) => {
           <span
             key={star}
             className={`star ${star <= rating ? "filled" : ""}`}
-            onClick={() => setRating(star)}
+            // onClick={() => setRating(star)}
           >
             ★
           </span>

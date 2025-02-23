@@ -47,6 +47,7 @@ const BookingConfirmation = () => {
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [technicianDetails, setTechnicianDetails] = useState([]);
   const [enterQuoteAmount, setQuote] = useState('');
+  const [fixedDiscount, setFixedDiscount] = useState("");
   const [othercharges, setOtherCharge] = useState("");
   const [selectedStatus] = useState('');
   const [transactionDetails, setTransactionDetails] = useState("");
@@ -293,7 +294,7 @@ const [isSaved, setIsSaved] = useState(false);
             setQuote(quotedata.enterQuoteAmount);
             // setFixedQuote(quotedata.fixedQuote);
             // setDiscount(quotedata.discount);
-            // setFixedDiscount(quotedata.fixedDiscount);
+            setFixedDiscount(quotedata.fixedDiscount);
             // setId(quotedata.id);
             // setGST(quotedata.gst);
             // setFixedGSTs(quotedata.fixedGST);
@@ -319,13 +320,14 @@ const [isSaved, setIsSaved] = useState(false);
                   return currentAmount < prevAmount ? current : prev;
                 });
                 setQuote(lowest.enterQuoteAmount);
+                setFixedDiscount(lowest.fixedDiscount);
                 setOtherCharge(lowest.othercharges);
                 setSpecifications(lowest.materials);          
               } else {
                 setQuote('');
                 setOtherCharge('')
               }
-            }, [technicianDetails,enterQuoteAmount, othercharges]);
+            }, [technicianDetails,enterQuoteAmount,fixedDiscount, othercharges]);
             
             useEffect(() => {
               const fetchPaymentData = async () => {
@@ -935,7 +937,7 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
           </tr>
           <tr>
             <td><strong>Quoted Amount</strong></td>
-            <td>{enterQuoteAmount}</td>
+            <td>{enterQuoteAmount- fixedDiscount}</td>
           </tr>
           <tr>
             <td><strong>Delivery Charges</strong></td>

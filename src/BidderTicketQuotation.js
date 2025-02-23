@@ -67,8 +67,8 @@ const BidderTicketQuotation = () => {
   const [materialTotal, setMaterialTotal] = useState('');
 
     useEffect(() => {
-        console.log(subject, loading, isWithMaterial, enterQuoteAmount, fixedQuote, materialQuotation, raiseAQuoteId, id);
-      }, [subject, loading, isWithMaterial, enterQuoteAmount, fixedQuote, materialQuotation, raiseAQuoteId, id]);
+        console.log(subject, loading, materialTotal, isWithMaterial, enterQuoteAmount, fixedQuote, materialQuotation, raiseAQuoteId, id);
+      }, [subject, loading, materialTotal, isWithMaterial, enterQuoteAmount, fixedQuote, materialQuotation, raiseAQuoteId, id]);
     
     // Fetch data from API on component mount 
     useEffect(() => {
@@ -92,8 +92,8 @@ const BidderTicketQuotation = () => {
           setServiceCharge(quotedata.serviceCharges);
           setFixedServiceCharge(quotedata.fixedServiceCharge);
           setFixedOtherCharge(quotedata.fixedOtherCharge);
-          setRemarks(quotedata.addrRmarks || [{ requestedDate: new Date(), remarks: ""}]);
-          // alert(quotedata[0]?.remarks);
+          setRemarks(quotedata.addRemarks || []);
+          // alert(quotedata[0].remarks);
           // setSpecifications(quotedata.materials || [{material: "", quantity: "", price: "", total: ""}]);         
         } catch (error) {
           console.error('Error fetching data:', error);
@@ -223,8 +223,8 @@ const BidderTicketQuotation = () => {
             setDealerDetails(dataDealer);
             //  alert(JSON.stringify(dataDealer));
             setAddRemarks(dataDealer[0].addrRmarks || []);
-            setMaterialTotal(dataDealer[0].totalAmount);
-            // alert(dataDealer[0].totalAmount);
+            setMaterialTotal(dataDealer[0].totalAmount || []);
+            // alert(dataDealer[0].totalAmount || []);
              setSpecifications(dataDealer[0].materials || []);
            setMaterialQuotation(dataDealer[0]?.materialQuotation || []);
           } catch (error) {
@@ -249,17 +249,17 @@ const BidderTicketQuotation = () => {
           //  setLowestDealerBidder(lowest);
           //  alert(JSON.stringify(lowest));
           setLowestDealerBidder(lowest.dealerId);
-          
+          // setMaterialTotal(lowest.totalAmount);
           setDealerId(lowest.dealerId);
           setLowestGrandTotal(lowest.materialQuotation[0].grandtotal);
 
           setId(lowest.id);
-          setDealerId(lowest.dealerId);
+          // setDealerId(lowest.dealerId);
           // alert(lowest.dealerId);
           
            
-           if (lowest.addRemarks?.length > 0) {
-            setAddRemarks(lowest.addRemarks[0].remarks);
+           if (lowest.addrRmarks?.length > 0) {
+            setAddRemarks(lowest.addrRmarks[0].remarks);
           } else {
             setAddRemarks("");
           }
@@ -327,8 +327,8 @@ const BidderTicketQuotation = () => {
             setLowestBidder(lowest.technicianId);
             // setSpecifications(lowest.materials);
             // setMaterialQuotation(lowest.materialQuotation);
-            if (lowest.addrRmarks?.length > 0) {
-              setRemarks(lowest.addrRmarks[0].remarks);
+            if (lowest.addRemarks?.length > 0) {
+              setRemarks(lowest.addRemarks[0].remarks);
             } else {
               setRemarks("");
             }
@@ -848,7 +848,7 @@ const BidderTicketQuotation = () => {
           <tr key={index} className="text-end">
             {[
               dealer.dealerId,
-              materialTotal,
+              dealer.totalAmount,
               Number(dealer.materialQuotation[0].fixedDiscount).toFixed(2),
               dealer.materialQuotation[0].fixedDeliveryChargs,
               Number(dealer.materialQuotation[0].fixedServicecharges).toFixed(2),
@@ -889,7 +889,7 @@ const BidderTicketQuotation = () => {
         <div key={index} className="card border p-2 mb-3">
           {[
             ['Trader ID', dealer.dealerId],
-            ['Total', materialTotal],
+            ['Total', dealer.totalAmount],
             ['Discount', Number(dealer.materialQuotation[0].fixedDiscount).toFixed(2)],
             ['Delivery Charges', dealer.materialQuotation[0].fixedDeliveryChargs],
             ['Service Charges', Number(dealer.materialQuotation[0].fixedServicecharges).toFixed(2)],
