@@ -58,14 +58,13 @@ const BidderTicketQuotation = () => {
     const [zipCode, setZipcode] = useState('');
     const [address, setAddress] = useState('');
     const [fullName, setFullName] = useState('');
-    const [rateQuotedBy] = useState("Dealer/Trader");
    const [lowestGrandTotal, setLowestGrandTotal] = useState('');
    const [details, setDetails] = useState('');
     const [materialQuotation, setMaterialQuotation] = useState([{discount: "", fixedDiscount: "", deliverycharges: "", fixedDeliveryChargs: "", servicecharges: "", fixedServicecharges: "", gst: "", fixedGST: "", grandtotal: ""}])
   const [technicianList, setTechnicianList] = useState([]);
   const [dealerList, setDealerList] = useState([]);
   const [materialTotal, setMaterialTotal] = useState('');
-
+  const [rateQuotedBy, setRateQuotedBy] = useState('');
     useEffect(() => {
         console.log(subject, loading, materialTotal, isWithMaterial, enterQuoteAmount, fixedQuote, materialQuotation, raiseAQuoteId, id);
       }, [subject, loading, materialTotal, isWithMaterial, enterQuoteAmount, fixedQuote, materialQuotation, raiseAQuoteId, id]);
@@ -174,6 +173,7 @@ const BidderTicketQuotation = () => {
             setAddress(data.address);
             setSubject(data.subject);
             setId(data.id);
+            setRateQuotedBy(data.rateQuotedBy);
             setTechnicianList(data.technicianList || []);
             setDealerList(data.dealerList || []);
             setCustomerId(data.customerId);
@@ -437,6 +437,7 @@ const BidderTicketQuotation = () => {
       TechnicianList: technicianList,
       DealerList: dealerList,
       Rating: "", 
+      RateQuotedBy: rateQuotedBy,
     };
     try {
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {

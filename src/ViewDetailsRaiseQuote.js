@@ -187,6 +187,7 @@ const RaiseQuoteTechnicianDetails = () => {
       TechnicianList: technicianId,
       DealerList: [],
       Rating: "",
+      RateQuotedBy: "",
     };
     try {
       

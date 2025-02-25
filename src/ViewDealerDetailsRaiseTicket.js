@@ -49,6 +49,7 @@ const [dealerData, setDealerData] = useState('');
 const {userType} = useParams();
 const {dealerId} = useParams();
 const [technicianId, setTechnicianId] = useState('');
+const [rateQuotedBy, setRateQuotedBy] = useState('');
 
 // const [fixedDeliveryCharge] = useState('100'); 
 // const [fixedServiceCharges] = useState('10');
@@ -94,6 +95,7 @@ const [technicianId, setTechnicianId] = useState('');
             setAddress(data.address);
             setSubject(data.subject);
             setId(data.id);
+            setRateQuotedBy(data.rateQuotedBy);
             setTechnicianId(data.technicianList);
             setCustomerId(data.customerId);
             setIsWithMaterial(data.isMaterialType);
@@ -189,6 +191,8 @@ const [technicianId, setTechnicianId] = useState('');
       Option2Time: "",
       TechnicianList: technicianId,
       DealerList: dealerId,
+      Rating: "",
+      RateQuotedBy: rateQuotedBy,
     };
     try { 
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {

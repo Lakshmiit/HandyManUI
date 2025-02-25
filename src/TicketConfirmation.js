@@ -9,7 +9,7 @@ import { useParams, } from "react-router-dom";
 
 const BookingConfirmation = () => {
   // const Navigate = useNavigate();
-  // const {userType} = useParams();
+   const {userType} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const {raiseTicketId} = useParams();
@@ -19,7 +19,7 @@ const BookingConfirmation = () => {
   const [details, setDetails] = useState('');
   const [loading, setLoading] = useState(true);
   const [attachments, setAttachments] = useState([]);
-  const [specifications, setSpecifications] = useState([{ material: "", quantity: "", receivedQuantity: "", remainingQuantity: "", isSelected: false}]);
+  const [specifications] = useState([{ material: "", quantity: "", receivedQuantity: "", remainingQuantity: "", isSelected: false}]);
   const [commentsList, setCommentsList] = useState([{updatedDate: new Date(), commentText: ""}]); 
   const [technicianAcceptance] = useState([{type: "", technicianRemarks: ""}]); 
   const [dealerAcceptance] = useState([{type: "", dealerRemarks: ""}]); 
@@ -53,14 +53,14 @@ const BookingConfirmation = () => {
   const [transactionDetails, setTransactionDetails] = useState("");
   const [dealerAddress, setDealerAddress] = useState('');
   const [dealerData, setDealerData] = useState('');
-  // const [deliveryData, setDeliveryData] = useState('');
+   const [deliveryData, setDeliveryData] = useState('');
   const [dealerStatus] = useState('');
   const [paymentData, setPaymentData] = useState('');
   const [paymentMode, SetPaymentMode] = useState('');
   const [customerCode, setCustomerCode] = useState('');
  const [paymentDataTime, setPaymentDateTime]=useState('');
-  // const [deliveryNoteId, setDeliveryNoteId]=useState('');
-  const [deliveryId, setDeliveryId] = useState('');
+  //  const [deliveryNoteId, setDeliveryNoteId]=useState('');
+  const [deliveryNoteId, setDeliveryId] = useState('');
   const [paymentId, setPaymentId] = useState('');
   const [technicianAmount, setTechnicianAmount] = useState('');
   const [dealerAmont, setDealerAmount] = useState('');
@@ -74,10 +74,14 @@ const BookingConfirmation = () => {
   const [isMaterialCollected, setIsMaterialCollected] = useState(false);
 const [isMaterialSaved, setIsMaterialSaved] = useState(false);
 const [isSaved, setIsSaved] = useState(false);
+const [rateQuotedBy, setRateQuotedBy] = useState(''); 
+const [noteId, setNoteId] = useState('');
+const [technicianMaterial, setTechnicianMaterial] = useState([{ material: "", quantity: "", receivedQuantity: "", remainingQuantity: "", isSelected: false}]);
+
 
   useEffect(() => {
-  console.log(ticketData,isTimeSlotSaved,deliveryId, internalStatus,loading,id,technicianData, selectedSlot, dealerStatus, paymentData, dealerData);
-    }, [ticketData,isTimeSlotSaved, deliveryId,internalStatus, loading,id,technicianData, selectedSlot,dealerStatus, paymentData, dealerData]);
+  console.log(ticketData, deliveryData, isTimeSlotSaved, internalStatus,loading,id,technicianData, selectedSlot, dealerStatus, paymentData, dealerData);
+    }, [ticketData, deliveryData, isTimeSlotSaved,internalStatus, loading,id,technicianData, selectedSlot,dealerStatus, paymentData, dealerData]);
 
   // useEffect(() => {
   //   const fetchticketData = async () => {
@@ -123,6 +127,36 @@ const [isSaved, setIsSaved] = useState(false);
   //   fetchticketData();
   // }, [raiseTicketId]);
 
+  useEffect(() => {
+    if (!ticketId) return;  
+    const fetchDeliveryData = async () => {
+      try {
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/DeliveryNote/GetRaiseTicketForDealer?RaiseTicketId=${ticketId}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch delivery data');
+        }
+        const data = await response.json();
+        //  alert(JSON.stringify(data));
+        setDeliveryData(data);
+        setNoteId(data.id);
+        setOption1Day(data.option1Day || '');
+        setOption2Day(data.option2Day || '');
+        setOption1Time(data.option1Time || '');
+        setOption2Time(data.option2Time || '');
+        setDeliveryId(data.deliveryNoteId);
+        
+        // setTechnicianStatus(data.technicianStatus);
+        // setTechnicianAcceptance(data.technicianAcceptance || [{ type: "", technicianRemarks: "" }]);
+        // setDealerStatus(data.dealerStatus);
+        setTechnicianMaterial(data.materialCollection || [{ material: "", quantity: "", receivedQuantity: "", remainingQuantity: "" }]);
+      } catch (error) {
+        console.error('Error fetching delivery data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDeliveryData();
+}, [ticketId]);   
 
   
     useEffect(() => {
@@ -143,6 +177,7 @@ const [isSaved, setIsSaved] = useState(false);
           setSubject(data.subject);
           setDetails(data.details);
           setId(data.id);
+          setRateQuotedBy(data.rateQuotedBy);
           setTechnicianId(data.technicianList || []);
           setDealerId(data.dealerList || []);
           setInternalStatus(data.internalStatus);
@@ -171,34 +206,7 @@ const [isSaved, setIsSaved] = useState(false);
       fetchticketData();
   }, [raiseTicketId]);   
   
-  // useEffect(() => {
-  //     if (!ticketId) return;  
-  //     const fetchDeliveryData = async () => {
-  //       try {
-  //         const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/DeliveryNote/GetRaiseTicketForDealer?RaiseTicketId=${ticketId}`);
-  //         if (!response.ok) {
-  //           throw new Error('Failed to fetch delivery data');
-  //         }
-  //         const data = await response.json();
-  //         setDeliveryData(data);
-  //         setId(data.id);
-  //         setOption1Day(data.option1Day || '');
-  //         setOption2Day(data.option2Day || '');
-  //         setOption1Time(data.option1Time || '');
-  //         setOption2Time(data.option2Time || '');
-  //         setTechnicianStatus(data.technicianStatus);
-  //         setTechnicianAcceptance(data.technicianAcceptance || [{ type: "", technicianRemarks: "" }]);
-  //         setDealerStatus(data.dealerStatus);
-  //         setSpecifications(data.materialCollection || [{ material: "", quantity: "", receivedQuantity: "", remainingQuantity: "" }]);
-  //       } catch (error) {
-  //         console.error('Error fetching delivery data:', error);
-  //       } finally {
-  //         setLoading(false);
-  //       }
-  //     };
-  //     fetchDeliveryData();
-  // }, [ticketId]);   
-  
+ 
   
   // useEffect(() => { 
   //   if (!ticketId) return; // Ensure ticketId is available before fetching
@@ -289,7 +297,7 @@ const [isSaved, setIsSaved] = useState(false);
             const response = await fetch(apiUrl);
             const quotedata = await response.json();
             setTechnicianDetails(quotedata);
-            //alert(JSON.stringify(technicianDetails));
+            // alert(JSON.stringify(technicianDetails));
             // setRaiseAQuoteId(quotedata.raiseAQuoteId);
             setQuote(quotedata.enterQuoteAmount);
             // setFixedQuote(quotedata.fixedQuote);
@@ -303,7 +311,7 @@ const [isSaved, setIsSaved] = useState(false);
             // setServiceCharge(quotedata.serviceCharges);
             // setFixedServiceCharge(quotedata.fixedServiceCharge);
             // setFixedOtherCharge(quotedata.fixedOtherCharge);
-            setSpecifications(quotedata.materials || [{material: "", quantity: ""}]);         
+            // setTechnicianMaterial(quotedata.materials || [{material: "", quantity: ""}]);         
             // setAddRemarks(quotedata.addrRmarks);
           } catch (error) {
             console.error('Error fetching data:', error);
@@ -322,7 +330,7 @@ const [isSaved, setIsSaved] = useState(false);
                 setQuote(lowest.enterQuoteAmount);
                 setFixedDiscount(lowest.fixedDiscount);
                 setOtherCharge(lowest.othercharges);
-                setSpecifications(lowest.materials);          
+                 setTechnicianMaterial(lowest.materials);          
               } else {
                 setQuote('');
                 setOtherCharge('')
@@ -338,7 +346,7 @@ const [isSaved, setIsSaved] = useState(false);
                   }
                   const paymentData = await response.json();
                   setPaymentData(paymentData);
-                  // alert(JSON.stringify(invoiceData));  
+                  // alert(JSON.stringify(paymentData));  
                   SetPaymentMode(paymentData.paymentMode);
                   setCustomerCode(paymentData.technicianConfirmationCode);
                   setPaymentId(paymentData.id);
@@ -346,6 +354,7 @@ const [isSaved, setIsSaved] = useState(false);
                   setTechnicianAmount(paymentData.technicianAmount);
                   setDealerAmount(paymentData.dealerAmont);
                   setPaymentDateTime(paymentData.paymentDataTime);
+                  setTransactionDetails(paymentData.utrTransactionNumber);
                   } catch (error) {
                   console.error('Error fetching payment data:', error);
                 } finally {
@@ -488,6 +497,7 @@ const handleSlotSave = () => {
       TechnicianList: technicianId,
       DealerList: dealerId,
       Rating: "",
+      RateQuotedBy: rateQuotedBy,
     };
   
     try {
@@ -591,7 +601,7 @@ const handleSlotSave = () => {
   const handleTimeSlotSave = async (e) => {
     e.preventDefault();
 
-    const selectedSpecifications = specifications.filter((spec) => spec.isSelected);
+    // const selectedSpecifications = technicianMaterial.filter((spec) => spec.isSelected);
   
   const payload1 = {
 
@@ -619,11 +629,11 @@ const handleSlotSave = () => {
       dealerRemarks: remarks.dealerRemarks,
     })),
     assignedTo: assignedTo,
-    materialCollection: selectedSpecifications.map((collection) => ({
+    materialCollection: technicianMaterial.map((collection) => ({
       material: collection.material,
       quantity: collection.quantity,
-      receivedQuantity: collection.receivedQuantity,
-      remainingQuantity: collection.remainingQuantity,
+      receivedQuantity: "",
+      remainingQuantity: "",
     })),
   };
 
@@ -638,13 +648,17 @@ const handleSlotSave = () => {
     if (!response.ok) {
       throw new Error('Failed to create a Technician TimeSlot.');
     }
-
-    const postData = await response.json();
-        console.log("POST Response:", postData);
-        // const deliveryId = postData.deliveryNoteId;
-        setDeliveryId(postData.deliveryNoteId);
-        // alert(postData.deliveryNoteId);
+    // const postData = await response.json();
+    //     console.log("POST Response:", postData);
+    //     // const deliveryId = postData.deliveryNoteId;
+    //     setDeliveryId(postData.deliveryNoteId);
+    //    alert(postData.deliveryNoteId);
     alert('Technician TimeSlot saved Successfully!');
+    // alert(lowestBidder);
+    //alert(userType);
+    // Redirect to CustomerProfilePage
+    window.location.href = `https://handymanserviceproviders.com/CustomerProfilePage?ReactToken=${lowestBidder}$${userType}`;
+    
   } catch (error) {
     console.error('Error:', error);
     window.alert('Failed to create the Technician TimeSlot. Please try again later.');
@@ -653,38 +667,36 @@ const handleSlotSave = () => {
 
 
 
+
 const handleMaterialUpdate = async (e) => {
   e.preventDefault();
 
-  if (!selectedSlot) {
-    alert("Please select a time slot.");
-    return;
-  }
+  // if (!selectedSlot) {
+  //   alert("Please select a time slot.");
+  //   return;
+  // }
 
   // if (!selectedStatus) {
   //   alert("Please select a ticket status.");
   //   return;
   // }
-  // const selectedSpecifications = specifications.filter((spec) => spec.isSelected);
 
-  const selectedSpecifications = specifications.filter((spec) => spec.isSelected);
+  const selectedSpecifications = technicianMaterial.filter((spec) => spec.isSelected);
 
-if (selectedSpecifications.length === 0) {
-  alert("Please select at least one or more than one material.");
-  return;
-}
-
-
+// if (selectedSpecifications.length === 0) {
+//   alert("Please select at least one or more than one material.");
+//   return;
+// }
 
 const payload2 = {
 
-  id:deliveryId,
+  id: noteId,
   ticketId: ticketId,
-  deliveryNoteId: "string",
-  option1Day: selectedSlot === "option1" ? option1Day : "",
-  option1Time: selectedSlot === "option1" ? option1Time : "",
-  option2Day: selectedSlot === "option2" ? option2Day : "",
-  option2Time: selectedSlot === "option2" ? option2Time : "",
+  deliveryNoteId: deliveryNoteId,
+  option1Day:  option1Day,
+  option1Time: option1Time,
+  option2Day: option2Day,
+  option2Time: option2Time,
   deliveryTime: DeliveryDataTime,
   UploadInvoice: [],
   InvoiceNumber: "",
@@ -702,10 +714,10 @@ const payload2 = {
     receivedQuantity: collection.receivedQuantity,
     remainingQuantity: collection.remainingQuantity,
   })),
-};
+}; 
 // alert(payload2);
 try {
-  const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/DeliveryNote/${deliveryId}`, {
+  const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/DeliveryNote/${noteId}`, {
     method: 'PUT',
     headers: { 
       'Content-Type': 'application/json',
@@ -848,7 +860,7 @@ const handleBothActions =  (e) => {
 
   // Handle material input change
   const handleMaterialChange = (index, field, value) => {
-    const updatedMaterials = [...specifications];
+    const updatedMaterials = [...technicianMaterial];
     updatedMaterials[index][field] = value;
   
     if (field === "quantity" || field === "receivedQuantity") {
@@ -861,7 +873,7 @@ const handleBothActions =  (e) => {
         return;
       }
     }
-    setSpecifications(updatedMaterials);
+    setTechnicianMaterial(updatedMaterials);
     };
 
   
@@ -872,12 +884,12 @@ const handleBothActions =  (e) => {
     // };
 
     const handleRadioChange = (index) => {
-      const updatedSpecifications = specifications.map((spec, i) => ({
+      const updatedSpecifications = technicianMaterial.map((spec, i) => ({
         ...spec,
         isSelected: i === index ? !spec.isSelected : spec.isSelected, 
       }));
     
-      setSpecifications(updatedSpecifications);
+      setTechnicianMaterial(updatedSpecifications);
     };
   // const handleStatusChange = (event) => {
   //   setSelectedStatus(event.target.value);
@@ -951,21 +963,25 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
             <td><strong>Customer Time Slots </strong></td>
             <td className='time-slot-booking'>
             {isMobile ? (
-              <div className="dropdown mb-3">
-                <select 
-                  className="form-select border-dark" 
-                  onChange={(e) => handleSlotSelection(e.target.value)}
-                  defaultValue=""
-                >
-                  <option value="" disabled>Select a time slot</option>
-                  <option value="option1">
-                    Option 1 - Date: {option1Day}, Time: {option1Time}
-                  </option>
-                  <option value="option2">
-                    Option 2 - Date: {option2Day}, Time: {option2Time}
-                  </option>
-                </select>
+              <div className='timeslots-option d-flex flex-column'>
+              {/* Option 1 */}
+              <div className='slot mb-3 p-2 border rounded'>
+              <strong><input type='radio' className='form-check-input m-1 border-dark' 
+                     name='timeslot' value='option1'
+                      onClick={() => handleSlotSelection('option1')}/>
+                     Option 1</strong>
+                <div><span style={{ fontWeight: "bold" }}>Date:</span> {option1Day || 'N/A'}</div>
+                <div><span style={{ fontWeight: "bold" }}>Time:</span> {option1Time || 'N/A'}</div>
               </div>
+      
+              {/* Option 2 */}
+              <div className='slot p-2 border rounded'>
+              <strong><input type='radio' className='form-check-input m-1 border-dark' 
+                    name='timeslot' value='option2' onClick={() => handleSlotSelection('option2')}/>Option 2</strong>
+                <div><span style={{ fontWeight: "bold" }}>Date:</span> {option2Day || 'N/A'}</div>
+                <div><span style={{ fontWeight: "bold" }}>Time:</span> {option2Time || 'N/A'}</div>
+              </div>
+            </div>
             ) : (
                 <div className='timeslots-option d-flex flex-row'>
                 <div className='slot m-2 p-2'>
@@ -1014,7 +1030,7 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
             <label className="fw-bold">Remaining Quantity</label>
           </div>
         </div>
-      {specifications.map((spec, index) => (
+      {technicianMaterial.map((spec, index) => (
         <div className="d-flex gap-3 mb-2" key={index}>
           <input
             type="text"
@@ -1056,7 +1072,7 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
     </div>    
     ) : (
     <div>
-      {specifications.map((spec, index) => (
+      {technicianMaterial.map((spec, index) => (
         <div key={index} className="card mb-3 shadow-sm" style={{ maxWidth: "300px" }}>
           <div className="card-body">
             <p className="mb-1"><strong>Material:</strong> {spec.material}</p>

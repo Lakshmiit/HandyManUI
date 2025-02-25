@@ -202,6 +202,7 @@ const RaiseActionView = () => {
       TechnicianList: [],
       DealerList: [],
       Rating: "",
+      RateQuotedBy: "",
     };
     try {
       

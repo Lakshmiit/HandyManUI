@@ -18,6 +18,8 @@ const TicketConfirmationNotification = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
    const { district, category } = useParams();
+  //  const { lowestBidder } = useParams();
+
   const rowsPerPage = 15;
 useEffect(() => {
     console.log(ticketData);
@@ -32,7 +34,7 @@ useEffect(() => {
         console.log("API Response:", response.data); 
 
         const tickets = response.data.tickets || [];
-        const filteredTickets = tickets.filter((ticket) => ticket.internalStatus === "Customer Approved" || ticket.internalStatus === "Closed");
+        const filteredTickets = tickets.filter((ticket) => (ticket.internalStatus === "Customer Approved" || ticket.internalStatus === "Closed")  && ticket.lowestBidderTechnicainId === technicianId);
         
         setTicketData(filteredTickets);
         setFilteredData(filteredTickets);

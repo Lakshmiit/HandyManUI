@@ -62,6 +62,10 @@ const PaymentConfirmation = () => {
   const [technicianId, setTechnicianId] = useState([]);
   const [dealerId, setDealerId] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [rateQuotedBy, setRateQuotedBy] = useState(''); 
+  const [dealerData, setDealerData] = useState(''); 
+  const [dealerPhoneNumber, setDealerPhoneNumber] = useState(''); 
+
 
 
   const paymentDataTime = new Date().toLocaleString("en-IN", {
@@ -74,8 +78,8 @@ const PaymentConfirmation = () => {
     hour12: false
   }).replace(",", "");
   useEffect(() => {
-      console.log(loading, id, materialQuotation);
-    }, [loading, id, materialQuotation]);
+      console.log(loading, id, materialQuotation, dealerData);
+    }, [loading, id, materialQuotation, dealerData]);
   
   useEffect(() => {
     const fetchticketData = async () => {
@@ -95,6 +99,7 @@ const PaymentConfirmation = () => {
         setSubject(data.subject);
         setDetails(data.details);
         setId(data.id);
+        setRateQuotedBy(data.rateQuotedBy);
         setTechnicianId(data.technicianList || []);
         setDealerId(data.dealerList || []);
         setCategory(data.category);
@@ -122,6 +127,29 @@ const PaymentConfirmation = () => {
     };
     fetchticketData();
   }, [raiseTicketId]);
+
+  useEffect(() => {
+    const fetchDealerData = async () => {
+      try {
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Dealer/GetDealerDtailsByUserId?userId=${lowestDealerBidder}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch dealer data');
+        }
+        // alert(lowestDealerBidder);
+        const dealerData = await response.json();
+        setDealerData(dealerData);
+        // alert(JSON.stringify(dealerData)); 
+        //alert(lowestDealerBidder);
+        setDealerPhoneNumber(dealerData[0].phoneNumber);
+        //alert(dealerData.phoneNumber);
+        } catch (error) {
+        console.error('Error fetching dealer data:', error);
+      } finally {
+        setLoading(false);
+      } 
+    };
+    fetchDealerData();
+  }, [lowestDealerBidder]);
 
 
   // useEffect(() => {
@@ -281,6 +309,7 @@ const PaymentConfirmation = () => {
       TechnicianList: technicianId,
       DealerList: dealerId,
       Rating: "",
+      RateQuotedBy: rateQuotedBy,
     };
   
     try { 
@@ -301,7 +330,6 @@ const PaymentConfirmation = () => {
       window.alert('Failed to save the ticket data. Please try again later.');
     }
   };
-  
 
 //   const handlePaymentTicket =  async(e) => {
 //     e.preventDefault();
@@ -380,26 +408,73 @@ const handlePaymentTicket = async (e) => {
 
     const data = await response.json();
 
-    // Store confirmation code in state
-    setTechnicianConfirmationCode(data.technicianConfirmationCode);
-    setShowConfirmation(true); // Show the confirmation UI
-    
+    // // Store confirmation code in state
+    // setTechnicianConfirmationCode(data.technicianConfirmationCode);
+    // setShowConfirmation(true); // Show the confirmation UI
+
+    if (data && typeof data.technicianConfirmationCode === "string") {
+      setTechnicianConfirmationCode(data.technicianConfirmationCode);
+      return data.technicianConfirmationCode;
+    } 
     alert('Payment Done successfully!');
+    // handleSendSMSLowestBidder(e);
   } catch (error) {
     console.error('Error:', error);
     window.alert('Failed to create the payment. Please try again later.');
   }
 };
 
+const handleSendSMSLowestBidder = async (technicianConfirmationCode) => {
+  // e.preventDefault();
+
+  try { 
+    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Payment/sendLowestBidderDealerNotifications?ticketId=${ticketId}&ConfirmationCode=${technicianConfirmationCode}&technicianPhoneNumber=${dealerPhoneNumber}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!response.ok) {
+      throw new Error('Failed to send SMS to LowestBidder');
+    }
+    alert('SMS to LowestBidder sent Successfully!');
+  } catch (error) {
+    console.error('Error sending SMS to LowestBidder:', error);
+    window.alert('Failed to sending SMS to LowestBidder. Please try again later.');
+  }
+};
+
+
   const handleCheckboxChange = (value) => {
     setSelectedPayment(selectedPayment === value ? null : value);
   };
 
-  const handleBothActions =  (e) => {
-    e.preventDefault();
-    handleSaveTicket(e);
-    handlePaymentTicket(e);
+  const handleBothActions = async (e) => {
+    e.preventDefault(); 
+  
+    try {
+      const confirmationCode = await handlePaymentTicket(e); 
+  
+      if (confirmationCode) {
+        await handleSaveTicket(e);
+        await handleSendSMSLowestBidder(confirmationCode); 
+      } else {
+        console.error("Technician confirmation code is missing.");
+        window.alert("Failed to retrieve the confirmation code. SMS not sent.");
+      }
+    } catch (error) {
+      console.error("Error in processing:", error);
+    }
   };
+  
+
+  // const handleBothActions =  (e) => {
+  //   e.preventDefault();
+  //   handleSaveTicket(e);
+  //   handlePaymentTicket(e);
+  //   // handleSendSMSLowestBidder(e);
+  // };
+
   
 
   return (
@@ -809,6 +884,7 @@ const handlePaymentTicket = async (e) => {
         <label className='fs-2 bg-warning fw-bold w-100 p-2'>
             Technician Confirmation Code is: {technicianConfirmationCode}
         </label>
+        {/* <button className='btn btn-primary m-2' onClick={handleSendSMSLowestBidder}>Send SMS</button> */}
     </div> 
 )} 
     </div>

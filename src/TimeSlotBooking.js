@@ -64,6 +64,9 @@ const TimeSlotBooking = () => {
   const [isChecked, setIsChecked] = useState(false);
    const [showModal, setShowModal] = useState(false);
   // const [errorMessage, setErrorMessage] = useState("");
+  const [rateQuotedBy, setRateQuotedBy] = useState(''); 
+
+
   
   useEffect(() => {
     console.log(loading, id);
@@ -223,6 +226,7 @@ const handleDateChange = (event) => {
         setSubject(data.subject);
         setDetails(data.details);
         setId(data.id);
+        setRateQuotedBy(data.rateQuotedBy);
         setTechnicianId(data.technicianList || []);
         setDealerId(data.dealerList || []);
         setCategory(data.category);;;
@@ -351,6 +355,7 @@ const handleDateChange = (event) => {
      TechnicianList: technicianId,
      DealerList: dealerId,
      Rating: "",
+     RateQuotedBy: rateQuotedBy,
     };
   
     try {

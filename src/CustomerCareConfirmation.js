@@ -74,6 +74,8 @@ const CustomerCareConfirmation = () => {
   const [dealerId, setDealerId] = useState([]);
   const [rating, setRating] = useState('');
   const [isFinalized, setIsFinalized]= useState(false);
+  const [rateQuotedBy, setRateQuotedBy] = useState(''); 
+
   
   // const [isDealerChecked, setIsDealerChecked] = useState(false);
   // const [isTechnicianChecked, setIsTechnicianChecked] = useState(false);
@@ -146,6 +148,7 @@ const CustomerCareConfirmation = () => {
         setSubject(data.subject);
         setDetails(data.details);
         setId(data.id);
+        setRateQuotedBy(data.rateQuotedBy);
         setTechnicianId(data.technicianList || []);
         setDealerId(data.dealerList || []);
         setCategory(data.category);
@@ -474,6 +477,7 @@ setShowAlert(true);
       DealerList: dealerId,
       
       Rating: rating.toString(),
+      RateQuotedBy: rateQuotedBy,
     };
   
     try {
@@ -860,7 +864,8 @@ const handleStatusChange = (event) => {
       ))}
     </div>
   )}
-
+{rateQuotedBy === "Customer Care" && (
+  <>
 <h3 className="section-title">Invoice Details</h3>
       <table className="customer-details-table">
         <tbody>
@@ -911,7 +916,9 @@ const handleStatusChange = (event) => {
               // onClick={handleUploadInvoice}
               >Save</button>
           </div>
-        </div> 
+          </>
+        )} 
+        </div>
         <div className='payment'>
             <label className='section-title'>Material Collection Point</label>
             <table className='customer-details-table'>
@@ -938,6 +945,8 @@ const handleStatusChange = (event) => {
             </label> */}
             {/* <button className='btn btn-warning m-2 fs-5'>Save</button> */}
         </div>
+        {rateQuotedBy === "Dealer/Trader" && (
+          <>
         <h3 className="section-title">Invoice Details</h3>
       <table className="customer-details-table">
         <tbody>
@@ -958,6 +967,8 @@ const handleStatusChange = (event) => {
         </tbody>
       </table>
       <button className='btn btn-warning fs-5 m-2' onClick={handleDownloadAllAttachments}>Download Invoice</button>
+      </>
+        )}
 
         <div className='payment'>
             <label className='section-title'>Technician Details</label>

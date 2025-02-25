@@ -34,8 +34,9 @@ const RaiseTicketQuotation = () => {
   const [fixedGST, setFixedGSTs] = useState('');
   const [lowestBidder, setLowestBidder] = useState("");
   const [othercharges, setOtherCharge] = useState("");
-  const [addrRmarks, setAddRemarks] = useState([{requestedDate: new Date(), remarks: ""}]);
-  const [assignedTo, setAssignedTo] = useState('');
+   const [addrRmarks, setAddRemarks] = useState([{requestedDate: new Date(), remarks: ""}]);
+   const [addRemarks, setCustomerRemarks] = useState([{ requestedDate: new Date(), remarks: "" }]);  
+   const [assignedTo, setAssignedTo] = useState('');
   const [uploadedFiles] = useState([]);
   const [isWithMaterial, setIsWithMaterial] = useState(false);
   const [newPhotoCount , setPhotoCount] = useState(0);
@@ -58,40 +59,28 @@ const RaiseTicketQuotation = () => {
     // const [isDealerSelected, setIsDealerSelected] = useState(false);
     const [material, setMaterialQuotation] = useState([{discounts: "", fixedDiscounts: "", deliveryCharges: "", fixedDeliveryCharges: "", serviceCharges: "", fixedServiceCharges: "", gsts: "", fixedGSTS: "", grandtotal: ""}])
     const [technicianList, setTechnicianList] = useState([]);
+    const [fixedDeliveryCharge] = useState('100'); 
+ const [fixedServiceCharges] = useState('10');
+ const [gsts] = useState('18');
+ const [CalculateTotal, setCalculatedGrandTotal] = useState('');
+ const [calculatedServiceCharge, setCalculatedServiceCharge] = useState('0');
+ const [calculatedGSTS, setCalculatedGSTS] = useState('0');
+//  const [dealerId] = useState('');
+
+ useEffect(() => {
+  console.log(subject, loading, isWithMaterial, fixedQuote, enterQuoteAmount,addrRmarks,raiseAQuoteId,id);
+}, [subject, loading, isWithMaterial, fixedQuote, enterQuoteAmount,addrRmarks,raiseAQuoteId,id]);
  
     // Fetch data from API on component mount
     useEffect(() => {
       // API URL
-      const apiUrl = `https://handymanapiv2.azurewebsites.net/api
-
-/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
+      const apiUrl = `https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
       // Fetching the data from the API
       const fetchData = async () => {
         try {
           const response = await fetch(apiUrl);
           const quotedata = await response.json();
-          // Map the data to match your technician details structure 
-          // const mappedData = data.map(item => ({
-          //   id: item.id,
-          //   technicianId: item.technicianId,
-          //   quotedAmount: parseFloat(item.enterQuoteAmount),
-          //   discount: parseFloat(item.discount),
-          //   fixedDiscount: parseFloat(item.fixedDiscount),
-
-          //   othercharges: parseFloat(item.othercharges),
-          //   fixedOtherCharge: parseFloat(item.fixedOtherCharge),
-
-          //   serviceCharges: parseFloat(item.serviceCharges),
-          //   fixedServiceCharge: parseFloat(item.fixedServiceCharge),
-
-          //   gst: parseFloat(item.gst),
-          //   fixedGST: parseFloat(item.fixedGST),
-
-          //   totalQuotedAmount: parseFloat(item.totalAmount),
-          //   addrRmarks:item.addrRmarks,
-          //   materials: item.materials,
-          // }));
-          setTechnicianDetails(quotedata);
+           setTechnicianDetails(quotedata);
           //alert(JSON.stringify(technicianDetails));
           setRaiseAQuoteId(quotedata.raiseAQuoteId);
           setQuote(quotedata.enterQuoteAmount);
@@ -139,36 +128,29 @@ const RaiseTicketQuotation = () => {
       // setIsDealerSelected(value === "Dealer/Trader");
     };  
   
-    const materialAmount = () => specifications.reduce((sum, spec) => sum + Number(spec.total), 0);
+    // const materialAmount = () => specifications.reduce((sum, spec) => sum + Number(spec.total), 0);
+
+const TotalAmount = () => specifications.reduce((sum, spec) => sum + Number(spec.total), 0);
 
 const calculateTotalPrice = () => {
-  // const discountAmount = total * (discountPercentage / 100);
-  // const priceAfterDiscount = total - discountAmount;
- 
-  // const priceAfterDeliveryCharges = priceAfterDiscount + deliveryCharges;
-
-  // const serviceChargeAmount = priceAfterDeliveryCharges * (serviceChargePercentage / 100);
-  // const priceAfterServiceCharge = priceAfterDeliveryCharges + serviceChargeAmount;
-
-  // const gstAmount = priceAfterServiceCharge * (material[0].gstPercentage / 100);
-  // const total1 = priceAfterServiceCharge + gstAmount;
-
- 
+  
   setMaterialQuotation((prev) => {
     const updated = [...prev];
     const discount = updated[0]?.discounts;
     const deliveryCharges = updated[0]?.deliveryCharges;
     const serviceCharges = updated[0]?.serviceCharges; 
     const gst = updated[0]?.gsts;
-    const baseAmount = materialAmount();
+    const baseAmount = TotalAmount();
   
     const fixedDiscounts = baseAmount * (discount / 100); // Percentage discount
     const fixedDeliveryCharges = deliveryCharges;
-    const fixedServiceCharges = ((baseAmount - fixedDiscounts + deliveryCharges) * serviceCharges) / 100;;
-    const fixedGSTS = ((baseAmount - fixedDiscounts + deliveryCharges + serviceCharges) * gst) / 100;
+    const fixedServiceCharges = (deliveryCharges * serviceCharges) / 100;;
+    const fixedGSTS = ((serviceCharges) * gst) / 100;
+    //const fixedGST = ((baseAmount - fixedDiscount + deliveryCharges + serviceCharges) * gst) / 100;
+  
     const grandtotal =
       baseAmount - fixedDiscounts + fixedDeliveryCharges + fixedServiceCharges + fixedGSTS;
-  
+   
     updated[0] = {
       ...updated[0],
       fixedDiscounts,
@@ -184,18 +166,8 @@ const calculateTotalPrice = () => {
 
 useEffect(() => {
   calculateTotalPrice();
-}
+});
   
-  // material[0]?.discounts,
-  // material[0]?.deliveryCharges,
-  // material[0]?.serviceCharges,
-  // material[0]?.gsts,
-);
- 
-  
-  useEffect(() => {
-    console.log(subject, loading, isWithMaterial);
-  }, [subject, loading, isWithMaterial]);
 
   useEffect(() => {
         const fetchticketData = async () => {
@@ -308,11 +280,14 @@ useEffect(() => {
     }));
   };
 
-  const handleAddRemarks = (index, value) => {
-    setAddRemarks((prev) =>
-      prev.map((item, i) => (i === index ? { ...item, remarks: value } : item))
-    );
+  const handleAddRemarks = (index, key, value) => {
+    setCustomerRemarks((prev) => {
+      const updated = [...prev];
+      updated[index][key] = value;
+      return updated;
+    });
   };
+
   const handleDownloadAllAttachments = async () => {
     if (attachments.length === 0) {
       alert("No files to download");
@@ -387,6 +362,7 @@ useEffect(() => {
       TechnicianList: technicianList,
       DealerList: [],
       Rating: "",
+      RateQuotedBy: rateQuotedBy,
     };
     try {
       
@@ -407,77 +383,133 @@ useEffect(() => {
     }
   };
 
-  const handleValuesTicket = async (e) => {
-    e.preventDefault();
-    // var techData = technicianDetails[0];
-    // alert(techData);
-    // var techData = JSON.stringify(technicianDetails);
-    // alert(techData);
-    //alert(enterQuoteAmount);
-    // console.log(techData);
+//   const handleValuesTicket = async (e) => {
+//     e.preventDefault();
+//     // var techData = technicianDetails[0];
+//     // alert(techData);
+//     // var techData = JSON.stringify(technicianDetails);
+//     // alert(techData);
+//     //alert(enterQuoteAmount);
+//     // console.log(techData);
     
-    const payload3 = {
-      id: id,
-      quotedDate: new Date().toISOString(),
-      RaiseAQuoteId:raiseAQuoteId ,
-      //raiseAQuote: ticketData.raiseAQuote,
-      RaiseTicketId: raiseTicketId,
-      CustomerId: customerId,
-      TicketId: ticketData.raiseTicketId,
-      TechnicianId: technicianId,
-      enterQuoteAmount: enterQuoteAmount,
-      Discount: discount, 
-      othercharges: othercharges,
-      serviceCharges: serviceCharges,
-      GST: gst,
-      totalAmount: totalAmount,
-      fixedQuote: fixedQuote,
-      fixedDiscount:fixedDiscount,
-      fixedOtherCharge:fixedOtherCharge,
-      fixedServiceCharge: fixedServiceCharge,
-      fixedGST: fixedGST,
-      AddRemarks:addrRmarks.map((comment) => ({
-          requestedDate: comment.requestedDate,
-          remarks: comment.remarks ,
-      })),
-    materials: specifications.map((spec) => ({
-      material: spec.material,
-      quantity: spec.quantity,
-      price: spec.price.toString(),
-      Total: spec.total.toString(),
-    })),
-    materialQuotation: material.map((quote) => ({
-      discount: quote.discounts.toString(),
-      deliverycharges: quote.deliveryCharges.toString(),
-      servicecharges: quote.serviceCharges.toString(),
-      gst: quote.gsts.toString(),
-      grandtotal: quote.grandtotal.toString(), 
+//     const payload3 = {
+//       id: id,
+//       quotedDate: new Date().toISOString(),
+//       RaiseAQuoteId:raiseAQuoteId ,
+//       //raiseAQuote: ticketData.raiseAQuote,
+//       RaiseTicketId: raiseTicketId,
+//       CustomerId: customerId,
+//       TicketId: ticketData.raiseTicketId,
+//       TechnicianId: "Customer Care",
+//       enterQuoteAmount: enterQuoteAmount,
+//       Discount: discount, 
+//       othercharges: othercharges,
+//       serviceCharges: serviceCharges,
+//       GST: gst,
+//       totalAmount: totalAmount,
+//       fixedQuote: fixedQuote,
+//       fixedDiscount:fixedDiscount,
+//       fixedOtherCharge:fixedOtherCharge,
+//       fixedServiceCharge: fixedServiceCharge,
+//       fixedGST: fixedGST,
+//       AddRemarks:addrRmarks.map((comment) => ({
+//           requestedDate: comment.requestedDate,
+//           remarks: comment.remarks ,
+//       })),
+//     materials: specifications.map((spec) => ({
+//       material: spec.material,
+//       quantity: spec.quantity,
+//       price: spec.price.toString(),
+//       Total: spec.total.toString(),
+//     })),
+//     materialQuotation: material.map((quote) => ({
+//       discount: quote.discounts.toString(),
+//       deliverycharges: fixedDeliveryCharge,
+//       servicecharges: fixedServiceCharges,
+//       gst: gsts,
+//       grandtotal: CalculateTotal.toString(), 
       
-      fixedDiscount: quote.fixedDiscounts.toString(),
-      fixedDeliveryChargs: quote.fixedDeliveryCharges.toString(),
-      fixedServicecharges: quote.fixedServiceCharges.toString(),
-      fixedGST: quote.fixedGSTS.toString(),
-    })),
-  };
-  try {
-    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
+//       fixedDiscount: quote.fixedDiscounts.toString(),
+//       fixedDeliveryChargs: fixedDeliveryCharge,
+//       fixedServicecharges: calculatedServiceCharge.toString(),
+//       fixedGST: calculatedGSTS,
+//     })),
+//   };
+//   try {
+//     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/CreateRaiseAQuote`, {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify(payload3),
+//     });
+     
+//     if (!response.ok) {
+//       throw new Error('Failed to Update RaiseAQuote data');
+//     }
 
-/RaiseAQuote/id?id=${id}`, {
-      method: 'PUT',
+//     alert('RaiseAQuote Updated Successfully!');
+//   } catch (error) {
+//     console.error('Error Update RaiseAQuote ticket data:', error);
+//     window.alert('Failed to Update the RaiseAQuote ticket data. Please try again later.');
+//   }
+// };
+
+const handleSaveCustomerCareMaterials = async (e) => {
+  e.preventDefault();
+  // alert(material);
+  const payload1 = {
+    id :"string",
+    ticketId: ticketData.raiseTicketId,
+    CustomerId: ticketData.customerId,
+    DealerId: "customerCare",
+    TotalAmount: TotalAmount().toString(),
+    raiseTicketId: raiseTicketId,
+    raiseAQuoteDate: new Date(), 
+    raiseAQuoteByDealerId: "string",
+    addrRmarks: addRemarks.map((comment) => ({
+      requestedDate: comment.requestedDate,
+      remarks: comment.remarks,
+  })),
+
+materials: specifications.map((spec) => ({
+  material: spec.material || "",
+  quantity: spec.quantity || 0,
+  price: spec.price ? spec.price.toString() : "0",
+  total: spec.total ? spec.total.toString() : "0",
+})),
+
+materialQuotation: material.map((mat) => ({
+  
+  discount: mat.discounts ? mat.discounts.toString() : "0",
+  fixedDiscount: mat.fixedDiscounts ? mat.fixedDiscounts.toString() : "0",
+  deliveryCharges:fixedDeliveryCharge,
+  fixedDeliveryChargs:fixedDeliveryCharge,
+  serviceCharge: fixedServiceCharges,
+  fixedServiceCharges: calculatedServiceCharge.toString(),
+  gsts: gsts,
+  fixedGST: calculatedGSTS,
+  grandtotal:CalculateTotal.toString(),
+})),
+ 
+  };  
+  try {
+    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuoteByDealer/CreateRaiseAQuoteByDealer`, {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(payload3),
+      body: JSON.stringify(payload1),
     });
-     
+  
     if (!response.ok) {
-      throw new Error('Failed to Update RaiseAQuote data');
+      throw new Error('Failed to save Dealer ticket data');
     }
-
-    alert('RaiseAQuote Updated Successfully!');
+   
+    alert('Ticket  Dealer saved Successfully!');
   } catch (error) {
-    console.error('Error Update RaiseAQuote ticket data:', error);
-    window.alert('Failed to Update the RaiseAQuote ticket data. Please try again later.');
+    console.error('Error saving Dealer ticket data:', error);
+    window.alert('Failed to save the Dealer ticket data. Please try again later.')
   }
 };
 
@@ -485,7 +517,7 @@ useEffect(() => {
   const handleBothActions =  (e) => {
     e.preventDefault();
     handleSaveTicket(e);
-    handleValuesTicket(e);
+    handleSaveCustomerCareMaterials(e);
     Navigate(`/adminNotifications`);
   }
 
@@ -926,7 +958,7 @@ useEffect(() => {
       <input
         type="number"
         className="form-control text-end"
-        value={materialAmount()}
+        value={TotalAmount()}
         readOnly
       />
     </td>
@@ -943,9 +975,15 @@ useEffect(() => {
         onChange={(e) =>
           setMaterialQuotation((prev) => {
             const updated = [...prev];
-            updated[0].discounts = parseFloat(e.target.value) || 0;
+            updated[0].discounts = parseFloat(e.target.value);
+             const calculateserviceCharge = ((TotalAmount() - e.target.value) * fixedServiceCharges)/100;           
+             setCalculatedServiceCharge(calculateserviceCharge);
+             setCalculatedGSTS(((calculateserviceCharge * gsts) / 100).toFixed(2));
+             var CalculateTotal = (TotalAmount() - e.target.value) + Number(fixedDeliveryCharge) + Number(calculateserviceCharge) + Number(calculatedGSTS);
+            // alert(CalculateTotal);
+             setCalculatedGrandTotal(Number(CalculateTotal).toFixed(2));
             return updated;
-          })
+          }) 
         }
         placeholder="Enter Discount"
       />
@@ -970,24 +1008,25 @@ useEffect(() => {
       <input
         type="number"
         className="form-control text-end"
-        value={material[0]?.deliveryCharges}
-        onChange={(e) =>
-          setMaterialQuotation((prev) => {
-            const updated = [...prev];
-            updated[0].deliveryCharges = parseFloat(e.target.value) || 0;
-            return updated;
-          })
-        }
-        placeholder="Enter Delivery Charges"
+        value={fixedDeliveryCharge}
+        // onChange={(e) =>
+        //   setMaterialQuotation((prev) => {
+        //     const updated = [...prev];
+        //     updated[0].deliveryCharges = parseFloat(e.target.value) || 0;
+        //     return updated;
+        //   })
+        // }
+        // placeholder="Enter Delivery Charges"
+        disabled
       />
     </td>
     <td colSpan="2">
       <input
         type="number"
         className="form-control text-end"
-        value={material[0]?.fixedDeliveryCharges}
+        value={fixedDeliveryCharge}
         readOnly
-        placeholder="Fixed Delivery Amount"
+        disabled      
       />
     </td>
   </tr>
@@ -1001,24 +1040,25 @@ useEffect(() => {
       <input
         type="number"
         className="form-control text-end"
-        value={material[0]?.serviceCharges}
-        onChange={(e) =>
-          setMaterialQuotation((prev) => {
-            const updated = [...prev];
-            updated[0].serviceCharges = parseFloat(e.target.value) || 0;
-            return updated;
-          })
-        }
-        placeholder="Enter Service Charges"
+        value={fixedServiceCharges}
+        // onChange={(e) =>
+        //   setMaterialQuotation((prev) => {
+        //     const updated = [...prev];
+        //     updated[0].serviceCharges = parseFloat(e.target.value) || 0;
+        //     return updated;
+        //   })
+        // }
+        // placeholder="Enter Service Charges"
+        disabled
       />
     </td>
     <td colSpan="2">
       <input
         type="number"
         className="form-control text-end"
-        value={Number(material[0]?.fixedServiceCharges).toFixed(2)}
+        value={calculatedServiceCharge}
         readOnly
-        placeholder="Fixed Service Charges"
+        disabled
       />
     </td>
   </tr>
@@ -1032,24 +1072,25 @@ useEffect(() => {
       <input
         type="number"
         className="form-control text-end"
-        value={material[0]?.gsts }
-        onChange={(e) =>
-          setMaterialQuotation((prev) => {
-            const updated = [...prev];
-            updated[0].gsts = parseFloat(e.target.value) || 0;
-            return updated;
-          })
-        }
-        placeholder="Enter GST"
+        value={gsts }
+        // onChange={(e) =>
+        //   setMaterialQuotation((prev) => {
+        //     const updated = [...prev];
+        //     updated[0].gsts = parseFloat(e.target.value) || 0;
+        //     return updated;
+        //   })
+        // }
+        // placeholder="Enter GST"
+        disabled
       />
     </td>
     <td colSpan="2">
       <input
         type="number"
         className="form-control text-end"
-        value={Number(material[0]?.fixedGSTS).toFixed(2)}
+        value={calculatedGSTS}
         readOnly
-        placeholder="Fixed GST"
+        disabled
       />
     </td>
   </tr>
@@ -1063,9 +1104,9 @@ useEffect(() => {
       <input
         type="number"
         className="form-control text-end"
-        value={Number(material[0]?.grandtotal).toFixed(2)}
+        value={CalculateTotal}
         readOnly
-        placeholder="Grand Total"
+        disabled
       />
     </td>
   </tr>
@@ -1153,23 +1194,22 @@ useEffect(() => {
 
        {/* Add Remarks */}
        <div className="form-group col-md-6">
-          <label>Technician Remarks</label>
-          {Array.isArray(addrRmarks) && addrRmarks.length > 0 ? (
-          addrRmarks.map((item, index) =>(
-              <div key={index} className="d-flex gap-3">
-                <input
-                  type="text"
-                  className="form-control"
-                  value={item.remarks} 
-                  onChange={(e) => handleAddRemarks(e.target.value)}
-                  readOnly
-                />
-              </div>
-              ))
-            ) : (
-              <p>No remarks available</p>
-            )}
-        </div>
+      <label>Customer Care Remarks</label>
+      {Array.isArray(addRemarks) &&
+        addRemarks.map((remark, index) => (
+          <div key={index} className="d-flex gap-3 mb-2">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Enter Remarks"
+              value={remark.remarks || ""}
+              onChange={(e) =>
+                handleAddRemarks(index, "remarks", e.target.value)
+              }
+            />
+          </div>
+        ))}
+    </div>
 
         {/* Send Quote Button */}
         <div className="mt-4 text-end">

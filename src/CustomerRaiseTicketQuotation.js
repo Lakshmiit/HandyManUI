@@ -63,6 +63,7 @@ const RaiseQuotation = () => {
   const [dealerList, setDealerList] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [materialTotal, setMaterialTotal] = useState('');
+  const [rateQuotedBy, setRateQuotedBy] = useState('');
 
   useEffect(() => {
     console.log(category, materialTotal, loading, subject,status, id, fixedQuote, enterQuoteAmount, materialQuotation, raiseAQuoteId);
@@ -87,6 +88,7 @@ const RaiseQuotation = () => {
         setZipcode(data.zipCode);
         setSubject(data.subject);
         setCategory(data.category);
+        setRateQuotedBy(data.rateQuotedBy);
         setCustomerId(data.customerId);
         setAssignedTo(data.assignedTo);
         setTechnicianList(data.technicianList || []);
@@ -190,11 +192,11 @@ const RaiseQuotation = () => {
             }
             const dataDealer = await  response.json();
             
-            // alert(JSON.stringify(dataDealer));
+            //  alert(JSON.stringify(dataDealer));
             // console.log(JSON.stringify(dataDealer));
             setDealerDetails(dataDealer);
             // setId(dataDealer.id);
-            // setDealerId(dataDealer.dealerId);
+            setDealerId(dataDealer.dealerId);
             // setCustomerId(dataDealer.customerId);
             setAddrRmarks(dataDealer[0].addrRmarks || []);
             setMaterialTotal(dataDealer[0].totalAmount);
@@ -315,6 +317,7 @@ const RaiseQuotation = () => {
       TechnicianList: technicianList,
       DealerList: dealerList,
       Rating: "",
+      RateQuotedBy: rateQuotedBy, 
     };
     try {
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
@@ -449,7 +452,7 @@ const RaiseQuotation = () => {
     }
   })();
   // const calculateGrandTotal = () => specifications.reduce((sum, spec) => sum + spec.total, 0);
- 
+ const isCustomerCare = dealerId === "customerCare";
   return (
     <div className="d-flex">
       {!isMobile && (
@@ -611,13 +614,13 @@ const RaiseQuotation = () => {
 </div>
 
 
-<p><strong>Trader Quotation</strong></p>
+<p><strong>{isCustomerCare ? "Customer Care Quotation" : "Trader Quotation"}</strong></p>
   <>
   {!isMobile ? (
     <table className="table table-bordered">
       <thead>
         <tr>
-          {['Trader ID', 'Total', 'Discount', 'Delivery Charges', 'Service Charges', 'GST', 'Grand Total', 'Lowest Bidder'].map((header, idx) => (
+          {[isCustomerCare ? "Customer Care ID" : "Trader ID", 'Total', 'Discount', 'Delivery Charges', 'Service Charges', 'GST', 'Grand Total', 'Lowest Bidder'].map((header, idx) => (
             <th key={idx}>{header}</th>
           ))}
         </tr>
@@ -667,7 +670,7 @@ const RaiseQuotation = () => {
       {dealerDetails.map((dealer, index) => (
         <div key={index} className="card border p-2 mb-3">
           {[
-            ['Trader ID', dealer.dealerId],
+            [isCustomerCare ? "Customer Care ID" : "Trader ID", dealer.dealerId],
             ['Total', dealer.totalAmount],
             ['Discount', Number(dealer.materialQuotation[0].fixedDiscount).toFixed(2)],
             ['Delivery Charges', dealer.materialQuotation[0].fixedDeliveryChargs],
@@ -689,13 +692,13 @@ const RaiseQuotation = () => {
   </div> 
   {/* Add Remarks */}
   <div className="form-group col-md-6">
-            <label className='fw-bold'>Dealer Remarks</label>
+            <label className='fw-bold'>{isCustomerCare ? "Customer Care Remarks" : "Dealer Remarks"}</label>
             <input 
             type="text"
             className="form-control m-2"
             value={addrRmarks}
             placeholder="Enter Remarks"
-            // onChange={(e) => handleAddRemarks(e.target.value)}
+            
             />
         </div>
    

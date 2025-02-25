@@ -337,6 +337,7 @@ useEffect(() => {
       TechnicianList: [],
       DealerList: [],
       Rating: "",
+      RateQuotedBy: "",
     };
 
   try {
@@ -426,7 +427,7 @@ useEffect(() => {
   //   };
 
   // try {
-  //   const response = await fetch('https://localhost:7091/api/RaiseTicketExtention/CreateRaiseTicketExtension', {
+  //   const response = await fetch('https://handymanapiv2.azurewebsites.net/api/RaiseTicketExtention/CreateRaiseTicketExtension', {
   //     method: 'POST',
   //     headers: {
   //       'Content-Type': 'application/json',

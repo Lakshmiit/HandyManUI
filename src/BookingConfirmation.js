@@ -50,7 +50,8 @@ const BookingConfirmation = () => {
   const [technicianId, setTechnicianId] = useState('');
   const [dealerId, setDealerId] = useState('');
   const [showModal, setShowModal] = useState(false);
- 
+  const [rateQuotedBy, setRateQuotedBy] = useState(''); 
+
   
   useEffect(() => {
       console.log(loading,id, technicianData);
@@ -75,6 +76,7 @@ const BookingConfirmation = () => {
         setSubject(data.subject);
         setDetails(data.details);
         setId(data.id);
+        setRateQuotedBy(data.rateQuotedBy);
         setTechnicianId(data.technicianList || []);
         setDealerId(data.dealerList || []);
         setCategory(data.category);
@@ -180,6 +182,8 @@ const BookingConfirmation = () => {
       TechnicianList: technicianId,
       DealerList: dealerId,
       Rating: "",
+      RateQuotedBy: rateQuotedBy,
+
     };
     try {
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {

@@ -52,7 +52,7 @@ const RaiseQuotation = () => {
     const [district, setDistrict] = useState('')
     const [zipCode, setZipcode] = useState('');
     const [address, setAddress] = useState('');
-    const [rateQuotedBy, setRateQuotedBy] = useState("Customer Care");
+    const [rateQuotedBy, setRateQuotedBy] = useState("Dealer/Trader");
     // const [isDealerSelected, setIsDealerSelected] = useState(false);
     const [material, setMaterialQuotation] = useState([{discounts: "", fixedDiscounts: "", deliveryCharges: "", fixedDeliveryCharges: "", serviceCharges: "", fixedServiceCharges: "", gsts: "", fixedGSTS: "", grandtotal: ""}])
     const [category, setCategory] = useState('');
@@ -345,6 +345,7 @@ useEffect(() => {
       TechnicianList: technicianId,
       DealerList: [],
       Rating: "",
+      RateQuotedBy: rateQuotedBy,
     };
     try {
       
@@ -738,7 +739,7 @@ const handleUpdateTicket = async (e) => {
         </Row>
           {/* Radio Buttons */}
           <div className="radio">
-                  <div className="form-group">
+            <div className="form-group">
               <strong>Rate Quoted By <span className="req_star">*</span></strong>
               <div className="radio">
                 <label className="m-1">

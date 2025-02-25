@@ -37,10 +37,10 @@ useEffect(() => {
       .get(url)
       .then((response) => {
         const tickets = response.data.tickets || [];
-        const filteredTickets = tickets.filter((ticket) => ticket.internalStatus === "Customer Approved" || ticket.internalStatus === "Closed");
+        const filteredTickets = tickets.filter((ticket) => (ticket.internalStatus === "Customer Approved" || ticket.internalStatus === "Closed") && ticket.lowestBidderDealerId === dealerId);
 
         setTicketData(filteredTickets);
-        setFilteredData(filteredTickets);
+        setFilteredData(filteredTickets); 
       })
       .catch((error) => {
         console.error("Error fetching ticket data:", error);

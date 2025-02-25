@@ -27,7 +27,8 @@ const RaiseQuotation = () => {
   const [requestType, setRequestType] = useState('');
   const [customerId, setCustomerId] = useState(''); 
   const [status, setStatus] = useState('');
-  const [fullName, setFullName] = useState('');  
+  const [fullName, setFullName] = useState(''); 
+  const [rateQuotedBy, setRateQuotedBy] = useState(''); 
   // const [gst, setGST] = useState("");
   // const [fixedOtherCharge, setFixedOtherCharge] = useState('');
   const [raiseAQuoteId]=useState('');
@@ -230,6 +231,7 @@ useEffect(() => {
             setAddress(data.address);
             setSubject(data.subject);
             setId(data.id);
+            setRateQuotedBy(data.rateQuotedBy);
             setCustomerId(data.customerId);
             setIsWithMaterial(data.isMaterialType);
             setTechnicianId(data.technicianList || []);
@@ -357,6 +359,7 @@ useEffect(() => {
      TechnicianList: technicianId,
      DealerList: updatedDealerList,
      Rating: "", 
+     RateQuotedBy: rateQuotedBy, 
     };
     
       // alert(JSON.stringify(payload));

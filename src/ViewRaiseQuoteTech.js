@@ -365,6 +365,8 @@ const handleUpdateTicket = async (e) => {
           option2Time: "", 
           dealerList: [], 
           Rating: "",
+          RateQuotedBy: "",
+
       };
 
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {

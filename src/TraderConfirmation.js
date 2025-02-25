@@ -73,6 +73,7 @@ const TraderConfirmation = () => {
   const [dealerDetails, setDealerDetails] = useState('');
   const [materialTotal, setMaterialTotal] = useState('');
   const [materialQuotation, setMaterialQuotation] = useState([]);
+  const [rateQuotedBy, setRateQuotedBy] = useState(''); 
  useEffect(() => {
       console.log(loading, dealerDetails, dealer, technicianStatus,technicianData, technicianFullName,deliveryData, dealerStatus,paymentData,showAlert, technicianAddress, technicianPhotoId, selectedSlot);
     }, [loading, dealerDetails, dealer,technicianData,technicianStatus, technicianFullName, deliveryData,dealerStatus,paymentData,showAlert, technicianAddress, technicianPhotoId, selectedSlot]);
@@ -114,6 +115,7 @@ const TraderConfirmation = () => {
         setAddress(raiseTicketData.address);
         setSubject(raiseTicketData.subject);
         setDetails(raiseTicketData.details);
+        setRateQuotedBy(raiseTicketData.rateQuotedBy);
         setUpdateRaiseTicketId(raiseTicketData.id);
         setTechnicianId(raiseTicketData.technicianList || []);
         setDealerId(raiseTicketData.dealerList || []);
@@ -411,6 +413,7 @@ useEffect(() => {
       Option2Day: option2Day,
       Option2Time: option2Time,
       Rating: "", 
+      RateQuotedBy: rateQuotedBy,
       
     };
   

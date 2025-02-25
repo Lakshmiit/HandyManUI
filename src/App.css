@@ -1850,3 +1850,10 @@ textarea {
     display: block; 
   }
 }
+
+.floating-menu {
+  position: fixed;
+  top: 80px; 
+  left: 20px; 
+  z-index: 1000;
+}

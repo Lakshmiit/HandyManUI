@@ -66,6 +66,8 @@ const CustomerTicketTrack = () => {
   const [dealerAddress, setDealerAddress] = useState('');
   const [dealerData, setDealerData] = useState('');
   const [dealerName,setDealerName] = useState('');
+  // const [rateQuotedBy, setRateQuotedBy] = useState(''); 
+
   // const [technicianId, setTechnicianId] = useState([]);
   // const [dealerId, setDealerId] = useState([]);
   // const [isFinalized, setIsFinalized] = useState(false);
@@ -145,6 +147,7 @@ useEffect(() => {
         setIsWithMaterial(data.isMaterialType);
         setAssignedTo(data.assignedTo);
         setStatus(data.status);
+        // setRateQuotedBy(data.rateQuotedBy);
         setFullName(data.customerName);
         setApprovedAmount(data.approvedAmount);
         setLowestBidder(data.lowestBidderTechnicainId);
@@ -387,6 +390,7 @@ useEffect(() => {
 //       TechnicianList: technicianId,
 //       DealerList: dealerId,
 //       Rating: rating.toString(),
+//       RateQuotedBy: rateQuotedBy,
 //     };
   
 //     try {
