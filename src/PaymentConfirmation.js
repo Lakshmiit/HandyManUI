@@ -426,6 +426,10 @@ const handlePaymentTicket = async (e) => {
 
 const handleSendSMSLowestBidder = async (technicianConfirmationCode) => {
   // e.preventDefault();
+  if (rateQuotedBy !== "Dealer/Trader") {
+    return;
+  }
+
 
   try { 
     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Payment/sendLowestBidderDealerNotifications?ticketId=${ticketId}&ConfirmationCode=${technicianConfirmationCode}&technicianPhoneNumber=${dealerPhoneNumber}`, {
