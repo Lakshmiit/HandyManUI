@@ -683,7 +683,7 @@ useEffect(() => {
         </Row>
 
         {/* File Upload */}
-        <div className="form-group mt-4">
+        <div className="form-group">
           <label className="text-danger m-2">Upload your Query Photos<span className="req_star">*</span></label>
           <input
                 type="file"
@@ -895,12 +895,6 @@ useEffect(() => {
     </div>
 {/* Styles for floating menu */}
 <style jsx>{`
-        .floating-menu {
-          position: fixed;
-          top: 80px; /* Increased from 20px to avoid overlapping with the logo */
-          left: 20px; /* Adjusted for placement on the left side */
-          z-index: 1000;
-        }
         .menu-popup {
           position: absolute;
           top: 50px; /* Keeps the popup aligned below the floating menu */
@@ -922,8 +916,6 @@ useEffect(() => {
           border-bottom: none;
         }
       `}</style>
-
-    
     </div>
   );
 };
