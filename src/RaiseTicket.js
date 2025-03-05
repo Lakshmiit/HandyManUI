@@ -251,7 +251,11 @@ useEffect(() => {
   // Generate WhatsApp link with the ticket ID
   const generateWhatsAppLink = (ticketId, phoneNumber) => {
     const message = `Hello, I'd like to continue uploading my video for ticket: ${ticketId}`;
-    return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+ var url =`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    // alert(url);
+    //console.log(url);
+
+    return url;
   };
   const handleWhatsAppClick = () => {
     // handleSaveWhatsapp();
