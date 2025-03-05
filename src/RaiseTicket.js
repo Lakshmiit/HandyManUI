@@ -519,7 +519,7 @@ useEffect(() => {
       <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
       <h1 className="text-center mb-2">Raise a Ticket</h1>
       {/* Ticket Form */}
-      <Form onSubmit={handleSaveTicket}>
+      {/* <Form > */}
         {/* Display primary address with "Change Address" link */}
         <Form.Group>
           <label>Address</label>
@@ -649,7 +649,7 @@ useEffect(() => {
                 required
               >
                 <option value="">Select Category</option>
-                <option>Plumbing & Sanitary</option>
+                <option>Plumbing and Sanitary</option>
                 <option>Electrical</option>
                 <option>Painting</option>
                 <option>Interior</option>
@@ -790,11 +790,11 @@ useEffect(() => {
 
         {/* Get Quote Button */}
         <div className="mt-4">
-          <Button variant="success" type="submit">
+          <Button variant="success" type="submit" onClick={handleSaveTicket}>
             Get Quote
           </Button>
         </div>
-      </Form>
+      {/* </Form> */}
 
       {/* Address Modal */}
       <Modal show={showModal} onHide={() => setShowModal(false)}>

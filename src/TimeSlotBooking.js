@@ -55,7 +55,6 @@ const TimeSlotBooking = () => {
   const [category, setCategory] = useState('');
   const [lowestDealerBidder, setLowestDealerBidder] = useState('');
   const [lowestBidder, setLowestBidder] = useState('');
-  // const [customerTimeSlot, setCustomerTimeSlot] = useState([{day: "", time: ""}]);
   const getDaysInMonth = (month, year) => new Date(year, month + 1, 0).getDate();
   const getFirstDayOfMonth = (month, year) => new Date(year, month, 1).getDay();
   const [option1Selection, setOption1Selection] = useState({day:"", time: ""});
@@ -63,11 +62,8 @@ const TimeSlotBooking = () => {
   const [approvedAmount, setApprovedAmount] = useState('');
   const [isChecked, setIsChecked] = useState(false);
    const [showModal, setShowModal] = useState(false);
-  // const [errorMessage, setErrorMessage] = useState("");
   const [rateQuotedBy, setRateQuotedBy] = useState(''); 
 
-
-  
   useEffect(() => {
     console.log(loading, id);
   }, [loading, id]);
@@ -179,13 +175,7 @@ const handleDateChange = (event) => {
         } else if (activeTab === "Option 2" && selectedTimeSlot) {
           setOption2Selection((prev) => ({ ...prev, time: selectedTimeSlot }));
         }
-      }, [activeTab, selectedTimeSlot]);
-
-      // useEffect(() => {
-      //   if (activeTab === "Option 2" && selectedTimeSlot) {
-      //     setOption2Selection((prev) => ({ ...prev, time: selectedTimeSlot }));
-      //   }
-      // }, [activeTab, selectedTimeSlot]); 
+      }, [activeTab, selectedTimeSlot]); 
       
       const handleTimeSlotClick = (slot) => {
         setSelectedTimeSlot(slot);
@@ -203,7 +193,7 @@ const handleDateChange = (event) => {
   // Detect screen size for responsiveness
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
-    handleResize(); // Set initial state
+    handleResize(); 
     window.addEventListener('resize', handleResize);
   
     return () => window.removeEventListener('resize', handleResize);
@@ -235,10 +225,6 @@ const handleDateChange = (event) => {
         setAssignedTo(data.assignedTo);
         setStatus(data.status);
         setFullName(data.customerName);
-        // setOption1Day(data.option1Day);
-        // setOption1Time(data.option1Time);
-        // setOption2Day(data.option2Day);
-        // setOption2Time(data.option2Time);
         setOption1Selection({ day: data?.option1Day || "", time: data?.option1Time || "" });
         setOption2Selection({ day: data?.option2Day || "", time: data?.option2Time || "" });
         setApprovedAmount(data.approvedAmount);
@@ -257,39 +243,54 @@ const handleDateChange = (event) => {
     fetchticketData();
   }, [raiseTicketId]);
 
-  const handleContinue = () => {
+//   const handleContinue = () => {
+//   if (activeTab === "Option 1") {
+//     if (selectedDate && selectedTimeSlot) {
+//       setOption1Selection({
+//         date: formatDate(selectedDate),
+//         time: selectedTimeSlot,
+//       });
+//       setActiveTab("Option 2");  
+//     } else {
+//     }
+//   } else if (activeTab === "Option 2") {
+//      if (!isChecked) {
+//       alert("You didn't select the Terms and Conditions checkbox.");
+//       return;
+//     }
+
+//     if (selectedDate && selectedTimeSlot) {
+//       setOption2Selection({
+//         date: formatDate(selectedDate),
+//         time: selectedTimeSlot,
+//       });
+//     }
+
+//       if (option1Selection.date && option2Selection.date) {
+//         handleSaveTicket();
+//       } 
+//   }
+// };
+
+const handleContinue = () => {
   if (activeTab === "Option 1") {
-    if (selectedDate && selectedTimeSlot) {
-      setOption1Selection({
-        date: formatDate(selectedDate),
-        time: selectedTimeSlot,
-      });
-      setActiveTab("Option 2");  
-    } else {
-      //alert("Please select date and time for Option 2.");
+    if (!option1Selection.date || !option1Selection.time) {
+      alert("Please select a date and time slot for Option 1 before proceeding.");
+      return;
     }
+    setActiveTab("Option 2");  
   } else if (activeTab === "Option 2") {
-     if (!isChecked) {
-      alert("You didn't select the Terms and Conditions checkbox.");
+    if (!option2Selection.date || !option2Selection.time) {
+      alert("Please select a date and time slot for Option 2 before submitting.");
       return;
     }
 
-    if (selectedDate && selectedTimeSlot) {
-      setOption2Selection({
-        date: formatDate(selectedDate),
-        time: selectedTimeSlot,
-      });
+    if (!isChecked) {
+      alert("You must accept the Terms and Conditions before proceeding.");
+      return;
     }
 
-      if (option1Selection.date && option2Selection.date) {
-        handleSaveTicket();
-      } 
-      // else {
-      //   alert("Please complete Option 1 selection before submitting.");
-      // }
-    // } else {
-    //   alert("Please select date and time for Option 2.");
-    // }
+    handleSaveTicket();
   }
 };
 
@@ -423,19 +424,11 @@ const handleDateChange = (event) => {
 </div>
 
 <div className="calendar-section">
-    {/* <div className="calendar-header d-flex justify-content-between align-items-center">
-      <span>{months[currentMonth]} {currentYear}</span>
-      <div className="m-2">
-      <button className="nav-btn" onClick={handlePrevMonth}>&#60;</button>
-       <button className="nav-btn" onClick={handleNextMonth}>&#62;</button> 
-       </div>
-    </div> */}
     {isMobile ? (
         <div className="calendar-header">
         <label><strong>Select Date</strong></label>
         <input
           type="date"
-          // value={selectedDate && !isNaN(selectedDate.getTime()) ? selectedDate.toISOString().split('T')[0] : ""}
           value={selectedDate ? selectedDate.toISOString().split("T")[0] : ""}
           onChange={handleDateChange}
           className="date-input"
@@ -544,7 +537,7 @@ const handleDateChange = (event) => {
               className="text-primary ms-1"
               style={{ background: "none", border: "none", padding: 0, textDecoration: "underline", cursor: "pointer" }}
               >
-                Terms and conditions & Privacy Policy ..
+                Terms and Conditions & Privacy Policy ..
               </button>
           </label>
       </div>
@@ -850,40 +843,7 @@ const handleDateChange = (event) => {
           </div>
         </div>
     </div>
-    {/* CSS for Modal */}
-    <style>{`
-    .floating-menu {
-          position: fixed;
-          top: 80px; /* Increased from 20px to avoid overlapping with the logo */
-          left: 20px; /* Adjusted for placement on the left side */
-          z-index: 1000;
-        }
-        .modal-overlay {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 110%;
-          height: 110%;
-          background: rgba(0, 0, 0, 0.5);
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          z-index: 1000;
-        }
-
-        .modal-content {
-          background: white;
-          padding: 20px;
-          border-radius: 20px;
-          width: 100%;
-          max-width: 600px;
-          max-height: 80vh;
-          overflow-y: auto;
-          text-align: left;
-        }
-      `}</style>
-
-  </div>   
+    </div>   
  );
 };
 

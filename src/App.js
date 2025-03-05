@@ -52,7 +52,17 @@ import TicketConfirmationGrid from './TicketConfirmationGrid.js';
 import TraderConfirmationGrid from './TraderConfirmationGrid.js';
 // import TermsandConditions from './TermsandConditions.js';
 import CustomerCareGrid from './CustomerCareGrid.js';
-
+import BookTechnician from './BookTechnician.js';
+import BookTechnicianActionView from './BookTechnicianActionView.js';
+import UploadBookTechnician from './UploadBookTechnician.js';
+import BookTechnicianList from './BookTechnicianList.js';
+import BookTechnicianPaymentPage from './BookTechnicianPaymentPage.js';
+import UpdateBookTechnician from './UpdateBookTechnician.js';
+import BookTechnicianNotificationGrid from './BookTechnicianNotificationGrid.js';
+import BookTechnicianCustomerGrid from './BookTechnicianCustomerGrid.js';
+import CustomerBookTechnicianQuotation from './CustomerBookTechnicianQuotation.js';
+import BooKTechnicianAdminGridView from './BooKTechnicianAdminGridView.js';
+import CustomerBookTechnicianQuotationView from './CustomerBookTechnicianQuotationView.js';
 
 function App() {
   return (
@@ -113,8 +123,19 @@ function App() {
             <Route path="/traderConfirmationGrid/:userType/:district/:dealerId" element={<TraderConfirmationGrid />} />
             {/* <Route path="/termsandConditions" element={<TermsandConditions />} />*/}
             <Route path="/customerCareGrid" element={<CustomerCareGrid />} /> 
-
             <Route path="/trackStatus/:userType" element={<TrackStatusGrid />} />
+            <Route path="/bookTechnician/:customerId/:userType" element={<BookTechnician />} />
+            <Route path="/bookTechnicianActionView/:raiseTicketId" element={<BookTechnicianActionView />} />
+            <Route path="/uploadBookTechnician" element={<UploadBookTechnician />} />
+            <Route path="/bookTechnicianList" element={<BookTechnicianList />} />
+            <Route path="/bookTechnicianPaymentPage/:raiseTicketId/:userType" element={<BookTechnicianPaymentPage />} />
+            <Route path="/updateBookTechnician/:id" element={<UpdateBookTechnician />} />
+            <Route path="/bookTechnicianNotificationGrid" element={<BookTechnicianNotificationGrid />} />
+            <Route path="/bookTechnicianCustomerGrid/:userType/:customerId" element={<BookTechnicianCustomerGrid />} />
+            <Route path="/customerBookTechnicianQuotation/:userType/:raiseTicketId" element={<CustomerBookTechnicianQuotation />} />
+            <Route path="/bookTechnicianAdminView/:raiseTicketId" element={<BooKTechnicianAdminGridView />} /> 
+            <Route path="/customerBookTechnicianQuotationView/:userType/:raiseTicketId" element={<CustomerBookTechnicianQuotationView />} />
+            
           </Routes>
         </main>
       </div>

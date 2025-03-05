@@ -1037,7 +1037,7 @@ textarea {
 
 .notifications-container {
   width: 100%;
-  max-width: 650px;
+  max-width: 690px;
   border: 1px solid #ccc;
   font-family: Arial, sans-serif;
   background-color: #fff;
@@ -1047,7 +1047,7 @@ textarea {
   height: 100%;
   /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);  */
   border-radius: 25px;
-  padding: 1rem;
+  padding: 8px;
 }
 
 .tabs {
@@ -1857,3 +1857,4 @@ textarea {
   left: 20px; 
   z-index: 1000;
 }
+

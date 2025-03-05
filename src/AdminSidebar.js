@@ -10,6 +10,7 @@ import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import ForumIcon from "@mui/icons-material/Forum";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import GroupsIcon from "@mui/icons-material/Groups";
+import DescriptionIcon from '@mui/icons-material/Description';
 
 const menuConfig = [
   { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", TargetUrl: "https://lakshmisaiserviceproviders.com/UserIdLogin" },
@@ -28,6 +29,7 @@ const menuConfig = [
   { MenuIcon: <ImportContactsIcon />, MenuTitle: "Customer Care Directory", TargetUrl: "/CustomerDirectory" },
   { MenuIcon: <PersonOutlineIcon />, MenuTitle: "Accounts", TargetUrl: "/Accounts" },
   { MenuIcon: <UploadIcon />, MenuTitle: "Upload Product", TargetUrl: "/product-list" },
+  { MenuIcon: <DescriptionIcon />, MenuTitle: "Get A Technician Upload Job Description", TargetUrl: "" },
   { MenuIcon: <SupportAgentIcon />, MenuTitle: "Customer Care Helpdesk", TargetUrl: "/CustomerHelpDesk" },
   { MenuIcon: <ForumIcon />, MenuTitle: "Chat", TargetUrl: "/Chat" },
   { MenuIcon: <MailOutlineIcon />, MenuTitle: "SMS Center", TargetUrl: "/SMSCenter" },

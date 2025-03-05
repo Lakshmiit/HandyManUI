@@ -575,13 +575,12 @@ const handleUpdateTicket = async (e) => {
   const handleBothActions = (e) => {
     e.preventDefault();
   
-    // Validate the category
     if (!category) {
       setError("Must select a category");
-      return; // Stop execution if validation fails
+      return; 
     }
   
-    setError(""); // Clear error if validation passes
+    setError(""); 
   
     // Perform both actions
     handleSaveTicket(e);

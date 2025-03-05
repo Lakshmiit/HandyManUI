@@ -214,12 +214,6 @@ const TrackNotification = () => {
           100% {
             opacity: 1;
           }
-        }
-        .floating-menu {
-          position: fixed;
-          top: 80px; /* Increased from 20px to avoid overlapping with the logo */
-          left: 20px; /* Adjusted for placement on the left side */
-          z-index: 1000;
         }  
       `}</style>
     </div>

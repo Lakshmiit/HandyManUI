@@ -6,12 +6,12 @@ import { Dashboard as MoreVertIcon } from '@mui/icons-material';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import './App.css';
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate} from "react-router-dom";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 
 const CustomerCareConfirmation = () => {
-  // const Navigate = useNavigate();
+ const Navigate = useNavigate();
   // const {userType} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -27,7 +27,7 @@ const CustomerCareConfirmation = () => {
   const [specifications, setSpecifications] = useState([{ material: "", quantity: "", receivedQuantity: "", remainingQuantity: "", isSelected: false}]);
   const [commentsList, setCommentsList] = useState([{updatedDate: new Date(), commentText: ""}]); 
   const [requestType, setRequestType] = useState('');
-  // const [technicianAcceptance, setTechnicianAcceptance] = useState([{type: "", technicianRemarks: ""}]); 
+  const [technicianAcceptance] = useState([{type: "", technicianRemarks: ""}]); 
   const [deliveryData, setDeliveryData] = useState('');
   const [customerId, setCustomerId] = useState(''); 
   const [status, setStatus] = useState(''); 
@@ -57,8 +57,8 @@ const CustomerCareConfirmation = () => {
   const [selectedStatus, setSelectedStatus] = useState('');
   const [paymentData, setPaymentData] = useState('');
   const [customerCode, setCustomerCode] = useState('');
-  // const [deliveryNoteId, setDeliveryNoteId]=useState('');
-  // const [dealerAcceptance, setDealerAcceptance] = useState([{type: "", dealerRemarks: ""}]); 
+  const [deliveryNoteId, setDeliveryNoteId]=useState('');
+ const [dealerAcceptance] = useState([{type: "", dealerRemarks: ""}]); 
  const [dealerInvoice, setDealerInvoice] = useState([]);
    const [showAlert, setShowAlert] = useState(false);
   const [invoiceNumber, setInvoiceNumber] = useState('');
@@ -187,6 +187,7 @@ useEffect(() => {
         setDeliveryData(data);
         // alert(JSON.stringify(data));
         setDeliveryId(data.id);
+        setDeliveryNoteId(data.deliveryNoteId);
         const imageRequests =
         data.uploadInvoice?.map((photo) => fetch(
             `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
@@ -492,8 +493,8 @@ setShowAlert(true);
         throw new Error('Failed to save ticket data');
       }
       alert('Ticket saved Successfully!');
+      Navigate(`/adminNotifications`);
       setIsFinalized(true);
-      // Navigate(`/paymentConfirmation/${raiseTicketId}/${userType}`)
     } catch (error) {
       console.error('Error saving ticket data:', error);
       window.alert('Failed to save the ticket data. Please try again later.');
@@ -567,62 +568,63 @@ setShowAlert(true);
 //   }
 // };
 
-// const handleUploadInvoice = async (e) => {
-//   e.preventDefault();
+const handleUploadInvoice = async (e) => {
+  e.preventDefault();
 
 
-// const payload2 = {
+const payload2 = {
 
-//   id: deliveryId,
-//   ticketId: ticketId,
-//   deliveryNoteId: deliveryNoteId,
-//   option1Day: option1Day,
-//   option1Time: option1Time,
-//   option2Day: option2Day,
-//   option2Time:  option2Time,
-//   deliveryTime: new Date().toISOString(),
-//   UploadInvoice: uploadInvoice.map((file) => file.src),
-//   InvoiceNumber: invoiceNumber,
-//   InvoiceDate: invoiceDate,
-//   deliveryInvoiceId: "string", 
-//   internalStatus: status,
-//   technicianStatus: technicianStatus,
-//   dealerStatus: selectedStatus,
-//   technicianAcceptance: technicianAcceptance.map((remarks) => ({
-//     type: remarks.type,
-//     technicianRemarks: remarks.technicianRemarks,
-//   })),
-//   dealerAcceptance: dealerAcceptance.map((remarks) => ({
-//     type: remarks.type,
-//     dealerRemarks: remarks.dealerRemarks,
-//   })),
-//   assignedTo: assignedTo,
-//   materialCollection: specifications.map((collection) => ({
-//     material: collection.material,
-//     quantity: collection.quantity,
-//     receivedQuantity: collection.receivedQuantity,
-//     remainingQuantity: collection.remainingQuantity,
-//   }))
-// };
+  id: deliveryId,
+  ticketId: ticketId,
+  deliveryNoteId: deliveryNoteId,
+  option1Day: option1Day,
+  option1Time: option1Time,
+  option2Day: option2Day,
+  option2Time:  option2Time,
+  deliveryTime: new Date().toISOString(),
+  UploadInvoice: uploadInvoice.map((file) => file.src),
+  InvoiceNumber: invoiceNumber,
+  InvoiceDate: invoiceDate,
+  deliveryInvoiceId: "string", 
+  internalStatus: status,
+  technicianStatus: technicianStatus,
+  dealerStatus: selectedStatus,
+  technicianAcceptance: technicianAcceptance.map((remarks) => ({
+    type: remarks.type,
+    technicianRemarks: remarks.technicianRemarks,
+  })),
+  dealerAcceptance: dealerAcceptance.map((remarks) => ({
+    type: remarks.type,
+    dealerRemarks: remarks.dealerRemarks,
+  })),
+  assignedTo: assignedTo, 
+  materialCollection: specifications.map((collection) => ({
+    material: collection.material,
+    quantity: collection.quantity,
+    receivedQuantity: collection.receivedQuantity,
+    remainingQuantity: collection.remainingQuantity,
+  }))
+};
 
-// try {
-//   const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/DeliveryNote/${deliveryId}`, {
-//     method: 'PUT',
-//     headers: {
-//       'Content-Type': 'application/json',
-//     },
-//     body: JSON.stringify(payload2),
-//   });
-//   if (!response.ok) {
-//     throw new Error('Failed to create a Invoice.');
-//   }
-//   alert('Uploaded Invoice saved Successfully!');
-//   setIsFinalized(true);
-// } catch (error) {
-//   console.error('Error:', error);
-//   window.alert('Failed to create the Invoice. Please try again later.');
-// }
-// };
+try {
+  const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/DeliveryNote/${deliveryId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload2),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to create a Invoice.');
+  }
+  alert('Uploaded Invoice saved Successfully!');
+  Navigate(`/adminNotifications`);
+  setIsFinalized(true);
+} catch (error) {
+  console.error('Error:', error);
+  window.alert('Failed to create the Invoice. Please try again later.');
+}
+};
 
 
 // const handleBothActions =  (e) => {
@@ -815,7 +817,20 @@ const handleStatusChange = (event) => {
           <label className='section-title'>Required Materials Details</label>
           {!isMobile ? (
           <div className='mt-3'>
-            
+            <div className='d-flex gap-3 text-center'>
+          <div style={{ flex: 4}}>
+            <label className="fw-bold">Material</label>
+          </div>
+          <div style={{ flex: 4}}>
+            <label className="fw-bold">Quantity</label>
+          </div>
+          <div style={{ flex: 4 }}>
+            <label className="fw-bold">Received Quantity</label>
+          </div>
+          <div style={{ flex: 4 }}>
+            <label className="fw-bold">Remaining Quantity</label>
+          </div>
+        </div>
           {specifications.map((spec, index) => (
             <div className="d-flex gap-3 mb-2" key={index}>
               
@@ -894,7 +909,9 @@ const handleStatusChange = (event) => {
                 required
               />
               {showAlert && (
-                <div className="alert alert-danger  mt-2">
+                <div className="alert alert-danger  mt-2 fs-5">
+                  <strong>Note:</strong> Invoice will be uploaded only once; if uploaded, it cannot be changed.  
+                  <br />
                   Please click the <strong>Upload Files</strong> button to upload the selected images.
                 </div>
               )}
@@ -913,7 +930,7 @@ const handleStatusChange = (event) => {
               </button>
               <button className='btn btn-warning m-1'
               disabled={isFinalized} 
-              // onClick={handleUploadInvoice}
+              onClick={handleUploadInvoice}
               >Save</button>
           </div>
           </>
@@ -1082,15 +1099,6 @@ const handleStatusChange = (event) => {
       </div>
     </div> 
     </div>
-    {/* Styles for floating menu */}
-<style jsx>{`
-        .floating-menu {
-          position: fixed;
-          top: 80px; /* Increased from 20px to avoid overlapping with the logo */
-          left: 20px; /* Adjusted for placement on the left side */
-          z-index: 1000;
-        }
-      `}</style>
     </div>
   );
 };

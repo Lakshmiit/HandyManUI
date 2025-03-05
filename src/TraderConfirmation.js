@@ -849,6 +849,8 @@ const handleBothActions =  (e) => {
               />
               {showAlert && (
                 <div className="alert alert-danger  mt-2">
+                  <strong>Note:</strong> Invoice will be uploaded only once; if uploaded, it cannot be changed.  
+                  <br />
                   Please click the <strong>Upload Invoice</strong> button to upload the selected Invoice.
                 </div>
               )}

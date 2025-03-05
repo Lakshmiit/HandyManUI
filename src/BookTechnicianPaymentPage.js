@@ -2,7 +2,6 @@ import React, { useEffect, useState} from 'react';
 import Sidebar from './Sidebar';
 import { Button } from 'react-bootstrap';
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
-// import image from './img/technician.png';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import './App.css';
@@ -13,143 +12,105 @@ const PaymentConfirmation = () => {
   // const {userType} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const {raiseTicketId} = useParams();
+ const {raiseTicketId} = useParams();
   const [isChecked, setIsChecked] = useState('');
-  const [id, setId] = useState('');
-  const [ticketData, setTicketData] = useState('');
-  const [subject, setSubject] = useState('');
-  const [details, setDetails] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [attachments, setAttachments] = useState([]);
-  const [specifications, setSpecifications] = useState([{ material: "", quantity: "", price: "", total: "" }]);
-  const [commentsList, setCommentsList] = useState([{updatedDate: new Date(), commentText: ""}]); 
-  const [requestType, setRequestType] = useState('');
-  const [customerId, setCustomerId] = useState(''); 
-  const [status, setStatus] = useState(''); 
-  const [state, setState] = useState('');
-  const [district, setDistrict] = useState('')
-  const [zipCode, setZipcode] = useState('');
-  const [address, setAddress] = useState('');
-  const [assignedTo, setAssignedTo] = useState('');
-  const [isWithMaterial, setIsWithMaterial] = useState(false);
-  const [category, setCategory] = useState('');
-  const [lowestDealerBidder, setLowestDealerBidder] = useState('');
-  const [lowestBidder, setLowestBidder] = useState('');
-  const [option1Day, setOption1Day] = useState('');
-  const [option2Day, setOption2Day] = useState('');
-  const [option1Time, setOption1Time] = useState('');
-  const [option2Time, setOption2Time] = useState('');
-  const [technicianConfirmationCode, setTechnicianConfirmationCode] = useState('');
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const [approvedAmount, setApprovedAmount] = useState('');
-  const [fullName, setFullName] = useState('');
-  // const [option1Time, setOption1Time] = useState('');
-  // const [option2Time, setOption2Time] = useState('');
-  // const [technicianData, setTechnicianData] = useState('');
-  // const [technicianFullName, setTechnicianName] = useState('');
-  // const [technicianAddress, setTechnicianAddress] = useState('');
-  // const [aadharNumber, setAadharNumber] = useState('');
-  // const [technicianPhotoId, setTechnicianPhotoId] = useState('');
-  const [ticketId, setTicketId] = useState('');
-  const [selectedPayment, setSelectedPayment] = useState(null);
-  //const [showConfirmation, setShowConfirmation] = useState(false);
-  const [totalAmount, setTotalAmount] = useState('');
-  const [technicianDetails, setTechnicianDetails] = useState([]);
-  //const [technicianConfirmationCode] = useState('');
-  const [materialQuotation, setMaterialQuotation] = useState([{discount: "", fixedDiscount: "", deliverycharges: "", fixedDeliveryChargs: "", servicecharges: "", fixedServicecharges: "", gst: "", fixedGST: "", grandtotal: ""}])
-  const [dealerDetails, setDealerDetails] = useState([]);
-  const [lowestGrandTotal, setLowestGrandTotal] = useState('');
-  const [technicianId, setTechnicianId] = useState([]);
-  const [dealerId, setDealerId] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [rateQuotedBy, setRateQuotedBy] = useState(''); 
-  const [dealerData, setDealerData] = useState(''); 
-  const [dealerPhoneNumber, setDealerPhoneNumber] = useState(''); 
+  // const [id, setId] = useState('');
+const [technicianData, setTechnicianData] = useState('');
+const [bookTechnicianIds, setBookTechnicianId] = useState('');
+const [loading, setLoading] = useState(true);
+const [state, setState] = useState('');
+const [district, setDistrict] = useState('') 
+const [zipCode, setZipcode] = useState('');
+const [address, setAddress] = useState('');
+const [customerId, setCustomerId] = useState(''); 
+const [category, setCategory] = useState('');
+const [customerName, setCustomerName] = useState('');
+const [technicianConfirmationCode, setTechnicianConfirmationCode] = useState('');
+const [showConfirmation, setShowConfirmation] = useState(false);
+// const [selectedJob, setSelectedJob] = useState([{remarks: "", discount: "", moreInfo: "", afterDiscount: "", jobDescription: ""}]);
+const [selectedPayment, setSelectedPayment] = useState(null);
+const [showModal, setShowModal] = useState(false);
+// const [status, setStatus] = useState('');
+const [rate, setRate] = useState('');
+const [discount, setDiscount] = useState('');
+const [afterDiscount, setAfterDiscount] = useState('');
+const [jobDescription, setJobDescription] = useState('');
+const [phoneNumber, setPhoneNumber] = useState('');
+const [moreInfo, setMoreInfo] = useState('');
+const [remarks, setRemarks] = useState('');
 
+  // const paymentDataTime = new Date().toLocaleString("en-IN", {
+  //   timeZone: "Asia/Kolkata",
+  //   day: "2-digit",
+  //   month: "2-digit",
+  //   year: "numeric",
+  //   hour: "2-digit",
+  //   minute: "2-digit",
+  //   hour12: false
+  // }).replace(",", "");
 
-
-  const paymentDataTime = new Date().toLocaleString("en-IN", {
-    timeZone: "Asia/Kolkata",
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false
-  }).replace(",", "");
   useEffect(() => {
-      console.log(loading, id, materialQuotation, dealerData);
-    }, [loading, id, materialQuotation, dealerData]);
+      console.log( technicianData);
+    }, [technicianData]);
   
   useEffect(() => {
-    const fetchticketData = async () => {
+    const fetchtechnicianData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/GetBookTechnician/${raiseTicketId}`);
         if (!response.ok) {
-          throw new Error('Failed to fetch ticket data');
+          throw new Error('Failed to fetch technician data');
         }
         const data = await response.json();
-        setTicketData(data);
+        setTechnicianData(data);
         // alert(JSON.stringify(data));
+        setTechnicianConfirmationCode(data.id);
+        setBookTechnicianId(data.bookTechnicianId);
+        setCustomerName(data.customerName);
+        setAddress(data.address);
+        setCategory(data.category); 
+        setCustomerId(data.customerId);
         setState(data.state);
-        setTicketId(data.raiseTicketId);
         setDistrict(data.district);
         setZipcode(data.zipCode);
-        setAddress(data.address);
-        setSubject(data.subject);
-        setDetails(data.details);
-        setId(data.id);
-        setRateQuotedBy(data.rateQuotedBy);
-        setTechnicianId(data.technicianList || []);
-        setDealerId(data.dealerList || []);
-        setCategory(data.category);
-        setCustomerId(data.customerId);
-        setIsWithMaterial(data.isMaterialType);
-        setAssignedTo(data.assignedTo);
-        setStatus(data.status);
-        setFullName(data.customerName);
-        setApprovedAmount(data.approvedAmount);
-        setOption1Day(data.option1Day || '');
-        setOption2Day(data.option2Day || '');
-        setOption1Time(data.option1Time || '');
-        setOption2Time(data.option2Time || '');
-        setLowestBidder(data.lowestBidderTechnicainId);
-        setLowestDealerBidder(data.lowestBidderDealerId)
-        setRequestType(data.requestType || 'Without Material');
-        setAttachments(data.attachments);
-        setSpecifications(data.materials || [{material: "", quantity: "", price: "", total: ""}]);
-        setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: ""}]);
-      } catch (error) {
+        setPhoneNumber(data.phoneNumber);
+        setRemarks(data.remarks);
+        setDiscount(data.discount);
+        setMoreInfo(data.moreInfo);
+        setAfterDiscount(data.afterDiscount);
+        setJobDescription(data.jobDescription);
+        setRate(data.rate);
+        
+        } catch (error) {
         console.error('Error fetching ticket data:', error);
       } finally {
         setLoading(false);
       }
     };
-    fetchticketData();
+    fetchtechnicianData();
   }, [raiseTicketId]);
 
-  useEffect(() => {
-    const fetchDealerData = async () => {
-      try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Dealer/GetDealerDtailsByUserId?userId=${lowestDealerBidder}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch dealer data');
-        }
-        // alert(lowestDealerBidder);
-        const dealerData = await response.json();
-        setDealerData(dealerData);
-        // alert(JSON.stringify(dealerData)); 
-        //alert(lowestDealerBidder);
-        setDealerPhoneNumber(dealerData[0].phoneNumber);
-        //alert(dealerData.phoneNumber);
-        } catch (error) {
-        console.error('Error fetching dealer data:', error);
-      } finally {
-        setLoading(false);
-      } 
-    };
-    fetchDealerData();
-  }, [lowestDealerBidder]);
+  // useEffect(() => {
+  //   const fetchDealerData = async () => {
+  //     try {
+  //       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Dealer/GetDealerDtailsByUserId?userId=${lowestDealerBidder}`);
+  //       if (!response.ok) {
+  //         throw new Error('Failed to fetch dealer data');
+  //       }
+  //       // alert(lowestDealerBidder);
+  //       const dealerData = await response.json();
+  //       setDealerData(dealerData);
+  //       // alert(JSON.stringify(dealerData)); 
+  //       //alert(lowestDealerBidder);
+  //       setDealerPhoneNumber(dealerData[0].phoneNumber);
+  //       //alert(dealerData.phoneNumber);
+  //       } catch (error) {
+  //       console.error('Error fetching dealer data:', error);
+  //     } finally {
+  //       setLoading(false);
+  //     } 
+  //   };
+  //   fetchDealerData();
+  // }, [lowestDealerBidder]);
 
 
   // useEffect(() => {
@@ -176,85 +137,85 @@ const PaymentConfirmation = () => {
   // }, [lowestBidder]);
 
   // Fetch data from API on component mount
-        useEffect(() => {
-          // API URL
-          const apiUrl = `https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
-          // Fetching the data from the API
-          const fetchData = async () => {
-            try {
-              const response = await fetch(apiUrl);
-              const quotedata = await response.json();
-              setTechnicianDetails(quotedata);
-              //alert(JSON.stringify(technicianDetails));
-              // setRaiseAQuoteId(quotedata.raiseAQuoteId);
-              // setQuote(quotedata.enterQuoteAmount);
-              // setFixedQuote(quotedata.fixedQuote);
-              // setDiscount(quotedata.discount);
-              // setFixedDiscount(quotedata.fixedDiscount);
-              // setId(quotedata.id);
-              // setGST(quotedata.gst);
-              // setFixedGSTs(quotedata.fixedGST);
-              setTotalAmount(quotedata.totalAmount);
-              // setOtherCharge(quotedata.othercharges);
-              // setServiceCharge(quotedata.serviceCharges);
-              // setFixedServiceCharge(quotedata.fixedServiceCharge);
-              // setFixedOtherCharge(quotedata.fixedOtherCharge);
-              // setSpecifications(quotedata.materials || [{material: "", quantity: "", price: "", total: ""}]);         
-              // setAddRemarks(quotedata.addrRmarks);
-            } catch (error) {
-              console.error('Error fetching data:', error);
-            }
-          };
-          fetchData(); 
-        }, [raiseTicketId]); 
+      //   useEffect(() => {
+      //     // API URL
+      //     const apiUrl = `https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
+      //     // Fetching the data from the API
+      //     const fetchData = async () => {
+      //       try {
+      //         const response = await fetch(apiUrl);
+      //         const quotedata = await response.json();
+      //         setTechnicianDetails(quotedata);
+      //         //alert(JSON.stringify(technicianDetails));
+      //         // setRaiseAQuoteId(quotedata.raiseAQuoteId);
+      //         // setQuote(quotedata.enterQuoteAmount);
+      //         // setFixedQuote(quotedata.fixedQuote);
+      //         // setDiscount(quotedata.discount);
+      //         // setFixedDiscount(quotedata.fixedDiscount);
+      //         // setId(quotedata.id);
+      //         // setGST(quotedata.gst);
+      //         // setFixedGSTs(quotedata.fixedGST);
+      //         setTotalAmount(quotedata.totalAmount);
+      //         // setOtherCharge(quotedata.othercharges);
+      //         // setServiceCharge(quotedata.serviceCharges);
+      //         // setFixedServiceCharge(quotedata.fixedServiceCharge);
+      //         // setFixedOtherCharge(quotedata.fixedOtherCharge);
+      //         // setSpecifications(quotedata.materials || [{material: "", quantity: "", price: "", total: ""}]);         
+      //         // setAddRemarks(quotedata.addrRmarks);
+      //       } catch (error) {
+      //         console.error('Error fetching data:', error);
+      //       }
+      //     };
+      //     fetchData(); 
+      //   }, [raiseTicketId]); 
   
-        useEffect(() => {
-                if (technicianDetails.length > 0) {
-                  const lowest = technicianDetails.reduce((prev, current) => {
-                    const prevAmount = parseFloat(prev.totalAmount);
-                    const currentAmount = parseFloat(current.totalAmount);
-                    return currentAmount < prevAmount ? current : prev;
-                  });
-                  setTotalAmount(lowest.totalAmount);
-                  // setOtherCharge(lowest.othercharges);
-                  // setSpecifications(lowest.materials);          
-                } else {
-                  // setQuote('');
-                  // setOtherCharge('')
-                }
-              }, [technicianDetails,totalAmount]);
+      //   useEffect(() => {
+      //           if (technicianDetails.length > 0) {
+      //             const lowest = technicianDetails.reduce((prev, current) => {
+      //               const prevAmount = parseFloat(prev.totalAmount);
+      //               const currentAmount = parseFloat(current.totalAmount);
+      //               return currentAmount < prevAmount ? current : prev;
+      //             });
+      //             setTotalAmount(lowest.totalAmount);
+      //             // setOtherCharge(lowest.othercharges);
+      //             // setSpecifications(lowest.materials);          
+      //           } else {
+      //             // setQuote('');
+      //             // setOtherCharge('')
+      //           }
+      //         }, [technicianDetails,totalAmount]);
               
-      useEffect(() => {
-              const fetchDealerData = async () => {
-                try {
-                  const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuoteByDealer/GetRaiseAQuoteLowestDealerByid?raiseAQuotetDealerId=${raiseTicketId}`);
-                  if (!response.ok) {
-                    throw new Error('Failed to fetch ticket data');
-                  }
-                  const dataDealer = await  response.json();
-                  setDealerDetails(dataDealer);
-                 setMaterialQuotation(dataDealer[0]?.materialQuotation || []);
-                } catch (error) {
-                  console.error('Error fetching dealer data:', error);
-                } finally {
-                  setLoading(false);
-                }
-              };
-              fetchDealerData();
-            }, [raiseTicketId]);
+      // useEffect(() => {
+      //         const fetchDealerData = async () => {
+      //           try {
+      //             const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuoteByDealer/GetRaiseAQuoteLowestDealerByid?raiseAQuotetDealerId=${raiseTicketId}`);
+      //             if (!response.ok) {
+      //               throw new Error('Failed to fetch ticket data');
+      //             }
+      //             const dataDealer = await  response.json();
+      //             setDealerDetails(dataDealer);
+      //            setMaterialQuotation(dataDealer[0]?.materialQuotation || []);
+      //           } catch (error) {
+      //             console.error('Error fetching dealer data:', error);
+      //           } finally {
+      //             setLoading(false);
+      //           }
+      //         };
+      //         fetchDealerData();
+      //       }, [raiseTicketId]);
       
-            useEffect(() => {
-              if (dealerDetails.length > 0) {
-                const lowest = dealerDetails.reduce((prev, current) => {
-                  const prevAmount = parseFloat(prev.materialQuotation[0].grandtotal);
-                  const currentAmount = parseFloat(current.materialQuotation[0].grandtotal);
-                  return currentAmount < prevAmount ? current : prev;
-                });
-                setLowestGrandTotal(lowest.materialQuotation[0].grandtotal);
-              } else {
-                setLowestGrandTotal('');
-              }
-            }, [dealerDetails]); 
+      //       useEffect(() => {
+      //         if (dealerDetails.length > 0) {
+      //           const lowest = dealerDetails.reduce((prev, current) => {
+      //             const prevAmount = parseFloat(prev.materialQuotation[0].grandtotal);
+      //             const currentAmount = parseFloat(current.materialQuotation[0].grandtotal);
+      //             return currentAmount < prevAmount ? current : prev;
+      //           });
+      //           setLowestGrandTotal(lowest.materialQuotation[0].grandtotal);
+      //         } else {
+      //           setLowestGrandTotal('');
+      //         }
+      //       }, [dealerDetails]); 
 
     // Detect screen size for responsiveness
   useEffect(() => {
@@ -265,71 +226,71 @@ const PaymentConfirmation = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleSaveTicket = async (e) => {
-    e.preventDefault();
+//   const handleSaveTicket = async (e) => {
+//     e.preventDefault();
   
-    if (!isChecked) {
-      alert("You must accept the terms and conditions.");
-      return;
-    } 
-    const payload = {
-      RaiseTicketId: ticketData.raiseTicketId,
-      Date: new Date().toISOString(),
-      Address: address,
-      Subject: subject,
-      Details: details,
-      Category: category,
-      AssignedTo: assignedTo,
-      id: raiseTicketId,
-      status: status,
-      internalStatus: "Customer Approved",
-      CustomerId: customerId,
-      State: state,
-      LowestBidderTechnicainId: lowestBidder,
-      LowestBidderDealerId: lowestDealerBidder,
-      ApprovedAmount: approvedAmount,
-      customerName: fullName,
-      Option1Day: option1Day,
-      Option1Time: option1Time,
-      Option2Day: option2Day,
-      Option2Time: option2Time,
-      IsMaterialType: isWithMaterial,
-      District: district,
-      ZipCode: zipCode,
-      RequestType: requestType,
-      Attachments: attachments,
-      Materials: specifications.map((spec) => ({
-        material: spec.material,
-        Quantity: spec.quantity,
-      })),
-      comments: commentsList.map((Comment) => ({
-        updatedDate: Comment.updatedDate,
-        commentText: Comment.commentText,
-      })),
-      TechnicianList: technicianId,
-      DealerList: dealerId,
-      Rating: "",
-      RateQuotedBy: rateQuotedBy,
-    };
+//     if (!isChecked) {
+//       alert("You must accept the terms and conditions.");
+//       return;
+//     } 
+//     const payload = {
+//       RaiseTicketId: ticketData.raiseTicketId,
+//       Date: new Date().toISOString(),
+//       Address: address,
+//       Subject: subject,
+//       Details: details,
+//       Category: category,
+//       AssignedTo: assignedTo,
+//       id: raiseTicketId,
+//       status: status,
+//       internalStatus: "Customer Approved",
+//       CustomerId: customerId,
+//       State: state,
+//       LowestBidderTechnicainId: lowestBidder,
+//       LowestBidderDealerId: lowestDealerBidder,
+//       ApprovedAmount: approvedAmount,
+//       customerName: fullName,
+//       Option1Day: option1Day,
+//       Option1Time: option1Time,
+//       Option2Day: option2Day,
+//       Option2Time: option2Time,
+//       IsMaterialType: isWithMaterial,
+//       District: district,
+//       ZipCode: zipCode,
+//       RequestType: requestType,
+//       Attachments: attachments,
+//       Materials: specifications.map((spec) => ({
+//         material: spec.material,
+//         Quantity: spec.quantity,
+//       })),
+//       comments: commentsList.map((Comment) => ({
+//         updatedDate: Comment.updatedDate,
+//         commentText: Comment.commentText,
+//       })),
+//       TechnicianList: technicianId,
+//       DealerList: dealerId,
+//       Rating: "",
+//       RateQuotedBy: rateQuotedBy,
+//     };
   
-    try { 
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to save ticket data');
-      }
-      alert('Ticket saved Successfully!');
-      setShowConfirmation(true);
-    } catch (error) {
-      console.error('Error saving ticket data:', error);
-      window.alert('Failed to save the ticket data. Please try again later.');
-    }
-  };
+//     try { 
+//       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+//         method: 'PUT',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify(payload),
+//       });
+//       if (!response.ok) {
+//         throw new Error('Failed to save ticket data');
+//       }
+//       alert('Ticket saved Successfully!');
+//       setShowConfirmation(true);
+//     } catch (error) {
+//       console.error('Error saving ticket data:', error);
+//       window.alert('Failed to save the ticket data. Please try again later.');
+//     }
+//   };
 
 //   const handlePaymentTicket =  async(e) => {
 //     e.preventDefault();
@@ -370,116 +331,118 @@ const PaymentConfirmation = () => {
 //     } catch (error) {
 //       console.error('Error:', error);
 //       window.alert('Failed to create the payment. Please try again later.');
-//     }
+// //     }
+// //   };
+
+
+// const handleBookTechnicianPayment = async (e) => {
+//   e.preventDefault();
+
+//   const payload1 = {
+//     id: "string",
+//     bookTechnicianId: bookTechnicianIds,
+//     paymentId: "string",
+//     paymentMode: selectedPayment,
+//     approvedAmount: afterDiscount,
+//     paidAmount: "string",
+//     balancedAmount: "string",
+//     paymentDataTime: paymentDataTime,
+//     technicianAmount: "",
+//     utrTransactionNumber: "",
+//     technicianConfirmationCode: "",
 //   };
 
+//   try {
+//     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnicianPayment/CreateBookTechnicianPayment`, {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify(payload1),
+//     });
 
-const handlePaymentTicket = async (e) => {
+//     if (!response.ok) {
+//       throw new Error('Failed to create payment.');
+//     }
+
+    
+//     alert('Payment Done successfully!');
+//   } catch (error) {
+//     console.error('Error:', error);
+//     window.alert('Failed to create the payment. Please try again later.');
+//   }
+// };
+
+const handleUpdateJobDescription = async (e) => {
   e.preventDefault();
+  if (!isChecked) {
+      alert("You must accept the terms and conditions.");
+      return; 
+    }  
 
-  const payload1 = {
-    id: "string",
-    RaiseTicketId: ticketData.raiseTicketId,
-    paymentId: "string",
+  const payload2 = {
+    id: raiseTicketId,  
+    bookTechnicianId: bookTechnicianIds,
+    date: new Date(),
+    customerName: customerName,
+    address: address,
+    state: state,
+    district: district,
+    zipCode: zipCode,
+    category: category,
+    jobDescription: jobDescription,
+    rate: rate,
+    discount: discount,
+    afterDiscount: afterDiscount,
+    remarks: remarks,
+    moreInfo: moreInfo,
+    status: "Open",
+    customerId: customerId,
+    assignedTo: "",
+    phoneNumber: phoneNumber,
     paymentMode: selectedPayment,
-    approvedAmount: approvedAmount,
-    paidAmount: "string",
-    balancedAmount: "string",
-    paymentDataTime: paymentDataTime,
-    technicianAmount: Number(totalAmount).toFixed(2),
-    dealerAmont: lowestGrandTotal,
-    customerCareAmount: "string",
+    approvedAmount: afterDiscount,
     utrTransactionNumber: "",
     technicianConfirmationCode: "",
   };
 
   try {
-    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Payment/CreatePayment`, {
-      method: 'POST',
+    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(payload1),
+      body: JSON.stringify(payload2),
     });
 
     if (!response.ok) {
-      throw new Error('Failed to create payment.');
+      throw new Error('Failed to Update Technician.');
     }
-
     const data = await response.json();
 
-    // // Store confirmation code in state
-    // setTechnicianConfirmationCode(data.technicianConfirmationCode);
-    // setShowConfirmation(true); // Show the confirmation UI
-
-    if (data && typeof data.technicianConfirmationCode === "string") {
-      setTechnicianConfirmationCode(data.technicianConfirmationCode);
-      return data.technicianConfirmationCode;
-    } 
-    alert('Payment Done successfully!');
-    // handleSendSMSLowestBidder(e);
+    // Store confirmation code in state
+    setTechnicianConfirmationCode(data.technicianConfirmationCode);
+    setShowConfirmation(true); 
+    alert("Book Technician Updated Successfully!");
   } catch (error) {
     console.error('Error:', error);
-    window.alert('Failed to create the payment. Please try again later.');
+    window.alert('Failed to Update Technician. Please try again later.');
   }
 };
 
-const handleSendSMSLowestBidder = async (technicianConfirmationCode) => {
-  // e.preventDefault();
-  if (rateQuotedBy !== "Dealer/Trader") {
-    return;
-  }
-
-
-  try { 
-    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Payment/sendLowestBidderDealerNotifications?ticketId=${ticketId}&ConfirmationCode=${technicianConfirmationCode}&technicianPhoneNumber=${dealerPhoneNumber}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    if (!response.ok) {
-      throw new Error('Failed to send SMS to LowestBidder');
-    }
-    alert('SMS to LowestBidder sent Successfully!');
-  } catch (error) {
-    console.error('Error sending SMS to LowestBidder:', error);
-    window.alert('Failed to sending SMS to LowestBidder. Please try again later.');
-  }
+const handleBothActions = (e) => {
+  e.preventDefault();
+  // handleBookTechnicianPayment(e);
+  handleUpdateJobDescription(e);
 };
-
+  
+if (loading) {
+  return <div>Loading...</div>;
+}
 
   const handleCheckboxChange = (value) => {
     setSelectedPayment(selectedPayment === value ? null : value);
   };
-
-  const handleBothActions = async (e) => {
-    e.preventDefault(); 
-  
-    try {
-      const confirmationCode = await handlePaymentTicket(e); 
-  
-      if (confirmationCode) {
-        await handleSaveTicket(e);
-        await handleSendSMSLowestBidder(confirmationCode); 
-      } else {
-        console.error("Technician confirmation code is missing.");
-        window.alert("Failed to retrieve the confirmation code. SMS not sent.");
-      }
-    } catch (error) {
-      console.error("Error in processing:", error);
-    }
-  };
-  
-
-  // const handleBothActions =  (e) => {
-  //   e.preventDefault();
-  //   handleSaveTicket(e);
-  //   handlePaymentTicket(e);
-  //   // handleSendSMSLowestBidder(e);
-  // };
-
-  
 
   return (
     <div className="d-flex">
@@ -487,7 +450,7 @@ const handleSendSMSLowestBidder = async (technicianConfirmationCode) => {
         <div className="ml-0 p-0 sde_mnu">
           <Sidebar />
         </div>
-      )}
+      )} 
 
       {/* Floating menu for mobile */}
       {isMobile && (
@@ -511,21 +474,21 @@ const handleSendSMSLowestBidder = async (technicianConfirmationCode) => {
 <div className={`container m-1 ${isMobile ? "w-100" : "w-75"}`}>
 <h2 className="title">PAYMENT CONFIRMATION</h2>
     <div className="booking-confirmation">
-      <p className='text-center fs-4'><strong className='name'>{fullName}</strong> Thank you for Choosing the HandyMan Services</p>
+      <p className='text-center fs-4'><strong className='name'>{customerName}</strong> Thank you for Choosing the HandyMan Services</p>
 
       <table className="booking-table">
         <tbody>
           <tr>
             <td><strong>Ticket Number</strong></td>
-            <td>{ticketId}</td>   
+            <td>{bookTechnicianIds}</td>   
           </tr>
           <tr>
-            <td><strong>Description</strong></td>
-            <td>{details}</td>
+            <td><strong>Job Description</strong></td>
+            <td>{jobDescription}</td>
           </tr>
           <tr>
-            <td><strong>Approved Amount</strong></td>
-            <td>{approvedAmount}</td>
+            <td><strong>Amount</strong></td>
+            <td>{afterDiscount}</td>
           </tr>
         </tbody>
       </table>
@@ -592,7 +555,7 @@ const handleSendSMSLowestBidder = async (technicianConfirmationCode) => {
               className="text-primary ms-1"
               style={{ background: "none", border: "none", padding: 0, textDecoration: "underline", cursor: "pointer" }}
               >
-                Terms and conditions & Privacy Policy ..
+                Terms and Conditions & Privacy Policy & Cancellation and Refund Policy..
               </button>
           </label>
       {/* Modal for Terms and Conditions */}
@@ -864,10 +827,44 @@ const handleSendSMSLowestBidder = async (technicianConfirmationCode) => {
                             If you have any questions or concerns regarding this Agreement, please contact us at <a href="mailto:handymanserviceproviders@gmail.com.">handymanserviceproviders@gmail.com.</a>
                         </p>
                         
-                        </div>
+                        </div> 
                         
                 </div>
             </div>
+            <div align="center">
+                <h3 class="tc">Cancellation and Refund Policy</h3>
+            </div>
+            <div class="text-justify">
+                <div class="mt-20">
+                   
+                    <h4>1. Cancellation Policy</h4>
+                    <p>
+                        Customers can request a cancellation before the service begins for a full refund.
+                        If the technician has already arrived or started the work, a partial refund may be issued based on the work completed.
+                        Cancellations must be requested via phone, email, or the official website.
+                        
+                    </p>
+                        
+                    </div>
+                   
+                    <div class="mt-20">
+                        <h4>2. Refund Policy </h4>
+                        <p>
+                            Full Refund: Issued if the service is canceled before the technician starts work.
+                            Partial Refund: If the service is partially completed, the refund amount will be adjusted accordingly.
+                            No Refund: If the service is fully completed and meets the agreed-upon standards.
+                        </p>
+                  </div>
+                    <div class="mt-20">
+                        <h4>3. Exceptions & Special Cases</h4>
+                        <p>
+                            If the technician is unable to complete the job due to unforeseen issues (e.g., faulty wiring, additional materials needed), the customer may be eligible for a reschedule or partial refund.
+                            Refunds are processed within 5-7 business days via the original payment method.
+                            For any cancellation or refund inquiries, please contact <a href="mailto:lakshmisaiserviceproviders@gmail.com">lakshmisaiserviceproviders@gmail.com</a>.
+                        </p>
+                    </div>
+                  </div>
+
             <div className = "text-center">
             <button className="btn btn-danger w-20" title="close" onClick={() => setShowModal(false)}>Close</button>
             </div>
@@ -877,7 +874,7 @@ const handleSendSMSLowestBidder = async (technicianConfirmationCode) => {
 
 <div className="button">
     <button className="btn-back m-2">Back</button>
-    <button className="btn-continue m-2" onClick={handleBothActions}>Save</button>
+    <button className="btn-continue m-2"  onClick={handleBothActions}>Save</button>
 </div>
 
 {showConfirmation && (
@@ -896,12 +893,6 @@ const handleSendSMSLowestBidder = async (technicianConfirmationCode) => {
     </div>
     {/* Styles for floating menu */}
 <style jsx>{`
-        .floating-menu {
-          position: fixed;
-          top: 80px; /* Increased from 20px to avoid overlapping with the logo */
-          left: 20px; /* Adjusted for placement on the left side */
-          z-index: 1000;
-        }
         .modal-overlay {
           position: fixed;
           top: 0;

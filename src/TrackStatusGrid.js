@@ -214,12 +214,6 @@ useEffect(() => {
       </div>
       {/* Styles for floating menu */}
       <style jsx>{`
-        .floating-menu {
-          position: fixed;
-          top: 80px;
-          left: 20px;
-          z-index: 1000;
-        }
         .menu-popup {
           position: absolute;
           top: 50px;

@@ -9,16 +9,24 @@ import {
 import { Button } from "react-bootstrap";
 import "./App.css";
 
-const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) => {
+const NotificationsList = ({ notifications, highlightedItem }) => {
   const navigate = useNavigate();
   const {userType} = useParams();
 
   const raiseTicketNotifications = notifications.filter(
-    (item) => item.assignedTo === "Customer"
+    (item) => item.assignedTo === "Customer" && item.internalStatus === "Pending" && item.status === "Assigned" && item.raiseTicketId != null
+  );
+
+  const getTechnicianNotifications = notifications.filter(
+    (item) => item.status === "Assigned" && item.assignedTo === "Customer" && item.bookTechnicianId != null
   );
   const handleTicketClick = (ticketId) => {
     navigate(`/customerRaiseTicketQuotation/${userType}/${ticketId}`, { state: { ticketId } });
-  }; 
+  };
+  
+  const handleTechnicianClick = (technicianId) => {
+    navigate(`/customerBookTechnicianQuotation/${userType}/${technicianId}`, { state: { technicianId } });
+  };
 
   return (
     <div>
@@ -56,39 +64,39 @@ const NotificationsList = ({ notifications, highlightedItem, handleItemClick }) 
         ))}
       </div>
 
-      {/* <div className="notification-list">
-        {getQuoteNotifications.map((notification) => (
+      <div className="notification-list">
+        {getTechnicianNotifications.map((notification) => (
           <div
-            key={notification.ticketId}
+            key={notification.bookTechnicianId}
             className={`notification-item ${
-              notification.ticketId === highlightedItem ? "highlight" : ""
+              notification.bookTechnicianId === highlightedItem ? "highlight" : ""
             }`}
           >
             <div className="notification-header">
               <strong>Ticket ID: </strong>
               <span
-                onClick={() => handleQuoteClick(notification.ticketId)}
+                onClick={() => handleTechnicianClick(notification.id)}
                 style={{
                   color: "blue",
                   cursor: "pointer",
                   textDecoration: "underline",
                 }} 
               >
-                {notification.ticketId}
+                {notification.bookTechnicianId}
               </span>
             </div>
             <div>
-              <strong>Customer ID:</strong> {notification.customerId}
+              <strong>Job Description:</strong> {notification.jobDescription}
             </div>
             <div>
-              <strong>Technician ID:</strong> {notification.technicianId}
+              <strong>Category:</strong> {notification.category}
             </div>
             <div className="notification-date">
-              <strong>Date:</strong> {new Date(notification.quotedDate).toLocaleString()}
+              <strong>Date:</strong> {new Date(notification.date).toLocaleString()}
             </div>
           </div>
         ))}
-      </div> */}
+      </div>
     </div>
   );
 };
@@ -98,21 +106,21 @@ const Notification = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [ticketNotifications, setTicketNotifications] = useState([]);
-  // const [orderNotifications, setOrderNotifications] = useState([]);
+  const [technicianNotifications, setTechnicianNotifications] = useState([]);
   // const [quoteNotifications, setQuoteNotifications] = useState([]);
   const [newTicketCount, setNewTicketCount] = useState(0);
-  const [newQuoteCount] = useState(0);
+  const [newTechnicianCount, setNewTechnicianCount] = useState(0);
   // const [newOrderCount, setNewOrderCount] = useState(0);
   const [newNotificationCount, setNewNotificationCount] = useState(0);
   const [glow, setGlow] = useState(false);
   const [glowTicket, setGlowTicket] = useState(false);
-  const [glowQuote] = useState(false);
+  const [glowTechnician, setGlowTechnician] = useState(false);
   const [glowGet] = useState(false);
   // const [glowOrder, setGlowOrder] = useState(false);
   const [highlightedTicket, setHighlightedTicket] = useState(null);
-  // const [highlightedOrder, setHighlightedOrder] = useState(null);
+  const [highlightedTechnician, setHighlightedTechnician] = useState(null);
   // const [highlightedQuote, setHighlightedQuote] = useState(null);
-  const [activeTab, setActiveTab] = useState("Raise Ticket");
+  const [activeTab, setActiveTab] = useState("");
   const navigate = useNavigate();
   const {userType} = useParams();
   const { customerId } = useParams();
@@ -129,13 +137,16 @@ const Notification = () => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const raiseTicketResponse = await fetch(
+        const [raiseTicketResponse, getTechnicianResponse] = await Promise.all([
+          fetch(
           `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetRaiseTicketNotificationsByCustomerId?customerId=${customerId}`
-        );
+        ),
+        fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/GetBookTechnicianListForAdmin`),
+      ]);
         const raiseTicketData = await raiseTicketResponse.json();
 
         const raiseTicketFiltered = raiseTicketData.filter(
-          (item) => item.assignedTo === "Customer"
+          (item) => item.assignedTo === "Customer" && item.internalStatus === "Pending" && item.status === "Assigned"  && item.raiseTicketId != null
         );
         const raiseTicketCount = raiseTicketFiltered.length;
 
@@ -145,6 +156,22 @@ const Notification = () => {
  
         if (raiseTicketCount > 0) {
           setHighlightedTicket(raiseTicketFiltered[0].raiseTicketId);
+        }
+
+
+        const bookTechnicianData = await getTechnicianResponse.json();
+
+        const getTechnicianFiltered = bookTechnicianData.filter(
+          (item) => item.status === "Assigned" && item.assignedTo === "Customer"&& item.bookTechnicianId != null
+        );
+        const getTechnicianCount = getTechnicianFiltered.length;
+
+        setTechnicianNotifications(getTechnicianFiltered);
+        setNewTechnicianCount(getTechnicianCount);
+        setGlowTechnician(getTechnicianCount > 0);
+ 
+        if (getTechnicianCount > 0) {
+          setHighlightedTechnician(getTechnicianFiltered[0].bookTechnicianId);
         }
  
         // const getQuoteResponse = await fetch(
@@ -161,7 +188,7 @@ const Notification = () => {
         //   setHighlightedQuote(getQuoteData[0].raiseAQuoteId);
         // }
 
-        const totalNotifications = raiseTicketCount;
+        const totalNotifications = raiseTicketCount + getTechnicianCount;
         setNewNotificationCount(totalNotifications);
         setGlow(totalNotifications > 0);
       } catch (error) {
@@ -178,11 +205,11 @@ const Notification = () => {
   };
 
 
-  // const handleClearOrderNotifications = () => {
-  //   setNewOrderCount(0);
-  //   setGlowOrder(false);
-  //   setHighlightedOrder(null);
-  // }
+  const handleClearTechnicianNotifications = () => {
+    setNewTechnicianCount(0);
+    setGlowTechnician(false);
+    setHighlightedTechnician(null);
+  }
   // const handleClearQuoteNotifications = () => {
   //   setNewQuoteCount(0);
   //   setGlowQuote(false);
@@ -233,13 +260,13 @@ const Notification = () => {
         <div className="notifications-container d-flex bg-white p-2">
         {isMobile ? (
   <div className="tabs-mobile d-flex flex-column">
-    {["Raise Ticket Quotations", "Buy Product Quotations", "General  Notifications"].map((tab) => (
+    {["Raise Ticket Quotations", "Buy Product Quotations", "Technician Notifications"].map((tab) => (
               <span
                 key={tab}
                 className={`tab-item ${activeTab === tab ? "active" : ""} 
                 ${tab === "Raise Ticket Quotations" && glowTicket ? "glow" : ""}
-                ${tab === "Buy Product Quotations" && glowQuote ? "glow" : ""}
-                ${tab === "General  Notifications" && glowGet ? "glow": ""}`}
+                ${tab === "Buy Product Quotations" && glowGet ? "glow" : ""}
+                ${tab === "Technician Notifications" && glowTechnician ? "glow": ""}`}
                 onClick={() => handleTabClick(tab)}
                 style={{ cursor: "pointer" }}
               >
@@ -254,16 +281,16 @@ const Notification = () => {
                 {tab === "Buy Product Quotations" && (
                   <>
                     Buy Product Quotations{" "}
-                    {newQuoteCount > 0 && (
+                    {/* {newQuoteCount > 0 && (
                       <span className="badge bg-danger">{newQuoteCount}</span>
-                    )}
+                    )} */}
                   </>
                 )}
-                 {tab === "General  Notifications" && (
-                  <>
-                    General Notifications{" "}
-                    {newQuoteCount > 0 && (
-                      <span className="badge bg-danger">{newQuoteCount}</span>
+                 {tab === "Technician Notifications" && (
+                  <> 
+                    Technician Notifications{" "}
+                    {newTechnicianCount > 0 && (
+                      <span className="badge bg-danger">{newTechnicianCount}</span>
                     )}
                   </>
                 )}
@@ -272,13 +299,13 @@ const Notification = () => {
   </div>
 ) : (
   <div className="tabs d-flex">
-    {["Raise Ticket Quotations", "Buy Product Quotations", "General  Notifications"].map((tab) => (
+    {["Raise Ticket Quotations", "Buy Product Quotations", "Technician Notifications"].map((tab) => (
       <span
         key={tab}
         className={`tab-item ${activeTab === tab ? "active" : ""} 
           ${tab === "Raise Ticket Quotations" && glowTicket ? "glow" : ""} 
-          ${tab === "Buy Product Quotations" && glowQuote ? "glow" : ""} 
-          ${tab === "General  Notifications" && glowGet ? "glow" : ""} `}
+          ${tab === "Buy Product Quotations" && glowGet ? "glow" : ""} 
+          ${tab === "Technician Notifications" && glowTechnician ? "glow" : ""} `}
         onClick={() => handleTabClick(tab)}
         style={{ cursor: "pointer", marginRight: "15px" }}
       >
@@ -286,11 +313,11 @@ const Notification = () => {
         {tab === "Raise Ticket Quotations" && newTicketCount > 0 && (
           <span className="badge bg-danger">{newTicketCount}</span>
         )}
-        {tab === "Buy Product Quotations" && newQuoteCount > 0 && (
+        {/* {tab === "Buy Product Quotations" && newQuoteCount > 0 && (
           <span className="badge bg-danger">{newQuoteCount}</span>
-        )}
-        {tab === "General  Notifications" && newQuoteCount > 0 && (
-          <span className="badge bg-danger">{newQuoteCount}</span>
+        )} */}
+        {tab === "Technician Notifications" && newTechnicianCount > 0 && (
+          <span className="badge bg-danger">{newTechnicianCount}</span>
         )}
       </span>
     ))}
@@ -317,6 +344,27 @@ const Notification = () => {
               </>
             )}
           </div>
+
+          <div>
+            {activeTab === "Technician Notifications" && (
+              <>
+                <NotificationsList
+                  notifications={technicianNotifications}
+                  highlightedItem={highlightedTechnician}
+                />
+                <div
+                  className=" view-notifications text-info mx-2"
+                  onClick={() => {
+                    navigate(`/bookTechnicianCustomerGrid/${userType}/${customerId}`);
+                    handleClearTechnicianNotifications();
+                  }}
+                  style={{ cursor: "pointer" }}
+                >
+                  View All Notifications
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
       <style jsx>{`
@@ -334,13 +382,7 @@ const Notification = () => {
           100% {
             opacity: 1;
           }
-        }
-        .floating-menu {
-          position: fixed;
-          top: 80px; /* Increased from 20px to avoid overlapping with the logo */
-          left: 20px; /* Adjusted for placement on the left side */
-          z-index: 1000;
-        }  
+        } 
       `}</style>
     </div>
   );

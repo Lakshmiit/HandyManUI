@@ -11,7 +11,7 @@ import "./App.css";
 
 const NotificationsList = ({ notifications, highlightedItem }) => {
   const navigate = useNavigate();
-
+ 
   const raiseTicketNotifications = notifications.filter(
     (item) => item.internalStatus === "Open" && item.assignedTo === "Customer Care" 
   );
@@ -27,6 +27,10 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
   
  const orderTicketNotifications = notifications.filter(
   (item) => item.internalStatus === "Customer Approved"
+);
+
+const bookTechnicianNotifications = notifications.filter(
+  (item) => item.status === "Open"
 );
 
   
@@ -46,6 +50,9 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
     navigate(`/customerCareConfirmation/${raiseTicketId}`, { state: { raiseTicketId}});
   }
 
+  const handleTechnicianClick = (bookTechnicianId) => {
+    navigate(`/bookTechnicianActionView/${bookTechnicianId}`, { state: { bookTechnicianId}});
+  }
   return (
     <div>
       <div className="notification-list">
@@ -183,6 +190,40 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
         ))}
       </div>
 
+      <div className="notification-list">
+        {bookTechnicianNotifications.map((notification) => (
+          <div
+            key={notification.bookTechnicianId}
+            className={`notification-item ${
+              notification.bookTechnicianId === highlightedItem ? "highlight" : ""
+            }`}
+          >
+            <div className="notification-header">
+              <strong>Ticket ID: </strong>
+              <span
+                onClick={() => handleTechnicianClick(notification.id)}
+                style={{
+                  color: "blue",
+                  cursor: "pointer",
+                  textDecoration: "underline",
+                }}
+              >
+                {notification.bookTechnicianId}
+              </span>
+            </div>
+            <div>
+              <strong>Job Description:</strong> {notification.jobDescription}
+            </div>
+            <div>
+              <strong>Category:</strong> {notification.category}
+            </div>
+            <div className="notification-date">
+              <strong>Date:</strong> {new Date(notification.date).toLocaleString()}
+            </div>
+          </div>
+        ))}
+      </div>
+
     </div>
   );
 };
@@ -194,20 +235,24 @@ const Notification = () => {
   const [quoteNotifications, setQuoteNotifications] = useState([]);
   const [dealerNotifications, setDealerNotifications] = useState([]);
   const [orderNotifications, setOrderNotifications] = useState([]);
+ const [technicianNotifications, setTechnicianNotifications] = useState([]);
   const [newTicketCount, setNewTicketCount] = useState(0);
   const [newQuoteCount, setNewQuoteCount] = useState(0);
   const [newDealerCount, setNewDealerCount] = useState(0);
   const [newOrderCount, setNewOrderCount] = useState(0); 
+  const [newTechnicianCount, setNewTechnicianCount] = useState(0); 
   const [newNotificationCount, setNewNotificationCount] = useState(0);
   const [glow, setGlow] = useState(false);
   const [glowTicket, setGlowTicket] = useState(false);
   const [glowQuote, setGlowQuote] = useState(false);
   const [glowDealer, setGlowDealer] = useState(false);
   const [glowOrder, setGlowOrder] = useState(false);
+  const [glowTechnician, setGlowTechnician] = useState(false);
   const [highlightedTicket, setHighlightedTicket] = useState(null);
   const [highlightedQuote, setHighlightedQuote] = useState(null);
   const [highlightedDealer, setHighlightedDealer] = useState(null);
   const [highlightedOrder, setHighlightedOrder] = useState(null);
+  const [highlightedTechnician, setHighlightedTechnician] = useState(null);
   const [activeTab, setActiveTab] = useState("");
   // const {raiseTicketId} = useParams();
   const navigate = useNavigate();
@@ -222,7 +267,7 @@ const Notification = () => {
 
   const fetchNotifications = async () => {
     try {
-      const [raiseTicketResponse, getQuoteResponse, getDealerResponse, getOrderResponse] = await Promise.all([
+      const [raiseTicketResponse, getQuoteResponse, getDealerResponse, getOrderResponse, BookTechnicianResponse] = await Promise.all([
         fetch(
           "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications"
         ),
@@ -233,6 +278,7 @@ const Notification = () => {
           "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetRaiseTicketsForDealers"
         ),
         fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications`),
+        fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/GetBookTechnicianListForAdmin`),
       ]);
 
       const raiseTicketData = await raiseTicketResponse.json();
@@ -286,7 +332,18 @@ const Notification = () => {
      if (getOrderCount > 0) {
       setHighlightedOrder(orderFiltered[0].raiseTicketId);
      }
-      const totalNotifications = raiseTicketCount + getQuoteCount + getDealerCount + getOrderCount;
+
+     const bookTechnicianData = await BookTechnicianResponse.json();
+   const bookTechnicianFiltered = bookTechnicianData.filter((item) => item.status === "Open");
+     const bookTechnicianCount = bookTechnicianFiltered.length;
+     setTechnicianNotifications(bookTechnicianFiltered);
+     setNewTechnicianCount(bookTechnicianCount);
+     setGlowTechnician(bookTechnicianCount > 0);
+
+     if (bookTechnicianCount > 0) {
+      setHighlightedTechnician(bookTechnicianFiltered[0].bookTechnicianId);
+     }
+      const totalNotifications = raiseTicketCount + getQuoteCount + getDealerCount + getOrderCount + bookTechnicianCount;
       setNewNotificationCount(totalNotifications);
       setGlow(totalNotifications > 0);
     } catch (error) {
@@ -322,6 +379,12 @@ const Notification = () => {
     setNewOrderCount(0);
     setGlowOrder(false);
     setHighlightedOrder(null);
+  };
+
+  const handleClearTechnicianNotifications = () => {
+    setNewTechnicianCount(0);
+    setGlowTechnician(false);
+    setHighlightedTechnician(null);
   };
 
   const handleTabClick = (tab) => setActiveTab(tab);
@@ -365,17 +428,19 @@ const Notification = () => {
           )}
         </h2>
 
-<div className="notifications-container d-flex bg-white p-1">
+<div className="notifications-container d-flex bg-white">
 {isMobile ? (
   <div className="tabs-mobile d-flex flex-column">
-    {["Raise Ticket", "Technician Get Quote", "Dealer Get Quote", "Raise Ticket Orders"].map((tab) => (
+    {["Raise Ticket", "Technician Get Quote", "Dealer Get Quote", "Raise Ticket Orders", "Book Technician"].map((tab) => (
       <div
         key={tab}
         className={`tab-item ${activeTab === tab ? "active" : ""} 
           ${tab === "Raise Ticket" && glowTicket ? "glow" : ""} 
           ${tab === "Technician Get Quote" && glowQuote ? "glow" : ""} 
           ${tab === "Dealer Get Quote" && glowDealer ? "glow" : ""} 
-          ${tab === "Raise Ticket Orders" && glowOrder ? "glow" : ""}`}
+          ${tab === "Raise Ticket Orders" && glowOrder ? "glow" : ""}
+          ${tab === "Book Technician" && glowTechnician ? "glow" : ""}
+          `}
         onClick={() => handleTabClick(tab)}
         style={{ cursor: "pointer" }}
       >
@@ -392,19 +457,24 @@ const Notification = () => {
         {tab === "Raise Ticket Orders" && newOrderCount > 0 && (
           <span className="badge bg-danger">{newOrderCount}</span>
         )}
+        {tab === "Book Technician" && newTechnicianCount > 0 && (
+          <span className="badge bg-danger">{newTechnicianCount}</span>
+        )}
       </div>
     ))}
   </div>
 ) : (
   <div className="tabs d-flex">
-    {["Raise Ticket", "Technician Get Quote", "Dealer Get Quote", "Raise Ticket Orders"].map((tab) => (
+    {["Raise Ticket", "Technician Get Quote", "Dealer Get Quote", "Raise Ticket Orders", "Book Technician"].map((tab) => (
       <span
         key={tab}
         className={`tab-item ${activeTab === tab ? "active" : ""} 
           ${tab === "Raise Ticket" && glowTicket ? "glow" : ""} 
           ${tab === "Technician Get Quote" && glowQuote ? "glow" : ""} 
           ${tab === "Dealer Get Quote" && glowDealer ? "glow" : ""} 
-          ${tab === "Raise Ticket Orders" && glowOrder ? "glow" : ""}`}
+          ${tab === "Raise Ticket Orders" && glowOrder ? "glow" : ""}
+          ${tab === "Book Technician" && glowTechnician ? "glow" : ""} 
+          `}
         onClick={() => handleTabClick(tab)}
         style={{ cursor: "pointer", marginRight: "15px" }}
       >
@@ -420,6 +490,9 @@ const Notification = () => {
         )}
         {tab === "Raise Ticket Orders" && newOrderCount > 0 && (
           <span className="badge bg-danger">{newOrderCount}</span>
+        )}
+        {tab === "Book Technician" && newTechnicianCount > 0 && (
+          <span className="badge bg-danger">{newTechnicianCount}</span>
         )}
       </span>
     ))}
@@ -498,6 +571,27 @@ const Notification = () => {
                 onClick={() => {
                   navigate(`/customerCareGrid`);
                   handleClearOrderNotifications();
+                }} 
+                style={{ cursor: "pointer" }}
+              >
+                View All Notifications
+              </div>
+            </>
+          )}
+          </div>
+
+          <div>
+{activeTab === "Book Technician" && (
+            <>
+              <NotificationsList
+                notifications={technicianNotifications}
+                highlightedItem={highlightedTechnician}
+              />
+              <div
+                className="view-notifications text-info mx-2"
+                onClick={() => {
+                  navigate(`/bookTechnicianNotificationGrid`);
+                  handleClearTechnicianNotifications();
                 }} 
                 style={{ cursor: "pointer" }}
               >

@@ -728,6 +728,7 @@ try {
     throw new Error('Failed to create a Material.');
   }
   alert('Material saved Successfully!');
+window.location.href = `https://handymanserviceproviders.com/CustomerProfilePage?ReactToken=${lowestBidder}$${userType}`;
 } catch (error) {
   console.error('Error:', error);
   window.alert('Failed to create the Material. Please try again later.');
@@ -852,6 +853,7 @@ const handleBothActions =  (e) => {
   //handleTimeSlotSave(e)
   handlePaymentTicket(e);
   setIsSaved(true);
+window.location.href = `https://handymanserviceproviders.com/CustomerProfilePage?ReactToken=${lowestBidder}$${userType}`;
 };
 
 // const handleCheckboxChange = (mode) => {
@@ -1214,16 +1216,6 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
     </div>
     </div>
     </div>
-    {/* Styles for floating menu */}
-<style jsx>{`
-        .floating-menu {
-          position: fixed;
-          top: 80px; /* Increased from 20px to avoid overlapping with the logo */
-          left: 20px; /* Adjusted for placement on the left side */
-          z-index: 1000;
-        }
-      `}</style>
-    
     </div>
   );
 };

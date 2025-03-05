@@ -31,7 +31,7 @@ const Sidebar = () => {
       { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", 
         TargetUrl: `https://handymanserviceproviders.com/CustomerProfilePage?ReactToken=${customerId}$${userType}`},
       { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${customerId}/${userType}` },
-      { MenuIcon: <PersonAddIcon />, MenuTitle: "Add Member", TargetUrl: "/addMember" },
+      { MenuIcon: <PersonAddIcon />, MenuTitle: "Book A Technician", TargetUrl: `/bookTechnician/${customerId}/${userType}` },
       { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${customerId}` },
     { MenuIcon: <NotificationsActiveIcon />, MenuTitle: "Notifications", TargetUrl: `/customerNotification/${userType}/${customerId}` }, 
       { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: "/buyProducts" },
@@ -41,7 +41,7 @@ const Sidebar = () => {
     ],
     builder: [
       { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", TargetUrl: `https://handymanserviceproviders.com/CustomerProfilePage?ReactToken=${customerId}$${userType}` },
-      { MenuIcon: <PersonAddIcon />, MenuTitle: "Add Member", TargetUrl: "/addMember" },
+      { MenuIcon: <PersonAddIcon />, MenuTitle: "Book A Technician", TargetUrl: "/addMember" },
       { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: "/raiseQuote" },
       { MenuIcon: <NotificationsActiveIcon />, MenuTitle: "Notifications", TargetUrl: "/Notifications" },
       { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: "/buyProducts" },
@@ -74,7 +74,7 @@ const Sidebar = () => {
     ],
     estimator: [
       { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", TargetUrl: `https://handymanserviceproviders.com/CustomerProfilePage?ReactToken=${customerId}$${userType}` },
-      { MenuIcon: <PersonAddIcon />, MenuTitle: "Add Member", TargetUrl: "/addMember" },
+      { MenuIcon: <PersonAddIcon />, MenuTitle: "Book A Technician", TargetUrl: "/addMember" },
       { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: "/raiseQuote" },
       { MenuIcon: <NotificationsActiveIcon />, MenuTitle: "Notifications", TargetUrl: "/Notifications" },
       { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: "/buyProducts" },

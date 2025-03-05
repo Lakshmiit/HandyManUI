@@ -26,9 +26,7 @@ const ProductView = () => {
   // Fetch product data, categories, and catalogues
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv2.azurewebsites.net/api
-
-/Product/GetProductList?ProductOwnedBy=Admin`
+    const url = `https://handymanapiv2.azurewebsites.net/api/Product/GetProductList?ProductOwnedBy=Admin`
     axios.get(url)
       .then(response => {
         const products = response.data.map((product) => ({
