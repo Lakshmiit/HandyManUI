@@ -205,7 +205,8 @@ const BookTechnicianNotification = () => {
         </div>
         
         <>
-        {!isMobile ? (
+        {currentBookTechnician.length > 0 ? (
+        !isMobile ? (
         <table className="table table-bordered">
           <thead>
             <tr>
@@ -282,6 +283,9 @@ const BookTechnicianNotification = () => {
     </div>
   ))}
 </div>
+        )
+      ) : (
+        <p className="text-center text-muted">No Tickets Data Found</p>
 
         )}
       </>

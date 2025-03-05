@@ -3,10 +3,10 @@ import { Button } from "react-bootstrap";
 import axios from 'axios';
 import Sidebar from "./Sidebar";
 import { Link, useParams } from "react-router-dom";
-import { FaTrash, FaEye } from "react-icons/fa";
+import {  FaEye } from "react-icons/fa";
 import {
   Dashboard as MoreVertIcon,
-} from "@mui/icons-material";
+} from "@mui/icons-material"; 
 
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import "./App.css";
@@ -46,19 +46,19 @@ const CustomerBookTechnicianGrid = () => {
       });
   }, [customerId]);
 
-  const handleDelete = (technicianId) => {
-    const confirmDelete = window.confirm('Are you sure you want to delete this ticket?');
-    if (confirmDelete) {
-      axios.delete(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${technicianId}`)
-        .then(() => {
-          setTechncianData(prevData => prevData.filter(technician => technician.id !== technicianId));
-          setFilteredData(prevData => prevData.filter(technician => technician.id !== technicianId));
-        })
-        .catch(error => {
-          console.error("Error deleting technician:", error);
-        });
-    }
-  };
+  // const handleDelete = (technicianId) => {
+  //   const confirmDelete = window.confirm('Are you sure you want to delete this ticket?');
+  //   if (confirmDelete) {
+  //     axios.delete(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${technicianId}`)
+  //       .then(() => {
+  //         setTechncianData(prevData => prevData.filter(technician => technician.id !== technicianId));
+  //         setFilteredData(prevData => prevData.filter(technician => technician.id !== technicianId));
+  //       })
+  //       .catch(error => {
+  //         console.error("Error deleting technician:", error);
+  //       });
+  //   }
+  // };
 
     useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -111,7 +111,8 @@ const CustomerBookTechnicianGrid = () => {
       <div className={`container m-1 ${isMobile ? "w-100" : "w-75"}`}>
         <h2 className="text-center m-4">Book Technician Customer Notifications</h2>
         <>
-        {!isMobile ? (
+        {currentBookTechnician.length > 0 ? (
+        !isMobile ? (
         <table className="table table-bordered">
           <thead>
             <tr>
@@ -138,12 +139,12 @@ const CustomerBookTechnicianGrid = () => {
                   >
                     <FaEye />   
                   </Link>
-                  <Link
+                  {/* <Link
                     onClick={() => handleDelete(technician.id)}
                     className="btn btn-danger mx-2"
                   >   
                      <FaTrash />
-                  </Link>
+                  </Link> */}
                   {/* <Link to="#" className="btn btn-success mx-2">
                     <ForwardIcon />
                   </Link> */}
@@ -169,14 +170,16 @@ const CustomerBookTechnicianGrid = () => {
         <Link to={`customerBookTechnicianQuotationView/${userType}/${technician.id}`} className="btn btn-info mx-2">
           <FaEye />
         </Link>
-        <Button onClick={() => handleDelete(technician.id)} className="btn btn-danger mx-2">
+        {/* <Button onClick={() => handleDelete(technician.id)} className="btn btn-danger mx-2">
           <FaTrash />
-        </Button>
+        </Button> */}
       </div>
     </div>
   ))}
 </div>
-
+        ) 
+      ) : (
+        <p className="text-center text-muted">No Tickets Data Found</p>
         )}
       </>
         <div className="mt-4 text-end">

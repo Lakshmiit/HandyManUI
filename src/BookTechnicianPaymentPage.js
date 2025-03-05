@@ -9,7 +9,7 @@ import { useParams } from "react-router-dom";
 
 const PaymentConfirmation = () => {
   // const Navigate = useNavigate();
-  // const {userType} = useParams();
+  const {userType} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
  const {raiseTicketId} = useParams();
@@ -26,7 +26,7 @@ const [customerId, setCustomerId] = useState('');
 const [category, setCategory] = useState('');
 const [customerName, setCustomerName] = useState('');
 const [technicianConfirmationCode, setTechnicianConfirmationCode] = useState('');
-const [showConfirmation, setShowConfirmation] = useState(false);
+// const [showConfirmation, setShowConfirmation] = useState(false);
 // const [selectedJob, setSelectedJob] = useState([{remarks: "", discount: "", moreInfo: "", afterDiscount: "", jobDescription: ""}]);
 const [selectedPayment, setSelectedPayment] = useState(null);
 const [showModal, setShowModal] = useState(false);
@@ -50,8 +50,8 @@ const [remarks, setRemarks] = useState('');
   // }).replace(",", "");
 
   useEffect(() => {
-      console.log( technicianData);
-    }, [technicianData]);
+      console.log( technicianData, technicianConfirmationCode);
+    }, [technicianData, technicianConfirmationCode]);
   
   useEffect(() => {
     const fetchtechnicianData = async () => {
@@ -422,8 +422,8 @@ const handleUpdateJobDescription = async (e) => {
 
     // Store confirmation code in state
     setTechnicianConfirmationCode(data.technicianConfirmationCode);
-    setShowConfirmation(true); 
-    alert("Book Technician Updated Successfully!");
+    // setShowConfirmation(true); 
+    // alert("Book Technician Updated Successfully!");
   } catch (error) {
     console.error('Error:', error);
     window.alert('Failed to Update Technician. Please try again later.');
@@ -434,7 +434,12 @@ const handleBothActions = (e) => {
   e.preventDefault();
   // handleBookTechnicianPayment(e);
   handleUpdateJobDescription(e);
+  window.alert(`Payment has been completed successfully! Your reference number is ${bookTechnicianIds}. Technician will contact you shortly.`);
+  // Redirect to CustomerProfilePage
+  window.location.href = `https://handymanserviceproviders.com/CustomerProfilePage?ReactToken=${customerId}$${userType}`;
+  
 };
+
   
 if (loading) {
   return <div>Loading...</div>;
@@ -546,7 +551,9 @@ if (loading) {
             type="checkbox" 
             className="form-check-input border-dark m-1"
             checked={isChecked}
-            onChange={(e) => setIsChecked(e.target.checked)}/>
+            onChange={(e) => setIsChecked(e.target.checked)}
+            required
+            />
             <button
               onClick={(e) => {
                 e.preventDefault();
@@ -873,21 +880,23 @@ if (loading) {
       )} 
 
 <div className="button">
-    <button className="btn-back m-2">Back</button>
+    {/* <button className="btn-back m-2">Back</button> */}
     <button className="btn-continue m-2"  onClick={handleBothActions}>Save</button>
+  
 </div>
-
-{showConfirmation && (
+ 
+{/* {showConfirmation && (
     <div className='text-center m-2'>
-        <label className='blinking-text fw-bold fs-2 text-success'>
+         <label className='blinking-text fw-bold fs-2 text-success'>
             Technician Arrived as per your time slot
-        </label>
+        </label> 
         <label className='fs-2 bg-warning fw-bold w-100 p-2'>
             Technician Confirmation Code is: {technicianConfirmationCode}
         </label>
-        {/* <button className='btn btn-primary m-2' onClick={handleSendSMSLowestBidder}>Send SMS</button> */}
-    </div> 
-)} 
+        <button className='btn btn-primary m-2' onClick={handleSendSMSLowestBidder}>Send SMS</button>
+    </div> )}
+  */}
+
     </div>
     </div>
     </div>

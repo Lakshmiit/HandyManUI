@@ -13,6 +13,7 @@ import { Link, useParams } from 'react-router-dom';
 import './App.css';
 const CustomerBookTechnicianQuotation = () => {
 //   const Navigate = useNavigate(); 
+const {userType} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [error, setError] = useState("");
@@ -48,7 +49,7 @@ const CustomerBookTechnicianQuotation = () => {
   useEffect(() => {
     const fetchtechnicianData = async () => {
       try {
-        const response = await fetch(`https://localhost:7091/api/BookTechnician/GetBookTechnician/${raiseTicketId}`);
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/GetBookTechnician/${raiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch technician data');
         }
@@ -175,7 +176,7 @@ setError("");
   };
 
   try {
-    const response = await fetch(`https://localhost:7091/api/BookTechnician/${raiseTicketId}`, {
+    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -184,12 +185,12 @@ setError("");
     });
 
     if (!response.ok) {
-      throw new Error('Failed to forward Customer.');
+      throw new Error('Failed to forward Customer Care.');
     }
-    alert("Ticket Forwarded to customer Successfully!");
+    alert("Ticket Forwarded to Customer Care Successfully!");
   } catch (error) {
     console.error('Error:', error);
-    window.alert('Failed to forward Customer. Please try again later.');
+    window.alert('Failed to forward Customer Care. Please try again later.');
   }
 };
 
@@ -438,9 +439,10 @@ setError("");
       
         {/* Save Button */}
         <div className="mt-4 text-end">
-          <Link to='/bookTechnicianNotificationGrid' className="btn btn-warning text-white mx-2" title='Back'>
-            <ArrowLeftIcon />
-          </Link>
+        <Link to={`/customerNotification/${userType}/${customerId}`} className="btn btn-warning text-white mx-2" title="Back">
+          <ArrowLeftIcon />
+        </Link>
+
           {/* <Link to='/raiseTicketActionView/{ticketId}' className="btn btn-warning text-white mx-2" title='Edit'> 
           <FaEdit />
           </Link> */}

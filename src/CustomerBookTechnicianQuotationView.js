@@ -13,6 +13,8 @@ import { Link, useParams } from 'react-router-dom';
 import './App.css';
 const CustomerBookTechnicianQuotation = () => {
 //   const Navigate = useNavigate(); 
+const {userType} = useParams();
+// const {customerId} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [jobDescription, setJobDescription] = useState(''); 
@@ -27,7 +29,7 @@ const CustomerBookTechnicianQuotation = () => {
  const [totalAmount, setTotalAmount] = useState('');
 //  const [state, setState] = useState('');
 //  const [district, setDistrict] = useState('')
-//  const [customerId, setCustomerId] = useState(''); 
+ const [customerId, setCustomerId] = useState(''); 
   // const [zipCode,setZipCode]=useState('');
   // const [customerName, setCustomerName] = useState("");
   // const [rate, setRate] = useState('');
@@ -61,7 +63,8 @@ const CustomerBookTechnicianQuotation = () => {
         setBookTechnicianId(data.bookTechnicianId);
         setTotalAmount(data.afterDiscount);
         setPaymentMode(data.paymentMode);
-        // setCustomerId(data.customerId);
+        setCustomerId(data.customerId);
+        //  alert(userType);
         // setCustomerName(data.customerName);
         // setState(data.state);
         // setDistrict(data.district);
@@ -382,7 +385,7 @@ const CustomerBookTechnicianQuotation = () => {
       
         {/* Save Button */}
         <div className="mt-4 text-end">
-          <Link to='/bookTechnicianNotificationGrid' className="btn btn-warning text-white mx-2" title='Back'>
+          <Link to={`/bookTechnicianCustomerGrid/${userType}/${customerId}`} className="btn btn-warning text-white mx-2" title='Back'>
             <ArrowLeftIcon />
           </Link>
           {/* <Link to='/raiseTicketActionView/{ticketId}' className="btn btn-warning text-white mx-2" title='Edit'> 
