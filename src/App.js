@@ -128,7 +128,7 @@ function App() {
             <Route path="/bookTechnicianActionView/:raiseTicketId" element={<BookTechnicianActionView />} />
             <Route path="/uploadBookTechnician" element={<UploadBookTechnician />} />
             <Route path="/bookTechnicianList" element={<BookTechnicianList />} />
-            <Route path="/bookTechnicianPaymentPage/:raiseTicketId/:userType" element={<BookTechnicianPaymentPage />} />
+            <Route path="/bookTechnicianPaymentPage/:userType/:raiseTicketId" element={<BookTechnicianPaymentPage />} />
             <Route path="/updateBookTechnician/:id" element={<UpdateBookTechnician />} />
             <Route path="/bookTechnicianNotificationGrid" element={<BookTechnicianNotificationGrid />} />
             <Route path="/bookTechnicianCustomerGrid/:userType/:customerId" element={<BookTechnicianCustomerGrid />} />

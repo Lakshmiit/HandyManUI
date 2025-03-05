@@ -308,7 +308,7 @@ const handleUpdateJobDescription = async (e) => {
     setRaiseTicketId(data.raiseTicketId);
     // Show alert message with the correct ticketId
     //window.alert(`Ticket has been submitted successfully! Your reference number is ${data.bookTechnicianId}. Technician will contact you shortly.`);
-        Navigate(`/bookTechnicianPaymentPage/${data.raiseTicketId}/${userType}`)
+        Navigate(`/bookTechnicianPaymentPage/${userType}/${data.raiseTicketId}`)
   } catch (error) {
     console.error('Error:', error);
     window.alert('Failed to Book Technician. Please try again later.');
