@@ -90,7 +90,7 @@ const CustomerOrders = () => {
       try {
         const [buyProductResponse] = await Promise.all([
           fetch(
-          `https://handymanapiv2.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForAdmin/${customerId}`
+          `https://handymanapiv2.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForUserList?UserID=${customerId}`
         ),
       ]);
         const productOrdersData = await buyProductResponse.json();
