@@ -8,7 +8,7 @@ import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import { Button, Form, Modal } from 'react-bootstrap'; // Import Bootstrap components for modal
 import axios from 'axios';
 
-const BuyProduct = () => {
+const BuyProductCartView = () => {
   const navigate = useNavigate();
   const {userType} = useParams();
   const [buyProductId, setBuyProductId] = useState('');
@@ -78,7 +78,9 @@ useEffect(() => {
     const fetchProfileType = async () => {
       try {
         const API_URL = "https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/";
+        //alert(userId);
         const response = await fetch(`${API_URL}${userId}`);
+        
         if (!response.ok) {
           throw new Error("Failed to fetch customer profile data");
         }
@@ -186,87 +188,77 @@ useEffect(() => {
       console.error("Error submitting quotation:", error);
       window.alert('Failed to submitting quotation. Please try again later.');    }
   };
-
-  const handleColorChange = (e) => {
-    const inputColor = e.target.value;
-    if (color.includes(inputColor)) {
-      setChooseColors(inputColor); 
-    } else {
-      alert("Please choose a color from the given options!");
-    }
-  };
-  
   
 
 
-  // const handleAddToCart = async (e) => {
-  //   e.preventDefault();
+//   const handleAddToCart = async (e) => {
+//     e.preventDefault();
    
-  //   const primaryAddress = addresses.find((addr) => addr.type === "primary");
-  //   const state = primaryAddress?.state || "";
-  //   const district = primaryAddress?.district || "";
-  //   const pincode = primaryAddress?.zipCode || "";
-  //   const mobileNumber = primaryAddress?.mobileNumber || "";
+//     const primaryAddress = addresses.find((addr) => addr.type === "primary");
+//     const state = primaryAddress?.state || "";
+//     const district = primaryAddress?.district || "";
+//     const pincode = primaryAddress?.zipCode || "";
+//     const mobileNumber = primaryAddress?.mobileNumber || "";
   
-  //   const payload = {
-  //     BuyProductId:"string",
-  //     id: "string",
-  //     date: new Date(),
-  //     Address: primaryAddress?.address || "",
-  //     CustomerPhoneNumber: mobileNumber,
-  //     category,
-  //     status: "Draft",
-  //     productName,
-  //     ProductCatalogue: productCatalogue,
-  //     productSize,
-  //     rate: rate.toString(),
-  //     discount: discount.toString(),
-  //     afterDiscountPrice: afterDiscountPrice.toString(),
-  //     color: color,
-  //     selectedColors: colors,
-  //     requiredQuantity: requiredQuality.toString(),
-  //     totalAmount: totalAmount.toString(),
-  //     AssignedTo: "Customer Care",
-  //     DeliveryCharges: "",
-  //     ServiceCharges: "",
-  //     TotalPaymentAmount: "",
-  //     AddressType: primaryAddress ? "primary" : "secondary",
-  //     State: state,
-  //     District: district,
-  //     ZipCode: pincode,
-  //     CustomerId: userId,
-  //     CustomerName: fullName,
-  //     RequestedBy: userId,
-  //     PaymentMode:"",
-  //     UTRTransactionNumber:"",
-  //     TechnicianConfirmationCode:"",
-  //     DeliveryDate:"",
-  //     TechnicianDetils:"",
-  //     ProductView: "Draft",
-  //     InvoiceDetails:"",
-  //     UploadInvoice: [],
-  //     WarrantyPeriod: "",
-  //   };
+//     const payload = {
+//       BuyProductId:"string",
+//       id: "string",
+//       date: new Date(),
+//       Address: primaryAddress?.address || "",
+//       CustomerPhoneNumber: mobileNumber,
+//       category,
+//       status: "Draft",
+//       productName,
+//       ProductCatalogue: productCatalogue,
+//       productSize,
+//       rate: rate.toString(),
+//       discount: discount.toString(),
+//       afterDiscountPrice: afterDiscountPrice.toString(),
+//       color: color,
+//       selectedColors: colors,
+//       requiredQuantity: requiredQuality.toString(),
+//       totalAmount: totalAmount.toString(),
+//       AssignedTo: "Customer Care",
+//       DeliveryCharges: "",
+//       ServiceCharges: "",
+//       TotalPaymentAmount: "",
+//       AddressType: primaryAddress ? "primary" : "secondary",
+//       State: state,
+//       District: district,
+//       ZipCode: pincode,
+//       CustomerId: userId,
+//       CustomerName: fullName,
+//       RequestedBy: userId,
+//       PaymentMode:"",
+//       UTRTransactionNumber:"",
+//       TechnicianConfirmationCode:"",
+//       DeliveryDate:"",
+//       TechnicianDetils:"",
+//       ProductView: "Draft",
+//       InvoiceDetails:"",
+//       UploadInvoice: [],
+//       WarrantyPeriod: "",
+//     };
   
-  //   try {
-  //     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/BuyProductUpload`,{
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify(payload),
-  //     });
-  //     if (!response.ok) {
-  //      throw new Error("Failed to submit quotation.");
-  //     }
-  //     const buyProductData = await response.json();
-  //     setBuyProductId(buyProductData.buyProductId);
-  //     alert(`Add to Cart Successfully`);
-  //     // navigate(`/buyProductPaymentPage/${buyProductData.buyProductId}/${userType}`);
-  //   } catch (error) {
-  //     console.error("Error submitting quotation:", error);
-  //     window.alert('Failed to submitting quotation. Please try again later.');    }
-  // };
+//     try {
+//       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/BuyProductUpload`,{
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify(payload),
+//       });
+//       if (!response.ok) {
+//        throw new Error("Failed to submit quotation.");
+//       }
+//       const buyProductData = await response.json();
+//       setBuyProductId(buyProductData.buyProductId);
+//       alert(`Add to Cart Successfully`);
+//       // navigate(`/buyProductPaymentPage/${buyProductData.buyProductId}/${userType}`);
+//     } catch (error) {
+//       console.error("Error submitting quotation:", error);
+//       window.alert('Failed to submitting quotation. Please try again later.');    }
+//   };
   
   // Detect screen size for responsiveness
 useEffect(() => {
@@ -284,14 +276,14 @@ useEffect(() => {
 
    const handleSubmit = (e) => {
      e.preventDefault();
-   };
+   };   
 
   const states = ['Andhra Pradesh', 'Telangana'];
-  const districts = {
+  const districts = {  
     'Andhra Pradesh': ['Visakhapatnam', 'Vijayawada', 'Guntur'],
     'Telangana': ['Hyderabad', 'Warangal', 'Khammam'],
   };
-
+ 
 
   // // Handle adding a new address
   // const handleAddAddress = () => {
@@ -886,7 +878,7 @@ useEffect(() => {
                 type="text"
                 className="form-control"
                 value={colors}
-                onChange={handleColorChange}
+                onChange={(e) => setChooseColors(e.target.value)}
                 placeholder="Select Required Color"
               />
             </div>
@@ -957,7 +949,7 @@ useEffect(() => {
           top: 80px; /* Increased from 20px to avoid overlapping with the logo */
           left: 20px; /* Adjusted for placement on the left side */
           z-index: 1000;
-        }   
+        }
         .menu-popup {
           position: absolute;
           top: 50px; /* Keeps the popup aligned below the floating menu */
@@ -984,4 +976,4 @@ useEffect(() => {
   );
 };
 
-export default BuyProduct;
+export default BuyProductCartView;

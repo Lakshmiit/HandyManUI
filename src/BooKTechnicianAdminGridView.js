@@ -151,7 +151,6 @@ const handleUpdateJobDescription = async (e) => {
     if (!response.ok) {
       throw new Error('Failed to forward Customer.');
     }
-
     alert("Ticket Forwarded to customer Successfully!");
     Navigate("/adminNotifications");
   } catch (error) {

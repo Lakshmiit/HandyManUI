@@ -38,6 +38,7 @@ const [jobDescription, setJobDescription] = useState('');
 const [phoneNumber, setPhoneNumber] = useState('');
 const [moreInfo, setMoreInfo] = useState('');
 const [remarks, setRemarks] = useState('');
+const [error, setError] = useState("");
 
   // const paymentDataTime = new Date().toLocaleString("en-IN", {
   //   timeZone: "Asia/Kolkata",
@@ -63,7 +64,7 @@ const [remarks, setRemarks] = useState('');
         const data = await response.json();
         setTechnicianData(data);
         // alert(JSON.stringify(data));
-        setTechnicianConfirmationCode(data.id);
+        // setTechnicianConfirmationCode(data.id);
         setBookTechnicianId(data.bookTechnicianId);
         setCustomerName(data.customerName);
         setAddress(data.address);
@@ -375,6 +376,12 @@ const [remarks, setRemarks] = useState('');
 
 const handleUpdateJobDescription = async (e) => {
   e.preventDefault();
+
+  if (!selectedPayment) {
+    setError("Please select at least one payment method.");
+    return;
+  }
+
   if (!isChecked) {
       alert("You must accept the terms and conditions.");
       return; 
@@ -540,6 +547,7 @@ if (loading) {
         />
         Pay On In Presence of Technician
       </label>
+      {error && <p className="text-danger">{error}</p>}
     </div>
   )}
 </div>

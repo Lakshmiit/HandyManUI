@@ -1050,6 +1050,21 @@ textarea {
   padding: 8px;
 }
 
+
+.notifications-container1 {
+  width: 100%;
+  max-width: 940px;
+  border: 1px solid #ccc;
+  font-family: Arial, sans-serif;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);  */
+  border-radius: 25px;
+  padding: 8px;
+}
 .tabs {
   display: flex;
   justify-content: space-around;

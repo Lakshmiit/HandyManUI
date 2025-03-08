@@ -63,6 +63,21 @@ import BookTechnicianCustomerGrid from './BookTechnicianCustomerGrid.js';
 import CustomerBookTechnicianQuotation from './CustomerBookTechnicianQuotation.js';
 import BooKTechnicianAdminGridView from './BooKTechnicianAdminGridView.js';
 import CustomerBookTechnicianQuotationView from './CustomerBookTechnicianQuotationView.js';
+import BuyProductPaymentPage from './BuyProductPaymentPage.js';
+import AdminBuyProductOrders from './AdminBuyProductOrders.js';
+import AdminBuyProductOrderGridView from './AdminBuyProductOrderGridView..js';
+
+import BuyProductNotificationGrid from './BuyProductNotificationGrid.js';
+import CustomerOrdersNotifications from './CustomerOrdersNotifications.js';
+import ViewCustomerBuyProductOrders from './ViewCustomerBuyProductsOrders.js';
+import CustomerBuyProductOrdersGrid from './CustomerBuyproductsOrdersGrid.js';
+import ViewCustomerBuyProductOrdersGrid from './ViewCustomerBuyProductOrdersGrid.js';
+import AdminClosedBuyProductOrders from './AdminClosedBuyProductsOrders.js';
+import BuyProductClosedOrdersGrid from './BuyProductClosedOrdersGrid.js';
+import AdminClosedOrdersFinalGridView from './AdminClosedOrdersFinalGridView.js';
+import BuyProductsCustomerCart from './BuyProductsCustomerCart.js';
+// import BuyProductCartView from './BuyProductCartView.js';
+
 
 function App() {
   return (
@@ -135,13 +150,26 @@ function App() {
             <Route path="/customerBookTechnicianQuotation/:userType/:raiseTicketId" element={<CustomerBookTechnicianQuotation />} />
             <Route path="/bookTechnicianAdminView/:raiseTicketId" element={<BooKTechnicianAdminGridView />} /> 
             <Route path="/customerBookTechnicianQuotationView/:userType/:raiseTicketId" element={<CustomerBookTechnicianQuotationView />} />
+            <Route path='/buyProductPaymentPage/:buyProductId/:userType' element={<BuyProductPaymentPage />} />
+            <Route path='/adminBuyProductOrders/:buyProductId' element={<AdminBuyProductOrders />} />
+            <Route path='/adminBuyProductOrderGridView/:buyProductId' element={<AdminBuyProductOrderGridView />} />
+            <Route path='/buyProductNotificationGrid' element={<BuyProductNotificationGrid />} />
+            <Route path='/customerOrders/:customerId/:userType' element={<CustomerOrdersNotifications />} />
+            <Route path='/viewCustomerBuyProductOrders/:buyProductId/:userType' element={<ViewCustomerBuyProductOrders />} />
+            <Route path='/viewCustomerBuyProductOrdersGrid/:buyProductId/:userType' element={<ViewCustomerBuyProductOrdersGrid />} />
+            <Route path='/adminClosedBuyProductOrders/:buyProductId' element={<AdminClosedBuyProductOrders />} />
+            <Route path='/buyProductClosedOrdersGrid' element={<BuyProductClosedOrdersGrid />} />
+            <Route path='/adminClosedOrdersFinalGridView/:buyProductId' element={<AdminClosedOrdersFinalGridView />} />
+            <Route path='/buyProductsCustomerCart/:customerId/:userType' element={<BuyProductsCustomerCart />} />
+            {/* <Route path='/buyProductsCartView/:customerId/:buyProductId/:userType' element={<BuyProductCartView />} /> */}
             
-          </Routes>
+            <Route path='/customerBuyProductOrdersGrid/:customerId/:userType' element={<CustomerBuyProductOrdersGrid />} /> 
+            </Routes>
         </main>
       </div>
     </Router>
   );
 }
 
-export default App;
+export default App; 
  

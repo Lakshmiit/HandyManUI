@@ -25,8 +25,7 @@ const Sidebar = () => {
   const {district} = useParams();
   const {category} = useParams();
 
-
-  const menuConfig = {
+const menuConfig = {
     customer: [
       { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", 
         TargetUrl: `https://handymanserviceproviders.com/CustomerProfilePage?ReactToken=${customerId}$${userType}`},
@@ -34,8 +33,8 @@ const Sidebar = () => {
       { MenuIcon: <PersonAddIcon />, MenuTitle: "Book A Technician", TargetUrl: `/bookTechnician/${customerId}/${userType}` },
       { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${customerId}` },
     { MenuIcon: <NotificationsActiveIcon />, MenuTitle: "Notifications", TargetUrl: `/customerNotification/${userType}/${customerId}` }, 
-      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: "" },
-      { MenuIcon: <InventoryIcon />, MenuTitle: "Orders", TargetUrl: "" },
+      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${customerId}/${userType}` },
+      { MenuIcon: <InventoryIcon />, MenuTitle: "Orders", TargetUrl: `/customerOrders/${customerId}/${userType}` },
       { MenuIcon: <ShoppingCartIcon />, MenuTitle: "Cart", TargetUrl: "" },
       { MenuIcon: <AccountCircleIcon />, MenuTitle: "Accounts", TargetUrl: "" },
     ],
@@ -44,7 +43,7 @@ const Sidebar = () => {
       { MenuIcon: <PersonAddIcon />, MenuTitle: "Book A Technician", TargetUrl: "" },
       { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: "" },
       { MenuIcon: <NotificationsActiveIcon />, MenuTitle: "Notifications", TargetUrl: "" },
-      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: "" },
+      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${customerId}/${userType}` },
       { MenuIcon: <AccountCircleIcon />, MenuTitle: "My Account", TargetUrl: "" },
       { MenuIcon: <AccountBalanceIcon />, MenuTitle: "Add Bank Account", TargetUrl: "" },
       { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: "" },
@@ -55,7 +54,7 @@ const Sidebar = () => {
       { MenuIcon: <UploadIcon />, MenuTitle: "Upload Products", TargetUrl: `/product-list/${ProductOwnedBy}/${userType}` },
       { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: "" },
       { MenuIcon: <NotificationsActiveIcon />, MenuTitle: "Notifications", TargetUrl: `/dealerNotifications/${userType}/${category}/${district}/${dealerId}` },
-      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: ""},
+      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${customerId}/${userType}`},
       { MenuIcon: <AccountCircleIcon />, MenuTitle: "My Account", TargetUrl: "" },
       { MenuIcon: <AccountBalanceIcon />, MenuTitle: "Add Bank Account", TargetUrl: "" },
       { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${dealerId}/${userType}` },
@@ -66,7 +65,7 @@ const Sidebar = () => {
       { MenuIcon: <UploadIcon />, MenuTitle: "Upload Products", TargetUrl: "" },
       { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: "" },
       { MenuIcon: <NotificationsActiveIcon />, MenuTitle: "Notifications", TargetUrl: `/dealerNotifications/${userType}/${category}/${district}/${dealerId}` },
-      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: ""},
+      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${customerId}/${userType}`},
       { MenuIcon: <AccountCircleIcon />, MenuTitle: "My Account", TargetUrl: "" },
       { MenuIcon: <AccountBalanceIcon />, MenuTitle: "Add Bank Account", TargetUrl: "" },
       { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${dealerId}/${userType}` },
@@ -77,7 +76,7 @@ const Sidebar = () => {
       { MenuIcon: <PersonAddIcon />, MenuTitle: "Book A Technician", TargetUrl: "" },
       { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: "" },
       { MenuIcon: <NotificationsActiveIcon />, MenuTitle: "Notifications", TargetUrl: "" },
-      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: "" },
+      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${customerId}/${userType}` },
       { MenuIcon: <AccountCircleIcon />, MenuTitle: "My Account", TargetUrl: "" },
       { MenuIcon: <AccountBalanceIcon />, MenuTitle: "Add Bank Account", TargetUrl: "" },
       { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: "" },
@@ -91,7 +90,7 @@ const Sidebar = () => {
       { MenuIcon: <TransferWithinAStationIcon />, MenuTitle: "Track Technician", TargetUrl: "" },
       { MenuIcon: <AccountCircleIcon />, MenuTitle: "My Account", TargetUrl: "" },
       { MenuIcon: <AccountBalanceIcon />, MenuTitle: "Add Bank Account", TargetUrl: "" },
-      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: "" },
+      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${customerId}/${userType}` },
       { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${technicianId}/${userType}` },
       { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: ""},
     ],

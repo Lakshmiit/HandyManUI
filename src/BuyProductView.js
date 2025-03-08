@@ -179,7 +179,7 @@ const BuyProdcutView = () => {
                       <img
                         src={`data:image/jpeg;base64,${img.imageData}`}
                         className="d-block w-100 rounded"
-                        style={{ maxHeight: '400px', objectFit: 'cover' }}
+                        style={{ height: '300px', objectFit: 'cover' }}
                         alt={`Slide ${index + 1}`}
                       />
                     </div>
@@ -215,9 +215,9 @@ const BuyProdcutView = () => {
                   <p><strong>Catalogue:</strong> {catalogue}</p>
                   <p><strong>Size:</strong> {productSize}</p>
                   <p><strong>Color:</strong> {color}</p>
-                  <p><strong>Rate:</strong> ${rate}</p>
+                  <p><strong>Rate:</strong> Rs {rate}</p>
                   <p><strong>Discount:</strong> {discount}%</p>
-                  <p><strong>Price After Discount:</strong> ${afterDiscountPrice.toFixed(2)}</p>
+                  <p><strong>Price After Discount:</strong> Rs {afterDiscountPrice.toFixed(2)}</p>
                 </div>
                 <div className="col-md-6">
                   <h5>Specifications</h5>
@@ -229,7 +229,7 @@ const BuyProdcutView = () => {
                     ))}
                   </ul>
                   <h5>Warranty</h5>
-                  <p>{warranty} months</p>
+                  <p>{warranty}</p>
                   <h5>Additional Information</h5>
                   <p>{additionalInformation}</p>
                 </div>
@@ -250,10 +250,13 @@ const BuyProdcutView = () => {
         productName,
         catalogue,
         productSize,
-        color,
+        color, 
         otherThanProduct,
         requiredQuality,
         units,
+        rate,
+        discount,
+        afterDiscountPrice,
       },
     })
   }
