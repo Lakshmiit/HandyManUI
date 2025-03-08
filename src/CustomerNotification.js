@@ -141,7 +141,7 @@ const Notification = () => {
           fetch(
           `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetRaiseTicketNotificationsByCustomerId?customerId=${customerId}`
         ),
-        fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/GetBookTechnicianListForAdmin`),
+        fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/GetBookTechnicianListForAdmin/${customerId}`),
       ]);
         const raiseTicketData = await raiseTicketResponse.json();
 
