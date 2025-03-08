@@ -370,9 +370,9 @@ const Notification = () => {
           "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetRaiseTicketsForDealers"
         ),
         fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications`),
-        fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/GetBookTechnicianListForAdmin`),
-        fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForAdmin`),
-        fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForAdmin`),
+        fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/GetBookTechnicianList`),
+        fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsList`),
+        fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsList`),
       ]);
 
       const raiseTicketData = await raiseTicketResponse.json();
