@@ -27,7 +27,7 @@ const CustomerBookTechnicianGrid = () => {
   }, [technicianData]);
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv2.azurewebsites.net/api/BookTechnician/GetBookTechnicianListForAdmin`
+    const url = `https://handymanapiv2.azurewebsites.net/api/BookTechnician/GetBookTechnicianDetailsForUserList?userId=${customerId}`
 
     axios.get(url)
       .then(response => {

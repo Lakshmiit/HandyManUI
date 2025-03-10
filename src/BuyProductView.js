@@ -244,10 +244,11 @@ const BuyProdcutView = () => {
      <button
   type="button"
   className="btn btn-warning text-white w-50 mt-2"
-  onClick={() =>
+  onClick={() => 
     navigate(`/buyProducts/${userId}/${userType}`, {
       state: {
-        productName,
+        category,
+        productName, 
         catalogue,
         productSize,
         color, 

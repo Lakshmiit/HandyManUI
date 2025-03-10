@@ -32,7 +32,7 @@ const BookTechnicianNotification = () => {
 
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv2.azurewebsites.net/api/BookTechnician/GetBookTechnicianListForAdmin`
+    const url = `https://handymanapiv2.azurewebsites.net/api/BookTechnician/GetBookTechnicianForAdminList`
     axios.get(url)
       .then(response => {
         const technicians = response.data.map((technician) => ({

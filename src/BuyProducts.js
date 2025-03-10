@@ -6,9 +6,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import { Button, Form, Modal } from 'react-bootstrap'; // Import Bootstrap components for modal
-import axios from 'axios';
+// import axios from 'axios';
 
-const BuyProduct = () => {
+const BuyProduct = () => { 
   const navigate = useNavigate();
   const {userType} = useParams();
   const [buyProductId, setBuyProductId] = useState('');
@@ -18,15 +18,11 @@ const BuyProduct = () => {
   const [category, setCategory] = useState("");
   const [productSize, setProductSize] = useState("");
   const [productCatalogue, setProductCatalogue] = useState("");
-  const [color, setChooseColor] = useState("");
+  const [color, setChooseColor] = useState([]);
   const [colors, setChooseColors] = useState("");
-  // const [totalAmount, setTotalAmounts] = useState('');
-  // const [otherThanProduct, setOtherThanProduct] = useState("");
   const [requiredQuality, setRequiredQuality] = useState("");
-  // const [units, setUnits] = useState("");
   const [rate, setRate] = useState("");
   const [discount, setDiscount] = useState("");
-  // const [afterDiscount, setAfterDiscount] = useState("");
   const [productName, setProductName] = useState("");
   const [showSecondaryAddresses, setShowSecondaryAddresses] = useState(false);
   const [newAddress, setNewAddress] = useState('');
@@ -37,19 +33,26 @@ const BuyProduct = () => {
   const [pincode, setPincode] = useState('');
   const [fullName, setFullName] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const [productSuggestions, setProductSuggestions] = useState([]);
-  const [filteredSuggestions, setFilteredSuggestions] = useState([]);
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [allProducts, setAllProducts] = useState([]);
+  // const [productSuggestions, setProductSuggestions] = useState([]);
+  // const [filteredSuggestions, setFilteredSuggestions] = useState([]);
+  // const [showDropdown, setShowDropdown] = useState(false);
+  // const [allProducts, setAllProducts] = useState([]);
+  const [quantityError, setQuantityError] = useState("");
+  const [colorError, setColorError] = useState("");
+  // const [error, setError] = useState("");
+  const [productOptions, setProductOptions] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState({});
   const [id, setId] = useState("");
   const { userId } = useParams(); 
   const location = useLocation();
  // Check if there's state passed from ViewProduct page
  useEffect(() => {
+  const storedState = sessionStorage.getItem("buyProductState");
   if (location.state) {
     const {
+      category,
       productName,
-      catalogue,
+      catalogue, 
       productSize,
       color,
       rate,
@@ -58,6 +61,7 @@ const BuyProduct = () => {
       requiredQuality,
       id,
     } = location.state;
+    setCategory(category);
     setProductName(productName);
     setProductCatalogue(catalogue);
     setProductSize(productSize);
@@ -67,8 +71,48 @@ const BuyProduct = () => {
     // setAfterDiscount(afterDiscount);
     setRequiredQuality(requiredQuality);
     setId(id);
+
+    sessionStorage.setItem("buyProductState", JSON.stringify(location.state));
+  } else if (storedState) {
+    const parsedState = JSON.parse(storedState);
+    setCategory(parsedState.category);
+    setProductName(parsedState.productName);
+    setProductCatalogue(parsedState.catalogue);
+    setProductSize(parsedState.productSize);
+    setChooseColor(parsedState.color);
+    setRate(parsedState.rate);
+    setDiscount(parsedState.discount);
+    // setAfterDiscount(afterDiscount);
+    setRequiredQuality(parsedState.requiredQuality);
+    setId(parsedState.id);
   }
 }, [location.state]);
+
+// const handleViewProduct = () => {
+//   const hasViewed = sessionStorage.getItem("hasViewedProduct");
+
+//   if (!productName.trim()) {
+//     setError("Please select a product name!");
+//     return;
+//   }
+
+//   setError("");
+//   sessionStorage.setItem("hasViewedProduct", "true");
+
+//   navigate(`/buyproduct-view/${id}/${userId}/${userType}`, {
+//     state: {
+//       category,
+//       productName,
+//       productCatalogue,
+//       productSize,
+//       color,
+//       rate,
+//       discount,
+//       requiredQuality,
+//     },
+//   });
+// };
+
 
 useEffect(() => {
   console.log(buyProductId);
@@ -113,15 +157,19 @@ useEffect(() => {
   const afterDiscountPrice = parseFloat((validRate - (validRate * validDiscount) / 100).toFixed(2));
   const totalAmount = parseFloat((requiredQuality * afterDiscountPrice).toFixed(2));
 
-  
-  // // Generate ticket ID in the format VSKPAKP002
-  // const ticketIdPrefix = "VSKPAKP";
-  // const ticketIdSuffix = String(Math.floor(Math.random() * 999) + 1).padStart(3, "0");
-  // const ticketId = `${ticketIdPrefix}${ticketIdSuffix}`;
-
   const handleGetQuotation = async (e) => {
     e.preventDefault();
-   
+
+    if (!colors) {
+        setColorError("Please Enter SelectColor Field!");
+        return;
+      }
+
+    if (!requiredQuality) {
+      setQuantityError("Please Enter Quantity Field!");
+      return;
+    }
+  
     const primaryAddress = addresses.find((addr) => addr.type === "primary");
     const state = primaryAddress?.state || "";
     const district = primaryAddress?.district || "";
@@ -134,7 +182,7 @@ useEffect(() => {
       date: new Date(),
       Address: primaryAddress?.address || "",
       CustomerPhoneNumber: mobileNumber,
-      category,
+      category:category,
       status: "Open",
       productName,
       ProductCatalogue: productCatalogue,
@@ -187,6 +235,47 @@ useEffect(() => {
       window.alert('Failed to submitting quotation. Please try again later.');    }
   };
 
+  // const handleColorChange = (e) => {
+  //   if (!Array.isArray(colors)) {
+  //     console.error("colors is not an array:", colors);
+  //     return; 
+  //   }
+  
+  //   const inputColors = e.target.value
+  //     .split(",")
+  //     .map(c => c.trim().toLowerCase())  
+  //     .filter(c => c !== ""); 
+  
+  //   const colorSet = colors.map(c => c.toLowerCase()); 
+  
+  //   const isValid = inputColors.every(c => colorSet.includes(c));
+  
+  //   if (isValid) {
+  //     setChooseColors(inputColors);
+  //   } else {
+  //     alert("Please enter a color from the given options!");
+  //   }
+  // };
+  
+//   const handleColorChange = (e) => {
+//     const inputColors = e.target.value
+//       .split(",")
+//       .map(c => c.trim())
+//       .filter(c => c !== ""); // Clean the input
+
+//     const sortedInput = [...inputColors].sort().join(",").toLowerCase();
+//     const sortedColor = [...color].sort().join(",").toLowerCase();
+//     setChooseColors(e.target.value);
+
+//     if (sortedInput === sortedColor) {
+//       // setChooseColors(e.target.value);
+//       setColorError("");
+//     } else {
+//       setColorError(`Please match the exact colors`);
+//     }
+// };
+  
+
   const handleColorChange = (e) => {
     const inputColor = e.target.value;
     if (color.includes(inputColor)) {
@@ -196,7 +285,22 @@ useEffect(() => {
     }
   };
   
-  
+  const handleQuantityChange = (e) => {
+    const value = e.target.value.trim();
+
+    if (value === "") {
+      setRequiredQuality("");
+      setQuantityError("Quantity is required.");
+      return;
+    }
+
+    if (/^[1-9]\d*$/.test(value)) {
+      setRequiredQuality(value);
+      setQuantityError(""); 
+    } else {
+      setQuantityError("Please enter a minimum one Number Of Quantity.");
+    }
+  };
 
 
   // const handleAddToCart = async (e) => {
@@ -402,56 +506,127 @@ useEffect(() => {
     setAddresses(updatedAddresses);
   };
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get(
-          `https://handymanapiv2.azurewebsites.net/api/Product/GetProductsByCategory?category=${category}`
-        );
-        setAllProducts(response.data);
-        // alert(JSON.stringify(allProducts));
-        setProductSuggestions(response.data.map((product) => product.productName));
-      } catch (error) {
-        console.error("Error fetching products by category:", error);
-      }
-    };
-    fetchProducts();
-  }, [category]);
-  
-  useEffect(() => {
-    if (productName) {
-      const filtered = productSuggestions.filter((product) =>
-        // name.toLowerCase().startsWith(productName.toLowerCase())
-      product.toLowerCase().includes(productName.toLowerCase())
-      );
-      setFilteredSuggestions(filtered);
-      setShowDropdown(filtered.length > 0);
-    } else {
-      setFilteredSuggestions([]);
-      setShowDropdown(false);
+//   // Fetch products when category changes
+// useEffect(() => {
+//   if (category) {
+//     fetchProductsByCategory(category);
+//   }
+// }, [category]);
+
+const fetchProductsByCategory = async (selectedCategory) => {
+  try {
+    const response = await fetch(
+      `https://handymanapiv2.azurewebsites.net/api/Product/GetProductsByCategory?Category=${selectedCategory}`
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch products");
     }
-  }, [productName, productSuggestions]);
+    const data = await response.json();
+    console.log("Fetched Products:", data);
+    // alert(JSON.stringify(productOptions));
+      setProductOptions(data);
+      setProductName("");
+      setProductCatalogue("");
+      setProductSize("");
+      setChooseColor([]);
+      setRate("");
+      setDiscount("");
+      setId("");
+
+  } catch (error) {
+    console.error("Error fetching products:", error);
+  }
+};
+useEffect(() => {
+  if (category) {
+    fetchProductsByCategory(category);
+  }
+}, [category]);
+
+
+const handleCategoryChange = (e) => {
+  setCategory(e.target.value);
+  setProductName(""); 
+};
+
+const handleProductChange = (e) => {
+  const selectedProduct = productOptions.find(prod => prod.productName === e.target.value);
+  
+  if (selectedProduct) {
+    setProductName(selectedProduct.productName);
+    setProductCatalogue(selectedProduct.catalogue || "");
+    setProductSize(selectedProduct.productSize || "");
+    setChooseColor(selectedProduct.color || []);
+    setRate(selectedProduct.rate || "");
+    setDiscount(selectedProduct.discount || "");
+    setId(selectedProduct.id || "");
+  }
+};
+
+useEffect(() => {
+  if (!selectedProduct.category && category) {
+    fetchProductsByCategory(category);
+  }
+}, [category, selectedProduct]);
+
+
+  // useEffect(() => {
+  //   // if (!category || category === "Choose Category") {
+  //   //   setProductSuggestions([]);
+  //   //   setFilteredSuggestions([]);
+  //   //   return;
+  //   // }
+
+  //   const fetchProducts = async () => {
+  //     if (!category) return;
+  //     try {
+  //       const response = await axios.get(
+  //         `https://handymanapiv2.azurewebsites.net/api/Product/GetProductsByCategory?category=${category}`
+  //       );
+  //       setAllProducts(response.data);
+  //       // alert(JSON.stringify(allProducts));
+  //       setProductSuggestions(response.data.map((product) => product.productName));
+  //     } catch (error) {
+  //       console.error("Error fetching products by category:", error);
+  //     }
+  //   };
+  //   fetchProducts();
+  // }, [category]);
+  
+  // useEffect(() => {
+  //   if (productName) {
+  //     const filtered = productSuggestions.filter((product) =>
+  //       // name.toLowerCase().startsWith(productName.toLowerCase())
+  //     product.toLowerCase().includes(productName.toLowerCase())
+  //     );
+  //     setFilteredSuggestions(filtered);
+  //     setShowDropdown(filtered.length > 0);
+  //   } else {
+  //     setFilteredSuggestions([]);
+  //     setShowDropdown(false);
+  //   }
+  // }, [productName, productSuggestions]);
 
   
-  const handleProductSelect = (selectedProductName) => {
-    setProductName(selectedProductName); // Update the input field to reflect the selected name
-    setShowDropdown(false);
-    const selectedProduct = allProducts.find(
-      (product) => product.productName === selectedProductName
-    );
-    if (selectedProduct) {
-      setProductCatalogue(selectedProduct.catalogue);
-      setProductSize(selectedProduct.productSize);
-      
-      setChooseColor(selectedProduct.color);
-      setRate(selectedProduct.rate);
-      setDiscount(selectedProduct.discount);
-      // setAfterDiscount(selectedProduct.afterDiscount);
-      setId(selectedProduct.id);
-    }
+  // const handleProductSelect = (selectedProductName) => {
+  //   setProductName(selectedProductName); // Update the input field to reflect the selected name
+  //   setShowDropdown(false);
+
+  //   const selectedProduct = allProducts.find(
+  //     (product) => product.productName === selectedProductName
+  //   );
+  //   if (selectedProduct) {
+  //     setProductCatalogue(selectedProduct.catalogue);
+  //     setProductSize(selectedProduct.productSize);
+  //     setChooseColor(selectedProduct.color);
+  //     setRate(selectedProduct.rate);
+  //     setDiscount(selectedProduct.discount);
+  //     // setAfterDiscount(selectedProduct.afterDiscount);
+  //     setId(selectedProduct.id);
+  //   }
     
-    setFilteredSuggestions([]);
-  };
+  //   setFilteredSuggestions([]);
+  // };
 
   // // Handle product selection
   // const handleProductSelect = (selectedProduct) => {
@@ -664,9 +839,10 @@ useEffect(() => {
               <select
                 className="form-control"
                 value={category}
-                onChange={(e) => setCategory(e.target.value)}
+                onChange={handleCategoryChange}
+                required
               >
-                <option>Choose Category</option>
+                <option value="">Choose Category</option>
                 <option>Electrical items</option>
                 <option>Plumbing Materials</option>
                 <option>Sanitary items</option>
@@ -677,19 +853,32 @@ useEffect(() => {
               </select>
             </div>
 
-            <div className="form-group position-relative">
+      <div className="form-group position-relative">
       <label>
         Product Name <span className="req_star">*</span>
       </label>
-      <input
-        type="text"
+      <select
         className="form-control"
         value={productName}
-        onChange={(e) => setProductName(e.target.value)}
-        placeholder="Product Name"
-        onFocus={() => setShowDropdown(true)}
-        onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
-      />
+        onChange={handleProductChange}
+        placeholder="Choose Product Ceiling Fan, Air Conditioner"
+        >
+         <option value="">Select Product</option>
+            {productOptions.map((productOption, i) => (
+              <option key={i} value={productOption.productName}>{productOption.productName}</option>
+            ))}
+        </select>
+        </div>
+        {/* // onFocus={() => 
+        //     setShowDropdown(true)
+        //   } 
+        //   onBlur={(e) => {
+        //     if (!e.relatedTarget || !e.relatedTarget.classList.contains("dropdown-item")) {
+        //       setShowDropdown(false);
+        //     }
+        //   }} */}
+      
+      {/* {error && <p style={{ color: "red", fontSize: "14px", marginTop: "5px" }}>{error}</p>}
 
       {showDropdown && filteredSuggestions.length > 0 && (
         <ul
@@ -706,50 +895,8 @@ useEffect(() => {
             </li>
           ))}
         </ul>
-      )}
-    </div>
-
-            {/* <div className="form-group">
-              <label>
-                Product Name <span className="req_star">*</span>
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                value={productName}
-                onChange={(e) => setProductName(e.target.value)}
-                placeholder="Product Name"
-                onFocus={() => setShowDropdown(true)}
-                onBlur={() => setTimeout(() => setShowDropdown(false), 200)}              
-                />
-
-{showDropdown && filteredSuggestions.length > 0 && (
-        <ul className="list-group position-absolute w-100 mt-1 shadow bg-white" style={{ zIndex: 1000 }}>
-          {filteredSuggestions.map((suggestion, index) => (
-            <li
-              key={index}
-              className="list-group-item list-group-item-action"
-              onMouseDown={() => handleProductSelect(suggestion)}
-            >
-              {suggestion}
-            </li>
-          ))}
-        </ul>
       )} */}
-              {/* {filteredSuggestions.length > 0 && (
-                <ul className="list-group mt-2">
-                  {filteredSuggestions.map((suggestion, index) => (
-                    <li
-                      key={index}
-                      className="list-group-item list-group-item-action"
-                      onClick={() => handleProductSelect(suggestion)}
-                    >
-                      {suggestion}
-                    </li>
-                  ))}
-                </ul>
-              )} */}
-            {/* </div> */}
+    
 
             <div className="form-group">
               <label>
@@ -759,7 +906,7 @@ useEffect(() => {
                 type="text"
                 className="form-control"
                 value={productCatalogue}
-                onChange={(e) => setProductCatalogue(e.target.value)}
+                 onChange={(e) => setProductCatalogue(e.target.value)}
                 placeholder="Product Catalogue"
                 readOnly
               />
@@ -773,7 +920,7 @@ useEffect(() => {
                 type="text"
                 className="form-control"
                 value={productSize}
-                onChange={(e) => setProductSize(e.target.value)}
+                // onChange={(e) => setProductSize(e.target.value)}
                 placeholder="Product Size"
                 readOnly
               />
@@ -785,7 +932,7 @@ useEffect(() => {
                   type="text"
                   className="form-control"
                   value={rate}
-                  onChange={rate}
+                  // onChange={rate}
                   placeholder="Rate"
                   readOnly
                 />
@@ -796,7 +943,7 @@ useEffect(() => {
                   type="text"
                   className="form-control"
                   value={discount}
-                  onChange={(e) => setDiscount(e.target.value)}
+                  // onChange={(e) => setDiscount(e.target.value)}
                   placeholder="Discount"
                   readOnly
                 />
@@ -827,20 +974,34 @@ useEffect(() => {
             <button
               type="button"
               className="btn btn-warning text-white w-50 mt-2"
-              onClick={() =>
-                navigate(`/buyproduct-view/${id}/${userId}/${userType}`, {
-                  state: {
-                    productName,
-                    productCatalogue,
-                    productSize,
-                    color,
-                    rate,
-                    discount,
-                    // afterDiscount,
-                    requiredQuality,
-                  },
-                })
-              }
+              onClick={() => {
+                setSelectedProduct({
+                  category,
+                  productName,
+                  productCatalogue,
+                  productSize,
+                  color,
+                  rate,
+                  discount,
+                  requiredQuality,
+                });
+                navigate(`/buyproduct-view/${id}/${userId}/${userType}`);
+              }}
+              // onClick={() =>
+              //   navigate(`/buyproduct-view/${id}/${userId}/${userType}`, {
+              //     state: {
+              //       category,
+              //       productName,
+              //       productCatalogue,
+              //       productSize,
+              //       color,
+              //       rate,
+              //       discount,
+              //       // afterDiscount,
+              //       requiredQuality,
+              //     },
+              //   })
+              // }
             >
               View Product
             </button>
@@ -874,7 +1035,7 @@ useEffect(() => {
                 type="text"
                 className="form-control"
                 value={color}
-                onChange={(e) => setChooseColor(e.target.value)}
+                // onChange={(e) => setChooseColor(e.target.value)}
                 placeholder="Color"
                 readOnly
               />
@@ -888,7 +1049,10 @@ useEffect(() => {
                 value={colors}
                 onChange={handleColorChange}
                 placeholder="Select Required Color"
+                required
               />
+             {colorError && <p style={{ color: "red" }}>{colorError}</p>}
+
             </div>
               
               <div className="col-md-6">
@@ -899,9 +1063,11 @@ useEffect(() => {
                   type="text"
                   className="form-control"
                   value={requiredQuality}
-                  onChange={(e) => setRequiredQuality(e.target.value)}
+                  onChange={handleQuantityChange}
                   placeholder="Enter Required Quantity"
+                  required
                 />
+                {quantityError && <p style={{ color: "red" }}>{quantityError}</p>}
               </div>
 
               <div className="col-md-6">

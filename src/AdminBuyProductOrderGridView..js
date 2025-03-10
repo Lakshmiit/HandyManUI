@@ -11,7 +11,7 @@ import { Button } from 'react-bootstrap'; // Import Bootstrap components for mod
 
 const AdminBuyProductOrdersView = () => {
   const navigate = useNavigate();
-  const {userType} = useParams();
+  // const {userType} = useParams();
   const {buyProductId} = useParams();
   const [buyProductTicketId, setBuyProductTicketId] = useState('');
   const [isMobile, setIsMobile] = useState(false);
@@ -44,7 +44,7 @@ const [addressType, setAddressType] = useState('');
   // const [filteredSuggestions, setFilteredSuggestions] = useState([]);
   // const [allProducts, setAllProducts] = useState([]);
   const [id, setId] = useState("");
-  const { userId } = useParams(); 
+  // const { userId } = useParams(); 
   const [deliveryCharges, setDeliveryCharges] = useState(0);
 const [serviceCharges, setServiceCharges] = useState(0);
 const [totalPaymentAmount, setTotalPaymentAmount] = useState(0);
@@ -818,7 +818,7 @@ useEffect(() => {
               />
             </div> */}
 
-            <button
+            {/* <button
               type="button"
               className="btn btn-warning text-white w-50 mt-2"
               onClick={() =>
@@ -837,7 +837,7 @@ useEffect(() => {
               }
             >
               View Product
-            </button>
+            </button> */}
 
 
             {/* <div className="form-group mb-3">

@@ -37,13 +37,13 @@ const CustomerBuyProductNotificationGrid = () => {
   }, [productData])
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv2.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForAdmin`
+    const url = `https://handymanapiv2.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForUserList?UserID=${customerId}`
     axios.get(url)
       .then(response => {
         const products = response.data.map((product) => ({
           ...product,
         }));
-        const buyProducts = products.filter((product) => product.status === "Pending");
+        const buyProducts = products.filter((product) => product.status === "Closed");
         setFilteredData(buyProducts);
         setProductData(buyProducts);
 
@@ -62,7 +62,7 @@ const CustomerBuyProductNotificationGrid = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, []);
+  }, [customerId]);
 
   // const handleDelete = (productId) => {
   //   const confirmDelete = window.confirm('Are you sure you want to delete this product?');

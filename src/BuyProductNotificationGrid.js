@@ -32,7 +32,7 @@ const BuyProductNotificationGrid = () => {
 
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv2.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForAdmin`
+    const url = `https://handymanapiv2.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForAdminList`
     axios.get(url)
       .then(response => {
         const products = response.data.map((product) => ({
