@@ -441,10 +441,14 @@ const handleBothActions = (e) => {
   e.preventDefault();
   // handleBookTechnicianPayment(e);
   handleUpdateJobDescription(e);
-  window.alert(`Payment has been completed successfully! Your reference number is ${bookTechnicianIds}. Technician will contact you shortly.`);
-  // Redirect to CustomerProfilePage
-  window.location.href = `https://handymanserviceproviders.com/CustomerProfilePage?ReactToken=${customerId}$${userType}`;
-  
+  if (selectedPayment === 'online') {
+  window.alert(`We are Redirecting to the Payment Page! Your reference number is ${bookTechnicianIds}. Technician will contact you shortly.`);
+    window.location.href=`https://handymanserviceproviders.com/PaymentPage`;
+  } else if (selectedPayment === 'technician') {
+   window.alert(`Thank You for choosing the HandyMan Services! Your reference number is ${bookTechnicianIds}. Technician will contact you shortly.`);
+   window.location.href = `https://handymanserviceproviders.com/CustomerProfilePage?ReactToken=${customerId}$${userType}`;
+  }
+
 };
 
   
