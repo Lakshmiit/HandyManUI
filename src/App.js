@@ -76,6 +76,7 @@ import AdminClosedBuyProductOrders from './AdminClosedBuyProductsOrders.js';
 import BuyProductClosedOrdersGrid from './BuyProductClosedOrdersGrid.js';
 import AdminClosedOrdersFinalGridView from './AdminClosedOrdersFinalGridView.js';
 import BuyProductsCustomerCart from './BuyProductsCustomerCart.js';
+import PaymentPage from './PaymentPage';
 // import ProfilePage from './ProfilePage.js';
 // import BuyProductCartView from './BuyProductCartView.js';
 
@@ -164,7 +165,7 @@ function App() {
             <Route path='/adminClosedOrdersFinalGridView/:buyProductId' element={<AdminClosedOrdersFinalGridView />} />
             <Route path='/buyProductsCustomerCart/:customerId/:userType' element={<BuyProductsCustomerCart />} />
             {/* <Route path='/buyProductsCartView/:customerId/:buyProductId/:userType' element={<BuyProductCartView />} /> */}
-            
+            <Route path="/payment-selection/:raiseTicketId" element={<PaymentPage />} />
             <Route path='/customerBuyProductOrdersGrid/:customerId/:userType' element={<CustomerBuyProductOrdersGrid />} /> 
             </Routes>
         </main>
