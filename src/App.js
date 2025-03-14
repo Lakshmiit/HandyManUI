@@ -76,7 +76,7 @@ import AdminClosedBuyProductOrders from './AdminClosedBuyProductsOrders.js';
 import BuyProductClosedOrdersGrid from './BuyProductClosedOrdersGrid.js';
 import AdminClosedOrdersFinalGridView from './AdminClosedOrdersFinalGridView.js';
 import BuyProductsCustomerCart from './BuyProductsCustomerCart.js';
-import ProfilePage from './ProfilePage.js';
+// import ProfilePage from './ProfilePage.js';
 import PaymentPage from './PaymentPage';
 // import BuyProductCartView from './BuyProductCartView.js';
 
@@ -91,7 +91,7 @@ function App() {
         {/* Main content */}
         <main className="container py-3 mt_100px">
           <Routes>
-            <Route path="/profilePage/:userType/:userId" element={<ProfilePage />} />
+            {/* <Route path="/profilePage/:userType/:userId" element={<ProfilePage />} /> */}
             <Route path="/product/:ProductOwnedBy" element={<UploadForm />} />
             {/* Dynamic product ID route for ProductView */}
             <Route path="/product-view/:id/:ProductOwnedBy" element={<ProductView />} /> 
