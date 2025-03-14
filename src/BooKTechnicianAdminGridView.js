@@ -7,12 +7,12 @@ import {  Dashboard as MoreVertIcon } from '@mui/icons-material';
 // import { FaEdit} from 'react-icons/fa'; // Correct icon import
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 // import SaveAsIcon from '@mui/icons-material/SaveAs';
-import ForwardIcon from '@mui/icons-material/Forward';
+// import ForwardIcon from '@mui/icons-material/Forward';
 // import { FaEye } from 'react-icons/fa';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import './App.css';
 const BookTechnicianActionView = () => {
- const Navigate = useNavigate(); 
+//  const Navigate = useNavigate(); 
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [jobDescription, setJobDescription] = useState(''); 
@@ -38,10 +38,18 @@ const BookTechnicianActionView = () => {
   const [technicianConfirmationCode, setTechnicianConfirmationCode] = useState('');
   const [assignedTo, setAssignedTo] = useState('');
   const [utrTransactionNumber,setutrTransactionNumber]=useState('');
+  const [OrderId, setOrderId] = useState("");
+  const [OrderDate, setOrderDate] = useState("");
+  const [PaidAmount, setPaidAmount] = useState("");
+  const [TransactionStatus, setTransactionStatus] = useState("");
+  const [TransactionType, setTransactionType] = useState("");
+  const [InvoiceId, setInvoiceId] = useState("");
+  const [InvoiceURL, setInvoiceURL] = useState("");
+
   
   useEffect(() => {
-    console.log(technicianData);
-  }, [technicianData]);
+    console.log(technicianData,state, district, customerId, zipCode, customerName, rate, discount, afterDiscount, remarks, moreInfo);
+  }, [technicianData,state, district, customerId, zipCode, customerName, rate, discount, afterDiscount, remarks, moreInfo]);
 
   useEffect(() => {
     const fetchtechnicianData = async () => {
@@ -74,6 +82,13 @@ const BookTechnicianActionView = () => {
         setTechnicianConfirmationCode(data.technicianConfirmationCode);
         setutrTransactionNumber(data.utrTransactionNumber);
         setAssignedTo(data.assignedTo);
+        setOrderId(data.orderId);
+        setOrderDate(data.orderDate);
+        setPaidAmount(data.paidAmount);
+        setTransactionStatus(data.transactionStatus);
+        setTransactionType(data.transactionType);
+        setInvoiceId(data.invoiceId);
+        setInvoiceURL(data.invoiceURL);
       } catch (error) {
         console.error('Error fetching technician data:', error);
       } finally {
@@ -110,54 +125,54 @@ const BookTechnicianActionView = () => {
 //     return <div>Loading...</div>;
 //   }
 
-const handleUpdateJobDescription = async (e) => {
-  e.preventDefault();
+// const handleUpdateJobDescription = async (e) => {
+//   e.preventDefault();
 
-  const payload2 = {
-    id: raiseTicketId,  
-    bookTechnicianId: bookTechnicianId,
-    date: new Date(),
-    customerName: customerName,
-    address: address,
-    state: state,
-    district: district,
-    zipCode: zipCode,
-    category: category,
-    jobDescription: jobDescription,
-    rate: rate,
-    discount: discount,
-    afterDiscount: afterDiscount,
-    remarks: remarks,
-    moreInfo: moreInfo,
-    status: "Closed",
-    customerId: customerId,
-    assignedTo: "Customer",
-    phoneNumber: phoneNumber,
-    paymentMode: paymentMode,
-    approvedAmount: afterDiscount,
-    utrTransactionNumber: utrTransactionNumber,
-    technicianConfirmationCode: technicianConfirmationCode,
-  };
+//   const payload2 = {
+//     id: raiseTicketId,  
+//     bookTechnicianId: bookTechnicianId,
+//     date: new Date(),
+//     customerName: customerName,
+//     address: address,
+//     state: state,
+//     district: district,
+//     zipCode: zipCode,
+//     category: category,
+//     jobDescription: jobDescription,
+//     rate: rate,
+//     discount: discount,
+//     afterDiscount: afterDiscount,
+//     remarks: remarks,
+//     moreInfo: moreInfo,
+//     status: "Closed",
+//     customerId: customerId,
+//     assignedTo: "Customer",
+//     phoneNumber: phoneNumber,
+//     paymentMode: paymentMode,
+//     approvedAmount: afterDiscount,
+//     utrTransactionNumber: utrTransactionNumber,
+//     technicianConfirmationCode: technicianConfirmationCode,
+//   };
  
-  try {
-    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload2),
-    });
+//   try {
+//     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
+//       method: 'PUT',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify(payload2),
+//     });
  
-    if (!response.ok) {
-      throw new Error('Failed to forward Customer.');
-    }
-    alert("Ticket Forwarded to customer Successfully!");
-    Navigate("/adminNotifications");
-  } catch (error) {
-    console.error('Error:', error);
-    window.alert('Failed to forward Customer. Please try again later.');
-  }
-};
+//     if (!response.ok) {
+//       throw new Error('Failed to forward Customer.');
+//     }
+//     alert("Ticket Forwarded to customer Successfully!");
+//     Navigate("/adminNotifications");
+//   } catch (error) {
+//     console.error('Error:', error);
+//     window.alert('Failed to forward Customer. Please try again later.');
+//   }
+// };
 
   // const handleForwardTicket = async () => {
   //   try {
@@ -358,9 +373,10 @@ const handleUpdateJobDescription = async (e) => {
             <Form.Group>
               <label>Customer Address</label>
               <Form.Control
+                as="textarea"
                 type="text"
                 name="address"
-                value={`${address}, ${phoneNumber}`}
+                value={`${address}, ${district}, ${state}, ${zipCode}, ${phoneNumber}` }
                 onChange={handleChange}
                 placeholder="Customer Address"
                 readOnly
@@ -376,6 +392,125 @@ const handleUpdateJobDescription = async (e) => {
             </Form.Group>
           </Col>
         </Row>
+
+{/* Order Id */}
+        <Row>
+                  <Col md={12}>
+                    <Form.Group>
+                      <label>Order Id</label>
+                      <Form.Control
+                        type="text"
+                        name="OrderId"
+                        value={OrderId}
+                        onChange={handleChange}
+                        placeholder="Order Id"
+                        readOnly
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+
+                {/* Order Date */}
+                <Row>
+                  <Col md={12}>
+                    <Form.Group>
+                      <label>Order Date</label>
+                      <Form.Control
+                        type="text"
+                        name="OrderDate"
+                        value={OrderDate}
+                        onChange={handleChange}
+                        placeholder="Order Date"
+                        readOnly
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+
+                {/* Paid Amount */}
+                <Row>
+                  <Col md={12}>
+                    <Form.Group>
+                      <label>Paid Amount</label>
+                      <Form.Control
+                        type="text"
+                        name="PaidAmount"
+                        value={PaidAmount}
+                        onChange={handleChange}
+                        placeholder="Paid Amount"
+                        readOnly
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+
+                {/* Transaction Status */}
+                <Row>
+                  <Col md={12}>
+                    <Form.Group>
+                      <label>Transaction Status</label>
+                      <Form.Control
+                        type="text"
+                        name="TransactionStatus"
+                        value={TransactionStatus}
+                        onChange={handleChange}
+                        placeholder="Transaction Status"
+                        readOnly
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+
+                {/* Transaction Type */}
+                <Row>
+                  <Col md={12}>
+                    <Form.Group>
+                      <label>Transaction Type</label>
+                      <Form.Control
+                        type="text"
+                        name="TransactionType"
+                        value={TransactionType}
+                        onChange={handleChange}
+                        placeholder="Transaction Type"
+                        readOnly
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+
+                {/* Invoice Id */}
+                <Row>
+                  <Col md={12}>
+                    <Form.Group>
+                      <label>Invoice Id</label>
+                      <Form.Control
+                        type="text"
+                        name="InvoiceId"
+                        value={InvoiceId}
+                        onChange={handleChange}
+                        placeholder="Invoice Id"
+                        readOnly
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+
+                {/* Invoice URL*/}
+                <Row>
+                  <Col md={12}>
+                    <Form.Group>
+                      <label>Invoice URL</label>
+                      <Form.Control
+                        type="text"
+                        name="InvoiceURL"
+                        value={InvoiceURL}
+                        onChange={handleChange}
+                        placeholder="Invoice URL"
+                        readOnly
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
 
         
         {/* Assigned To */}
@@ -407,9 +542,9 @@ const handleUpdateJobDescription = async (e) => {
           disabled={status === "Assigned" && assignedTo === "Technical Agency"}>
             <SaveAsIcon />
           </Button> */}
-          <Button className="btn btn-warning text-white mx-2" onClick={handleUpdateJobDescription} title="Forward">
+          {/* <Button className="btn btn-warning text-white mx-2" onClick={handleUpdateJobDescription} title="Forward">
             <ForwardIcon />
-          </Button>
+          </Button> */}
 
         </div>
         </Form>

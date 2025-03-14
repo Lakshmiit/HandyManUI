@@ -27,10 +27,10 @@ const {userType} = useParams();
  const [loading, setLoading] = useState(true);
  const [paymentMode, setPaymentMode] = useState('');
  const [totalAmount, setTotalAmount] = useState('');
-//  const [state, setState] = useState('');
-//  const [district, setDistrict] = useState('')
+ const [state, setState] = useState('');
+ const [district, setDistrict] = useState('')
  const [customerId, setCustomerId] = useState(''); 
-  // const [zipCode,setZipCode]=useState('');
+  const [zipCode,setZipCode]=useState('');
   // const [customerName, setCustomerName] = useState("");
   // const [rate, setRate] = useState('');
   // const [discount, setDiscount] = useState('');
@@ -40,7 +40,14 @@ const {userType} = useParams();
   const [technicianConfirmationCode, setTechnicianConfirmationCode] = useState('');
   const [assignedTo, setAssignedTo] = useState('');
   const [UTRTransactionNumber, setPaymentTransactionDetails] = useState('');
-
+  const [paymentType] = useState("");
+  const [OrderId, setOrderId] = useState("");
+    const [OrderDate, setOrderDate] = useState("");
+    const [PaidAmount, setPaidAmount] = useState("");
+    const [TransactionStatus, setTransactionStatus] = useState("");
+    const [TransactionType, setTransactionType] = useState("");
+    const [InvoiceId, setInvoiceId] = useState("");
+    const [InvoiceURL, setInvoiceURL] = useState("");
   
   useEffect(() => {
     console.log(technicianData, afterDiscount);
@@ -66,9 +73,9 @@ const {userType} = useParams();
         setCustomerId(data.customerId);
         //  alert(userType);
         // setCustomerName(data.customerName);
-        // setState(data.state);
-        // setDistrict(data.district);
-        // setZipCode(data.zipCode);
+        setState(data.state);
+        setDistrict(data.district);
+        setZipCode(data.zipCode);
         // setRate(data.rate);
         // setDiscount(data.discount);
         setAfterDiscount(data.afterDiscount);
@@ -78,6 +85,14 @@ const {userType} = useParams();
         setPaymentTransactionDetails(data.utrTransactionNumber);
         //(paymentTransactionDetails);
         setAssignedTo(data.assignedTo);
+        setOrderId(data.orderId);
+        setOrderDate(data.orderDate);
+        setPaidAmount(data.paidAmount);
+        setTransactionStatus(data.transactionStatus);
+        setTransactionType(data.transactionType);
+        setInvoiceId(data.invoiceId);
+        setInvoiceURL(data.invoiceURL);
+
       } catch (error) {
         console.error('Error fetching technician data:', error);
       } finally {
@@ -310,10 +325,62 @@ const {userType} = useParams();
                     </Form.Group>
                   </Col>
                 </Row>
-        
-        
+
+                {paymentMode === "technician" && (
+                  <>
+                  <div className="form-group">
+                <label>Payment Transaction Details<span className="req_star">*</span></label>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="paymentTransactionDetails"
+                  value={UTRTransactionNumber}
+                  // onChange={handlePaymentTransactionDetailsChange}                
+                  placeholder="Payment Transaction Details"
+                  readOnly
+                />
+              </div>
+              <div className='radio'>
+                {/* <label className='m-1'>
+                  <input className='form-check-input m-2 border-dark'
+                  type='radio'
+                  name="paymentType"
+                  value="Cash"
+                  checked={paymentType === "Cash"}
+                  onChange = {handlePaymenTypeChange}
+                  required
+                  />
+                  Cash
+                </label>
+                <label className='m-1'>
+                  <input className='form-check-input m-2 border-dark'
+                  type='radio'
+                  name="paymentType"
+                  value="Transaction Details"
+                  checked={paymentType === "Transaction Details"}
+                  onChange = {handlePaymenTypeChange}
+                  required
+                  />
+                  Transaction Details
+                </label> */}
+
+                <label className='m-1'>
+                  <input className='form-check-input m-1 border-dark'
+                  type='radio'
+                  name="paymentType"
+                  value="Pay Online"
+                  checked={paymentType === "Pay Online"}
+                  // onChange = {handlePaymenTypeChange}
+                  readOnly
+                  />
+                  Pay Online
+                </label>
+              </div>
+                </>
+                )}
+                
                 {/* Payment Transaction Details */}
-                <Form.Group>
+                {/* <Form.Group>
                   <label>Payment Transaction Details</label>
                   <Form.Control
                     name='paymentTransactionDetails'
@@ -323,7 +390,7 @@ const {userType} = useParams();
                     placeholder="Payment Transaction Details"
                     readOnly
                   />
-                </Form.Group>
+                </Form.Group> */}
         
 
         {/* Phone Number
@@ -338,16 +405,17 @@ const {userType} = useParams();
             readOnly
           />
         </Form.Group> */}
-
+ 
         {/* Customer Address*/}
         <Row>
           <Col md={12}>
             <Form.Group>
               <label>Customer Address</label>
               <Form.Control
+                as="textarea"
                 type="text"
                 name="address"
-                value={`${address}, ${phoneNumber}`}
+                value={`${address}, ${district}, ${state}, ${zipCode}, ${phoneNumber}`}
                 onChange={handleChange}
                 placeholder="Customer Address"
                 readOnly
@@ -364,18 +432,135 @@ const {userType} = useParams();
           </Col>
         </Row>
 
-        
-        
+        {/* Order Id */}
+        <Row>
+                  <Col md={12}>
+                    <Form.Group>
+                      <label>Order Id</label>
+                      <Form.Control
+                        type="text"
+                        name="OrderId"
+                        value={OrderId}
+                        onChange={handleChange}
+                        placeholder="Order Id"
+                        readOnly
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+
+                {/* Order Date */}
+                <Row>
+                  <Col md={12}>
+                    <Form.Group>
+                      <label>Order Date</label>
+                      <Form.Control
+                        type="text"
+                        name="OrderDate"
+                        value={OrderDate}
+                        onChange={handleChange}
+                        placeholder="Order Date"
+                        readOnly
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+
+                {/* Paid Amount */}
+                <Row>
+                  <Col md={12}>
+                    <Form.Group>
+                      <label>Paid Amount</label>
+                      <Form.Control
+                        type="text"
+                        name="PaidAmount"
+                        value={PaidAmount}
+                        onChange={handleChange}
+                        placeholder="Paid Amount"
+                        readOnly
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+
+                {/* Transaction Status */}
+                <Row>
+                  <Col md={12}>
+                    <Form.Group>
+                      <label>Transaction Status</label>
+                      <Form.Control
+                        type="text"
+                        name="TransactionStatus"
+                        value={TransactionStatus}
+                        onChange={handleChange}
+                        placeholder="Transaction Status"
+                        readOnly
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+
+                {/* Transaction Type */}
+                <Row>
+                  <Col md={12}>
+                    <Form.Group>
+                      <label>Transaction Type</label>
+                      <Form.Control
+                        type="text"
+                        name="TransactionType"
+                        value={TransactionType}
+                        onChange={handleChange}
+                        placeholder="Transaction Type"
+                        readOnly
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+
+                {/* Invoice Id */}
+                <Row>
+                  <Col md={12}>
+                    <Form.Group>
+                      <label>Invoice Id</label>
+                      <Form.Control
+                        type="text"
+                        name="InvoiceId"
+                        value={InvoiceId}
+                        onChange={handleChange}
+                        placeholder="Invoice Id"
+                        readOnly
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+
+                {/* Invoice URL*/}
+                <Row>
+                  <Col md={12}>
+                    <Form.Group>
+                      <label>Invoice URL</label>
+                      <Form.Control
+                        type="text"
+                        name="InvoiceURL"
+                        value={InvoiceURL}
+                        onChange={handleChange}
+                        placeholder="Invoice URL"
+                        readOnly
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+
         {/* Assigned To */}
         <Row>
         <Col md={12}> 
             <Form.Group>
               <label>Assigned To</label>
               <input
-                name="assignedTo"
+                name="Customer Care"
                 value={assignedTo}
                 className='form-control'
-                onChange={(e) => setAssignedTo(e.target.value)}
+                // onChange={(e) => setAssignedTo(e.target.value)}
                 readOnly
               />
             </Form.Group>

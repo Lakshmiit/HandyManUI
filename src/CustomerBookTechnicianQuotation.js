@@ -9,10 +9,10 @@ import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 // import SaveAsIcon from '@mui/icons-material/SaveAs';
 import ForwardIcon from '@mui/icons-material/Forward';
 // import { FaEye } from 'react-icons/fa';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import './App.css';
 const CustomerBookTechnicianQuotation = () => {
-//   const Navigate = useNavigate(); 
+  const navigate = useNavigate(); 
 const {userType} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -38,10 +38,12 @@ const {userType} = useParams();
   const [remarks, setRemarks] = useState('');
   const [moreInfo, setMoreInfo] = useState('');
   const [technicianConfirmationCode, setTechnicianConfirmationCode] = useState('');
-  const [assignedTo, setAssignedTo] = useState('');
+  const [assignedTo] = useState('');
   const [paymentTransactionDetails, setPaymentTransactionDetails] = useState('');
-
+  const [paymentType, setPaymentType] = useState("");
+  const [emailAddress, setEmailAddress] = useState("");
   
+ 
   useEffect(() => {
     console.log(technicianData);
   }, [technicianData]);
@@ -65,6 +67,7 @@ const {userType} = useParams();
         setPaymentMode(data.paymentMode);
         setCustomerId(data.customerId);
         setCustomerName(data.customerName);
+        setEmailAddress(data.customerEmail);
         setState(data.state);
         setDistrict(data.district);
         setZipCode(data.zipCode);
@@ -107,27 +110,29 @@ const {userType} = useParams();
     }));
   };
 
-  const handleAssignedToChange = (e) => {
-    const selectedAssignedTo = e.target.value;
-    setAssignedTo(selectedAssignedTo);
+  // const handleAssignedToChange = (e) => {
+  //   const selectedAssignedTo = e.target.value;
+  //   setAssignedTo(selectedAssignedTo);
 
     
-    if (selectedAssignedTo) {
-      setError("");
-    }
-  };
+  //   if (selectedAssignedTo) {
+  //     setError("");
+  //   }
+  // };
 
   const handlePaymentTransactionDetailsChange = (e) => {
-    const selectedPaymentTransactionDetails = e.target.value;
-    setPaymentTransactionDetails(selectedPaymentTransactionDetails);
-
-    
-    if (selectedPaymentTransactionDetails) {
-      setError("");
-    }
+    const value = e.target.value;
+    setPaymentTransactionDetails(value);
+    setPaymentType("");
+    setError("");
   };
 
-
+  const handlePaymenTypeChange = (e) => {
+    const selectedPayment = e.target.value;
+    setPaymentType(selectedPayment);
+    setPaymentTransactionDetails("");
+    setError("");
+};
 
  
   if (loading) {
@@ -137,17 +142,26 @@ const {userType} = useParams();
 const handleUpdateJobDescription = async (e) => {
   e.preventDefault();
 
-  if (!paymentTransactionDetails) {
-    alert("Payment Transaction Details are required!");
+  if (!paymentType && !paymentTransactionDetails) {
+    setError("Please Enter Payment Transaction Details or select Pay Online.");
     return;
   }
 
-  if (!assignedTo ) {
-    alert("You Must select AssignedTo");
-    return;     
-}
+  alert(`Payment method selected: ${paymentType || "Transaction Details entered"}`);
+
+
+  // if (paymentType === "Pay Online") {
+  //   window.location.href = "";
+  // } else {
+  //   alert(`Payment method selected: ${paymentType}`);
+  // }
+
+//   if (!assignedTo ) {
+//     alert("You Must select AssignedTo");
+//     return;     
+// }
  
-setError("");
+
  
   const payload2 = {
     id: raiseTicketId,  
@@ -167,12 +181,20 @@ setError("");
     moreInfo: moreInfo,
     status: "Assigned",
     customerId: customerId,
+    CustomerEmail: emailAddress,
     assignedTo: "Customer Care",
     phoneNumber: phoneNumber,
     paymentMode: paymentMode,
     approvedAmount: afterDiscount,
-    UTRTransactionNumber: paymentTransactionDetails,
+    UTRTransactionNumber: paymentType === "Pay Online" ? "Online" : paymentTransactionDetails,
     technicianConfirmationCode: technicianConfirmationCode,
+    OrderId: "",
+    OrderDate: "",
+    PaidAmount: "",
+    TransactionStatus: "", 
+    TransactionType: "",
+    InvoiceId: "",
+    InvoiceURL: "",
   };
 
   try {
@@ -187,7 +209,14 @@ setError("");
     if (!response.ok) {
       throw new Error('Failed to forward Customer Care.');
     }
-    alert("Ticket Forwarded to Customer Care Successfully!");
+    if (paymentType === "Pay Online") {
+      alert(`We are redirecting to Payment Page!`);
+      window.location.href = `https://handymanserviceproviders.com/PaymentPage/${raiseTicketId}`;
+    } else {
+      alert("Ticket Forwarded to Customer Care Successfully!");
+      navigate(`/bookTechnicianCustomerGrid/${userType}/${customerId}`);
+    }
+  // window.location.href = `https://handymanapiv2.azurewebsites.net/CustomerProfilePage?ReactToken=${customerId}$${userType}`;
   } catch (error) {
     console.error('Error:', error);
     window.alert('Failed to forward Customer Care. Please try again later.');
@@ -357,25 +386,70 @@ setError("");
                     </Form.Group>
                   </Col>
                 </Row>
-        
-        
-                {/* Payment Transaction Details */}
-                <div className="form-group">
-              <label>Payment Transaction Details<span className="req_star">*</span></label>
-              <input
-                type="text"
-                className="form-control"
-                name="paymentTransactionDetails"
-                value={paymentTransactionDetails}
-                onChange={handlePaymentTransactionDetailsChange}                
-                placeholder="Payment Transaction Details"
-                required
-              />
-               {error && <div style={{ color: "red", marginTop: "5px" }}>{error}</div>}
-            </div>
 
-        
+                {paymentMode === "technician" && (
+                  <>
+                  <div className="form-group">
+                <label>Payment Transaction Details<span className="req_star">*</span></label>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="paymentTransactionDetails"
+                  value={paymentTransactionDetails}
+                  onChange={handlePaymentTransactionDetailsChange}                
+                  placeholder="Payment Transaction Details"
+                  disabled={paymentType === "Pay Online"}
+                  required
+                />
+                {/* {error && <div style={{ color: "red", marginTop: "5px" }}>{error}</div>} */}
+              </div>
+              <div className='radio'>
+                {/* <label className='m-1'>
+                  <input className='form-check-input m-2 border-dark'
+                  type='radio'
+                  name="paymentType"
+                  value="Cash"
+                  checked={paymentType === "Cash"}
+                  onChange = {handlePaymenTypeChange}
+                  required
+                  />
+                  Cash
+                </label>
+                <label className='m-1'>
+                  <input className='form-check-input m-2 border-dark'
+                  type='radio'
+                  name="paymentType"
+                  value="Transaction Details"
+                  checked={paymentType === "Transaction Details"}
+                  onChange = {handlePaymenTypeChange}
+                  required
+                  />
+                  Transaction Details
+                </label> */}
 
+                <label className='m-1'>
+                  <input className='form-check-input m-1 border-dark'
+                  type='radio'
+                  name="paymentType"
+                  value="Pay Online"
+                  checked={paymentType === "Pay Online"}
+                  onChange = {handlePaymenTypeChange}
+                  disabled={paymentTransactionDetails?.length > 0}
+                  required
+                  />
+                  Pay Online
+                </label>
+              </div>
+              {error && (
+                  <div style={{ color: "red", marginTop: "5px" }}>{error}</div>
+                )}
+                </>
+                )}
+                
+                
+                
+
+              
         {/* Phone Number
         <Form.Group>
           <label>Phone Number</label>
@@ -392,12 +466,13 @@ setError("");
         {/* Customer Address*/}
         <Row>
           <Col md={12}>
-            <Form.Group>
+            <Form.Group> 
               <label>Customer Address</label>
               <Form.Control
+                as = "textarea"
                 type="text"
                 name="address"
-                value={`${address}, ${phoneNumber}`}
+                value={`${address}, ${district}, ${state}, ${zipCode}, ${phoneNumber}`}
                 onChange={handleChange}
                 placeholder="Customer Address"
                 readOnly
@@ -422,16 +497,12 @@ setError("");
             <Form.Group>
               <label>Assigned To</label>
               <Form.Control
-                as="select"
-                name="assignedTo"
-                value={assignedTo}
-                onChange={handleAssignedToChange}
-                required
+                name={assignedTo}
+                value="Customer Care"
+                readOnly
               >
-                <option>Select Assigned</option>
-                <option>Customer Care</option>
               </Form.Control>
-              {error && <div style={{ color: "red", marginTop: "5px" }}>{error}</div>}
+              {/* {error && <div style={{ color: "red", marginTop: "5px" }}>{error}</div>} */}
             </Form.Group>
           </Col>
         </Row>

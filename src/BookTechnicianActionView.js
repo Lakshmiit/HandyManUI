@@ -39,7 +39,9 @@ const BookTechnicianActionView = () => {
   const [technicianConfirmationCode, setTechnicianConfirmationCode] = useState('');
   const [assignedTo, setAssignedTo] = useState('');
   const [utrTransactionNumber,setutrTransactionNumber]=useState('');
-  
+  const [emailAddress, setEmailAddress] = useState("");
+   
+
   useEffect(() => {
     console.log(technicianData);
   }, [technicianData]);
@@ -75,6 +77,8 @@ const BookTechnicianActionView = () => {
         setTechnicianConfirmationCode(data.technicianConfirmationCode);
         setutrTransactionNumber(data.utrTransactionNumber);
         setAssignedTo(data.assignedTo);
+        setEmailAddress(data.customerEmail);
+
       } catch (error) {
         console.error('Error fetching technician data:', error);
       } finally {
@@ -150,13 +154,21 @@ const handleUpdateJobDescription = async (e) => {
     moreInfo: moreInfo,
     status: "Assigned",
     customerId: customerId,
+    CustomerEmail: emailAddress,
     assignedTo: "Customer",
     phoneNumber: phoneNumber,
     paymentMode: paymentMode,
     approvedAmount: afterDiscount,
     utrTransactionNumber: "",
     technicianConfirmationCode: technicianConfirmationCode,
-  };
+    OrderId: "",
+    OrderDate: "",
+    PaidAmount: "",
+    TransactionStatus: "", 
+    TransactionType: "",
+    InvoiceId: "",
+    InvoiceURL: "",
+  }; 
 
   try {
     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
@@ -363,9 +375,10 @@ const handleUpdateJobDescription = async (e) => {
             <Form.Group>
               <label>Customer Address</label>
               <Form.Control
+                as="textarea"
                 type="text"
                 name="address"
-                value={`${address}, ${phoneNumber}`}
+                value={`${address}, ${district}, ${state}, ${zipCode}, ${phoneNumber}`}
                 onChange={handleChange}
                 placeholder="Customer Address"
                 readOnly

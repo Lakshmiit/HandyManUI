@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 // Importing necessary components
-import Header from './Header';
+// import Header from './Header';
 import UploadForm from './uploadform';
 import ProductView from './ProductView'; 
 import EditUploadForm from './EditUploadForm';
@@ -76,8 +76,8 @@ import AdminClosedBuyProductOrders from './AdminClosedBuyProductsOrders.js';
 import BuyProductClosedOrdersGrid from './BuyProductClosedOrdersGrid.js';
 import AdminClosedOrdersFinalGridView from './AdminClosedOrdersFinalGridView.js';
 import BuyProductsCustomerCart from './BuyProductsCustomerCart.js';
+import ProfilePage from './ProfilePage.js';
 import PaymentPage from './PaymentPage';
-// import ProfilePage from './ProfilePage.js';
 // import BuyProductCartView from './BuyProductCartView.js';
 
 
@@ -86,17 +86,17 @@ function App() {
     <Router>     
       <div className="App"> 
         {/* Header Component */}
-        <Header />
+        {/* <Header /> */}
         
         {/* Main content */}
         <main className="container py-3 mt_100px">
           <Routes>
-          {/* <Route path="/profilePage" element={<ProfilePage />} /> */}
-            <Route path="/product/:ProductOwnedBy/:userType" element={<UploadForm />} />
+            <Route path="/profilePage/:userType/:userId" element={<ProfilePage />} />
+            <Route path="/product/:ProductOwnedBy" element={<UploadForm />} />
             {/* Dynamic product ID route for ProductView */}
-            <Route path="/product-view/:id/:ProductOwnedBy/:userType" element={<ProductView />} /> 
-            <Route path="/product-list/:ProductOwnedBy/:userType" element={<ProductList />} />
-            <Route path="/product-edit/:id/:ProductOwnedBy/:userType" element={<EditUploadForm />} />           
+            <Route path="/product-view/:id/:ProductOwnedBy" element={<ProductView />} /> 
+            <Route path="/product-list/:ProductOwnedBy" element={<ProductList />} />
+            <Route path="/product-edit/:id/:ProductOwnedBy" element={<EditUploadForm />} />           
             <Route path="/RaiseTicket/:customerId/:userType" element={<RaiseTicket />} />
             <Route path="/buyProducts/:userId/:userType" element={<BuyProduct />} />
             <Route path="/sidebar/:userType" element={<Sidebar />} />
@@ -165,8 +165,9 @@ function App() {
             <Route path='/adminClosedOrdersFinalGridView/:buyProductId' element={<AdminClosedOrdersFinalGridView />} />
             <Route path='/buyProductsCustomerCart/:customerId/:userType' element={<BuyProductsCustomerCart />} />
             {/* <Route path='/buyProductsCartView/:customerId/:buyProductId/:userType' element={<BuyProductCartView />} /> */}
-            <Route path="/payment-selection/:raiseTicketId" element={<PaymentPage />} />
+            
             <Route path='/customerBuyProductOrdersGrid/:customerId/:userType' element={<CustomerBuyProductOrdersGrid />} /> 
+            <Route path="/payment-selection/:raiseTicketId" element={<PaymentPage />} />
             </Routes>
         </main>
       </div>

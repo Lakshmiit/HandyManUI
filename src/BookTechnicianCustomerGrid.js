@@ -34,7 +34,8 @@ const CustomerBookTechnicianGrid = () => {
         const technicians = response.data.map((technician) => ({
           ...technician,
         }));
-        const filteredTechnicians = technicians.filter((technician) => technician.status === "Closed" && technician.assignedTo === "Customer");
+        const filteredTechnicians = technicians.filter((technician) => technician.status === "Assigned" && technician.assignedTo === "Customer Care");
+          // technician.status === "Closed" && technician.assignedTo === "Customer");
         setTechncianData(filteredTechnicians);
         setFilteredData(filteredTechnicians);
       })
@@ -167,7 +168,7 @@ const CustomerBookTechnicianGrid = () => {
         <p><strong>Assigned To:</strong> {technician.assignedTo}</p>
       </div>
       <div className="ticket-actions">
-        <Link to={`customerBookTechnicianQuotationView/${userType}/${technician.id}`} className="btn btn-info mx-2">
+        <Link to={`/customerBookTechnicianQuotationView/${userType}/${technician.id}`} className="btn btn-info mx-2">
           <FaEye />
         </Link>
         {/* <Button onClick={() => handleDelete(technician.id)} className="btn btn-danger mx-2">
