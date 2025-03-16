@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "./Sidebar";
+import Header from './Header.js';
 import {
   Dashboard as MoreVertIcon,
   ArrowBack as ArrowBackIcon,
@@ -12,6 +13,8 @@ import "./App.css";
 const NotificationsList = ({ notifications, highlightedItem }) => {
   const navigate = useNavigate();
   const {userType} = useParams();
+  const {userId} = useParams();
+
 
   const raiseTicketNotifications = notifications.filter(
     (item) => item.assignedTo === "Customer" && item.internalStatus === "Pending" && item.status === "Assigned" && item.raiseTicketId != null
@@ -20,12 +23,12 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
   const getTechnicianNotifications = notifications.filter(
     (item) => item.status === "Assigned" && item.assignedTo === "Customer" && item.bookTechnicianId != null
   );
-  const handleTicketClick = (ticketId) => {
-    navigate(`/customerRaiseTicketQuotation/${userType}/${ticketId}`, { state: { ticketId } });
+  const handleTicketClick = (raiseTicketId) => { 
+    navigate(`/customerRaiseTicketQuotation/${userType}/${userId}/${raiseTicketId}`, { state: { raiseTicketId } });
   };
   
   const handleTechnicianClick = (technicianId) => {
-    navigate(`/customerBookTechnicianQuotation/${userType}/${technicianId}`, { state: { technicianId } });
+    navigate(`/customerBookTechnicianQuotation/${userType}/${userId}/${technicianId}`, { state: { technicianId } });
   };
 
   return (
@@ -123,7 +126,7 @@ const Notification = () => {
   const [activeTab, setActiveTab] = useState("");
   const navigate = useNavigate();
   const {userType} = useParams();
-  const { customerId } = useParams();
+  const { userId } = useParams();
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -139,9 +142,9 @@ const Notification = () => {
       try {
         const [raiseTicketResponse, getTechnicianResponse] = await Promise.all([
           fetch(
-          `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetRaiseTicketNotificationsByCustomerId?customerId=${customerId}`
+          `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetRaiseTicketNotificationsByCustomerId?customerId=${userId}`
         ),
-        fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/GetBookTechnicianDetailsForUserList?userId=${customerId}`),
+        fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/GetBookTechnicianDetailsForUserList?userId=${userId}`),
       ]);
         const raiseTicketData = await raiseTicketResponse.json();
 
@@ -196,7 +199,7 @@ const Notification = () => {
       }
     };
     fetchNotifications();
-  }, [customerId]);
+  }, [userId]);
 
   const handleClearTicketNotifications = () => {
     setNewTicketCount(0);
@@ -219,6 +222,8 @@ const Notification = () => {
   const handleTabClick = (tab) => setActiveTab(tab);
 
   return (
+    <div>
+  {isMobile && <Header />}
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className="ml-0 p-0 sde_mnu">
@@ -334,7 +339,7 @@ const Notification = () => {
                 <div
                   className=" view-notifications text-info mx-2"
                   onClick={() => {
-                    navigate(`/viewCustomer/${userType}/${customerId}`);
+                    navigate(`/viewCustomer/${userType}/${userId}`);
                     handleClearTicketNotifications();
                   }}
                   style={{ cursor: "pointer" }}
@@ -355,7 +360,7 @@ const Notification = () => {
                 <div
                   className=" view-notifications text-info mx-2"
                   onClick={() => {
-                    navigate(`/bookTechnicianCustomerGrid/${userType}/${customerId}`);
+                    navigate(`/bookTechnicianCustomerGrid/${userType}/${userId}`);
                     handleClearTechnicianNotifications();
                   }}
                   style={{ cursor: "pointer" }}
@@ -366,6 +371,7 @@ const Notification = () => {
             )}
           </div>
         </div>
+      </div>
       </div>
       <style jsx>{`
         .glow {

@@ -148,12 +148,12 @@ function App() {
             <Route path="/raiseTicketQuotation/:raiseTicketId" element={<RaiseTicketQuotation />} />
             <Route path="/raiseTicketBuyProducts/:raiseTicketId" element={<RaiseTicketBuyProducts />} /> 
             <Route path="/quoteNotification" element={<QuoteNotifications />} />
-            <Route path="/notificationTechnician/:userType/:category/:district/:technicianId" element={<NotificationTechnician />} />
+            <Route path="/notificationTechnician/:userType/:category/:district/:userId" element={<NotificationTechnician />} />
             <Route path="/customerNotification/:userType/:userId" element={<CustomerNotification />} />
             <Route path="/viewCustomer/:userType/:customerId" element={<ViewCustomerGrid />} />
             <Route path="/ShortAdminNotifications" element={<ShortAdminNotifications />} />
             <Route path="/customerRaiseTicketQuotation/:userType/:raiseTicketId" element={<CustomerRaiseTicketQuotation />} />
-            <Route path="/dealerNotifications/:userType/:category/:district/:dealerId" element={<DealerNotifications />} /> 
+            <Route path="/dealerNotifications/:userType/:category/:district/:userId" element={<DealerNotifications />} /> 
             <Route path="/dealerNotificationsGrid/:userType/:category/:district/:dealerId" element={<DealerNotificationsGrid />} />
             <Route path="/viewDealerRaiseTicket/:raiseTicketId/:userType/:category/:dealerId" element={<ViewDealerRaiseTicket />} />
             <Route path="/viewDealerDetailsRaiseTicket/:raiseTicketId/:userType/:category/:dealerId" element={<ViewDealerDetailsRaiseTicket />} />
@@ -181,10 +181,10 @@ function App() {
             <Route path="/updateBookTechnician/:id" element={<UpdateBookTechnician />} />
             <Route path="/bookTechnicianNotificationGrid" element={<BookTechnicianNotificationGrid />} />
             <Route path="/bookTechnicianCustomerGrid/:userType/:customerId" element={<BookTechnicianCustomerGrid />} />
-            <Route path="/customerBookTechnicianQuotation/:userType/:raiseTicketId" element={<CustomerBookTechnicianQuotation />} />
+            <Route path="/customerBookTechnicianQuotation/:userType/:userId/:raiseTicketId" element={<CustomerBookTechnicianQuotation />} />
             <Route path="/bookTechnicianAdminView/:raiseTicketId" element={<BooKTechnicianAdminGridView />} /> 
             <Route path="/customerBookTechnicianQuotationView/:userType/:raiseTicketId" element={<CustomerBookTechnicianQuotationView />} />
-            <Route path='/buyProductPaymentPage/:buyProductId/:userType' element={<BuyProductPaymentPage />} />
+            <Route path='/buyProductPaymentPage/:userType/:userId/:buyProductId' element={<BuyProductPaymentPage />} />
             <Route path='/adminBuyProductOrders/:buyProductId' element={<AdminBuyProductOrders />} />
             <Route path='/adminBuyProductOrderGridView/:buyProductId' element={<AdminBuyProductOrderGridView />} />
             <Route path='/buyProductNotificationGrid' element={<BuyProductNotificationGrid />} />

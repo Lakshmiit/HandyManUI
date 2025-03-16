@@ -30,11 +30,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 // import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 
-const getMenuList = (userType, userId) => {
-  // alert("CustomerId");
-  // alert(customerId);
-  // alert("UserType");
-  // alert(userType);
+const getMenuList = (userType, userId, ProductOwnedBy, category, district ) => {
   const customer = [
       { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
       { MenuIcon: <PersonOutlineIcon />, MenuTitle: "Book A Technician", TargetUrl: `/bookTechnician/${userType}/${userId}` },
@@ -42,42 +38,53 @@ const getMenuList = (userType, userId) => {
       { MenuIcon: <NotificationsNoneIcon />, MenuTitle: "Notifications", TargetUrl: `/customerNotification/${userType}/${userId}` },
       { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
       { MenuIcon: <OrdersIcon />, MenuTitle: "Orders", TargetUrl: `/customerOrders/${userType}/${userId}` },
-      { MenuIcon: <ShoppingBagIcon />, MenuTitle: "Cart", TargetUrl: "#" },
-      { MenuIcon: <PersonIcon />, MenuTitle: "Accounts", TargetUrl: "#" }
+      { MenuIcon: <ShoppingBagIcon />, MenuTitle: "Cart", TargetUrl: "" },
+      { MenuIcon: <PersonIcon />, MenuTitle: "Accounts", TargetUrl: "" }
   ];
 
   const builder = [
-      { icon: <PersonIcon />, title: "Add Member", url: "#" },
-      { icon: <RequestQuoteIcon />, title: "Raise a Quote", url: "#" },
-      { icon: <NotificationsNoneIcon />, title: "Notifications", url: "#" },
-      { icon: <StorefrontIcon />, title: "Buy Products", url: "/BuyProducts" },
-      { icon: <PersonIcon />, title: "My Account", url: "#" },
-      { icon: <AccountBalanceIcon />, title: "Add Bank Account", url: "#" },
-      { icon: <SupportAgentIcon />, title: "Raise Ticket", url: "/TicketRaise" },
-      { icon: <RouteIcon />, title: "Track Ticket Status", url: "#" }
+      { MenuIcon: <PersonIcon />, MenuTitle: "Add Member", TargetUrl: "" },
+      { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: "" },
+      { MenuIcon: <NotificationsNoneIcon />, MenuTitle: "Notifications", TargetUrl: "" },
+      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: "/BuyProducts" },
+      { MenuIcon: <PersonIcon />, MenuTitle: "My Account", TargetUrl: "" },
+      { MenuIcon: <AccountBalanceIcon />, MenuTitle: "Add Bank Account", TargetUrl: "" },
+      { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: "/TicketRaise" },
+      { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: "" }
   ];
  
   const dealer = [
-      { icon: <UploadIcon />, title: "Upload Products", url: "/ProductListView" },
-      { icon: <RequestQuoteIcon />, title: "Raise a Quote", url: "#" },
-      { icon: <NotificationsNoneIcon />, title: "Notifications", url: "/DealerNotifications" },
-      { icon: <StorefrontIcon />, title: "Buy Products", url: "/BuyProducts" },
-      { icon: <PersonIcon />, title: "My Account", url: "#" },
-      { icon: <AccountBalanceIcon />, title: "Add Bank Account", url: "#" },
-      { icon: <SupportAgentIcon />, title: "Raise Ticket", url: "/TicketRaise" },
-      { icon: <RouteIcon />, title: "Track Ticket Status", url: "#" }
+      { MenuIcon: <UploadIcon />, MenuTitle: "Upload Products", TargetUrl: `/product-list/${ProductOwnedBy}` },
+      { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: "" },
+      { MenuIcon: <NotificationsNoneIcon />, MenuTitle: "Notifications", TargetUrl: `/dealerNotifications/${userType}/${category}/${district}/${userId}` },
+      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
+      { MenuIcon: <PersonIcon />, MenuTitle: "My Account", TargetUrl: "" },
+      { MenuIcon: <AccountBalanceIcon />, MenuTitle: "Add Bank Account", TargetUrl: "" },
+      { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
+      { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}` }
   ];
 
+  const trader = [
+    { MenuIcon: <UploadIcon />, MenuTitle: "Upload Products", TargetUrl: `/product-list/${ProductOwnedBy}` },
+    { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: "" },
+    { MenuIcon: <NotificationsNoneIcon />, MenuTitle: "Notifications", TargetUrl: `/dealerNotifications/${userType}/${category}/${district}/${userId}` },
+    { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
+    { MenuIcon: <PersonIcon />, MenuTitle: "My Account", TargetUrl: "" },
+    { MenuIcon: <AccountBalanceIcon />, MenuTitle: "Add Bank Account", TargetUrl: "" },
+    { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
+    { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}` }
+];
+
   const technician = [
-      { icon: <PersonIcon />, title: "Add Technician", url: "#" },
-      { icon: <RequestQuoteIcon />, title: "Raise a Quote", url: "/RaiseQuoteTechnicianNotifications" },
-      { icon: <NotificationsNoneIcon />, title: "Notifications", url: "#" },
-      { icon: <TransferWithinAStationIcon />, title: "Track Technician", url: "#" },
-      { icon: <PersonIcon />, title: "My Account", url: "#" },
-      { icon: <AccountBalanceIcon />, title: "Add Bank Account", url: "#" },
-      { icon: <StorefrontIcon />, title: "Buy Products", url: "/BuyProducts" },
-      { icon: <SupportAgentIcon />, title: "Raise Ticket", url: "/TicketRaise" },
-      { icon: <RouteIcon />, title: "Track Ticket Status", url: "#" }
+      { MenuIcon: <PersonIcon />, MenuTitle: "Add Technician", TargetUrl: "" },
+      { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: `/notificationTechnician/${userType}/${category}/${district}/${userId}` },
+      { MenuIcon: <NotificationsNoneIcon />, MenuTitle: "Notifications", TargetUrl: "" },
+      { MenuIcon: <TransferWithinAStationIcon />, MenuTitle: "Track Technician", TargetUrl: "" },
+      { MenuIcon: <PersonIcon />, MenuTitle: "My Account", TargetUrl: "" },
+      { MenuIcon: <AccountBalanceIcon />, MenuTitle: "Add Bank Account", TargetUrl: "" },
+      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
+      { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
+      { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}` }
   ];
 
      switch (userType) {
@@ -85,6 +92,8 @@ const getMenuList = (userType, userId) => {
           return builder;
       case "dealer":
           return dealer;
+      case "trader":
+          return trader;
       case "technician":
           return technician;
       default:
@@ -134,9 +143,10 @@ useEffect(() => {
                 fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=buyProduct`),
                 fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=bookTechnician`),
               ]);
-      
+              
               if (!ticketResponse.ok || !productResponse.ok || !technicianResponse) {
                 throw new Error("Failed to fetch ticket, product and technician data");
+
               }
       
               const ticketData = await ticketResponse.json();
@@ -257,30 +267,77 @@ useEffect(() => {
         return () => document.removeEventListener("mousedown", handleCloseMenuOnClickOutside);
       }, []);
       
+      useEffect(() => {
+        if (!userId || !userType) return;
+        const fetchProfileData = async () => {
+          try {
+            let apiUrl = "";
+            if (userType === "customer") {
+              apiUrl = `https://handymanapiv2.azurewebsites.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`;
+            } else if (userType === "technician") {
+              apiUrl = `https://handymanapiv2.azurewebsites.net/api/technician/technicianProfileData?profileType=${userType}&UserId=${userId}`;
+            } else if (userType === "dealer") {
+              apiUrl = `https://handymanapiv2.azurewebsites.net/api/dealer/dealerProfileData?profileType=${userType}&UserId=${userId}`;
+            }
+            if (!apiUrl) return;
+            const response = await axios.get(apiUrl);
+            setProfile(response.data);
+      
+            if (response.data.photoAttachmentId) {
+              fetchImageUrl(response.data.photoAttachmentId);
+            }
+          } catch (err) {
+            setError(err.message);
+          } finally {
+            setLoading(false);
+          }
+        };
+      
+        fetchProfileData();
+      }, [userType, userId]);
+      
 
-useEffect(() => {
-  if (!userId || !userType) return;
+// useEffect(() => {
+//   if (!userId || !userType) return;
+//   const fetchProfileData = async () => {
+//     if (userType === "customer") {
+//       try {
+//         const [customerResponse, technicianResponse, dealerResponse]= await Promise.all([
+//           axios.get(`https://handymanapiv2.azurewebsites.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`),
+//           axios.get(`https://handymanapiv2.azurewebsites.net/api/technician/technicianProfileData?profileType=${userType}&UserId=${userId}`),
+//           axios.get(`https://handymanapiv2.azurewebsites.net/api/dealer/dealerProfileData?profileType=${userType}&UserId=${userId}`)
+//         ]
+//           // `https://handymanapiv2.azurewebsites.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`,
+//         );
+//         const customerData = customerResponse.data;
+//         const technicianData = technicianResponse.data;
+//         const dealerData = dealerResponse.data;
+  
+//         if (userType === "Customer") {
+//           setProfile(customerData);
+//         } else if (userType === "Technician") {
+//           setProfile(technicianData);
+//         } else {
+//           setProfile(dealerData);
+//         }
+//         // setProfile(response.data);
+//         // setUserStatus(response.data.status);
+//         // alert(response.data.status);
+//         const photoId = customerData.photoAttachmentId || technicianData.photoAttachmentId || dealerData.photoAttachmentId;
+  
+//         if (photoId) {
+//           fetchImageUrl(photoId);
+//         }
+//       } 
+//     } catch (err) {
+//       setError(err.message);
+//     } finally { 
+//       setLoading(false);
+//     }
+//   };
 
-  const fetchProfileData = async () => {
-    try {
-      const response = await axios.get(
-        `https://handymanapiv2.azurewebsites.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`,
-      );
-      setProfile(response.data);
-      // setUserStatus(response.data.status);
-      // alert(response.data.status);
-      if (response.data.photoAttachmentId) {
-        fetchImageUrl(response.data.photoAttachmentId);
-      }
-    } catch (err) {
-      setError(err.message);
-    } finally { 
-      setLoading(false);
-    }
-  };
-
-  fetchProfileData();
-}, [userType, userId]);
+//   fetchProfileData();
+// }, [userType, userId]);
 
 const fetchImageUrl = async (photoId) => {
   try {
@@ -759,7 +816,7 @@ const fetchImageUrl = async (photoId) => {
             </div>
           ))
         ) : ( 
-          <p>No tickets found for this customer.</p>
+          <p>No tickets found for this {userType}.</p>
         )}
       </div>
     </div>

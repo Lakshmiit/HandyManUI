@@ -3,6 +3,7 @@ import { Button, Form, Row, Col } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import AdminSidebar from './AdminSidebar';
+// import Header from './Header.js';
 import {  Dashboard as MoreVertIcon } from '@mui/icons-material';
 // import { FaEdit} from 'react-icons/fa'; // Correct icon import
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
@@ -167,9 +168,9 @@ const handleUpdateJobDescription = async (e) => {
     TransactionStatus: "", 
     TransactionType: "",
     InvoiceId: "",
-    InvoiceURL: "",
+    InvoiceURL: "", 
   }; 
-
+ 
   try {
     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
       method: 'PUT',
@@ -435,6 +436,7 @@ const handleUpdateJobDescription = async (e) => {
 
         </div>
         </Form>
+        </div>
 
         {/* Styles for floating menu */}
 <style jsx>{`
@@ -455,7 +457,6 @@ const handleUpdateJobDescription = async (e) => {
           width: 200px;
         }
       `}</style>
-      </div>
     </div>
   );
 };

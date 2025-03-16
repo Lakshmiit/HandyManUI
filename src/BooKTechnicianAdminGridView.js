@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Form, Row, Col } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+// import Header from './Header.js';
 import AdminSidebar from './AdminSidebar';
 import {  Dashboard as MoreVertIcon } from '@mui/icons-material';
 // import { FaEdit} from 'react-icons/fa'; // Correct icon import
@@ -53,7 +54,7 @@ const BookTechnicianActionView = () => {
 
   useEffect(() => {
     const fetchtechnicianData = async () => {
-      try {
+      try { 
         const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/GetBookTechnician/${raiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch technician data');
@@ -189,7 +190,7 @@ const BookTechnicianActionView = () => {
   //   }
   // }; 
 
-  return (
+  return ( 
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className=" ml-0 p-0 adm_mnu h-90">
@@ -339,8 +340,8 @@ const BookTechnicianActionView = () => {
           </Col>
         </Row>
 
-
         {/* Payment Transaction Details */}
+        {paymentMode === "technician" && (
         <Form.Group>
           <label>Payment Transaction Details</label>
           <Form.Control
@@ -351,7 +352,8 @@ const BookTechnicianActionView = () => {
             placeholder="Payment Transaction Details"
             readOnly
           />
-        </Form.Group>
+        </Form.Group> 
+        )} 
 
 
         {/* Phone Number
@@ -548,6 +550,7 @@ const BookTechnicianActionView = () => {
 
         </div>
         </Form>
+        </div>
 
         {/* Styles for floating menu */}
 <style jsx>{`
@@ -568,7 +571,6 @@ const BookTechnicianActionView = () => {
           width: 200px;
         }
       `}</style>
-      </div>
     </div>
   );
 };

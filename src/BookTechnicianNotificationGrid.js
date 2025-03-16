@@ -49,7 +49,7 @@ const BookTechnicianNotification = () => {
         const uniqueAssigned = [...new Set(technicians.map(technician => technician.assignedTo))]
         setStates(uniqueStates);
         setDistricts(uniqueDistricts);
-        setPinCodes(uniquePinCode);
+        setPinCodes(uniquePinCode); 
         setAssigned(uniqueAssigned);
       })
       .catch(error => {
@@ -246,7 +246,7 @@ const BookTechnicianNotification = () => {
                   </Link>
                 </td>
               </tr>
-            ))}
+            ))} 
           </tbody>
         </table>
         ) : (

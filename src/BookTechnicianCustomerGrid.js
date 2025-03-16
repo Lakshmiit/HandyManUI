@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import axios from 'axios';
+import Header from './Header.js';
 import Sidebar from "./Sidebar";
 import { Link, useParams } from "react-router-dom";
 import {  FaEye } from "react-icons/fa";
@@ -23,7 +24,7 @@ const CustomerBookTechnicianGrid = () => {
   const { customerId } = useParams();
  
   useEffect(() => {
-    console.log(technicianData);
+    console.log(technicianData); 
   }, [technicianData]);
   useEffect(() => {
     setLoading(true);
@@ -83,7 +84,9 @@ const CustomerBookTechnicianGrid = () => {
  }
 
   return ( 
-    <div className="d-flex flex-row justify-content-start align-items-start">
+<div>
+  {isMobile && <Header />}
+<div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className="ml-0 p-0 sde_mnu">
           <Sidebar />
@@ -137,7 +140,7 @@ const CustomerBookTechnicianGrid = () => {
                   <Link
                     to={`/customerBookTechnicianQuotationView/${userType}/${technician.id}`}
                     className="btn btn-info mx-2"
-                  >
+                  > 
                     <FaEye />   
                   </Link>
                   {/* <Link
@@ -214,7 +217,7 @@ const CustomerBookTechnicianGrid = () => {
           </nav>
         </div>
       </div>
-    
+    </div>
       {/* Styles for floating menu */}
 <style jsx>{`
         .menu-popup {

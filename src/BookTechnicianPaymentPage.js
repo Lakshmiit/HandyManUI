@@ -1,6 +1,7 @@
 import React, { useEffect, useState} from 'react';
 import Sidebar from './Sidebar';
 import { Button } from 'react-bootstrap';
+import Header from './Header.js';
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
@@ -10,6 +11,7 @@ import { useParams } from "react-router-dom";
 const PaymentConfirmation = () => {
   // const Navigate = useNavigate();
   const {userType} = useParams();
+  const {userId} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
  const {raiseTicketId} = useParams();
@@ -22,7 +24,7 @@ const [state, setState] = useState('');
 const [district, setDistrict] = useState('') 
 const [zipCode, setZipcode] = useState('');
 const [address, setAddress] = useState('');
-const [customerId, setCustomerId] = useState(''); 
+// const [customerId, setCustomerId] = useState(''); 
 const [category, setCategory] = useState('');
 const [customerName, setCustomerName] = useState('');
 const [technicianConfirmationCode, setTechnicianConfirmationCode] = useState('');
@@ -70,7 +72,7 @@ const [emailAddress, setEmailAddress] = useState("");
         setCustomerName(data.customerName);
         setAddress(data.address);
         setCategory(data.category); 
-        setCustomerId(data.customerId);
+        // setCustomerId(data.customerId);
         setState(data.state);
         setDistrict(data.district);
         setZipcode(data.zipCode);
@@ -92,135 +94,7 @@ const [emailAddress, setEmailAddress] = useState("");
     fetchtechnicianData();
   }, [raiseTicketId]);
 
-  // useEffect(() => {
-  //   const fetchDealerData = async () => {
-  //     try {
-  //       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Dealer/GetDealerDtailsByUserId?userId=${lowestDealerBidder}`);
-  //       if (!response.ok) {
-  //         throw new Error('Failed to fetch dealer data');
-  //       }
-  //       // alert(lowestDealerBidder);
-  //       const dealerData = await response.json();
-  //       setDealerData(dealerData);
-  //       // alert(JSON.stringify(dealerData)); 
-  //       //alert(lowestDealerBidder);
-  //       setDealerPhoneNumber(dealerData[0].phoneNumber);
-  //       //alert(dealerData.phoneNumber);
-  //       } catch (error) {
-  //       console.error('Error fetching dealer data:', error);
-  //     } finally {
-  //       setLoading(false);
-  //     } 
-  //   };
-  //   fetchDealerData();
-  // }, [lowestDealerBidder]);
-
-
-  // useEffect(() => {
-  //   const fetchtechnicianData = async () => {
-  //     try {
-  //       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Technician/GetTechnicianDetailsForInvoice?TechnicianId=${lowestBidder}`);
-  //       if (!response.ok) {
-  //         throw new Error('Failed to fetch ticket data');
-  //       }
-  //       const invoiceData = await response.json();
-  //       setTechnicianData(invoiceData);
-  //       // alert(JSON.stringify(invoiceData));  
-  //       setTechnicianName(invoiceData.technicianFullName);
-  //       setAadharNumber(invoiceData.aadharNumber);
-  //       setTechnicianAddress(invoiceData.address);
-  //       setTechnicianPhotoId(invoiceData.technicianPhotoId);
-  //       } catch (error) {
-  //       console.error('Error fetching ticket data:', error);
-  //     } finally {
-  //       setLoading(false);
-  //     } 
-  //   };
-  //   fetchtechnicianData();
-  // }, [lowestBidder]);
-
-  // Fetch data from API on component mount
-      //   useEffect(() => {
-      //     // API URL
-      //     const apiUrl = `https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
-      //     // Fetching the data from the API
-      //     const fetchData = async () => {
-      //       try {
-      //         const response = await fetch(apiUrl);
-      //         const quotedata = await response.json();
-      //         setTechnicianDetails(quotedata);
-      //         //alert(JSON.stringify(technicianDetails));
-      //         // setRaiseAQuoteId(quotedata.raiseAQuoteId);
-      //         // setQuote(quotedata.enterQuoteAmount);
-      //         // setFixedQuote(quotedata.fixedQuote);
-      //         // setDiscount(quotedata.discount);
-      //         // setFixedDiscount(quotedata.fixedDiscount);
-      //         // setId(quotedata.id);
-      //         // setGST(quotedata.gst);
-      //         // setFixedGSTs(quotedata.fixedGST);
-      //         setTotalAmount(quotedata.totalAmount);
-      //         // setOtherCharge(quotedata.othercharges);
-      //         // setServiceCharge(quotedata.serviceCharges);
-      //         // setFixedServiceCharge(quotedata.fixedServiceCharge);
-      //         // setFixedOtherCharge(quotedata.fixedOtherCharge);
-      //         // setSpecifications(quotedata.materials || [{material: "", quantity: "", price: "", total: ""}]);         
-      //         // setAddRemarks(quotedata.addrRmarks);
-      //       } catch (error) {
-      //         console.error('Error fetching data:', error);
-      //       }
-      //     };
-      //     fetchData(); 
-      //   }, [raiseTicketId]); 
-  
-      //   useEffect(() => {
-      //           if (technicianDetails.length > 0) {
-      //             const lowest = technicianDetails.reduce((prev, current) => {
-      //               const prevAmount = parseFloat(prev.totalAmount);
-      //               const currentAmount = parseFloat(current.totalAmount);
-      //               return currentAmount < prevAmount ? current : prev;
-      //             });
-      //             setTotalAmount(lowest.totalAmount);
-      //             // setOtherCharge(lowest.othercharges);
-      //             // setSpecifications(lowest.materials);          
-      //           } else {
-      //             // setQuote('');
-      //             // setOtherCharge('')
-      //           }
-      //         }, [technicianDetails,totalAmount]);
-              
-      // useEffect(() => {
-      //         const fetchDealerData = async () => {
-      //           try {
-      //             const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuoteByDealer/GetRaiseAQuoteLowestDealerByid?raiseAQuotetDealerId=${raiseTicketId}`);
-      //             if (!response.ok) {
-      //               throw new Error('Failed to fetch ticket data');
-      //             }
-      //             const dataDealer = await  response.json();
-      //             setDealerDetails(dataDealer);
-      //            setMaterialQuotation(dataDealer[0]?.materialQuotation || []);
-      //           } catch (error) {
-      //             console.error('Error fetching dealer data:', error);
-      //           } finally {
-      //             setLoading(false);
-      //           }
-      //         };
-      //         fetchDealerData();
-      //       }, [raiseTicketId]);
-      
-      //       useEffect(() => {
-      //         if (dealerDetails.length > 0) {
-      //           const lowest = dealerDetails.reduce((prev, current) => {
-      //             const prevAmount = parseFloat(prev.materialQuotation[0].grandtotal);
-      //             const currentAmount = parseFloat(current.materialQuotation[0].grandtotal);
-      //             return currentAmount < prevAmount ? current : prev;
-      //           });
-      //           setLowestGrandTotal(lowest.materialQuotation[0].grandtotal);
-      //         } else {
-      //           setLowestGrandTotal('');
-      //         }
-      //       }, [dealerDetails]); 
-
-    // Detect screen size for responsiveness
+  // Detect screen size for responsiveness
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     handleResize(); // Set initial state
@@ -229,152 +103,6 @@ const [emailAddress, setEmailAddress] = useState("");
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-//   const handleSaveTicket = async (e) => {
-//     e.preventDefault();
-  
-//     if (!isChecked) {
-//       alert("You must accept the terms and conditions.");
-//       return;
-//     } 
-//     const payload = {
-//       RaiseTicketId: ticketData.raiseTicketId,
-//       Date: new Date().toISOString(),
-//       Address: address,
-//       Subject: subject,
-//       Details: details,
-//       Category: category,
-//       AssignedTo: assignedTo,
-//       id: raiseTicketId,
-//       status: status,
-//       internalStatus: "Customer Approved",
-//       CustomerId: customerId,
-//       State: state,
-//       LowestBidderTechnicainId: lowestBidder,
-//       LowestBidderDealerId: lowestDealerBidder,
-//       ApprovedAmount: approvedAmount,
-//       customerName: fullName,
-//       Option1Day: option1Day,
-//       Option1Time: option1Time,
-//       Option2Day: option2Day,
-//       Option2Time: option2Time,
-//       IsMaterialType: isWithMaterial,
-//       District: district,
-//       ZipCode: zipCode,
-//       RequestType: requestType,
-//       Attachments: attachments,
-//       Materials: specifications.map((spec) => ({
-//         material: spec.material,
-//         Quantity: spec.quantity,
-//       })),
-//       comments: commentsList.map((Comment) => ({
-//         updatedDate: Comment.updatedDate,
-//         commentText: Comment.commentText,
-//       })),
-//       TechnicianList: technicianId,
-//       DealerList: dealerId,
-//       Rating: "",
-//       RateQuotedBy: rateQuotedBy,
-//     };
-  
-//     try { 
-//       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
-//         method: 'PUT',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify(payload),
-//       });
-//       if (!response.ok) {
-//         throw new Error('Failed to save ticket data');
-//       }
-//       alert('Ticket saved Successfully!');
-//       setShowConfirmation(true);
-//     } catch (error) {
-//       console.error('Error saving ticket data:', error);
-//       window.alert('Failed to save the ticket data. Please try again later.');
-//     }
-//   };
-
-//   const handlePaymentTicket =  async(e) => {
-//     e.preventDefault();
-
-//     const payload1 = {
-//       id: "string",
-//       RaiseTicketId: ticketData.raiseTicketId,
-//       paymentId: "string",
-//       paymentMode: selectedPayment,
-//       approvedAmount: approvedAmount,
-//       paidAmount: "string",
-//       balancedAmount: "string",
-//       paymentDataTime: new Date(),
-//       technicianAmount: Number(totalAmount).toFixed(2),
-//       dealerAmont: lowestGrandTotal,
-//       customerCareAmount: "string",
-//       utrTransactionNumber: "string",
-//       technicianConfirmationCode: "",
-//     };
-// // console.log(new Date());
-//     try {
-//       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Payment/CreatePayment`, {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify(payload1),
-//       });
-//       if (!response.ok) {
-//         throw new Error('Failed to create payment.');
-//       }
-//       const data = await response.json();
-//       // const technicianConfirmationCode = data.technicianConfirmationCode;
-  
-//         payload1.technicianConfirmationCode = data.technicianConfirmationCode;
-      
-//       alert('Payment Done successfully!');
-//     } catch (error) {
-//       console.error('Error:', error);
-//       window.alert('Failed to create the payment. Please try again later.');
-// //     }
-// //   };
-
-
-// const handleBookTechnicianPayment = async (e) => {
-//   e.preventDefault();
-
-//   const payload1 = {
-//     id: "string",
-//     bookTechnicianId: bookTechnicianIds,
-//     paymentId: "string",
-//     paymentMode: selectedPayment,
-//     approvedAmount: afterDiscount,
-//     paidAmount: "string",
-//     balancedAmount: "string",
-//     paymentDataTime: paymentDataTime,
-//     technicianAmount: "",
-//     utrTransactionNumber: "",
-//     technicianConfirmationCode: "",
-//   };
-
-//   try {
-//     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnicianPayment/CreateBookTechnicianPayment`, {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify(payload1),
-//     });
-
-//     if (!response.ok) {
-//       throw new Error('Failed to create payment.');
-//     }
-
-    
-//     alert('Payment Done successfully!');
-//   } catch (error) {
-//     console.error('Error:', error);
-//     window.alert('Failed to create the payment. Please try again later.');
-//   }
-// };
 
 const handleUpdateJobDescription = async (e) => {
   e.preventDefault();
@@ -406,7 +134,7 @@ const handleUpdateJobDescription = async (e) => {
     remarks: remarks,
     moreInfo: moreInfo,
     status: "Open",
-    customerId: customerId,
+    customerId: userId,
     CustomerEmail: emailAddress,
     assignedTo: "",
     phoneNumber: phoneNumber,
@@ -456,7 +184,7 @@ const handleBothActions = (e) => {
     window.location.href=`https://handymanserviceproviders.com/PaymentPage/${raiseTicketId}`;
   } else if (selectedPayment === 'technician') {
    window.alert(`Thank You for choosing the HandyMan Services! Your reference number is ${bookTechnicianIds}. Technician will contact you shortly.`);
-   window.location.href = `https://handymanapiv2.azurewebsites.net/CustomerProfilePage?ReactToken=${customerId}$${userType}`;
+   window.location.href = `/profilePage/${userType}/${userId}`;
   }
 
 };
@@ -471,6 +199,8 @@ if (loading) {
   };
 
   return (
+    <div>
+  {isMobile && <Header />}
     <div className="d-flex">
         {!isMobile && (
         <div className="ml-0 p-0 sde_mnu">
@@ -596,7 +326,7 @@ if (loading) {
                     <div className="mt-20">
                         <h4>I. YOUR ACCEPTANCE OF THIS AGREEMENT</h4>
                         <p>
-                            This is an agreement between you ("you" or "your") and Lakshmi Sai Service Providers, a Proprietorship firm incorporated under the Registration of Establishment – Sec 2(b) and Sec 4(2) The Andhra Pradesh (Insurance of integrated Registration and Furnishing of Combined returns under various labour  Laws by certain Establishments) Act, 2015  with its registered office at Dr.No.44-40-12, Nandhagirinagar, Akkayyapalem, Visakhapatnam - 530016 ("Lakshmi Sai Service Provider" "we," or "our") that governs your use of the search services offered by Lakshmi Sai Service Providers through its website https://handymanapiv2.azurewebsites.net ("Website"), using which Lakshmi Sai Service Providers may provide the search services ("Platform"). When you access or use Platform you agree to be bound by these Terms and Conditions ("Terms").
+                            This is an agreement between you ("you" or "your") and Lakshmi Sai Service Providers, a Proprietorship firm incorporated under the Registration of Establishment – Sec 2(b) and Sec 4(2) The Andhra Pradesh (Insurance of integrated Registration and Furnishing of Combined returns under various labour  Laws by certain Establishments) Act, 2015  with its registered office at Dr.No.44-40-12, Nandhagirinagar, Akkayyapalem, Visakhapatnam - 530016 ("Lakshmi Sai Service Provider" "we," or "our") that governs your use of the search services offered by Lakshmi Sai Service Providers through its websitehttp://handymanserviceproviders.com ("Website"), using which Lakshmi Sai Service Providers may provide the search services ("Platform"). When you access or use Platform you agree to be bound by these Terms and Conditions ("Terms").
                         </p>
                     </div>
                     <div className="mt-20">
@@ -670,12 +400,12 @@ if (loading) {
                         <li>
                             impersonates another person or entity, or that collects or uses any information about Site visitors.
                         </li>
-                        </ul>
+                        </ul> 
                         <p>
                             It is also clarified that, if there are any issues or claims due to your posts by way of Reviews, Ratings and Comments, then Lakshmi Sai Service Provider reserves right to take appropriate legal action against you. Further, you shall indemnify and protect Lakshmi Sai Service Provider against such claims or damages or any issues, due to your posting of such Reviews, Ratings and Comments Lakshmi Sai Service Provider takes no responsibility and assumes no liability for any content posted by you or any third party on Lakshmi Sai Service Provider site or on any mediums of Lakshmi Sai Service Provider.
                         </p>
                         <p>
-                            You further acknowledge that conduct prohibited in connection with your use of the Lakshmi Sai Service Provider (https://handymanapiv2.azurewebsites.net) website includes, but is not limited to, breaching or attempting to breach the security of the Site.
+                            You further acknowledge that conduct prohibited in connection with your use of the Lakshmi Sai Service Provider (http://handymanserviceproviders.com) website includes, but is not limited to, breaching or attempting to breach the security of the Site.
                         </p>
                         <div className="mt-20">
                         <h4>VII. PRIVACY POLICY</h4>
@@ -795,7 +525,7 @@ if (loading) {
                         <div className="mt-20">
                         <h4>XII. ADDITIONAL DISCLAIMER</h4>
                         <p>
-                            Users using any of Lakshmi Sai Service Provider service across the following mediums ie. through internet ie<a href="https://handymanapiv2.azurewebsites.net"> https://handymanapiv2.azurewebsites.net </a>Websiteis bound by this additional disclaimer wherein they are cautioned to make proper enquiry before they (Users) rely, act upon or enter into any transaction (any kind or any sort of transaction including but not limited to monetary transaction ) with the Advertiser listed with Lakshmi Sai Service Provider.
+                            Users using any of Lakshmi Sai Service Provider service across the following mediums ie. through internet ie<a href="http://handymanserviceproviders.com"> http://handymanserviceproviders.com </a>Websiteis bound by this additional disclaimer wherein they are cautioned to make proper enquiry before they (Users) rely, act upon or enter into any transaction (any kind or any sort of transaction including but not limited to monetary transaction ) with the Advertiser listed with Lakshmi Sai Service Provider.
                         </p>
                         <p>
                             All the Users are cautioned that all and any information of whatsoever nature provided or received from the Advertiser/s is taken in good faith, without least suspecting the bonafides of the Advertiser/s and Lakshmi Sai Service Provider does not confirm, does not acknowledge, or subscribe to the claims and representation made by the Advertiser/s listed with Lakshmi Sai Service Provider. Further, Lakshmi Sai Service Provider is not at all responsible for any act of Advertiser/s listed at Lakshmi Sai Service Provider.
@@ -919,6 +649,7 @@ if (loading) {
     </div> )}
   */}
 
+    </div>
     </div>
     </div>
     </div>

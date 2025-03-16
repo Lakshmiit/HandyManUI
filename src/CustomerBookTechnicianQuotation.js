@@ -3,6 +3,7 @@ import { Button, Form, Row, Col } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import Sidebar from './Sidebar';
+import Header from './Header.js';
 import {  Dashboard as MoreVertIcon } from '@mui/icons-material';
 // import { FaEdit} from 'react-icons/fa'; // Correct icon import
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
@@ -120,17 +121,17 @@ const {userType} = useParams();
   //   }
   // };
 
-  const handlePaymentTransactionDetailsChange = (e) => {
-    const value = e.target.value;
-    setPaymentTransactionDetails(value);
-    setPaymentType("");
-    setError("");
-  };
+  // const handlePaymentTransactionDetailsChange = (e) => {
+  //   const value = e.target.value;
+  //   setPaymentTransactionDetails(value);
+  //   setPaymentType("");
+  //   setError("");
+  // };
 
   const handlePaymenTypeChange = (e) => {
     const selectedPayment = e.target.value;
     setPaymentType(selectedPayment);
-    setPaymentTransactionDetails("");
+    // setPaymentTransactionDetails("");
     setError("");
 };
 
@@ -141,26 +142,15 @@ const {userType} = useParams();
 
 const handleUpdateJobDescription = async (e) => {
   e.preventDefault();
-
-  if (!paymentType && !paymentTransactionDetails) {
-    setError("Please Enter Payment Transaction Details or select Pay Online.");
+if (paymentMode === "technician") {
+  if (!paymentType) {
+    setError("Please select atleast one.");
     return;
   }
-
-  alert(`Payment method selected: ${paymentType || "Transaction Details entered"}`);
-
-
-  // if (paymentType === "Pay Online") {
-  //   window.location.href = "";
-  // } else {
-  //   alert(`Payment method selected: ${paymentType}`);
   // }
-
-//   if (!assignedTo ) {
-//     alert("You Must select AssignedTo");
-//     return;     
-// }
- 
+  // alert(`Payment method selected: ${paymentType || "Transaction Details entered"}`);
+  // return;
+}
 
  
   const payload2 = {
@@ -186,7 +176,7 @@ const handleUpdateJobDescription = async (e) => {
     phoneNumber: phoneNumber,
     paymentMode: paymentMode,
     approvedAmount: afterDiscount,
-    UTRTransactionNumber: paymentType === "Pay Online" ? "Online" : paymentTransactionDetails,
+    UTRTransactionNumber: paymentType === "Pay Online" ? "online" : paymentType === "Cash" ? "cash" : paymentTransactionDetails || "",
     technicianConfirmationCode: technicianConfirmationCode,
     OrderId: "",
     OrderDate: "",
@@ -209,13 +199,23 @@ const handleUpdateJobDescription = async (e) => {
     if (!response.ok) {
       throw new Error('Failed to forward Customer Care.');
     }
-    if (paymentType === "Pay Online") {
+    if ((paymentMode === "technician" && paymentType === "Cash") || 
+    (paymentMode === "technician" && paymentType === "Pay Online")) {
+      if (paymentType === "Pay Online") {
       alert(`We are redirecting to Payment Page!`);
       window.location.href = `https://handymanserviceproviders.com/PaymentPage/${raiseTicketId}`;
-    } else {
+    }  
+    else {
       alert("Ticket Forwarded to Customer Care Successfully!");
       navigate(`/bookTechnicianCustomerGrid/${userType}/${customerId}`);
     }
+  }
+    if (paymentMode === "online") {
+      alert("Ticket Forwarded to Customer Care Successfully!");
+      navigate(`/bookTechnicianCustomerGrid/${userType}/${customerId}`);
+      return;
+    }
+    
   // window.location.href = `https://handymanapiv2.azurewebsites.net/CustomerProfilePage?ReactToken=${customerId}$${userType}`;
   } catch (error) {
     console.error('Error:', error);
@@ -239,6 +239,8 @@ const handleUpdateJobDescription = async (e) => {
   // }; 
 
   return (
+    <div>
+  {isMobile && <Header />}
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className=" ml-0 p-0 sde_mnu">
@@ -389,7 +391,7 @@ const handleUpdateJobDescription = async (e) => {
 
                 {paymentMode === "technician" && (
                   <>
-                  <div className="form-group">
+                  {/* <div className="form-group">
                 <label>Payment Transaction Details<span className="req_star">*</span></label>
                 <input
                   type="text"
@@ -399,23 +401,24 @@ const handleUpdateJobDescription = async (e) => {
                   onChange={handlePaymentTransactionDetailsChange}                
                   placeholder="Payment Transaction Details"
                   disabled={paymentType === "Pay Online"}
-                  required
+                   required
                 />
-                {/* {error && <div style={{ color: "red", marginTop: "5px" }}>{error}</div>} */}
-              </div>
+              {error && <div style={{ color: "red", marginTop: "5px" }}>{error}</div>} 
+              </div> */}
               <div className='radio'>
-                {/* <label className='m-1'>
-                  <input className='form-check-input m-2 border-dark'
+                 <label className='m-1'>
+                  <input className='form-check-input m-1 border-dark'
                   type='radio'
                   name="paymentType"
                   value="Cash"
                   checked={paymentType === "Cash"}
                   onChange = {handlePaymenTypeChange}
+                  // disabled={paymentType === "Pay Online"}
                   required
-                  />
+                  /> 
                   Cash
                 </label>
-                <label className='m-1'>
+                {/* <label className='m-1'>
                   <input className='form-check-input m-2 border-dark'
                   type='radio'
                   name="paymentType"
@@ -434,7 +437,7 @@ const handleUpdateJobDescription = async (e) => {
                   value="Pay Online"
                   checked={paymentType === "Pay Online"}
                   onChange = {handlePaymenTypeChange}
-                  disabled={paymentTransactionDetails?.length > 0}
+                  // disabled={paymentType === "Cash"}
                   required
                   />
                   Pay Online
@@ -527,7 +530,7 @@ const handleUpdateJobDescription = async (e) => {
 
         </div>
         </Form>
-
+        </div>
         {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {

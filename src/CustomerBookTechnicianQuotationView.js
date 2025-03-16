@@ -3,6 +3,7 @@ import { Button, Form, Row, Col } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import Sidebar from './Sidebar';
+import Header from './Header.js';
 import {  Dashboard as MoreVertIcon } from '@mui/icons-material';
 // import { FaEdit} from 'react-icons/fa'; // Correct icon import
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
@@ -40,7 +41,7 @@ const {userType} = useParams();
   const [technicianConfirmationCode, setTechnicianConfirmationCode] = useState('');
   const [assignedTo, setAssignedTo] = useState('');
   const [UTRTransactionNumber, setPaymentTransactionDetails] = useState('');
-  const [paymentType] = useState("");
+  // const [paymentType] = useState("");
   const [OrderId, setOrderId] = useState("");
     const [OrderDate, setOrderDate] = useState("");
     const [PaidAmount, setPaidAmount] = useState("");
@@ -178,6 +179,8 @@ const {userType} = useParams();
 // };
 
   return (
+    <div>
+  {isMobile && <Header />}
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className=" ml-0 p-0 sde_mnu">
@@ -364,7 +367,7 @@ const {userType} = useParams();
                   Transaction Details
                 </label> */}
 
-                <label className='m-1'>
+                {/* <label className='m-1'>
                   <input className='form-check-input m-1 border-dark'
                   type='radio'
                   name="paymentType"
@@ -374,7 +377,7 @@ const {userType} = useParams();
                   readOnly
                   />
                   Pay Online
-                </label>
+                </label> */}
               </div>
                 </>
                 )}
@@ -585,7 +588,7 @@ const {userType} = useParams();
           </Button> */}
         </div>
         </Form>
-
+        </div>
         {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {

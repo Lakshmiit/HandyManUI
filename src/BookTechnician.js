@@ -682,7 +682,7 @@ const handleUpdateJobDescription = async (e) => {
             type="checkbox" 
             className="form-check-input border-dark m-1"
             checked={isChecked}
-            onChange={(e) => setIsChecked(e.target.checked)}/>
+            onChange={(e) => setIsChecked(e.target.checked)}/> 
             <button
               onClick={(e) => {
                 e.preventDefault();
