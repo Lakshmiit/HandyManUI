@@ -277,7 +277,7 @@ const handleUpdateJobDescription = async (e) => {
     customerName: fullName,
     address: addresses.find((addr) => addr.type === 'primary')?.address || '',
     category: category,
-    status: "Open",
+    status: "Draft",
     assignedTo: "",
     customerId: userId,
     state: state,
