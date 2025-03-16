@@ -681,7 +681,7 @@ const fetchImageUrl = async (photoId) => {
                     </p>
 
                     <hr />
-                    <p className="logout-btn" onClick={() => window.location.href = "https://localhost:7155/Logout"}>
+                    <p className="logout-btn" onClick={() => window.location.href = "https://handymanserviceproviders.com/Logout"}>
                       <LogoutIcon />
                       <span>Logout</span>
                     </p>
