@@ -17,9 +17,9 @@ import { useParams } from 'react-router-dom';
 // Sidebar component
 const Sidebar = () => {  
   const {userType} = useParams();
-  const {customerId} = useParams();
-  const {dealerId} = useParams();
-  const {technicianId} = useParams();
+  const {userId} = useParams();
+  // const {dealerId} = useParams();
+  // const {technicianId} = useParams();
   const {ProductOwnedBy} = useParams();
   // const {UserId} = useParams();
   const {district} = useParams();
@@ -28,73 +28,73 @@ const Sidebar = () => {
 const menuConfig = {
     customer: [
       { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", 
-        TargetUrl: `https://handymanserviceproviders.com/CustomerProfilePage?ReactToken=${customerId}$${userType}`},
-      { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${customerId}/${userType}` },
-      { MenuIcon: <PersonAddIcon />, MenuTitle: "Book A Technician", TargetUrl: `/bookTechnician/${customerId}/${userType}` },
-      { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${customerId}` },
-    { MenuIcon: <NotificationsActiveIcon />, MenuTitle: "Notifications", TargetUrl: `/customerNotification/${userType}/${customerId}` }, 
-      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${customerId}/${userType}` },
-      { MenuIcon: <InventoryIcon />, MenuTitle: "Orders", TargetUrl: `/customerOrders/${customerId}/${userType}` },
+        TargetUrl: `/profilePage/${userType}/${userId}`},
+      { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
+      { MenuIcon: <PersonAddIcon />, MenuTitle: "Book A Technician", TargetUrl: `/bookTechnician/${userType}/${userId}` },
+      { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}` },
+    { MenuIcon: <NotificationsActiveIcon />, MenuTitle: "Notifications", TargetUrl: `/customerNotification/${userType}/${userId}` }, 
+      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
+      { MenuIcon: <InventoryIcon />, MenuTitle: "Orders", TargetUrl: `/customerOrders/${userType}/${userId}` },
       { MenuIcon: <ShoppingCartIcon />, MenuTitle: "Cart", TargetUrl: "" },
       { MenuIcon: <AccountCircleIcon />, MenuTitle: "Accounts", TargetUrl: "" },
     ],
     builder: [
-      { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", TargetUrl: `https://handymanserviceproviders.com/CustomerProfilePage?ReactToken=${customerId}$${userType}` },
-      { MenuIcon: <PersonAddIcon />, MenuTitle: "Book A Technician", TargetUrl: "" },
+      { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", TargetUrl: `/profilePage/${userType}/${userId}` },
+      { MenuIcon: <PersonAddIcon />, MenuTitle: "Book A Technician", TargetUrl: `/bookTechnician/${userType}/${userId}` },
       { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: "" },
       { MenuIcon: <NotificationsActiveIcon />, MenuTitle: "Notifications", TargetUrl: "" },
-      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${customerId}/${userType}` },
+      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
       { MenuIcon: <AccountCircleIcon />, MenuTitle: "My Account", TargetUrl: "" },
       { MenuIcon: <AccountBalanceIcon />, MenuTitle: "Add Bank Account", TargetUrl: "" },
       { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: "" },
-      { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: "" },
+      { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}` },
     ],
     dealer: [
-      { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", TargetUrl: `https://handymanserviceproviders.com/CustomerProfilePage?ReactToken=${dealerId}$${userType}` },
-      { MenuIcon: <UploadIcon />, MenuTitle: "Upload Products", TargetUrl: `/product-list/${ProductOwnedBy}/${userType}` },
+      { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", TargetUrl: `/profilePage/${userType}/${userId}` },
+      { MenuIcon: <UploadIcon />, MenuTitle: "Upload Products", TargetUrl: `/product-list/${ProductOwnedBy}` },
       { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: "" },
-      { MenuIcon: <NotificationsActiveIcon />, MenuTitle: "Notifications", TargetUrl: `/dealerNotifications/${userType}/${category}/${district}/${dealerId}` },
-      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${customerId}/${userType}`},
+      { MenuIcon: <NotificationsActiveIcon />, MenuTitle: "Notifications", TargetUrl: `/dealerNotifications/${userType}/${category}/${district}/${userId}` },
+      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}`},
       { MenuIcon: <AccountCircleIcon />, MenuTitle: "My Account", TargetUrl: "" },
       { MenuIcon: <AccountBalanceIcon />, MenuTitle: "Add Bank Account", TargetUrl: "" },
-      { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${dealerId}/${userType}` },
-      { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: ""},
+      { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
+      { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}`},
     ],
     trader: [
-      { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", TargetUrl: `https://handymanserviceproviders.com/CustomerProfilePage?ReactToken=${dealerId}$${userType}` },
+      { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", TargetUrl: `/profilePage/${userType}/${userId}` },
       { MenuIcon: <UploadIcon />, MenuTitle: "Upload Products", TargetUrl: "" },
       { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: "" },
-      { MenuIcon: <NotificationsActiveIcon />, MenuTitle: "Notifications", TargetUrl: `/dealerNotifications/${userType}/${category}/${district}/${dealerId}` },
-      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${customerId}/${userType}`},
+      { MenuIcon: <NotificationsActiveIcon />, MenuTitle: "Notifications", TargetUrl: `/dealerNotifications/${userType}/${category}/${district}/${userId}` },
+      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}`},
       { MenuIcon: <AccountCircleIcon />, MenuTitle: "My Account", TargetUrl: "" },
       { MenuIcon: <AccountBalanceIcon />, MenuTitle: "Add Bank Account", TargetUrl: "" },
-      { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${dealerId}/${userType}` },
-      { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: ""},
+      { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
+      { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}`},
     ],
     estimator: [
-      { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", TargetUrl: `https://handymanserviceproviders.com/CustomerProfilePage?ReactToken=${customerId}$${userType}` },
-      { MenuIcon: <PersonAddIcon />, MenuTitle: "Book A Technician", TargetUrl: "" },
+      { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", TargetUrl: `/profilePage/${userType}/${userId}` },
+      { MenuIcon: <PersonAddIcon />, MenuTitle: "Book A Technician", TargetUrl: `/bookTechnician/${userType}/${userId}` },
       { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: "" },
       { MenuIcon: <NotificationsActiveIcon />, MenuTitle: "Notifications", TargetUrl: "" },
-      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${customerId}/${userType}` },
+      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
       { MenuIcon: <AccountCircleIcon />, MenuTitle: "My Account", TargetUrl: "" },
       { MenuIcon: <AccountBalanceIcon />, MenuTitle: "Add Bank Account", TargetUrl: "" },
       { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: "" },
-      { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: "" },
+      { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}` },
     ],
     technician: [
-      { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", TargetUrl: `https://handymanserviceproviders.com/CustomerProfilePage?ReactToken=${technicianId}$${userType}` },
+      { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", TargetUrl: `/profilePage/${userType}/${userId}` },
       { MenuIcon: <PersonAddIcon />, MenuTitle: "Add Technician", TargetUrl: "" },
-    { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: `/notificationTechnician/${userType}/${category}/${district}/${technicianId}` },
+    { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: `/notificationTechnician/${userType}/${category}/${district}/${userId}` },
       { MenuIcon: <NotificationsActiveIcon />, MenuTitle: "Notifications", TargetUrl: "" },
       { MenuIcon: <TransferWithinAStationIcon />, MenuTitle: "Track Technician", TargetUrl: "" },
       { MenuIcon: <AccountCircleIcon />, MenuTitle: "My Account", TargetUrl: "" },
       { MenuIcon: <AccountBalanceIcon />, MenuTitle: "Add Bank Account", TargetUrl: "" },
-      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${customerId}/${userType}` },
-      { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${technicianId}/${userType}` },
-      { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: ""},
+      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
+      { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
+      { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}`},
     ],
-  };
+  }; 
 
    const { userType: fallbackUserType } = useParams(); 
    const selectedUserType = userType || fallbackUserType;

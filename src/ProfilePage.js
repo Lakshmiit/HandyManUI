@@ -30,18 +30,18 @@ import LogoutIcon from "@mui/icons-material/Logout";
 // import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 
-const getMenuList = (customerId, userType) => {
+const getMenuList = (userType, userId) => {
   // alert("CustomerId");
   // alert(customerId);
   // alert("UserType");
   // alert(userType);
   const customer = [
-      { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: `/raiseticket/${userType}/${customerId}` },
-      { MenuIcon: <PersonOutlineIcon />, MenuTitle: "Book A Technician", TargetUrl: `/bookTechnician/${userType}/${customerId}` },
-      { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${customerId}` },
-      { MenuIcon: <NotificationsNoneIcon />, MenuTitle: "Notifications", TargetUrl: `/customerNotification/${userType}/${customerId}` },
-      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${customerId}/${userType}` },
-      { MenuIcon: <OrdersIcon />, MenuTitle: "Orders", TargetUrl: `/customerOrders/${customerId}/${userType}` },
+      { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
+      { MenuIcon: <PersonOutlineIcon />, MenuTitle: "Book A Technician", TargetUrl: `/bookTechnician/${userType}/${userId}` },
+      { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}` },
+      { MenuIcon: <NotificationsNoneIcon />, MenuTitle: "Notifications", TargetUrl: `/customerNotification/${userType}/${userId}` },
+      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
+      { MenuIcon: <OrdersIcon />, MenuTitle: "Orders", TargetUrl: `/customerOrders/${userType}/${userId}` },
       { MenuIcon: <ShoppingBagIcon />, MenuTitle: "Cart", TargetUrl: "#" },
       { MenuIcon: <PersonIcon />, MenuTitle: "Accounts", TargetUrl: "#" }
   ];
@@ -56,7 +56,7 @@ const getMenuList = (customerId, userType) => {
       { icon: <SupportAgentIcon />, title: "Raise Ticket", url: "/TicketRaise" },
       { icon: <RouteIcon />, title: "Track Ticket Status", url: "#" }
   ];
-
+ 
   const dealer = [
       { icon: <UploadIcon />, title: "Upload Products", url: "/ProductListView" },
       { icon: <RequestQuoteIcon />, title: "Raise a Quote", url: "#" },

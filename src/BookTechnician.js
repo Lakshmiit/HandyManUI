@@ -5,6 +5,7 @@ import {
   Dashboard as MoreVertIcon,
 } from '@mui/icons-material';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import Header from './Header.js';
 import Sidebar from './Sidebar';
 import { useParams, useNavigate} from 'react-router-dom';
 const AddressManager = () => {
@@ -16,7 +17,7 @@ const AddressManager = () => {
  const [isChecked, setIsChecked] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const { customerId } = useParams(); 
+  const { userId } = useParams(); 
  const [raiseTicketId, setRaiseTicketId] = useState('');
  const [addresses, setAddresses] = useState([]);
 //  const [bookTechnicianId, setBookTechnicianId] = useState('');
@@ -52,7 +53,7 @@ const [mobileNumber, setPhoneNumber] = useState('');
   useEffect(() => {
     const fetchCustomerData = async () => {
       try {
-        const response = await fetch(`${API_URL}${customerId}`);
+        const response = await fetch(`${API_URL}${userId}`);
         if (!response.ok) {
 
           throw new Error('Failed to fetch customer profile data');
@@ -83,7 +84,7 @@ const [mobileNumber, setPhoneNumber] = useState('');
       }
     };
     fetchCustomerData();
-  }, [customerId]);
+  }, [userId]);
 
   
   useEffect(() => {
@@ -169,7 +170,7 @@ useEffect(() => {
       fetchJobsByCategory(category);
     }
   }, [category]);
-
+ 
   const fetchJobsByCategory = async (selectedCategory) => {
     try {
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/UploadJobDescriptionBookTechnician/GetSelctedJobsByCategory?Category=${selectedCategory}`);
@@ -278,7 +279,7 @@ const handleUpdateJobDescription = async (e) => {
     category: category,
     status: "Open",
     assignedTo: "",
-    customerId: customerId,
+    customerId: userId,
     state: state,
     district: district,
     zipCode: pincode,
@@ -320,7 +321,7 @@ const handleUpdateJobDescription = async (e) => {
     setRaiseTicketId(data.raiseTicketId);
     // Show alert message with the correct ticketId
     //window.alert(`Ticket has been submitted successfully! Your reference number is ${data.bookTechnicianId}. Technician will contact you shortly.`);
-        Navigate(`/bookTechnicianPaymentPage/${userType}/${data.raiseTicketId}`)
+        Navigate(`/bookTechnicianPaymentPage/${userType}/${userId}/${data.raiseTicketId}`)
   } catch (error) {
     console.error('Error:', error);
     window.alert('Failed to Book Technician. Please try again later.');
@@ -383,6 +384,8 @@ const handleUpdateJobDescription = async (e) => {
 //   }, [uploadedFiles]);
 
   return (
+    <div>
+  {isMobile && <Header />}
     <div className="d-flex flex-row justify-content-start align-items-start">
        {/* Sidebar for larger screens */}
        {!isMobile && (
@@ -854,7 +857,7 @@ const handleUpdateJobDescription = async (e) => {
                         <p>
                             Both User and Service Provider do hereby agree that Lakshmi Sai Service Provider shall not be required to mediate or resolve any dispute or disagreement that might arise between the parties out of these transactions.
                         </p>
-                        <p>
+                        <p> 
                             Service Providers and Users are responsible for researching and complying with any applicable laws, regulations or restrictions on items, services, or manner of sale or exchange that may pertain to transactions in which they participate.
                         </p>
                         <p>
@@ -1079,6 +1082,7 @@ const handleUpdateJobDescription = async (e) => {
           </Button>
         </Modal.Footer>
       </Modal> 
+    </div>
     </div>
     {/* Styles for floating menu */}
       <style jsx>{`

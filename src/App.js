@@ -10,7 +10,7 @@ import ProductView from './ProductView';
 import EditUploadForm from './EditUploadForm';
 import ProductList from './ProductList';
 import RaiseTicket from './RaiseTicket';
-import BuyProduct from './BuyProducts';
+import BuyProducts from './BuyProducts';
 import Sidebar from './Sidebar'; 
 import BuyProductView from './BuyProductView';
 import AdminProductApproval from './AdminProductApproval.js';
@@ -128,10 +128,10 @@ function App() {
             <Route path="/product-view/:id/:ProductOwnedBy" element={<ProductView />} /> 
             <Route path="/product-list/:ProductOwnedBy" element={<ProductList />} />
             <Route path="/product-edit/:id/:ProductOwnedBy" element={<EditUploadForm />} />           
-            <Route path="/RaiseTicket/:customerId/:userType" element={<RaiseTicket />} />
-            <Route path="/buyProducts/:userId/:userType" element={<BuyProduct />} />
+            <Route path="/raiseTicket/:userType/:userId" element={<RaiseTicket />} />
+            <Route path="/buyProducts/:userType/:userId" element={<BuyProducts />} />
             <Route path="/sidebar/:userType" element={<Sidebar />} />
-            <Route path="/buyproduct-view/:id/:userId/:userType" element={<BuyProductView />} />
+            <Route path="/buyproduct-view/:userType/:userId/:id" element={<BuyProductView />} />
             <Route path="/adminUploadForm/Admin" element={<AdminUploadForm />} />
             <Route path="/adminProductApproval/:id/Admin" element={<AdminProductApproval />} />
             <Route path="/adminProductList/Admin" element={<AdminProductList />} />
@@ -149,7 +149,7 @@ function App() {
             <Route path="/raiseTicketBuyProducts/:raiseTicketId" element={<RaiseTicketBuyProducts />} /> 
             <Route path="/quoteNotification" element={<QuoteNotifications />} />
             <Route path="/notificationTechnician/:userType/:category/:district/:technicianId" element={<NotificationTechnician />} />
-            <Route path="/customerNotification/:userType/:customerId" element={<CustomerNotification />} />
+            <Route path="/customerNotification/:userType/:userId" element={<CustomerNotification />} />
             <Route path="/viewCustomer/:userType/:customerId" element={<ViewCustomerGrid />} />
             <Route path="/ShortAdminNotifications" element={<ShortAdminNotifications />} />
             <Route path="/customerRaiseTicketQuotation/:userType/:raiseTicketId" element={<CustomerRaiseTicketQuotation />} />
@@ -159,15 +159,15 @@ function App() {
             <Route path="/viewDealerDetailsRaiseTicket/:raiseTicketId/:userType/:category/:dealerId" element={<ViewDealerDetailsRaiseTicket />} />
             <Route path="/dealerGrid" element={<DealerGrid /> } />
             <Route path="/bidderTicketQuotation/:raiseTicketId" element={<BidderTicketQuotation /> } />
-            <Route path="/timeSlotBooking/:raiseTicketId/:userType/:customerId" element={<TimeSlotBooking />} />
-            <Route path="/bookingConfirmation/:raiseTicketId/:userType/:customerId" element={<BookingConfirmation />} />
-            <Route path="/paymentConfirmation/:raiseTicketId/:userType/:customerId" element={<PaymentConfirmation />} />
+            <Route path="/timeSlotBooking/:userType/:userId/:raiseTicketId" element={<TimeSlotBooking />} />
+            <Route path="/bookingConfirmation/:userType/:userId/:raiseTicketId" element={<BookingConfirmation />} />
+            <Route path="/paymentConfirmation/:userType/:userId/:raiseTicketId" element={<PaymentConfirmation />} />
             <Route path="/ticketConfirmation/:raiseTicketId/:district/:userType/:technicianId" element={<TicketConfirmation />} />
             <Route path="/traderConfirmation/:raiseTicketId/:district/:userType/:dealerId" element={<TraderConfirmation />} />
             <Route path="/raiseOrders/:userType" element={<RaiseOrdersGrid />} />
             <Route path="/customerCareConfirmation/:raiseTicketId" element={<CustomerCareConfirmation />} />
-            <Route path="/customerTrackConfirmation/:raiseTicketId/:userType/:customerId" element={<CustomerRaiseTicketTrack />} />
-            <Route path="/trackStatusNotifications/:userType/:customerId" element={<TrackStatusNotifications />} />
+            <Route path="/customerTrackConfirmation/:userType/:userId/:raiseTicketId" element={<CustomerRaiseTicketTrack />} />
+            <Route path="/trackStatusNotifications/:userType/:userId" element={<TrackStatusNotifications />} />
             <Route path="/ticketConfirmationGrid/:userType/:district/:technicianId" element={<TicketConfirmationGrid />} />
             <Route path="/traderConfirmationGrid/:userType/:district/:dealerId" element={<TraderConfirmationGrid />} />
             {/* <Route path="/termsandConditions" element={<TermsandConditions />} />*/}
@@ -177,7 +177,7 @@ function App() {
             <Route path="/bookTechnicianActionView/:raiseTicketId" element={<BookTechnicianActionView />} />
             <Route path="/uploadBookTechnician" element={<UploadBookTechnician />} />
             <Route path="/bookTechnicianList" element={<BookTechnicianList />} />
-            <Route path="/bookTechnicianPaymentPage/:userType/:raiseTicketId" element={<BookTechnicianPaymentPage />} />
+            <Route path="/bookTechnicianPaymentPage/:userType/:userId/:raiseTicketId" element={<BookTechnicianPaymentPage />} />
             <Route path="/updateBookTechnician/:id" element={<UpdateBookTechnician />} />
             <Route path="/bookTechnicianNotificationGrid" element={<BookTechnicianNotificationGrid />} />
             <Route path="/bookTechnicianCustomerGrid/:userType/:customerId" element={<BookTechnicianCustomerGrid />} />
