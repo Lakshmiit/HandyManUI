@@ -80,7 +80,7 @@ import AdminClosedOrdersFinalGridView from './AdminClosedOrdersFinalGridView.js'
 import BuyProductsCustomerCart from './BuyProductsCustomerCart.js';
 import ProfilePage from './ProfilePage.js';
 import PaymentPage from './PaymentPage';
-import TechnicianViewBookTechnician from './TechnicianViewBookTechnician.js';
+// import TechnicianViewBookTechnician from './TechnicianViewBookTechnician.js';
 // import BuyProductCartView from './BuyProductCartView.js';
 
 const PreventBackNavigation = () => {
@@ -196,7 +196,7 @@ function App() {
             <Route path='/adminClosedOrdersFinalGridView/:buyProductId' element={<AdminClosedOrdersFinalGridView />} />
             <Route path='/buyProductsCustomerCart/:customerId/:userType' element={<BuyProductsCustomerCart />} />
             {/* <Route path='/buyProductsCartView/:customerId/:buyProductId/:userType' element={<BuyProductCartView />} /> */}
-            <Route path='/technicianViewBookTechnician/:userType/:raiseTicketId' element={<TechnicianViewBookTechnician />} /> 
+            {/* <Route path='/technicianViewBookTechnician/:userType/:raiseTicketId' element={<TechnicianViewBookTechnician />} />  */}
             
             <Route path='/customerBuyProductOrdersGrid/:customerId/:userType' element={<CustomerBuyProductOrdersGrid />} /> 
             <Route path="/payment-selection/:raiseTicketId" element={<PaymentPage />} />
