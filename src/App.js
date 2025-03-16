@@ -173,7 +173,7 @@ function App() {
             {/* <Route path="/termsandConditions" element={<TermsandConditions />} />*/}
             <Route path="/customerCareGrid" element={<CustomerCareGrid />} /> 
             <Route path="/trackStatus/:userType" element={<TrackStatusGrid />} />
-            <Route path="/bookTechnician/:customerId/:userType" element={<BookTechnician />} />
+            <Route path="/bookTechnician/:userType/:userId" element={<BookTechnician />} />
             <Route path="/bookTechnicianActionView/:raiseTicketId" element={<BookTechnicianActionView />} />
             <Route path="/uploadBookTechnician" element={<UploadBookTechnician />} />
             <Route path="/bookTechnicianList" element={<BookTechnicianList />} />
