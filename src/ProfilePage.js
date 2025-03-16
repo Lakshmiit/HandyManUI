@@ -672,15 +672,15 @@ const fetchImageUrl = async (photoId) => {
                     {profile.address}
                     </p>
                     <hr />
-                    <p className="fw-bold m-1 text-primary" style={{ cursor: "pointer" }}>
+                    {/* <p className="fw-bold m-1 text-primary" style={{ cursor: "pointer" }}>
                       <a href="/change-password">Click to change password</a>
-                    </p>
+                    </p> */}
 
-                    <p className="fw-bold m-1 text-primary" style={{ cursor: "pointer" }}>
+                    {/* <p className="fw-bold m-1 text-primary" style={{ cursor: "pointer" }}>
                       <a href="/user-settings">User Settings</a>
                     </p>
 
-                    <hr />
+                    <hr /> */}
                     <p className="logout-btn" onClick={() => window.location.href = "https://handymanserviceproviders.com/Logout"}>
                       <LogoutIcon />
                       <span>Logout</span>
