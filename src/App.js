@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './App.css';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useNavigate} from 'react-router-dom';
+
 // Importing necessary components
 // import Header from './Header';
+// import Footer from './Footer.js';
 import UploadForm from './uploadform';
 import ProductView from './ProductView'; 
 import EditUploadForm from './EditUploadForm';
@@ -76,22 +78,51 @@ import AdminClosedBuyProductOrders from './AdminClosedBuyProductsOrders.js';
 import BuyProductClosedOrdersGrid from './BuyProductClosedOrdersGrid.js';
 import AdminClosedOrdersFinalGridView from './AdminClosedOrdersFinalGridView.js';
 import BuyProductsCustomerCart from './BuyProductsCustomerCart.js';
-// import ProfilePage from './ProfilePage.js';
+import ProfilePage from './ProfilePage.js';
 import PaymentPage from './PaymentPage';
+import TechnicianViewBookTechnician from './TechnicianViewBookTechnician.js';
 // import BuyProductCartView from './BuyProductCartView.js';
 
+const PreventBackNavigation = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handlePopState = (event) => {
+      event.preventDefault();
+      navigate(1); // Moves user forward, preventing back navigation
+    };
+
+    window.history.pushState(null, null, window.location.href);
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [navigate]);
+
+  return null;
+};
 
 function App() {
+
+    useEffect(() => {
+      const link = document.createElement("link");
+      link.href = "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200";
+      link.rel = "stylesheet";
+      document.head.appendChild(link);
+    }, []);
+  
   return (
-    <Router>     
+    <Router>   
+       <PreventBackNavigation />   
       <div className="App"> 
         {/* Header Component */}
         {/* <Header /> */}
-        
         {/* Main content */}
-        <main className="container py-3 mt_100px">
+        <main 
+        className="py-3 mt-mob-50">
           <Routes>
-            {/* <Route path="/profilePage/:userType/:userId" element={<ProfilePage />} /> */}
+            <Route path="/profilePage/:userType/:userId" element={<ProfilePage />} />
             <Route path="/product/:ProductOwnedBy" element={<UploadForm />} />
             {/* Dynamic product ID route for ProductView */}
             <Route path="/product-view/:id/:ProductOwnedBy" element={<ProductView />} /> 
@@ -165,11 +196,14 @@ function App() {
             <Route path='/adminClosedOrdersFinalGridView/:buyProductId' element={<AdminClosedOrdersFinalGridView />} />
             <Route path='/buyProductsCustomerCart/:customerId/:userType' element={<BuyProductsCustomerCart />} />
             {/* <Route path='/buyProductsCartView/:customerId/:buyProductId/:userType' element={<BuyProductCartView />} /> */}
+            <Route path='/technicianViewBookTechnician/:userType/:raiseTicketId' element={<TechnicianViewBookTechnician />} /> 
             
             <Route path='/customerBuyProductOrdersGrid/:customerId/:userType' element={<CustomerBuyProductOrdersGrid />} /> 
             <Route path="/payment-selection/:raiseTicketId" element={<PaymentPage />} />
             </Routes>
+         
         </main>
+        {/* <Footer /> */}
       </div>
     </Router>
   );

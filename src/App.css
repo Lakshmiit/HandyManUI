@@ -1,4 +1,5 @@
 /* Global Css */
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
 
 :root {
   --bs-primary: #f3b524 !important;
@@ -236,6 +237,14 @@ h4 {
   z-index: 9;
 }
 
+.mnu_mn:hover{
+background-color: #000;
+}
+
+
+a{
+  color:#000000 !important;
+}
 .prm_clr {
   color: var(--bs-primary);
 }
@@ -416,6 +425,10 @@ footer.footer {
   background-color: #fff;
   box-shadow: var(--bxsdw);
 }
+ .mt-mob-50{
+  margin-top:100px;
+  
+}
 
 .main_vw{
   width: 100%;
@@ -484,23 +497,26 @@ footer.footer {
   gap: 10px;
 }
 
-
-
-.db_menu .mnu_mn .material-symbols-outlined {
-  font-size: 40px;
-  transition: all 0.3s;
-}
-
-.db_menu .mnu_mn:hover .material-symbols-outlined {
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
   font-size: 50px;
 }
 
-.db_menu .mnu_mn:hover {
+
+.mnu_mn .material-symbols-outlined {
+  font-size: 40px;
+  transition: all 0.3s;
+}
+ .mnu_mn:hover .material-symbols-outlined {
+  font-size: 50px;
+}
+
+ .mnu_mn:hover {
   background-color: var(--bs-primary);
   border-radius: 20px;
 }
 
-.db_menu .mnu_mn {
+ .mnu_mn {
   width: 100%;
 }
 
@@ -590,6 +606,22 @@ footer.footer {
   padding: 1rem 0;
   line-height: normal;
   font-size: 1rem;
+}
+
+.mnu_mn {
+  width: 200px;
+  height: 200px;
+  background-color: #f1b61f30;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 1rem;
+  transition: all 0.5s;
+  cursor: pointer;
+  text-align: center;
+  padding: 1rem;
 }
 
 .profl_dets_mn .h5 {
@@ -783,9 +815,15 @@ footer.footer {
   .db_menu {
       grid-template-columns: repeat(3, 1fr);
   }
-  .db_menu .mnu_mn {
+ .mnu_mn {
       height: 140px;
       padding:0.5rem;
+      width: 113px;
+  }
+
+  .mt-mob-50{
+    margin-top:50px;
+
   }
   .hdr_dp {
       display: block;
@@ -2130,16 +2168,16 @@ textarea {
   width: 300px;
   height: fit-content;
   padding: 0;
-  margin: 5px;
+  /* margin: 5px; */
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .profile {
   text-align: start;
-  padding: 2px;
-  margin: 2px;
-  font-size: 18px;
+  /* padding: 2px;
+  margin: 2px; */
+  font-size: 15px;
   font-weight: normal;
 }
 
@@ -2392,4 +2430,241 @@ h2 {
   justify-content: space-between;
   align-items: center;
   margin: 5px;
+}
+/* Hide profile card container on mobile view
+.profile-card-container {
+  display: block; /* Default state (visible on larger screens) 
+}
+
+/* When the screen width is 768px or less, hide the profile card container 
+@media (max-width: 768px) {
+  .profile-card-container {
+      display: none; /* Hide on mobile screens 
+  } */
+
+  /* .g-3, .gx-3 {
+    --bs-gutter-x: 0rem;
+}
+} */
+.profile-card-container {
+  display: none; /* Hidden by default */
+  position: absolute; /* Position it relative to the parent */
+  top: 50px; /* Adjust as needed */
+  right: 0; /* Align it to the right */
+  background: white;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000; /* Ensure it appears above other elements */
+}
+
+/* Show when active */
+.profile-card-container.active {
+  display: block;
+}
+
+/* Default profile card container visibility */
+.profile-card-container {
+  display: block; /* Visible on larger screens */
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  max-height: 0; /* Start with hidden */
+  overflow: hidden;
+}
+
+/* When the "show" class is added, make the container visible */
+.profile-card-container.show {
+  opacity: 1;
+  max-height: 500px; /* Adjust max height if needed */
+}
+
+/* Mobile view - Hide by default */
+@media (max-width: 768px) {
+  .profile-card-container {
+    display: none; /* Hidden by default on mobile screens */
+  }
+
+  /* When showProfile is true, show the profile container on mobile */
+  .profile-card-container.show {
+    display: block;
+  }
+}
+
+/* Style for the "more" icon button */
+.more-icon {
+  font-size: 24px;
+  color: #f1b61f; /* Or any color you want */
+  display: inline-block;
+}
+
+/* Profile card and text styling */
+.profile-card {
+  background-color: #ffffff;
+  /* padding: 20px; */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profile-img-container {
+  text-align: center;
+}
+
+.profile-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* Add styling for the rest of the profile info */
+.profile-info h5 {
+  text-align: center;
+  font-weight: bold;
+  color: #333;
+}
+.profile-img-container {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.profile-img-wrapper {
+  position: relative;
+  width: 120px;  /* Set size of the profile image */
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid #f1b61f;  /* Add border to the image */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Add shadow for better look */
+}
+
+.profile-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;  /* Make sure the image fits well */
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+
+.profile-img:hover {
+  transform: scale(1.1);  /* Scale the image slightly on hover */
+}
+
+.file-input {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+  background-color: #f1b61f;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0.8; /* Make the button slightly transparent */
+  transition: opacity 0.3s ease;
+}
+
+.file-input:hover {
+  opacity: 1;  /* Full opacity on hover */
+}
+
+.file-input:focus {
+  outline: none; /* Remove the outline when focused */
+}
+
+.file-input::-webkit-file-upload-button {
+  display: none;  /* Hide default file input button */
+}
+.profile-img-container {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  margin: 0 auto;  /* Center the profile image */
+}
+
+/* Wrapper for the profile image */
+.profile-img-wrapper {
+  position: relative;
+  width: 80px;  /* Adjust size for mobile-friendly view */
+  height: 80px;
+  border-radius: 50%;  /* Keep it circular */
+  overflow: hidden;
+  border: 3px solid #ffffff;  /* Add a golden border */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow for elevation */
+}
+
+/* Profile Image */
+.profile-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+
+/* Hover effect on profile image */
+.profile-img:hover {
+  transform: scale(1.05);  /* Slight scale effect on hover */
+}
+
+/* Styled file input button */
+.file-input {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: 25px;
+  height: 25px;
+  background-color: #f1b61f;  /* Match the border color */
+  border: none;
+  border-radius: 50%;  /* Circular button */
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+/* Hover effect for file input button */
+.file-input:hover {
+  opacity: 1;
+}
+
+/* Remove outline when file input button is focused */
+.file-input:focus {
+  outline: none;
+}
+
+/* Hide the default file input button */
+.file-input::-webkit-file-upload-button {
+  display: none;
+}
+
+/* Media Queries for Mobile */
+@media (max-width: 768px) {
+
+  .logout-btn{
+    padding-bottom: 10px;
+  }
+  .profile-img-wrapper {
+    width: 70px;  /* Slightly smaller on mobile */
+    height: 70px;
+  }
+
+  .file-input {
+    width: 20px;  /* Smaller file input button on mobile */
+    height: 20px;
+    bottom: 3px;
+    right: 3px;
+  }
+
+  .profile-img {
+    border-radius: 50%;
+    transition: transform 0.2s ease;
+    border: none;
+    width: 48px;
+    height: 48px;
+    margin-top: 14px;
+  }
+
+  .profile-img:hover {
+    transform: scale(1.1);  /* Slightly more noticeable on hover for mobile */
+  }
 }
