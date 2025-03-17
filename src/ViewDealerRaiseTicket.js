@@ -5,6 +5,7 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import "./App.css";
 import Sidebar from './Sidebar';
+import Header from './Header.js';
 import ForwardIcon from '@mui/icons-material/Forward';
 // import SaveAsIcon from '@mui/icons-material/SaveAs';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
@@ -16,7 +17,6 @@ const RaiseQuotation = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const {raiseTicketId} = useParams();
-
   const [id, setId] = useState('');
   const [ticketData, setTicketData] = useState('');
   const [subject, setSubject] = useState('');
@@ -60,7 +60,7 @@ const RaiseQuotation = () => {
     const [dealerData, setDealerData] = useState({});
     const {userType} = useParams();
     // const [dealerId, setDealerId] = useState('');
- const {dealerId} = useParams();
+ const {userId} = useParams();
  const [technicianId, setTechnicianId] = useState('');
  const [fixedDeliveryCharge] = useState('100'); 
  const [fixedServiceCharges] = useState('10');
@@ -270,7 +270,7 @@ useEffect(() => {
       useEffect(() => {
         const fetchDealerData = async () => {
           try {
-            const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuoteByDealer/GetRaiseAQuoteDealerDetailsByid?raiseTicketId=${raiseTicketId}&dealerId=${dealerId}`);
+            const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuoteByDealer/GetRaiseAQuoteDealerDetailsByid?raiseTicketId=${raiseTicketId}&dealerId=${userId}`);
             if (!response.ok) {
               throw new Error('Failed to fetch ticket data');
             }
@@ -290,7 +290,7 @@ useEffect(() => {
           }
         };
         fetchDealerData();
-      }, [raiseTicketId, dealerId]);
+      }, [raiseTicketId, userId]);
       
   // Handle form data changes
   const handleChange = (e) => {
@@ -315,7 +315,7 @@ useEffect(() => {
     try {
       const existingDealerList = ticketData.dealerList || [];
 
-      const newDealers = dealerId ? dealerId.split(",").map(id => id.trim()) : [];
+      const newDealers = userId ? userId.split(",").map(id => id.trim()) : [];
       const updatedDealerList = Array.from(new Set([...existingDealerList, ...newDealers]));
     
     const payload = {
@@ -388,7 +388,7 @@ const handleUpdateTicket = async (e) => {
     id :"string",
     ticketId: ticketData.raiseTicketId,
     CustomerId: ticketData.customerId,
-    DealerId: dealerId,
+    DealerId: userId,
     TotalAmount: TotalAmount().toString(),
     raiseTicketId: raiseTicketId,
     raiseAQuoteDate: new Date(), 
@@ -466,7 +466,7 @@ materialQuotation: material.map((mat) => ({
     // setError("");
     handleSaveTicket(e);
    handleUpdateTicket(e);
-    Navigate(`/dealerNotifications/${userType}/${category}/${district}/${dealerId}`);
+    Navigate(`/dealerNotifications/${userType}/${userId}/${category}/${district}`);
   };
 
   // Detect screen size for responsiveness
@@ -494,6 +494,8 @@ materialQuotation: material.map((mat) => ({
   // };
 
   return (
+    <div>
+    {isMobile && <Header />}   
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className=" ml-0 m-4 p-0 sde_mnu h-90">
@@ -922,7 +924,7 @@ materialQuotation: material.map((mat) => ({
 
         {/* Send Quote Button */}
         <div className="mt-4 text-end">
-          <Link to={`/dealerNotifications/${userType}/${category}/${district}/${dealerId}`} className="btn btn-warning text-white mx-2" title='Back'>
+          <Link to={`/dealerNotifications/${userType}/${userId}/${category}/${district}`} className="btn btn-warning text-white mx-2" title='Back'>
             <ArrowLeftIcon />
           </Link>
           {/* <Link className="btn btn-warning text-white mx-2"  type="submit" title="Save">
@@ -933,6 +935,7 @@ materialQuotation: material.map((mat) => ({
           </Link>
         </div>
       </Form>
+    </div>
     </div>
     {/* Styles for floating menu */}
 <style jsx>{`

@@ -1,6 +1,7 @@
 import React, { useEffect, useState} from 'react';
 import Sidebar from './Sidebar';
 import { Button } from 'react-bootstrap';
+import Header from './Header.js';
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
 // import image from './img/technician.png';
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -11,6 +12,7 @@ import { useParams, useNavigate } from "react-router-dom";
 const BookingConfirmation = () => {
   const Navigate = useNavigate();
   const {userType} = useParams();
+  const {userId} = useParams();
     const [isMobile, setIsMobile] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
     const {raiseTicketId} = useParams();
@@ -51,11 +53,12 @@ const BookingConfirmation = () => {
   const [dealerId, setDealerId] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [rateQuotedBy, setRateQuotedBy] = useState(''); 
+  const [customerEmail, setCustomerEmail] = useState('');
 
   
   useEffect(() => {
-      console.log(loading,id, technicianData);
-    }, [loading, id, technicianData]);
+      console.log(loading,id, technicianData, customerId);
+    }, [loading, id, technicianData, customerId]);
   
 
   useEffect(() => {
@@ -75,6 +78,7 @@ const BookingConfirmation = () => {
         setAddress(data.address);
         setSubject(data.subject);
         setDetails(data.details);
+        setCustomerEmail(data.customerEmail);
         setId(data.id);
         setRateQuotedBy(data.rateQuotedBy);
         setTechnicianId(data.technicianList || []);
@@ -156,7 +160,7 @@ const BookingConfirmation = () => {
       id: raiseTicketId,
       status: status,
       internalStatus: "Pending",
-      CustomerId: customerId,
+      CustomerId: ticketData.customerId,
       State: state,
       LowestBidderTechnicainId: lowestBidder,
       LowestBidderDealerId: lowestDealerBidder,
@@ -183,7 +187,14 @@ const BookingConfirmation = () => {
       DealerList: dealerId,
       Rating: "",
       RateQuotedBy: rateQuotedBy,
-
+      CustomerEmail: customerEmail,
+    OrderId: "",
+    OrderDate: "",
+    PaidAmount: "",
+    TransactionStatus: "",
+    TransactionType: "",
+    InvoiceId: "",
+    InvoiceURL: "",
     };
     try {
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
@@ -197,16 +208,16 @@ const BookingConfirmation = () => {
         throw new Error('Failed to save ticket data');
       }
       alert('Ticket saved Successfully!');
-      Navigate(`/paymentConfirmation/${raiseTicketId}/${userType}/${customerId}`)
+      Navigate(`/paymentConfirmation/${userType}/${userId}/${raiseTicketId}`)
     } catch (error) {
       console.error('Error saving ticket data:', error);
       window.alert('Failed to save the ticket data. Please try again later.');
     }
   };
   
-
-
   return (
+    <div>
+    {isMobile && <Header />}   
     <div className="d-flex">
         {!isMobile && (
         <div className="ml-0 p-0 sde_mnu">
@@ -379,7 +390,7 @@ const BookingConfirmation = () => {
                     <div className="mt-20">
                         <h4>I. YOUR ACCEPTANCE OF THIS AGREEMENT</h4>
                         <p>
-                            This is an agreement between you ("you" or "your") and Lakshmi Sai Service Providers, a Proprietorship firm incorporated under the Registration of Establishment – Sec 2(b) and Sec 4(2) The Andhra Pradesh (Insurance of integrated Registration and Furnishing of Combined returns under various labour  Laws by certain Establishments) Act, 2015  with its registered office at Dr.No.44-40-12, Nandhagirinagar, Akkayyapalem, Visakhapatnam - 530016 ("Lakshmi Sai Service Provider" "we," or "our") that governs your use of the search services offered by Lakshmi Sai Service Providers through its website https://handymanserviceproviders.com ("Website"), using which Lakshmi Sai Service Providers may provide the search services ("Platform"). When you access or use Platform you agree to be bound by these Terms and Conditions ("Terms").
+                            This is an agreement between you ("you" or "your") and Lakshmi Sai Service Providers, a Proprietorship firm incorporated under the Registration of Establishment – Sec 2(b) and Sec 4(2) The Andhra Pradesh (Insurance of integrated Registration and Furnishing of Combined returns under various labour  Laws by certain Establishments) Act, 2015  with its registered office at Dr.No.44-40-12, Nandhagirinagar, Akkayyapalem, Visakhapatnam - 530016 ("Lakshmi Sai Service Provider" "we," or "our") that governs your use of the search services offered by Lakshmi Sai Service Providers through its website https://handymanapiv2.azurewebsites.net ("Website"), using which Lakshmi Sai Service Providers may provide the search services ("Platform"). When you access or use Platform you agree to be bound by these Terms and Conditions ("Terms").
                         </p>
                     </div>
                     <div className="mt-20">
@@ -458,7 +469,7 @@ const BookingConfirmation = () => {
                             It is also clarified that, if there are any issues or claims due to your posts by way of Reviews, Ratings and Comments, then Lakshmi Sai Service Provider reserves right to take appropriate legal action against you. Further, you shall indemnify and protect Lakshmi Sai Service Provider against such claims or damages or any issues, due to your posting of such Reviews, Ratings and Comments Lakshmi Sai Service Provider takes no responsibility and assumes no liability for any content posted by you or any third party on Lakshmi Sai Service Provider site or on any mediums of Lakshmi Sai Service Provider.
                         </p>
                         <p>
-                            You further acknowledge that conduct prohibited in connection with your use of the Lakshmi Sai Service Provider (handymanserviceproviders.com) website includes, but is not limited to, breaching or attempting to breach the security of the Site.
+                            You further acknowledge that conduct prohibited in connection with your use of the Lakshmi Sai Service Provider (https://handymanapiv2.azurewebsites.net) website includes, but is not limited to, breaching or attempting to breach the security of the Site.
                         </p>
                         <div className="mt-20">
                         <h4>VII. PRIVACY POLICY</h4>
@@ -532,7 +543,7 @@ const BookingConfirmation = () => {
                         </p>
                         <p>
                             Both User and Service Provider do hereby agree that Lakshmi Sai Service Provider shall not be required to mediate or resolve any dispute or disagreement that might arise between the parties out of these transactions.
-                        </p>
+                        </p> 
                         <p>
                             Service Providers and Users are responsible for researching and complying with any applicable laws, regulations or restrictions on items, services, or manner of sale or exchange that may pertain to transactions in which they participate.
                         </p>
@@ -578,7 +589,7 @@ const BookingConfirmation = () => {
                         <div className="mt-20">
                         <h4>XII. ADDITIONAL DISCLAIMER</h4>
                         <p>
-                            Users using any of Lakshmi Sai Service Provider service across the following mediums ie. through internet ie<a href="https://handymanserviceproviders.com"> https://handymanserviceproviders.com </a>Websiteis bound by this additional disclaimer wherein they are cautioned to make proper enquiry before they (Users) rely, act upon or enter into any transaction (any kind or any sort of transaction including but not limited to monetary transaction ) with the Advertiser listed with Lakshmi Sai Service Provider.
+                            Users using any of Lakshmi Sai Service Provider service across the following mediums ie. through internet ie<a href="https://handymanapiv2.azurewebsites.net"> https://handymanapiv2.azurewebsites.net </a>Websiteis bound by this additional disclaimer wherein they are cautioned to make proper enquiry before they (Users) rely, act upon or enter into any transaction (any kind or any sort of transaction including but not limited to monetary transaction ) with the Advertiser listed with Lakshmi Sai Service Provider.
                         </p>
                         <p>
                             All the Users are cautioned that all and any information of whatsoever nature provided or received from the Advertiser/s is taken in good faith, without least suspecting the bonafides of the Advertiser/s and Lakshmi Sai Service Provider does not confirm, does not acknowledge, or subscribe to the claims and representation made by the Advertiser/s listed with Lakshmi Sai Service Provider. Further, Lakshmi Sai Service Provider is not at all responsible for any act of Advertiser/s listed at Lakshmi Sai Service Provider.
@@ -657,14 +668,9 @@ const BookingConfirmation = () => {
     </div> 
     </div>
     </div>
+    </div>
     {/* Styles for floating menu */}
 <style jsx>{`
-        .floating-menu {
-          position: fixed;
-          top: 80px; 
-          left: 20px; 
-          z-index: 1000;
-        }
         .modal-overlay {
           position: fixed;
           top: 0;

@@ -77,7 +77,7 @@ const RaiseTicketQuotation = () => {
       const apiUrl = `https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
       // Fetching the data from the API
       const fetchData = async () => {
-        try {
+        try { 
           const response = await fetch(apiUrl);
           const quotedata = await response.json();
            setTechnicianDetails(quotedata);
@@ -505,7 +505,7 @@ materialQuotation: material.map((mat) => ({
     if (!response.ok) {
       throw new Error('Failed to save Dealer ticket data');
     }
-   
+    
     alert('Ticket  Dealer saved Successfully!');
   } catch (error) {
     console.error('Error saving Dealer ticket data:', error);

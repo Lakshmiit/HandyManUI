@@ -5,6 +5,7 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import "./App.css";
 import Sidebar from './Sidebar';
+import Header from './Header.js';
 // import ForwardIcon from '@mui/icons-material/Forward';
 // import SaveAsIcon from '@mui/icons-material/SaveAs';
 // import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
@@ -13,6 +14,7 @@ import { useParams, useNavigate} from 'react-router-dom';
 const RaiseQuotation = () => {
  const navigate = useNavigate();
  const {userType} = useParams();
+ const {userId} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const { raiseTicketId } = useParams();
@@ -64,10 +66,12 @@ const RaiseQuotation = () => {
   const [showModal, setShowModal] = useState(false);
   const [materialTotal, setMaterialTotal] = useState('');
   const [rateQuotedBy, setRateQuotedBy] = useState('');
+  const [customerEmail, setCustomerEmail] = useState('');
+
 
   useEffect(() => {
-    console.log(category, materialTotal, loading, subject,status, id, fixedQuote, enterQuoteAmount, materialQuotation, raiseAQuoteId);
-  }, [category, loading, materialTotal, subject,status, id, fixedQuote, enterQuoteAmount, materialQuotation, raiseAQuoteId]);
+    console.log(category, materialTotal, customerId, loading, subject,status, id, fixedQuote, enterQuoteAmount, materialQuotation, raiseAQuoteId);
+  }, [category, loading, materialTotal, customerId, subject,status, id, fixedQuote, enterQuoteAmount, materialQuotation, raiseAQuoteId]);
 
   
   useEffect(() => {
@@ -90,6 +94,7 @@ const RaiseQuotation = () => {
         setCategory(data.category);
         setRateQuotedBy(data.rateQuotedBy);
         setCustomerId(data.customerId);
+        setCustomerEmail(data.customerEmail);
         setAssignedTo(data.assignedTo);
         setTechnicianList(data.technicianList || []);
         setDealerList(data.dealerList || []);
@@ -284,7 +289,7 @@ const RaiseQuotation = () => {
       status: status,
       internalStatus: "Assigned",
       TicketOwner: ticketData.customerId,
-      CustomerId: customerId,
+      CustomerId: ticketData.customerId,
       state: state,
       isMaterialType: isMaterialType,
       district: district,
@@ -318,6 +323,14 @@ const RaiseQuotation = () => {
       DealerList: dealerList,
       Rating: "",
       RateQuotedBy: rateQuotedBy, 
+      CustomerEmail: customerEmail,
+    OrderId: "",
+    OrderDate: "",
+    PaidAmount: "",
+    TransactionStatus: "",
+    TransactionType: "",
+    InvoiceId: "",
+    InvoiceURL: "",
     };
     try {
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
@@ -331,7 +344,7 @@ const RaiseQuotation = () => {
         throw new Error('Failed to save ticket data');
       }
       alert('Ticket saved Successfully!');
-      navigate(`/timeSlotBooking/${raiseTicketId}/${userType}/${customerId}`);
+      navigate(`/timeSlotBooking/${userType}/${userId}/${raiseTicketId}`);
     } catch (error) {
       console.error('Error saving ticket data:', error);
       window.alert('Failed to save the ticket data. Please try again later.')
@@ -454,6 +467,8 @@ const RaiseQuotation = () => {
   // const calculateGrandTotal = () => specifications.reduce((sum, spec) => sum + spec.total, 0);
  const isCustomerCare = dealerId === "customerCare";
   return (
+    <div>
+  {isMobile && <Header />}
     <div className="d-flex">
       {!isMobile && (
         <div className=" ml-0 p-0 sde_mnu">
@@ -473,7 +488,7 @@ const RaiseQuotation = () => {
 
           {showMenu && (
             <div className="sidebar-container">
-              <Sidebar />
+              <Sidebar /> 
             </div>
           )}
         </div>
@@ -958,7 +973,7 @@ const RaiseQuotation = () => {
                     <div className="mt-20">
                         <h4>I. YOUR ACCEPTANCE OF THIS AGREEMENT</h4>
                         <p>
-                            This is an agreement between you ("you" or "your") and Lakshmi Sai Service Providers, a Proprietorship firm incorporated under the Registration of Establishment – Sec 2(b) and Sec 4(2) The Andhra Pradesh (Insurance of integrated Registration and Furnishing of Combined returns under various labour  Laws by certain Establishments) Act, 2015  with its registered office at Dr.No.44-40-12, Nandhagirinagar, Akkayyapalem, Visakhapatnam - 530016 ("Lakshmi Sai Service Provider" "we," or "our") that governs your use of the search services offered by Lakshmi Sai Service Providers through its website https://handymanserviceproviders.com ("Website"), using which Lakshmi Sai Service Providers may provide the search services ("Platform"). When you access or use Platform you agree to be bound by these Terms and Conditions ("Terms").
+                            This is an agreement between you ("you" or "your") and Lakshmi Sai Service Providers, a Proprietorship firm incorporated under the Registration of Establishment – Sec 2(b) and Sec 4(2) The Andhra Pradesh (Insurance of integrated Registration and Furnishing of Combined returns under various labour  Laws by certain Establishments) Act, 2015  with its registered office at Dr.No.44-40-12, Nandhagirinagar, Akkayyapalem, Visakhapatnam - 530016 ("Lakshmi Sai Service Provider" "we," or "our") that governs your use of the search services offered by Lakshmi Sai Service Providers through its website https://handymanapiv2.azurewebsites.net ("Website"), using which Lakshmi Sai Service Providers may provide the search services ("Platform"). When you access or use Platform you agree to be bound by these Terms and Conditions ("Terms").
                         </p>
                     </div>
                     <div className="mt-20">
@@ -1037,7 +1052,7 @@ const RaiseQuotation = () => {
                             It is also clarified that, if there are any issues or claims due to your posts by way of Reviews, Ratings and Comments, then Lakshmi Sai Service Provider reserves right to take appropriate legal action against you. Further, you shall indemnify and protect Lakshmi Sai Service Provider against such claims or damages or any issues, due to your posting of such Reviews, Ratings and Comments Lakshmi Sai Service Provider takes no responsibility and assumes no liability for any content posted by you or any third party on Lakshmi Sai Service Provider site or on any mediums of Lakshmi Sai Service Provider.
                         </p>
                         <p>
-                            You further acknowledge that conduct prohibited in connection with your use of the Lakshmi Sai Service Provider (handymanserviceproviders.com) website includes, but is not limited to, breaching or attempting to breach the security of the Site.
+                            You further acknowledge that conduct prohibited in connection with your use of the Lakshmi Sai Service Provider (https://handymanapiv2.azurewebsites.net) website includes, but is not limited to, breaching or attempting to breach the security of the Site.
                         </p>
                         <div className="mt-20">
                         <h4>VII. PRIVACY POLICY</h4>
@@ -1157,7 +1172,7 @@ const RaiseQuotation = () => {
                         <div className="mt-20">
                         <h4>XII. ADDITIONAL DISCLAIMER</h4>
                         <p>
-                            Users using any of Lakshmi Sai Service Provider service across the following mediums ie. through internet ie<a href="https://handymanserviceproviders.com"> https://handymanserviceproviders.com </a>Websiteis bound by this additional disclaimer wherein they are cautioned to make proper enquiry before they (Users) rely, act upon or enter into any transaction (any kind or any sort of transaction including but not limited to monetary transaction ) with the Advertiser listed with Lakshmi Sai Service Provider.
+                            Users using any of Lakshmi Sai Service Provider service across the following mediums ie. through internet ie<a href="https://handymanapiv2.azurewebsites.net"> https://handymanapiv2.azurewebsites.net </a>Websiteis bound by this additional disclaimer wherein they are cautioned to make proper enquiry before they (Users) rely, act upon or enter into any transaction (any kind or any sort of transaction including but not limited to monetary transaction ) with the Advertiser listed with Lakshmi Sai Service Provider.
                         </p>
                         <p>
                             All the Users are cautioned that all and any information of whatsoever nature provided or received from the Advertiser/s is taken in good faith, without least suspecting the bonafides of the Advertiser/s and Lakshmi Sai Service Provider does not confirm, does not acknowledge, or subscribe to the claims and representation made by the Advertiser/s listed with Lakshmi Sai Service Provider. Further, Lakshmi Sai Service Provider is not at all responsible for any act of Advertiser/s listed at Lakshmi Sai Service Provider.
@@ -1237,6 +1252,7 @@ const RaiseQuotation = () => {
           </Button>
         </div>
       </Form>
+    </div>
     </div>
     {/* Styles for floating menu */}
 <style jsx>{`

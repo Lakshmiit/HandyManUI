@@ -12,7 +12,7 @@ import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import "./App.css";
 
 const RaiseTicketNotification = () => {
-  const [assignedTo, setAssignedTo] = useState("");
+  const [assignedTo, setAssignedTo] = useState(""); 
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [ticketData, setTicketData] = useState([]);

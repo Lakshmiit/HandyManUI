@@ -3,6 +3,7 @@ import { Button, Form, Row, Col } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import Sidebar from './Sidebar';
+import Header from './Header.js';
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
 // import { FaEdit} from 'react-icons/fa'; // Correct icon import
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
@@ -31,7 +32,7 @@ const RaiseQuoteTechnician = () => {
   // const [requiredMaterials, setRequiredMaterials] = useState([{material: "", quantity: "", price: ""}]); 
   const [loading, setLoading] = useState(true);
   const [attachments, setAttachments] = useState([]);
-  const [customerId, setCustomerId] = useState(''); 
+  const [userId, setCustomerId] = useState(''); 
   const [zipCode,setzipCode]=useState('');
   const [status, setStatus] = useState("");
   const [assignedTo, setAssignedTo] = useState('');
@@ -53,7 +54,7 @@ const RaiseQuoteTechnician = () => {
   const [userType] = useState('technician');
   const { selectedUserType} = useParams();
   const {category} = useParams();
-  const {technicianId} = useParams();
+  // const {userId} = useParams();
   const [fullName, setFullName] = useState('');
   // const [internalStatus, setInternalStatus] = useState('');
   // const [ticketId, setTicketId] = useState('');
@@ -62,8 +63,8 @@ const RaiseQuoteTechnician = () => {
   // const [serviceCharge, setServiceCharges] = useState('10');
   // const [gstCharge, setGSTCharge] = useState('18');
   useEffect(() => {
-    console.log(ticketData, status, id, technicianData, customerId);
-  }, [ticketData, status, id, technicianData, customerId]); 
+    console.log(ticketData, status, id, technicianData, userId);
+  }, [ticketData, status, id, technicianData, userId]); 
 
   // alert(enableForward);
 
@@ -233,7 +234,7 @@ const RaiseQuoteTechnician = () => {
 
 //   const handleUpdateTicket = async (e) => {
 //     e.preventDefault();
-
+ 
 //     try {
 //         // Step 1: Get existing technician list
 //         const existingTechnicianList = ticketData.TechnicianList || [];
@@ -315,7 +316,7 @@ const handleUpdateTicket = async (e) => {
       const existingTechnicianList = ticketData.technicianList || [];
 
       
-      const newTechnicians = technicianId ? technicianId.split(",").map(id => id.trim()) : [];
+      const newTechnicians = userId ? userId.split(",").map(id => id.trim()) : [];
 
       
       const updatedTechnicianList = Array.from(new Set([...existingTechnicianList, ...newTechnicians]));
@@ -337,8 +338,8 @@ const handleUpdateTicket = async (e) => {
           category: ticketData.category,  
           assignedTo: "Technical Agency",
           internalStatus: "Pending", 
-          ticketOwner: ticketData.customerId,  
-          customerId: ticketData.customerId, 
+          ticketOwner: userId,  
+          customerId: userId, 
           state: state,  
           isMaterialType: isMaterialType, 
           district: district, 
@@ -398,9 +399,9 @@ const handleUpdateTicket = async (e) => {
       id :"string",
       quotedDate: new Date(), 
       raiseAQuoteId: "string",
-      CustomerId: ticketData.customerId,
-      ticketId: ticketData.raiseTicketId,
-      technicianId: technicianId,
+      CustomerId:userId,
+      ticketId: userId,
+      technicianId: userId,
       enterQuoteAmount: enterQuoteAmount.toString(),
       fixedQuote: fixedQuote.toString(),
       discount: discount.toString(),
@@ -450,7 +451,7 @@ const handleUpdateTicket = async (e) => {
       }
      
       alert('Ticket  Technician  saved Successfully!');
-      // window.location.href = `https://handymanserviceproviders.com/CustomerProfilePage?ReactToken=${technicianId}$${userType}`;
+      // window.location.href = `https://handymanapiv2.azurewebsites.net/CustomerProfilePage?ReactToken=${technicianId}$${userType}`;
     } catch (error) {
       console.error('Error saving Technician ticket data:', error);
       window.alert('Failed to save the Technician ticket data. Please try again later.')
@@ -458,11 +459,11 @@ const handleUpdateTicket = async (e) => {
   };
 
   useEffect(() => {
-    if (raiseTicketId && technicianId) {
+    if (raiseTicketId && userId) {
       const fetchtechnicianData = async () => {
         try {
           const technicianResponse = await fetch(
-            `https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByTechnicianId?raiseAQuotetId=${raiseTicketId}&TechnicianId=${technicianId}`
+            `https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByTechnicianId?raiseAQuotetId=${raiseTicketId}&TechnicianId=${userId}`
           );
           if (!technicianResponse.ok) {
             throw new Error('Failed to fetch technician data');
@@ -505,7 +506,7 @@ const handleUpdateTicket = async (e) => {
       };
       fetchtechnicianData();
     }
-  }, [raiseTicketId, technicianId]);
+  }, [raiseTicketId, userId]);
 
 
 // const handleTechnicianTicket = async (e) => {
@@ -550,7 +551,7 @@ const handleUpdateTicket = async (e) => {
     e.preventDefault();
     handleUpdateTicket(e);
     handleSaveTicket(e);
-    navigate(`/notificationTechnician/${userType}/${category}/${district}/${technicianId}`);
+    navigate(`/notificationTechnician/${userType}/${userId}/${category}/${district}`);
   };
 
 
@@ -677,6 +678,8 @@ setTotalAmount(roundedGrandTotal);
   }
 
   return (
+    <div>
+  {isMobile && <Header />}
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className=" ml-0 m-4 p-0 sde_mnu h-90">
@@ -778,7 +781,7 @@ setTotalAmount(roundedGrandTotal);
               <Form.Control
                 type="text"
                 name="ticketOwner"
-                value={ticketData.customerId}
+                value={userId}
                 onChange={handleChange}
                 placeholder="Ticket Owner"
                 readOnly
@@ -1200,7 +1203,7 @@ setTotalAmount(roundedGrandTotal);
       
         {/* Save Button */}
         <div className="mt-4 text-end">
-          <Link to={`/technicianQuoteNotification/${userType}/${category}/${district}/${technicianId}`} className="btn btn-warning text-white mx-2" title='Back'>
+          <Link to={`/technicianQuoteNotification/${userType}/${userId}/${category}/${district}`} className="btn btn-warning text-white mx-2" title='Back'>
             <ArrowLeftIcon />
           </Link>
           {/* <Link to='/raiseTicketActionView/{ticketId}' className="btn btn-warning text-white mx-2" title='Edit'> 
@@ -1217,7 +1220,7 @@ setTotalAmount(roundedGrandTotal);
           </Button> */}
         </div>
         </Form>
-
+        </div>
         {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {

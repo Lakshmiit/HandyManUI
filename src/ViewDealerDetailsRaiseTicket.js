@@ -5,6 +5,7 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import "./App.css";
 import Sidebar from './Sidebar';
+import Header from './Header.js';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import {Link, useParams} from 'react-router-dom';
 
@@ -47,7 +48,7 @@ const RaiseQuotationDealerDetails = () => {
 const {category} = useParams();
 const [dealerData, setDealerData] = useState('');
 const {userType} = useParams();
-const {dealerId} = useParams();
+const {userId} = useParams();
 const [technicianId, setTechnicianId] = useState('');
 const [rateQuotedBy, setRateQuotedBy] = useState('');
 
@@ -129,7 +130,7 @@ const [rateQuotedBy, setRateQuotedBy] = useState('');
       useEffect(() => {
         const fetchDealerData = async () => {
           try {
-            const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuoteByDealer/GetRaiseAQuoteDealerDetailsByid?raiseTicketId=${raiseTicketId}&dealerId=${dealerId}`);
+            const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuoteByDealer/GetRaiseAQuoteDealerDetailsByid?raiseTicketId=${raiseTicketId}&dealerId=${userId}`);
             if (!response.ok) {
               throw new Error('Failed to fetch ticket data');
             }
@@ -149,7 +150,7 @@ const [rateQuotedBy, setRateQuotedBy] = useState('');
           }
         };
         fetchDealerData();
-      }, [raiseTicketId, dealerId]);
+      }, [raiseTicketId, userId]);
 
   const handleSaveTicket = async (e) => {
     e.preventDefault();
@@ -190,7 +191,7 @@ const [rateQuotedBy, setRateQuotedBy] = useState('');
       Option2Day: "",
       Option2Time: "",
       TechnicianList: technicianId,
-      DealerList: dealerId,
+      DealerList: userId,
       Rating: "",
       RateQuotedBy: rateQuotedBy,
     };
@@ -202,7 +203,7 @@ const [rateQuotedBy, setRateQuotedBy] = useState('');
         },
         body: JSON.stringify(payload),
       });
-      if (!response.ok) {
+      if (!response.ok) { 
         throw new Error('Failed to save ticket data');
       }
       alert('Ticket saved Successfully!');
@@ -227,6 +228,8 @@ const [rateQuotedBy, setRateQuotedBy] = useState('');
   }
   
   return (
+    <div>
+  {isMobile && <Header />}
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className=" ml-0 m-4 p-0 sde_mnu h-90">
@@ -552,11 +555,12 @@ const [rateQuotedBy, setRateQuotedBy] = useState('');
 
         {/* Send Quote Button */}
         <div className="mt-4 text-end">
-          <Link to={`/dealerNotificationsGrid/${userType}/${category}/${district}/${dealerId}`} className="btn btn-warning text-white mx-2" title='Back'>
+          <Link to={`/dealerNotificationsGrid/${userType}/${userId}/${category}/${district}`} className="btn btn-warning text-white mx-2" title='Back'>
             <ArrowLeftIcon />
           </Link>
         </div>
       </Form>
+    </div>
     </div>
     {/* Styles for floating menu */}
 <style jsx>{`

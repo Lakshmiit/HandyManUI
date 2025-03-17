@@ -359,7 +359,7 @@ const Notification = () => {
   }, []);
 
   const fetchNotifications = async () => {
-    try {  
+    try {   
       const [raiseTicketResponse, getQuoteResponse, getDealerResponse, getOrderResponse, BookTechnicianResponse, buyProductResponse, productClosedResponse] = await Promise.all([
         fetch(
           "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications"

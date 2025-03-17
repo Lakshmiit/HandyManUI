@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Button } from "react-bootstrap";
 import Sidebar from "./Sidebar";
+import Header from './Header.js';
 import {Dashboard as MoreVertIcon,} from "@mui/icons-material";
 import { FaEye } from 'react-icons/fa';
 import  ArrowLeftIcon  from '@mui/icons-material/ArrowLeft';
@@ -11,7 +12,7 @@ const RaiseTicketNotification = () => {
   const { userType } = useParams();
   const { selectedUserType } = useParams();
   // const [enableForward] = useState('Disable');
-  const {technicianId} = useParams();
+  const {userId} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [ticketData, setTicketData] = useState([]);
@@ -28,7 +29,7 @@ useEffect(() => {
 
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingTechnicianId?category=${category}&district=${district}&technicianId=${technicianId}`;
+    const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingTechnicianId?category=${category}&district=${district}&technicianId=${userId}`;
     
     axios.get(url)
       .then((response) => {
@@ -44,7 +45,7 @@ useEffect(() => {
       .finally(() => {
         setLoading(false);
       });
-  }, [ category, district, technicianId]);
+  }, [ category, district, userId]);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -68,6 +69,8 @@ useEffect(() => {
   }
 
   return (
+    <div>
+  {isMobile && <Header />}
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className="ml-0 m-4 p-0 sde_mnu">
@@ -121,7 +124,7 @@ useEffect(() => {
                 <td>{ticket.assignedTo}</td>
                 <td className="d-flex align-items-center">
                   <Link
-                    to={`/viewDetailsRaiseQuote/${ticket.id}/${category}/${userType}/${technicianId}`}
+                    to={`/viewDetailsRaiseQuote/${userType}/${userId}/${category}/${ticket.id}`}
                     className="btn btn-info mx-2"
                     title="View"
                   >
@@ -133,13 +136,13 @@ useEffect(() => {
         </tbody>
       </table>
       ) : (
-        <div className="mobile-ticket-grid">
+        <div className="mobile-ticket-grid"> 
   {currentRaiseTicket.map((ticket, index) => (
     <div key={index} className="ticket-card">
-      <div className="ticket-header">
+      {/* <div className="ticket-header"> */}
       <strong>Customer ID:</strong> {ticket.customerId} <br />
       <strong>Ticket ID:</strong> {ticket.raiseTicketId}
-      </div>
+      {/* </div> */}
       <div className="ticket-body">
         <p><strong>Category:</strong> {ticket.category}</p>
         <p><strong>Description:</strong> {ticket.details}</p>
@@ -148,7 +151,7 @@ useEffect(() => {
       </div>
       <div className="ticket-actions">
       <Link
-        to={`/viewDetailsRaiseQuote/${ticket.id}/${category}/${userType}/${technicianId}`}
+        to={`/viewDetailsRaiseQuote/${userType}/${userId}/${category}/${ticket.id}`}
         className="btn btn-info mx-2"
         title="View"
       >
@@ -163,7 +166,7 @@ useEffect(() => {
 
       <div className="mt-4 text-end">
         <Link
-          to={`/notificationTechnician/technician/${category}/${district}/${technicianId}`}
+          to={`/notificationTechnician/${userType}/${userId}/${category}/${district}`}
           className="btn btn-warning text-white mx-2"
           title="Back"
         >
@@ -192,6 +195,7 @@ useEffect(() => {
         </nav>
       </div>
     </div>
+  </div>
   </div>
   );
 };

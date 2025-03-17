@@ -5,6 +5,7 @@ import {
   Dashboard as MoreVertIcon,
 } from '@mui/icons-material';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import Header from './Header.js';
 import Sidebar from './Sidebar';
 import { useParams } from 'react-router-dom';
 const AddressManager = () => {
@@ -12,7 +13,7 @@ const AddressManager = () => {
   const {userType} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const { customerId } = useParams(); 
+  const { userId } = useParams(); 
  const [addresses, setAddresses] = useState([]);
  const [ticketId, setTicketId] = useState('');
 //  const [showConfirmation, setShowConfirmation] = useState(false);
@@ -63,7 +64,7 @@ const AddressManager = () => {
   useEffect(() => {
     const fetchCustomerData = async () => {
       try {
-        const response = await fetch(`${API_URL}${customerId}`);
+        const response = await fetch(`${API_URL}${userId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch customer profile data');
         }
@@ -79,6 +80,7 @@ const AddressManager = () => {
           state: addr.state,
           district: addr.district,
           zipCode: addr.zipCode, 
+          emailAddress: addr.emailAddress,
           // fullName: addr.FullName,
         }));
         setAddresses(formattedAddresses);
@@ -92,13 +94,13 @@ const AddressManager = () => {
     };
   
     fetchCustomerData();
-  }, [customerId]);
+  }, [userId]);
   
     
 // Detect screen size for responsiveness
 useEffect(() => {
   const handleResize = () => setIsMobile(window.innerWidth <= 768);
-  handleResize(); // Set initial state
+  handleResize(); 
   window.addEventListener('resize', handleResize);
 
   return () => window.removeEventListener('resize', handleResize);
@@ -303,6 +305,8 @@ useEffect(() => {
     const state = primaryAddress?.state || "";
     const district = primaryAddress?.district || "";
     const pincode = primaryAddress?.zipCode || primaryAddress?.pincode || "";
+    const emailAddress = primaryAddress?.emailAddress || primaryAddress?.emailAddress || "";
+
 
     const payload = {
       RaiseTicketId:"string",
@@ -320,7 +324,7 @@ useEffect(() => {
       internalStatus:'Open',
       SupportTicketId: uuidv4(),
       id: uuidv4(),// Unique identifier for the API call
-      customerId: customerId, // Replace with actual customer ID logic
+      customerId: userId, // Replace with actual customer ID logic
       attachments: uploadedFiles.map((file) => file.src), 
       comments: commentsList.map((comment) => ({
         UpdatedDate : comment.updatedDate,
@@ -334,6 +338,7 @@ useEffect(() => {
       LowestBidderDealerId: "",
       ApprovedAmount: "",
       CustomerName: fullName, 
+      CustomerEmail: emailAddress,
       Option1Day: "",
       Option1Time: "",
       Option2Day: "",
@@ -342,6 +347,13 @@ useEffect(() => {
       DealerList: [],
       Rating: "",
       RateQuotedBy: "",
+      OrderId: "",
+      OrderDate: "",
+      PaidAmount: "",
+      TransactionStatus: "",
+      TransactionType: "",
+      InvoiceId: "",
+      InvoiceURL: "", 
     };
 
   try {
@@ -374,12 +386,12 @@ useEffect(() => {
           });
           const data = await res.json();
           setResponse(data);
-        } catch (error) {
+        } catch (error) { 
           console.error('Error sending message:', error);
         }
   
     // Redirect to CustomerProfilePage
-    window.location.href = `https://handymanserviceproviders.com/CustomerProfilePage?ReactToken=${customerId}$${userType}`;
+    window.location.href = `/profilePage/${userType}/${userId}`;
   
   } catch (error) {
     console.error('Error:', error);
@@ -492,6 +504,8 @@ useEffect(() => {
   }, [uploadedFiles]);
 
   return (
+    <div>
+      {isMobile && <Header />}
     <div className="d-flex flex-row justify-content-start align-items-start">
        {/* Sidebar for larger screens */}
        {!isMobile && (
@@ -517,7 +531,7 @@ useEffect(() => {
               </div>
           )}
         </div>
-      )}
+      )} 
 
       {/* Main Content */}
       <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
@@ -895,7 +909,7 @@ useEffect(() => {
         </Modal.Footer>
       </Modal>
 
-     
+      </div>
     </div>
 {/* Styles for floating menu */}
 <style jsx>{`

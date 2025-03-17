@@ -104,14 +104,6 @@ const PreventBackNavigation = () => {
 };
 
 function App() {
-
-    useEffect(() => {
-      const link = document.createElement("link");
-      link.href = "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200";
-      link.rel = "stylesheet";
-      document.head.appendChild(link);
-    }, []);
-  
   return (
     <Router>   
        <PreventBackNavigation />   
@@ -142,28 +134,28 @@ function App() {
             <Route path="/adminRaiseQuote" element={<AdminRaiseaQuote />} />
             <Route path="/raiseTicketNotification" element={<RaiseTicketNotifications />} />
             <Route path="/addTechnician/:userType" element={<AddTechnician />} />
-            <Route path="/technicianQuoteNotification/:userType/:category/:district/:technicianId" element={<TechnicianQuoteNotifications />} />
-            <Route path="/viewRaiseQuote/:raiseTicketId/:category/:userType/:technicianId" element={<ViewRaiseQuoteTech />} />
-            <Route path="/viewDetailsRaiseQuote/:raiseTicketId/:category/:userType/:technicianId" element={<ViewDetailsRaiseQuote />} />
+            <Route path="/technicianQuoteNotification/:userType/:userId/:category/:district" element={<TechnicianQuoteNotifications />} />
+            <Route path="/viewRaiseQuote/:userType/:userId/:category/:raiseTicketId" element={<ViewRaiseQuoteTech />} />
+            <Route path="/viewDetailsRaiseQuote/:userType/:userId/:category/:raiseTicketId" element={<ViewDetailsRaiseQuote />} />
             <Route path="/raiseTicketQuotation/:raiseTicketId" element={<RaiseTicketQuotation />} />
             <Route path="/raiseTicketBuyProducts/:raiseTicketId" element={<RaiseTicketBuyProducts />} /> 
             <Route path="/quoteNotification" element={<QuoteNotifications />} />
-            <Route path="/notificationTechnician/:userType/:category/:district/:userId" element={<NotificationTechnician />} />
+            <Route path="/notificationTechnician/:userType/:userId/:category/:district" element={<NotificationTechnician />} />
             <Route path="/customerNotification/:userType/:userId" element={<CustomerNotification />} />
-            <Route path="/viewCustomer/:userType/:customerId" element={<ViewCustomerGrid />} />
+            <Route path="/viewCustomer/:userType/:userId" element={<ViewCustomerGrid />} />
             <Route path="/ShortAdminNotifications" element={<ShortAdminNotifications />} />
-            <Route path="/customerRaiseTicketQuotation/:userType/:raiseTicketId" element={<CustomerRaiseTicketQuotation />} />
-            <Route path="/dealerNotifications/:userType/:category/:district/:userId" element={<DealerNotifications />} /> 
-            <Route path="/dealerNotificationsGrid/:userType/:category/:district/:dealerId" element={<DealerNotificationsGrid />} />
-            <Route path="/viewDealerRaiseTicket/:raiseTicketId/:userType/:category/:dealerId" element={<ViewDealerRaiseTicket />} />
-            <Route path="/viewDealerDetailsRaiseTicket/:raiseTicketId/:userType/:category/:dealerId" element={<ViewDealerDetailsRaiseTicket />} />
+            <Route path="/customerRaiseTicketQuotation/:userType/:userId/:raiseTicketId" element={<CustomerRaiseTicketQuotation />} />
+            <Route path="/dealerNotifications/:userType/:userId/:category/:district" element={<DealerNotifications />} /> 
+            <Route path="/dealerNotificationsGrid/:userType/:userId/:category/:district" element={<DealerNotificationsGrid />} />
+            <Route path="/viewDealerRaiseTicket/:userType/:userId/:category/:raiseTicketId" element={<ViewDealerRaiseTicket />} />
+            <Route path="/viewDealerDetailsRaiseTicket/:userType/:userId/:category/:raiseTicketId" element={<ViewDealerDetailsRaiseTicket />} />
             <Route path="/dealerGrid" element={<DealerGrid /> } />
             <Route path="/bidderTicketQuotation/:raiseTicketId" element={<BidderTicketQuotation /> } />
             <Route path="/timeSlotBooking/:userType/:userId/:raiseTicketId" element={<TimeSlotBooking />} />
             <Route path="/bookingConfirmation/:userType/:userId/:raiseTicketId" element={<BookingConfirmation />} />
             <Route path="/paymentConfirmation/:userType/:userId/:raiseTicketId" element={<PaymentConfirmation />} />
-            <Route path="/ticketConfirmation/:raiseTicketId/:district/:userType/:technicianId" element={<TicketConfirmation />} />
-            <Route path="/traderConfirmation/:raiseTicketId/:district/:userType/:dealerId" element={<TraderConfirmation />} />
+            <Route path="/ticketConfirmation/:userType/:userId/:district/:raiseTicketId" element={<TicketConfirmation />} />
+            <Route path="/traderConfirmation/:userType/:userId/:district/:raiseTicketId" element={<TraderConfirmation />} />
             <Route path="/raiseOrders/:userType" element={<RaiseOrdersGrid />} />
             <Route path="/customerCareConfirmation/:raiseTicketId" element={<CustomerCareConfirmation />} />
             <Route path="/customerTrackConfirmation/:userType/:userId/:raiseTicketId" element={<CustomerRaiseTicketTrack />} />

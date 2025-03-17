@@ -17,7 +17,8 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
 
 
   const raiseTicketNotifications = notifications.filter(
-    (item) => item.assignedTo === "Customer" && item.internalStatus === "Pending" && item.status === "Assigned" && item.raiseTicketId != null
+    (item) => item.assignedTo === "Customer"  && item.status === "Assigned" && item.raiseTicketId != null
+    // && item.internalStatus === "Pending"
   );
 
   const getTechnicianNotifications = notifications.filter(
@@ -149,7 +150,8 @@ const Notification = () => {
         const raiseTicketData = await raiseTicketResponse.json();
 
         const raiseTicketFiltered = raiseTicketData.filter(
-          (item) => item.assignedTo === "Customer" && item.internalStatus === "Pending" && item.status === "Assigned"  && item.raiseTicketId != null
+          (item) => item.assignedTo === "Customer"  && item.status === "Assigned"  && item.raiseTicketId != null
+          // && item.internalStatus === "Pending"
         );
         const raiseTicketCount = raiseTicketFiltered.length;
 
@@ -341,7 +343,7 @@ const Notification = () => {
                   onClick={() => {
                     navigate(`/viewCustomer/${userType}/${userId}`);
                     handleClearTicketNotifications();
-                  }}
+                  }} 
                   style={{ cursor: "pointer" }}
                 >
                   View All Notifications

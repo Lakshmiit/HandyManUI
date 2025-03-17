@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "./Sidebar";
+import Header from './Header.js';
 import {
   Dashboard as MoreVertIcon,
   ArrowBack as ArrowBackIcon,
@@ -13,20 +14,20 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
   const navigate = useNavigate();
   const {category} = useParams();
   const {userType} = useParams();
-  const {technicianId} = useParams();
+  const {userId} = useParams();
   const {district} = useParams();
 
   const getQuoteNotifications = notifications.filter((item) => item.assignedTo === "Technical Agency");
 
-  const getOrderNotifications = notifications.filter((item) => item.internalStatus === "Customer Approved" && item.lowestBidderTechnicainId === technicianId);
+  const getOrderNotifications = notifications.filter((item) => item.internalStatus === "Customer Approved" && item.lowestBidderTechnicainId === userId);
 
 
   const handleQuoteClick = (ticketId) => {
-    navigate(`/viewRaiseQuote/${ticketId}/${category}/${userType}/${technicianId}`, { state: { ticketId } });
+    navigate(`/viewRaiseQuote/${userType}/${userId}/${category}/${ticketId}`, { state: { ticketId } });
   };
 
   const handleOrderClick = (ticketId) => {
-    navigate(`/ticketConfirmation/${ticketId}/${district}/${userType}/${technicianId}`, { state: { ticketId } });
+    navigate(`/ticketConfirmation/${userType}/${userId}/${district}/${ticketId}`, { state: { ticketId } });
   };
 
   return (
@@ -116,10 +117,10 @@ const Notification = () => {
   const [glow, setGlow] = useState(false);
   const [glowQuote, setGlowQuote] = useState(false);
    const [glowOrder, setGlowOrder] = useState(false);
-  const { district, category } = useParams();
+  const { category, district } = useParams();
   const { userType } = useParams();
   // const {raiseTicketId} = useParams();
-  const { technicianId } = useParams();
+  const { userId } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -160,9 +161,9 @@ useEffect(() => {
     try {
       const [getQuoteResponse, orderResponse] = await Promise.all([
       fetch(
-        `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistTechnicianId?category=${category}&district=${district}&technicianId=${technicianId}`
+        `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistTechnicianId?category=${category}&district=${district}&technicianId=${userId}`
       ),
-      fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingTechnicianId?category=${category}&district=${district}&technicianId=${technicianId}`),
+      fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingTechnicianId?category=${category}&district=${district}&technicianId=${userId}`),
     ]);
 
       const getQuoteData = await getQuoteResponse.json();
@@ -184,7 +185,7 @@ useEffect(() => {
       //  alert(JSON.stringify(getOrderData));
        const orderTickets = getOrderData.tickets || [];
       const ordersFiltered = orderTickets.filter((item) =>
-         item.internalStatus === "Customer Approved" && item.lowestBidderTechnicainId === technicianId);
+         item.internalStatus === "Customer Approved" && item.lowestBidderTechnicainId === userId);
 
       const getOrderCount = ordersFiltered.length;
       // alert(ordersFiltered); 
@@ -207,7 +208,7 @@ useEffect(() => {
     fetchNotifications();
     const interval = setInterval(fetchNotifications, 6000);
     return () => clearInterval(interval);
-  }, [category, district, technicianId]);
+  }, [category, district, userId]);
 
 
 // useEffect(() => {
@@ -281,6 +282,8 @@ useEffect(() => {
   const handleTabClick = (tab) => setActiveTab(tab);
 
   return (
+    <div>
+  {isMobile && <Header />}
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className="ml-0 m-4 p-0 sde_mnu">
@@ -383,7 +386,7 @@ useEffect(() => {
                 <div
                   className="view-notifications text-info mx-2"
                   onClick={() => {
-                    navigate(`/technicianQuoteNotification/${userType}/${category}/${district}/${technicianId}`);
+                    navigate(`/technicianQuoteNotification/${userType}/${userId}/${category}/${district}`);
                     handleClearQuoteNotifications();
                   }}
                   style={{ cursor: "pointer" }}
@@ -393,7 +396,7 @@ useEffect(() => {
               </>
             )}
           </div>
-          
+           
           <div>
             {activeTab === "Raise A Quote Orders" && (
               <>
@@ -404,7 +407,7 @@ useEffect(() => {
                 <div
                   className="view-notifications text-info mx-2"
                   onClick={() => {
-                    navigate(`/ticketConfirmationGrid/${userType}/${district}/${technicianId}`);
+                    navigate(`/ticketConfirmationGrid/${userType}/${userId}/${district}`);
                     handleClearOrderNotifications();
                   }} 
                   style={{ cursor: "pointer" }}
@@ -415,6 +418,7 @@ useEffect(() => {
             )}
           </div>
         </div>
+      </div>
       </div>
       <style jsx>{`
         .glow {

@@ -5,6 +5,7 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import "./App.css";
 import AdminSidebar from './AdminSidebar';
+// import Header from './Header.js';
 import ForwardIcon from '@mui/icons-material/Forward';
 // import SaveAsIcon from '@mui/icons-material/SaveAs';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
@@ -65,6 +66,8 @@ const BidderTicketQuotation = () => {
   const [dealerList, setDealerList] = useState([]);
   const [materialTotal, setMaterialTotal] = useState('');
   const [rateQuotedBy, setRateQuotedBy] = useState('');
+  const [customerEmail, setCustomerEmail] = useState('');
+
     useEffect(() => {
         console.log(subject, loading, materialTotal, isWithMaterial, enterQuoteAmount, fixedQuote, materialQuotation, raiseAQuoteId, id);
       }, [subject, loading, materialTotal, isWithMaterial, enterQuoteAmount, fixedQuote, materialQuotation, raiseAQuoteId, id]);
@@ -182,6 +185,7 @@ const BidderTicketQuotation = () => {
             setStatus(data.status);
             setDetails(data.details);
             setFullName(data.customerName);
+            setCustomerEmail(data.customerEmail);
             setRequestType(data.requestType || 'Without Material');
             setAttachments(data.attachments);
             // setSpecifications(data.materials || [{ material: "", quantity: "", price: "", total: "" }]);
@@ -433,11 +437,19 @@ const BidderTicketQuotation = () => {
       Option1Day: "",
       Option1Time: "",
       Option2Day: "",
-      Option2Time: "",
+      Option2Time: "", 
       TechnicianList: technicianList,
       DealerList: dealerList,
       Rating: "", 
       RateQuotedBy: rateQuotedBy,
+      CustomerEmail: customerEmail,
+    OrderId: "",
+    OrderDate: "",
+    PaidAmount: "",
+    TransactionStatus: "",
+    TransactionType: "",
+    InvoiceId: "",
+    InvoiceURL: "",
     };
     try {
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
@@ -1074,6 +1086,7 @@ const BidderTicketQuotation = () => {
         </div>
       </Form>
     </div>
+
     {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {

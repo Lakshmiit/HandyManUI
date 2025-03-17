@@ -34,6 +34,7 @@ const RaiseActionView = () => {
   const [assignedTo, setAssignedTo] = useState('');
   const [newPhotoCount , setPhotoCount] = useState(0);
   const [fullName, setFullName] = useState('');
+  const [customerEmail, setCustomerEmail] = useState('');
   
   useEffect(() => {
     console.log(ticketData, status);
@@ -52,7 +53,7 @@ const RaiseActionView = () => {
         setState(data.state);
         setDistrict(data.district);
         setzipCode(data.zipCode);
-        setAddress(data.address);
+        setAddress(data.address); 
         setId(data.id);
         setCustomerId(data.customerId);
         setIsWithMaterial(data.isMaterialType);
@@ -61,7 +62,7 @@ const RaiseActionView = () => {
         setFullName(data.customerName);
         setRequestType(data.requestType || 'Without Material');
         setSpecifications(data.materials || [{ material: "", quantity: "" }]);
-
+        setCustomerEmail(data.customerEmail);
         //setSpecifications(productData.specifications || [{ label: "", value: "" }]);
         setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: ""}])
         const imageRequests =
@@ -203,6 +204,14 @@ const RaiseActionView = () => {
       DealerList: [],
       Rating: "",
       RateQuotedBy: "",
+      CustomerEmail: customerEmail,
+    OrderId: "",
+    OrderDate: "",
+    PaidAmount: "",
+    TransactionStatus: "",
+    TransactionType: "",
+    InvoiceId: "",
+    InvoiceURL: "",
     };
     try {
       

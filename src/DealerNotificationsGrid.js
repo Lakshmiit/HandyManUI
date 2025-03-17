@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import axios from "axios";
 import Sidebar from "./Sidebar";
+import Header from './Header.js';
 import { Link, useParams } from "react-router-dom";
 import { FaEye, FaTrash } from "react-icons/fa";
 import {
@@ -14,7 +15,7 @@ import "./App.css";
 const RaiseTicketNotification = () => {
   const { userType } = useParams();
   const { selectedUserType } = useParams();
-  const {dealerId} = useParams();
+  const {userId} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [ticketData, setTicketData] = useState([]);
@@ -32,7 +33,7 @@ useEffect(() => {
   }, [ticketData]);
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingDealerId?category=${category}&district=${district}&dealerId=${dealerId}`;
+    const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingDealerId?category=${category}&district=${district}&dealerId=${userId}`;
     axios
       .get(url)
       .then((response) => {
@@ -46,7 +47,7 @@ useEffect(() => {
       .finally(() => {
         setLoading(false);
       });
-  }, [district, category, dealerId]);
+  }, [district, category, userId]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -94,6 +95,8 @@ useEffect(() => {
   }
 
   return (
+    <div>
+  {isMobile && <Header />}
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className="ml-0 m-4 p-0 sde_mnu">
@@ -147,7 +150,7 @@ useEffect(() => {
                 <td>{ticket.assignedTo}</td>
                 <td className="d-flex align-items-center">
                   <Link
-                    to={`/viewDealerDetailsRaiseTicket/${ticket.id}/${userType}/${category}/${dealerId}`}
+                    to={`/viewDealerDetailsRaiseTicket/${userType}/${userId}/${category}/${ticket.id}`}
                     className="btn btn-info mx-2"
                   >
                     <FaEye />
@@ -164,16 +167,16 @@ useEffect(() => {
                 </td>
               </tr>
             ))}
-          </tbody>
+          </tbody> 
         </table>
         ) : (
           <div className="mobile-ticket-grid">
   {currentRaiseTicket.map((ticket, index) => (
     <div key={index} className="ticket-card">
-      <div className="ticket-header">
+      {/* <div className="ticket-header"> */}
       <strong>Customer ID:</strong> {ticket.customerId} <br />
       <strong>Ticket ID:</strong> {ticket.raiseTicketId}
-      </div>
+      {/* </div> */}
       <div className="ticket-body">
         <p><strong>Category:</strong> {ticket.category}</p>
         <p><strong>Description:</strong> {ticket.details}</p>
@@ -182,7 +185,7 @@ useEffect(() => {
       </div>
       <div className="ticket-actions">
       <Link
-        to={`/viewDealerDetailsRaiseTicket/${ticket.id}/${userType}/${category}/${dealerId}`}
+        to={`/viewDealerDetailsRaiseTicket/${userType}/${userId}/${category}/${ticket.id}`}
         className="btn btn-info mx-2"
       >
         <FaEye />
@@ -204,7 +207,7 @@ useEffect(() => {
         )}
       </>
         <div className="mt-4 text-end">
-          <Link to={`/dealerNotifications/dealer/${category}/${district}/${dealerId}`} className="btn btn-warning text-white mx-2" title='Back'>
+          <Link to={`/dealerNotifications/${userType}/${userId}/${category}/${district}`} className="btn btn-warning text-white mx-2" title='Back'>
             <ArrowLeftIcon />
           </Link>
         </div>
@@ -234,6 +237,7 @@ useEffect(() => {
           </nav>
         </div>
       </div>
+      </div> 
       {/* Styles for floating menu */}
       <style jsx>{`
         .floating-menu {

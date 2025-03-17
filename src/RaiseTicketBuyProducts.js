@@ -58,6 +58,9 @@ const RaiseQuotation = () => {
     const [category, setCategory] = useState('');
     const [technicianId, setTechnicianId] = useState([]);
     const {userType} = useParams();
+    const [customerEmail, setCustomerEmail] = useState('');
+
+
 
     useEffect(() => {
       console.log(subject, loading, isWithMaterial, id, raiseAQuoteId, totalAmount, enterQuoteAmount, fixedQuote);
@@ -196,6 +199,7 @@ useEffect(() => {
             setTechnicianId(data.technicianList || []);
             // alert(data.technicianList);
             setCustomerId(data.customerId);
+            setCustomerEmail(data.customerEmail);
             setIsWithMaterial(data.isMaterialType);
             setAssignedTo(data.assignedTo);
             setStatus(data.status);
@@ -346,6 +350,14 @@ useEffect(() => {
       DealerList: [],
       Rating: "",
       RateQuotedBy: rateQuotedBy,
+      CustomerEmail: customerEmail,
+    OrderId: "",
+    OrderDate: "",
+    PaidAmount: "",
+    TransactionStatus: "",
+    TransactionType: "",
+    InvoiceId: "",
+    InvoiceURL: "",
     };
     try {
       
@@ -715,7 +727,7 @@ const handleUpdateTicket = async (e) => {
           <option value="Civil Waterproofing Materials">Civil Waterproofing Materials</option>
         </Form.Control>
         {error && <div style={{ color: "red", marginTop: "5px" }}>{error}</div>}
-      </Form.Group>
+      </Form.Group> 
     </Col>
   </Row>
         {/* Assigned To */}

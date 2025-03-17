@@ -1,5 +1,6 @@
 import React, { useEffect, useState} from 'react';
 import Sidebar from './Sidebar';
+import Header from './Header.js';
 import { Button } from 'react-bootstrap';
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
 // import image from './img/technician.png';
@@ -10,7 +11,8 @@ import { useParams } from "react-router-dom";
 
 const PaymentConfirmation = () => {
   // const Navigate = useNavigate();
-  // const {userType} = useParams();
+  const {userType} = useParams();
+  //  const {userId} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const {raiseTicketId} = useParams();
@@ -24,7 +26,7 @@ const PaymentConfirmation = () => {
   const [specifications, setSpecifications] = useState([{ material: "", quantity: "", price: "", total: "" }]);
   const [commentsList, setCommentsList] = useState([{updatedDate: new Date(), commentText: ""}]); 
   const [requestType, setRequestType] = useState('');
-  const [customerId, setCustomerId] = useState(''); 
+  const [userId, setCustomerId] = useState(''); 
   const [status, setStatus] = useState(''); 
   const [state, setState] = useState('');
   const [district, setDistrict] = useState('')
@@ -66,6 +68,7 @@ const PaymentConfirmation = () => {
   const [rateQuotedBy, setRateQuotedBy] = useState(''); 
   const [dealerData, setDealerData] = useState(''); 
   const [dealerPhoneNumber, setDealerPhoneNumber] = useState(''); 
+  const [customerEmail, setCustomerEmail] = useState('');
 
 
 
@@ -109,6 +112,7 @@ const PaymentConfirmation = () => {
         setAssignedTo(data.assignedTo);
         setStatus(data.status);
         setFullName(data.customerName);
+        setCustomerEmail(data.customerEmail);
         setApprovedAmount(data.approvedAmount);
         setOption1Day(data.option1Day || '');
         setOption2Day(data.option2Day || '');
@@ -286,9 +290,9 @@ const PaymentConfirmation = () => {
       Category: category,
       AssignedTo: assignedTo,
       id: raiseTicketId,
-      status: status,
+      status: status, 
       internalStatus: "Customer Approved",
-      CustomerId: customerId,
+      CustomerId: userId,
       State: state,
       LowestBidderTechnicainId: lowestBidder,
       LowestBidderDealerId: lowestDealerBidder,
@@ -315,6 +319,14 @@ const PaymentConfirmation = () => {
       DealerList: dealerId,
       Rating: "",
       RateQuotedBy: rateQuotedBy,
+      CustomerEmail: customerEmail,
+    OrderId: "",
+    OrderDate: "",
+    PaidAmount: "",
+    TransactionStatus: "",
+    TransactionType: "",
+    InvoiceId: "",
+    InvoiceURL: "",
     };
   
     try { 
@@ -330,6 +342,7 @@ const PaymentConfirmation = () => {
       }
       alert('Ticket saved Successfully!');
       setShowConfirmation(true);
+
     } catch (error) {
       console.error('Error saving ticket data:', error);
       window.alert('Failed to save the ticket data. Please try again later.');
@@ -381,6 +394,15 @@ const PaymentConfirmation = () => {
 
 const handlePaymentTicket = async (e) => {
   e.preventDefault();
+  if (!selectedPayment) {
+    setError("Please select at least one payment method.");
+    return;
+  }
+
+  if (!isChecked) {
+    alert("You must accept the terms and conditions.");
+    return; 
+  } 
 
   const payload1 = {
     id: "string",
@@ -421,8 +443,21 @@ const handlePaymentTicket = async (e) => {
       setTechnicianConfirmationCode(data.technicianConfirmationCode);
       return data.technicianConfirmationCode;
     } 
-    alert('Payment Done successfully!');
-    // handleSendSMSLowestBidder(e);
+    setId(data.id);
+    // alert(id);
+  //   if (selectedPayment === 'online') {
+  //     window.alert(`We are Redirecting to the Payment Page! Your reference number is ${ticketData.raiseTicketId}. Technician will contact you shortly.`);
+  //       window.location.href=`https://handymanserviceproviders.com/PaymentPage/${id}`;
+  //     } else if (selectedPayment === 'technician') {
+  //      window.alert(`Thank You for choosing the HandyMan Services! Your reference number is ${ticketData.raiseTicketId}. Technician will contact you shortly.`);
+  //      window.location.href = `/profilePage/${userType}/${userId}`;
+    
+  //     }
+  // //  handleSendSMSLowestBidder(e);
+
+  //   window.alert(`Thank You for choosing the HandyMan Services! Your reference number is ${ticketData.raiseTicketId}. Technician will contact you shortly.`);
+  //   window.location.href = `/profilePage/${userType}/${userId}`;
+    
   } catch (error) {
     console.error('Error:', error);
     window.alert('Failed to create the payment. Please try again later.');
@@ -447,6 +482,19 @@ const handleSendSMSLowestBidder = async (technicianConfirmationCode) => {
       throw new Error('Failed to send SMS to LowestBidder');
     }
     alert('SMS to LowestBidder sent Successfully!');
+    if (selectedPayment === 'online') {
+      window.alert(`We are Redirecting to the Payment Page! Your reference number is ${ticketData.raiseTicketId}. Technician will contact you shortly.`);
+        window.location.href=`https://handymanserviceproviders.com/PaymentPage/${id}`;
+      } else if (selectedPayment === 'technician') {
+       window.alert(`Thank You for choosing the HandyMan Services! Your reference number is ${ticketData.raiseTicketId}. Technician will contact you shortly.`);
+       window.location.href = `/profilePage/${userType}/${userId}`;
+    
+      }
+  //  handleSendSMSLowestBidder(e);
+
+    // window.alert(`Thank You for choosing the HandyMan Services! Your reference number is ${ticketData.raiseTicketId}. Technician will contact you shortly.`);
+    // window.location.href = `/profilePage/${userType}/${userId}`;
+
   } catch (error) {
     console.error('Error sending SMS to LowestBidder:', error);
     window.alert('Failed to sending SMS to LowestBidder. Please try again later.');
@@ -487,6 +535,8 @@ const handleSendSMSLowestBidder = async (technicianConfirmationCode) => {
   
 
   return (
+    <div>
+  {isMobile && <Header />}
     <div className="d-flex">
         {!isMobile && (
         <div className="ml-0 p-0 sde_mnu">
@@ -610,7 +660,7 @@ const handleSendSMSLowestBidder = async (technicianConfirmationCode) => {
                     <div className="mt-20">
                         <h4>I. YOUR ACCEPTANCE OF THIS AGREEMENT</h4>
                         <p>
-                            This is an agreement between you ("you" or "your") and Lakshmi Sai Service Providers, a Proprietorship firm incorporated under the Registration of Establishment – Sec 2(b) and Sec 4(2) The Andhra Pradesh (Insurance of integrated Registration and Furnishing of Combined returns under various labour  Laws by certain Establishments) Act, 2015  with its registered office at Dr.No.44-40-12, Nandhagirinagar, Akkayyapalem, Visakhapatnam - 530016 ("Lakshmi Sai Service Provider" "we," or "our") that governs your use of the search services offered by Lakshmi Sai Service Providers through its website https://handymanserviceproviders.com ("Website"), using which Lakshmi Sai Service Providers may provide the search services ("Platform"). When you access or use Platform you agree to be bound by these Terms and Conditions ("Terms").
+                            This is an agreement between you ("you" or "your") and Lakshmi Sai Service Providers, a Proprietorship firm incorporated under the Registration of Establishment – Sec 2(b) and Sec 4(2) The Andhra Pradesh (Insurance of integrated Registration and Furnishing of Combined returns under various labour  Laws by certain Establishments) Act, 2015  with its registered office at Dr.No.44-40-12, Nandhagirinagar, Akkayyapalem, Visakhapatnam - 530016 ("Lakshmi Sai Service Provider" "we," or "our") that governs your use of the search services offered by Lakshmi Sai Service Providers through its website https://handymanapiv2.azurewebsites.net ("Website"), using which Lakshmi Sai Service Providers may provide the search services ("Platform"). When you access or use Platform you agree to be bound by these Terms and Conditions ("Terms").
                         </p>
                     </div>
                     <div className="mt-20">
@@ -689,7 +739,7 @@ const handleSendSMSLowestBidder = async (technicianConfirmationCode) => {
                             It is also clarified that, if there are any issues or claims due to your posts by way of Reviews, Ratings and Comments, then Lakshmi Sai Service Provider reserves right to take appropriate legal action against you. Further, you shall indemnify and protect Lakshmi Sai Service Provider against such claims or damages or any issues, due to your posting of such Reviews, Ratings and Comments Lakshmi Sai Service Provider takes no responsibility and assumes no liability for any content posted by you or any third party on Lakshmi Sai Service Provider site or on any mediums of Lakshmi Sai Service Provider.
                         </p>
                         <p>
-                            You further acknowledge that conduct prohibited in connection with your use of the Lakshmi Sai Service Provider (handymanserviceproviders.com) website includes, but is not limited to, breaching or attempting to breach the security of the Site.
+                            You further acknowledge that conduct prohibited in connection with your use of the Lakshmi Sai Service Provider (https://handymanapiv2.azurewebsites.net) website includes, but is not limited to, breaching or attempting to breach the security of the Site.
                         </p>
                         <div className="mt-20">
                         <h4>VII. PRIVACY POLICY</h4>
@@ -809,7 +859,7 @@ const handleSendSMSLowestBidder = async (technicianConfirmationCode) => {
                         <div className="mt-20">
                         <h4>XII. ADDITIONAL DISCLAIMER</h4>
                         <p>
-                            Users using any of Lakshmi Sai Service Provider service across the following mediums ie. through internet ie<a href="https://handymanserviceproviders.com"> https://handymanserviceproviders.com </a>Websiteis bound by this additional disclaimer wherein they are cautioned to make proper enquiry before they (Users) rely, act upon or enter into any transaction (any kind or any sort of transaction including but not limited to monetary transaction ) with the Advertiser listed with Lakshmi Sai Service Provider.
+                            Users using any of Lakshmi Sai Service Provider service across the following mediums ie. through internet ie<a href="https://handymanapiv2.azurewebsites.net"> https://handymanapiv2.azurewebsites.net </a>Websiteis bound by this additional disclaimer wherein they are cautioned to make proper enquiry before they (Users) rely, act upon or enter into any transaction (any kind or any sort of transaction including but not limited to monetary transaction ) with the Advertiser listed with Lakshmi Sai Service Provider.
                         </p>
                         <p>
                             All the Users are cautioned that all and any information of whatsoever nature provided or received from the Advertiser/s is taken in good faith, without least suspecting the bonafides of the Advertiser/s and Lakshmi Sai Service Provider does not confirm, does not acknowledge, or subscribe to the claims and representation made by the Advertiser/s listed with Lakshmi Sai Service Provider. Further, Lakshmi Sai Service Provider is not at all responsible for any act of Advertiser/s listed at Lakshmi Sai Service Provider.
@@ -897,6 +947,7 @@ const handleSendSMSLowestBidder = async (technicianConfirmationCode) => {
         {/* <button className='btn btn-primary m-2' onClick={handleSendSMSLowestBidder}>Send SMS</button> */}
     </div> 
 )} 
+    </div>
     </div>
     </div>
     </div>

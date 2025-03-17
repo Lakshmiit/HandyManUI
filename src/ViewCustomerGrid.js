@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import axios from 'axios';
 import Sidebar from "./Sidebar";
+import Header from './Header.js';
 import { Link, useParams } from "react-router-dom";
 import { FaTrash, FaEye } from "react-icons/fa";
 import {
@@ -20,14 +21,14 @@ const RaiseTicketNotification = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
   const rowsPerPage = 15;
-  const { customerId } = useParams();
+  const { userId } = useParams();
  
   useEffect(() => {
     console.log(ticketData);
   }, [ticketData]);
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetRaiseTicketNotificationsByCustomerId?customerId=${customerId}`
+    const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetRaiseTicketNotificationsByCustomerId?customerId=${userId}`
 
     axios.get(url)
       .then(response => {
@@ -44,7 +45,7 @@ const RaiseTicketNotification = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, [customerId]);
+  }, [userId]);
 
   const handleDelete = (ticketId) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this ticket?');
@@ -81,8 +82,10 @@ const RaiseTicketNotification = () => {
    return <div>Loading...</div>; // Show loading message while data is fetching
  }
 
-  return ( 
-    <div className="d-flex flex-row justify-content-start align-items-start">
+  return (
+    <div>
+  {isMobile && <Header />}
+<div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className="ml-0 p-0 sde_mnu">
           <Sidebar />
@@ -133,7 +136,7 @@ const RaiseTicketNotification = () => {
                 <td>{ticket.assignedTo}</td>
                 <td className="d-flex align-items-center">
                   <Link
-                    to={`/customerRaiseTicketQuotation/${userType}/${ticket.id}`}
+                    to={`/customerRaiseTicketQuotation/${userType}/${userId}/${ticket.id}`}
                     className="btn btn-info mx-2"
                   >
                     <FaEye />   
@@ -166,7 +169,7 @@ const RaiseTicketNotification = () => {
         <p><strong>Assigned To:</strong> {ticket.assignedTo}</p>
       </div>
       <div className="ticket-actions">
-        <Link to={`/customerRaiseTicketQuotation/${userType}/${ticket.id}`} className="btn btn-info mx-2">
+        <Link to={`/customerRaiseTicketQuotation/${userType}/${userId}/${ticket.id}`} className="btn btn-info mx-2">
           <FaEye />
         </Link>
         <Button onClick={() => handleDelete(ticket.id)} className="btn btn-danger mx-2">
@@ -180,10 +183,10 @@ const RaiseTicketNotification = () => {
         )}
       </>
         <div className="mt-4 text-end">
-          <Link to={`/customerNotification/${userType}/${customerId}`} className="btn btn-warning text-white mx-2" title='Back'>
+          <Link to={`/customerNotification/${userType}/${userId}`} className="btn btn-warning text-white mx-2" title='Back'>
             <ArrowLeftIcon />
           </Link>
-        </div> 
+        </div>  
         
         {/* Pagination */}
         <div className="d-flex justify-content-center mt-3">
@@ -210,7 +213,7 @@ const RaiseTicketNotification = () => {
           </nav>
         </div>
       </div>
-    
+    </div>
       {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {

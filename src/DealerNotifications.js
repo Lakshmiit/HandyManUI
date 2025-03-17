@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "./Sidebar";
+import Header from './Header.js';
 import {
   Dashboard as MoreVertIcon,
   ArrowBack as ArrowBackIcon,
@@ -12,20 +13,20 @@ import "./App.css";
 const NotificationsList = ({ notifications, highlightedItem }) => {
   const navigate = useNavigate();
   const {userType} = useParams();
-  const {dealerId} = useParams();
+  const {userId} = useParams();
   const {category} = useParams();
   const {district} = useParams();
 
   const getQuoteNotifications = notifications.filter((item) => item.assignedTo === "Dealer/Trader" && item.internalStatus !== "Customer Approved");
 
-  const getOrdersNotifications = notifications.filter((item) => item.internalStatus === "Customer Approved" && item.lowestBidderDealerId === dealerId);
+  const getOrdersNotifications = notifications.filter((item) => item.internalStatus === "Customer Approved" && item.lowestBidderDealerId === userId);
 
   const handleQuoteClick = (ticketId) => {
-    navigate(`/viewDealerRaiseTicket/${ticketId}/${userType}/${category}/${dealerId}`, { state: { ticketId } });
+    navigate(`/viewDealerRaiseTicket/${userType}/${userId}/${category}/${ticketId}`, { state: { ticketId } });
   };
 
   const handleOrdersClick = (ticketId) => {
-    navigate(`/traderConfirmation/${ticketId}/${district}/${userType}/${dealerId}`, { state: { ticketId } });
+    navigate(`/traderConfirmation/${userType}/${userId}/${district}/${ticketId}`, { state: { ticketId } });
   };
 
   return ( 
@@ -118,7 +119,7 @@ const Notification = () => {
   const [glowOrder, setGlowOrder] = useState(false);
   const { district, category } = useParams();
   const { userType } = useParams();
-  const { dealerId } = useParams();
+  const { userId } = useParams();
   // const { raiseTicketId } = useParams();
   const navigate = useNavigate();
 
@@ -134,9 +135,9 @@ const Notification = () => {
       try {
         const [getQuoteResponse, orderResponse] = await Promise.all([
         fetch(
-          `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistDealerId?category=${category}&district=${district}&dealerId=${dealerId}`
+          `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistDealerId?category=${category}&district=${district}&dealerId=${userId}`
         ),
-        fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingDealerId?category=${category}&district=${district}&dealerId=${dealerId}`),
+        fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingDealerId?category=${category}&district=${district}&dealerId=${userId}`),
       ]);
         const getQuoteData = await getQuoteResponse.json();
         const tickets = getQuoteData.tickets || [];
@@ -154,7 +155,7 @@ const Notification = () => {
           // alert(JSON.stringify(getOrderData));
           // alert(JSON.stringify(tickets));
           const orderTickets = getOrderData.tickets || [];
-          const getOrderFiltered = orderTickets.filter((item) => item.internalStatus === "Customer Approved" && item.lowestBidderDealerId === dealerId);
+          const getOrderFiltered = orderTickets.filter((item) => item.internalStatus === "Customer Approved" && item.lowestBidderDealerId === userId);
           
           const getOrderCount = getOrderFiltered.length;
           // alert(getOrderCount);
@@ -172,7 +173,7 @@ const Notification = () => {
         }
       };
       fetchNotifications();
-   }, [district, category,dealerId]);
+   }, [district, category, userId]);
   
 
   // useEffect(() => {
@@ -225,6 +226,8 @@ const Notification = () => {
   const handleTabClick = (tab) => setActiveTab(tab);
 
   return (
+    <div>
+  {isMobile && <Header />}
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className="ml-0 m-4 p-0 sde_mnu">
@@ -322,13 +325,13 @@ const Notification = () => {
             {activeTab === "Raise A Quote Buy Products" && (
               <>
                 <NotificationsList
-                  notifications={quoteNotifications}
+                  notifications={quoteNotifications} 
                   highlightedItem={highlightedQuote}
                 />
                 <div
                   className="view-notifications text-info mx-2"
                   onClick={() => {
-                    navigate(`/dealerNotificationsGrid/${userType}/${category}/${district}/${dealerId}`);
+                    navigate(`/dealerNotificationsGrid/${userType}/${userId}/${category}/${district}`);
                     handleClearQuoteNotifications();
                   }}
                   style={{ cursor: "pointer" }}
@@ -349,7 +352,7 @@ const Notification = () => {
                 <div
                   className="view-notifications text-info mx-2"
                   onClick={() => {
-                    navigate(`/traderConfirmationGrid/${userType}/${district}/${dealerId}`);
+                    navigate(`/traderConfirmationGrid/${userType}/${district}/${userId}`);
                     handleClearOrdersNotifications();
                   }}
                   style={{ cursor: "pointer" }}
@@ -360,6 +363,7 @@ const Notification = () => {
             )}
           </div>
         </div>
+      </div>
       </div>
       <style jsx>{`
         .glow {
