@@ -2,6 +2,7 @@ import React, { useState, useEffect} from "react";
 import "./App.css";
 // import { v4 as uuidv4 } from 'uuid'; 
 import AdminSidebar from './AdminSidebar';
+// import Header from './Header.js';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Dashboard as MoreVertIcon} from '@mui/icons-material';
@@ -10,7 +11,7 @@ import { Button } from 'react-bootstrap'; // Import Bootstrap components for mod
 // import axios from 'axios';
 
 const AdminBuyProductOrders = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); 
   // const {userType} = useParams();
   const {buyProductId} = useParams();
   const [buyProductTicketId, setBuyProductTicketId] = useState('');
@@ -65,6 +66,8 @@ const [customerName, setCustomerName] = useState('');
 const [date, setDate] = useState('');
 const [warrantyPeriod, setWarrantyPeriod] = useState('');
 const [error, setError] = useState('');
+const [emailAddress, setEmailAddress] = useState("");
+
 
 
   const location = useLocation();
@@ -176,7 +179,7 @@ useEffect(() => {
        setTechnicianDetails(data.technicianDetils);
        setInvoiceDetails(data.invoiceDetails);
        setDeliveryDate(data.deliveryDate);
-
+       setEmailAddress(data.customerEmail);
         } catch (error) {
         console.error('Error fetching product data:', error);
       } finally {
@@ -186,6 +189,32 @@ useEffect(() => {
     fetchProductData();
   }, [buyProductId]);
 
+  const handleDeliveryDateChange = (e) => {
+    setDeliveryDate(e.target.value);
+    setError((prevErrors) => ({ ...prevErrors, deliveryDate: "" }));
+  };
+  
+  const handleTechnicianDetailsChange = (e) => {
+    setTechnicianDetails(e.target.value);
+    setError((prevErrors) => ({ ...prevErrors, technicianDetails: "" }));
+  };
+  
+  const handleInvoiceDetailsChange = (e) => {
+    setInvoiceDetails(e.target.value);
+    setError((prevErrors) => ({ ...prevErrors, invoiceDetails: "" }));
+  };
+  
+  const handleWarrantyPeriodChange = (e) => {
+    setWarrantyPeriod(e.target.value);
+    setError((prevErrors) => ({ ...prevErrors, warrantyPeriod: "" }));
+  };
+  
+  const handleAssignedToChange = (e) => {
+    setAssignedTo(e.target.value);
+    setError((prevErrors) => ({ ...prevErrors, assignedTo: "" }));
+  };
+  
+
   const validateForm = () => {
     let newErrors = {};
 
@@ -193,7 +222,7 @@ useEffect(() => {
     if (!technicianDetails) newErrors.technicianDetails = "Technician Details are required.";
     if (!invoiceDetails) newErrors.invoiceDetails = "Invoice Details are required.";
     if (!warrantyPeriod) newErrors.warrantyPeriod = "Warranty Period is required.";
-    if (!assignedTo) newErrors.assignedTo = "Please select an assignee.";
+    if (!assignedTo) newErrors.assignedTo = "Please select an assignedTo.";
     if (productInvoice.length === 0) newErrors.productInvoice = "Please upload an invoice.";
 
     setError(newErrors);
@@ -249,9 +278,17 @@ useEffect(() => {
       ProductView: "Assigned",
       InvoiceDetails: invoiceDetails,
       UploadInvoice: uploadedFiles.map((file) => file.src),
-      WarrantyPeriod: warrantyPeriod,
+      WarrentyPeriod: warrantyPeriod,
+      CustomerEmail: emailAddress,
+      OrderId: "",
+      OrderDate: "",
+      PaidAmount: "",
+      TransactionStatus: "",
+      TransactionType: "",
+      InvoiceId: "",
+      InvoiceURL: "",
     };
-  
+   
     try {
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/${buyProductId}`,{
         method: 'PUT',
@@ -505,7 +542,8 @@ useEffect(() => {
 
 
   return (
-    <div className="d-flex flex-row justify-content-start align-items-start">
+   
+<div className="d-flex flex-row justify-content-start align-items-start">
       {/* Sidebar menu for Larger Screens */}
       {!isMobile && (
         <div className=" ml-0 p-0 adm_mnu h-90">
@@ -557,9 +595,10 @@ useEffect(() => {
               <div className="form-group">
                 <label>Customer Address <span className="req_star">*</span></label>
                 <input
+                as="textarea"
                 type="text"
                 className="form-control"
-                value={address}
+                value={`${address}, ${district}, ${state}, ${pincode} ${mobileNumber}`}
                 onChange={(e) => setAddress(e.target.value)}
                 placeholder="Customer Address"
                 readOnly
@@ -739,7 +778,7 @@ useEffect(() => {
                 type="date"
                 className="form-control "
                 value={deliveryDate}
-                onChange={(e) => setDeliveryDate(e.target.value)}
+                onChange={handleDeliveryDateChange}
                 placeholder="dd-mm-yyyy"
                 required
               />
@@ -752,7 +791,7 @@ useEffect(() => {
                 type="text"
                 className="form-control"
                 value={technicianDetails}
-                onChange={(e) => setTechnicianDetails(e.target.value)}
+                onChange={handleTechnicianDetailsChange}
                 placeholder="Enter Technician Details"
                 required
               />
@@ -764,7 +803,7 @@ useEffect(() => {
                 type="text"
                 className="form-control"
                 value={invoiceDetails}
-                onChange={(e) => setInvoiceDetails(e.target.value)}
+                onChange={handleInvoiceDetailsChange}
                 placeholder="Enter Invoice Details"
                 required
               />
@@ -775,7 +814,7 @@ useEffect(() => {
                 type="date"
                 className="form-control"
                 value={warrantyPeriod}
-                onChange={(e) => setWarrantyPeriod(e.target.value)}
+                onChange={handleWarrantyPeriodChange}
                 placeholder="DD-MM-YYYY"
                 required
               />
@@ -786,7 +825,7 @@ useEffect(() => {
           <input
                 type="file"
                 className="form-control"
-                multiple
+                accept="image/*" 
                 onChange={handleFileChange}
                 required
               />
@@ -834,7 +873,7 @@ useEffect(() => {
                 type="text"
                 className="form-control"
                 value={assignedTo}
-                onChange={(e) => setAssignedTo(e.target.value)}
+                onChange={handleAssignedToChange}
                 required
               >
                 <option value="">Select AssignedTo</option>

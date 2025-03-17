@@ -6,6 +6,7 @@ import {
   ArrowBack as ArrowBackIcon,
   NotificationsNone as NotificationsNoneIcon,
 } from "@mui/icons-material";
+// import Header from './Header.js';
 import { Button } from "react-bootstrap";
 import "./App.css";
 
@@ -358,7 +359,7 @@ const Notification = () => {
   }, []);
 
   const fetchNotifications = async () => {
-    try {
+    try {  
       const [raiseTicketResponse, getQuoteResponse, getDealerResponse, getOrderResponse, BookTechnicianResponse, buyProductResponse, productClosedResponse] = await Promise.all([
         fetch(
           "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications"

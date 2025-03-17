@@ -2,8 +2,9 @@ import React, { useState, useEffect} from "react";
 import "./App.css";
 // import { v4 as uuidv4 } from 'uuid'; 
 import AdminSidebar from './AdminSidebar';
+// import Header from './Header.js';
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import { Dashboard as MoreVertIcon} from '@mui/icons-material';
 // import ForwardIcon from '@mui/icons-material/Forward';
 import { Button} from 'react-bootstrap'; // Import Bootstrap components for modal
@@ -11,7 +12,7 @@ import JSZip from "jszip";
 import { saveAs } from "file-saver";
 
 const AdminClosedBuyProductOrders = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   // const {userType} = useParams();
   const {buyProductId} = useParams();
   const [buyProductTicketId, setBuyProductTicketId] = useState('');
@@ -68,6 +69,7 @@ const [uploadInvoice, setUploadInvoice] = useState([]);
 // const [isClicked, setIsClicked] = useState(false);
 const [status, setStatus] = useState('');
 const [warrantyPeriod, setWarrantyPeriod] = useState('');
+const [emailAddress, setEmailAddress] = useState("");
 
   const location = useLocation();
  // Check if there's state passed from ViewProduct page
@@ -97,9 +99,9 @@ const [warrantyPeriod, setWarrantyPeriod] = useState('');
 }, [location.state]);
 
 useEffect(() => {
-  console.log( productData, loading, status);
-}, [productData, loading, status] );
-
+  console.log( productData, loading, status, addressType, id, customerId, date, emailAddress);
+}, [productData, loading, status, addressType, id, customerId, date, emailAddress] );
+ 
   // // Fetch customer profile data
   // useEffect(() => {
   //   const fetchProfileType = async () => {
@@ -177,7 +179,8 @@ useEffect(() => {
        setTechnicianDetails(data.technicianDetils);
        setInvoiceDetails(data.invoiceDetails);
        setTransactionDetails(data.utrTransactionNumber);
-       setWarrantyPeriod(data.warrantyPeriod);
+       setWarrantyPeriod(data.warrentyPeriod);
+       setEmailAddress(data.customerEmail);
        const imageRequests =
         data.uploadInvoice?.map((photo) => fetch(
             `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
@@ -242,66 +245,74 @@ useEffect(() => {
   // const ticketIdSuffix = String(Math.floor(Math.random() * 999) + 1).padStart(3, "0");
   // const ticketId = `${ticketIdPrefix}${ticketIdSuffix}`;
 
-  const handleGetQuotation = async (e) => {
-    e.preventDefault();
+  // const handleGetQuotation = async (e) => {
+  //   e.preventDefault();
    
-    const payload = {
-      BuyProductId: buyProductTicketId,
-      id: id,
-      date: date,
-      Address: address,
-      CustomerPhoneNumber: mobileNumber,
-      category: category,
-      status: "Pending",
-      productName: productName,
-      ProductCatalogue: productCatalogue,
-      productSize: productSize,
-      rate: rate.toString(),
-      discount: discount.toString(),
-      afterDiscountPrice: afterDiscount.toString(),
-      color: color,
-      selectedColors: selectedColors,
-      requiredQuantity: requiredQuantity.toString(),
-      totalAmount: totalAmount.toString(),
-      AssignedTo: "Customer Care",
-      DeliveryCharges: deliveryCharges,
-      ServiceCharges: serviceCharges,
-      TotalPaymentAmount: totalPaymentAmount,
-      AddressType: addressType,
-      State: state,
-      District: district,
-      ZipCode: pincode,
-      CustomerId: customerId,
-      CustomerName: customerName,
-      RequestedBy: customerName,
-      PaymentMode: paymentMode,
-      UTRTransactionNumber: transactionDetails,
-      TechnicianConfirmationCode: technicianConfirmationCode,
-      DeliveryDate: deliveryDate,
-      TechnicianDetils: technicianDetails,
-      ProductView: "Assigned",
-      InvoiceDetails: invoiceDetails,
-      UploadInvoice: uploadInvoice.map((file) => file.src),
-      WarrantyPeriod: warrantyPeriod,
-    }; 
+  //   const payload = {
+  //     BuyProductId: buyProductTicketId,
+  //     id: id,
+  //     date: date,
+  //     Address: address,
+  //     CustomerPhoneNumber: mobileNumber,
+  //     category: category,
+  //     status: "Pending",
+  //     productName: productName,
+  //     ProductCatalogue: productCatalogue,
+  //     productSize: productSize,
+  //     rate: rate.toString(),
+  //     discount: discount.toString(),
+  //     afterDiscountPrice: afterDiscount.toString(),
+  //     color: color,
+  //     selectedColors: selectedColors,
+  //     requiredQuantity: requiredQuantity.toString(),
+  //     totalAmount: totalAmount.toString(),
+  //     AssignedTo: "Customer Care",
+  //     DeliveryCharges: deliveryCharges,
+  //     ServiceCharges: serviceCharges,
+  //     TotalPaymentAmount: totalPaymentAmount,
+  //     AddressType: addressType,
+  //     State: state,
+  //     District: district,
+  //     ZipCode: pincode,
+  //     CustomerId: customerId,
+  //     CustomerName: customerName,
+  //     RequestedBy: customerName,
+  //     PaymentMode: paymentMode,
+  //     UTRTransactionNumber: transactionDetails,
+  //     TechnicianConfirmationCode: technicianConfirmationCode,
+  //     DeliveryDate: deliveryDate,
+  //     TechnicianDetils: technicianDetails,
+  //     ProductView: "Assigned",
+  //     InvoiceDetails: invoiceDetails,
+  //     UploadInvoice: uploadInvoice.map((file) => file.src),
+  //     WarrantyPeriod: warrantyPeriod,
+  //     CustomerEmail: emailAddress,
+  //     OrderId: "",
+  //     OrderDate: "",
+  //     PaidAmount: "",
+  //     TransactionStatus: "",
+  //     TransactionType: "",
+  //     InvoiceId: "",
+  //     InvoiceURL: "",
+  //   }; 
   
-    try {
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/${buyProductId}`,{
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-      if (!response.ok) {
-       throw new Error("Failed to update Buy Product Closed Details.");
-      }
-      alert('Product Order Closed Successfully!');
-      navigate(`/adminNotifications`);
-    } catch (error) {
-      console.error("Error update Buy Product Closed Details:", error);
-      window.alert('Failed to update Buy Product Closed Details. Please try again later.');    }
-  };
+  //   try {
+  //     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/${buyProductId}`,{
+  //       method: 'PUT',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(payload),
+  //     });
+  //     if (!response.ok) {
+  //      throw new Error("Failed to update Buy Product Closed Details.");
+  //     }
+  //     alert('Product Order Closed Successfully!');
+  //     navigate(`/adminNotifications`);
+  //   } catch (error) {
+  //     console.error("Error update Buy Product Closed Details:", error);
+  //     window.alert('Failed to update Buy Product Closed Details. Please try again later.');    }
+  // };
   
 
   // const handleButtonClick = () => {
@@ -544,7 +555,9 @@ useEffect(() => {
 
 
   return (
-    <div className="d-flex flex-row justify-content-start align-items-start">
+//     <div>
+// {!isMobile && <Header />}
+<div className="d-flex flex-row justify-content-start align-items-start">
       {/* Sidebar menu for Larger Screens */}
       {!isMobile && (
         <div className=" ml-0 p-0 adm_mnu h-90">
@@ -596,9 +609,10 @@ useEffect(() => {
               <div className="form-group">
                 <label>Customer Address <span className="req_star">*</span></label>
                 <input
+                as="textarea"
                 type="text"
                 className="form-control"
-                value={address}
+                value={`${address}, ${district}, ${state}, ${pincode} ${mobileNumber}`}
                 onChange={(e) => setAddress(e.target.value)}
                 placeholder="Customer Address"
                 readOnly
@@ -948,6 +962,8 @@ useEffect(() => {
             Pay On In Presence of Technician
           </label>
     </div>
+
+    {paymentMode === "technician" && (
     <div className="form-group">
               <label>Payment Transaction Details <span className="req_star">*</span></label>
               <input
@@ -959,6 +975,7 @@ useEffect(() => {
                 readOnly
               />
             </div>
+    )}
     <div className="form-group">
               <label>Delivery Date <span className="req_star">*</span></label>
               <input
@@ -1051,13 +1068,13 @@ useEffect(() => {
                 readOnly
               />
             </div>
-            <div className="mt-4 text-end">
+            {/* <div className="mt-4 text-end">
                 <Button type="submit" className="btn btn-warning text-white mx-2" 
                   onClick={handleGetQuotation} title="Closed">
                   Closed 
                 </Button>
     
-            </div> 
+            </div>  */}
 
             {/* <div className="col-md-6">
               <label>Assigned To <span className="req_star">*</span></label>

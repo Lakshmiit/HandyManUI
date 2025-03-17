@@ -29,7 +29,7 @@ const BuyProductNotificationGrid = () => {
   const [pinCodes, setPinCodes] = useState([]);
   const [assigned, setAssigned] = useState([]);
   const rowsPerPage = 15;
-
+ 
   useEffect(() => {
     setLoading(true);
     const url = `https://handymanapiv2.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForAdminList`

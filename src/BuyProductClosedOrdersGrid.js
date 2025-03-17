@@ -29,7 +29,7 @@ const BuyProductNotificationGrid = () => {
   const [pinCodes, setPinCodes] = useState([]);
   const [assigned, setAssigned] = useState([]);
   const rowsPerPage = 15;
-
+ 
   useEffect(() => {
     setLoading(true);
     const url = `https://handymanapiv2.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForAdminList`
@@ -38,7 +38,9 @@ const BuyProductNotificationGrid = () => {
         const products = response.data.map((product) => ({
           ...product,
         }));
-        const buyProducts = products.filter((product) => product.status === "Pending" && product.assignedTo === "Customer Care");
+          
+          const buyProducts = products.filter((product) =>  product.status === "Closed" );
+          // product.status === "Pending" && product.assignedTo === "Customer Care");
         setFilteredData(buyProducts);
         setProductData(buyProducts); 
 //alert(JSON.stringify(buyProducts));
