@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "./Sidebar";
+import Header from './Header.js';
 import {
   Dashboard as MoreVertIcon,
   ArrowBack as ArrowBackIcon,
@@ -18,7 +19,7 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
   );
   
   const handleOrdersClick = (buyProductId) => {
-    navigate(`/viewCustomerBuyProductOrders/${buyProductId}/${userType}`, { state: { buyProductId } });
+    navigate(`/viewCustomerBuyProductOrders/${userType}/${buyProductId}`, { state: { buyProductId } });
   };
 
   return (
@@ -74,7 +75,7 @@ const CustomerOrders = () => {
   const [activeTab, setActiveTab] = useState("");
   const navigate = useNavigate();
   const {userType} = useParams();
-  const { customerId } = useParams();
+  const { userId } = useParams();
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -85,12 +86,12 @@ const CustomerOrders = () => {
   }, []);
  
   // API Call to fetch notifications
-  useEffect(() => {
+  useEffect(() => { 
     const fetchNotifications = async () => {
       try {
         const [buyProductResponse] = await Promise.all([
           fetch(
-          `https://handymanapiv2.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForUserList?UserID=${customerId}`
+          `https://handymanapiv2.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForUserList?UserID=${userId}`
         ),
       ]);
         const productOrdersData = await buyProductResponse.json();
@@ -116,7 +117,7 @@ const CustomerOrders = () => {
       }
     };
     fetchNotifications();
-  }, [customerId]);
+  }, [userId]);
 
   const handleClearProductNotifications = () => {
     setNewProductCount(0);
@@ -128,6 +129,9 @@ const CustomerOrders = () => {
   const handleTabClick = (tab) => setActiveTab(tab);
 
   return (
+    <div>
+  {isMobile && <Header />}
+
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className="ml-0 p-0 sde_mnu">
@@ -217,7 +221,7 @@ const CustomerOrders = () => {
                 <div
                   className=" view-notifications text-info mx-2"
                   onClick={() => {
-                    navigate(`/customerbuyProductOrdersGrid/${customerId}/${userType}`);
+                    navigate(`/customerbuyProductOrdersGrid/${userType}/${userId}`);
                     handleClearProductNotifications();
                   }}
                   style={{ cursor: "pointer" }}
@@ -228,6 +232,7 @@ const CustomerOrders = () => {
             )}
           </div>
         </div>
+      </div>
       </div>
       <style jsx>{`
         .glow {

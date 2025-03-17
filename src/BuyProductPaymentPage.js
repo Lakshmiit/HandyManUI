@@ -1,6 +1,7 @@
 import React, { useEffect, useState} from 'react';
 import Sidebar from './Sidebar';
 import { Button } from 'react-bootstrap';
+import Header from './Header.js';
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
@@ -23,7 +24,7 @@ const [state, setState] = useState('');
 const [district, setDistrict] = useState('') 
 const [zipCode, setZipcode] = useState('');
 const [address, setAddress] = useState('');
-const [customerId, setCustomerId] = useState(''); 
+const [userId, setCustomerId] = useState(''); 
 const [category, setCategory] = useState(''); 
 const [customerName, setCustomerName] = useState('');
 const [technicianConfirmationCode, setTechnicianConfirmationCode] = useState('');
@@ -35,7 +36,7 @@ const [showModal, setShowModal] = useState(false);
 const [buyProductTicketId, setBuyProductTicketId] = useState('');
 // const [buyProductId, setBuyProductId] = useState('');
 const [mobileNumber, setMobileNumber] = useState('');
-const [rate, setRate] = useState('');
+const [rate, setRate] = useState(''); 
 const [discount, setDiscount] = useState('');
 // const [afterDiscount, setAfterDiscount] = useState('');
 const [productName, setproductName] = useState('');
@@ -50,6 +51,7 @@ const [deliveryCharges, setDeliveryCharges] = useState(0);
 const [serviceCharges, setServiceCharges] = useState(0);
 const [totalPaymentAmount, setTotalPaymentAmount] = useState(0);
 const [addressType, setAddressType] = useState('');
+const [emailAddress, setEmailAddress] = useState("");
 
   useEffect(() => {
       console.log( productData, technicianConfirmationCode);
@@ -83,6 +85,7 @@ const [addressType, setAddressType] = useState('');
         setState(data.state);
         setDistrict(data.district);
         setZipcode(data.zipCode);
+        setEmailAddress(data.customerEmail);
         setMobileNumber(data.customerPhoneNumber);
         setColor(data.color);
        setCustomerName(data.customerName);
@@ -164,8 +167,8 @@ const handleGetQuotation = async (e) => {
     State: state,
     District: district,
     ZipCode: zipCode,
-    CustomerId: customerId,
-    RequestedBy: customerId,
+    CustomerId: userId,
+    RequestedBy: userId,
     PaymentMode: selectedPayment,
     UTRTransactionNumber:"",
     TechnicianConfirmationCode:"",
@@ -174,7 +177,15 @@ const handleGetQuotation = async (e) => {
     ProductView: "Draft",
     InvoiceDetails:"",
     UploadInvoice: [],
-    WarrantyPeriod: "",
+    WarrentyPeriod: "",
+    CustomerEmail: emailAddress,
+    OrderId: "",
+    OrderDate: "",
+    PaidAmount: "",
+    TransactionStatus: "",
+    TransactionType: "",
+    InvoiceId: "",
+    InvoiceURL: "",
   };
 
   try {
@@ -191,9 +202,14 @@ const handleGetQuotation = async (e) => {
     const data = await response.json();
     // Store confirmation code in state
     setTechnicianConfirmationCode(data.technicianConfirmationCode);
-  window.alert(`Payment has been completed successfully! Your reference number is ${buyProductTicketId}. Technician will contact you shortly.`);
 
-  window.location.href = `https://handymanserviceproviders.com/CustomerProfilePage?ReactToken=${customerId}$${userType}`;
+  if (selectedPayment === 'online') {
+    window.alert(`We are Redirecting to the Payment Page! Your reference number is ${buyProductTicketId}. Technician will contact you shortly.`);
+      window.location.href=`https://handymanserviceproviders.com/BuyProductPaymentPage/${buyProductId}`;
+    } else if (selectedPayment === 'technician') {
+     window.alert(`Thank You for choosing the HandyMan Services! Your reference number is ${buyProductTicketId}. Technician will contact you shortly.`);
+     window.location.href = `/profilePage/${userType}/${userId}`;
+    } 
   } catch (error) {
     console.error("Error submitting Payment:", error);
     window.alert('Failed to submitting Payment. Please try again later.');    
@@ -263,7 +279,7 @@ const handleGetQuotation = async (e) => {
 //   handleUpdateJobDescription(e);
 // //   window.alert(`Payment has been completed successfully! Your reference number is ${bookTechnicianIds}. Technician will contact you shortly.`);
 //   // Redirect to CustomerProfilePage
-//   window.location.href = `https://handymanserviceproviders.com/CustomerProfilePage?ReactToken=${customerId}$${userType}`;
+//   window.location.href = `https://handymanapiv2.azurewebsites.net/CustomerProfilePage?ReactToken=${customerId}$${userType}`;
   
 // };
 
@@ -278,6 +294,8 @@ if (loading) {
   };
 
   return (
+    <div>
+  {isMobile && <Header />}
     <div className="d-flex">
         {!isMobile && (
         <div className="ml-0 p-0 sde_mnu">
@@ -432,7 +450,7 @@ if (loading) {
                     <div className="mt-20">
                         <h4>I. YOUR ACCEPTANCE OF THIS AGREEMENT</h4>
                         <p>
-                            This is an agreement between you ("you" or "your") and Lakshmi Sai Service Providers, a Proprietorship firm incorporated under the Registration of Establishment – Sec 2(b) and Sec 4(2) The Andhra Pradesh (Insurance of integrated Registration and Furnishing of Combined returns under various labour  Laws by certain Establishments) Act, 2015  with its registered office at Dr.No.44-40-12, Nandhagirinagar, Akkayyapalem, Visakhapatnam - 530016 ("Lakshmi Sai Service Provider" "we," or "our") that governs your use of the search services offered by Lakshmi Sai Service Providers through its website https://handymanserviceproviders.com ("Website"), using which Lakshmi Sai Service Providers may provide the search services ("Platform"). When you access or use Platform you agree to be bound by these Terms and Conditions ("Terms").
+                            This is an agreement between you ("you" or "your") and Lakshmi Sai Service Providers, a Proprietorship firm incorporated under the Registration of Establishment – Sec 2(b) and Sec 4(2) The Andhra Pradesh (Insurance of integrated Registration and Furnishing of Combined returns under various labour  Laws by certain Establishments) Act, 2015  with its registered office at Dr.No.44-40-12, Nandhagirinagar, Akkayyapalem, Visakhapatnam - 530016 ("Lakshmi Sai Service Provider" "we," or "our") that governs your use of the search services offered by Lakshmi Sai Service Providers through its website https://handymanapiv2.azurewebsites.net ("Website"), using which Lakshmi Sai Service Providers may provide the search services ("Platform"). When you access or use Platform you agree to be bound by these Terms and Conditions ("Terms").
                         </p>
                     </div>
                     <div className="mt-20">
@@ -511,7 +529,7 @@ if (loading) {
                             It is also clarified that, if there are any issues or claims due to your posts by way of Reviews, Ratings and Comments, then Lakshmi Sai Service Provider reserves right to take appropriate legal action against you. Further, you shall indemnify and protect Lakshmi Sai Service Provider against such claims or damages or any issues, due to your posting of such Reviews, Ratings and Comments Lakshmi Sai Service Provider takes no responsibility and assumes no liability for any content posted by you or any third party on Lakshmi Sai Service Provider site or on any mediums of Lakshmi Sai Service Provider.
                         </p>
                         <p>
-                            You further acknowledge that conduct prohibited in connection with your use of the Lakshmi Sai Service Provider (handymanserviceproviders.com) website includes, but is not limited to, breaching or attempting to breach the security of the Site.
+                            You further acknowledge that conduct prohibited in connection with your use of the Lakshmi Sai Service Provider (https://handymanapiv2.azurewebsites.net) website includes, but is not limited to, breaching or attempting to breach the security of the Site.
                         </p>
                         <div className="mt-20">
                         <h4>VII. PRIVACY POLICY</h4>
@@ -590,7 +608,7 @@ if (loading) {
                             Service Providers and Users are responsible for researching and complying with any applicable laws, regulations or restrictions on items, services, or manner of sale or exchange that may pertain to transactions in which they participate.
                         </p>
                         <p>
-                            Service Providers and Users are responsible for all applicable taxes and for all costs incurred by participating in the local service need fulfillment platform.
+                            Service Providers and Users are responsible for all applicable taxes and for all costs incurred by participating in the local service need fulfillment platform. 
                         </p>
                         <p>
                             Lakshmi Sai Service Provider will not be liable for damages of any kind incurred to any parties as a result of the information contained on this Platform. Users shall not use or manipulate this service for any fraudulent activity or purpose. Items or services offered for sale must comply with applicable laws. Lakshmi Sai Service Provider disclaims any and / or all responsibility and / or liability for any harm resulting from your use of third party services, and you hereby irrevocably waive any claim against Lakshmi Sai Service Provider with respect to the Content or operation of any third party services.
@@ -631,7 +649,7 @@ if (loading) {
                         <div className="mt-20">
                         <h4>XII. ADDITIONAL DISCLAIMER</h4>
                         <p>
-                            Users using any of Lakshmi Sai Service Provider service across the following mediums ie. through internet ie<a href="https://handymanserviceproviders.com"> https://handymanserviceproviders.com </a>Websiteis bound by this additional disclaimer wherein they are cautioned to make proper enquiry before they (Users) rely, act upon or enter into any transaction (any kind or any sort of transaction including but not limited to monetary transaction ) with the Advertiser listed with Lakshmi Sai Service Provider.
+                            Users using any of Lakshmi Sai Service Provider service across the following mediums ie. through internet ie<a href="https://handymanapiv2.azurewebsites.net"> https://handymanapiv2.azurewebsites.net </a>Websiteis bound by this additional disclaimer wherein they are cautioned to make proper enquiry before they (Users) rely, act upon or enter into any transaction (any kind or any sort of transaction including but not limited to monetary transaction ) with the Advertiser listed with Lakshmi Sai Service Provider.
                         </p>
                         <p>
                             All the Users are cautioned that all and any information of whatsoever nature provided or received from the Advertiser/s is taken in good faith, without least suspecting the bonafides of the Advertiser/s and Lakshmi Sai Service Provider does not confirm, does not acknowledge, or subscribe to the claims and representation made by the Advertiser/s listed with Lakshmi Sai Service Provider. Further, Lakshmi Sai Service Provider is not at all responsible for any act of Advertiser/s listed at Lakshmi Sai Service Provider.
@@ -759,6 +777,8 @@ if (loading) {
     </div>
     </div>
     </div>
+    </div>
+
     {/* Styles for floating menu */}
 <style jsx>{`
         .modal-overlay {

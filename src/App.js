@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Routes, useNavigate} from 'react-router
 
 // Importing necessary components
 // import Header from './Header';
-// import Footer from './Footer.js';
+//  import Footer from './Footer.js';
 import UploadForm from './uploadform';
 import ProductView from './ProductView'; 
 import EditUploadForm from './EditUploadForm';
@@ -188,17 +188,16 @@ function App() {
             <Route path='/adminBuyProductOrders/:buyProductId' element={<AdminBuyProductOrders />} />
             <Route path='/adminBuyProductOrderGridView/:buyProductId' element={<AdminBuyProductOrderGridView />} />
             <Route path='/buyProductNotificationGrid' element={<BuyProductNotificationGrid />} />
-            <Route path='/customerOrders/:customerId/:userType' element={<CustomerOrdersNotifications />} />
-            <Route path='/viewCustomerBuyProductOrders/:buyProductId/:userType' element={<ViewCustomerBuyProductOrders />} />
-            <Route path='/viewCustomerBuyProductOrdersGrid/:buyProductId/:userType' element={<ViewCustomerBuyProductOrdersGrid />} />
+            <Route path='/customerOrders/:userType/:userId' element={<CustomerOrdersNotifications />} />
+            <Route path='/viewCustomerBuyProductOrders/:userType/:buyProductId' element={<ViewCustomerBuyProductOrders />} />
+            <Route path='/viewCustomerBuyProductOrdersGrid/:userType/:buyProductId' element={<ViewCustomerBuyProductOrdersGrid />} />
             <Route path='/adminClosedBuyProductOrders/:buyProductId' element={<AdminClosedBuyProductOrders />} />
             <Route path='/buyProductClosedOrdersGrid' element={<BuyProductClosedOrdersGrid />} />
             <Route path='/adminClosedOrdersFinalGridView/:buyProductId' element={<AdminClosedOrdersFinalGridView />} />
             <Route path='/buyProductsCustomerCart/:customerId/:userType' element={<BuyProductsCustomerCart />} />
             {/* <Route path='/buyProductsCartView/:customerId/:buyProductId/:userType' element={<BuyProductCartView />} /> */}
             {/* <Route path='/technicianViewBookTechnician/:userType/:raiseTicketId' element={<TechnicianViewBookTechnician />} />  */}
-            
-            <Route path='/customerBuyProductOrdersGrid/:customerId/:userType' element={<CustomerBuyProductOrdersGrid />} /> 
+            <Route path='/customerBuyProductOrdersGrid/:userType/:userId' element={<CustomerBuyProductOrdersGrid />} /> 
             <Route path="/payment-selection/:raiseTicketId" element={<PaymentPage />} />
             </Routes>
          

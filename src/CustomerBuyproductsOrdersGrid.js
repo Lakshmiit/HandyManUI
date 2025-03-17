@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import axios from 'axios';
 import Sidebar from "./Sidebar";
+import Header from './Header.js';
 import { Link, useParams } from "react-router-dom";
 import { FaEye } from "react-icons/fa";
 import {
@@ -14,7 +15,7 @@ import "./App.css";
 const CustomerBuyProductNotificationGrid = () => {
   // const navigate = useNavigate(); 
   //const [status, setStatus] = useState("");
- const {customerId} = useParams();
+ const {userId} = useParams();
   const {userType} = useParams();
   // const [assignedTo, setAssignedTo] = useState("");
   const [isMobile, setIsMobile] = useState(false);
@@ -37,13 +38,16 @@ const CustomerBuyProductNotificationGrid = () => {
   }, [productData])
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv2.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForUserList?UserID=${customerId}`
+    const url = `https://handymanapiv2.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForUserList?UserID=${userId}`
     axios.get(url)
       .then(response => {
         const products = response.data.map((product) => ({
           ...product,
         }));
-        const buyProducts = products.filter((product) => product.status === "Closed");
+        const buyProducts = products.filter((product) =>  product.status === "Closed" && product.assignedTo === "Customer Care");
+
+          // product.status === "Pending" && product.assignedTo === "Customer Care");
+        // product.status === "Closed");
         setFilteredData(buyProducts);
         setProductData(buyProducts);
 
@@ -62,12 +66,12 @@ const CustomerBuyProductNotificationGrid = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, [customerId]);
+  }, [userId]); 
 
   // const handleDelete = (productId) => {
   //   const confirmDelete = window.confirm('Are you sure you want to delete this product?');
   //   if (confirmDelete) {
-  //     axios.delete(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${productId}`)
+  //     axios.delete(`https://localhost:7091/api/RaiseTicket/${productId}`)
   //       .then(() => {
   //         setProductData(prevData => prevData.filter(product => product.id !== productId));
   //         setFilteredData(prevData => prevData.filter(product => product.id !== productId));
@@ -122,6 +126,8 @@ const CustomerBuyProductNotificationGrid = () => {
  }
 
   return (
+    <div>
+  {isMobile && <Header />}
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className="ml-0 p-0 sde_mnu">
@@ -234,7 +240,7 @@ const CustomerBuyProductNotificationGrid = () => {
                 <td>{product.assignedTo}</td>
                 <td className="d-flex align-items-center">
                   <Link
-                    to={`/viewCustomerBuyProductOrdersGrid/${product.id}/${userType}`}
+                    to={`/viewCustomerBuyProductOrdersGrid/${userType}/${product.id}`}
                     className="btn btn-info mx-2"
                   >
                     <FaEye />   
@@ -258,7 +264,7 @@ const CustomerBuyProductNotificationGrid = () => {
   {currentBuyProduct.map((product, index) => (
     <div key={index} className="ticket-card">
       <div className="ticket-header">
-      <strong>Customer ID:</strong> {product.customerId} <br />
+      <strong>Customer ID:</strong>{product.customerId} <br />
       <strong>Buy Product ID:</strong> {product.buyProductId}
       </div>
       <div className="ticket-body">
@@ -269,7 +275,7 @@ const CustomerBuyProductNotificationGrid = () => {
       </div>
       <div className="ticket-actions">
       <Link
-                    to={`/viewCustomerBuyProductOrdersGrid/${product.id}/${userType}`}
+                    to={`/viewCustomerBuyProductOrdersGrid/${userType}/${product.id}`}
                     className="btn btn-info mx-2"
                   >
                     <FaEye />   
@@ -295,7 +301,7 @@ const CustomerBuyProductNotificationGrid = () => {
       </>
 
         <div className="mt-4 text-end">
-          <Link to={`/customerOrders/${customerId}/${userType}`} className="btn btn-warning text-white mx-2" title='Back'>
+          <Link to={`/customerOrders/${userType}/${userId}`} className="btn btn-warning text-white mx-2" title='Back'>
             <ArrowLeftIcon />
           </Link>
         </div>
@@ -323,6 +329,7 @@ const CustomerBuyProductNotificationGrid = () => {
             </ul>
           </nav>
         </div>
+      </div>
       </div>
       {/* Styles for floating menu */}
 <style jsx>{`

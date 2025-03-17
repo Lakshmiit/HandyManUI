@@ -2,17 +2,18 @@ import React, { useState, useEffect} from "react";
 import "./App.css";
 // import { v4 as uuidv4 } from 'uuid'; 
 import Sidebar from './Sidebar';
+import Header from './Header.js';
 import "bootstrap/dist/css/bootstrap.min.css";
-import {  useParams, useLocation } from "react-router-dom";
+import {  useParams, useLocation, useNavigate } from "react-router-dom";
 import { Dashboard as MoreVertIcon} from '@mui/icons-material';
-// import ForwardIcon from '@mui/icons-material/Forward';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Button } from 'react-bootstrap'; // Import Bootstrap components for modal
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 
 const CustomerBuyProductOrdersView = () => {
-  // const navigate = useNavigate();
-  // const {userType} = useParams();
+const navigate = useNavigate();
+const {userType} = useParams();
   const {buyProductId} = useParams();
   const [buyProductTicketId, setBuyProductTicketId] = useState('');
   const [isMobile, setIsMobile] = useState(false);
@@ -60,7 +61,7 @@ const [loading, setLoading] = useState(true);
 // const [showAlert, setShowAlert] = useState(false);
 const [paymentMode, setPaymentMode] = useState('');
 const [transactionDetails, setTransactionDetails] = useState('');
-const [customerId, setCustomerId] = useState('');
+const [userId, setCustomerId] = useState('');
 const [mobileNumber, setMobileNumber] = useState('');
 const [customerName, setCustomerName] = useState('');
 const [date, setDate] = useState('');
@@ -98,14 +99,14 @@ const [warrantyPeriod, setWarrantyPeriod] = useState('');
 }, [location.state]);
 
 useEffect(() => {
-  console.log( productData, loading, status, addressType, state, district, pincode, customerId,mobileNumber,date, id);
-}, [productData, loading, status, addressType, state, district, pincode, customerId,mobileNumber,date, id]);
+  console.log( productData, loading, status, addressType, state, district, pincode, userId,mobileNumber,date, id);
+}, [productData, loading, status, addressType, state, district, pincode, userId,mobileNumber,date, id]);
 
   // // Fetch customer profile data
   // useEffect(() => {
   //   const fetchProfileType = async () => {
   //     try {
-  //       const API_URL = "https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/";
+  //       const API_URL = "https://localhost:7091/api/Address/GetAddressById/";
   //       const response = await fetch(`${API_URL}${userId}`);
   //       if (!response.ok) {
   //         throw new Error("Failed to fetch customer profile data");
@@ -178,7 +179,7 @@ useEffect(() => {
        setTechnicianDetails(data.technicianDetils);
        setInvoiceDetails(data.invoiceDetails);
        setTransactionDetails(data.utrTransactionNumber);
-       setWarrantyPeriod(data.warrantyPeriod);
+       setWarrantyPeriod(data.warrentyPeriod);
        const imageRequests =
         data.uploadInvoice?.map((photo) => fetch(
             `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
@@ -284,9 +285,9 @@ useEffect(() => {
   //     InvoiceDetails: invoiceDetails,
   //     UploadInvoice: uploadInvoice.map((file) => file.src),
   //   }; 
-  
+   
   //   try {
-  //     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/${buyProductId}`,{
+  //     const response = await fetch(`https://localhost:7091/api/BuyProduct/${buyProductId}`,{
   //       method: 'PUT',
   //       headers: {
   //         'Content-Type': 'application/json',
@@ -435,7 +436,7 @@ useEffect(() => {
   //   const fetchProducts = async () => {
   //     try {
   //       const response = await axios.get(
-  //         `https://handymanapiv2.azurewebsites.net/api/Product/GetProductsByCategory?category=${category}`
+  //         `https://localhost:7091/api/Product/GetProductsByCategory?category=${category}`
   //       );
   //       setAllProducts(response.data);
   //       // alert(JSON.stringify(allProducts));
@@ -461,6 +462,9 @@ useEffect(() => {
   
     
   return (
+    
+<div>
+  {isMobile && <Header />}
     <div className="d-flex flex-row justify-content-start align-items-start">
       {/* Sidebar menu for Larger Screens */}
       {!isMobile && (
@@ -513,9 +517,10 @@ useEffect(() => {
               <div className="form-group">
                 <label>Customer Address <span className="req_star">*</span></label>
                 <input
+                as="textarea"
                 type="text"
                 className="form-control"
-                value={address}
+                value={`${address}, ${district}, ${state}, ${pincode} ${mobileNumber}`}
                 onChange={(e) => setAddress(e.target.value)}
                 placeholder="Customer Address"
                 readOnly
@@ -865,6 +870,8 @@ useEffect(() => {
             Pay On In Presence of Technician
           </label>
     </div>
+    {paymentMode === "technician" && (
+    <>
     <div className="form-group">
               <label>Payment Transaction Details <span className="req_star">*</span></label>
               <input
@@ -876,6 +883,8 @@ useEffect(() => {
                 readOnly
               />
             </div>
+            </>
+              )}
     <div className="form-group">
               <label>Delivery Date <span className="req_star">*</span></label>
               <input
@@ -970,6 +979,15 @@ useEffect(() => {
                 readOnly
               />
             </div>
+
+            <div className="mt-4 text-end">
+                <Button type="submit" 
+                onClick={() => navigate(`/customerbuyProductOrdersGrid/${userType}/${userId}`)} className="btn btn-warning text-white mx-2" 
+                  title="Back">
+                  <ArrowBackIcon /> 
+                </Button>
+            </div>
+
 
             {/* <div className="col-md-6">
               <label>Assigned To <span className="req_star">*</span></label>
@@ -1098,14 +1116,9 @@ useEffect(() => {
           </form>
         </div>
       </div>
+      </div>
       {/* Styles for floating menu */}
 <style jsx>{`
-        .floating-menu {
-          position: fixed;
-          top: 80px; /* Increased from 20px to avoid overlapping with the logo */
-          left: 20px; /* Adjusted for placement on the left side */
-          z-index: 1000;
-        }
         .menu-popup {
           position: absolute;
           top: 50px; /* Keeps the popup aligned below the floating menu */

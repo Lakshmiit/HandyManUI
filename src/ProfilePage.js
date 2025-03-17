@@ -10,7 +10,7 @@ import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import OrdersIcon from '@mui/icons-material/Assignment';
 // import AccountCircle from "@mui/icons-material/AccountCircle";
-import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
+// import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import PersonIcon from '@mui/icons-material/Person';
 import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
@@ -27,6 +27,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Logo from "./img/Hm_Logo 1.png";
 import SearchIcon from "@mui/icons-material/Search";
 import LogoutIcon from "@mui/icons-material/Logout";
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 // import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 
@@ -38,7 +39,7 @@ const getMenuList = (userType, userId, ProductOwnedBy, category, district ) => {
       { MenuIcon: <NotificationsNoneIcon />, MenuTitle: "Notifications", TargetUrl: `/customerNotification/${userType}/${userId}` },
       { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
       { MenuIcon: <OrdersIcon />, MenuTitle: "Orders", TargetUrl: `/customerOrders/${userType}/${userId}` },
-      { MenuIcon: <ShoppingBagIcon />, MenuTitle: "Cart", TargetUrl: "" },
+      { MenuIcon: <LocalOfferIcon />, MenuTitle: "Offers", TargetUrl: "" },
       { MenuIcon: <PersonIcon />, MenuTitle: "Accounts", TargetUrl: "" }
   ];
 
@@ -137,7 +138,7 @@ useEffect(() => {
 
         useEffect(() => {
           const fetchAllTickets = async () => {
-            try {
+            try { 
               const [ticketResponse, productResponse, technicianResponse] = await Promise.all([
                 fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=raiseTicket`),
                 fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=buyProduct`),
