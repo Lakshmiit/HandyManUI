@@ -67,7 +67,7 @@ const CustomerBuyProductNotificationGrid = () => {
         setLoading(false);
       });
   }, [userId]); 
-
+ 
   // const handleDelete = (productId) => {
   //   const confirmDelete = window.confirm('Are you sure you want to delete this product?');
   //   if (confirmDelete) {
@@ -263,10 +263,10 @@ const CustomerBuyProductNotificationGrid = () => {
           <div className="mobile-ticket-grid">
   {currentBuyProduct.map((product, index) => (
     <div key={index} className="ticket-card">
-      <div className="ticket-header">
+      {/* <div className="ticket-header"> */}
       <strong>Customer ID:</strong>{product.customerId} <br />
       <strong>Buy Product ID:</strong> {product.buyProductId}
-      </div>
+      {/* </div> */} 
       <div className="ticket-body">
         <p><strong>Category:</strong> {product.category}</p>
         <p><strong>Product Name:</strong> {product.productName}</p>

@@ -30,7 +30,7 @@ const {userType} = useParams();
  const [totalAmount, setTotalAmount] = useState('');
  const [state, setState] = useState('');
  const [district, setDistrict] = useState('')
- const [customerId, setCustomerId] = useState(''); 
+ const [userId, setCustomerId] = useState(''); 
   const [zipCode,setZipCode]=useState('');
   // const [customerName, setCustomerName] = useState("");
   // const [rate, setRate] = useState('');
@@ -573,7 +573,7 @@ const {userType} = useParams();
       
         {/* Save Button */}
         <div className="mt-4 text-end">
-          <Link to={`/bookTechnicianCustomerGrid/${userType}/${customerId}`} className="btn btn-warning text-white mx-2" title='Back'>
+          <Link to={`/bookTechnicianCustomerGrid/${userType}/${userId}`} className="btn btn-warning text-white mx-2" title='Back'>
             <ArrowLeftIcon />
           </Link>
           {/* <Link to='/raiseTicketActionView/{ticketId}' className="btn btn-warning text-white mx-2" title='Edit'> 
@@ -608,7 +608,7 @@ const {userType} = useParams();
           width: 200px;
         }
       `}</style>
-      </div>
+      </div> 
     </div>
   );
 };

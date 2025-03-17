@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Routes, useNavigate} from 'react-router
 
 // Importing necessary components
 // import Header from './Header';
-//  import Footer from './Footer.js';
+//  import Footer from './Footer.js'; 
 import UploadForm from './uploadform';
 import ProductView from './ProductView'; 
 import EditUploadForm from './EditUploadForm';
@@ -180,10 +180,10 @@ function App() {
             <Route path="/bookTechnicianPaymentPage/:userType/:userId/:raiseTicketId" element={<BookTechnicianPaymentPage />} />
             <Route path="/updateBookTechnician/:id" element={<UpdateBookTechnician />} />
             <Route path="/bookTechnicianNotificationGrid" element={<BookTechnicianNotificationGrid />} />
-            <Route path="/bookTechnicianCustomerGrid/:userType/:customerId" element={<BookTechnicianCustomerGrid />} />
+            <Route path="/bookTechnicianCustomerGrid/:userType/:userId" element={<BookTechnicianCustomerGrid />} />
             <Route path="/customerBookTechnicianQuotation/:userType/:userId/:raiseTicketId" element={<CustomerBookTechnicianQuotation />} />
             <Route path="/bookTechnicianAdminView/:raiseTicketId" element={<BooKTechnicianAdminGridView />} /> 
-            <Route path="/customerBookTechnicianQuotationView/:userType/:raiseTicketId" element={<CustomerBookTechnicianQuotationView />} />
+            <Route path="/customerBookTechnicianQuotationView/:userType/:userId/:raiseTicketId" element={<CustomerBookTechnicianQuotationView />} />
             <Route path='/buyProductPaymentPage/:userType/:userId/:buyProductId' element={<BuyProductPaymentPage />} />
             <Route path='/adminBuyProductOrders/:buyProductId' element={<AdminBuyProductOrders />} />
             <Route path='/adminBuyProductOrderGridView/:buyProductId' element={<AdminBuyProductOrderGridView />} />

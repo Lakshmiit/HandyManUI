@@ -4,17 +4,17 @@ import "./App.css";
 import AdminSidebar from './AdminSidebar';
 // import Header from './Header.js';
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useParams, useLocation } from "react-router-dom";
-import { Dashboard as MoreVertIcon} from '@mui/icons-material';
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 // import ForwardIcon from '@mui/icons-material/Forward';
 import { Button} from 'react-bootstrap'; // Import Bootstrap components for modal
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
+import { ArrowBack, Dashboard as MoreVertIcon} from '@mui/icons-material';
 
 const AdminClosedBuyProductOrders = () => {
-  // const navigate = useNavigate();
+const Navigate = useNavigate();
   // const {userType} = useParams();
-  const {buyProductId} = useParams();
+  const {buyProductId} = useParams(); 
   const [buyProductTicketId, setBuyProductTicketId] = useState('');
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -1068,13 +1068,15 @@ useEffect(() => {
                 readOnly
               />
             </div>
-            {/* <div className="mt-4 text-end">
-                <Button type="submit" className="btn btn-warning text-white mx-2" 
-                  onClick={handleGetQuotation} title="Closed">
-                  Closed 
+
+            <div className="mt-2 text-end">
+                <Button className="btn btn-warning text-white" 
+                  onClick={() => Navigate(`/adminNotifications`)}
+                   title="Back">
+                  <ArrowBack /> 
                 </Button>
     
-            </div>  */}
+            </div> 
 
             {/* <div className="col-md-6">
               <label>Assigned To <span className="req_star">*</span></label>

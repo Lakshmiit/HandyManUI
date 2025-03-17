@@ -21,14 +21,14 @@ const CustomerBookTechnicianGrid = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
   const rowsPerPage = 15;
-  const { customerId } = useParams();
+  const { userId } = useParams();
  
   useEffect(() => {
     console.log(technicianData); 
   }, [technicianData]);
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv2.azurewebsites.net/api/BookTechnician/GetBookTechnicianDetailsForUserList?userId=${customerId}`
+    const url = `https://handymanapiv2.azurewebsites.net/api/BookTechnician/GetBookTechnicianDetailsForUserList?userId=${userId}`
 
     axios.get(url)
       .then(response => {
@@ -46,7 +46,7 @@ const CustomerBookTechnicianGrid = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, [customerId]);
+  }, [userId]);
 
   // const handleDelete = (technicianId) => {
   //   const confirmDelete = window.confirm('Are you sure you want to delete this ticket?');
@@ -138,7 +138,7 @@ const CustomerBookTechnicianGrid = () => {
                 <td>{technician.assignedTo}</td>
                 <td className="d-flex align-items-center">
                   <Link
-                    to={`/customerBookTechnicianQuotationView/${userType}/${technician.id}`}
+                    to={`/customerBookTechnicianQuotationView/${userType}/${userId}/${technician.id}`}
                     className="btn btn-info mx-2"
                   > 
                     <FaEye />   
@@ -157,13 +157,13 @@ const CustomerBookTechnicianGrid = () => {
             ))}
           </tbody>
         </table>
-        ) : (
+        ) : ( 
           <div className="mobile-ticket-grid">
   {currentBookTechnician.map((technician, index) => (
     <div key={index} className="ticket-card">
-      <div className="ticket-header">
+      {/* <div className="ticket-header"> */}
         <strong>Ticket ID:</strong> {technician.bookTechnicianId}
-      </div>
+      {/* </div> */}
       <div className="ticket-body">
         <p><strong>Category:</strong> {technician.category}</p>
         <p><strong>Description:</strong> {technician.jobDescription}</p>
@@ -171,7 +171,7 @@ const CustomerBookTechnicianGrid = () => {
         <p><strong>Assigned To:</strong> {technician.assignedTo}</p>
       </div>
       <div className="ticket-actions">
-        <Link to={`/customerBookTechnicianQuotationView/${userType}/${technician.id}`} className="btn btn-info mx-2">
+        <Link to={`/customerBookTechnicianQuotationView/${userType}/${userId}/${technician.id}`} className="btn btn-info mx-2">
           <FaEye />
         </Link>
         {/* <Button onClick={() => handleDelete(technician.id)} className="btn btn-danger mx-2">
@@ -187,7 +187,7 @@ const CustomerBookTechnicianGrid = () => {
         )}
       </>
         <div className="mt-4 text-end">
-          <Link to={`/customerNotification/${userType}/${customerId}`} className="btn btn-warning text-white mx-2" title='Back'>
+          <Link to={`/customerNotification/${userType}/${userId}`} className="btn btn-warning text-white mx-2" title='Back'>
             <ArrowLeftIcon />
           </Link>
         </div> 
