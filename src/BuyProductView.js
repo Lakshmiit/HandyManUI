@@ -4,6 +4,7 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
+import Header from './Header.js';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Button } from 'react-bootstrap'; // Import Bootstrap components for modal
 
@@ -117,6 +118,8 @@ const BuyProdcutView = () => {
   const afterDiscountPrice = rate - (rate * discount) / 100;
 
   return (
+    <div>
+  {isMobile && <Header />}
     <div className="wrapper bg-light d-flex">
       {/* Sidebar menu for Larger Screens */}
       {!isMobile && (
@@ -184,7 +187,7 @@ const BuyProdcutView = () => {
                       />
                     </div>
                   ))}
-                </div>
+                </div> 
 
                 {/* Controls */}
                 <button
@@ -245,7 +248,7 @@ const BuyProdcutView = () => {
   type="button"
   className="btn btn-warning text-white w-50 mt-2"
   onClick={() => 
-    navigate(`/buyProducts/${userId}/${userType}`, {
+    navigate(`/buyProducts/${userType}/${userId}`, {
       state: {
         category,
         productName, 
@@ -265,6 +268,7 @@ const BuyProdcutView = () => {
   <span>Back</span>
       </button>
               </div>
+            </div>
             </div>
         {/* Styles for floating menu */}
 <style jsx>{`
