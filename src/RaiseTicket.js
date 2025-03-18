@@ -81,6 +81,7 @@ const AddressManager = () => {
           district: addr.district,
           zipCode: addr.zipCode, 
           emailAddress: addr.emailAddress,
+          mobileNumber: addr.mobileNumber,
           // fullName: addr.FullName,
         }));
         setAddresses(formattedAddresses);
@@ -306,6 +307,7 @@ useEffect(() => {
     const district = primaryAddress?.district || "";
     const pincode = primaryAddress?.zipCode || primaryAddress?.pincode || "";
     const emailAddress = primaryAddress?.emailAddress || primaryAddress?.emailAddress || "";
+    const mobileNumber = primaryAddress?.mobileNumber || primaryAddress?.mobileNumber || "";
 
 
     const payload = {
@@ -354,6 +356,7 @@ useEffect(() => {
       TransactionType: "",
       InvoiceId: "",
       InvoiceURL: "", 
+      CustomerPhoneNumber: mobileNumber,
     };
 
   try {

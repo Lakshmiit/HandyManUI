@@ -65,6 +65,8 @@ const RaiseTicketQuotation = () => {
  const [CalculateTotal, setCalculatedGrandTotal] = useState('');
  const [calculatedServiceCharge, setCalculatedServiceCharge] = useState('0');
  const [calculatedGSTS, setCalculatedGSTS] = useState('0');
+ const [customerPhoneNumber, setCustomerPhoneNumber] = useState('');
+ const [customerEmail, setCustomerEmail] = useState('');
 //  const [dealerId] = useState('');
 
  useEffect(() => {
@@ -189,6 +191,8 @@ useEffect(() => {
             setAssignedTo(data.assignedTo);
             setStatus(data.status);
             setFullName(data.customerName);
+            setCustomerPhoneNumber(data.customerPhoneNumber);
+            setCustomerEmail(data.emailAddress);
             setTechnicianList(data.technicianList || []);
             setRequestType(data.requestType || 'Without Material');
             setAttachments(data.attachments);
@@ -363,6 +367,9 @@ useEffect(() => {
       DealerList: [],
       Rating: "",
       RateQuotedBy: rateQuotedBy,
+      CustomerPhoneNumber: customerPhoneNumber,
+      CustomerEmail: customerEmail,
+
     };
     try {
       

@@ -66,9 +66,12 @@ const RaiseQuotation = () => {
  const [fixedServiceCharges] = useState('10');
  const [gsts] = useState('18');
  const [CalculateTotal, setCalculatedGrandTotal] = useState('');
-
  const [calculatedServiceCharge, setCalculatedServiceCharge] = useState('0');
  const [calculatedGSTS, setCalculatedGSTS] = useState('0');
+ const [customerPhoneNumber, setCustomerPhoneNumber] = useState('');
+ const [customerEmail, setCustomerEmail] = useState('');
+
+
     useEffect(() => {
       console.log(subject, loading, isWithMaterial, id, raiseAQuoteId, dealerData, customerId);
     }, [subject, loading, isWithMaterial, id, raiseAQuoteId, dealerData, customerId]);
@@ -237,6 +240,8 @@ useEffect(() => {
             setTechnicianId(data.technicianList || []);
             setStatus(data.status);
             setFullName(data.customerName);
+            setCustomerPhoneNumber(data.customerPhoneNumber);
+            setCustomerEmail(data.emailAddress);
             setRequestType(data.requestType || 'Without Material');
             setAttachments(data.attachments);
             setSpecifications(data.materials || [{ material: "", quantity: "", price: "", total: ""}]);
@@ -360,6 +365,15 @@ useEffect(() => {
      DealerList: updatedDealerList,
      Rating: "", 
      RateQuotedBy: rateQuotedBy, 
+     CustomerPhoneNumber: customerPhoneNumber,
+     CustomerEmail: customerEmail,
+    OrderId: "",
+    OrderDate: "",
+    PaidAmount: "",
+    TransactionStatus: "",
+    TransactionType: "",
+    InvoiceId: "",
+    InvoiceURL: "",
     };
     
       // alert(JSON.stringify(payload));
@@ -694,7 +708,7 @@ materialQuotation: material.map((mat) => ({
         ) : (
           <div>
             {specifications.map((spec, index) => (
-              <div key={index} className="card mb-3 shadow-sm" style={{ maxWidth: "300px" }}>
+              <div key={index} className="card w-100 mb-3 shadow-sm" style={{ maxWidth: "300px" }}>
                 <div className="card-body">
                   <p className="mb-1"><strong>Material:</strong> {spec.material}</p>
                   <p className="mb-1"><strong>Quantity:</strong> {spec.quantity}</p>

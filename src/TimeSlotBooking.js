@@ -66,7 +66,7 @@ const TimeSlotBooking = () => {
    const [showModal, setShowModal] = useState(false);
   const [rateQuotedBy, setRateQuotedBy] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
-
+  const [customerPhoneNumber, setCustomerPhoneNumber] = useState('');
 
   useEffect(() => {
     console.log(loading, id, customerId);
@@ -230,6 +230,7 @@ const handleDateChange = (event) => {
         setStatus(data.status);
         setFullName(data.customerName);
         setCustomerEmail(data.customerEmail);
+        setCustomerPhoneNumber(data.customerPhoneNumber);
         setOption1Selection({ day: data?.option1Day || "", time: data?.option1Time || "" });
         setOption2Selection({ day: data?.option2Day || "", time: data?.option2Time || "" });
         setApprovedAmount(data.approvedAmount);
@@ -363,6 +364,7 @@ const handleContinue = () => {
      Rating: "",
      RateQuotedBy: rateQuotedBy,
      CustomerEmail: customerEmail,
+     CustomerPhoneNumber: customerPhoneNumber,
     OrderId: "",
     OrderDate: "",
     PaidAmount: "",

@@ -35,7 +35,8 @@ const RaiseActionView = () => {
   const [newPhotoCount , setPhotoCount] = useState(0);
   const [fullName, setFullName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
-  
+  const [customerPhoneNumber, setCustomerPhoneNumber] = useState('');
+
   useEffect(() => {
     console.log(ticketData, status);
   }, [ticketData, status]);
@@ -60,6 +61,7 @@ const RaiseActionView = () => {
         setAssignedTo(data.assignedTo);
         setStatus(data.status);
         setFullName(data.customerName);
+        setCustomerPhoneNumber(data.customerPhoneNumber);
         setRequestType(data.requestType || 'Without Material');
         setSpecifications(data.materials || [{ material: "", quantity: "" }]);
         setCustomerEmail(data.customerEmail);
@@ -212,6 +214,7 @@ const RaiseActionView = () => {
     TransactionType: "",
     InvoiceId: "",
     InvoiceURL: "",
+    CustomerPhoneNumber: customerPhoneNumber,
     };
     try {
       

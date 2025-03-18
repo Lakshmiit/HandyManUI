@@ -59,8 +59,7 @@ const RaiseQuotation = () => {
     const [technicianId, setTechnicianId] = useState([]);
     const {userType} = useParams();
     const [customerEmail, setCustomerEmail] = useState('');
-
-
+    const [customerPhoneNumber, setCustomerPhoneNumber] = useState('');
 
     useEffect(() => {
       console.log(subject, loading, isWithMaterial, id, raiseAQuoteId, totalAmount, enterQuoteAmount, fixedQuote);
@@ -200,6 +199,7 @@ useEffect(() => {
             // alert(data.technicianList);
             setCustomerId(data.customerId);
             setCustomerEmail(data.customerEmail);
+            setCustomerPhoneNumber(data.customerPhoneNumber);
             setIsWithMaterial(data.isMaterialType);
             setAssignedTo(data.assignedTo);
             setStatus(data.status);
@@ -358,6 +358,7 @@ useEffect(() => {
     TransactionType: "",
     InvoiceId: "",
     InvoiceURL: "",
+    CustomerPhoneNumber: customerPhoneNumber,
     };
     try {
       
