@@ -824,7 +824,7 @@ const handleUpdateTicket = async (e) => {
               />
             </div> 
           ))}
-        </div>
+        </div> 
         ) : (
           <div>
             {specifications.map((spec, index) => (

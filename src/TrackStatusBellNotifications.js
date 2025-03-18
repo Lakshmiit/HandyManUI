@@ -12,7 +12,7 @@ const TrackStatusNotificationBell = () => {
 
   useEffect(() => {
     const notificationsRef = collection(db, "notifications");
-
+ 
     const unsubscribe = onSnapshot(notificationsRef, async (snapshot) => {
       try {
         const response = await fetch(

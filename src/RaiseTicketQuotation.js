@@ -1167,7 +1167,7 @@ materialQuotation: material.map((mat) => ({
         </tr> 
   </tbody>
   </table>
-  ) : (
+  ) : ( 
     <div className="mobile-view">
       {technicianDetails.map((technician, index) => (
         <div key={index} className="card w-100 border p-2 mb-3">

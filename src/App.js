@@ -87,7 +87,7 @@ import TrackStatusNotificationBell from './TrackStatusBellNotifications.js';
 // import BuyProductCartView from './BuyProductCartView.js';
  
 const PreventBackNavigation = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); 
   
   useEffect(() => { 
     const handlePopState = (event) => {

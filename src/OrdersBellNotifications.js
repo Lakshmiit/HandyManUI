@@ -57,7 +57,7 @@ const productOrdersFiltered = data.filter(
         {unreadCount > 0 && (
           <span className="bell-count">{unreadCount}</span>
         )}
-      </button>
+      </button> 
       {/* Uncomment if you want to show notifications */}
       {/* <div className="absolute right-0 mt-2 bg-white shadow-lg rounded-md p-2">
         {notifications.map((ticket) => (

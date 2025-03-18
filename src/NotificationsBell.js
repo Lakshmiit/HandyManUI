@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
 import {  useParams } from "react-router-dom";
 import { db, collection, onSnapshot } from "./FirebaseConflict.js";
-// import notificationSound from "./bell.mp3";
+import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import notificationSound from "./Bell.mp3";
 
 const NotificationBell = () => {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
 //   const navigate = useNavigate();
   const { userId } = useParams(); 
- 
+  
   useEffect(() => {
     const notificationsRef = collection(db, "notifications");
 
@@ -29,7 +30,7 @@ const NotificationBell = () => {
         // Check for new notifications
         if (getTechnicianFiltered.length > notifications.length) {
           setUnreadCount(getTechnicianFiltered.length - notifications.length);
-          // playNotificationSound();
+         playNotificationSound();
         }
 
         setNotifications(getTechnicianFiltered);
@@ -41,10 +42,10 @@ const NotificationBell = () => {
     return () => unsubscribe();
   }, [userId, notifications]); // Added dependencies to re-run effect when `userId` or `notifications` change
 
-  //   const playNotificationSound = () => {
-  //     const audio = new Audio(notificationSound);
-  //     audio.play();
-  //   };
+    const playNotificationSound = () => {
+      const audio = new Audio(notificationSound);
+      audio.play();
+    };
 
   //   const handleNotificationClick = (ticketId) => {
   //     setUnreadCount(0);
@@ -54,7 +55,7 @@ const NotificationBell = () => {
   return (
     <div className="relative">
       <button className="relative p-2" onClick={() => setUnreadCount(0)}>
-        🔔
+        <NotificationsNoneIcon sx={{ color: "black" }}/>
         {unreadCount > 0 && (
           <span className="bell-count">{unreadCount}</span>
         )}

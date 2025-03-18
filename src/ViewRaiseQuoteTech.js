@@ -56,6 +56,7 @@ const RaiseQuoteTechnician = () => {
   const {category} = useParams();
   // const {userId} = useParams();
   const [fullName, setFullName] = useState('');
+  const [customerPhoneNumber, setCustomerPhoneNumber] = useState('');
   // const [internalStatus, setInternalStatus] = useState('');
   // const [ticketId, setTicketId] = useState('');
   const [materialQuotation] = useState([{discount: "", fixedDiscount: "", deliveryCharges: "", fixedDeliveryChargs: "", servicecharges: "", fixedServicecharges: "", gst: "", fixedGST: "", gradntotal: ""}]);  
@@ -97,6 +98,7 @@ const RaiseQuoteTechnician = () => {
             setAssignedTo(data.assignedTo);
             setStatus(data.status);
             setFullName(data.customerName);
+            setCustomerPhoneNumber(data.customerPhoneNumber);
         setRequestType(data.requestType || 'Without Material');
         setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: ""}]);
         const imageRequests =
@@ -367,7 +369,7 @@ const handleUpdateTicket = async (e) => {
           dealerList: [], 
           Rating: "",
           RateQuotedBy: "",
-
+          CustomerPhoneNumber: customerPhoneNumber, 
       };
 
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {

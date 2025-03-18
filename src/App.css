@@ -2207,7 +2207,7 @@ textarea {
   background-color: #f1b61f30;
   border: none;
   display: flex;
-  align-items: center;
+  align-items: center; 
   justify-content: center;
   flex-direction: column;
   gap: 1rem;

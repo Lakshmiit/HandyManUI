@@ -10,16 +10,16 @@ import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import RouteIcon from "@mui/icons-material/Route";
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
-import StorefrontIcon from '@mui/icons-material/Storefront';
+import StorefrontIcon from '@mui/icons-material/Storefront'; 
 // import OrdersIcon from '@mui/icons-material/Assignment';
 // import AccountCircle from "@mui/icons-material/AccountCircle";
 // import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import PersonIcon from '@mui/icons-material/Person'; 
 import UploadIcon from '@mui/icons-material/Upload';
-import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
+import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-import { TextField, IconButton } from "@mui/material";
+import { TextField, IconButton } from "@mui/material"; 
 // import CancelIcon from "@mui/icons-material/Cancel";
 // import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import EditIcon from "@mui/icons-material/Edit";
@@ -758,13 +758,13 @@ const fetchImageUrl = async (photoId) => {
                     </p>
 
                     <hr /> */}
-                    <p className="logout-btn" onClick={() => window.location.href = "https://localhost:7155/Logout"}>
+                    <p className="logout-btn" onClick={() => window.location.href = "https://handymanserviceproviders.com/Logout"}>
                       <LogoutIcon />
                       <span>Logout</span>
                     </p>
                     
                     {/* Logout Button */}
-                    {/* <p className="logout-btn" onClick={`https://localhost:7155`}>
+                    {/* <p className="logout-btn" onClick={`https://handymanserviceproviders.com`}>
                       <LogoutIcon />
                       <span>Logout</span>
                     </p> */}
