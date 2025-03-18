@@ -28,18 +28,19 @@ jobs:
         with:
           node-version: 18
 
-      # Install Dependencies
+      # Install Dependencies (Ensure Firebase is Installed)
       - name: Install Dependencies
         run: |
-          echo "Installing dependencies..."
-          npm install jszip file-saver --save
+          echo "Installing all dependencies..."
+          npm install firebase --save  # Ensure Firebase is installed
+          npm ci  # Install all dependencies based on package-lock.json
           echo "Dependencies installed successfully."
 
-      # Debug Installed Packages
-      - name: Debug Installed Packages
+      # Verify Firebase Installation
+      - name: Verify Firebase Installation
         run: |
-          echo "Listing installed dependencies..."
-          npm list
+          echo "Checking Firebase installation..."
+          npm list firebase || echo "⚠️ Firebase is NOT installed!"
 
       # Build the App
       - name: Build the App
@@ -55,7 +56,7 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_AGREEABLE_PEBBLE_0B4DB7D1E }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: "/" 
+          app_location: "/"  # Change this if your React app is inside a subfolder
           api_location: "" 
           output_location: "build"
 
