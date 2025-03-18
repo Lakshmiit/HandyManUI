@@ -971,7 +971,7 @@ setTotalAmount(roundedGrandTotal);
         ) : (
           <>
             {specifications.map((spec, index) => (
-              <div key={index} className="card mb-3 shadow-sm">
+              <div key={index} className="card w-100 mb-2 shadow-sm">
                 <div className="card-body">
                   <p className="d-flex align-items-center gap-2 mb-2">
                     <strong>Material:</strong>
@@ -1193,7 +1193,7 @@ setTotalAmount(roundedGrandTotal);
             <input 
             type="text"
             className="form-control"
-            value={comment.remarks}
+            value={comment.remarks} 
             placeholder="Remarks Text"
             onChange={(e) => handleAddRemarks(index, "remarks", e.target.value)}
             />

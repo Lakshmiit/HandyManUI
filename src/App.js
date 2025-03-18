@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Routes, useNavigate} from 'react-router
 
 // Importing necessary components
 // import Header from './Header';
-//  import Footer from './Footer.js'; 
+ import Footer from './Footer.js'; 
 import UploadForm from './uploadform';
 import ProductView from './ProductView'; 
 import EditUploadForm from './EditUploadForm';
@@ -80,13 +80,16 @@ import AdminClosedOrdersFinalGridView from './AdminClosedOrdersFinalGridView.js'
 import BuyProductsCustomerCart from './BuyProductsCustomerCart.js';
 import ProfilePage from './ProfilePage.js';
 import PaymentPage from './PaymentPage';
+import NotificationsBell from './NotificationsBell.js'; 
+import OrdersNotificationBell from './OrdersBellNotifications.js';
+import TrackStatusNotificationBell from './TrackStatusBellNotifications.js';
 // import TechnicianViewBookTechnician from './TechnicianViewBookTechnician.js';
 // import BuyProductCartView from './BuyProductCartView.js';
-
+ 
 const PreventBackNavigation = () => {
   const navigate = useNavigate();
-
-  useEffect(() => {
+  
+  useEffect(() => { 
     const handlePopState = (event) => {
       event.preventDefault();
       navigate(1); // Moves user forward, preventing back navigation
@@ -191,10 +194,14 @@ function App() {
             {/* <Route path='/technicianViewBookTechnician/:userType/:raiseTicketId' element={<TechnicianViewBookTechnician />} />  */}
             <Route path='/customerBuyProductOrdersGrid/:userType/:userId' element={<CustomerBuyProductOrdersGrid />} /> 
             <Route path="/payment-selection/:raiseTicketId" element={<PaymentPage />} />
+            <Route path="/notificationsbell/:userId" element={<NotificationsBell />} />
+            <Route path="/ordersNotificationsbell/:userId" element={<OrdersNotificationBell />} />
+            <Route path="/trackStatusNotificationsbell/:userId" element={<TrackStatusNotificationBell />} />
+            
             </Routes>
          
         </main>
-        {/* <Footer /> */}
+        <Footer />
       </div>
     </Router>
   );

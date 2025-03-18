@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import './App.css';
+import NotificationBell from "./NotificationsBell";
+import OrdersNotificationBell from "./OrdersBellNotifications";
+import TrackStatusNotificationBell from "./TrackStatusBellNotifications";
 import axios from "axios";
 // import Footer from './Footer.js';
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
@@ -8,10 +11,10 @@ import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import RouteIcon from "@mui/icons-material/Route";
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import StorefrontIcon from '@mui/icons-material/Storefront';
-import OrdersIcon from '@mui/icons-material/Assignment';
+// import OrdersIcon from '@mui/icons-material/Assignment';
 // import AccountCircle from "@mui/icons-material/AccountCircle";
 // import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
-import PersonIcon from '@mui/icons-material/Person';
+import PersonIcon from '@mui/icons-material/Person'; 
 import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
@@ -32,13 +35,15 @@ import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 
 
 const getMenuList = (userType, userId, ProductOwnedBy, category, district ) => {
+  // alert(category);
+  // alert(district);
   const customer = [
       { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
       { MenuIcon: <PersonOutlineIcon />, MenuTitle: "Book A Technician", TargetUrl: `/bookTechnician/${userType}/${userId}` },
-      { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}` },
-      { MenuIcon: <NotificationsNoneIcon />, MenuTitle: "Notifications", TargetUrl: `/customerNotification/${userType}/${userId}` },
+      { MenuIcon: <TrackStatusNotificationBell />, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}` },
+      { MenuIcon: <NotificationBell/>, MenuTitle: "Notifications", TargetUrl: `/customerNotification/${userType}/${userId}` },
       { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
-      { MenuIcon: <OrdersIcon />, MenuTitle: "Orders", TargetUrl: `/customerOrders/${userType}/${userId}` },
+      { MenuIcon: <OrdersNotificationBell />, MenuTitle: "Orders", TargetUrl: `/customerOrders/${userType}/${userId}` },
       { MenuIcon: <LocalOfferIcon />, MenuTitle: "Offers", TargetUrl: "" },
       { MenuIcon: <PersonIcon />, MenuTitle: "Accounts", TargetUrl: "" }
   ];
@@ -57,7 +62,7 @@ const getMenuList = (userType, userId, ProductOwnedBy, category, district ) => {
   const dealer = [
       { MenuIcon: <UploadIcon />, MenuTitle: "Upload Products", TargetUrl: `/product-list/${ProductOwnedBy}` },
       { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: "" },
-      { MenuIcon: <NotificationsNoneIcon />, MenuTitle: "Notifications", TargetUrl: `/dealerNotifications/${userType}/${category}/${district}/${userId}` },
+      { MenuIcon: <NotificationsNoneIcon />, MenuTitle: "Notifications", TargetUrl: `/dealerNotifications/${userType}/${userId}/${category}/${district}` },
       { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
       { MenuIcon: <PersonIcon />, MenuTitle: "My Account", TargetUrl: "" },
       { MenuIcon: <AccountBalanceIcon />, MenuTitle: "Add Bank Account", TargetUrl: "" },
@@ -68,7 +73,7 @@ const getMenuList = (userType, userId, ProductOwnedBy, category, district ) => {
   const trader = [
     { MenuIcon: <UploadIcon />, MenuTitle: "Upload Products", TargetUrl: `/product-list/${ProductOwnedBy}` },
     { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: "" },
-    { MenuIcon: <NotificationsNoneIcon />, MenuTitle: "Notifications", TargetUrl: `/dealerNotifications/${userType}/${category}/${district}/${userId}` },
+    { MenuIcon: <NotificationsNoneIcon />, MenuTitle: "Notifications", TargetUrl: `/dealerNotifications/${userType}/${userId}/${category}/${district}` },
     { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
     { MenuIcon: <PersonIcon />, MenuTitle: "My Account", TargetUrl: "" },
     { MenuIcon: <AccountBalanceIcon />, MenuTitle: "Add Bank Account", TargetUrl: "" },
@@ -78,7 +83,7 @@ const getMenuList = (userType, userId, ProductOwnedBy, category, district ) => {
 
   const technician = [
       { MenuIcon: <PersonIcon />, MenuTitle: "Add Technician", TargetUrl: "" },
-      { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: `/notificationTechnician/${userType}/${category}/${district}/${userId}` },
+      { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: `/notificationTechnician/${userType}/${userId}/${category}/${district}` },
       { MenuIcon: <NotificationsNoneIcon />, MenuTitle: "Notifications", TargetUrl: "" },
       { MenuIcon: <TransferWithinAStationIcon />, MenuTitle: "Track Technician", TargetUrl: "" },
       { MenuIcon: <PersonIcon />, MenuTitle: "My Account", TargetUrl: "" },
@@ -105,7 +110,10 @@ const getMenuList = (userType, userId, ProductOwnedBy, category, district ) => {
 const ProfilePage = () => {
     const {userId} = useParams();
     const {userType} = useParams();
-    const menuList = getMenuList(userType, userId);
+    const [category, setCategory] = useState('');
+    const [district, setDistrict] = useState('');
+   const [menuList, setMenuList] = useState([]);
+    //  const menuList = getMenuList(userType, userId, category, district);
     const [profile, setProfile] = useState({});
       // const [ticketData, setTicketData] = useState([]);
       // const [selectedFile, setSelectedFile] = useState(null);
@@ -257,7 +265,7 @@ useEffect(() => {
       }, []);
 
       
-      useEffect(() => {
+      useEffect(() => { 
         const handleCloseMenuOnClickOutside = (event) => {
           if (menuRef.current && !menuRef.current.contains(event.target)) {
             setShowMenu(false);
@@ -282,11 +290,14 @@ useEffect(() => {
             }
             if (!apiUrl) return;
             const response = await axios.get(apiUrl);
-            setProfile(response.data);
-      
+            setProfile(response.data); 
+            setCategory(response.data.category);
+            setDistrict(response.data.district);
             if (response.data.photoAttachmentId) {
               fetchImageUrl(response.data.photoAttachmentId);
             }
+            setMenuList(getMenuList(userType, userId, response.data.category, response.data.district));
+
           } catch (err) {
             setError(err.message);
           } finally {
@@ -296,6 +307,13 @@ useEffect(() => {
       
         fetchProfileData();
       }, [userType, userId]);
+      
+
+      useEffect(() => {
+        if (category && district) {
+          setMenuList(getMenuList(userType, userId, category, district));
+        }
+      }, [category, district, userType, userId]);
       
 
 // useEffect(() => {
@@ -525,8 +543,8 @@ const fetchImageUrl = async (photoId) => {
       className="profile-img"
       onClick={handleProfileClick}
     />
-   
   </div>
+  {/* <NotificationBell /> */}
 </div>
 
 
@@ -564,6 +582,7 @@ const fetchImageUrl = async (photoId) => {
         <div>
       {/* More Icon */}
       <div className="mob-menu">
+      {/* <NotificationBell /> */}
       <div className="profile-button" onClick={handleMoreIconClick} 
           style={{ cursor: "pointer" }}>
           <MoreVertIcon fontSize="large" />
@@ -739,13 +758,13 @@ const fetchImageUrl = async (photoId) => {
                     </p>
 
                     <hr /> */}
-                    <p className="logout-btn" onClick={() => window.location.href = "https://handymanserviceproviders.com/Logout"}>
+                    <p className="logout-btn" onClick={() => window.location.href = "https://localhost:7155/Logout"}>
                       <LogoutIcon />
                       <span>Logout</span>
                     </p>
                     
                     {/* Logout Button */}
-                    {/* <p className="logout-btn" onClick={`https://handymanserviceproviders.com`}>
+                    {/* <p className="logout-btn" onClick={`https://localhost:7155`}>
                       <LogoutIcon />
                       <span>Logout</span>
                     </p> */}
@@ -776,7 +795,7 @@ const fetchImageUrl = async (photoId) => {
     {menuList.map((menu, index) => (
         <div className="col-4 col-sm-4 col-md-3" key={index}>
             <div className="mnu_mn text-center d-flex flex-column justify-content-center align-items-center p-2" >
-                <span  className="material-symbols-outlined" style={{ fontSize: "30px" }}>
+                <span  className="material-symbols-outlined custom-icon">
                     {menu.MenuIcon} {/* Assuming icon is provided as text, e.g., "support_agent" */}
                 </span>
                 <a href={menu.TargetUrl} className="menu-item-link mt-2">

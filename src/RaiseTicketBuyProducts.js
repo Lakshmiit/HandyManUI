@@ -822,13 +822,13 @@ const handleUpdateTicket = async (e) => {
                 onChange={(e) => handleMaterialChange(index, "total", e.target.value)}
                 readOnly
               />
-            </div>
+            </div> 
           ))}
         </div>
         ) : (
           <div>
             {specifications.map((spec, index) => (
-              <div key={index} className="card mb-3 shadow-sm" style={{ maxWidth: "300px" }}>
+              <div key={index} className="card w-100 mb-3 shadow-sm" style={{ maxWidth: "300px" }}>
                 <div className="card-body">
                   <p className="mb-1"><strong>Material:</strong> {spec.material}</p>
                   <p className="mb-1"><strong>Quantity:</strong> {spec.quantity}</p>

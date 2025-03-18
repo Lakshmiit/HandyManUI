@@ -871,7 +871,7 @@ materialQuotation: material.map((mat) => ({
     ) : (
       <>
         {specifications.map((spec, index) => (
-          <div key={index} className="card mb-3 shadow-sm">
+          <div key={index} className="card w-100 mb-3 shadow-sm">
             <div className="card-body">
               <p className="d-flex align-items-center gap-2 mb-2">
                 <strong>Material:</strong>
@@ -1170,8 +1170,8 @@ materialQuotation: material.map((mat) => ({
   ) : (
     <div className="mobile-view">
       {technicianDetails.map((technician, index) => (
-        <div key={index} className="card border p-2 mb-3">
-          {[
+        <div key={index} className="card w-100 border p-2 mb-3">
+          {[ 
             ['Technician ID', technician.technicianId],
             ['Quoted Amount', technician.enterQuoteAmount],
             ['Discount', technician.fixedDiscount ? Number(technician.fixedDiscount).toFixed(2) : '0.00'],

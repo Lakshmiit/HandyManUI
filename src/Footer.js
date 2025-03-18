@@ -5,9 +5,10 @@ const Footer = () => {
     <footer className="footer">
       Powered by <span className="text-warning strong">Lakshmi Sai Service Provider</span>
       <br />
-      <span className="small">&copy; 2024 Satya software development center. All rights reserved.</span>
+      <span className="small">&copy; 2024 Lakshmi software development center. All rights reserved.</span>
     </footer>
   );
 };
 
 export default Footer;
+ 
