@@ -5,35 +5,31 @@ import {  Button } from 'react-bootstrap'; // Import Bootstrap components for mo
 import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
-import Sidebar from './Sidebar';
+import AdminSidebar from './AdminSidebar';
 
 const ProductAdmin = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const {selectedUserType} = useParams();
+  // const {selectedUserType} = useParams();
   const [productData, setProductData] = useState(null);
-  const [imageUrls, setImageUrls] = useState([]);
+  const [imageUrls, setImageUrls] = useState([]); 
   // const [productType] = useState("Approved");
   // const [comments] = useState("");
   const { id } = useParams();
   const navigate = useNavigate(); // Hook to programmatically navigate
   const { ProductOwnedBy } = useParams(); 
-  const {userType} = useParams();
+  // const {userType} = useParams();
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api
-
-/Product/${id}`);
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/${id}`);
         const data = await response.json();
         setProductData(data);
 
         const imageRequests =
           data.productPhotos?.map((photo) =>
             fetch(
-              `https://handymanapiv2.azurewebsites.net/api
-
-/FileUpload/download?generatedfilename=${photo}`
+              `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
             )
               .then((res) => res.json())
               .then((data) => ({
@@ -127,8 +123,8 @@ const ProductAdmin = () => {
         <div className="d-flex flex-row justify-content-start align-items-start">
           {/* Sidebar */}
           {!isMobile && (
-          <div className=" ml-0 m-4 p-0 sde_mnu">
-          <Sidebar userType={selectedUserType} />
+          <div className=" ml-0 p-0 adm_mnu h-90">
+          <AdminSidebar  />
           </div>
           )}
           
@@ -145,7 +141,7 @@ const ProductAdmin = () => {
 
           {showMenu && (
               <div className="sidebar-container">
-                <Sidebar userType={selectedUserType} />
+                <AdminSidebar  />
               </div>
           )}
         </div>
@@ -154,7 +150,7 @@ const ProductAdmin = () => {
           {/* Main Content */}
           <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
           <div className=" col-md-9">
-            <div className="bg-white p-4 rounded shadow-sm">
+            <div className="bg-white rounded shadow-sm">
               <h3 className="mb-4 text-primary">Product Details</h3>
 
               {/* Carousel */}
@@ -285,9 +281,9 @@ const ProductAdmin = () => {
                 {/* View Single Product Button */}
       <button
         type="button"
-        className='btn btn-warning text-white'
+        className='btn btn-warning text-white m-2'
        
-          onClick={() => navigate(`/product-list/${ProductOwnedBy}/${userType}`)}
+          onClick={() => navigate(`/product-list/${ProductOwnedBy}`)}
       >
       
         <span>Back</span>
@@ -300,12 +296,6 @@ const ProductAdmin = () => {
     </div>
     {/* Styles for floating menu */}
 <style jsx>{`
-        .floating-menu {
-          position: fixed;
-          top: 80px; /* Increased from 20px to avoid overlapping with the logo */
-          left: 20px; /* Adjusted for placement on the left side */
-          z-index: 1000;
-        }
         .menu-popup {
           position: absolute;
           top: 50px; /* Keeps the popup aligned below the floating menu */

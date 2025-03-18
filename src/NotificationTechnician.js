@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import axios from 'axios';
 import Sidebar from "./Sidebar";
 import Header from './Header.js';
 import {
@@ -117,12 +118,33 @@ const Notification = () => {
   const [glow, setGlow] = useState(false);
   const [glowQuote, setGlowQuote] = useState(false);
    const [glowOrder, setGlowOrder] = useState(false);
-  const { category, district } = useParams();
-  const { userType } = useParams();
-  // const {raiseTicketId} = useParams();
-  const { userId } = useParams();
-  const navigate = useNavigate();
+  //  const [profile, setProfile] = useState([]);
+  const { category}= useParams();
+  const {district } = useParams();
 
+  const [ category1, setCategory1]= useState("");
+  const [ district1, setDistrict1]= useState("");
+  const { userType } = useParams();
+  // const {location} = useLocation();
+  // const [category, setCategory] = useState(sessionStorage.getItem("category") || "");
+  // const [district, setDistrict] = useState(sessionStorage.getItem("district") || "");
+  // const {raiseTicketId } = useParams();
+  const { userId } = useParams();
+const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);  
+    const navigate = useNavigate();
+    useEffect(() => {
+      console.log(loading, error);
+    }, [loading, error]);
+  // useEffect(() => {
+  //   if (location.state) {
+  //     const { category, district } = location.state;
+  //     setCategory(category);
+  //     setDistrict(district);
+  //     sessionStorage.setItem("category", category);
+  //     sessionStorage.setItem("district", district);
+  //   }
+  // }, [location.state]);
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     handleResize();
@@ -155,15 +177,56 @@ const Notification = () => {
 //     };
 //     fetchNotifications();
 //  }, [district, category, technicianId]);
+    useEffect(() => {
+            if (!userId || !userType) return;
+            const fetchProfileData = async () => {
+              try {
+                let apiUrl = "";
+             
+                  apiUrl = `https://handymanapiv2.azurewebsites.net/api/technician/technicianProfileData?profileType=${userType}&UserId=${userId}`;
+                
+                if (!apiUrl) return;
+                const response = await axios.get(apiUrl);
+                //setProfile(response.data); 
+                // alert(response.data.district);
+                setCategory1(response.data.category);
+             
+                setDistrict1(response.data.district);
+                alert(response.data.district);
+                
+                  
+              } catch (err) {
+                setError(err.message);
+              } finally {
+                setLoading(false);
+              }
+            };
+          
+            fetchProfileData();
+          }, [userType, userId]);
+          
     
+          // useEffect(() => {
+          //   if (category && district) {
+          //     setMenuList(getMenuList(userType, userId, category, district));
+          //   }
+          // }, [category, district, userType, userId]);
+          
+    
+
+
+
+
+
 useEffect(() => {
   const fetchNotifications = async () => {
     try {
       const [getQuoteResponse, orderResponse] = await Promise.all([
       fetch(
-        `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistTechnicianId?category=${category}&district=${district}&technicianId=${userId}`
+        `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistTechnicianId?category=${category1}&district=${district1}&technicianId=${userId}`
       ),
-      fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingTechnicianId?category=${category}&district=${district}&technicianId=${userId}`),
+      fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingTechnicianId?category=${category1}&district=${district1}&technicianId=${userId}`),
+
     ]);
 
       const getQuoteData = await getQuoteResponse.json();
@@ -208,7 +271,7 @@ useEffect(() => {
     fetchNotifications();
     const interval = setInterval(fetchNotifications, 6000);
     return () => clearInterval(interval);
-  }, [category, district, userId]);
+  }, [category1, district1, userId]);
 
 
 // useEffect(() => {

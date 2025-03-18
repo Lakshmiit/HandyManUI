@@ -4,10 +4,11 @@ import "./App.css"; // Add this for the required CSS.
 import { useNavigate } from 'react-router-dom';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import UploadIcon from '@mui/icons-material/Upload';
-import Sidebar from './Sidebar';
+import AdminSidebar from './AdminSidebar';
 import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import {  Button } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
+import Header from './Header.js';
 
 const ProductUpload = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -29,11 +30,11 @@ const ProductUpload = () => {
   const [color, setColor] = useState("");
   const [specificationDesc, setSpecificationDesc] = useState("");
   const [showAlert, setShowAlert] = useState(false);
-  const { userType} = useParams();
+  // const { userType} = useParams();
   // const [alertMessage, setAlertMessage] = useState("");
   const navigate = useNavigate(); // Hook to programmatically navigate
   const { ProductOwnedBy } = useParams(); 
-  const { selectedUserType} = useParams();
+  // const { selectedUserType} = useParams();
   //const { productstatus } = useState("Pending Approval");
   // Handle file input change (multiple files)
 
@@ -198,11 +199,16 @@ useEffect(() => {
   };
 
   return (
-    <div className="d-flex flex-row justify-content-start align-items-start">
+    <div>
+      <div className="header-container">
+      <Header />
+      </div>  
+    
+    <div className=" m-0 d-flex flex-row justify-content-start align-items-start">
       {/* Sidebar menu for Larger Screens */}
       {!isMobile && (
-        <div className=" ml-0 m-4 p-0 sde_mnu">
-          <Sidebar userType={selectedUserType} />
+        <div className="ml-0 p-0 adm_mnu h-90">
+          <AdminSidebar />
         </div>
       )}
 
@@ -219,7 +225,7 @@ useEffect(() => {
 
           {showMenu && (
               <div className="sidebar-container">
-                <Sidebar userType={selectedUserType} />
+                <AdminSidebar />
               </div>
           )}
         </div>
@@ -440,7 +446,7 @@ useEffect(() => {
         type="button"
         className="btn btn-primary w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
        
-          onClick={() => navigate(`/product-list/${ProductOwnedBy}/${userType}`)}
+          onClick={() => navigate(`/product-list/${ProductOwnedBy}`)}
       >
         <VisibilityIcon className="me-2" />
         <span>View Product</span>
@@ -450,6 +456,7 @@ useEffect(() => {
           </form>
         </div>
       </div>
+    </div>
     </div>
   );
 };

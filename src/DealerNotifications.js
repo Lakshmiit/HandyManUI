@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Header from './Header.js';
+import axios from 'axios';
 import {
   Dashboard as MoreVertIcon,
   ArrowBack as ArrowBackIcon,
@@ -117,11 +118,20 @@ const Notification = () => {
   const [glow, setGlow] = useState(false);
   const [glowQuote, setGlowQuote] = useState(false);
   const [glowOrder, setGlowOrder] = useState(false);
-  const { district, category } = useParams();
+  const { district} = useParams();
+  const {category } = useParams();
   const { userType } = useParams();
   const { userId } = useParams();
   // const { raiseTicketId } = useParams();
   const navigate = useNavigate();
+  const [ category1, setCategory1]= useState("");
+  const [ district1, setDistrict1]= useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);  
+
+  useEffect(() => {
+    console.log(loading, error);
+  }, [loading, error]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -131,13 +141,42 @@ const Notification = () => {
   }, []); 
 
   useEffect(() => {
+    if (!userId || !userType) return;
+    const fetchProfileData = async () => {
+      try {
+        let apiUrl = "";
+     
+          apiUrl = `https://handymanapiv2.azurewebsites.net/api/dealer/dealerProfileData?profileType=${userType}&UserId=${userId}`;
+        
+        if (!apiUrl) return;
+        const response = await axios.get(apiUrl);
+        //setProfile(response.data); 
+        // alert(response.data.district);
+        setCategory1(response.data.category);
+     
+        setDistrict1(response.data.district);
+        alert(response.data.district);
+        
+          
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchProfileData();
+  }, [userType, userId]);
+  
+
+  useEffect(() => {
     const fetchNotifications = async () => {
       try {
         const [getQuoteResponse, orderResponse] = await Promise.all([
         fetch(
-          `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistDealerId?category=${category}&district=${district}&dealerId=${userId}`
+          `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistDealerId?category=${category1}&district=${district1}&dealerId=${userId}`
         ),
-        fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingDealerId?category=${category}&district=${district}&dealerId=${userId}`),
+        fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingDealerId?category=${category1}&district=${district1}&dealerId=${userId}`),
       ]);
         const getQuoteData = await getQuoteResponse.json();
         const tickets = getQuoteData.tickets || [];
@@ -173,7 +212,7 @@ const Notification = () => {
         }
       };
       fetchNotifications();
-   }, [district, category, userId]);
+   }, [category1, district1, userId]);
   
 
   // useEffect(() => {

@@ -4,13 +4,13 @@ import "./App.css"; // Add this for the required CSS.
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import UpdateIcon from '@mui/icons-material/Update';
 import { useNavigate, useParams } from 'react-router-dom';
-import Sidebar from './Sidebar';
+import AdminSidebar from './AdminSidebar';
 import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import {  Button } from 'react-bootstrap';
 
 const ProductUpload = () => {
     const { id } = useParams(); // Retrieve the dynamic id from URL
-    const [selectedUserType] = useState("");
+    // const [selectedUserType] = useState("");
     const [isMobile, setIsMobile] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
     const navigate = useNavigate();
@@ -34,7 +34,7 @@ const ProductUpload = () => {
     const [moreInfo, setMoreInfo] = useState("");
     const [color, setColor] = useState("");
     const {ProductOwnedBy} = useParams();
-    const {userType} = useParams();
+    // const {userType} = useParams();
     useEffect(() => {
         const fetchProductData = async () => {
             try {
@@ -235,7 +235,7 @@ const ProductUpload = () => {
 
             if (response.ok) {
                 alert("Product updated successfully!");
-                navigate(`/product-list/${ProductOwnedBy}/${userType}`);
+                navigate(`/product-list/${ProductOwnedBy}`);
             } else {
                 alert("Please fill in all mandatory fields.");
                 alert("Failed to update product.");
@@ -261,8 +261,8 @@ const ProductUpload = () => {
         <div className="d-flex flex-row justify-content-start align-items-start">
             {/* Sidebar menu for Larger Screens */}
             {!isMobile && (
-                <div className=" ml-0 m-4 p-0 sde_mnu">
-                <Sidebar userType={selectedUserType} />
+                <div className=" ml-0 p-0 adm_mnu h-90">
+                <AdminSidebar  />
                 </div>
             )}
 
@@ -279,14 +279,14 @@ const ProductUpload = () => {
 
                 {showMenu && (
                     <div className="sidebar-container">
-                        <Sidebar userType={selectedUserType} />
+                        <AdminSidebar  />
                     </div>
                 )}
                 </div>
             )}
 
-       <div className={`container m-3 ${isMobile ? 'w-100' : 'w-75'}`}>
-                <h3 className="mb-3 text-center">Update Product</h3>
+       <div className={`container  ${isMobile ? 'w-100' : 'w-75'}`}>
+                <h3 className="mb-2 text-center">Update Product</h3>
                 <div className="bg-white rounded-3 p-3 bx_sdw w-60 m-auto">
                     <form onSubmit={handleSubmit}>
                         {/* Product Name */}
@@ -514,7 +514,7 @@ const ProductUpload = () => {
                             <button
                                 type="button"
                                 className="btn btn-primary w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
-                                onClick={() => navigate(`/product-list/${ProductOwnedBy}/${userType}`)}
+                                onClick={() => navigate(`/product-list/${ProductOwnedBy}`)}
                             >
                                 <VisibilityIcon className="me-2" />
                                 <span>View Product</span>
