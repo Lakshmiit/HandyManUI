@@ -28,19 +28,20 @@ jobs:
         with:
           node-version: 18
 
-      # Install Dependencies (Ensure Firebase is Installed)
+      # Install Dependencies (Ensure Firebase & jszip are Installed)
       - name: Install Dependencies
         run: |
           echo "Installing all dependencies..."
-          npm install firebase --save  # Ensure Firebase is installed
-          npm ci  # Install all dependencies based on package-lock.json
+          npm install firebase jszip --save  # Ensure Firebase & jszip are installed
+          npm ci  # Install all dependencies from package-lock.json
           echo "Dependencies installed successfully."
 
-      # Verify Firebase Installation
-      - name: Verify Firebase Installation
+      # Verify Firebase & jszip Installation
+      - name: Verify Installed Packages
         run: |
-          echo "Checking Firebase installation..."
+          echo "Checking Firebase and jszip installation..."
           npm list firebase || echo "⚠️ Firebase is NOT installed!"
+          npm list jszip || echo "⚠️ jszip is NOT installed!"
 
       # Build the App
       - name: Build the App
