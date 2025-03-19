@@ -1,5 +1,7 @@
 import React, { useEffect, useState} from 'react';
 import Sidebar from './Sidebar';
+import Header from './Header.js';
+import Footer from './Footer.js';
 import { Button } from 'react-bootstrap';
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
 // import image from './img/technician.png';
@@ -66,6 +68,9 @@ const CustomerTicketTrack = () => {
   const [dealerAddress, setDealerAddress] = useState('');
   const [dealerData, setDealerData] = useState('');
   const [dealerName,setDealerName] = useState('');
+//   const [customerPhoneNumber, setCustomerPhoneNumber] = useState('');
+// const [customerEmail, setCustomerEmail] = useState('');
+
   // const [rateQuotedBy, setRateQuotedBy] = useState(''); 
 
   // const [technicianId, setTechnicianId] = useState([]);
@@ -149,6 +154,8 @@ useEffect(() => {
         setStatus(data.status);
         // setRateQuotedBy(data.rateQuotedBy);
         setFullName(data.customerName);
+        // setCustomerEmail(data.emailAddress);   
+        //  setCustomerPhoneNumber(data.customerPhoneNumber);
         setApprovedAmount(data.approvedAmount);
         setLowestBidder(data.lowestBidderTechnicainId);
         setLowestDealerBidder(data.lowestBidderDealerId);
@@ -494,6 +501,8 @@ useEffect(() => {
 // };
 
   return (
+    <div>
+  {isMobile && <Header />}
     <div className="d-flex">
         {!isMobile && (
         <div className="ml-0 p-0 sde_mnu">
@@ -861,6 +870,10 @@ useEffect(() => {
       </div>
     </div>
     </div>
+
+    </div>
+    <Footer /> 
+
     {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {

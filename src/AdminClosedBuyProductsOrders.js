@@ -3,6 +3,7 @@ import "./App.css";
 // import { v4 as uuidv4 } from 'uuid'; 
 import AdminSidebar from './AdminSidebar';
 // import Header from './Header.js';
+import Footer from './Footer.js';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 // import ForwardIcon from '@mui/icons-material/Forward';
@@ -1205,6 +1206,8 @@ useEffect(() => {
           </form>
         </div>
       </div>
+      <Footer /> 
+
       {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {

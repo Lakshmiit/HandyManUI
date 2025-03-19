@@ -3,6 +3,8 @@ import "./App.css";
 // import { v4 as uuidv4 } from 'uuid'; 
 import Sidebar from './Sidebar';
 import Header from './Header.js';
+import Footer from './Footer.js';
+
 import "bootstrap/dist/css/bootstrap.min.css";
 import {  useParams, useLocation, useNavigate } from "react-router-dom";
 import { Dashboard as MoreVertIcon} from '@mui/icons-material';
@@ -106,7 +108,7 @@ useEffect(() => {
   // useEffect(() => {
   //   const fetchProfileType = async () => {
   //     try {
-  //       const API_URL = "https://localhost:7091/api/Address/GetAddressById/";
+  //       const API_URL = "https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/";
   //       const response = await fetch(`${API_URL}${userId}`);
   //       if (!response.ok) {
   //         throw new Error("Failed to fetch customer profile data");
@@ -287,7 +289,7 @@ useEffect(() => {
   //   }; 
    
   //   try {
-  //     const response = await fetch(`https://localhost:7091/api/BuyProduct/${buyProductId}`,{
+  //     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/${buyProductId}`,{
   //       method: 'PUT',
   //       headers: {
   //         'Content-Type': 'application/json',
@@ -436,7 +438,7 @@ useEffect(() => {
   //   const fetchProducts = async () => {
   //     try {
   //       const response = await axios.get(
-  //         `https://localhost:7091/api/Product/GetProductsByCategory?category=${category}`
+  //         `https://handymanapiv2.azurewebsites.net/api/Product/GetProductsByCategory?category=${category}`
   //       );
   //       setAllProducts(response.data);
   //       // alert(JSON.stringify(allProducts));
@@ -1116,7 +1118,10 @@ useEffect(() => {
           </form>
         </div>
       </div>
+
       </div>
+      <Footer /> 
+
       {/* Styles for floating menu */}
 <style jsx>{`
         .menu-popup {

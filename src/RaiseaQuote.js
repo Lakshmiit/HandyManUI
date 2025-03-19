@@ -6,6 +6,10 @@ import "./App.css";
 import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import { useParams } from 'react-router-dom';
 import Sidebar from './Sidebar';
+import Header from './Header.js';
+import Footer from './Footer.js';
+
+
 
 const RaiseQuote = () => {
   const {selectedUserType} = useParams();
@@ -161,6 +165,8 @@ const handleFixedChange = (setter, fixedSetter) => (e) => {
 
 
   return (
+    <div>
+  {isMobile && <Header />}
     <div className="d-flex flex-row justify-content-start align-items-start">
        {/* Sidebar menu for Larger Screens */}
        {!isMobile && (
@@ -581,6 +587,10 @@ const handleFixedChange = (setter, fixedSetter) => (e) => {
         </div>
       )}
     </div>
+
+    </div>
+    <Footer /> 
+
     {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {

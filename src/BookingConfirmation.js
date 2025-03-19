@@ -4,11 +4,12 @@ import { Button } from 'react-bootstrap';
 import Header from './Header.js';
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
 // import image from './img/technician.png';
+import Footer from './Footer.js';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import './App.css';
 import { useParams, useNavigate } from "react-router-dom";
-
+ 
 const BookingConfirmation = () => {
   const Navigate = useNavigate();
   const {userType} = useParams();
@@ -54,7 +55,7 @@ const BookingConfirmation = () => {
   const [showModal, setShowModal] = useState(false);
   const [rateQuotedBy, setRateQuotedBy] = useState(''); 
   const [customerEmail, setCustomerEmail] = useState('');
-
+  const [customerPhoneNumber, setCustomerPhoneNumber] = useState('');
   
   useEffect(() => {
       console.log(loading,id, technicianData, customerId);
@@ -89,6 +90,7 @@ const BookingConfirmation = () => {
         setAssignedTo(data.assignedTo);
         setStatus(data.status);
         setFullName(data.customerName);
+        setCustomerPhoneNumber(data.customerPhoneNumber);
         setApprovedAmount(data.approvedAmount);
         setOption1Day(data.option1Day);
         setOption2Day(data.option2Day);
@@ -188,6 +190,7 @@ const BookingConfirmation = () => {
       Rating: "",
       RateQuotedBy: rateQuotedBy,
       CustomerEmail: customerEmail,
+      CustomerPhoneNumber: customerPhoneNumber,
     OrderId: "",
     OrderDate: "",
     PaidAmount: "",
@@ -669,6 +672,7 @@ const BookingConfirmation = () => {
     </div>
     </div>
     </div>
+    <Footer /> 
     {/* Styles for floating menu */}
 <style jsx>{`
         .modal-overlay {

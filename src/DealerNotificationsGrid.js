@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import axios from "axios";
 import Sidebar from "./Sidebar";
+import Footer from './Footer.js';
+
 import Header from './Header.js';
 import { Link, useParams } from "react-router-dom";
 import { FaEye, FaTrash } from "react-icons/fa";
@@ -237,7 +239,10 @@ useEffect(() => {
           </nav>
         </div>
       </div>
+
       </div> 
+      <Footer /> 
+
       {/* Styles for floating menu */}
       <style jsx>{`
         .floating-menu {

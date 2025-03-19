@@ -1,5 +1,8 @@
 import React, { useEffect, useState} from 'react';
 import Sidebar from './Sidebar';
+import Header from './Header.js';
+import Footer from './Footer.js';
+
 import { Button } from 'react-bootstrap';
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
 // import image from './img/technician.png';
@@ -67,13 +70,17 @@ const TraderConfirmation = () => {
   const [dealer, setDealerData] = useState('');
   const [dealerName,setDealerName] = useState('');
   const [technicianId, setTechnicianId] = useState([]);
-  const [dealerId, setDealerId] = useState([]);
+  const [userId, setDealerId] = useState([]);
   const [deliveryId, setDeliveryId] = useState('');
   const [isSaved, setIsSaved] = useState(false);
   const [dealerDetails, setDealerDetails] = useState('');
   const [materialTotal, setMaterialTotal] = useState('');
   const [materialQuotation, setMaterialQuotation] = useState([]);
   const [rateQuotedBy, setRateQuotedBy] = useState(''); 
+  const [customerPhoneNumber, setCustomerPhoneNumber] = useState('');
+const [customerEmail, setCustomerEmail] = useState('');
+  // const [paymentType, setPaymentType] = useState("");
+
  useEffect(() => {
       console.log(loading, dealerDetails, dealer, technicianStatus,technicianData, technicianFullName,deliveryData, dealerStatus,paymentData,showAlert, technicianAddress, technicianPhotoId, selectedSlot);
     }, [loading, dealerDetails, dealer,technicianData,technicianStatus, technicianFullName, deliveryData,dealerStatus,paymentData,showAlert, technicianAddress, technicianPhotoId, selectedSlot]);
@@ -121,6 +128,8 @@ const TraderConfirmation = () => {
         setDealerId(raiseTicketData.dealerList || []);
         setCategory(raiseTicketData.category);
         setCustomerId(raiseTicketData.customerId);
+        setCustomerEmail(raiseTicketData.emailAddress);   
+        setCustomerPhoneNumber(raiseTicketData.customerPhoneNumber);
         setIsWithMaterial(raiseTicketData.isMaterialType);
         setAssignedTo(raiseTicketData.assignedTo);
         setStatus(raiseTicketData.status);
@@ -392,7 +401,7 @@ useEffect(() => {
       CustomerId: customerId,
       State: state,
       TechnicianList: technicianId,
-      DealerList: dealerId,
+      DealerList: userId,
       LowestBidderTechnicainId: lowestBidder,
       LowestBidderDealerId: lowestDealerBidder,
       IsMaterialType: isWithMaterial,
@@ -414,7 +423,15 @@ useEffect(() => {
       Option2Time: option2Time,
       Rating: "", 
       RateQuotedBy: rateQuotedBy,
-      
+      CustomerPhoneNumber: customerPhoneNumber,
+    CustomerEmail: customerEmail,
+    OrderId: "",
+    OrderDate: "",
+    PaidAmount: "",
+    TransactionStatus: "",
+    TransactionType: "",
+    InvoiceId: "",
+    InvoiceURL: "",
     };
   
     try {
@@ -572,6 +589,8 @@ const handleBothActions =  (e) => {
 // };
 
   return (
+    <div>
+  {isMobile && <Header />}
     <div className="d-flex">
         {!isMobile && (
         <div className="ml-0 p-0 sde_mnu">
@@ -1006,6 +1025,10 @@ const handleBothActions =  (e) => {
       </div>
     </div>
     </div>
+
+    </div>
+    <Footer /> 
+
     {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {

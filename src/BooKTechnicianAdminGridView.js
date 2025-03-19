@@ -3,6 +3,7 @@ import { Button, Form, Row, Col } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 // import Header from './Header.js';
+import Footer from './Footer.js';
 import AdminSidebar from './AdminSidebar';
 import {  Dashboard as MoreVertIcon } from '@mui/icons-material';
 // import { FaEdit} from 'react-icons/fa'; // Correct icon import
@@ -551,7 +552,7 @@ const BookTechnicianActionView = () => {
         </div>
         </Form>
         </div>
-
+        <Footer /> 
         {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {

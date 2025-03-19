@@ -3,6 +3,8 @@ import { Button } from "react-bootstrap";
 import axios from 'axios';
 import Sidebar from "./Sidebar";
 import Header from './Header.js';
+import Footer from './Footer.js';
+
 import { Link, useParams } from "react-router-dom";
 import { FaEye } from "react-icons/fa";
 import {
@@ -71,7 +73,7 @@ const CustomerBuyProductNotificationGrid = () => {
   // const handleDelete = (productId) => {
   //   const confirmDelete = window.confirm('Are you sure you want to delete this product?');
   //   if (confirmDelete) {
-  //     axios.delete(`https://localhost:7091/api/RaiseTicket/${productId}`)
+  //     axios.delete(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${productId}`)
   //       .then(() => {
   //         setProductData(prevData => prevData.filter(product => product.id !== productId));
   //         setFilteredData(prevData => prevData.filter(product => product.id !== productId));
@@ -331,6 +333,8 @@ const CustomerBuyProductNotificationGrid = () => {
         </div>
       </div>
       </div>
+      <Footer /> 
+
       {/* Styles for floating menu */}
 <style jsx>{`
         .menu-popup {

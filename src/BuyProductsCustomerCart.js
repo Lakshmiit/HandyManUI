@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {  useParams } from "react-router-dom";
 import Sidebar from "./Sidebar";
+import Header from './Header.js';
 import {
   Dashboard as MoreVertIcon,
   ArrowBack as ArrowBackIcon,
@@ -130,6 +131,8 @@ const BuyProductsCustomerCart = () => {
   const handleTabClick = (tab) => setActiveTab(tab);
 
   return (
+    <div>
+  {isMobile && <Header />}
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className="ml-0 p-0 sde_mnu">
@@ -230,6 +233,7 @@ const BuyProductsCustomerCart = () => {
             )}
           </div>
         </div>
+      </div>
       </div>
       <style jsx>{`
         .glow {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import axios from 'axios';
 import Header from './Header.js';
+import Footer from './Footer.js';
 import Sidebar from "./Sidebar";
 import { Link, useParams } from "react-router-dom";
 import {  FaEye } from "react-icons/fa";
@@ -218,6 +219,8 @@ const CustomerBookTechnicianGrid = () => {
         </div>
       </div>
     </div>
+    <Footer /> 
+
       {/* Styles for floating menu */}
 <style jsx>{`
         .menu-popup {

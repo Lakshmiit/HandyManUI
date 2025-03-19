@@ -6,6 +6,8 @@ import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import "./App.css";
 import Sidebar from './Sidebar';
 import Header from './Header.js';
+import Footer from './Footer.js';
+
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import {Link, useParams} from 'react-router-dom';
 
@@ -561,7 +563,10 @@ const [rateQuotedBy, setRateQuotedBy] = useState('');
         </div>
       </Form>
     </div>
+
     </div>
+    <Footer /> 
+
     {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {

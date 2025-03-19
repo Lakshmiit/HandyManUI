@@ -4,6 +4,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import Sidebar from './Sidebar';
 import Header from './Header.js';
+import Footer from './Footer.js';
+
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import { Link, useParams } from 'react-router-dom';
@@ -829,7 +831,10 @@ const RaiseQuoteTechnicianDetails = () => {
           </Button> */}
         </div>
         </Form>
+
         </div>
+        <Footer /> 
+
         {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {

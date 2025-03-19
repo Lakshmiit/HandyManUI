@@ -7,6 +7,7 @@ import {
   NotificationsNone as NotificationsNoneIcon,
 } from "@mui/icons-material";
 // import Header from './Header.js';
+import Footer from './Footer.js';
 import { Button } from "react-bootstrap";
 import "./App.css";
 
@@ -791,6 +792,7 @@ const Notification = () => {
           </div> 
         </div>
         </div>
+        <Footer /> 
       </div>
   );
 }; 

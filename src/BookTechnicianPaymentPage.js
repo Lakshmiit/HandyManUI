@@ -2,6 +2,7 @@ import React, { useEffect, useState} from 'react';
 import Sidebar from './Sidebar';
 import { Button } from 'react-bootstrap';
 import Header from './Header.js';
+import Footer from './Footer.js';
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
@@ -653,6 +654,8 @@ if (loading) {
     </div>
     </div>
     </div>
+    <Footer /> 
+
     {/* Styles for floating menu */}
 <style jsx>{`
         .modal-overlay {

@@ -1129,8 +1129,9 @@ useEffect(() => {
             </div> */}
           </form>
         </div>
-        <Footer /> 
+        
       </div>
+      <Footer /> 
       {/* Styles for floating menu */}
 <style jsx>{`
         .menu-popup {

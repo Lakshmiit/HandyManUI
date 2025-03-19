@@ -1257,10 +1257,10 @@ const RaiseQuotation = () => {
           </Button>
         </div>
       </Form>
+    </div> 
     </div>
     <Footer /> 
- 
-    </div>
+
     {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {

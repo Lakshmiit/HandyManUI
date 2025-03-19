@@ -4,6 +4,8 @@ import axios from 'axios';
 import { Button } from "react-bootstrap";
 import Sidebar from "./Sidebar";
 import Header from './Header.js';
+import Footer from './Footer.js';
+
 import {Dashboard as MoreVertIcon,} from "@mui/icons-material";
 import { FaEye } from 'react-icons/fa';
 import  ArrowLeftIcon  from '@mui/icons-material/ArrowLeft';
@@ -196,6 +198,8 @@ useEffect(() => {
       </div>
     </div>
   </div>
+  <Footer /> 
+
   </div>
   );
 };

@@ -3,14 +3,17 @@ import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Button } from "react-bootstrap";
 import Sidebar from "./Sidebar";
+import Header from './Header.js';
+import Footer from './Footer.js';
+
 import {Dashboard as MoreVertIcon,} from "@mui/icons-material";
 import { FaEye } from 'react-icons/fa';
 import  ArrowLeftIcon  from '@mui/icons-material/ArrowLeft';
-
+ 
 const TicketConfirmationNotification = () => {
   const { userType } = useParams();
   const { selectedUserType } = useParams();
-  const {technicianId} = useParams();
+  const {userId} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [ticketData, setTicketData] = useState([]);
@@ -27,14 +30,14 @@ useEffect(() => {
 
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingTechnicianId?category=${category}&district=${district}&technicianId=${technicianId}`;
+    const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingTechnicianId?category=${category}&district=${district}&technicianId=${userId}`;
     
     axios.get(url)
       .then((response) => {
         console.log("API Response:", response.data); 
 
         const tickets = response.data.tickets || [];
-        const filteredTickets = tickets.filter((ticket) => (ticket.internalStatus === "Customer Approved" || ticket.internalStatus === "Closed")  && ticket.lowestBidderTechnicainId === technicianId);
+        const filteredTickets = tickets.filter((ticket) => (ticket.internalStatus === "Customer Approved" || ticket.internalStatus === "Closed")  && ticket.lowestBidderTechnicainId === userId);
         
         setTicketData(filteredTickets);
         setFilteredData(filteredTickets);
@@ -45,7 +48,7 @@ useEffect(() => {
       .finally(() => {
         setLoading(false);
       });
-  }, [ category, district, technicianId]);
+  }, [ category, district, userId]);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -69,6 +72,8 @@ useEffect(() => {
   }
 
   return (
+    <div>
+  {isMobile && <Header />}
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className="ml-0 m-4 p-0 sde_mnu">
@@ -122,7 +127,7 @@ useEffect(() => {
                 <td>{ticket.assignedTo}</td>
                 <td className="d-flex align-items-center">
                   <Link
-                    to={`/ticketConfirmation/${ticket.id}/${district}/${userType}/${technicianId}`}
+                    to={`/ticketConfirmation/${userType}/${userId}/${district}/${ticket.id}`}
                     className="btn btn-info mx-2"
                     title="View"
                   >
@@ -149,7 +154,7 @@ useEffect(() => {
       </div>
       <div className="ticket-actions">
       <Link
-        to={`/ticketConfirmation/${ticket.id}/${district}/${userType}/${technicianId}`}
+        to={`/ticketConfirmation/${userType}/${userId}/${district}/${ticket.id}`}
         className="btn btn-info mx-2"
         title="View"
       >
@@ -164,7 +169,7 @@ useEffect(() => {
       </>
       <div className="mt-4 text-end">
         <Link
-          to={`/notificationTechnician/technician/${category}/${district}/${technicianId}`}
+          to={`/notificationTechnician/${userType}/${userId}/${category}/${district}`}
           className="btn btn-warning text-white mx-2"
           title="Back"
         >
@@ -193,6 +198,9 @@ useEffect(() => {
         </nav>
       </div>
     </div>
+    </div>
+    <Footer /> 
+
     </div>
   );
 };

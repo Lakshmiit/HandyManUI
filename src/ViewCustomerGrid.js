@@ -3,6 +3,8 @@ import { Button } from "react-bootstrap";
 import axios from 'axios';
 import Sidebar from "./Sidebar";
 import Header from './Header.js';
+import Footer from './Footer.js';
+
 import { Link, useParams } from "react-router-dom";
 import { FaTrash, FaEye } from "react-icons/fa";
 import {
@@ -213,7 +215,10 @@ const RaiseTicketNotification = () => {
           </nav>
         </div>
       </div>
+
     </div>
+    <Footer /> 
+
       {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {

@@ -5,6 +5,8 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import "./App.css";
 import AdminSidebar from './AdminSidebar';
+import Footer from './Footer.js';
+
 import ForwardIcon from '@mui/icons-material/Forward';
 // import SaveAsIcon from '@mui/icons-material/SaveAs';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
@@ -1232,6 +1234,8 @@ materialQuotation: material.map((mat) => ({
         </div>
         </div>
       </Form>
+      <Footer /> 
+
       <style jsx>{`
         .floating-menu {
           position: fixed;

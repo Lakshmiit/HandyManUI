@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header.js';
+import Footer from './Footer.js';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Button } from 'react-bootstrap'; // Import Bootstrap components for modal
 
@@ -270,6 +271,8 @@ const BuyProdcutView = () => {
               </div>
             </div>
             </div>
+            <Footer />  
+
         {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {

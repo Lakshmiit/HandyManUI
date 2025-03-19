@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "./Sidebar";
+import Header from './Header.js';
+import Footer from './Footer.js';
+
 import {
   Dashboard as MoreVertIcon,
   ArrowBack as ArrowBackIcon,
@@ -13,10 +16,10 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
   const navigate = useNavigate();
 //   const {category} = useParams();
   const {userType} = useParams();
-  const {customerId} = useParams();
+  const {userId} = useParams();
 
   const handleTicketClick = (ticketId) => {
-    navigate(`/customerTrackConfirmation/${ticketId}/${userType}/${customerId}`, { state: { ticketId } });
+    navigate(`/customerTrackConfirmation/${userType}/${userId}/${ticketId}`, { state: { ticketId } });
   };
 
   return (
@@ -70,7 +73,7 @@ const TrackNotification = () => {
   const [glowTrack, setGlowTrack] = useState(false);
   // const { userType } = useParams();
   // const { raiseTicketId } = useParams('');
-  const { customerId } = useParams('');
+  const { userId } = useParams('');
   // const navigate = useNavigate();
 
   useEffect(() => {
@@ -84,7 +87,7 @@ const TrackNotification = () => {
   const fetchNotifications = async () => {
     try {
       const trackTicketResponse = await fetch(
-        `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTrackTicketsByCustomerId?customerId=${customerId}
+        `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTrackTicketsByCustomerId?customerId=${userId}
 `
       );
       const trackData = await trackTicketResponse.json();
@@ -104,7 +107,7 @@ const TrackNotification = () => {
       }
     };
     fetchNotifications();
- }, [customerId]);
+ }, [userId]);
     
 
   // const handleClearTrackNotifications = () => {
@@ -116,6 +119,8 @@ const TrackNotification = () => {
   const handleTabClick = (tab) => setActiveTab(tab);
 
   return (
+    <div>
+  {isMobile && <Header />}
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className="ml-0 m-4 p-0 sde_mnu">
@@ -199,6 +204,10 @@ const TrackNotification = () => {
           </div>
         </div>
       </div>
+
+      </div>
+      <Footer /> 
+
       <style jsx>{`
         .glow {
           color: gold;

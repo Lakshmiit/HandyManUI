@@ -1224,9 +1224,10 @@ setTotalAmount(roundedGrandTotal);
           </Button> */}
         </div>
         </Form> 
-        <Footer /> 
 
         </div>
+        <Footer />  
+
         {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {

@@ -5,6 +5,8 @@ import "./App.css"; // Add this for the required CSS.
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import UpdateIcon from '@mui/icons-material/Upload';
 import AdminSidebar from './AdminSidebar';
+import Footer from './Footer.js';
+
 import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import {  Button } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -492,6 +494,8 @@ const handleUpdateJobDescription = async (e) => {
           </form>
         </div>
       </div>
+      <Footer /> 
+
     </div>
   );
 };

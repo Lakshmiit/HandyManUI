@@ -9,7 +9,7 @@ const PaymentSelection = () => {
   const [razorpayLoaded, setRazorpayLoaded] = useState(false);
 
   useEffect(() => {
-    const loadRazorpay = async () => {
+    const loadRazorpay = async () => { 
       const script = document.createElement("script");
       script.src = "https://checkout.razorpay.com/v1/checkout.js";
       script.async = true;

@@ -6,6 +6,8 @@ import {
 } from '@mui/icons-material';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import Header from './Header.js';
+import Footer from './Footer.js';
+
 import Sidebar from './Sidebar';
 import { useParams } from 'react-router-dom';
 const AddressManager = () => {
@@ -913,7 +915,10 @@ useEffect(() => {
       </Modal>
 
       </div>
+
     </div>
+    <Footer /> 
+
 {/* Styles for floating menu */}
 <style jsx>{`
         .menu-popup {

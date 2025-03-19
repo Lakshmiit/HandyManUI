@@ -3,6 +3,7 @@ import "./App.css";
 // import { v4 as uuidv4 } from 'uuid'; 
 import AdminSidebar from './AdminSidebar';
 // import Header from './Header.js';
+import Footer from './Footer.js';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { ArrowBack, Dashboard as MoreVertIcon} from '@mui/icons-material';
@@ -1188,6 +1189,8 @@ useEffect(() => {
           </form>
         </div>
       </div>
+      <Footer /> 
+
       {/* Styles for floating menu */}
 <style jsx>{`
         .menu-popup {

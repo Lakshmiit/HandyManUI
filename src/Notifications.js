@@ -5,7 +5,7 @@ import "./App.css";
 import { Button } from "react-bootstrap"; 
 import { useNavigate } from "react-router-dom";
 
-const Notification = () => {
+const Notification = () => { 
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [activeTab, setActiveTab] = useState("Raise Ticket"); 
@@ -100,7 +100,7 @@ const Notification = () => {
             onClick={() => navigate("/raiseTicketNotification")}
             style={{ cursor: "pointer" }}
           >
-            >>> VIEW ALL
+             VIEW ALL
           </div>
         </div>
       </div>

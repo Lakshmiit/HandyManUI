@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import axios from 'axios';
 import AdminSidebar from "./AdminSidebar";
+import Footer from './Footer.js';
+
 import { Link } from "react-router-dom";
 import { FaTrash, FaEye } from "react-icons/fa";
 import {
@@ -304,7 +306,10 @@ const RaiseTicketNotification = () => {
             </ul>
           </nav>
         </div>
+
       </div>
+      <Footer /> 
+
       {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {

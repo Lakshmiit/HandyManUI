@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import axios from "axios";
 import Sidebar from "./Sidebar";
+import Header from './Header.js';
 import { Link, useParams } from "react-router-dom";
 import { FaEye } from "react-icons/fa";
 import {
@@ -10,6 +11,8 @@ import {
 } from "@mui/icons-material";
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import "./App.css";
+import Footer from './Footer.js';
+
 
 const RaiseQuoteOrders = () => {
   const { userType } = useParams();
@@ -111,6 +114,8 @@ useEffect(() => {
   }
 
   return (
+    <div>
+  {isMobile && <Header />}
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className="ml-0 m-4 p-0 sde_mnu">
@@ -201,6 +206,10 @@ useEffect(() => {
           </nav>
         </div>
       </div>
+
+      </div>
+      <Footer /> 
+
       {/* Styles for floating menu */}
       <style jsx>{`
         .floating-menu {

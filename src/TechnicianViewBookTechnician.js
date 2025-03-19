@@ -5,6 +5,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import Sidebar from './Sidebar';
 import Header from './Header.js';
 import Footer from './Footer.js';
+
 import {  Dashboard as MoreVertIcon } from '@mui/icons-material';
 // import { FaEdit} from 'react-icons/fa'; // Correct icon import
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
@@ -13,7 +14,7 @@ import ForwardIcon from '@mui/icons-material/Forward';
 // import { FaEye } from 'react-icons/fa';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import './App.css';
-const CustomerBookTechnicianQuotation = () => {
+const TechnicianViewBookTechnician = () => {
   const navigate = useNavigate(); 
 const {userType} = useParams();
   const [isMobile, setIsMobile] = useState(false);
@@ -148,6 +149,9 @@ if (paymentMode === "technician") {
     setError("Please select atleast one.");
     return;
   }
+  // }
+  // alert(`Payment method selected: ${paymentType || "Transaction Details entered"}`);
+  // return;
 }
 
  
@@ -265,7 +269,7 @@ if (paymentMode === "technician") {
       )}
 
       <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
-        <h1 className="text-center mb-2">Book a Technician Action View</h1>
+        <h1 className="text-center mb-2">Technician Action View Book a Technician</h1>
         <Form>
         <Row>
             <Col md={6}>
@@ -528,9 +532,9 @@ if (paymentMode === "technician") {
 
         </div>
         </Form>
-        </div>
         <Footer /> 
 
+        </div>
         {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {
@@ -555,4 +559,4 @@ if (paymentMode === "technician") {
   );
 };
 
-export default CustomerBookTechnicianQuotation;
+export default TechnicianViewBookTechnician;

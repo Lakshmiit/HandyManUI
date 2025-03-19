@@ -6,6 +6,7 @@ import {
 } from '@mui/icons-material';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import Header from './Header.js';
+import Footer from './Footer.js';
 import Sidebar from './Sidebar';
 import { useParams, useNavigate} from 'react-router-dom';
 const AddressManager = () => {
@@ -1084,6 +1085,8 @@ const handleUpdateJobDescription = async (e) => {
       </Modal> 
     </div>
     </div>
+    <Footer /> 
+
     {/* Styles for floating menu */}
       <style jsx>{`
         .modal-overlay {

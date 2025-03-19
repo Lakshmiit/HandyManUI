@@ -4,6 +4,7 @@ import "./App.css"; // Add this for the required CSS.
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import UpdateIcon from '@mui/icons-material/Update';
 import { useNavigate, useParams } from 'react-router-dom';
+import Footer from './Footer.js';
 import AdminSidebar from './AdminSidebar';
 import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import {  Button } from 'react-bootstrap';
@@ -523,6 +524,8 @@ const ProductUpload = () => {
                     </form>
                 </div>
             </div>
+            <Footer /> 
+
             {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {

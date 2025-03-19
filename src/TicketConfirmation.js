@@ -1,5 +1,8 @@
 import React, { useEffect, useState} from 'react';
 import Sidebar from './Sidebar';
+import Header from './Header.js';
+import Footer from './Footer.js';
+
 import { Button } from 'react-bootstrap';
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -24,7 +27,7 @@ const BookingConfirmation = () => {
   const [technicianAcceptance] = useState([{type: "", technicianRemarks: ""}]); 
   const [dealerAcceptance] = useState([{type: "", dealerRemarks: ""}]); 
   const [requestType, setRequestType] = useState('');
-  const [customerId, setCustomerId] = useState(''); 
+  const [userId, setCustomerId] = useState(''); 
   const [status, setStatus] = useState(''); 
   const [state, setState] = useState('');
   const [district, setDistrict] = useState('')
@@ -77,6 +80,8 @@ const [isSaved, setIsSaved] = useState(false);
 const [rateQuotedBy, setRateQuotedBy] = useState(''); 
 const [noteId, setNoteId] = useState('');
 const [technicianMaterial, setTechnicianMaterial] = useState([{ material: "", quantity: "", receivedQuantity: "", remainingQuantity: "", isSelected: false}]);
+const [customerPhoneNumber, setCustomerPhoneNumber] = useState('');
+const [customerEmail, setCustomerEmail] = useState('');
 
 
   useEffect(() => {
@@ -187,6 +192,8 @@ const [technicianMaterial, setTechnicianMaterial] = useState([{ material: "", qu
           setAssignedTo(data.assignedTo);
           setStatus(data.status);
           setFullName(data.customerName);
+          setCustomerEmail(data.emailAddress);    
+          setCustomerPhoneNumber(data.customerPhoneNumber);
           setApprovedAmount(data.approvedAmount);
           setOption1Day(data.option1Day);
           setOption2Day(data.option2Day);
@@ -471,7 +478,7 @@ const handleSlotSave = () => {
       id: raiseTicketId, 
       status: status,
       internalStatus: "Customer Approved",
-      CustomerId: customerId,
+      CustomerId: userId,
       State: state,
       LowestBidderTechnicainId: lowestBidder,
       LowestBidderDealerId: lowestDealerBidder,
@@ -498,12 +505,22 @@ const handleSlotSave = () => {
       DealerList: dealerId,
       Rating: "",
       RateQuotedBy: rateQuotedBy,
+      CustomerPhoneNumber: customerPhoneNumber,
+    CustomerEmail: customerEmail,
+    OrderId: "",
+    OrderDate: "",
+    PaidAmount: "",
+    TransactionStatus: "",
+    TransactionType: "",
+    InvoiceId: "",
+    InvoiceURL: "",
     };
   
     try {
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
+
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload),
@@ -657,7 +674,7 @@ const handleSlotSave = () => {
     // alert(lowestBidder);
     //alert(userType);
     // Redirect to CustomerProfilePage
-    window.location.href = `https://handymanapiv2.azurewebsites.net/CustomerProfilePage?ReactToken=${lowestBidder}$${userType}`;
+    window.location.href = `/profilePage/${userType}/${userId}`;
     
   } catch (error) {
     console.error('Error:', error);
@@ -728,7 +745,7 @@ try {
     throw new Error('Failed to create a Material.');
   }
   alert('Material saved Successfully!');
-window.location.href = `https://handymanapiv2.azurewebsites.net/CustomerProfilePage?ReactToken=${lowestBidder}$${userType}`;
+window.location.href = `/profilePage/${userType}/${userId}`;
 } catch (error) {
   console.error('Error:', error);
   window.alert('Failed to create the Material. Please try again later.');
@@ -853,7 +870,7 @@ const handleBothActions =  (e) => {
   //handleTimeSlotSave(e)
   handlePaymentTicket(e);
   setIsSaved(true);
-window.location.href = `https://handymanapiv2.azurewebsites.net/CustomerProfilePage?ReactToken=${lowestBidder}$${userType}`;
+window.location.href = `/profilePage/${userType}/${userId}`;
 };
 
 // const handleCheckboxChange = (mode) => {
@@ -909,6 +926,8 @@ const handleMaterialSave = () => {
 const total = Number(enterQuoteAmount) + Number(othercharges);
 
   return (
+    <div>
+  {isMobile && <Header />}
     <div className="d-flex">
         {!isMobile && (
         <div className="ml-0 p-0 sde_mnu">
@@ -1178,6 +1197,7 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
             Pay On In Presence of Technician
           </label>
           </div>
+          
           <div className='d-flex align-items-center'>
           <h3 className='section-title m-2'>Payment Transaction Details</h3>
           <input
@@ -1216,6 +1236,9 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
     </div>
     </div>
     </div>
+    </div>
+    <Footer /> 
+
     </div>
   );
 };

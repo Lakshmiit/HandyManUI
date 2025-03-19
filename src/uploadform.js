@@ -9,6 +9,8 @@ import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import {  Button } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import Header from './Header.js';
+import Footer from './Footer.js';
+
 
 const ProductUpload = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -457,6 +459,7 @@ useEffect(() => {
         </div>
       </div>
     </div>
+    <Footer /> 
     </div>
   );
 };

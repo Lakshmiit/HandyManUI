@@ -2,6 +2,8 @@ import React, {useEffect, useState} from "react";
 import Sidebar from './Sidebar';
 import { Button } from 'react-bootstrap';
 import Header from './Header.js';
+import Footer from './Footer.js';
+
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
 import './App.css';
 import { useParams, useNavigate } from "react-router-dom";
@@ -937,6 +939,8 @@ const handleContinue = () => {
         </div>
     </div>
     </div> 
+    <Footer /> 
+
     </div>  
  );
 };

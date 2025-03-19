@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Header from './Header.js';
+import Footer from './Footer.js';
 import {
   Dashboard as MoreVertIcon,
   ArrowBack as ArrowBackIcon,
@@ -375,6 +376,7 @@ const Notification = () => {
         </div>
       </div>
       </div>
+      <Footer /> 
       <style jsx>{`
         .glow {
           color: gold;

@@ -4,6 +4,8 @@ import axios from 'axios';
 import AdminSidebar from "./AdminSidebar";
 import { Link } from "react-router-dom";
 import { FaTrash, FaEye } from "react-icons/fa";
+import Footer from './Footer.js';
+
 import {
   Dashboard as MoreVertIcon, 
   Forward as ForwardIcon,
@@ -321,6 +323,8 @@ const QuoteNotification = () => {
           </nav>
         </div>
       </div>
+      <Footer /> 
+
       {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {

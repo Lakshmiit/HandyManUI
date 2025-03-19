@@ -3,6 +3,8 @@ import { Button } from "react-bootstrap";
 import axios from 'axios';
 import AdminSidebar from "./AdminSidebar";
 import { Link } from "react-router-dom";
+import Footer from './Footer.js';
+
 import { FaTrash, FaEye } from "react-icons/fa";
 import {
   Dashboard as MoreVertIcon,
@@ -322,6 +324,8 @@ const BuyProductNotificationGrid = () => {
           </nav>
         </div>
       </div>
+      <Footer /> 
+
       {/* Styles for floating menu */}
 <style jsx>{`
         .menu-popup {

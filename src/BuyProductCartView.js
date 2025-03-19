@@ -2,6 +2,8 @@ import React, { useState, useEffect} from "react";
 import "./App.css";
 import { v4 as uuidv4 } from 'uuid'; 
 import Sidebar from './Sidebar';
+import Header from './Header.js';
+import Footer from './Footer.js';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
@@ -453,6 +455,8 @@ useEffect(() => {
 
 
   return (
+    <div>
+  {isMobile && <Header />}
     <div className="d-flex flex-row justify-content-start align-items-start">
       {/* Sidebar menu for Larger Screens */}
       {!isMobile && (
@@ -942,14 +946,10 @@ useEffect(() => {
           </form>
         </div>
       </div>
+      <Footer /> 
+      </div>
       {/* Styles for floating menu */}
 <style jsx>{`
-        .floating-menu {
-          position: fixed;
-          top: 80px; /* Increased from 20px to avoid overlapping with the logo */
-          left: 20px; /* Adjusted for placement on the left side */
-          z-index: 1000;
-        }
         .menu-popup {
           position: absolute;
           top: 50px; /* Keeps the popup aligned below the floating menu */

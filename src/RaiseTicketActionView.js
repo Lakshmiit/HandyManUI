@@ -3,6 +3,8 @@ import { Button, Form, Row, Col } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import AdminSidebar from './AdminSidebar';
+import Footer from './Footer.js';
+
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
 // import { FaEdit} from 'react-icons/fa'; // Correct icon import
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
@@ -584,6 +586,7 @@ const RaiseActionView = () => {
 
         </div>
         </Form>
+        <Footer /> 
 
         {/* Styles for floating menu */}
 <style jsx>{`

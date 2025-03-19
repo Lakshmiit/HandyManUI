@@ -5,6 +5,9 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import "./App.css";
 import Sidebar from './Sidebar';
+import Footer from './Footer.js';
+
+import Header from './Header.js';
 import ForwardIcon from '@mui/icons-material/Forward';
 // import SaveAsIcon from '@mui/icons-material/SaveAs';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
@@ -494,6 +497,8 @@ materialQuotation: material.map((mat) => ({
   // };
 
   return (
+    <div>
+  {isMobile && <Header />}
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className=" ml-0 m-4 p-0 sde_mnu h-90">
@@ -869,6 +874,9 @@ materialQuotation: material.map((mat) => ({
         </div>
       </Form>
     </div>
+    </div>
+    <Footer /> 
+
   </div>
   );
 };

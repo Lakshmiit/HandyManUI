@@ -6,6 +6,8 @@ import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
 import AdminSidebar from './AdminSidebar';
+import Footer from './Footer.js';
+
 
 const ProductAdmin = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -294,6 +296,8 @@ const ProductAdmin = () => {
         </div>
       </div>
     </div>
+    <Footer /> 
+
     {/* Styles for floating menu */}
 <style jsx>{`
         .menu-popup {

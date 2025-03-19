@@ -1,5 +1,6 @@
 import React, { useEffect, useState} from 'react';
 import AdminSidebar from './AdminSidebar';
+import Footer from './Footer.js';
 import { Button } from 'react-bootstrap';
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
 // import image from './img/technician.png';
@@ -75,7 +76,9 @@ const CustomerCareConfirmation = () => {
   const [rating, setRating] = useState('');
   const [isFinalized, setIsFinalized]= useState(false);
   const [rateQuotedBy, setRateQuotedBy] = useState(''); 
-
+  const [customerPhoneNumber, setCustomerPhoneNumber] = useState('');
+  const [customerEmail, setCustomerEmail] = useState('');
+  
   
   // const [isDealerChecked, setIsDealerChecked] = useState(false);
   // const [isTechnicianChecked, setIsTechnicianChecked] = useState(false);
@@ -159,6 +162,8 @@ const CustomerCareConfirmation = () => {
         setRating(data.rating);
         // alert(data.rating);
         setFullName(data.customerName);
+        setCustomerEmail(data.emailAddress);    
+        setCustomerPhoneNumber(data.customerPhoneNumber);
         setApprovedAmount(data.approvedAmount);
         setLowestBidder(data.lowestBidderTechnicainId);
         setLowestDealerBidder(data.lowestBidderDealerId);
@@ -308,7 +313,7 @@ useEffect(() => {
               }
               const dealerData = await response.json();
               setDealerData(dealerData);
-              // alert(JSON.stringify(dealerData));  
+            //  alert(JSON.stringify(dealerData));  
               setDealerAddress(dealerData.address);
                setDealerName(dealerData.dealerFirmName);
                      } catch (error) {
@@ -479,6 +484,16 @@ setShowAlert(true);
       
       Rating: rating.toString(),
       RateQuotedBy: rateQuotedBy,
+      CustomerPhoneNumber: customerPhoneNumber,
+    CustomerEmail: customerEmail,
+    OrderId: "",
+    OrderDate: "",
+    PaidAmount: "",
+    TransactionStatus: "",
+    TransactionType: "",
+    InvoiceId: "",
+    InvoiceURL: "",
+
     };
   
     try {
@@ -1099,6 +1114,7 @@ const handleStatusChange = (event) => {
       </div>
     </div> 
     </div>
+    <Footer /> 
     </div>
   );
 };

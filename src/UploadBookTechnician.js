@@ -8,6 +8,8 @@ import AdminSidebar from './AdminSidebar';
 import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import {  Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import Footer from './Footer.js';
+
 
 const UploadBookTechnician = () => {
 const [error, setError] = useState("");
@@ -382,6 +384,8 @@ const handleUploadJobDescription = async (e) => {
           </form>
         </div>
       </div>
+      <Footer /> 
+
     </div>
   );
 };

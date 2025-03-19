@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
+import Footer from './Footer.js';
+
 const ProductView = () => {
   const [productData, setProductData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -235,6 +237,8 @@ const ProductView = () => {
           </div>
         </>
       )}
+ <Footer /> 
+
     </div>
   );
 };

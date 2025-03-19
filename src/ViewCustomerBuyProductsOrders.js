@@ -3,6 +3,8 @@ import "./App.css";
 // import { v4 as uuidv4 } from 'uuid'; 
 import Sidebar from './Sidebar';
 import Header from './Header.js';
+import Footer from './Footer.js';
+
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Dashboard as MoreVertIcon} from '@mui/icons-material';
@@ -109,7 +111,7 @@ useEffect(() => {
   // useEffect(() => {
   //   const fetchProfileType = async () => {
   //     try {
-  //       const API_URL = "https://localhost:7091/api/Address/GetAddressById/";
+  //       const API_URL = "https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/";
   //       const response = await fetch(`${API_URL}${userId}`);
   //       if (!response.ok) {
   //         throw new Error("Failed to fetch customer profile data");
@@ -1085,7 +1087,10 @@ useEffect(() => {
           </form>
         </div>
       </div>
+
       </div>
+      <Footer /> 
+
       {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {

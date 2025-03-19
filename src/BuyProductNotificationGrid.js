@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import axios from 'axios';
+import Footer from './Footer.js';
 import AdminSidebar from "./AdminSidebar";
 import { Link } from "react-router-dom";
 import { FaTrash, FaEye } from "react-icons/fa";
@@ -320,6 +321,8 @@ const BuyProductNotificationGrid = () => {
           </nav>
         </div>
       </div>
+      <Footer /> 
+
       {/* Styles for floating menu */}
 <style jsx>{`
         .menu-popup {

@@ -1,6 +1,8 @@
 import React, { useEffect, useState} from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header.js';
+import Footer from './Footer.js';
+
 import { Button } from 'react-bootstrap';
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
 // import image from './img/technician.png';
@@ -148,7 +150,7 @@ const PaymentConfirmation = () => {
         // alert(JSON.stringify(dealerData)); 
         //alert(lowestDealerBidder);
         setDealerPhoneNumber(dealerData[0].phoneNumber);
-        //alert(dealerData.phoneNumber);
+        // alert(dealerData.phoneNumber);
         } catch (error) {
         console.error('Error fetching dealer data:', error);
       } finally {
@@ -952,8 +954,10 @@ const handleSendSMSLowestBidder = async (technicianConfirmationCode) => {
 )} 
     </div>
     </div>
+    </div> 
+    
     </div>
-    </div>
+    <Footer /> 
     {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {

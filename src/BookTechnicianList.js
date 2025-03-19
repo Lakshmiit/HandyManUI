@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'; 
 import { Link, useNavigate} from 'react-router-dom';
 import axios from 'axios';
+import Footer from './Footer.js';
 import AdminSidebar from './AdminSidebar';
 import { Dashboard as MoreVertIcon} from '@mui/icons-material';
 import { Button } from 'react-bootstrap'; 
@@ -232,6 +233,7 @@ useEffect(() => {
         </>
       )}
     </div>
+    <Footer /> 
   </div>
   );
 };
