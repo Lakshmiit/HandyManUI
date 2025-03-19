@@ -67,6 +67,8 @@ const BidderTicketQuotation = () => {
   const [materialTotal, setMaterialTotal] = useState('');
   const [rateQuotedBy, setRateQuotedBy] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
+  const [customerPhoneNumber, setCustomerPhoneNumber] = useState('');
+
 
     useEffect(() => {
         console.log(subject, loading, materialTotal, isWithMaterial, enterQuoteAmount, fixedQuote, materialQuotation, raiseAQuoteId, id);
@@ -186,6 +188,7 @@ const BidderTicketQuotation = () => {
             setDetails(data.details);
             setFullName(data.customerName);
             setCustomerEmail(data.customerEmail);
+            setCustomerPhoneNumber(data.customerPhoneNumber);
             setRequestType(data.requestType || 'Without Material');
             setAttachments(data.attachments);
             // setSpecifications(data.materials || [{ material: "", quantity: "", price: "", total: "" }]);
@@ -443,6 +446,7 @@ const BidderTicketQuotation = () => {
       Rating: "", 
       RateQuotedBy: rateQuotedBy,
       CustomerEmail: customerEmail,
+      CustomerPhoneNumber: customerPhoneNumber,
     OrderId: "",
     OrderDate: "",
     PaidAmount: "",

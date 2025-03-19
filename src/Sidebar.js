@@ -21,7 +21,7 @@ const Sidebar = () => {
   const {userId} = useParams();
   // const {dealerId} = useParams();
   // const {technicianId} = useParams();
-  const {ProductOwnedBy} = useParams();
+  // const {ProductOwnedBy} = useParams();
   // const {UserId} = useParams();
   const {district} = useParams();
   const {category} = useParams();
@@ -52,7 +52,7 @@ const menuConfig = {
     ],
     dealer: [
       { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", TargetUrl: `/profilePage/${userType}/${userId}` },
-      { MenuIcon: <UploadIcon />, MenuTitle: "Upload Products", TargetUrl: `/product-list/${ProductOwnedBy}` },
+      { MenuIcon: <UploadIcon />, MenuTitle: "Upload Products", TargetUrl: "" },
       { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: "" },
       { MenuIcon: <NotificationsActiveIcon />, MenuTitle: "Notifications", TargetUrl: `/dealerNotifications/${userType}/${userId}/${category}/${district}` },
       { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}`},

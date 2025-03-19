@@ -24,7 +24,7 @@ import { TextField, IconButton } from "@mui/material";
 // import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import EditIcon from "@mui/icons-material/Edit";
 // import Header from "./Header";
-import HandyMan from './img/HandyMan.jpeg';
+import HandyMan from './img/HandymanLogo.png';
 import { useParams } from "react-router-dom";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Logo from "./img/Hm_Logo 1.png";
@@ -34,7 +34,7 @@ import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 // import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 
-const getMenuList = (userType, userId, ProductOwnedBy, category, district ) => {
+const getMenuList = (userType, userId, category, district ) => {
   // alert(category);
   // alert(district);
   const customer = [
@@ -60,7 +60,7 @@ const getMenuList = (userType, userId, ProductOwnedBy, category, district ) => {
   ];
  
   const dealer = [
-      { MenuIcon: <UploadIcon />, MenuTitle: "Upload Products", TargetUrl: `/product-list/${ProductOwnedBy}` },
+      { MenuIcon: <UploadIcon />, MenuTitle: "Upload Products", TargetUrl: "" },
       { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: "" },
       { MenuIcon: <NotificationsNoneIcon />, MenuTitle: "Notifications", TargetUrl: `/dealerNotifications/${userType}/${userId}/${category}/${district}` },
       { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
@@ -71,7 +71,7 @@ const getMenuList = (userType, userId, ProductOwnedBy, category, district ) => {
   ];
 
   const trader = [
-    { MenuIcon: <UploadIcon />, MenuTitle: "Upload Products", TargetUrl: `/product-list/${ProductOwnedBy}` },
+    { MenuIcon: <UploadIcon />, MenuTitle: "Upload Products", TargetUrl: "" },
     { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: "" },
     { MenuIcon: <NotificationsNoneIcon />, MenuTitle: "Notifications", TargetUrl: `/dealerNotifications/${userType}/${userId}/${category}/${district}` },
     { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },

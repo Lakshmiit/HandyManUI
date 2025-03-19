@@ -69,6 +69,7 @@ const PaymentConfirmation = () => {
   const [dealerData, setDealerData] = useState(''); 
   const [dealerPhoneNumber, setDealerPhoneNumber] = useState(''); 
   const [customerEmail, setCustomerEmail] = useState('');
+  const [customerPhoneNumber, setCustomerPhoneNumber] = useState('');
 
 
 
@@ -113,6 +114,7 @@ const PaymentConfirmation = () => {
         setStatus(data.status);
         setFullName(data.customerName);
         setCustomerEmail(data.customerEmail);
+        setCustomerPhoneNumber(data.customerPhoneNumber);
         setApprovedAmount(data.approvedAmount);
         setOption1Day(data.option1Day || '');
         setOption2Day(data.option2Day || '');
@@ -320,6 +322,7 @@ const PaymentConfirmation = () => {
       Rating: "",
       RateQuotedBy: rateQuotedBy,
       CustomerEmail: customerEmail,
+      CustomerPhoneNumber: customerPhoneNumber,
     OrderId: "",
     OrderDate: "",
     PaidAmount: "",
@@ -484,7 +487,7 @@ const handleSendSMSLowestBidder = async (technicianConfirmationCode) => {
     alert('SMS to LowestBidder sent Successfully!');
     if (selectedPayment === 'online') {
       window.alert(`We are Redirecting to the Payment Page! Your reference number is ${ticketData.raiseTicketId}. Technician will contact you shortly.`);
-        window.location.href=`https://handymanserviceproviders.com/PaymentPage/${id}`;
+        window.location.href=`https://handymanserviceproviders.com/RaiseTicketPayments/${id}`;
       } else if (selectedPayment === 'technician') {
        window.alert(`Thank You for choosing the HandyMan Services! Your reference number is ${ticketData.raiseTicketId}. Technician will contact you shortly.`);
        window.location.href = `/profilePage/${userType}/${userId}`;

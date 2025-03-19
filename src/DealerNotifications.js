@@ -155,9 +155,8 @@ const Notification = () => {
         setCategory1(response.data.category);
      
         setDistrict1(response.data.district);
-        alert(response.data.district);
+        // alert(response.data.district);
         
-          
       } catch (err) {
         setError(err.message);
       } finally {

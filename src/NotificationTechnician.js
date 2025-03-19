@@ -192,7 +192,7 @@ const [loading, setLoading] = useState(true);
                 setCategory1(response.data.category);
              
                 setDistrict1(response.data.district);
-                alert(response.data.district);
+                // alert(response.data.district);
                 
                   
               } catch (err) {

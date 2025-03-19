@@ -10,7 +10,7 @@ const TimeSlotBooking = () => {
   const Navigate = useNavigate();
   const {userType} = useParams();
   const {userId} = useParams();
-    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [selectedDate, setSelectedDate] = useState(null);
     const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
     const [technicianId, setTechnicianId] = useState([]);
     const [dealerId, setDealerId] = useState([]);
@@ -57,8 +57,8 @@ const TimeSlotBooking = () => {
   const [category, setCategory] = useState('');
   const [lowestDealerBidder, setLowestDealerBidder] = useState('');
   const [lowestBidder, setLowestBidder] = useState('');
-  const getDaysInMonth = (month, year) => new Date(year, month + 1, 0).getDate();
-  const getFirstDayOfMonth = (month, year) => new Date(year, month, 1).getDay();
+  // const getDaysInMonth = (month, year) => new Date(year, month + 1, 0).getDate();
+  // const getFirstDayOfMonth = (month, year) => new Date(year, month, 1).getDay();
   const [option1Selection, setOption1Selection] = useState({day:"", time: ""});
   const [option2Selection, setOption2Selection] = useState({day:"", time: ""});
   const [approvedAmount, setApprovedAmount] = useState('');
@@ -72,62 +72,101 @@ const TimeSlotBooking = () => {
     console.log(loading, id, customerId);
   }, [loading, id, customerId]);
 
-      const handlePrevMonth = () => {
-        if (currentMonth === 0) {
-          setCurrentMonth(11);
-          setCurrentYear(currentYear - 1);
-        } else {
-          setCurrentMonth(currentMonth - 1);
-        }
-      };
-    
-      const handleNextMonth = () => {
-        if (currentMonth === 11) {
-          setCurrentMonth(0);
-          setCurrentYear(currentYear + 1);
-        } else {
-          setCurrentMonth(currentMonth + 1);
-        }
-      };
+  const handlePrevMonth = () => {
+    setCurrentMonth((prev) => (prev === 0 ? 11 : prev - 1));
+    setCurrentYear((prev) => (currentMonth === 0 ? prev - 1 : prev));
+  };
 
-      const totalDays = getDaysInMonth(currentMonth, currentYear);
-  const firstDayIndex = getFirstDayOfMonth(currentMonth, currentYear);
+  const handleNextMonth = () => {
+    setCurrentMonth((prev) => (prev === 11 ? 0 : prev + 1));
+    setCurrentYear((prev) => (currentMonth === 11 ? prev + 1 : prev));
+  };
+
+      // const handlePrevMonth = () => {
+      //   if (currentMonth === 0) {
+      //     setCurrentMonth(11);
+      //     setCurrentYear(currentYear - 1);
+      //   } else {
+      //     setCurrentMonth(currentMonth - 1);
+      //   }
+      // };
+    
+      // const handleNextMonth = () => {
+      //   if (currentMonth === 11) {
+      //     setCurrentMonth(0);
+      //     setCurrentYear(currentYear + 1);
+      //   } else {
+      //     setCurrentMonth(currentMonth + 1);
+      //   }
+      // };
+
+      useEffect(() => {
+        setSelectedDate(new Date());
+      }, []);    
+
+  //     const totalDays = getDaysInMonth(currentMonth, currentYear);
+  // const firstDayIndex = getFirstDayOfMonth(currentMonth, currentYear);
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const daysArray = [
-    ...Array(firstDayIndex).fill(null),  
-    ...Array.from({ length: totalDays }, (_, i) => i + 1)
-  ];
+  // const daysArray = [
+  //   ...Array(firstDayIndex).fill(null),  
+  //   ...Array.from({ length: totalDays }, (_, i) => i + 1)
+  // ];
 
-  const calendarCells = daysArray.map((day, index) => {
-    if (!day) {
-      return { id: index, day: null, isPastDate: false, isSelected: false };
+  const generateCalendarCells = () => {
+    const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
+    const totalDaysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    const today = new Date();
+    
+    let calendarCells = [];
+    for (let i = 0; i < firstDayOfMonth; i++) {
+      calendarCells.push({ id: `empty-${i}`, day: null });
     }
-  
-    const cellDate = new Date(currentYear, currentMonth, day);
-    cellDate.setHours(0, 0, 0, 0);
-    const todayDate = new Date();
-    todayDate.setHours(0, 0, 0, 0);
+    
+    for (let day = 1; day <= totalDaysInMonth; day++) {
+      const date = new Date(currentYear, currentMonth, day);
+      const isPastDate = date < today.setHours(0, 0, 0, 0);
+      calendarCells.push({
+        id: `day-${day}`,
+        day,
+        isSelected: selectedDate && selectedDate.getDate() === day && selectedDate.getMonth() === currentMonth,
+        isPastDate
+      });
+    }
+    return calendarCells;
+  };
 
-    const tomorrow = new Date(todayDate);
-  tomorrow.setDate(todayDate.getDate() + 1);
+  const calendarCells = generateCalendarCells();
 
-  const isPastDate = cellDate < today || cellDate.getTime() === today.getTime();
-  const isTomorrowDate = cellDate.getDate() === tomorrow.getDate() && cellDate.getMonth() === tomorrow.getMonth();
+  // const calendarCells = daysArray.map((day, index) => {
+  //   if (!day) {
+  //     return { id: index, day: null, isPastDate: false, isSelected: false };
+  //   }
   
-    return {
-      id: index,
-      day: day,
-      isSelected:
-        selectedDate &&
-        selectedDate.getDate() === day &&
-        selectedDate.getMonth() === currentMonth &&
-        selectedDate.getFullYear() === currentYear,
-      isPastDate: isPastDate,
-      isTomorrowDate: isTomorrowDate,
-    };
-  });
+  //   const cellDate = new Date(currentYear, currentMonth, day);
+  //   cellDate.setHours(0, 0, 0, 0);
+  //   const todayDate = new Date();
+  //   todayDate.setHours(0, 0, 0, 0);
+
+  //   const tomorrow = new Date(todayDate);
+  // tomorrow.setDate(todayDate.getDate() + 1);
+
+  // const isPastDate = cellDate < today || cellDate.getTime() === today.getTime();
+  // const isTomorrowDate = cellDate.getDate() === tomorrow.getDate() && cellDate.getMonth() === tomorrow.getMonth();
+  
+  //   return {
+  //     id: index,
+  //     day: day,
+  //     isSelected:
+  //       selectedDate &&
+  //       selectedDate.getDate() === day &&
+  //       selectedDate.getMonth() === currentMonth &&
+  //       selectedDate.getFullYear() === currentYear,
+  //     isPastDate: isPastDate,
+  //     isTomorrowDate: isTomorrowDate,
+  //   };
+  // });
 
   const formatDate = (date) => {
     if (!(date instanceof Date) || isNaN(date.getTime())) {
@@ -164,14 +203,11 @@ const handleDateClick = (day) => {
 };            
 
 
-const handleDateChange = (event) => {
-  const newDate = new Date(event.target.value);
-  if (isNaN(newDate.getTime())) {
-    console.error('Invalid date selected');
-    return;
-  }
-  setSelectedDate(newDate);
-};
+// const handleDateChange = (date) => {
+//   // const newDate = event.target.value ? new Date(event.target.value) : null;
+//   setSelectedDate(date);
+//     console.log("Selected Date:", date);
+// }; 
 
       useEffect(() => {
         if (activeTab === "Option 1" && selectedTimeSlot) {
@@ -278,15 +314,50 @@ const handleDateChange = (event) => {
 //   }
 // };
 
+// const handleContinue = () => {
+//   if (activeTab === "Option 1") {
+//     if (!option1Selection?.date || !option1Selection?.time) {
+//       alert("Please select a date and time slot for Option 1 before proceeding.");
+//       return;
+//     }
+//     setTimeout(() => {
+//       setActiveTab("Option 2");
+//     }, 100); 
+//   } else if (activeTab === "Option 2") {
+//     if (!option2Selection?.date || !option2Selection?.time) {
+//       alert("Please select a date and time slot for Option 2 before submitting.");
+//       return;
+//     }
+
+//     if (!isChecked) {
+//       alert("You must accept the Terms and Conditions before proceeding.");
+//       return;
+//     }
+
+//     setTimeout(() => {
+//       handleSaveTicket();
+//     }, 100);
+//   }
+// };
+
 const handleContinue = () => {
+  console.log("Active Tab:", activeTab);
+  console.log("Option 1 Selection:", option1Selection);
+  console.log("Option 2 Selection:", option2Selection);
+  console.log("Terms Checked:", isChecked);
+
   if (activeTab === "Option 1") {
-    if (!option1Selection.date || !option1Selection.time) {
+    if (!option1Selection || !option1Selection.date || !option1Selection.time) {
       alert("Please select a date and time slot for Option 1 before proceeding.");
       return;
     }
-    setActiveTab("Option 2");  
-  } else if (activeTab === "Option 2") {
-    if (!option2Selection.date || !option2Selection.time) {
+
+    setTimeout(() => {
+      setActiveTab("Option 2");
+    }, 100);
+  } 
+  else if (activeTab === "Option 2") {
+    if (!option2Selection || !option2Selection.date || !option2Selection.time) {
       alert("Please select a date and time slot for Option 2 before submitting.");
       return;
     }
@@ -296,15 +367,18 @@ const handleContinue = () => {
       return;
     }
 
-    handleSaveTicket();
+        setTimeout(() => {
+      handleSaveTicket();
+    }, 100);
   }
 };
+
 
   
   const handleSaveTicket = async (e) => {
     if (e) e.preventDefault();
   
-    if (!option1Selection || !option2Selection) {
+    if (!option1Selection?.date || !option1Selection?.time || !option2Selection?.date || !option2Selection?.time) {
       alert("Please select both time slots before submitting.");
       return;
     }
@@ -386,7 +460,9 @@ const handleContinue = () => {
         throw new Error('Failed to save ticket data');
       }
       alert('Ticket saved Successfully!');
-      Navigate(`/bookingConfirmation/${userType}/${userId}/${raiseTicketId}`)
+      setTimeout(() => {
+      Navigate(`/bookingConfirmation/${userType}/${userId}/${raiseTicketId}`);
+      }, 200);
     } catch (error) {
       console.error('Error saving ticket data:', error);
       window.alert('Failed to save the ticket data. Please try again later.');
@@ -441,18 +517,18 @@ const handleContinue = () => {
 </div>
 
 <div className="calendar-section">
-    {isMobile ? (
-        <div className="calendar-header">
-        <label><strong>Select Date</strong></label>
-        <input
-          type="date"
-          value={selectedDate ? selectedDate.toISOString().split("T")[0] : ""}
-          onChange={handleDateChange}
-          className="date-input"
-          min={new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0]}  
-        />
-      </div>
-      ) : (
+   {/* {isMobile ? (
+  <div className="calendar-header">
+    <label><strong>Select Date</strong></label>
+    <input
+      type="date"
+      value={selectedDate ? selectedDate.toISOString().split("T")[0] : ""}
+      onChange={(e) => handleDateChange(new Date(e.target.value))}
+      className="date-input"
+      min={new Date(Date.now() + 86400000).toISOString().split('T')[0]}  
+      />
+  </div>
+) : ( */}
       <>
       <div className="calendar-header d-flex justify-content-between align-items-center">
       <span>{months[currentMonth]} {currentYear}</span>
@@ -468,7 +544,7 @@ const handleContinue = () => {
        {calendarCells.map((cell) => (
           <div
             key={cell.id}
-            className={`day-cell ${cell.isSelected  ? "selected" : ""} ${cell.isPastDate ? "disabled" : ""}`}
+            className={`day-cell ${cell.isSelected ? "selected" : ""} ${cell.isPastDate ? "disabled" : ""}`}
             onClick={() => cell.day && handleDateClick(cell.day)}
           >
             {cell.day || ""}
@@ -476,7 +552,7 @@ const handleContinue = () => {
         ))}
     </div>
     </>
-   )}
+   {/* )} */}
 </div>
 
 <div className="time-slot-section">
