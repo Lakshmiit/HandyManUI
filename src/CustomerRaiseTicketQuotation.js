@@ -6,6 +6,8 @@ import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import "./App.css";
 import Sidebar from './Sidebar';
 import Header from './Header.js';
+import Footer from './Footer.js';
+
 // import ForwardIcon from '@mui/icons-material/Forward';
 // import SaveAsIcon from '@mui/icons-material/SaveAs';
 // import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
@@ -67,6 +69,7 @@ const RaiseQuotation = () => {
   const [materialTotal, setMaterialTotal] = useState('');
   const [rateQuotedBy, setRateQuotedBy] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
+  const [customerPhoneNumber, setCustomerPhoneNumber] = useState('');
 
 
   useEffect(() => {
@@ -95,6 +98,7 @@ const RaiseQuotation = () => {
         setRateQuotedBy(data.rateQuotedBy);
         setCustomerId(data.customerId);
         setCustomerEmail(data.customerEmail);
+        setCustomerPhoneNumber(data.customerPhoneNumber);
         setAssignedTo(data.assignedTo);
         setTechnicianList(data.technicianList || []);
         setDealerList(data.dealerList || []);
@@ -324,6 +328,7 @@ const RaiseQuotation = () => {
       Rating: "",
       RateQuotedBy: rateQuotedBy, 
       CustomerEmail: customerEmail,
+      CustomerPhoneNumber: customerPhoneNumber,
     OrderId: "",
     OrderDate: "",
     PaidAmount: "",
@@ -1253,6 +1258,8 @@ const RaiseQuotation = () => {
         </div>
       </Form>
     </div>
+    <Footer /> 
+ 
     </div>
     {/* Styles for floating menu */}
 <style jsx>{`
