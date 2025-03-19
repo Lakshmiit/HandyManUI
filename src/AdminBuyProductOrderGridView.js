@@ -3,6 +3,7 @@ import "./App.css";
 // import { v4 as uuidv4 } from 'uuid'; 
 import AdminSidebar from './AdminSidebar';
 // import Header from './Header.js';
+import Footer from './Footer.js';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Dashboard as MoreVertIcon} from '@mui/icons-material';
@@ -1128,6 +1129,7 @@ useEffect(() => {
             </div> */}
           </form>
         </div>
+        <Footer /> 
       </div>
       {/* Styles for floating menu */}
 <style jsx>{`
@@ -1141,7 +1143,7 @@ useEffect(() => {
           box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
           width: 200px;
         }
-      `}</style>    
+      `}</style>
     </div>
   );
 };

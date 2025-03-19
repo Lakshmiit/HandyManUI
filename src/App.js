@@ -7,7 +7,7 @@ import { BrowserRouter as Router, Route, Routes, useNavigate} from 'react-router
 //  import Footer from './Footer.js'; 
 import UploadForm from './uploadform';
 import ProductView from './ProductView'; 
-import EditUploadForm from './EditUploadForm';
+import EditUploadForm from './EditUploadForm'; 
 import ProductList from './ProductList';
 import RaiseTicket from './RaiseTicket';
 import BuyProducts from './BuyProducts';

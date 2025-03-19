@@ -875,7 +875,7 @@ const fetchImageUrl = async (photoId) => {
           <img src={HandyMan} className="w-100 m-2 d-block mx-auto" alt="Advertisement for our product"/>
           
         </div>
-        </div>
+        </div> 
         </div>
          <Footer />
         </>
