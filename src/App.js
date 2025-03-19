@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Routes, useNavigate} from 'react-router
 
 // Importing necessary components
 // import Header from './Header';
- import Footer from './Footer.js'; 
+//  import Footer from './Footer.js'; 
 import UploadForm from './uploadform';
 import ProductView from './ProductView'; 
 import EditUploadForm from './EditUploadForm';
@@ -67,7 +67,7 @@ import BooKTechnicianAdminGridView from './BooKTechnicianAdminGridView.js';
 import CustomerBookTechnicianQuotationView from './CustomerBookTechnicianQuotationView.js';
 import BuyProductPaymentPage from './BuyProductPaymentPage.js';
 import AdminBuyProductOrders from './AdminBuyProductOrders.js';
-import AdminBuyProductOrderGridView from './AdminBuyProductOrderGridView..js';
+import AdminBuyProductOrderGridView from './AdminBuyProductOrderGridView.js';
 
 import BuyProductNotificationGrid from './BuyProductNotificationGrid.js';
 import CustomerOrdersNotifications from './CustomerOrdersNotifications.js';
@@ -201,7 +201,7 @@ function App() {
             </Routes>
          
         </main>
-        <Footer />
+        {/* <Footer /> */}
       </div>
     </Router>
   );

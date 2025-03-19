@@ -4,6 +4,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import Sidebar from './Sidebar';
 import Header from './Header.js';
+import Footer from './Footer.js';
+
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
 // import { FaEdit} from 'react-icons/fa'; // Correct icon import
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
@@ -32,7 +34,7 @@ const RaiseQuoteTechnician = () => {
   // const [requiredMaterials, setRequiredMaterials] = useState([{material: "", quantity: "", price: ""}]); 
   const [loading, setLoading] = useState(true);
   const [attachments, setAttachments] = useState([]);
-  const [userId, setCustomerId] = useState(''); 
+  const [customerId, setCustomerId] = useState(''); 
   const [zipCode,setzipCode]=useState('');
   const [status, setStatus] = useState("");
   const [assignedTo, setAssignedTo] = useState('');
@@ -54,7 +56,7 @@ const RaiseQuoteTechnician = () => {
   const [userType] = useState('technician');
   const { selectedUserType} = useParams();
   const {category} = useParams();
-  // const {userId} = useParams();
+  const {userId} = useParams();
   const [fullName, setFullName] = useState('');
   const [customerPhoneNumber, setCustomerPhoneNumber] = useState('');
   // const [internalStatus, setInternalStatus] = useState('');
@@ -340,8 +342,8 @@ const handleUpdateTicket = async (e) => {
           category: ticketData.category,  
           assignedTo: "Technical Agency",
           internalStatus: "Pending", 
-          ticketOwner: userId,  
-          customerId: userId, 
+          ticketOwner: customerId,  
+          customerId: customerId, 
           state: state,  
           isMaterialType: isMaterialType, 
           district: district, 
@@ -401,8 +403,8 @@ const handleUpdateTicket = async (e) => {
       id :"string",
       quotedDate: new Date(), 
       raiseAQuoteId: "string",
-      CustomerId:userId,
-      ticketId: userId,
+      CustomerId:customerId,
+      ticketId: customerId,
       technicianId: userId,
       enterQuoteAmount: enterQuoteAmount.toString(),
       fixedQuote: fixedQuote.toString(),
@@ -783,7 +785,7 @@ setTotalAmount(roundedGrandTotal);
               <Form.Control
                 type="text"
                 name="ticketOwner"
-                value={userId}
+                value={customerId}
                 onChange={handleChange}
                 placeholder="Ticket Owner"
                 readOnly
@@ -1222,6 +1224,8 @@ setTotalAmount(roundedGrandTotal);
           </Button> */}
         </div>
         </Form>
+        <Footer /> 
+
         </div>
         {/* Styles for floating menu */}
 <style jsx>{`

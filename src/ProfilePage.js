@@ -5,7 +5,7 @@ import NotificationBell from "./NotificationsBell";
 import OrdersNotificationBell from "./OrdersBellNotifications";
 import TrackStatusNotificationBell from "./TrackStatusBellNotifications";
 import axios from "axios";
-// import Footer from './Footer.js';
+import Footer from './Footer.js';
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import RouteIcon from "@mui/icons-material/Route";
@@ -120,7 +120,7 @@ const ProfilePage = () => {
       const [isEditing, setIsEditing] = useState(false);
       const [name, setName] = useState(profile.fullName);
       const [loading, setLoading] = useState(true);
-      const [error, setError] = useState(null);
+      // const [error, setError] = useState(null);
       const [profileImage, setProfileImage] = useState(null);
       const fileInputRef = useRef(null);
       const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -298,8 +298,8 @@ useEffect(() => {
             }
             setMenuList(getMenuList(userType, userId, response.data.category, response.data.district));
 
-          } catch (err) {
-            setError(err.message);
+          } catch (error) {
+            console.log("Error Fetching Data:", error)
           } finally {
             setLoading(false);
           }
@@ -503,8 +503,9 @@ const fetchImageUrl = async (photoId) => {
   //   }
   // };
   
-  // if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
+ if (loading) return 
+//  <p>Loading...</p>;
+  // if (error) return <p>Error: {error}</p>;
 
   // const updatedMenuList = getMenuList(userType, userId).map(menu => ({
   //   ...menu,
@@ -811,12 +812,10 @@ const fetchImageUrl = async (photoId) => {
               <div className="ticket-container">
                 <div className="ticket-header">
                 <h4 className="ticket-title">My Tickets</h4>
-                <h4 className="ticket-title">View All</h4>
+                {/* <h4 className="ticket-title">View All</h4> */}
                 </div>
       <div className="ticket-scroll" ref={scrollRef}>
-      {loading ? (
-        <p>Loading Tickets...</p>
-      ) : allTickets.length > 0 ? (
+      {!loading && allTickets.length > 0 ? (
           allTickets.map((ticket, index) => (
             <div key={index} className={`ticket-card1 ${ticket.raiseTicketId ? "raise-ticket-bg" : ticket.buyProductId ? "buy-product-bg" : "book-technician-bg"}`}>
               <div className="ticket-content">
@@ -836,7 +835,7 @@ const fetchImageUrl = async (photoId) => {
             </div>
           ))
         ) : ( 
-          <p>No tickets found for this {userType}.</p>
+          !loading && <p>No tickets found for this {userType}.</p>
         )}
       </div>
     </div>
@@ -878,7 +877,7 @@ const fetchImageUrl = async (photoId) => {
         </div>
         </div>
         </div>
-        {/* <Footer /> */}
+         <Footer />
         </>
   );
 };
