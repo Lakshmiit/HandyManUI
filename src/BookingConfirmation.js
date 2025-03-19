@@ -265,7 +265,7 @@ const BookingConfirmation = () => {
           <tr>
             <td><strong>Approved Amount</strong></td>
             <td>{approvedAmount}</td>
-          </tr>
+          </tr>     
           <tr> 
             <td><strong>Time Slot Booking</strong></td>
             <td className='time-slot-booking'>
