@@ -191,8 +191,8 @@ function App() {
             <Route path='/adminBuyProductOrderGridView/:buyProductId' element={<AdminBuyProductOrderGridView />} />
             <Route path='/buyProductNotificationGrid' element={<BuyProductNotificationGrid />} />
             <Route path='/customerOrders/:userType/:userId' element={<CustomerOrdersNotifications />} />
-            <Route path='/viewCustomerBuyProductOrders/:userType/:buyProductId' element={<ViewCustomerBuyProductOrders />} />
-            <Route path='/viewCustomerBuyProductOrdersGrid/:userType/:buyProductId' element={<ViewCustomerBuyProductOrdersGrid />} />
+            <Route path='/viewCustomerBuyProductOrders/:userType/:userId/:buyProductId' element={<ViewCustomerBuyProductOrders />} />
+            <Route path='/viewCustomerBuyProductOrdersGrid/:userType/:userId/:buyProductId' element={<ViewCustomerBuyProductOrdersGrid />} />
             <Route path='/adminClosedBuyProductOrders/:buyProductId' element={<AdminClosedBuyProductOrders />} />
             <Route path='/buyProductClosedOrdersGrid' element={<BuyProductClosedOrdersGrid />} />
             <Route path='/adminClosedOrdersFinalGridView/:buyProductId' element={<AdminClosedOrdersFinalGridView />} />

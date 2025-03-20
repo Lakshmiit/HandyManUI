@@ -529,7 +529,7 @@ if (paymentMode === "technician") {
         </div>
         </Form>
         </div>
-        <Footer /> 
+        
 
         {/* Styles for floating menu */}
 <style jsx>{`
@@ -551,6 +551,8 @@ if (paymentMode === "technician") {
         }
       `}</style>
       </div>
+
+      <Footer /> 
     </div>
   );
 };

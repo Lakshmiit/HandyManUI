@@ -15,13 +15,14 @@ import "./App.css";
 const NotificationsList = ({ notifications, highlightedItem }) => {
   const navigate = useNavigate();
   const {userType} = useParams();
+  const {userId} = useParams();
 
   const customerOrdersNotifications = notifications.filter(
     (item) => item.assignedTo === "Customer" && item.status === "Assigned"
   );
   
   const handleOrdersClick = (buyProductId) => {
-    navigate(`/viewCustomerBuyProductOrders/${userType}/${buyProductId}`, { state: { buyProductId } });
+    navigate(`/viewCustomerBuyProductOrders/${userType}/${userId}/${buyProductId}`, { state: { buyProductId } });
   };
 
   return (
