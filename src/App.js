@@ -68,7 +68,6 @@ import CustomerBookTechnicianQuotationView from './CustomerBookTechnicianQuotati
 import BuyProductPaymentPage from './BuyProductPaymentPage.js';
 import AdminBuyProductOrders from './AdminBuyProductOrders.js';
 import AdminBuyProductOrderGridView from './AdminBuyProductOrderGridView.js';
-
 import BuyProductNotificationGrid from './BuyProductNotificationGrid.js';
 import CustomerOrdersNotifications from './CustomerOrdersNotifications.js';
 import ViewCustomerBuyProductOrders from './ViewCustomerBuyProductsOrders.js';
@@ -83,6 +82,9 @@ import PaymentPage from './PaymentPage';
 import NotificationsBell from './NotificationsBell.js'; 
 import OrdersNotificationBell from './OrdersBellNotifications.js';
 import TrackStatusNotificationBell from './TrackStatusBellNotifications.js';
+// import WebProfilePage from './WebProfilePage.js';
+import Device from './Device.js';
+// import FirebaseMainConfig from './FirebaseMainConfig.js';
 // import TechnicianViewBookTechnician from './TechnicianViewBookTechnician.js';
 // import BuyProductCartView from './BuyProductCartView.js';
  
@@ -106,8 +108,9 @@ const PreventBackNavigation = () => {
   return null;
 };
 
+
 function App() {
-  return (
+  return ( 
     <Router>   
        <PreventBackNavigation />   
       <div className="App"> 
@@ -117,7 +120,9 @@ function App() {
         <main 
         className="py-3 mt-mob-50">
           <Routes>
+          <Route path="/device" element={<Device />} />
             <Route path="/profilePage/:userType/:userId" element={<ProfilePage />} />
+            {/* <Route path="/webProfilePage/:userType/:userId" element={<WebProfilePage />} /> */}
             <Route path="/product/:ProductOwnedBy" element={<UploadForm />} />
             {/* Dynamic product ID route for ProductView */}
             <Route path="/product-view/:id/:ProductOwnedBy" element={<ProductView />} /> 
