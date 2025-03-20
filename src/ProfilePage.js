@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import './App.css';
+import Device from './Device.js';
 import NotificationBell from "./NotificationsBell";
 import OrdersNotificationBell from "./OrdersBellNotifications";
 import TrackStatusNotificationBell from "./TrackStatusBellNotifications";
@@ -810,6 +811,7 @@ const fetchImageUrl = async (photoId) => {
                 {/* </>
                 )} */}
               <div className="ticket-container">
+              <Device />
                 <div className="ticket-header">
                 <h4 className="ticket-title">My Tickets</h4>
                 {/* <h4 className="ticket-title">View All</h4> */}
