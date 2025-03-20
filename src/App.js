@@ -80,10 +80,12 @@ import BuyProductsCustomerCart from './BuyProductsCustomerCart.js';
 import ProfilePage from './ProfilePage.js';
 import PaymentPage from './PaymentPage';
 import NotificationsBell from './NotificationsBell.js'; 
+// import RaiseQuoteNotificationBell from './RaiseQuoteBellNotifications.js';
 import OrdersNotificationBell from './OrdersBellNotifications.js';
 import TrackStatusNotificationBell from './TrackStatusBellNotifications.js';
 // import WebProfilePage from './WebProfilePage.js';
-import Device from './Device.js';
+import Device from './Device.js';       
+// import Offers from './Offers.js';
 // import FirebaseMainConfig from './FirebaseMainConfig.js';
 // import TechnicianViewBookTechnician from './TechnicianViewBookTechnician.js';
 // import BuyProductCartView from './BuyProductCartView.js';
@@ -124,7 +126,7 @@ function App() {
             <Route path="/profilePage/:userType/:userId" element={<ProfilePage />} />
             {/* <Route path="/webProfilePage/:userType/:userId" element={<WebProfilePage />} /> */}
             <Route path="/product/:ProductOwnedBy" element={<UploadForm />} />
-            {/* Dynamic product ID route for ProductView */}
+            {/* Dynamic product ID route for ProductView */}                
             <Route path="/product-view/:id/:ProductOwnedBy" element={<ProductView />} /> 
             <Route path="/product-list/:ProductOwnedBy" element={<ProductList />} />
             <Route path="/product-edit/:id/:ProductOwnedBy" element={<EditUploadForm />} />           
@@ -202,7 +204,8 @@ function App() {
             <Route path="/notificationsbell/:userId" element={<NotificationsBell />} />
             <Route path="/ordersNotificationsbell/:userId" element={<OrdersNotificationBell />} />
             <Route path="/trackStatusNotificationsbell/:userId" element={<TrackStatusNotificationBell />} />
-            
+            {/* <Route path="/offers" element={<Offers />} /> */}
+            {/* <Route path="/raiseQuoteNotificationsBell/:userId" element={<RaiseQuoteNotificationBell />} /> */}
             </Routes>
          
         </main>

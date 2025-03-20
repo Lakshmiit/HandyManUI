@@ -406,27 +406,62 @@ const handleUpdateTicket = async (e) => {
       CustomerId:customerId,
       ticketId: customerId,
       technicianId: userId,
-      enterQuoteAmount: enterQuoteAmount.toString(),
-      fixedQuote: fixedQuote.toString(),
-      discount: discount.toString(),
-      fixedDiscount: fixedDiscount.toString(),
-      othercharges: othercharges.toString(),
-      fixedOtherCharge: fixedOtherCharge.toString(),
-      serviceCharges: serviceCharges.toString(),
-      fixedServiceCharge: fixedServiceCharge.toString(),
-      gst: gst.toString(),
-      fixedGST: fixedGST.toString(),
-      totalAmount: totalAmount.toString(),
-      raiseTicketId: raiseTicketId,
-      AddRemarks: addrRmarks.map((comment) => ({
-        requestedDate: comment.requestedDate,
-        remarks: comment.remarks,
-    })),
-    materials: specifications.map((spec) => ({
-      material: spec.material,
-      quantity: spec.quantity,
-      price: "",
-      total: "",
+  //     enterQuoteAmount: enterQuoteAmount.toString(),
+  //     fixedQuote: fixedQuote.toString(),
+  //     discount: discount.toString(),
+  //     fixedDiscount: fixedDiscount.toString(),
+  //     othercharges: othercharges.toString(),
+  //     fixedOtherCharge: fixedOtherCharge.toString(),
+  //     serviceCharges: serviceCharges.toString(),
+  //     fixedServiceCharge: fixedServiceCharge.toString(),
+  //     gst: gst.toString(),
+  //     fixedGST: fixedGST.toString(),
+  //     totalAmount: totalAmount.toString(),
+  //     raiseTicketId: raiseTicketId,
+  //     AddRemarks: addrRmarks.map((comment) => ({
+  //       requestedDate: comment.requestedDate,
+  //       remarks: comment.remarks,
+  //   })),
+  //   materials: specifications.map((spec) => ({
+  //     material: spec.material,
+  //     quantity: spec.quantity,
+  //     price: "",
+  //     total: "",
+  // })),
+  // materialQuotation: materialQuotation.map((mat) => ({
+  //   discount: "",
+  //   fixedDiscount: "",
+  //   deliveryCharges: "",
+  //   fixedDeliveryChargs: "",
+  //   serviceCharge: "",
+  //   fixedServicecharges: "",
+  //   gst: "",
+  //   fixedGST: "",
+  //   grandtotal: "",
+  // })),
+
+
+  enterQuoteAmount: String(enterQuoteAmount || ""),
+  fixedQuote: String(fixedQuote || ""),
+  discount: String(discount || ""),
+  fixedDiscount: String(fixedDiscount || ""),
+  othercharges: String(othercharges || ""),
+  fixedOtherCharge: String(fixedOtherCharge || ""),
+  serviceCharges: String(serviceCharges || ""),
+  fixedServiceCharge: String(fixedServiceCharge || ""),
+  gst: String(gst || ""),
+  fixedGST: String(fixedGST || ""),
+  totalAmount: String(totalAmount || ""),
+  raiseTicketId: raiseTicketId || "", 
+  AddRemarks: addrRmarks.map((comment) => ({
+    requestedDate: comment.requestedDate || "",
+    remarks: comment.remarks || "",
+  })),
+  materials: specifications.map((spec) => ({
+    material: spec.material || "",
+    quantity: spec.quantity || "",
+    price: "",
+    total: "",
   })),
   materialQuotation: materialQuotation.map((mat) => ({
     discount: "",
@@ -890,7 +925,7 @@ setTotalAmount(roundedGrandTotal);
               <Form.Control
                 as="select"
                 name="assignedTo"
-                value={assignedTo}
+                 value={assignedTo}
                 onChange={(e) => setAssignedTo(e.target.value)}
                 required
               >
@@ -951,6 +986,7 @@ setTotalAmount(roundedGrandTotal);
                   value={spec.material}
                   placeholder="Enter Material"
                   onChange={(e) => handleMaterialChange(index, "material", e.target.value)}
+                  required
                 />
                 <input
                   type="text"
@@ -958,6 +994,7 @@ setTotalAmount(roundedGrandTotal);
                   placeholder="Enter Quantity"
                   value={spec.quantity}
                   onChange={(e) => handleMaterialChange(index, "quantity", e.target.value)}
+                  required
                 />
                 <button
                   type="button"
@@ -985,6 +1022,7 @@ setTotalAmount(roundedGrandTotal);
                       placeholder="Enter Material"
                       value={spec.material}
                       onChange={(e) => handleMaterialChange(index, "material", e.target.value)}
+                      required
                     />
                   </p>
                   <p className="d-flex align-items-center gap-2 mb-2">
@@ -995,6 +1033,7 @@ setTotalAmount(roundedGrandTotal);
                       placeholder="Enter Quantity"
                       value={spec.quantity}
                       onChange={(e) => handleMaterialChange(index, "quantity", e.target.value)}
+                      required
                     />
                   </p>
     
@@ -1034,6 +1073,7 @@ setTotalAmount(roundedGrandTotal);
             // onBlur={calculateTotal}
             onChange={handleFixedChange(setQuote, setFixedQuote)}
             placeholder="Enter Quote Amount"
+            required
         />
       </td>
         <td colSpan="2">
@@ -1060,6 +1100,7 @@ setTotalAmount(roundedGrandTotal);
           // onBlur={calculateTotal}
           onChange={handleDiscountCharges(setDiscount, setFixedDiscount)}
           placeholder="Enter Discount"
+          required
         />
       </td>
       <td colSpan="2">
@@ -1200,6 +1241,7 @@ setTotalAmount(roundedGrandTotal);
             value={comment.remarks} 
             placeholder="Remarks Text"
             onChange={(e) => handleAddRemarks(index, "remarks", e.target.value)}
+            required
             />
             </div>
           ))}
@@ -1226,9 +1268,10 @@ setTotalAmount(roundedGrandTotal);
         </Form> 
 
         </div>
-        <Footer />  
+      </div>
+      <Footer /> 
 
-        {/* Styles for floating menu */}
+      {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {
           position: fixed;
@@ -1247,7 +1290,6 @@ setTotalAmount(roundedGrandTotal);
           width: 200px;
         }
       `}</style>
-      </div>
     </div>
   );
 };

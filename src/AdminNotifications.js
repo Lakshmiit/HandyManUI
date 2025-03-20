@@ -520,6 +520,7 @@ const Notification = () => {
   const handleTabClick = (tab) => setActiveTab(tab);
 
   return ( 
+    <>
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className="ml-0 p-0 adm_mnu">
@@ -792,8 +793,9 @@ const Notification = () => {
           </div> 
         </div>
         </div>
-        <Footer /> 
       </div>
+         <Footer /> 
+        </>  
   );
 }; 
 

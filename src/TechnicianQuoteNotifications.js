@@ -71,6 +71,7 @@ useEffect(() => {
   }
 
   return (
+    <>
     <div>
   {isMobile && <Header />}
     <div className="d-flex flex-row justify-content-start align-items-start">
@@ -198,9 +199,10 @@ useEffect(() => {
       </div>
     </div>
   </div>
-  <Footer /> 
 
   </div>
+    <Footer /> 
+</>
   );
 };
 

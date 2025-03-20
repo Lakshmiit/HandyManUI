@@ -833,9 +833,9 @@ const RaiseQuoteTechnicianDetails = () => {
         </Form>
 
         </div>
-        <Footer /> 
-
-        {/* Styles for floating menu */}
+      </div>
+      <Footer /> 
+{/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {
           position: fixed;
@@ -854,7 +854,6 @@ const RaiseQuoteTechnicianDetails = () => {
           width: 200px;
         }
       `}</style>
-      </div>
     </div>
   );
 };

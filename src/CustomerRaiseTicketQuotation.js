@@ -1293,6 +1293,7 @@ const RaiseQuotation = () => {
           text-align: left;
         } 
       `}</style>
+      
   </div>
   );
 };

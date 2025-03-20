@@ -106,6 +106,7 @@ const ProductView = () => {
   }
 
   return ( 
+    <>
     <div className="container">
       <h2 className="text-center mb-2">All Products</h2>
       <div className="d-flex align-items-center justify-content-between">
@@ -237,9 +238,9 @@ const ProductView = () => {
           </div>
         </>
       )}
- <Footer /> 
-
     </div>
+     <Footer /> 
+</>
   );
 };
 

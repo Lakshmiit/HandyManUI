@@ -497,6 +497,7 @@ materialQuotation: material.map((mat) => ({
   // };
 
   return (
+    <>
     <div>
   {isMobile && <Header />}
     <div className="d-flex flex-row justify-content-start align-items-start">
@@ -875,9 +876,9 @@ materialQuotation: material.map((mat) => ({
       </Form>
     </div>
     </div>
-    <Footer /> 
-
   </div>
+      <Footer /> 
+</>
   );
 };
 

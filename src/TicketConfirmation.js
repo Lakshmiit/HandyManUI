@@ -13,6 +13,8 @@ import { useParams, } from "react-router-dom";
 const BookingConfirmation = () => {
   // const Navigate = useNavigate();
    const {userType} = useParams();
+   const {userId} = useParams();
+
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const {raiseTicketId} = useParams();
@@ -27,7 +29,7 @@ const BookingConfirmation = () => {
   const [technicianAcceptance] = useState([{type: "", technicianRemarks: ""}]); 
   const [dealerAcceptance] = useState([{type: "", dealerRemarks: ""}]); 
   const [requestType, setRequestType] = useState('');
-  const [userId, setCustomerId] = useState(''); 
+  const [customerId, setCustomerId] = useState(''); 
   const [status, setStatus] = useState(''); 
   const [state, setState] = useState('');
   const [district, setDistrict] = useState('')
@@ -478,7 +480,7 @@ const handleSlotSave = () => {
       id: raiseTicketId, 
       status: status,
       internalStatus: "Customer Approved",
-      CustomerId: userId,
+      CustomerId: customerId,
       State: state,
       LowestBidderTechnicainId: lowestBidder,
       LowestBidderDealerId: lowestDealerBidder,
@@ -926,6 +928,7 @@ const handleMaterialSave = () => {
 const total = Number(enterQuoteAmount) + Number(othercharges);
 
   return (
+    <>
     <div>
   {isMobile && <Header />}
     <div className="d-flex">
@@ -1094,7 +1097,7 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
     ) : (
     <div>
       {technicianMaterial.map((spec, index) => (
-        <div key={index} className="card mb-3 shadow-sm" style={{ maxWidth: "300px" }}>
+        <div key={index} className="card w-100 mb-3 shadow-sm" style={{ maxWidth: "300px" }}>
           <div className="card-body">
             <p className="mb-1"><strong>Material:</strong> {spec.material}</p>
             <p className="mb-1"><strong>Quantity:</strong> {spec.quantity}</p>
@@ -1226,9 +1229,7 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
           </div> */}
           <div className='d-flex flex-row align-items-center gap-5'> 
           <button className='btn btn-warning fs-5' title='save' onClick={handleBothActions}
-          disabled={!isMaterialSaved} 
-          // disabled={internalStatus !== "Technician Approved L1"}
-          // disabled={internalStatus === "Customer Approved"}
+          disabled={!transactionDetails.trim()} 
           >Save</button>
           {/* <button className='btn btn-warning fs-5'title='forward' >Forward</button> */}
           </div>
@@ -1237,9 +1238,10 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
     </div>
     </div>
     </div>
-    <Footer /> 
-
+    
     </div>
+    <Footer />
+    </>
   );
 };
 

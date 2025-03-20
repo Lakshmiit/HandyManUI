@@ -10,10 +10,10 @@ const DeviceApp = () => {
         const permission = await Notification.requestPermission();
  
         if (permission === "granted") {
-          const token = await getToken(messaging, { vapidKey: "BPX1QO7yGm3XMZLOrn_cGswUBoUxL8NHtSzL1mqMJsogLfdL5qprcgutEDXDuXHipVKgd1MFpGpAg22jsISxgR8" });
-        alert(token); 
-          console.log("FCM Device Token:", token)
-          setDeviceToken(token);
+          const deviceToken = await getToken(messaging, { vapidKey: "BPX1QO7yGm3XMZLOrn_cGswUBoUxL8NHtSzL1mqMJsogLfdL5qprcgutEDXDuXHipVKgd1MFpGpAg22jsISxgR8" });
+        //alert(token); 
+          ///console.log("FCM Device Token:", token)
+          setDeviceToken(deviceToken);
           // Send the token to your backend to store
         } else {
           console.log("Permission denied");

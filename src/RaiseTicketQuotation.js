@@ -560,6 +560,7 @@ materialQuotation: material.map((mat) => ({
   };
 
   return (
+    <>
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className=" ml-0 m-4 p-0 adm_mnu h-90">
@@ -1234,7 +1235,7 @@ materialQuotation: material.map((mat) => ({
         </div>
         </div>
       </Form>
-      <Footer /> 
+    </div>
 
       <style jsx>{`
         .floating-menu {
@@ -1254,8 +1255,9 @@ materialQuotation: material.map((mat) => ({
           width: 200px;
         }
       `}</style>
-    </div>
   </div>
+      <Footer /> 
+</>
   );
 };
 

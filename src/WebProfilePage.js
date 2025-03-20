@@ -4,7 +4,6 @@ import './App.css';
 import NotificationBell from "./NotificationsBell";
 import OrdersNotificationBell from "./OrdersBellNotifications";
 import TrackStatusNotificationBell from "./TrackStatusBellNotifications";
-// import RaiseQuoteNotificationBell from "./RaiseQuoteBellNotifications.js";
 import axios from "axios";
 import Footer from './Footer.js';
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
@@ -91,7 +90,7 @@ const getMenuList = (userType, userId, category, district ) => {
       { MenuIcon: <AccountBalanceIcon />, MenuTitle: "Add Bank Account", TargetUrl: "" },
       { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
       { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
-      { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: `` }
+      { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}` }
   ];
 
      switch (userType) {
@@ -108,7 +107,7 @@ const getMenuList = (userType, userId, category, district ) => {
   }
 };
 
-const ProfilePage = () => {
+const WebProfilePage = () => {
     const {userId} = useParams();
     const {userType} = useParams();
     const [category, setCategory] = useState('');
@@ -127,13 +126,13 @@ const ProfilePage = () => {
       const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
         const [showDropdown, setShowDropdown] = useState(false);
         const [showMenu, setShowMenu] = useState(false);
-        const [showProfile, setShowProfile] = useState(false);
+        // const [showProfile, setShowProfile] = useState(false);
       // const [ticketId, setTicketId] = useState("");
       // const [subject, setSubject] = useState("");
       // const [category, setCategory] = useState("");
       // const [status, setStatus] = useState("");
       // const [assignedTo, setAssignedTo] = useState("");
-      const [allTickets, setAllTickets] = useState([]);
+      const [allTickets, setAllTickets] = useState([]); 
       // const [userStatus, setUserStatus] = useState(null);
       // const [loadingStatus, setLoadingStatus] = useState(true);
 
@@ -178,9 +177,9 @@ useEffect(() => {
       
 
          // Handle "more" icon click to toggle profile card visibility
-  const handleMoreIconClick = () => {
-    setShowProfile(!showProfile);
-  };
+  // const handleMoreIconClick = () => {
+  //   setShowProfile(!showProfile);
+  // };
 // useEffect(() => {
 //     const fetchticketData = async () => {
 //       try {
@@ -537,7 +536,7 @@ const fetchImageUrl = async (photoId) => {
         <div className="profile-button"
         //  onClick={handleMoreIconClick} 
           style={{ cursor: "pointer" }}>
-      <div className="profile-img-container">
+      {/* <div className="profile-img-container">
   <div className="profile-img-wrapper">
     <img
       src={profileImage}
@@ -546,8 +545,8 @@ const fetchImageUrl = async (photoId) => {
       onClick={handleProfileClick}
     />
   </div>
-  {/* <NotificationBell /> */}
-</div>
+   <NotificationBell /> 
+</div> */}
 
 
           {/* <AccountCircleIcon fontSize="large" /> */}
@@ -568,18 +567,46 @@ const fetchImageUrl = async (photoId) => {
        )}
       </div>
 
-      {isMobile ? (
+      <div className="user-profile">
+      
+      {/* {!isMobile ? ( */}
+        {/* <div className="profile-details">
+          <h2>{profile.fullName}</h2>
+          <p><strong>Mobile:</strong> {profile.mobileNumber}</p>
+          <p><strong>Email:</strong> {profile.email}</p>
+          <p><strong>Address:</strong> {profile.address}</p>
+          <div className="logout" onClick={() => console.log("Logging out...")}>
+            <LogoutIcon /> Logout
+          </div>
+        </div> */}
+      {/* ) : ( )} */}
         <div>
       {/* More Icon */}
       <div className="mob-menu">
       {/* <NotificationBell /> */}
-      <div className="profile-button" onClick={handleMoreIconClick} 
+      <div className="profile-button" 
+    //   onClick={handleMoreIconClick} 
           style={{ cursor: "pointer" }}>
           <MoreVertIcon fontSize="large" />
         </div>
+        {/* <span
+          className="more-icon"
+          style={{ cursor: "pointer" }}
+          onClick={handleMoreIconClick}
+        >
+          {/* <svg
+            className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium"
+            focusable="false"
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            data-testid="MoreVertIcon"
+          >
+            <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2m0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2m0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2"></path>
+          </svg> 
+        </span> */}
       </div>
       </div>
-      ) : null}
+      </div>
 
     
       {/* More Icon for Mobile */}
@@ -650,88 +677,9 @@ const fetchImageUrl = async (photoId) => {
         {/* Profile Section */}
         <div className="col-md-3">
         {/* {profile && ( */}
-        <div className="user-profile">
-      
-      {!isMobile ? (
-        <div className="row">
-        <div className="col-md-3">
-                 <div>
-                 <div 
-                
-             >
-                   <div className="profile-card">
-                     <div className="profile-img-container ">
-                     
-                   <div className="profile-container">
-                     
-             <div className="profile-info">
-               
-               <div className="webprofile-section">
-               <p className="text-warning fs-5">Welcome <strong className="text-dark">{profile.fullName}{" "}</strong></p>
-                   <h5 className="fw-bold fs-3">Lakshmi Sai Service Providers</h5>
-                   <p className="text-warning fs-3">{profile.userProfileType}</p>
-                   <div className="webprofile-img-wrapper">
-                     <img src={profileImage} alt="Profile" 
-                     className="webprofile-img" onClick={handleProfileClick}/>
-                     <input
-                       type="file"
-                       ref={fileInputRef}
-                       style={{ display: "none" }}
-                       accept="image/*"
-                       // onChange={handleFileChange}
-                     />
-                    </div>
-                 <p className="label fw-bold fs-5">Name</p>
-                 {isEditing ? (
-                   <TextField
-                     value={name}
-                     onChange={(e) => setName(e.target.value)}
-                     variant="outlined"
-                     size="small"
-                   />
-                 ) : (
-                   <p className="value">
-                     {profile.fullName}
-                     <IconButton size="small" onClick={handleEditClick}>
-                       <EditIcon fontSize="small" />
-                     </IconButton>
-                   </p>
-                 )}
-                  <hr />
-               {/* </div>
-       
-               <div className="profile-section"> */}
-                 <p className="label fw-bold fs-5">Mobile</p>
-                 <p className="value">{profile.mobileNumber}</p>
-               <hr />
-                 <p className="label fw-bold fs-5">Email</p>
-                 <p className="value">{profile.email}</p>
-              <hr />
-                 <p className="label fw-bold fs-5">Address</p>
-                 <p className="value">{profile.address}</p>
-               <hr />
-       
-               <p className="logout-btn m-1" onClick={() => window.location.href = "https://handymanserviceproviders.com/Logout"}>
-                 <LogoutIcon />
-                 <span className="fs-5">Logout</span>
-               </p>
-             </div>
-           </div>
-           </div>
-           </div>
-                   </div>
-       
-                   
-                 </div>
-               </div>
-               {/* )} */}
-               </div>
-               </div>
-      ) : null}
-            </div>
+            
 
-          <div>
-          </div>
+
           
           {/* Wrap profile-card and profile-info inside a parent div */}
           <div className="row">
@@ -739,86 +687,71 @@ const fetchImageUrl = async (photoId) => {
           <div>
           <div 
           // className={`${showProfile ? "show" : ""}`}
-        className={`profile-card-container ${showProfile ? "show" : ""}`}
+        // className={`profile-card-container ${showProfile ? "show" : ""}`}
       >
             <div className="profile-card">
-              <div className="profile-img-container">
-              {/* <img src={profileImage} alt="Profile" 
-              className="profile-img" onClick={handleProfileClick}/>
+              <div className="profile-img-container ">
+              
+            <div className="profile-container">
+              
+      <div className="profile-info">
+        
+        <div className="webprofile-section">
+        <p className="text-warning fs-5">Welcome <strong className="text-dark">{profile.fullName}{" "}</strong></p>
+            <h5 className="fw-bold fs-3">Lakshmi Sai Service Providers</h5>
+            <p className="text-warning fs-3">{profile.userProfileType}</p>
+            <div className="webprofile-img-wrapper">
+              <img src={profileImage} alt="Profile" 
+              className="webprofile-img" onClick={handleProfileClick}/>
               <input
                 type="file"
                 ref={fileInputRef}
                 style={{ display: "none" }}
                 accept="image/*"
-                onChange={handleFileChange}
-              /> */}
-              </div>
-              <div className="profile-info">
-                {isEditing ? (
-                  <div className="edit-name d-flex">
-                    <label className="fw-bold">
-                      Full Name <span className="text-danger">*</span>
-                    </label>
-                    <TextField
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      variant="outlined"
-                      size="small"
-                    />
-                    {/* <div className="edit-icons d-flex">
-                      <IconButton onClick={handleCancel} color="error">
-                        <CancelIcon />
-                      </IconButton>
-                      <IconButton onClick={handleSave} color="success">
-                        <CheckCircleIcon />
-                      </IconButton>
-                    </div> */}
-                  </div>
-                ) : (
-                  <div className="name-section">
-                    <p className="fw-bold">Name</p>
-                    <p>
-                      {profile.fullName}{" "}
-                      <IconButton size="small" onClick={handleEditClick}>
-                        <EditIcon fontSize="small" />
-                      </IconButton>
-                    </p>
-                    <hr />
-                    {/* <p className="text-warning text-center">customer</p> */}
-                    <p className="fw-bold">Mobile</p>
-                    <p className="profile">{profile.mobileNumber}</p>
-                    <hr />
-                    <p className="fw-bold">Email</p>
-                    <p className="profile">{profile.email}</p>
-                    <hr />
-                    <p className="fw-bold">Address</p>
-                    <p className="profile">
-                    {profile.address}
-                    </p>
-                    <hr />
-                    {/* <p className="fw-bold m-1 text-primary" style={{ cursor: "pointer" }}>
-                      <a href="/change-password">Click to change password</a>
-                    </p> */}
+                // onChange={handleFileChange}
+              />
+             </div>
+          <p className="label fw-bold">Name</p>
+          {isEditing ? (
+            <TextField
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              variant="outlined"
+              size="small"
+            />
+          ) : (
+            <p className="value">
+              {profile.fullName}
+              <IconButton size="small" onClick={handleEditClick}>
+                <EditIcon fontSize="small" />
+              </IconButton>
+            </p>
+          )}
+           <hr />
+        {/* </div>
 
-                    {/* <p className="fw-bold m-1 text-primary" style={{ cursor: "pointer" }}>
-                      <a href="/user-settings">User Settings</a>
-                    </p>
+        <div className="profile-section"> */}
+          <p className="label fw-bold">Mobile</p>
+          <p className="value">{profile.mobileNumber}</p>
+        <hr />
+          <p className="label fw-bold">Email</p>
+          <p className="value">{profile.email}</p>
+       <hr />
+          <p className="label fw-bold">Address</p>
+          <p className="value">{profile.address}</p>
+        <hr />
 
-                    <hr /> */}
-                    <p className="logout-btn" onClick={() => window.location.href = "https://handymanserviceproviders.com/Logout"}>
-                      <LogoutIcon />
-                      <span>Logout</span>
-                    </p>
-                    
-                    {/* Logout Button */}
-                    {/* <p className="logout-btn" onClick={`https://handymanserviceproviders.com`}>
-                      <LogoutIcon />
-                      <span>Logout</span>
-                    </p> */}
-                  </div>
-                )}
-              </div>
+        <p className="logout-btn m-1" onClick={() => window.location.href = "https://handymanserviceproviders.com/Logout"}>
+          <LogoutIcon />
+          <span>Logout</span>
+        </p>
+      </div>
+    </div>
+    </div>
+    </div>
             </div>
+
+            
           </div>
         </div>
         {/* )} */}
@@ -837,12 +770,12 @@ const fetchImageUrl = async (photoId) => {
           )} */}
 
         <div className="col-md-9 bg-white">
-          <h5 className="mb-2 fs-4">Dashboard</h5>
-          <div className=" row g-3">
+          <h5 className="mb-2">Dashboard</h5>
+          <div className=" row g-5">
     {menuList.map((menu, index) => (
-        <div className="col-4 col-sm-4 col-md-3" key={index}>
-            <div className="mnu_mn text-center d-flex flex-column justify-content-center align-items-center p-2" >
-                <span  className="material-symbols-outlined custom-icon">
+        <div className="col-md-3" key={index}>
+            <div className="mnu_mn text-center d-flex flex-column justify-content-center align-items-center" >
+                <span  className="material-symbols-outlined custom-icon" sx={{ fontSize: 40 }}>
                     {menu.MenuIcon} {/* Assuming icon is provided as text, e.g., "support_agent" */}
                 </span>
                 <a href={menu.TargetUrl} className="menu-item-link mt-2">
@@ -858,7 +791,7 @@ const fetchImageUrl = async (photoId) => {
               <div className="ticket-container">
                 <div className="ticket-header">
                 <h4 className="ticket-title">My Tickets</h4>
-                {/* <h4 className="ticket-title">View All</h4> */}
+                 {/* <h4 className="ticket-title">View All</h4> */}
                 </div>
       <div className="ticket-scroll" ref={scrollRef}>
       {!loading && allTickets.length > 0 ? (
@@ -872,7 +805,7 @@ const fetchImageUrl = async (photoId) => {
                   <span className={ticket.status.toLowerCase()}> {ticket.status}</span>
                 </p>
                 <p><strong>Assigned To:</strong> {ticket.assignedTo}</p>
-                {/* <p><strong>Date:</strong> {ticket.date ? ticket.date.split("T")[0] : "N/A"}</p> */}
+                <p><strong>Date:</strong> {ticket.date ? ticket.date.split("T")[0] : "N/A"}</p> 
                 <p><strong>Date:</strong> {ticket.date ? new Date(ticket.date).toLocaleDateString('en-GB') : "N/A"}</p>
                 <p><strong>Transaction Status:</strong> {ticket.transactionStatus }</p>
                 <p><strong>Paid Amount:</strong> {ticket.paidAmount}</p>
@@ -918,7 +851,7 @@ const fetchImageUrl = async (photoId) => {
             </table>
             </div> */}
           
-          <img src={HandyMan} className="w-100 m-2 d-block mx-auto" alt="Advertisement for our product"/>
+          <img src={HandyMan} className="w-100 m-3 d-block mx-auto" alt="Advertisement for our product"/>
           
         </div>
         </div> 
@@ -928,4 +861,4 @@ const fetchImageUrl = async (photoId) => {
   );
 };
 
-export default ProfilePage;
+export default WebProfilePage;

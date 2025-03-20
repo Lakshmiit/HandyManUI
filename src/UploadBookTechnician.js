@@ -104,6 +104,7 @@ const handleUploadJobDescription = async (e) => {
   };
 
   return (
+    <>
     <div className="d-flex flex-row justify-content-start align-items-start">
       {/* Sidebar menu for Larger Screens */}
       {!isMobile && (
@@ -384,9 +385,9 @@ const handleUploadJobDescription = async (e) => {
           </form>
         </div>
       </div>
-      <Footer /> 
-
     </div>
+          <Footer /> 
+</>
   );
 };
 

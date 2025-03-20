@@ -254,6 +254,7 @@ const RaiseActionView = () => {
   // }; 
 
   return (
+    <>
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className=" ml-0 p-0 adm_mnu h-90">
@@ -586,7 +587,8 @@ const RaiseActionView = () => {
 
         </div>
         </Form>
-        <Footer /> 
+        
+      </div>
 
         {/* Styles for floating menu */}
 <style jsx>{`
@@ -607,8 +609,9 @@ const RaiseActionView = () => {
           width: 200px;
         }
       `}</style>
-      </div>
     </div>
+          <Footer /> 
+</>
   );
 };
 

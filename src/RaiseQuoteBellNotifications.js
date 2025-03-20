@@ -1,15 +1,18 @@
 import { useState, useEffect } from "react";
 import {  useParams } from "react-router-dom";
 import { db, collection, onSnapshot } from "./FirebaseConflict.js";
-import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
 import notificationSound from "./Bell.mp3";
 
 
-const NotificationBell = () => {
+const RaiseQuoteNotificationBell = () => {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
 //   const navigate = useNavigate();
   const { userId } = useParams(); 
+  const { category1 } = useParams(); 
+  const { district1 } = useParams(); 
+
   
   useEffect(() => {
     const notificationsRef = collection(db, "notifications");
@@ -17,31 +20,27 @@ const NotificationBell = () => {
     const unsubscribe = onSnapshot(notificationsRef, async (snapshot) => {
       try {
         const response = await fetch(
-          `https://handymanapiv2.azurewebsites.net/api/BookTechnician/GetBookTechnicianDetailsForUserList?userId=${userId}`
-        );
+            `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistTechnicianId?category=${category1}&district=${district1}&technicianId=${userId}`
+          );
         const data = await response.json();
 // alert(getTechnicianFiltered.length);
-        const getTechnicianFiltered = data.filter(
-          (item) =>
-            item.status === "Assigned" &&
-            item.assignedTo === "Customer" &&
-            item.bookTechnicianId != null
-        );
+const getTicketsFiltered = data.filter((item) => item.assignedTo ==="Technical Agency");
+
 
         // Check for new notifications
-        if (getTechnicianFiltered.length > notifications.length) {
-          setUnreadCount(getTechnicianFiltered.length - notifications.length);
+        if (getTicketsFiltered.length > notifications.length) {
+          setUnreadCount(getTicketsFiltered.length - notifications.length);
          playNotificationSound();
         }
 
-        setNotifications(getTechnicianFiltered);
+        setNotifications(getTicketsFiltered);
       } catch (error) {
         console.error("Error fetching notifications:", error);
       }
     });
 
     return () => unsubscribe();
-  }, [userId, notifications]); // Added dependencies to re-run effect when `userId` or `notifications` change
+  }, [ category1, district1,userId,  notifications]); // Added dependencies to re-run effect when `userId` or `notifications` change
 
     const playNotificationSound = () => {
       const audio = new Audio(notificationSound);
@@ -56,7 +55,7 @@ const NotificationBell = () => {
   return (
     <div className="relative">
       <div className="relative p-2" onClick={() => setUnreadCount(0)}>
-        <NotificationsNoneIcon sx={{ color: "black" }}/>
+        <RequestQuoteIcon sx={{ color: "black" }}/>
         {unreadCount > 0 && (
           <span className="bell-count">{unreadCount}</span>
         )}
@@ -77,4 +76,4 @@ const NotificationBell = () => {
   );
 };
 
-export default NotificationBell;
+export default RaiseQuoteNotificationBell;

@@ -206,6 +206,7 @@ const handleUpdateJobDescription = async (e) => {
   };
 
   return (
+    <>
     <div className="d-flex flex-row justify-content-start align-items-start">
       {/* Sidebar menu for Larger Screens */}
       {!isMobile && (
@@ -494,9 +495,9 @@ const handleUpdateJobDescription = async (e) => {
           </form>
         </div>
       </div>
-      <Footer /> 
-
     </div>
+          <Footer /> 
+</>
   );
 };
 

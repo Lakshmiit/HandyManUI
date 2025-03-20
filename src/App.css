@@ -2173,6 +2173,18 @@ textarea {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.webprofile-section {
+  width: 320px;
+  height: fit-content;
+  /* padding: 0; */
+  /* margin: 5px; */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  /* padding: 8px; */
+  text-align: center;
+}
+
 .profile {
   text-align: start;
   /* padding: 2px;
@@ -2467,21 +2479,7 @@ h2 {
   align-items: start;
   margin: 5px;
 }
-/* Hide profile card container on mobile view
-.profile-card-container {
-  display: block; /* Default state (visible on larger screens) 
-}
 
-/* When the screen width is 768px or less, hide the profile card container 
-@media (max-width: 768px) {
-  .profile-card-container {
-      display: none; /* Hide on mobile screens 
-  } */
-
-  /* .g-3, .gx-3 {
-    --bs-gutter-x: 0rem;
-}
-} */
 .profile-card-container {
   display: none; /* Hidden by default */
   position: absolute; /* Position it relative to the parent */
@@ -2552,6 +2550,27 @@ h2 {
   cursor: pointer;
 }
 
+.webprofile-img {
+  width: 120px;
+  height: 120px;
+  border-radius: 60%;
+  cursor: pointer;
+}
+
+.webprofile-img-wrapper {
+  position: relative;
+  width: 150px;  /* Set size of the profile image */
+  height: 150px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid #f1b61f;  /* Add border to the image */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Add shadow for better look */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+}
+
 /* Add styling for the rest of the profile info */
 .profile-info h5 {
   text-align: center;
@@ -2585,6 +2604,14 @@ h2 {
 .profile-img:hover {
   transform: scale(1.1);  /* Scale the image slightly on hover */
 }
+
+/* .profile-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+} */
 
 .file-input {
   position: absolute;

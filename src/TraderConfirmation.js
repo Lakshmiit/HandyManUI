@@ -10,14 +10,14 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import './App.css';
 import { useParams } from "react-router-dom";
-
+ 
 const TraderConfirmation = () => {
   // const Navigate = useNavigate();
-  // const {userType} = useParams();
+  const {userType} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const {raiseTicketId} = useParams();
-  // const [id, setId] = useState('');
+  // const [id, setId] = useState(''); 
   const [updateRaiseTicketId, setUpdateRaiseTicketId] = useState('');
   const [ticketData, setTicketData] = useState('');
   const [subject, setSubject] = useState('');
@@ -128,7 +128,7 @@ const [customerEmail, setCustomerEmail] = useState('');
         setDealerId(raiseTicketData.dealerList || []);
         setCategory(raiseTicketData.category);
         setCustomerId(raiseTicketData.customerId);
-        setCustomerEmail(raiseTicketData.emailAddress);   
+        setCustomerEmail(raiseTicketData.customerEmail);   
         setCustomerPhoneNumber(raiseTicketData.customerPhoneNumber);
         setIsWithMaterial(raiseTicketData.isMaterialType);
         setAssignedTo(raiseTicketData.assignedTo);
@@ -514,6 +514,7 @@ useEffect(() => {
       throw new Error('Failed to create a ticket.');
     }
     alert('Delivery saved Successfully!');
+    window.location.href = `/profilePage/${userType}/${userId}`;
   } catch (error) {
     console.error('Error:', error);
     window.alert('Failed to create the delivery. Please try again later.');

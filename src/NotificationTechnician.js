@@ -483,8 +483,9 @@ useEffect(() => {
           </div>
         </div>
       </div>
-      <Footer /> 
       </div>
+      <Footer /> 
+
       <style jsx>{`
         .glow {
           color: gold;

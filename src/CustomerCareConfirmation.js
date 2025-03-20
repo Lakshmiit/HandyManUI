@@ -678,6 +678,7 @@ const handleStatusChange = (event) => {
 
 
   return (
+    <>
     <div className="d-flex">
         {!isMobile && (
         <div className="ml-0 p-0 adm_mnu h-90">
@@ -1114,8 +1115,9 @@ const handleStatusChange = (event) => {
       </div>
     </div> 
     </div>
-    <Footer /> 
     </div>
+        <Footer /> 
+</>
   );
 };
  

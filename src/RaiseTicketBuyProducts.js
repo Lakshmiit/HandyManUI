@@ -631,6 +631,7 @@ const handleUpdateTicket = async (e) => {
   // };
 
   return (
+    <>
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className=" ml-0 m-4 p-0 adm_mnu h-90">
@@ -1061,7 +1062,6 @@ const handleUpdateTicket = async (e) => {
       </Form>
 
     </div>
-    <Footer /> 
 
     <style jsx>{`
         .floating-menu {
@@ -1072,6 +1072,8 @@ const handleUpdateTicket = async (e) => {
         }
        `}</style>
   </div>
+      <Footer /> 
+</>
   );
 };
 

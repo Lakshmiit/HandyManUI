@@ -52,12 +52,12 @@ const productOrdersFiltered = data.filter(
 
   return (
     <div className="relative">
-      <button className="relative p-2" onClick={() => setUnreadCount(0)}>
+      <div className="relative p-2" onClick={() => setUnreadCount(0)}>
         <OrdersIcon  sx={{ color: "black" }}/>
         {unreadCount > 0 && (
           <span className="bell-count">{unreadCount}</span>
         )}
-      </button> 
+      </div> 
       {/* Uncomment if you want to show notifications */}
       {/* <div className="absolute right-0 mt-2 bg-white shadow-lg rounded-md p-2">
         {notifications.map((ticket) => (

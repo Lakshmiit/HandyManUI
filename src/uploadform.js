@@ -201,6 +201,7 @@ useEffect(() => {
   };
 
   return (
+    <>
     <div>
       <div className="header-container">
       <Header />
@@ -459,8 +460,9 @@ useEffect(() => {
         </div>
       </div>
     </div>
-    <Footer /> 
     </div>
+        <Footer /> 
+</>
   );
 };
 
