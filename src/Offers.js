@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import './App.css';
 import Sidebar from './Sidebar.js';
 import Footer from './Footer.js';
@@ -9,10 +9,10 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Button, Carousel, Modal } from 'react-bootstrap';
 
 const OffersProductCard = () => {
-  const navigate = useNavigate();
-  const {userType} = useParams();
-  const {userId} = useParams();
-  const {id} = useParams();
+  // const navigate = useNavigate();
+  // const {userType} = useParams();
+  // const {userId} = useParams(); 
+  // const {id} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const { selectedUserType } = useParams();
