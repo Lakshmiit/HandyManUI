@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import './App.css';
 import Sidebar from './Sidebar.js';
 import Footer from './Footer.js';
@@ -9,6 +9,10 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Button, Carousel, Modal } from 'react-bootstrap';
 
 const OffersProductCard = () => {
+  const navigate = useNavigate();
+  const {userType} = useParams();
+  const {userId} = useParams();
+  const {id} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const { selectedUserType } = useParams();
@@ -19,7 +23,7 @@ const OffersProductCard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`https://localhost:7091/api/Product/GetAllProductList`);
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/GetAllProductList`);
         const data = await response.json();
         setProductData(data);
 
@@ -139,7 +143,9 @@ const OffersProductCard = () => {
                     <p className="card-text fw-bold fs-5 text-muted">Rate: Rs {product.rate}</p>
                     <p className="card-text  fw-bold fs-5 text-danger">Discount: {product.discount}%</p>
                   </div>
-                  <Button className="btn btn-warning w-50 fw-bold mt-2">Buy Now</Button>
+                  <Button className="btn btn-warning w-50 fw-bold mt-2"
+                  // onClick={() => navigate(`/offersBuyProduct/${userType}/${userId}/${product.id}`)}
+                  >Buy Now</Button>
                 </div>
               </div>
             ))}
@@ -179,7 +185,7 @@ const OffersProductCard = () => {
     .close-button {
       position: absolute;
       top: 8px;  
-      right: 10px; 
+      right: 10px;  
       background: red;
       border: none;
       font-size: 24px;
