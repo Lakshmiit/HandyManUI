@@ -86,7 +86,8 @@ import TrackStatusNotificationBell from './TrackStatusBellNotifications.js';
 // import WebProfilePage from './WebProfilePage.js';
 import Device from './Device.js';       
 import Offers from './Offers.js';
-// import OffersBuyProductPage from './OffersBuyProductPage.js';
+import OffersBuyProductPage from './OffersBuyProductPage.js';
+// import ViewOffersBuyProductPage from './ViewOffersBuyProductPage.js';
 // import FirebaseMainConfig from './FirebaseMainConfig.js';
 // import TechnicianViewBookTechnician from './TechnicianViewBookTechnician.js';
 // import BuyProductCartView from './BuyProductCartView.js';
@@ -121,7 +122,8 @@ function App() {
         {/* <Header /> */}
         {/* Main content */}
         <main 
-        className="py-3 mt-mob-50">
+        className="py-3 mt-mob-50"
+        >
           <Routes>
           <Route path="/device" element={<Device />} />
             <Route path="/profilePage/:userType/:userId" element={<ProfilePage />} />
@@ -206,7 +208,9 @@ function App() {
             <Route path="/ordersNotificationsbell/:userId" element={<OrdersNotificationBell />} />
             <Route path="/trackStatusNotificationsbell/:userId" element={<TrackStatusNotificationBell />} />
             <Route path="/offers/:userType/:userId" element={<Offers />} />
-            {/* <Route path="/offersBuyProduct/:userType/:id" element={<OffersBuyProductPage />} /> */}
+            <Route path="/offersBuyProduct/:userType/:userId/:id" element={<OffersBuyProductPage />} />
+            {/* <Route path="/viewOffersBuyProductPage/:userType/:userId/:id" element={<ViewOffersBuyProductPage />} /> */}
+
             {/* <Route path="/raiseQuoteNotificationsBell/:userId" element={<RaiseQuoteNotificationBell />} /> */}
             </Routes>
          

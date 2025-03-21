@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import './App.css';
 import Sidebar from './Sidebar.js';
 import Footer from './Footer.js';
@@ -9,9 +9,9 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Button, Carousel, Modal } from 'react-bootstrap';
 
 const OffersProductCard = () => {
-  // const navigate = useNavigate();
-  // const {userType} = useParams();
-  // const {userId} = useParams(); 
+  const navigate = useNavigate();
+  const {userType} = useParams();
+  const {userId} = useParams(); 
   // const {id} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -144,7 +144,7 @@ const OffersProductCard = () => {
                     <p className="card-text  fw-bold fs-5 text-danger">Discount: {product.discount}%</p>
                   </div>
                   <Button className="btn btn-warning w-50 fw-bold mt-2"
-                  // onClick={() => navigate(`/offersBuyProduct/${userType}/${userId}/${product.id}`)}
+                   onClick={() => navigate(`/offersBuyProduct/${userType}/${userId}/${product.id}`)}
                   >Buy Now</Button>
                 </div>
               </div>

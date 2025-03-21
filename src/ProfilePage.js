@@ -516,7 +516,7 @@ const fetchImageUrl = async (photoId) => {
   return (
     <>
     <header className="header d-flex align-items-center justify-content-between p-2 bg-white shadow-sm">
-        <img className="h-100" src={Logo} alt="Handy Man Logo" style={{ height: "60px", width: "auto" }}/>
+        <img className="h-100" src={Logo} alt="Handy Man Logo" style={{ height: "60px", width: "auto", paddingLeft: "10px" }}/>
         <div className="spacer"></div>
         <div className="d-flex align-items-center w-100">
       {!isMobile && (
@@ -638,7 +638,7 @@ const fetchImageUrl = async (photoId) => {
 
 
     <div
-      className="container m-2"
+      className="container"
       style={{
         padding: "8px",
         borderRadius: "5px",
@@ -650,17 +650,18 @@ const fetchImageUrl = async (photoId) => {
         {/* Profile Section */}
         <div className="col-md-3">
         {/* {profile && ( */}
-        <div className="user-profile">
+        <div>
       
       {!isMobile ? (
-        <div className="row">
-        {/* <div className="col-md-3"> */}
+        // <div className="row">
+        // <div className="col-md-3">
                    <div className="profile-card">
                      <div className="profile-img-container "> 
                    <div className="profile-container"> 
              <div className="profile-info">
                <div className="webprofile-section">
-               <p className="text-warning fs-5">Welcome <strong className="text-dark">{profile.fullName}{" "}</strong></p>
+               <p className="text-warning cust-name">Welcome <br /> 
+               <p className="text-dark">{profile.fullName}{" "}</p></p>
                    <h5 className="fw-bold fs-3">Lakshmi Sai Service Providers</h5>
                    <p className="text-warning fs-3">{profile.userProfileType}</p>
                    <div className="webprofile-img-wrapper">
@@ -713,9 +714,8 @@ const fetchImageUrl = async (photoId) => {
            </div>
            </div>
                    </div>
-             {/* )} */}
-               {/* </div> */}
-               </div>
+              //  </div>
+              //  </div>
       ) : null}
             </div> 
           {/* Wrap profile-card and profile-info inside a parent div */}
@@ -820,7 +820,13 @@ const fetchImageUrl = async (photoId) => {
               <strong></strong>
               </div>
           )} */}
-
+          {isMobile && (
+            <div>
+            <p className="text-warning cust-fullname fs-3">Welcome <br /> <strong className="text-dark">{profile.fullName}{" "}</strong></p>
+            <h5 className="fw-bold fs-3">Lakshmi Sai Service Providers</h5>
+            <p className="text-warning fs-3">{profile.userProfileType}</p>
+            </div>
+          )}
         <div className="col-md-9 bg-white">
           <h5 className="mb-2 fs-4">Dashboard</h5>
           <div className=" row g-2">
