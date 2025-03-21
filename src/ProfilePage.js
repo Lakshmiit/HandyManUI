@@ -45,7 +45,7 @@ const getMenuList = (userType, userId, category, district ) => {
       { MenuIcon: <NotificationBell/>, MenuTitle: "Notifications", TargetUrl: `/customerNotification/${userType}/${userId}` },
       { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
       { MenuIcon: <OrdersNotificationBell />, MenuTitle: "Orders", TargetUrl: `/customerOrders/${userType}/${userId}` },
-      { MenuIcon: <LocalOfferIcon />, MenuTitle: "Offers", TargetUrl: "" },
+      { MenuIcon: <LocalOfferIcon />, MenuTitle: "Offers", TargetUrl: `/offers/${userType}/${userId}` },
       { MenuIcon: <PersonIcon />, MenuTitle: "Accounts", TargetUrl: "" }
   ];
 
@@ -654,18 +654,11 @@ const fetchImageUrl = async (photoId) => {
       
       {!isMobile ? (
         <div className="row">
-        <div className="col-md-3">
-                 <div>
-                 <div 
-                
-             >
+        {/* <div className="col-md-3"> */}
                    <div className="profile-card">
-                     <div className="profile-img-container ">
-                     
-                   <div className="profile-container">
-                     
+                     <div className="profile-img-container "> 
+                   <div className="profile-container"> 
              <div className="profile-info">
-               
                <div className="webprofile-section">
                <p className="text-warning fs-5">Welcome <strong className="text-dark">{profile.fullName}{" "}</strong></p>
                    <h5 className="fw-bold fs-3">Lakshmi Sai Service Providers</h5>
@@ -720,19 +713,11 @@ const fetchImageUrl = async (photoId) => {
            </div>
            </div>
                    </div>
-       
-                   
-                 </div>
-               </div>
-               {/* )} */}
-               </div>
+             {/* )} */}
+               {/* </div> */}
                </div>
       ) : null}
-            </div>
-
-          <div>
-          </div>
-          
+            </div> 
           {/* Wrap profile-card and profile-info inside a parent div */}
           <div className="row">
  <div className="col-md-3">
@@ -838,7 +823,7 @@ const fetchImageUrl = async (photoId) => {
 
         <div className="col-md-9 bg-white">
           <h5 className="mb-2 fs-4">Dashboard</h5>
-          <div className=" row g-3">
+          <div className=" row g-2">
     {menuList.map((menu, index) => (
         <div className="col-4 col-sm-4 col-md-3" key={index}>
             <div className="mnu_mn text-center d-flex flex-column justify-content-center align-items-center p-2" >

@@ -85,7 +85,8 @@ import OrdersNotificationBell from './OrdersBellNotifications.js';
 import TrackStatusNotificationBell from './TrackStatusBellNotifications.js';
 // import WebProfilePage from './WebProfilePage.js';
 import Device from './Device.js';       
-// import Offers from './Offers.js';
+import Offers from './Offers.js';
+// import OffersBuyProductPage from './OffersBuyProductPage.js';
 // import FirebaseMainConfig from './FirebaseMainConfig.js';
 // import TechnicianViewBookTechnician from './TechnicianViewBookTechnician.js';
 // import BuyProductCartView from './BuyProductCartView.js';
@@ -204,7 +205,8 @@ function App() {
             <Route path="/notificationsbell/:userId" element={<NotificationsBell />} />
             <Route path="/ordersNotificationsbell/:userId" element={<OrdersNotificationBell />} />
             <Route path="/trackStatusNotificationsbell/:userId" element={<TrackStatusNotificationBell />} />
-            {/* <Route path="/offers" element={<Offers />} /> */}
+            <Route path="/offers/:userType/:userId" element={<Offers />} />
+            {/* <Route path="/offersBuyProduct/:userType/:id" element={<OffersBuyProductPage />} /> */}
             {/* <Route path="/raiseQuoteNotificationsBell/:userId" element={<RaiseQuoteNotificationBell />} /> */}
             </Routes>
          
