@@ -22,8 +22,9 @@ const OffersBuyProduct = () => {
   const [category, setCategory] = useState("");
   const [productSize, setProductSize] = useState("");
   const [productCatalogue, setProductCatalogue] = useState("");
-  const [color, setChooseColor] = useState([]);
-  const [colors, setChooseColors] = useState("");
+  const [chooseColor, setChooseColor] = useState([]);
+  const [selectedColor, setSelectedColor] = useState("");
+  // const [colorInput, setColorInput] = useState("");
   const [requiredQuality, setRequiredQuality] = useState("");
   const [rate, setRate] = useState("");
   const [discount, setDiscount] = useState("");
@@ -175,13 +176,13 @@ useEffect(() => {
   const handleGetQuotation = async (e) => {
     e.preventDefault();
 
-    if (!colors) {
+    if (!chooseColor) {
         setColorError("Please Enter Select Color Field!");
         return;
       }
 
     if (!requiredQuality) {
-      setQuantityError("Please Enter Quantity Field!");
+      setQuantityError("Please Enter ZRequired Quantity Field!");
       return;
     }
 
@@ -212,8 +213,8 @@ useEffect(() => {
       rate: rate.toString(),
       discount: discount.toString(),
       afterDiscountPrice: afterDiscountPrice.toString(),
-      color: color,
-      selectedColors: colors,
+      color: chooseColor,
+      selectedColors: selectedColor,
       requiredQuantity: requiredQuality.toString(),
       totalAmount: totalAmount.toString(),
       AssignedTo: "Customer Care",
@@ -265,15 +266,16 @@ useEffect(() => {
       window.alert('Failed to submitting quotation. Please try again later.');    }
   };
 
-
   const handleColorChange = (e) => {
     const inputColor = e.target.value;
-    if (color.includes(inputColor)) {
-      setChooseColors(inputColor); 
+    if (chooseColor.includes(inputColor)) {
+      setSelectedColor(inputColor);
+      setColorError("");
     } else {
-      alert("Please choose a color from the given options!");
+      setColorError("Please choose a color from the given options!");
     }
   };
+
   
   const handleQuantityChange = (e) => {
     const value = e.target.value.trim();
@@ -912,7 +914,7 @@ fetchProducts();
             </div>
 
             <div className="col-md-6">
-                <label>Rate <span className="req_star">*</span></label>
+                <label>Price <span className="req_star">*</span></label>
                 <input
                   type="text"
                   className="form-control"
@@ -948,20 +950,20 @@ fetchProducts();
             <button
               type="button"
               className="btn btn-warning text-white w-50 mt-2"
-              // onClick={() => {
-              //   navigate("/viewOffersBuyProduct", {
-              //     state: {
-              //     category,
-              //     productName,
-              //     productCatalogue,
-              //     productSize,
-              //     color,
-              //     rate,
-              //     discount,
-              //     requiredQuality,
-              //     },
-              //   });
-              // }}
+              onClick={() => {
+                navigate(`/viewOffersBuyProduct/${userType}/${userId}/${id}`, {
+                  state: {
+                  category,
+                  productName,
+                  productCatalogue,
+                  productSize,
+                  chooseColor,
+                  rate,
+                  discount,
+                  requiredQuality,
+                  }, 
+                });
+              }} 
             >
               View Product
             </button>
@@ -989,12 +991,12 @@ fetchProducts();
                   placeholder="Enter Rate"
                 />
               </div> */}
-              <div className="form-group">
-              <label> Choose Color (Optional)</label>
+              {/* <div className="form-group">
+              <label> Available Colours (Optional)</label>
               <input
                 type="text"
                 className="form-control"
-                value={color}
+                value={chooseColor}
                 // onChange={(e) => setChooseColor(e.target.value)}
                 placeholder="Color"
                 readOnly
@@ -1002,18 +1004,49 @@ fetchProducts();
             </div>
 
             <div className="form-group">
-              <label>Select Required Color</label>
+              <label>Select Required Colour</label>
               <input
                 type="text"
                 className="form-control"
-                value={colors}
+                value={selectedColor}
                 onChange={handleColorChange}
                 placeholder="Select Required Color"
                 required
               />
              {colorError && <p style={{ color: "red" }}>{colorError}</p>}
-            </div>
-              
+            </div> */}
+
+<div className="form-group">
+  <label>Available Colours (Optional)</label>
+  <input
+    type="text"
+    className="form-control"
+    value={chooseColor || ""}
+    placeholder="Color"
+    readOnly
+  />
+</div>
+
+<div className="form-group">
+  <label>Select Required Colour</label>
+  <select
+    className="form-control"
+    value={selectedColor}
+    onChange={handleColorChange}
+    required
+  >
+    <option value="">Select Required Color</option>
+    {(typeof chooseColor === "string" ? chooseColor.split(",") : []).map(
+      (color, index) => (
+        <option key={index} value={color.trim()}>
+          {color.trim()}
+        </option>
+      )
+    )}
+  </select>
+  {colorError && <p style={{ color: "red" }}>{colorError}</p>}
+</div>
+
               <div className="col-md-6">
                 <label>
                   Required Quantity <span className="req_star">*</span>

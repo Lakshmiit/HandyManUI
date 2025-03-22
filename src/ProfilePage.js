@@ -516,7 +516,7 @@ const fetchImageUrl = async (photoId) => {
   return (
     <>
     <header className="header d-flex align-items-center justify-content-between p-2 bg-white shadow-sm">
-        <img className="h-100" src={Logo} alt="Handy Man Logo" style={{ height: "60px", width: "auto", paddingLeft: "10px" }}/>
+        <img className="h-90" src={Logo} alt="Handy Man Logo" style={{ height: "60px", width: "auto", paddingLeft: "10px" }}/>
         <div className="spacer"></div>
         <div className="d-flex align-items-center w-100">
       {!isMobile && (
