@@ -230,7 +230,7 @@ const BidderTicketQuotation = () => {
             const dataDealer = await  response.json();
             setDealerDetails(dataDealer);
             //  alert(JSON.stringify(dataDealer));
-            setAddRemarks(dataDealer[0].addrRmarks || []);
+             setAddRemarks(dataDealer[0].addrRmarks || []);
             setMaterialTotal(dataDealer[0].totalAmount || []);
             // alert(dataDealer[0].totalAmount || []);
              setSpecifications(dataDealer[0].materials || []);
@@ -414,7 +414,7 @@ const BidderTicketQuotation = () => {
       assignedTo: "Customer",
       id : raiseTicketId,
       status: status,
-      InternalStatus: "Assigned",
+      InternalStatus: "Assign",
       TicketOwner: ticketData.customerId,
       CustomerId: customerId,
       state: state,
@@ -571,6 +571,7 @@ const BidderTicketQuotation = () => {
 
 
   return (
+    <>
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className=" ml-0 m-4 p-0 adm_mnu h-90">
@@ -930,7 +931,7 @@ const BidderTicketQuotation = () => {
             <input 
             type="text"
             className="form-control m-2"
-            value={addrRmarks}
+            value={addrRmarks || ""}
             placeholder="Enter Remarks"
             // onChange={(e) => handleAddRemarks(e.target.value)}
             />
@@ -1019,7 +1020,7 @@ const BidderTicketQuotation = () => {
             <input 
             type="text"
             className="form-control"
-            value={techRemarks}
+            value={techRemarks || ""}
             placeholder="Enter Remarks"
             // onChange={(e) => handleTechRemarks(e.target.value)}
             />
@@ -1091,7 +1092,6 @@ const BidderTicketQuotation = () => {
         </div>
       </Form>
     </div>
-    <Footer /> 
 
     {/* Styles for floating menu */}
 <style jsx>{`
@@ -1103,6 +1103,8 @@ const BidderTicketQuotation = () => {
         }
       `}</style>
   </div>
+      <Footer /> 
+</>
   );
 };
 

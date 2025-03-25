@@ -121,6 +121,7 @@ const DealerNotification = () => {
  }
 
   return (
+    <>
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className="ml-0 m-4 p-0 adm_mnu">
@@ -318,10 +319,7 @@ const DealerNotification = () => {
             </ul>
           </nav>
         </div>
-
       </div>
-      <Footer /> 
-
       {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {
@@ -342,6 +340,8 @@ const DealerNotification = () => {
         }
       `}</style>
     </div>
+          <Footer /> 
+</>
   );
 };
 

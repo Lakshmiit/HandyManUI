@@ -744,7 +744,7 @@ const handleSendSMSLowestBidder = async (technicianConfirmationCode) => {
                             It is also clarified that, if there are any issues or claims due to your posts by way of Reviews, Ratings and Comments, then Lakshmi Sai Service Provider reserves right to take appropriate legal action against you. Further, you shall indemnify and protect Lakshmi Sai Service Provider against such claims or damages or any issues, due to your posting of such Reviews, Ratings and Comments Lakshmi Sai Service Provider takes no responsibility and assumes no liability for any content posted by you or any third party on Lakshmi Sai Service Provider site or on any mediums of Lakshmi Sai Service Provider.
                         </p>
                         <p>
-                            You further acknowledge that conduct prohibited in connection with your use of the Lakshmi Sai Service Provider (https://handymanapiv2.azurewebsites.net) website includes, but is not limited to, breaching or attempting to breach the security of the Site.
+                            You further acknowledge that conduct prohibited in connection with your use of the Lakshmi Sai Service Provider (https://handymanserviceproviders.com) website includes, but is not limited to, breaching or attempting to breach the security of the Site.
                         </p>
                         <div className="mt-20">
                         <h4>VII. PRIVACY POLICY</h4>
@@ -864,7 +864,7 @@ const handleSendSMSLowestBidder = async (technicianConfirmationCode) => {
                         <div className="mt-20">
                         <h4>XII. ADDITIONAL DISCLAIMER</h4>
                         <p>
-                            Users using any of Lakshmi Sai Service Provider service across the following mediums ie. through internet ie<a href="https://handymanapiv2.azurewebsites.net"> https://handymanapiv2.azurewebsites.net </a>Websiteis bound by this additional disclaimer wherein they are cautioned to make proper enquiry before they (Users) rely, act upon or enter into any transaction (any kind or any sort of transaction including but not limited to monetary transaction ) with the Advertiser listed with Lakshmi Sai Service Provider.
+                            Users using any of Lakshmi Sai Service Provider service across the following mediums ie. through internet ie <a href="https://handymanserviceproviders.com"> https://handymanserviceproviders.com </a>Websiteis bound by this additional disclaimer wherein they are cautioned to make proper enquiry before they (Users) rely, act upon or enter into any transaction (any kind or any sort of transaction including but not limited to monetary transaction ) with the Advertiser listed with Lakshmi Sai Service Provider.
                         </p>
                         <p>
                             All the Users are cautioned that all and any information of whatsoever nature provided or received from the Advertiser/s is taken in good faith, without least suspecting the bonafides of the Advertiser/s and Lakshmi Sai Service Provider does not confirm, does not acknowledge, or subscribe to the claims and representation made by the Advertiser/s listed with Lakshmi Sai Service Provider. Further, Lakshmi Sai Service Provider is not at all responsible for any act of Advertiser/s listed at Lakshmi Sai Service Provider.

@@ -15,6 +15,7 @@ import { saveAs } from "file-saver";
 const RaiseQuoteTechnicianDetails = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const {userId} = useParams();
   const {raiseTicketId} = useParams();
   const [state, setState] = useState('');
   const [district, setDistrict] = useState('')
@@ -30,7 +31,7 @@ const RaiseQuoteTechnicianDetails = () => {
   const [commentsList, setCommentsList] = useState([{updatedDate: new Date(), commentText: ""}]);
   const [loading, setLoading] = useState(true);
   const [attachments, setAttachments] = useState([]);
-  const [userId, setCustomerId] = useState(''); 
+  const [customerId, setCustomerId] = useState(''); 
   const [zipCode,setzipCode]=useState('');
   const [status, setStatus] = useState("");
   const [assignedTo, setAssignedTo] = useState('');
@@ -160,8 +161,8 @@ const RaiseQuoteTechnicianDetails = () => {
       category: ticketData.category,
       assignedTo:"Technical Agency",
       InternalStatus: "Pending",
-      TicketOwner: userId,
-      CustomerId: userId,
+      TicketOwner: customerId,
+      CustomerId: customerId,
       state: state,
       isMaterialType: isMaterialType,
       district: district,
@@ -479,7 +480,7 @@ const RaiseQuoteTechnicianDetails = () => {
               <Form.Control
                 type="text"
                 name="ticketOwner"
-                value={userId}
+                value={customerId}
                 readOnly
               />
             </Form.Group>

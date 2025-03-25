@@ -194,6 +194,7 @@ const handleUpdateJobDescription = async (e) => {
 
 
   return (
+    <>
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className=" ml-0 p-0 adm_mnu h-90">
@@ -434,12 +435,9 @@ const handleUpdateJobDescription = async (e) => {
           <Button className="btn btn-warning text-white mx-2" onClick={handleUpdateJobDescription} title="Forward">
             <ForwardIcon />
           </Button>
-
         </div>
         </Form>
         </div>
-        <Footer /> 
-
 
         {/* Styles for floating menu */}
 <style jsx>{`
@@ -461,6 +459,8 @@ const handleUpdateJobDescription = async (e) => {
         }
       `}</style>
     </div>
+            <Footer /> 
+</>
   );
 };
 

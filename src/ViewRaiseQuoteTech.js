@@ -89,7 +89,8 @@ const RaiseQuoteTechnician = () => {
             });
             setOtherCharge('100');
             setServiceCharge('10');
-            setGST('18');    
+            setGST('18');  
+            // setDiscount('0');  
             setState(data.state);
             setDistrict(data.district);
             setzipCode(data.zipCode);
@@ -489,7 +490,7 @@ const handleUpdateTicket = async (e) => {
         throw new Error('Failed to save Technician ticket data');
       }
      
-      alert('Ticket  Technician  saved Successfully!');
+      alert('Ticket Technician saved Successfully!');
       // window.location.href = `https://handymanapiv2.azurewebsites.net/CustomerProfilePage?ReactToken=${technicianId}$${userType}`;
     } catch (error) {
       console.error('Error saving Technician ticket data:', error);
@@ -612,8 +613,8 @@ const handleUpdateTicket = async (e) => {
   };
 
   const calculateTotalPrice = (quote, discountPercentage, otherCharges, serviceChargePercentage, gstPercentage) => {
-    const discountAmount = quote * (discountPercentage / 100); 
-    const priceAfterDiscount = quote - discountAmount; 
+    const discountAmount = (quote * (discountPercentage / 100)); 
+    const priceAfterDiscount = quote - (discountAmount); 
     const priceAfterOtherCharges = priceAfterDiscount + otherCharges; 
     const serviceCharge = (quote - discountAmount + priceAfterOtherCharges ) * (serviceChargePercentage / 100); 
     const priceAfterServiceCharge = priceAfterOtherCharges + serviceCharge;
@@ -1097,7 +1098,6 @@ setTotalAmount(roundedGrandTotal);
           type="number"
           className="form-control text-end"
           value={discount}
-          // onBlur={calculateTotal}
           onChange={handleDiscountCharges(setDiscount, setFixedDiscount)}
           placeholder="Enter Discount"
           required

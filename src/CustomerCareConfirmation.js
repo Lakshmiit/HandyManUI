@@ -162,7 +162,7 @@ const CustomerCareConfirmation = () => {
         setRating(data.rating);
         // alert(data.rating);
         setFullName(data.customerName);
-        setCustomerEmail(data.emailAddress);    
+        setCustomerEmail(data.customerEmail);    
         setCustomerPhoneNumber(data.customerPhoneNumber);
         setApprovedAmount(data.approvedAmount);
         setLowestBidder(data.lowestBidderTechnicainId);

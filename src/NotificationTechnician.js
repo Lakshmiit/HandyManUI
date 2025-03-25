@@ -29,7 +29,7 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
   };
 
   const handleOrderClick = (ticketId) => {
-    navigate(`/ticketConfirmation/${userType}/${userId}/${district}/${ticketId}`, { state: { ticketId } });
+    navigate(`/ticketConfirmation/${userType}/${userId}/${category}/${district}/${ticketId}`, { state: { ticketId } });
   };
 
   return (
@@ -471,7 +471,7 @@ useEffect(() => {
                 <div
                   className="view-notifications text-info mx-2"
                   onClick={() => {
-                    navigate(`/ticketConfirmationGrid/${userType}/${userId}/${district}`);
+                    navigate(`/ticketConfirmationGrid/${userType}/${userId}/${category}/${district}`);
                     handleClearOrderNotifications();
                   }} 
                   style={{ cursor: "pointer" }}

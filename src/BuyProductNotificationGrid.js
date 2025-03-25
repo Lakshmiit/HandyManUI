@@ -119,6 +119,7 @@ const BuyProductNotificationGrid = () => {
  }
 
   return (
+    <>
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className="ml-0 m-4 p-0 adm_mnu">
@@ -321,7 +322,6 @@ const BuyProductNotificationGrid = () => {
           </nav>
         </div>
       </div>
-      <Footer /> 
 
       {/* Styles for floating menu */}
 <style jsx>{`
@@ -337,6 +337,8 @@ const BuyProductNotificationGrid = () => {
         }
       `}</style>
     </div>
+  <Footer /> 
+</>
   );
 };
 

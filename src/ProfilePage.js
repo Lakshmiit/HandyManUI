@@ -660,10 +660,10 @@ const fetchImageUrl = async (photoId) => {
                    <div className="profile-container"> 
              <div className="profile-info">
                <div className="webprofile-section">
-               <p className="text-warning cust-name">Welcome <br /> 
-               <p className="text-dark">{profile.fullName}{" "}</p></p>
-                   <h5 className="fw-bold fs-3">Lakshmi Sai Service Providers</h5>
-                   <p className="text-warning fs-3">{profile.userProfileType}</p>
+               <div className="text-warning cust-name">Welcome <br /> 
+               <p className="text-dark">{profile.fullName}{" "}</p></div>
+                   <div className="fw-bold fs-3">Lakshmi Sai Service Providers</div>
+                   <div className="text-warning fs-3">{profile.userProfileType}</div>
                    <div className="webprofile-img-wrapper">
                      <img src={profileImage} alt="Profile" 
                      className="webprofile-img" onClick={handleProfileClick}/>
@@ -675,7 +675,7 @@ const fetchImageUrl = async (photoId) => {
                        // onChange={handleFileChange}
                      />
                     </div>
-                 <p className="label fw-bold fs-5">Name</p>
+                 <div className="label fw-bold fs-5">Name</div>
                  {isEditing ? (
                    <TextField
                      value={name}
@@ -695,13 +695,13 @@ const fetchImageUrl = async (photoId) => {
                {/* </div>
        
                <div className="profile-section"> */}
-                 <p className="label fw-bold fs-5">Mobile</p>
+                 <div className="label fw-bold fs-5">Mobile</div>
                  <p className="value">{profile.mobileNumber}</p>
                <hr />
-                 <p className="label fw-bold fs-5">Email</p>
+                 <div className="label fw-bold fs-5">Email</div>
                  <p className="value">{profile.email}</p>
               <hr />
-                 <p className="label fw-bold fs-5">Address</p>
+                 <div className="label fw-bold fs-5">Address</div>
                  <p className="value">{profile.address}</p>
                <hr />
        
@@ -761,7 +761,7 @@ const fetchImageUrl = async (photoId) => {
                   </div>
                 ) : (
                   <div className="name-section">
-                    <p className="fw-bold">Name</p>
+                    <div className="fw-bold">Name</div>
                     <p>
                       {profile.fullName}{" "}
                       <IconButton size="small" onClick={handleEditClick}>
@@ -770,13 +770,13 @@ const fetchImageUrl = async (photoId) => {
                     </p>
                     <hr />
                     {/* <p className="text-warning text-center">customer</p> */}
-                    <p className="fw-bold">Mobile</p>
+                    <div className="fw-bold">Mobile</div>
                     <p className="profile">{profile.mobileNumber}</p>
                     <hr />
-                    <p className="fw-bold">Email</p>
+                    <div className="fw-bold">Email</div>
                     <p className="profile">{profile.email}</p>
                     <hr />
-                    <p className="fw-bold">Address</p>
+                    <div className="fw-bold">Address</div>
                     <p className="profile">
                     {profile.address}
                     </p>
@@ -790,10 +790,10 @@ const fetchImageUrl = async (photoId) => {
                     </p>
 
                     <hr /> */}
-                    <p className="logout-btn" onClick={() => window.location.href = "https://handymanserviceproviders.com/Logout"}>
+                    <div className="logout-btn" onClick={() => window.location.href = "https://handymanserviceproviders.com/Logout"}>
                       <LogoutIcon />
                       <span>Logout</span>
-                    </p>
+                    </div>
                     
                     {/* Logout Button */}
                     {/* <p className="logout-btn" onClick={`https://handymanserviceproviders.com`}>
@@ -834,7 +834,7 @@ const fetchImageUrl = async (photoId) => {
         <div className="col-4 col-sm-4 col-md-3" key={index}>
             <div className="mnu_mn text-center d-flex flex-column justify-content-center align-items-center p-2" >
                 <span  className="material-symbols-outlined custom-icon">
-                    {menu.MenuIcon} {/* Assuming icon is provided as text, e.g., "support_agent" */}
+                    {menu.MenuIcon} 
                 </span>
                 <a href={menu.TargetUrl} className="menu-item-link mt-2">
                     <span style={{cursor: "pointer"}}>{menu.MenuTitle}</span>

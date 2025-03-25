@@ -1381,12 +1381,12 @@ fetchProducts();
                         </div>                       
                 </div>               
             </div>
-            <div class="container mt_120px h-100 p-0">
+            <div class="container mt_100px h-100 p-0">
         <div align="center">
             <h3 class="tc">Shipping and Delivery Policy</h3>
         </div>
         <div class="text-justify">
-            <div class="mt-20">
+            <div class="mt-10">
 
                 <h3>1. Shipping Process</h3>
                 <p>
@@ -1397,7 +1397,7 @@ fetchProducts();
 
             </div>
 
-            <div class="mt-20">
+            <div class="mt-10">
                 <h3>2. Delivery Time </h3>
                 <p>
                     Standard Shipping: Estimated delivery within 5-7 business days.
@@ -1405,7 +1405,7 @@ fetchProducts();
                     Same-Day Delivery: Available for select locations if the order is placed before the cutoff time.
                 </p>
             </div>
-            <div class="mt-20">
+            <div class="mt-10">
                 <h3>3. Shipping Charges</h3>
                 <p>
                     Shipping fees are calculated at checkout based on weight, destination, and shipping method.
@@ -1414,7 +1414,7 @@ fetchProducts();
 
             </div>
 
-            <div class="mt-20">
+            <div class="mt-10">
                 <h3>4. Delivery Conditions</h3>
                 <p>
                     Orders are delivered to the address provided by the customer.
@@ -1424,7 +1424,7 @@ fetchProducts();
 
             </div>
 
-            <div class="mt-20">
+            <div class="mt-10">
                 <h3>5. International Shipping</h3>
                 <p>
                     International shipping availability depends on the destination country.

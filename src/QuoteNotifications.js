@@ -123,6 +123,7 @@ const QuoteNotification = () => {
  }
 
   return (
+    <>
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className="ml-0 m-4 p-0 adm_mnu">
@@ -323,7 +324,6 @@ const QuoteNotification = () => {
           </nav>
         </div>
       </div>
-      <Footer /> 
 
       {/* Styles for floating menu */}
 <style jsx>{`
@@ -345,6 +345,8 @@ const QuoteNotification = () => {
         }
       `}</style>
     </div>
+      <Footer /> 
+</>
   );
 };
 

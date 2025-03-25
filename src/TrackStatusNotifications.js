@@ -18,6 +18,10 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
   const {userType} = useParams();
   const {userId} = useParams();
 
+  const getTrackNotifications = notifications.filter(
+    (item) => item.assignedTo === "Customer" && (item.internalStatus === "Assigned" || item.internalStatus === "Pending" || item.internalStatus === "Customer Approved")
+  );
+
   const handleTicketClick = (ticketId) => {
     navigate(`/customerTrackConfirmation/${userType}/${userId}/${ticketId}`, { state: { ticketId } });
   };
@@ -25,7 +29,7 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
   return (
     <div> 
     <div className="notification-list">
-      {notifications.map((notification) => (
+      {getTrackNotifications.map((notification) => (
         <div
           key={notification.raiseTicketId}
           className={`notification-item ${
@@ -91,13 +95,16 @@ const TrackNotification = () => {
 `
       );
       const trackData = await trackTicketResponse.json();
-        const trackCount = trackData.length;
+      const getTrackNotifications = trackData.filter(
+        (item) => item.assignedTo === "Customer"&& (item.internalStatus === "Assigned" || item.internalStatus === "Pending" || item.internalStatus === "Customer Approved")
+      );
+        const trackCount = getTrackNotifications.length;
 
-        setTrackNotifications(trackData);
+        setTrackNotifications(getTrackNotifications);
         setNewTrackCount(trackCount);
         setGlowTrack(trackCount > 0);
         if (trackCount > 0) {
-          setHighlightedTrack(trackData[0].raiseTicketId);
+          setHighlightedTrack(getTrackNotifications[0].raiseTicketId);
         }
         const totalNotifications = trackCount;
         setNewNotificationCount(totalNotifications);

@@ -20,8 +20,8 @@ const BuyProduct = () => {
   const [category, setCategory] = useState("");
   const [productSize, setProductSize] = useState("");
   const [productCatalogue, setProductCatalogue] = useState("");
-  const [color, setChooseColor] = useState([]);
-  const [colors, setChooseColors] = useState("");
+  const [chooseColor, setChooseColor] = useState([]);
+  const [selectedColors, setSelectedColors] = useState("");
   const [requiredQuality, setRequiredQuality] = useState("");
   const [rate, setRate] = useState("");
   const [discount, setDiscount] = useState("");
@@ -169,7 +169,7 @@ useEffect(() => {
   const handleGetQuotation = async (e) => {
     e.preventDefault();
 
-    if (!colors) {
+    if (!selectedColors) {
         setColorError("Please Enter Select Color Field!");
         return;
       }
@@ -206,8 +206,8 @@ useEffect(() => {
       rate: rate.toString(),
       discount: discount.toString(),
       afterDiscountPrice: afterDiscountPrice.toString(),
-      color: color,
-      selectedColors: colors,
+      color: chooseColor,
+      selectedColors: selectedColors,
       requiredQuantity: requiredQuality.toString(),
       totalAmount: totalAmount.toString(),
       AssignedTo: "Customer Care",
@@ -284,14 +284,15 @@ useEffect(() => {
 // };
   
 
-  const handleColorChange = (e) => {
-    const inputColor = e.target.value;
-    if (color.includes(inputColor)) {
-      setChooseColors(inputColor); 
-    } else {
-      alert("Please choose a color from the given options!");
-    }
-  };
+const handleColorChange = (e) => {
+  const inputColor = e.target.value;
+  if (chooseColor.includes(inputColor)) {
+    setSelectedColors(inputColor);
+    setColorError("");
+  } else {
+    setColorError("Please choose a color from the given options!");
+  }
+};
   
   const handleQuantityChange = (e) => {
     const value = e.target.value.trim();
@@ -937,13 +938,13 @@ useEffect(() => {
             </div>
 
             <div className="col-md-6">
-                <label>Rate <span className="req_star">*</span></label>
+                <label>Price <span className="req_star">*</span></label>
                 <input
                   type="text"
                   className="form-control"
                   value={rate}
                   // onChange={rate}
-                  placeholder="Rate"
+                  placeholder="Price"
                   readOnly
                 />
               </div>
@@ -990,7 +991,7 @@ useEffect(() => {
                   productName,
                   productCatalogue,
                   productSize,
-                  color,
+                  chooseColor,
                   rate,
                   discount,
                   requiredQuality,
@@ -1035,34 +1036,41 @@ useEffect(() => {
                   type="text"
                   className="form-control"
                   value={rate}
-                  onChange={(e) => setRate(e.target.value)}
+                  onChange={(e)
+                   => setRate(e.target.value)}
                   placeholder="Enter Rate"
                 />
               </div> */}
               <div className="form-group">
-              <label> Choose Color (Optional)</label>
-              <input
-                type="text"
-                className="form-control"
-                value={color}
-                // onChange={(e) => setChooseColor(e.target.value)}
-                placeholder="Color"
-                readOnly
-              />
-            </div>
+  <label>Available Colours (Optional)</label>
+  <input
+    type="text"
+    className="form-control"
+    value={chooseColor || ""}
+    placeholder="Color"
+    readOnly
+  />
+</div>
 
-            <div className="form-group">
-              <label>Select Required Color</label>
-              <input
-                type="text"
-                className="form-control"
-                value={colors}
-                onChange={handleColorChange}
-                placeholder="Select Required Color"
-                required
-              />
-             {colorError && <p style={{ color: "red" }}>{colorError}</p>}
-            </div>
+<div className="form-group">
+  <label>Select Required Colour</label>
+  <select
+    className="form-control"
+    value={selectedColors}
+    onChange={handleColorChange}
+    required
+  >
+    <option value="">Select Required Color</option>
+    {(typeof chooseColor === "string" ? chooseColor.split(",") : []).map(
+      (color, index) => (
+        <option key={index} value={color.trim()}>
+          {color.trim()}
+        </option>
+      )
+    )}
+  </select>
+  {colorError && <p style={{ color: "red" }}>{colorError}</p>}
+</div>
               
               <div className="col-md-6">
                 <label>
@@ -1214,7 +1222,7 @@ useEffect(() => {
                             It is also clarified that, if there are any issues or claims due to your posts by way of Reviews, Ratings and Comments, then Lakshmi Sai Service Provider reserves right to take appropriate legal action against you. Further, you shall indemnify and protect Lakshmi Sai Service Provider against such claims or damages or any issues, due to your posting of such Reviews, Ratings and Comments Lakshmi Sai Service Provider takes no responsibility and assumes no liability for any content posted by you or any third party on Lakshmi Sai Service Provider site or on any mediums of Lakshmi Sai Service Provider.
                         </p>
                         <p>
-                            You further acknowledge that conduct prohibited in connection with your use of the Lakshmi Sai Service Provider (https://handymanapiv2.azurewebsites.net) website includes, but is not limited to, breaching or attempting to breach the security of the Site.
+                            You further acknowledge that conduct prohibited in connection with your use of the Lakshmi Sai Service Provider (https://handymanserviceproviders.com) website includes, but is not limited to, breaching or attempting to breach the security of the Site.
                         </p>
                         <div className="mt-20">
                         <h4>VII. PRIVACY POLICY</h4>
@@ -1334,7 +1342,7 @@ useEffect(() => {
                         <div className="mt-20">
                         <h4>XII. ADDITIONAL DISCLAIMER</h4>
                         <p>
-                            Users using any of Lakshmi Sai Service Provider service across the following mediums ie. through internet ie<a href="https://handymanapiv2.azurewebsites.net"> https://handymanapiv2.azurewebsites.net </a>Websiteis bound by this additional disclaimer wherein they are cautioned to make proper enquiry before they (Users) rely, act upon or enter into any transaction (any kind or any sort of transaction including but not limited to monetary transaction ) with the Advertiser listed with Lakshmi Sai Service Provider.
+                            Users using any of Lakshmi Sai Service Provider service across the following mediums ie. through internet ie <a href="https://handymanserviceproviders.com">https://handymanserviceproviders.com </a>Website is bound by this additional disclaimer wherein they are cautioned to make proper enquiry before they (Users) rely, act upon or enter into any transaction (any kind or any sort of transaction including but not limited to monetary transaction ) with the Advertiser listed with Lakshmi Sai Service Provider.
                         </p>
                         <p>
                             All the Users are cautioned that all and any information of whatsoever nature provided or received from the Advertiser/s is taken in good faith, without least suspecting the bonafides of the Advertiser/s and Lakshmi Sai Service Provider does not confirm, does not acknowledge, or subscribe to the claims and representation made by the Advertiser/s listed with Lakshmi Sai Service Provider. Further, Lakshmi Sai Service Provider is not at all responsible for any act of Advertiser/s listed at Lakshmi Sai Service Provider.
@@ -1403,9 +1411,9 @@ useEffect(() => {
             <h3 class="tc">Shipping and Delivery Policy</h3>
         </div>
         <div class="text-justify">
-            <div class="mt-20">
+            <div class="mt-10">
 
-                <h3>1. Shipping Process</h3>
+                <h4>1. Shipping Process</h4>
                 <p>
                     Orders are processed within 1-2 business days after payment confirmation.
                     Customers receive a tracking number once the order is shipped.
@@ -1414,16 +1422,16 @@ useEffect(() => {
 
             </div>
 
-            <div class="mt-20">
-                <h3>2. Delivery Time </h3>
+            <div class="mt-10">
+                <h4>2. Delivery Time </h4>
                 <p>
                     Standard Shipping: Estimated delivery within 5-7 business days.
                     Express Shipping: Estimated delivery within 2-3 business days.
                     Same-Day Delivery: Available for select locations if the order is placed before the cutoff time.
                 </p>
             </div>
-            <div class="mt-20">
-                <h3>3. Shipping Charges</h3>
+            <div class="mt-10">
+                <h4>3. Shipping Charges</h4>
                 <p>
                     Shipping fees are calculated at checkout based on weight, destination, and shipping method.
                     Free shipping may be available on orders over a specified amount.
@@ -1431,8 +1439,8 @@ useEffect(() => {
 
             </div>
 
-            <div class="mt-20">
-                <h3>4. Delivery Conditions</h3>
+            <div class="mt-10">
+                <h4>4. Delivery Conditions</h4>
                 <p>
                     Orders are delivered to the address provided by the customer.
                     If the recipient is unavailable, a delivery attempt will be rescheduled, or the package may be held at a pickup location.
@@ -1441,8 +1449,8 @@ useEffect(() => {
 
             </div>
 
-            <div class="mt-20">
-                <h3>5. International Shipping</h3>
+            <div class="mt-10">
+                <h4>5. International Shipping</h4>
                 <p>
                     International shipping availability depends on the destination country.
                     Customers are responsible for customs duties, taxes, and import regulations.

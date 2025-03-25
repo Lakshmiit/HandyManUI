@@ -29,7 +29,7 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
   };
 
   const handleOrdersClick = (ticketId) => {
-    navigate(`/traderConfirmation/${userType}/${userId}/${district}/${ticketId}`, { state: { ticketId } });
+    navigate(`/traderConfirmation/${userType}/${userId}/${category}/${district}/${ticketId}`, { state: { ticketId } });
   };
 
   return ( 
@@ -392,7 +392,7 @@ const Notification = () => {
                 <div
                   className="view-notifications text-info mx-2"
                   onClick={() => {
-                    navigate(`/traderConfirmationGrid/${userType}/${district}/${userId}`);
+                    navigate(`/traderConfirmationGrid/${userType}/${userId}/${category}/${district}`);
                     handleClearOrdersNotifications();
                   }}
                   style={{ cursor: "pointer" }}

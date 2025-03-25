@@ -28,14 +28,50 @@ const RaiseTicketNotification = () => {
   // const [districts, setDistricts] = useState([]);
   // const [pinCodes, setPinCodes] = useState([]);
   // const [assigned, setAssigned] = useState([]);
-   const { district, category } = useParams();
+   const { district} = useParams();
+   const {category } = useParams();
+    const [ category1, setCategory1]= useState("");
+     const [ district1, setDistrict1]= useState("");
   const rowsPerPage = 15;
 useEffect(() => {
     console.log(ticketData);
   }, [ticketData]);
+
+  useEffect(() => {
+    if (!userId || !userType) return;
+    const fetchProfileData = async () => {
+      try {
+        let apiUrl = "";
+     
+          apiUrl = `https://handymanapiv2.azurewebsites.net/api/dealer/dealerProfileData?profileType=${userType}&UserId=${userId}`;
+        
+        if (!apiUrl) return;
+        const response = await axios.get(apiUrl);
+        //setProfile(response.data); 
+        // alert(response.data.district);
+        setCategory1(response.data.category);
+     
+        setDistrict1(response.data.district);
+        // alert(response.data.district);
+        
+      } catch (err) {
+        console.error("Error fetching ticket data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchProfileData();
+  }, [userType, userId]);
+  
+  
+
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingDealerId?category=${category}&district=${district}&dealerId=${userId}`;
+    const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingDealerId?category=${category1}&district=${district1}&dealerId=${userId}`;
+    // alert(category);
+    // alert(district);
+    // alert(userId);
     axios
       .get(url)
       .then((response) => {
@@ -51,7 +87,7 @@ useEffect(() => {
       .finally(() => {
         setLoading(false);
       });
-  }, [district, category, userId]);
+  }, [category1, district1,userId]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -154,7 +190,7 @@ useEffect(() => {
                 <td>{ticket.assignedTo}</td>
                 <td className="d-flex align-items-center">
                   <Link
-                    to={`/traderConfirmation/${userType}/${userId}/${district}/${ticket.id}`}
+                    to={`/traderConfirmation/${userType}/${userId}/${category}/${district}/${ticket.id}`}
                     className="btn btn-info mx-2"
                   >
                     <FaEye />
@@ -189,7 +225,7 @@ useEffect(() => {
       </div>
       <div className="ticket-actions">
       <Link
-        to={`/traderConfirmation/${userType}/${userId}/${district}/${ticket.id}`}
+        to={`/traderConfirmation/${userType}/${userId}/${category}/${district}/${ticket.id}`}
         className="btn btn-info mx-2"
       >
         <FaEye />

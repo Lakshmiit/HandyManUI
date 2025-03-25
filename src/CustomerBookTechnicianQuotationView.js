@@ -181,6 +181,7 @@ const {userType} = useParams();
 // };
 
   return (
+    <>
     <div>
   {isMobile && <Header />}
     <div className="d-flex flex-row justify-content-start align-items-start">
@@ -592,8 +593,6 @@ const {userType} = useParams();
         </Form>
 
         </div>
-        <Footer /> 
-
         {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {
@@ -615,6 +614,8 @@ const {userType} = useParams();
       `}</style>
       </div> 
     </div>
+            <Footer /> 
+</>
   );
 };
 

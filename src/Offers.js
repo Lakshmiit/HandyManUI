@@ -55,6 +55,10 @@ const OffersProductCard = () => {
     fetchData();
   }, []);
 
+  // const handleBackClick = () => {
+  //   navigate(`/offers/${userType}/${userId}`);
+  // };
+
   const handleImageClick = (imageSrc) => {
     setZoomImage(imageSrc);
     setShowZoomModal(true);
@@ -81,7 +85,7 @@ const OffersProductCard = () => {
     <>
       <Header />
       <div className="offer-banner text-center text-white py-3">
-        🎉 <b>Exclusive Deals!</b> Save up to <b>50%</b> on select items. Limited time only! 🛒
+        🎉 <b>Special Inaugural Offers!</b> Free Delivery and Installation and Products - Get the best deals on fans, lights, home, appliances and more! 🛒
       </div>
 
       {isMobile && <Header />}
@@ -152,6 +156,7 @@ const OffersProductCard = () => {
           </div>
         </div>
       </div>
+      
 
 {/* Zoom Modal */}
 <Modal show={showZoomModal} onHide={() => setShowZoomModal(false)} centered>
@@ -168,6 +173,18 @@ const OffersProductCard = () => {
           </div>
         </Modal.Body>
       </Modal>
+
+      <div className="text-end">
+  <button 
+    className="btn btn-warning m-2" 
+    onClick={() => navigate(`/profilePage/${userType}/${userId}`)}
+  >
+    Back
+  </button>
+</div>
+
+
+
       <style jsx>{`
        .zoomable-image {
           transition: transform 0.3s ease-in-out;

@@ -194,7 +194,7 @@ useEffect(() => {
             setStatus(data.status);
             setFullName(data.customerName);
             setCustomerPhoneNumber(data.customerPhoneNumber);
-            setCustomerEmail(data.emailAddress);
+            setCustomerEmail(data.customerEmail);
             setTechnicianList(data.technicianList || []);
             setRequestType(data.requestType || 'Without Material');
             setAttachments(data.attachments);
@@ -371,7 +371,13 @@ useEffect(() => {
       RateQuotedBy: rateQuotedBy,
       CustomerPhoneNumber: customerPhoneNumber,
       CustomerEmail: customerEmail,
-
+      OrderId: "",
+      OrderDate: "",
+      PaidAmount: "",
+      TransactionStatus: "",
+      TransactionType: "",
+      InvoiceId: "",
+      InvoiceURL: "",
     };
     try {
       
@@ -482,8 +488,8 @@ const handleSaveCustomerCareMaterials = async (e) => {
   })),
 
 materials: specifications.map((spec) => ({
-  material: spec.material || "",
-  quantity: spec.quantity || 0,
+  material: spec.material ? spec.material.toString() : "0",
+  quantity: spec.quantity ? spec.quantity.toString() : "0",
   price: spec.price ? spec.price.toString() : "0",
   total: spec.total ? spec.total.toString() : "0",
 })),

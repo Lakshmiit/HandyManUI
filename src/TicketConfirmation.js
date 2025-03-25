@@ -194,7 +194,7 @@ const [customerEmail, setCustomerEmail] = useState('');
           setAssignedTo(data.assignedTo);
           setStatus(data.status);
           setFullName(data.customerName);
-          setCustomerEmail(data.emailAddress);    
+          setCustomerEmail(data.customerEmail);    
           setCustomerPhoneNumber(data.customerPhoneNumber);
           setApprovedAmount(data.approvedAmount);
           setOption1Day(data.option1Day);
@@ -339,7 +339,7 @@ const [customerEmail, setCustomerEmail] = useState('');
                 setQuote(lowest.enterQuoteAmount);
                 setFixedDiscount(lowest.fixedDiscount);
                 setOtherCharge(lowest.othercharges);
-                 setTechnicianMaterial(lowest.materials);          
+                setTechnicianMaterial(lowest.materials);          
               } else {
                 setQuote('');
                 setOtherCharge('')
@@ -872,7 +872,7 @@ const handleBothActions =  (e) => {
   //handleTimeSlotSave(e)
   handlePaymentTicket(e);
   setIsSaved(true);
-window.location.href = `/profilePage/${userType}/${userId}`;
+ window.location.href = `/profilePage/${userType}/${userId}`;
 };
 
 // const handleCheckboxChange = (mode) => {

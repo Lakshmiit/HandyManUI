@@ -167,14 +167,14 @@ function App() {
             <Route path="/timeSlotBooking/:userType/:userId/:raiseTicketId" element={<TimeSlotBooking />} />
             <Route path="/bookingConfirmation/:userType/:userId/:raiseTicketId" element={<BookingConfirmation />} />
             <Route path="/paymentConfirmation/:userType/:userId/:raiseTicketId" element={<PaymentConfirmation />} />
-            <Route path="/ticketConfirmation/:userType/:userId/:district/:raiseTicketId" element={<TicketConfirmation />} />
-            <Route path="/traderConfirmation/:userType/:userId/:district/:raiseTicketId" element={<TraderConfirmation />} />
+            <Route path="/ticketConfirmation/:userType/:userId/:category/:district/:raiseTicketId" element={<TicketConfirmation />} />
+            <Route path="/traderConfirmation/:userType/:userId/:category/:district/:raiseTicketId" element={<TraderConfirmation />} />
             <Route path="/raiseOrders/:userType" element={<RaiseOrdersGrid />} />
             <Route path="/customerCareConfirmation/:raiseTicketId" element={<CustomerCareConfirmation />} />
             <Route path="/customerTrackConfirmation/:userType/:userId/:raiseTicketId" element={<CustomerRaiseTicketTrack />} />
             <Route path="/trackStatusNotifications/:userType/:userId" element={<TrackStatusNotifications />} />
-            <Route path="/ticketConfirmationGrid/:userType/:district/:technicianId" element={<TicketConfirmationGrid />} />
-            <Route path="/traderConfirmationGrid/:userType/:district/:dealerId" element={<TraderConfirmationGrid />} />
+            <Route path="/ticketConfirmationGrid/:userType/:userId/:category/:district" element={<TicketConfirmationGrid />} />
+            <Route path="/traderConfirmationGrid/:userType/:userId/:category/:district" element={<TraderConfirmationGrid />} />
             {/* <Route path="/termsandConditions" element={<TermsandConditions />} />*/}
             <Route path="/customerCareGrid" element={<CustomerCareGrid />} /> 
             <Route path="/trackStatus/:userType" element={<TrackStatusGrid />} />

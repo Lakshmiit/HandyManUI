@@ -6,8 +6,8 @@ import AdminSidebar from './AdminSidebar';
 import Footer from './Footer.js';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { Dashboard as MoreVertIcon} from '@mui/icons-material';
-import ForwardIcon from '@mui/icons-material/Forward';
+import { ArrowBack, Dashboard as MoreVertIcon} from '@mui/icons-material';
+// import ForwardIcon from '@mui/icons-material/Forward';
 import { Button } from 'react-bootstrap'; // Import Bootstrap components for modal
 // import axios from 'axios';
 
@@ -96,8 +96,8 @@ const [emailAddress, setEmailAddress] = useState("");
 }, [location.state]);
 
 useEffect(() => {
-  console.log( productData);
-}, [productData]);
+  console.log( productData,addressType, id, customerId, date, emailAddress);
+}, [productData,addressType, id, customerId, date, emailAddress]);
 
   // // Fetch customer profile data
   // useEffect(() => {
@@ -198,79 +198,79 @@ useEffect(() => {
   // const ticketIdSuffix = String(Math.floor(Math.random() * 999) + 1).padStart(3, "0");
   // const ticketId = `${ticketIdPrefix}${ticketIdSuffix}`;
 
-  const handleGetQuotation = async (e) => {
-    e.preventDefault();
+  // const handleGetQuotation = async (e) => {
+  //   e.preventDefault();
    
-    // const primaryAddress = addresses.find((addr) => addr.type === "primary");
-    // const state = primaryAddress?.state || "";
-    // const district = primaryAddress?.district || "";
-    // const pincode = primaryAddress?.zipCode || "";
-    // const mobileNumber = primaryAddress?.mobileNumber || "";
+  //   // const primaryAddress = addresses.find((addr) => addr.type === "primary");
+  //   // const state = primaryAddress?.state || "";
+  //   // const district = primaryAddress?.district || "";
+  //   // const pincode = primaryAddress?.zipCode || "";
+  //   // const mobileNumber = primaryAddress?.mobileNumber || "";
   
-    const payload = {
-      BuyProductId: buyProductTicketId,
-      id: id,
-      date: date,
-      Address: address,
-      CustomerPhoneNumber: mobileNumber,
-      category: category,
-      status: "Closed",
-      productName: productName,
-      ProductCatalogue: productCatalogue,
-      productSize: productSize,
-      rate: rate.toString(),
-      discount: discount.toString(),
-      afterDiscountPrice: afterDiscount.toString(),
-      color: color,
-      selectedColors: selectedColors,
-      requiredQuantity: requiredQuantity.toString(),
-      totalAmount: totalAmount.toString(),
-      AssignedTo: "Customer",
-      DeliveryCharges: deliveryCharges,
-      ServiceCharges: serviceCharges,
-      TotalPaymentAmount: totalPaymentAmount,
-      AddressType: addressType,
-      State: state,
-      District: district,
-      ZipCode: pincode,
-      CustomerId: customerId,
-      CustomerName: customerName,
-      RequestedBy: customerName,
-      PaymentMode: paymentMode,
-      UTRTransactionNumber: transactionDetails,
-      TechnicianConfirmationCode: technicianConfirmationCode,
-      DeliveryDate: deliveryDate,
-      TechnicianDetils: technicianDetails,
-      ProductView: "Assigned",
-      InvoiceDetails: invoiceDetails,
-      UploadInvoice: uploadedFiles.map((file) => file.src),
-      CustomerEmail: emailAddress,
-      OrderId: "",
-      OrderDate: "",
-      PaidAmount: "",
-      TransactionStatus: "",
-      TransactionType: "",
-      InvoiceId: "",
-      InvoiceURL: "",
-    };
+  //   const payload = {
+  //     BuyProductId: buyProductTicketId,
+  //     id: id,
+  //     date: date,
+  //     Address: address,
+  //     CustomerPhoneNumber: mobileNumber,
+  //     category: category,
+  //     status: "Closed",
+  //     productName: productName,
+  //     ProductCatalogue: productCatalogue,
+  //     productSize: productSize,
+  //     rate: rate.toString(),
+  //     discount: discount.toString(),
+  //     afterDiscountPrice: afterDiscount.toString(),
+  //     color: color,
+  //     selectedColors: selectedColors,
+  //     requiredQuantity: requiredQuantity.toString(),
+  //     totalAmount: totalAmount.toString(),
+  //     AssignedTo: "Customer",
+  //     DeliveryCharges: deliveryCharges,
+  //     ServiceCharges: serviceCharges,
+  //     TotalPaymentAmount: totalPaymentAmount,
+  //     AddressType: addressType,
+  //     State: state,
+  //     District: district,
+  //     ZipCode: pincode,
+  //     CustomerId: customerId,
+  //     CustomerName: customerName,
+  //     RequestedBy: customerName,
+  //     PaymentMode: paymentMode,
+  //     UTRTransactionNumber: transactionDetails,
+  //     TechnicianConfirmationCode: technicianConfirmationCode,
+  //     DeliveryDate: deliveryDate,
+  //     TechnicianDetils: technicianDetails,
+  //     ProductView: "Assigned",
+  //     InvoiceDetails: invoiceDetails,
+  //     UploadInvoice: uploadedFiles.map((file) => file.src),
+  //     CustomerEmail: emailAddress,
+  //     OrderId: "",
+  //     OrderDate: "",
+  //     PaidAmount: "",
+  //     TransactionStatus: "",
+  //     TransactionType: "",
+  //     InvoiceId: "",
+  //     InvoiceURL: "",
+  //   };
    
-    try {
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/${buyProductId}`,{
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-      if (!response.ok) {
-       throw new Error("Failed to update Buy Product Invoice Details.");
-      }
-      alert('Product Order Forwarded to Customer Successfully!');
-      navigate("/adminNotifications");
-    } catch (error) {
-      console.error("Error update Buy Product Invoice Details:", error);
-      window.alert('Failed to update Buy Product Invoice Details. Please try again later.');    }
-  };
+  //   try {
+  //     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/${buyProductId}`,{
+  //       method: 'PUT',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(payload),
+  //     });
+  //     if (!response.ok) {
+  //      throw new Error("Failed to update Buy Product Invoice Details.");
+  //     }
+  //     alert('Product Order Forwarded to Customer Successfully!');
+  //     navigate("/adminNotifications");
+  //   } catch (error) {
+  //     console.error("Error update Buy Product Invoice Details:", error);
+  //     window.alert('Failed to update Buy Product Invoice Details. Please try again later.');    }
+  // };
   
   // Detect screen size for responsiveness
 useEffect(() => {
@@ -281,153 +281,10 @@ useEffect(() => {
   return () => window.removeEventListener('resize', handleResize);
 }, []);
 
-
-  // const handleAddToCart = () => {
-  //   alert("Item added to cart!");
-  // };
-
    const handleSubmit = (e) => {
      e.preventDefault();
    };
 
-
-  // // Handle adding a new address
-  // const handleAddAddress = () => {
-  //   if (
-  //     newAddress.trim() === '' ||
-  //     addressType.trim() === '' ||
-  //     state.trim() === '' ||
-  //     district.trim() === '' ||
-  //     pincode.trim() === ''
-  //   ) {
-  //     alert('Please fill in all the fields.');
-  //     return;
-  //   }
-
-  //   if (addresses.length >= 4) {
-  //     alert('You can only add up to 4 addresses.');
-  //     return;
-  //   }
-
-  //   const newAddr = {
-  //     id: uuidv4(),
-  //     type: addressType,
-  //     address: newAddress,
-  //     state,
-  //     district,
-  //     pincode,
-  //   };
-
-  //   setAddresses((prevAddresses) => [...prevAddresses, newAddr]);
-  //   resetAddressForm();
-  //   setShowModal(false);
-  // };
-
-
-  // const handleAddAddress = () => {
-  //   if (
-  //     newAddress.trim() === '' ||
-  //     addressType.trim() === '' ||
-  //     state.trim() === '' ||
-  //     district.trim() === '' ||
-  //     pincode.trim() === ''
-  //   ) {
-  //     alert('Please fill in all the fields.');
-  //     return;
-  //   }
-  
-  //   if (addresses.length >= 4) {
-  //     alert('You can only add up to 4 addresses.');
-  //     return;
-  //   }
-  
-  //   const newAddr = {
-  //     id: uuidv4(),
-  //     type: addressType,
-  //     address: newAddress,
-  //     state,
-  //     district,
-  //     zipCode: pincode, // Corrected field name for consistency
-  //   };
-  
-  //   console.log('New Address:', newAddr); // Debugging
-  
-  //   setAddresses((prevAddresses) => [...prevAddresses, newAddr]);
-  //   resetAddressForm();
-  //   setShowModal(false);
-  // };
-  
-
-  // // Reset address form fields
-  // const resetAddressForm = () => {
-  //   setNewAddress('');
-  //   setAddressType('');
-  //   setState('');
-  //   setDistrict('');
-  //   setPincode('');
-  // };
-
-  // // Handle secondary address selection
-  // const handleSecondaryAddressSelect = (id) => {
-  //   const updatedAddresses = addresses.map((address) =>
-  //     address.id === id
-  //       ? { ...address, type: 'primary' }
-  //       : address.type === 'primary'
-  //       ? { ...address, type: 'secondary' }
-  //       : address
-  //   );
-  //   setAddresses(updatedAddresses);
-  //   setShowSecondaryAddresses(false); // Collapse secondary addresses view
-  // };
-
-  // // Handle address editing
-  // const handleAddressEdit = (id) => {
-  //   const addressToEdit = addresses.find((address) => address.id === id);
-  //   if (addressToEdit) {
-  //     setNewAddress(addressToEdit.address);
-  //     setAddressType(addressToEdit.type);
-  //     setState(addressToEdit.state);
-  //     setDistrict(addressToEdit.district);
-  //     setPincode(addressToEdit.pincode);
-  //     setShowModal(true);
-  //     handleAddressDelete(id); // Remove the address to re-add it after edit
-  //   }
-  // };
-
-  // // Handle address deletion
-  // const handleAddressDelete = (id) => {
-  //   const updatedAddresses = addresses.filter((address) => address.id !== id);
-  //   setAddresses(updatedAddresses);
-  // };
-
-  // useEffect(() => {
-  //   const fetchProducts = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         `https://handymanapiv2.azurewebsites.net/api/Product/GetProductsByCategory?category=${category}`
-  //       );
-  //       setAllProducts(response.data);
-  //       // alert(JSON.stringify(allProducts));
-  //       setProductSuggestions(response.data.map((product) => product.productName));
-  //     } catch (error) {
-  //       console.error("Error fetching products by category:", error);
-  //     }
-  //   };
-  //   fetchProducts();
-  // }, [category]);
-  
-  // useEffect(() => {
-  //   if (productName) {
-  //     setFilteredSuggestions(
-  //       productSuggestions.filter((name) =>
-  //         name.toLowerCase().startsWith(productName.toLowerCase())
-  //       )
-  //     );
-  //   } else {
-  //     setFilteredSuggestions([]);
-  //   }
-  // }, [productName, productSuggestions]);
-  
     // Handle file upload
     const handleFileChange = (e) => {
       const files = Array.from(e.target.files);
@@ -505,8 +362,7 @@ useEffect(() => {
 
 
   return (
-//     <div>
-// {!isMobile && <Header />}
+<>
 <div className="d-flex flex-row justify-content-start align-items-start">
       {/* Sidebar menu for Larger Screens */}
       {!isMobile && (
@@ -568,159 +424,6 @@ useEffect(() => {
                 readOnly
               />
               </div>
-
-            
-
-              
-
-{/* <div className="p-3 border rounded bg-light">
-  {addresses
-    .filter((addr) => addr.type === 'primary')
-    .map((address) => (
-      <div
-        key={address.id}
-        className="list-group-item d-flex justify-content-between align-items-center bg-white text-dark"
-      >
-        <div>
-          <span className="ml-2">{address.address}</span>
-          <br />
-          <span className="ml-2">{address.state}</span>
-          <br />
-          <span className="ml-2">{address.district}</span>
-          <br />
-          <span className="ml-2">{address.zipCode}</span> 
-          <br />
-          <small className="text-muted">Primary Address</small>
-        </div>
-      </div>
-    ))} */}
-
-                {/* {showSecondaryAddresses && (
-                  <>
-                    <div className="list-group">
-                      {addresses
-                        .filter((addr) => addr.type === 'secondary')
-                        .map((address) => (
-                          <div
-                            key={address.id}
-                            className="list-group-item d-flex justify-content-between align-items-center"
-                          >
-                            <div>
-                              <input
-                                type="radio"
-                                name="address"
-                                checked={address.type === 'primary'}
-                                onChange={() => handleSecondaryAddressSelect(address.id)}
-                              />
-                              <span className="ml-2">{address.address}</span>
-                              <br />
-                              <small className="text-muted">Secondary Address</small>
-                            </div>
-                            <div>
-                              <button
-                                className="btn btn-warning btn-sm mx-1"
-                                onClick={() => handleAddressEdit(address.id)}
-                              >
-                                Edit
-                              </button>
-                              <button
-                                className="btn btn-danger btn-sm mx-1"
-                                onClick={() => handleAddressDelete(address.id)}
-                              >
-                                Delete
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                    </div>
-                    <div className="mt-3">
-                    <button
-                      className="btn btn-success"
-                      onClick={() => setShowModal(true)}
-                    >
-                      Add Address
-                    </button>
-                  </div>
-                  </>
-                )} */}
-              {/* </div> */}
-
-            {/* <Modal show={showModal} onHide={() => setShowModal(false)}>
-  <Modal.Header closeButton>
-    <Modal.Title>{newAddress ? 'Edit Address' : 'Add Address'}</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    <Form.Group controlId="address">
-      <Form.Label>Address</Form.Label>
-      <Form.Control
-        type="text"
-        value={newAddress}
-        onChange={(e) => setNewAddress(e.target.value)}
-        placeholder="Enter address"
-      />
-    </Form.Group>
-
-    <Form.Group controlId="addressType">
-      <Form.Label>Address Type</Form.Label>
-      <Form.Control
-        as="select"
-        value={addressType}
-        onChange={(e) => setAddressType(e.target.value)}
-      >
-        <option value="">Select Address Type</option>
-        <option value="primary">Primary</option>
-        <option value="secondary">Secondary</option>
-      </Form.Control>
-    </Form.Group>
-
-    <Form.Group controlId="state">
-      <Form.Label>State</Form.Label>
-      <Form.Control
-        as="select"
-        value={state}
-        onChange={(e) => setState(e.target.value)}
-      >
-        <option value="">Select State</option>
-        {states.map((state, index) => (
-          <option key={index} value={state}>
-            {state}
-          </option>
-        ))}
-      </Form.Control>
-    </Form.Group>
-
-    <Form.Group controlId="district">
-      <Form.Label>District</Form.Label>
-      <Form.Control
-        as="select"
-        value={district}
-        onChange={(e) => setDistrict(e.target.value)}
-      >
-        <option value="">Select District</option>
-        {districts[state]?.map((district, index) => (
-          <option key={index} value={district}>
-            {district}
-          </option>
-        ))}
-      </Form.Control>
-    </Form.Group>
-
-    <Form.Group controlId="pincode">
-      <Form.Label>Pincode</Form.Label>
-      <Form.Control
-        type="text"
-        value={pincode}
-        onChange={(e) => setPincode(e.target.value)}
-        placeholder="Enter pincode"
-      />
-    </Form.Group>
-
-    <Button type="button" variant="primary" onClick={handleAddAddress}>
-      {newAddress ? 'Save Address' : 'Add Address'}
-    </Button>
-  </Modal.Body>
-</Modal> */}
-
   
             <div className="form-group">
               <label>Category <span className="req_star">*</span></label>
@@ -821,62 +524,7 @@ useEffect(() => {
               </div>
               </div>
 
-
-            {/* <div className="form-group">
-              <label>Color (Optional)</label>
-              <input
-                type="text"
-                className="form-control"
-                value={color}
-                onChange={(e) => setChooseColor(e.target.value)}
-                placeholder="Enter Color"
-              />
-            </div> */}
-
-            {/* <button
-              type="button"
-              className="btn btn-warning text-white w-50 mt-2"
-              onClick={() =>
-                navigate(`/buyproduct-view/${id}/${userId}/${userType}`, {
-                  state: {
-                    productName,
-                    productCatalogue,
-                    productSize,
-                    color,
-                    rate,
-                    discount,
-                    // afterDiscount,
-                    requiredQuantity,
-                  },
-                })
-              }
-            >
-              View Product
-            </button> */}
-
-
-            {/* <div className="form-group mb-3">
-              <label>Other Than Product</label>
-              <input
-                type="text"
-                className="form-control"
-                value={otherThanProduct}
-                onChange={(e) => setOtherThanProduct(e.target.value)}
-                placeholder="Enter Product Name"
-              />
-            </div> */}
-
             <div className="row">
-            {/* <div className="col-md-6">
-                <label>Rate <span className="req_star">*</span></label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={rate}
-                  onChange={(e) => setRate(e.target.value)}
-                  placeholder="Enter Rate"
-                />
-              </div> */}
               <div className="row ticket-info" >
               <div className="col-md-6">
               <p><strong className="me-2"> Choose Color (Optional):</strong>{color}</p>
@@ -1020,118 +668,19 @@ useEffect(() => {
             </div>
  
             <div className="mt-4 text-end">
-                <Button type="submit" className="btn btn-warning text-white mx-2"onClick={handleGetQuotation} title="Forward">
-                <ForwardIcon />
+            <Button className="btn btn-warning text-white mx-2" onClick={() => navigate(`/buyProductNotificationGrid`)} title="Back">
+                <ArrowBack />
                 </Button>
+                {/* <Button type="submit" className="btn btn-warning text-white mx-2" onClick={handleGetQuotation} title="Forward">
+                <ForwardIcon />
+                </Button> */}
     
             </div>
-            
-              
-              {/* <div className="col-md-6">
-                <label>
-                  Required Quantity <span className="req_star">*</span>
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={requiredQuantity}
-                  onChange={(e) => setRequiredQuantity(e.target.value)}
-                  placeholder="Enter Required Quantity"
-                />
-              </div> */}
-
-              {/* <div className="col-md-6">
-                <label>
-                  Total Amount<span className="req_star">*</span>
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={totalAmount}
-                  // onChange={(e) => setTotalAmounts(e.target.value)}
-                  // placeholder="Enter Total Amount"
-                  readOnly
-                />
-              </div>
-
-              <div className="col-md-6">
-                <label>
-                  Delivery Charges <span className="req_star">*</span>
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={deliveryCharges}
-                  onChange={(e) => setDeliveryCharges(e.target.value)}
-                  placeholder="Delivery Charges"
-                  readOnly
-                />
-              </div>
-
-              <div className="col-md-6">
-                <label>
-                  Service Charges <span className="req_star">*</span>
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={serviceCharges}
-                  onChange={(e) => setServiceCharges(e.target.value)}
-                  placeholder="Service Charges"
-                  readOnly
-                />
-              </div>
-
-              <div className="col-md-6">
-                <label>
-                  Total Payment Amount <span className="req_star">*</span>
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={totalPaymentAmount}
-                  onChange={(e) => setTotalPaymentAmount(e.target.value)}
-                  placeholder="Total Payment Amount"
-                  readOnly
-                />
-              </div> */}
-
-              
-              {/* <div className="col-md-6">
-                <label>
-                  Units <span className="req_star">*</span>
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={units}
-                  onChange={(e) => setUnits(e.target.value)}
-                  placeholder="Enter Units"
-                />
-              </div> */}
             </div>
-
-            {/* <div className="d-flex gap-5 mt-3">
-              <button
-                type="button"
-                className="text-white btn btn-warning w-50"
-                onClick={handleAddToCart}
-              >
-                Add to Cart
-              </button>
-              <button
-                type="button"
-                className="text-white btn btn-warning w-50"
-                onClick={handleGetQuotation}
-              >
-                Buy Product
-              </button>
-            </div> */}
           </form>
         </div>
         
       </div>
-      <Footer /> 
       {/* Styles for floating menu */}
 <style jsx>{`
         .menu-popup {
@@ -1146,6 +695,8 @@ useEffect(() => {
         }
       `}</style>
     </div>
+    <Footer /> 
+</>
   );
 };
 

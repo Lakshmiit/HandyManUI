@@ -20,24 +20,57 @@ const TicketConfirmationNotification = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
-   const { district, category } = useParams();
+  const { district} = useParams();
+  const {category } = useParams();
+  const [ category1, setCategory1]= useState("");
+  const [ district1, setDistrict1]= useState("");
   //  const { lowestBidder } = useParams();
 
   const rowsPerPage = 15;
+
+  useEffect(() => {
+              if (!userId || !userType) return;
+              const fetchProfileData = async () => {
+                try {
+                  let apiUrl = "";
+               
+                    apiUrl = `https://handymanapiv2.azurewebsites.net/api/technician/technicianProfileData?profileType=${userType}&UserId=${userId}`;
+                  
+                  if (!apiUrl) return;
+                  const response = await axios.get(apiUrl);
+                //   alert("test1");
+                //  alert(response.data.category);
+                  setCategory1(response.data.category);
+                //   alert("test2");
+                //  alert(response.data.district);
+                  setDistrict1(response.data.district);
+                    
+                } catch (error) {
+                  console.log("Failed to fetch the data: ", error);
+                } finally {
+                  setLoading(false);
+                }
+              };
+            
+              fetchProfileData();
+            }, [userType, userId]);
+            
 useEffect(() => {
     console.log(ticketData);
   }, [ticketData]);
 
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingTechnicianId?category=${category}&district=${district}&technicianId=${userId}`;
+    const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingTechnicianId?category=${category1}&district=${district1}&technicianId=${userId}`;
     
     axios.get(url)
       .then((response) => {
         console.log("API Response:", response.data); 
 
         const tickets = response.data.tickets || [];
-        const filteredTickets = tickets.filter((ticket) => (ticket.internalStatus === "Customer Approved" || ticket.internalStatus === "Closed")  && ticket.lowestBidderTechnicainId === userId);
+        const filteredTickets = tickets.filter((ticket) => (ticket.internalStatus === "Customer Approved" 
+          // || ticket.internalStatus === "Closed"
+        )  && ticket.lowestBidderTechnicainId === userId);
         
         setTicketData(filteredTickets);
         setFilteredData(filteredTickets);
@@ -48,7 +81,7 @@ useEffect(() => {
       .finally(() => {
         setLoading(false);
       });
-  }, [ category, district, userId]);
+  }, [ category1, district1, userId]);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -128,7 +161,7 @@ useEffect(() => {
                 <td>{ticket.assignedTo}</td>
                 <td className="d-flex align-items-center">
                   <Link
-                    to={`/ticketConfirmation/${userType}/${userId}/${district}/${ticket.id}`}
+                    to={`/ticketConfirmation/${userType}/${userId}/${category}/${district}/${ticket.id}`}
                     className="btn btn-info mx-2"
                     title="View"
                   >
@@ -155,7 +188,7 @@ useEffect(() => {
       </div>
       <div className="ticket-actions">
       <Link
-        to={`/ticketConfirmation/${userType}/${userId}/${district}/${ticket.id}`}
+        to={`/ticketConfirmation/${userType}/${userId}/${category}/${district}/${ticket.id}`}
         className="btn btn-info mx-2"
         title="View"
       >
