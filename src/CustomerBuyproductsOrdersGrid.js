@@ -242,7 +242,7 @@ const CustomerBuyProductNotificationGrid = () => {
                 <td>{product.assignedTo}</td>
                 <td className="d-flex align-items-center">
                   <Link
-                    to={`/viewCustomerBuyProductOrdersGrid/${userType}/${product.id}`}
+                    to={`/viewCustomerBuyProductOrdersGrid/${userType}/${userId}/${product.id}`}
                     className="btn btn-info mx-2"
                   >
                     <FaEye />   
@@ -277,7 +277,7 @@ const CustomerBuyProductNotificationGrid = () => {
       </div>
       <div className="ticket-actions">
       <Link
-                    to={`/viewCustomerBuyProductOrdersGrid/${userType}/${product.id}`}
+                    to={`/viewCustomerBuyProductOrdersGrid/${userType}/${userId}/${product.id}`}
                     className="btn btn-info mx-2"
                   >
                     <FaEye />   

@@ -149,7 +149,6 @@ const handleGetQuotation = async (e) => {
     CustomerPhoneNumber: mobileNumber,
     CustomerName: customerName,
     category: category,
-    status: "Draft",
     productName: productName,
     ProductCatalogue: productCatalogue,
     productSize: productSize,
@@ -188,30 +187,51 @@ const handleGetQuotation = async (e) => {
     InvoiceId: "",
     InvoiceURL: "",
   };
+  const payload1 = {
+    ...payload, 
+    status: selectedPayment === "online" ? "Draft" : "Open",
+  };
 
   try {
-    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/${buyProductId}`,{
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-       body: JSON.stringify(payload),
-    });
-    if (!response.ok) {
-     throw new Error("Failed to submit Payment.");
-    }
-    const data = await response.json();
-    // Store confirmation code in state
-    setTechnicianConfirmationCode(data.technicianConfirmationCode);
-
+    let response;
   if (selectedPayment === 'online') {
+       response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/${buyProductId}`,{
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+         body: JSON.stringify(payload1),
+      });
+      if (!response.ok) {
+       throw new Error("Failed to submit Payment.");
+      }
+      const data = await response.json();
+      // Store confirmation code in state
+      setTechnicianConfirmationCode(data.technicianConfirmationCode);
+  
     window.alert(`We are Redirecting to the Payment Page! Your reference number is ${buyProductTicketId}. Technician will contact you shortly.`);
       window.location.href=`https://handymanserviceproviders.com/BuyProductPaymentPage/${buyProductId}`;
-    } else if (selectedPayment === 'technician') {
+    }  else if (selectedPayment === 'technician') {
+      
+         response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/${buyProductId}`,{
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+           body: JSON.stringify(payload1),
+        });
+        if (!response.ok) {
+         throw new Error("Failed to submit Payment.");
+        }
+        const data = await response.json();
+        // Store confirmation code in state
+        setTechnicianConfirmationCode(data.technicianConfirmationCode);
+    
      window.alert(`Thank You for choosing the HandyMan Services! Your reference number is ${buyProductTicketId}. Technician will contact you shortly.`);
      window.location.href = `/profilePage/${userType}/${userId}`;
     } 
-  } catch (error) {
+  
+  }  catch (error) {
     console.error("Error submitting Payment:", error);
     window.alert('Failed to submitting Payment. Please try again later.');    
   }
@@ -759,7 +779,7 @@ if (loading) {
 <div className="button">
     {/* <button className="btn-back m-2">Back</button> */}
     <button className="btn-continue m-2"  onClick={handleGetQuotation}
-    >Save</button>
+    >Proceed</button>
   
 </div>
  

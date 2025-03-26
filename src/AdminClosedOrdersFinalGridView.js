@@ -546,6 +546,7 @@ useEffect(() => {
 
 
   return (
+    <>
     <div className="d-flex flex-row justify-content-start align-items-start">
       {/* Sidebar menu for Larger Screens */}
       {!isMobile && (
@@ -1189,7 +1190,6 @@ useEffect(() => {
           </form>
         </div>
       </div>
-      <Footer /> 
 
       {/* Styles for floating menu */}
 <style jsx>{`
@@ -1205,6 +1205,8 @@ useEffect(() => {
         }
       `}</style>    
     </div>
+    <Footer /> 
+</>
   );
 };
 

@@ -204,9 +204,7 @@ useEffect(() => {
             const imageRequests =
               data.attachments?.map((photo) => 
                fetch(
-                  `https://handymanapiv2.azurewebsites.net/api
-
-/FileUpload/download?generatedfilename=${photo}`
+                  `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
                 )
                 .then((res) => res.json())
                 .then((data) => ({
