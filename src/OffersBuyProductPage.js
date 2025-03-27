@@ -1443,17 +1443,18 @@ fetchProducts();
       )}
     </div>
 
-            <div className="text-center mt-3">
-              {/* <button
-                type="button"
-                className="text-white btn btn-warning w-50"
-                onClick={handleAddToCart}
-              >
-                Add to Cart
-              </button> */}
+            <div className=" d-flex justify-content-between mt-3">
               <button
                 type="button"
-                className="text-white btn btn-warning w-50"
+                className="text-white text-start btn btn-warning w-20 m-3"
+                onClick={() => navigate(`/profilePage/${userType}/${userId}`)}
+
+              >
+                Back
+              </button>
+              <button
+                type="button"
+                className="text-white text-end btn btn-warning w-20 m-3"
                 onClick={handleGetQuotation}
               >
                 Buy Product

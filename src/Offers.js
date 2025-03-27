@@ -85,7 +85,7 @@ const OffersProductCard = () => {
     <>
       <Header />
       <div className="offer-banner text-center text-white py-3">
-        🎉 <b>Special Inaugural Offers!</b> Free Delivery and Installation and Products - Get the best deals on fans, lights, home, appliances and more! 🛒
+        🎉 <b>Special Inaugural  Offers!</b> Enjoy Free Delivery and Installation on all Products. 🛒
       </div>
 
       {isMobile && <Header />}
