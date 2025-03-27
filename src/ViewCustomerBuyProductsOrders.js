@@ -297,7 +297,7 @@ useEffect(() => {
       selectedColors: selectedColors,
       requiredQuantity: requiredQuantity.toString(),
       totalAmount: totalAmount.toString(),
-      AssignedTo: "Customer Care",
+      AssignedTo: "Admin",
       DeliveryCharges: deliveryCharges,
       ServiceCharges: serviceCharges,
       TotalPaymentAmount: totalPaymentAmount,
@@ -326,47 +326,55 @@ useEffect(() => {
     InvoiceId: "",
     InvoiceURL: "",
     }; 
+    const payload1 = {
+      ...payload, 
+      status: paymentType === "Pay Online" ? "Draft" : "Closed",
+    };
   
     try {
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/${buyProductId}`,{
+      let response; 
+      if (paymentMode === "technician" && (paymentType === "Cash" || paymentType === "Pay Online")) {
+       response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/${buyProductId}`,{
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(payload1),
       });
       if (!response.ok) {
        throw new Error("Failed to update Buy Product Payment Details.");
       }
-
-      if ((paymentMode === "technician" && paymentType === "Cash") || 
-    (paymentMode === "technician" && paymentType === "Pay Online")) {
       if (paymentType === "Pay Online") {
-      alert(`We are redirecting to Payment Page!`);
+      window.alert(`We are redirecting to Payment Page!`);
       window.location.href = `https://handymanserviceproviders.com/BuyProductPaymentPage/${buyProductId}`;
-    }  
-    else {
+    }  else {
       alert("Product Order Forwarded to Customer Care Successfully!!");
       navigate(`/customerOrders/${userType}/${userId}`);
     }
-  }
-    if (paymentMode === "online") {
+  } else if (paymentMode === "online") {
+      response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/${buyProductId}`,{
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload1),
+      });
+      if (!response.ok) {
+       throw new Error("Failed to update Buy Product Payment Details.");
+      }
+      window.alert("Product Order Forwarded to Customer Care Successfully!!");
+      navigate(`/customerOrders/${userType}/${userId}`);
+    } else {
       alert("Product Order Forwarded to Customer Care Successfully!!");
       navigate(`/customerOrders/${userType}/${userId}`);
-      return;
     }
-   
-      // if (paymentType === "Pay Online") {
-      //   window.alert(`We are Redirecting to the Payment Page! `);
-      //   window.location.href = `https://handymanserviceproviders.com/PaymentPage/${buyProductId}`;
-      // } else { 
-      // alert('Product Order Forwarded to Customer Care Successfully!');
-      // navigate(`/customerOrders/${customerId}/${userType}`);
-      // }
-    } catch (error) {
+   } catch (error) {
       console.error("Error update Buy Product Payment Details:", error);
       window.alert('Failed to update Buy Product Payment Details. Please try again later.');    }
   };
+
+
+
 
 
   // Detect screen size for responsiveness
@@ -978,7 +986,7 @@ useEffect(() => {
                 onClick={handleGetQuotation}  
                 // disabled={!transactionDetails?.trim()} 
                 title="Closed">
-                Closed Order
+                Proceed
                 </Button>
     
             </div>

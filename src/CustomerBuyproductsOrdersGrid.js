@@ -46,7 +46,7 @@ const CustomerBuyProductNotificationGrid = () => {
         const products = response.data.map((product) => ({
           ...product,
         }));
-        const buyProducts = products.filter((product) =>  product.status === "Closed" && product.assignedTo === "Customer Care");
+        const buyProducts = products.filter((product) =>  (product.assignedTo !== "Customer Care" && product.status === "Closed" && product.assignedTo === "Admin")||(product.transactionStatus === "Success" && product.assignedTo === "Admin"));
 
           // product.status === "Pending" && product.assignedTo === "Customer Care");
         // product.status === "Closed");

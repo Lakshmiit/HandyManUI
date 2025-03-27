@@ -174,7 +174,7 @@ const handleGetQuotation = async (e) => {
     TechnicianConfirmationCode:"",
     DeliveryDate:"",
     TechnicianDetils:"",
-    ProductView: "Draft",
+    ProductView: "Open",
     InvoiceDetails:"",
     UploadInvoice: [],
     WarrentyPeriod: "",

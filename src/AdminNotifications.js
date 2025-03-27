@@ -32,16 +32,15 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
 );
 
 const bookTechnicianNotifications = notifications.filter(
-  (item) => item.status === "Open" && item.bookTechnicianId != null
+  (item) => item.status === "Open"  && item.bookTechnicianId != null
 );
 
 const buyProductNotifications = notifications.filter(
-  (item) => (item.status === "Open") && item.buyProductId != null
+  (item) => item.status === "Open" && item.assignedTo === "Customer Care" && item.buyProductId != null
 );
 
 const productClosedNotifications = notifications.filter(
-  (item) => item.status === "Closed" && item.buyProductId != null  
-);
+  (item) => (item.assignedTo !== "Customer Care" && item.status === "Closed" && item.assignedTo === "Admin" && item.buyProductId != null) || (item.assignedTo === "Admin" && item.transactionStatus === "Success" && item.buyProductId != null));
   
   const handleTicketClick = (ticketId) => {
     navigate(`/raiseTicketActionView/${ticketId}`, { state: { ticketId } });
@@ -379,8 +378,8 @@ const Notification = () => {
 
       const raiseTicketData = await raiseTicketResponse.json();
       const raiseTicketFiltered = raiseTicketData.filter(
-        (item) => item.internalStatus === "Open" && item.assignedTo === "Customer Care"
-      );
+        (item) => item.internalStatus === "Open" && item.assignedTo === "Customer Care")
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
       const raiseTicketCount = raiseTicketFiltered.length;
 
       setTicketNotifications(raiseTicketFiltered);
@@ -393,8 +392,8 @@ const Notification = () => {
 
       const getQuoteData = await getQuoteResponse.json();
       const quoteTicketFiltered = getQuoteData.filter(
-        (item) => item.assignedTo === "Technical Agency" && item.status === "Assigned" && item.assignedTo !== "Dealer/Trader"
-      );
+        (item) => item.assignedTo === "Technical Agency" && item.status === "Assigned" && item.assignedTo !== "Dealer/Trader")
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
       const getQuoteCount = quoteTicketFiltered.length;
 
       setQuoteNotifications(quoteTicketFiltered);
@@ -407,8 +406,8 @@ const Notification = () => {
 
       const getDealerData = await getDealerResponse.json();
       const dealerTicketFiltered = getDealerData.filter(
-        (item) => item.internalStatus === "Pending" && item.assignedTo === "Dealer/Trader" 
-      );
+        (item) => item.internalStatus === "Pending" && item.assignedTo === "Dealer/Trader")
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
       const getDealerCount = dealerTicketFiltered.length;
 
       setDealerNotifications(dealerTicketFiltered);
@@ -419,8 +418,9 @@ const Notification = () => {
         setHighlightedQuote(dealerTicketFiltered[0].raiseTicketId);
       }
      const getOrderData = await getOrderResponse.json();
-   const orderFiltered = getOrderData.filter((item) => item.internalStatus === "Customer Approved");
-     const getOrderCount = orderFiltered.length;
+   const orderFiltered = getOrderData.filter((item) => item.internalStatus === "Customer Approved")
+   .sort((a, b) => new Date(b.date) - new Date(a.date));
+   const getOrderCount = orderFiltered.length;
      setOrderNotifications(orderFiltered);
      setNewOrderCount(getOrderCount);
      setGlowOrder(getOrderCount > 0);
@@ -430,8 +430,9 @@ const Notification = () => {
      }
 
      const bookTechnicianData = await BookTechnicianResponse.json();
-   const bookTechnicianFiltered = bookTechnicianData.filter((item) => item.status === "Open" && item.bookTechnicianId != null);
-     const bookTechnicianCount = bookTechnicianFiltered.length;
+   const bookTechnicianFiltered = bookTechnicianData.filter((item) => item.status === "Open" && item.bookTechnicianId != null)
+   .sort((a, b) => new Date(b.date) - new Date(a.date));
+   const bookTechnicianCount = bookTechnicianFiltered.length;
      setTechnicianNotifications(bookTechnicianFiltered);
      setNewTechnicianCount(bookTechnicianCount);
      setGlowTechnician(bookTechnicianCount > 0);
@@ -441,8 +442,10 @@ const Notification = () => {
      }
 
      const buyProductData = await buyProductResponse.json();
-   const buyProductFiltered = buyProductData.filter((item) => (item.status === "Open")&& item.buyProductId != null);
-     const buyProductCount = buyProductFiltered.length;
+   const buyProductFiltered = buyProductData.filter((item) => 
+    item.status === "Open" && item.assignedTo === "Customer Care" && item.buyProductId != null)
+  //  .sort((a, b) => new Date(b.date) - new Date(a.date));
+   const buyProductCount = buyProductFiltered.length;
      setProductNotifications(buyProductFiltered);
      setNewProductCount(buyProductCount);
      setGlowProduct(buyProductCount > 0);
@@ -452,7 +455,9 @@ const Notification = () => {
      }
 
      const productClosedData = await productClosedResponse.json();
-     const productClosedFiltered = productClosedData.filter((item) => item.status === "Closed" && item.buyProductId != null );
+     const productClosedFiltered = productClosedData.filter( 
+      (item) => (item.assignedTo !== "Customer Care" && item.status === "Closed"  && item.assignedTo === "Admin" && item.buyProductId != null) || (item.transactionStatus === "Success" && item.buyProductId != null));
+    //  .sort((a, b) => new Date(b.date) - new Date(a.date));
      const productClosedCount = productClosedFiltered.length;
      setClosedProductNotifications(productClosedFiltered);
      setNewClosedCount(productClosedCount);

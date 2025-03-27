@@ -100,8 +100,8 @@ const CustomerOrders = () => {
         const productOrdersData = await buyProductResponse.json();
 
         const productOrdersFiltered = productOrdersData.filter(
-          (item) => item.assignedTo === "Customer" && item.status === "Assigned"
-        );
+          (item) => item.assignedTo === "Customer" && item.status === "Assigned") 
+          .sort((a, b) => new Date(b.date) - new Date(a.date));
         const ordersCount = productOrdersFiltered.length;
 
         setProductNotifications(productOrdersFiltered);
