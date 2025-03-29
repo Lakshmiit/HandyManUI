@@ -259,6 +259,7 @@ const ProductUpload = () => {
     }
 
     return (
+        <>
         <div className="d-flex flex-row justify-content-start align-items-start">
             {/* Sidebar menu for Larger Screens */}
             {!isMobile && (
@@ -524,8 +525,6 @@ const ProductUpload = () => {
                     </form>
                 </div>
             </div>
-            <Footer /> 
-
             {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {
@@ -546,6 +545,8 @@ const ProductUpload = () => {
         }
       `}</style>
         </div>
+   <Footer /> 
+    </>
     );
 };
 

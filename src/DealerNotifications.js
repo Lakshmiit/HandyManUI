@@ -132,8 +132,8 @@ const Notification = () => {
   const [error, setError] = useState(null);  
 
   useEffect(() => {
-    console.log(loading, error);
-  }, [loading, error]);
+    console.log(loading, error, glowQuote, glowOrder);
+  }, [loading, error, glowQuote, glowOrder]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -181,7 +181,8 @@ const Notification = () => {
       ]);
         const getQuoteData = await getQuoteResponse.json();
         const tickets = getQuoteData.tickets || [];
-        const getQuoteFiltered = tickets.filter((item) => item.assignedTo === "Dealer/Trader" && item.internalStatus !== "Technician Approved");
+        const getQuoteFiltered = tickets.filter((item) => item.assignedTo === "Dealer/Trader" && item.internalStatus !== "Technician Approved")
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
         const getQuoteCount = getQuoteFiltered.length;
   
           setQuoteNotifications(getQuoteFiltered);
@@ -195,8 +196,8 @@ const Notification = () => {
           // alert(JSON.stringify(getOrderData));
           // alert(JSON.stringify(tickets));
           const orderTickets = getOrderData.tickets || [];
-          const getOrderFiltered = orderTickets.filter((item) => item.internalStatus === "Customer Approved" && item.lowestBidderDealerId === userId);
-          
+          const getOrderFiltered = orderTickets.filter((item) => item.internalStatus === "Customer Approved" && item.lowestBidderDealerId === userId)
+          .sort((a, b) => new Date(b.date) - new Date(a.date));    
           const getOrderCount = getOrderFiltered.length;
           // alert(getOrderCount);
           setOrderNotifications(getOrderFiltered);
@@ -313,8 +314,12 @@ const Notification = () => {
               <span
                 key={tab}
                 className={`tab-item ${activeTab === tab ? "active" : ""} 
-                ${tab === "Raise A Quote Buy Products" && glowQuote ? "glow" : ""}
-                ${tab === "Raise A Quote Orders" && glowOrder ? "glow" : ""}
+                ${tab === "Raise A Quote Buy Products"
+                  //  && glowQuote ? "glow" : ""
+                  }
+                ${tab === "Raise A Quote Orders" 
+                  // && glowOrder ? "glow" : ""
+                }
                 `}
                 onClick={() => handleTabClick(tab)}
                 style={{ cursor: "pointer" }}
@@ -344,8 +349,12 @@ const Notification = () => {
       <span
         key={tab}
         className={`tab-item ${activeTab === tab ? "active" : ""} 
-          ${tab === "Raise A Quote Buy Products" && glowQuote ? "glow" : ""} 
-          ${tab === "Raise A Quote Orders" && glowOrder ? "glow" : ""} `}
+          ${tab === "Raise A Quote Buy Products" 
+            // && glowQuote ? "glow" : ""
+          } 
+          ${tab === "Raise A Quote Orders" 
+            // && glowOrder ? "glow" : ""
+          } `}
         onClick={() => handleTabClick(tab)}
         style={{ cursor: "pointer", marginRight: "15px" }}
       >

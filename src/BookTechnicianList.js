@@ -114,6 +114,7 @@ useEffect(() => {
   }
 
   return (
+    <>
     <div className="d-flex flex-row justify-content-start align-items-start">
       {/* Sidebar for larger screens */}
       {!isMobile && (
@@ -233,8 +234,9 @@ useEffect(() => {
         </>
       )}
     </div>
-    <Footer /> 
   </div>
+      <Footer /> 
+</>
   );
 };
 

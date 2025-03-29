@@ -2,12 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./App.css"; // Add this for the required CSS.
 // import { useNavigate } from 'react-router-dom';
-import VisibilityIcon from '@mui/icons-material/Visibility';
+// import VisibilityIcon from '@mui/icons-material/Visibility';
 import UpdateIcon from '@mui/icons-material/Upload';
 import AdminSidebar from './AdminSidebar';
 import Footer from './Footer.js';
 
-import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
+import { ArrowBack, Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import {  Button } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -461,10 +461,10 @@ const handleUpdateJobDescription = async (e) => {
 
             
       {/* Update Job Description Button */}
-      <div className="d-flex justify-content-between gap-3 mt-3">
+      <div className="d-flex justify-content-between  mt-3">
         <button
             type="submit"
-            className="btn btn-success w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
+            className="btn btn-success w-40"
             onClick={handleUpdateJobDescription}
           >
             <UpdateIcon className="me-2" />
@@ -474,11 +474,11 @@ const handleUpdateJobDescription = async (e) => {
         {/* View Single Update Button */}
         <button
             type="button"
-            className="btn btn-primary w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
+            className="btn btn-primary w-40"
             onClick={() => Navigate(`/bookTechnicianList`)}
         >
-            <VisibilityIcon className="me-2" />
-            <span>View </span>
+            <ArrowBack className="me-2" />
+            <span>Back</span>
         </button>
         </div>
 

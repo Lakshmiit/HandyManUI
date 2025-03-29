@@ -3,8 +3,6 @@ import { Button, Form, Row, Col } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import AdminSidebar from './AdminSidebar';
-// import Header from './Header.js';
-import Footer from './Footer.js';
 import {  Dashboard as MoreVertIcon } from '@mui/icons-material';
 // import { FaEdit} from 'react-icons/fa'; // Correct icon import
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
@@ -13,9 +11,11 @@ import ForwardIcon from '@mui/icons-material/Forward';
 // import { FaEye } from 'react-icons/fa';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import './App.css';
+// import axios from "axios";
+
 const BookTechnicianActionView = () => {
  const Navigate = useNavigate(); 
- const [error, setError] = useState("");
+ const [error, setError] = useState({});
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [jobDescription, setJobDescription] = useState(''); 
@@ -42,7 +42,13 @@ const BookTechnicianActionView = () => {
   const [assignedTo, setAssignedTo] = useState('');
   const [utrTransactionNumber,setutrTransactionNumber]=useState('');
   const [emailAddress, setEmailAddress] = useState("");
-   
+  // const [selectCategory, setSelectCategory] = useState("");
+  const [selectPincode, setSelectPincode] = useState("");
+  const [selectTechnician, setSelectTechnician] = useState("");
+  // const [categories, setCategories] = useState([]);
+  const [pincodes, setPincodes] = useState([]);
+  const [technicians, setTechnicians] = useState([]);
+
 
   useEffect(() => {
     console.log(technicianData);
@@ -87,8 +93,9 @@ const BookTechnicianActionView = () => {
         setLoading(false);
       }
     };
-    fetchtechnicianData();
-  }, [raiseTicketId]); 
+    if (raiseTicketId) {  
+      fetchtechnicianData();
+    }  }, [raiseTicketId]); 
 
 
   // Detect screen size for responsiveness
@@ -100,6 +107,78 @@ const BookTechnicianActionView = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+ // Fetch pincodes based on category
+const fetchPincodesByCategory = async (category) => {
+  try {
+    setLoading(true);
+    const response = await fetch(
+      `https://handymanapiv2.azurewebsites.net/api/Technician/GetTechnicianPincodesBycategory?Category=${category}`
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch pincodes");
+    }
+    const data = await response.json();
+    setPincodes(data || []);  
+  } catch (error) {
+    console.error("Error fetching pincodes:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+// Fetch technicians based on pincode
+const fetchTechniciansByPincode = async (pincode) => {
+  try {
+    setLoading(true);
+    const response = await fetch(
+      `https://handymanapiv2.azurewebsites.net/api/Technician/GetTechniciannamesByPincode?pincode=${pincode}`
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch technicians");
+    }
+    const data = await response.json();
+    setTechnicians(data || []);
+  } catch (error) {
+    console.error("Error fetching technicians:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+// Fetch pincodes when category changes
+useEffect(() => {
+  if (category) {
+    fetchPincodesByCategory(category);
+  }
+}, [category]);
+
+// Fetch category when assignedTo is "Technician"
+useEffect(() => {
+  if (category && assignedTo === "Technician") { 
+    fetchPincodesByCategory(category);
+  }
+}, [category, assignedTo]);
+
+// Fetch technicians when pincode changes
+useEffect(() => {
+  if (selectPincode) {
+    fetchTechniciansByPincode(selectPincode);
+    setSelectTechnician(""); 
+  }
+}, [selectPincode]);
+
+// Handle pincode selection
+const handlePincodeChange = (e) => {
+  setSelectPincode(e.target.value);
+  setError({ ...error, selectPincode: "" });
+};
+
+// Handle technician selection
+const handleTechnicianChange = (e) => {
+  setSelectTechnician(e.target.value);
+  setError({ ...error, selectTechnician: "" });
+};
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -107,12 +186,52 @@ const BookTechnicianActionView = () => {
   const handleAssignedToChange = (e) => {
     const selectedAssignedTo = e.target.value;
     setAssignedTo(selectedAssignedTo);
-
-    
-    if (selectedAssignedTo) {
-      setError("");
+    setError({});
+    if (selectedAssignedTo === "Customer") {
+      // setCategory("");
+      setSelectPincode("");
+      setSelectTechnician("");
+      setPincodes([]);
+      setTechnicians([]);
     }
   };
+  
+
+  const validateFields = () => {
+    let newErrors = {};
+
+    if (assignedTo === "Technician") {
+      // if (!selectCategory) newErrors.selectCategory = "Category is required.";
+      if (!selectPincode) newErrors.selectPincode = "Pincode is required.";
+      if (!selectTechnician) newErrors.selectTechnician = "Technician is required.";
+    }
+
+    setError(newErrors);
+    return Object.keys(newErrors).length === 0; 
+  };
+  
+
+  // const handleCategoryChange = async (e) => {
+  //   const category = e.target.value;
+  //   setSelectCategory(category);
+  //   setSelectPincode(""); 
+  //   setSelectTechnician("");     
+  //   setError({ ...error, selectCategory: "" }); 
+  //   console.log("Selected Category:", category);
+  //   if (category) {
+  //     try {
+  //       const response = await axios.get(
+  //         `https://handymanapiv2.azurewebsites.net/api/Technician/GetTechnicianPincodesBycategory?Category=${category}`
+  //       );
+  //       console.log("API Response:", response.data);
+  //     alert(JSON.stringify(response.data));
+  //       setPincodes(response.data || []);
+  //     } catch (error) {
+  //       console.error("Error fetching pincodes:", error);
+  //     }
+  //   }
+  // };
+
 
   // Handle form data changes
   const handleChange = (e) => {
@@ -123,10 +242,6 @@ const BookTechnicianActionView = () => {
     }));
   };
  
-//   if (loading) {
-//     return <div>Loading...</div>;
-//   }
-
 const handleUpdateJobDescription = async (e) => {
   e.preventDefault();
 
@@ -134,9 +249,10 @@ const handleUpdateJobDescription = async (e) => {
     setError("You Must select AssignedTo");
     return;     
 }
-
-  setError(""); 
-
+  if (validateFields()) {
+    console.log("Form submitted successfully.");
+    
+  }
 
   const payload2 = {
     id: raiseTicketId,  
@@ -169,7 +285,7 @@ const handleUpdateJobDescription = async (e) => {
     TransactionStatus: "", 
     TransactionType: "",
     InvoiceId: "",
-    InvoiceURL: "", 
+    InvoiceURL: "",
   }; 
  
   try {
@@ -194,7 +310,6 @@ const handleUpdateJobDescription = async (e) => {
 
 
   return (
-    <>
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className=" ml-0 p-0 adm_mnu h-90">
@@ -399,27 +514,73 @@ const handleUpdateJobDescription = async (e) => {
         </Row>
 
         
-        {/* Assigned To */}
+       
+        
         <Row>
-        <Col md={12}> 
+      {/* Assigned To */}
+      <Col md={12}>
+        <Form.Group>
+          <label>Assigned To</label>
+          <Form.Control as="select" value={assignedTo} onChange={handleAssignedToChange} required>
+            <option value="">Select Assigned</option>
+            <option value="Customer">Customer</option>
+            <option value="Technician">Technician</option>
+          </Form.Control>
+          {error.assignedTo && <div style={{ color: "red", marginTop: "5px" }}>{error.assignedTo}</div>}
+        </Form.Group>
+      </Col>
+
+      {/* Show these fields only if "Technician" is selected */}
+      {assignedTo === "Technician" && (
+        <>
+          {/* Select Category */}
+          <Col md={12}>
             <Form.Group>
-              <label>Assigned To</label>
+              <label>Category</label>
               <Form.Control
-                as="select"
-                name="assignedTo"
-                value={assignedTo}
-                onChange={handleAssignedToChange}
-                required
+                type="text"
+                name="category"
+                value={category}
+                onChange={handleChange}
+                placeholder="Category"
+                readOnly
               >
-                <option value="">Select Assigned</option>
-                <option value="Customer">Customer</option>
               </Form.Control>
-              {error && <div style={{ color: "red", marginTop: "5px" }}>{error}</div>}
             </Form.Group>
           </Col>
-        </Row> 
 
-      
+
+          {/* Select Pincodes */}
+          <Col md={12}>
+            <Form.Group>
+              <label>Select Pincode</label>
+              <Form.Control as="select" value={selectPincode} onChange={handlePincodeChange} required>
+                <option value="">Select Pincode</option>
+                {pincodes.map((pincode, i) => (
+                  <option key={i} value={pincode.zipCode}>{pincode.zipCode}</option>
+                ))}
+              </Form.Control>
+              {error.selectPincode && <div style={{ color: "red", marginTop: "5px" }}>{error.selectPincode}</div>}
+            </Form.Group>
+          </Col>
+
+          {/* Select Technician */}
+        <Col md={12}>
+          <Form.Group>
+            <label>Select Technician</label>
+            <Form.Control as="select" value={selectTechnician} onChange={handleTechnicianChange} required>
+              <option value="">Select Technician</option>
+              {technicians.map((technician, i) => (
+                <option key={i} value={technician.technicianFullName}>{technician.technicianFullName}</option>
+              ))}
+            </Form.Control>
+            {error.selectTechnician && <div style={{ color: "red", marginTop: "5px" }}>{error.selectTechnician}</div>}
+          </Form.Group>
+        </Col>
+        </>
+      )}
+    </Row>
+
         {/* Save Button */}
         <div className="mt-4 text-end">
           <Link to='/bookTechnicianNotificationGrid' className="btn btn-warning text-white mx-2" title='Back'>
@@ -435,9 +596,9 @@ const handleUpdateJobDescription = async (e) => {
           <Button className="btn btn-warning text-white mx-2" onClick={handleUpdateJobDescription} title="Forward">
             <ForwardIcon />
           </Button>
+
         </div>
         </Form>
-        </div>
 
         {/* Styles for floating menu */}
 <style jsx>{`
@@ -458,9 +619,8 @@ const handleUpdateJobDescription = async (e) => {
           width: 200px;
         }
       `}</style>
+      </div>
     </div>
-            <Footer /> 
-</>
   );
 };
 

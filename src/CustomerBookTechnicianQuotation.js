@@ -151,7 +151,7 @@ if (paymentMode === "technician") {
 }
 
  
-  const payload2 = {
+  const payload = {
     id: raiseTicketId,  
     bookTechnicianId: bookTechnicianId,
     date: new Date(),
@@ -185,36 +185,52 @@ if (paymentMode === "technician") {
     InvoiceURL: "",
   };
 
-  try {
-    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload2),
-    });
+  const payload1 = {
+    ...payload, 
+    status: paymentType === "Pay Online" ? "Draft" : "Closed",
+  };
 
-    if (!response.ok) {
-      throw new Error('Failed to forward Customer Care.');
-    }
-    if ((paymentMode === "technician" && paymentType === "Cash") || 
-    (paymentMode === "technician" && paymentType === "Pay Online")) {
-      if (paymentType === "Pay Online") {
-      alert(`We are redirecting to Payment Page!`);
+  try {
+    let response
+    if (paymentMode === "technician" && (paymentType === "Cash" || paymentType === "Pay Online")) {
+        response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload1),
+        });
+    
+        if (!response.ok) {
+          throw new Error('Failed to forward Customer Care.');
+        }
+        if (paymentType === "Pay Online") {
+        window.alert(`We are redirecting to Payment Page!`);
       window.location.href = `https://handymanserviceproviders.com/PaymentPage/${raiseTicketId}`;
-    }  
+    }  else {
+      alert("Ticket Forwarded to Customer Care Successfully!");
+      navigate(`/bookTechnicianCustomerGrid/${userType}/${customerId}`);
+    } 
+  } else if (paymentMode === "online") {
+      response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload1),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to forward Customer Care.');
+      }
+      window.alert("Ticket Forwarded to Customer Care Successfully!");
+      navigate(`/bookTechnicianCustomerGrid/${userType}/${customerId}`);
+      return;
+    } 
     else {
       alert("Ticket Forwarded to Customer Care Successfully!");
       navigate(`/bookTechnicianCustomerGrid/${userType}/${customerId}`);
     }
-  }
-    if (paymentMode === "online") {
-      alert("Ticket Forwarded to Customer Care Successfully!");
-      navigate(`/bookTechnicianCustomerGrid/${userType}/${customerId}`);
-      return;
-    }
-    
-  // window.location.href = `https://handymanapiv2.azurewebsites.net/CustomerProfilePage?ReactToken=${customerId}$${userType}`;
   } catch (error) {
     console.error('Error:', error);
     window.alert('Failed to forward Customer Care. Please try again later.');

@@ -1106,7 +1106,10 @@ const handleStatusChange = (event) => {
           </span>
         ))}
       </div>
-          <div className='d-flex flex-row align-items-center gap-5'> 
+          <div className='d-flex justify-content-between'>
+          <button className='btn btn-warning me-2 fs-5' title='back'
+          onClick={() => Navigate(`/adminNotifications`)} 
+          >Back</button> 
           <button className='btn btn-warning me-2 fs-5' title='close' 
           onClick={handleSaveTicket} 
           disabled={isFinalized}

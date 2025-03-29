@@ -5,7 +5,7 @@ import "./App.css"; // Add this for the required CSS.
 // import VisibilityIcon from '@mui/icons-material/Visibility';
 import UploadIcon from '@mui/icons-material/Upload';
 import AdminSidebar from './AdminSidebar';
-import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
+import { ArrowBack, Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import {  Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import Footer from './Footer.js';
@@ -361,8 +361,15 @@ const handleUploadJobDescription = async (e) => {
 
            
       {/* Upload Job Description Button */}
-      <div className="d-flex justify-content-center align-items-center m-2">
-        <button
+      <div className="d-flex justify-content-between align-items-center m-2">
+      <button
+            title="Back"
+            className="btn btn-success w-40 p-2 m-2"
+            onClick={() => Navigate('/bookTechnicianList')}
+        >
+            <ArrowBack />
+        </button>
+        <button 
             type="submit"
             className="btn btn-success w-40 p-2 m-2"
         // onClick={() => navigate('/product')}

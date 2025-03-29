@@ -59,7 +59,7 @@ const RaiseQuotation = () => {
     const [material, setMaterialQuotation] = useState([{discounts: "", fixedDiscounts: "", deliveryCharges: "", fixedDeliveryCharges: "", serviceCharges: "", fixedServiceCharges: "", gsts: "", fixedGSTS: "", grandtotal: ""}])
     const [category, setCategory] = useState('');
     const [technicianId, setTechnicianId] = useState([]);
-    const {userType} = useParams();
+    // const {userType} = useParams();
     const [customerEmail, setCustomerEmail] = useState('');
     const [customerPhoneNumber, setCustomerPhoneNumber] = useState('');
 
@@ -1049,7 +1049,7 @@ const handleUpdateTicket = async (e) => {
 
         {/* Send Quote Button */}
         <div className="mt-4 text-end">
-          <Link to={`/dealerNotifications/${userType}/${district}/${category}`} className="btn btn-warning text-white mx-2" title='Back'>
+          <Link to={`/adminNotifications`} className="btn btn-warning text-white mx-2" title='Back'>
             <ArrowLeftIcon />
           </Link>
           {/* <Link className="btn btn-warning text-white mx-2"  type="submit" title="Save">

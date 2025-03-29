@@ -46,52 +46,52 @@ const getMenuList = (userType, userId, category, district ) => {
       { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
       { MenuIcon: <OrdersNotificationBell />, MenuTitle: "Orders", TargetUrl: `/customerOrders/${userType}/${userId}` },
       { MenuIcon: <LocalOfferIcon />, MenuTitle: "Offers", TargetUrl: `/offers/${userType}/${userId}` },
-      { MenuIcon: <PersonIcon />, MenuTitle: "Accounts", TargetUrl: "" }
+      { MenuIcon: <PersonIcon />, MenuTitle: "Accounts"}
   ];
 
   const builder = [
-      { MenuIcon: <PersonIcon />, MenuTitle: "Add Member", TargetUrl: "" },
-      { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: "" },
-      { MenuIcon: <NotificationsNoneIcon />, MenuTitle: "Notifications", TargetUrl: "" },
+      { MenuIcon: <PersonIcon />, MenuTitle: "Add Member" },
+      { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote" },
+      { MenuIcon: <NotificationsNoneIcon />, MenuTitle: "Notifications" },
       { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: "/BuyProducts" },
-      { MenuIcon: <PersonIcon />, MenuTitle: "My Account", TargetUrl: "" },
-      { MenuIcon: <AccountBalanceIcon />, MenuTitle: "Add Bank Account", TargetUrl: "" },
+      { MenuIcon: <PersonIcon />, MenuTitle: "My Account" },
+      { MenuIcon: <AccountBalanceIcon />, MenuTitle: "Add Bank Account" },
       { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: "/TicketRaise" },
-      { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: "" }
+      { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status" }
   ];
  
   const dealer = [
-      { MenuIcon: <UploadIcon />, MenuTitle: "Upload Products", TargetUrl: "" },
-      { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: "" },
+      { MenuIcon: <UploadIcon />, MenuTitle: "Upload Products" },
+      { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote" },
       { MenuIcon: <NotificationsNoneIcon />, MenuTitle: "Notifications", TargetUrl: `/dealerNotifications/${userType}/${userId}/${category}/${district}` },
       { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
-      { MenuIcon: <PersonIcon />, MenuTitle: "My Account", TargetUrl: "" },
-      { MenuIcon: <AccountBalanceIcon />, MenuTitle: "Add Bank Account", TargetUrl: "" },
+      { MenuIcon: <PersonIcon />, MenuTitle: "My Account" },
+      { MenuIcon: <AccountBalanceIcon />, MenuTitle: "Add Bank Account" },
       { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
       { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}` }
   ];
 
   const trader = [
-    { MenuIcon: <UploadIcon />, MenuTitle: "Upload Products", TargetUrl: "" },
-    { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: "" },
+    { MenuIcon: <UploadIcon />, MenuTitle: "Upload Products" },
+    { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote"},
     { MenuIcon: <NotificationsNoneIcon />, MenuTitle: "Notifications", TargetUrl: `/dealerNotifications/${userType}/${userId}/${category}/${district}` },
     { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
-    { MenuIcon: <PersonIcon />, MenuTitle: "My Account", TargetUrl: "" },
-    { MenuIcon: <AccountBalanceIcon />, MenuTitle: "Add Bank Account", TargetUrl: "" },
+    { MenuIcon: <PersonIcon />, MenuTitle: "My Account" },
+    { MenuIcon: <AccountBalanceIcon />, MenuTitle: "Add Bank Account"},
     { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
     { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}` }
 ];
 
   const technician = [
-      { MenuIcon: <PersonIcon />, MenuTitle: "Add Technician", TargetUrl: "" },
+      { MenuIcon: <PersonIcon />, MenuTitle: "Add Technician"},
       { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: `/notificationTechnician/${userType}/${userId}/${category}/${district}` },
-      { MenuIcon: <NotificationsNoneIcon />, MenuTitle: "Notifications", TargetUrl: "" },
-      { MenuIcon: <TransferWithinAStationIcon />, MenuTitle: "Track Technician", TargetUrl: "" },
-      { MenuIcon: <PersonIcon />, MenuTitle: "My Account", TargetUrl: "" },
-      { MenuIcon: <AccountBalanceIcon />, MenuTitle: "Add Bank Account", TargetUrl: "" },
+      { MenuIcon: <NotificationsNoneIcon />, MenuTitle: "Notifications" },
+      { MenuIcon: <TransferWithinAStationIcon />, MenuTitle: "Track Technician" },
+      { MenuIcon: <PersonIcon />, MenuTitle: "My Account"},
+      { MenuIcon: <AccountBalanceIcon />, MenuTitle: "Add Bank Account" },
       { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
       { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
-      { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: `` }
+      { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status" }
   ];
 
      switch (userType) {
@@ -829,20 +829,21 @@ const fetchImageUrl = async (photoId) => {
           )}
         <div className="col-md-9 bg-white">
           <h5 className="mb-2 fs-4">Dashboard</h5>
-          <div className=" row g-2">
+          <div className="row g-2">
     {menuList.map((menu, index) => (
         <div className="col-4 col-sm-4 col-md-3" key={index}>
-            <div className="mnu_mn text-center d-flex flex-column justify-content-center align-items-center p-2" >
-                <span  className="material-symbols-outlined custom-icon">
-                    {menu.MenuIcon} 
-                </span>
-                <a href={menu.TargetUrl} className="menu-item-link mt-2">
-                    <span style={{cursor: "pointer"}}>{menu.MenuTitle}</span>
-                </a>
-            </div>
+            <a href={menu.TargetUrl} className="text-decoration-none" style={{ color: "inherit" }}>
+                <div className="mnu_mn text-center d-flex flex-column justify-content-center align-items-center p-2" style={{ cursor: "pointer" }}>
+                    <span className="material-symbols-outlined custom-icon">
+                        {menu.MenuIcon} 
+                    </span>
+                    <span className="mt-2">{menu.MenuTitle}</span>
+                </div>
+            </a>
         </div>
     ))}
 </div>
+
 
                 {/* </>
                 )} */}

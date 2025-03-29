@@ -135,8 +135,8 @@ const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);  
     const navigate = useNavigate();
     useEffect(() => {
-      console.log(loading, error);
-    }, [loading, error]);
+      console.log(loading, error, glowQuote, glowOrder);
+    }, [loading, error, glowQuote, glowOrder]);
   // useEffect(() => {
   //   if (location.state) {
   //     const { category, district } = location.state;
@@ -232,8 +232,8 @@ useEffect(() => {
 
       const getQuoteData = await getQuoteResponse.json();
       const tickets = getQuoteData.tickets || [];
-      const getTicketsFiltered = tickets.filter((item) => item.assignedTo ==="Technical Agency");
-  
+      const getTicketsFiltered = tickets.filter((item) => item.assignedTo ==="Technical Agency")
+      .sort((a, b) => new Date(b.date) - new Date(a.date));
 
       const getQuoteCount = getTicketsFiltered.length;
 
@@ -249,8 +249,8 @@ useEffect(() => {
       //  alert(JSON.stringify(getOrderData));
        const orderTickets = getOrderData.tickets || [];
       const ordersFiltered = orderTickets.filter((item) =>
-         item.internalStatus === "Customer Approved" && item.lowestBidderTechnicainId === userId);
-
+         item.internalStatus === "Customer Approved" && item.lowestBidderTechnicainId === userId)
+      .sort((a, b) => new Date(b.date) - new Date(a.date));
       const getOrderCount = ordersFiltered.length;
       // alert(ordersFiltered); 
 
@@ -393,8 +393,12 @@ useEffect(() => {
               <span
                 key={tab}
                 className={`tab-item ${activeTab === tab ? "active" : ""} 
-                ${tab === "Raise A Quote" && glowQuote ? "glow" : ""}
-                ${tab === "Raise A Quote Orders" && glowOrder ? "glow" : ""}
+                ${tab === "Raise A Quote" 
+                  // && glowQuote ? "glow" : ""
+                }
+                ${tab === "Raise A Quote Orders" 
+                  // && glowOrder ? "glow" : ""
+                }
                 }`}
                 onClick={() => handleTabClick(tab)}
                 style={{ cursor: "pointer" }}
@@ -424,8 +428,12 @@ useEffect(() => {
       <span
         key={tab}
         className={`tab-item ${activeTab === tab ? "active" : ""} 
-          ${tab === "Raise A Quote" && glowQuote ? "glow" : ""} 
-          ${tab === "Raise A Quote Orders" && glowOrder ? "glow" : ""}`}
+          ${tab === "Raise A Quote" 
+            // && glowQuote ? "glow" : ""
+          } 
+          ${tab === "Raise A Quote Orders" 
+            // && glowOrder ? "glow" : ""
+          }`}
         onClick={() => handleTabClick(tab)}
         style={{ cursor: "pointer", marginRight: "15px" }}
       >

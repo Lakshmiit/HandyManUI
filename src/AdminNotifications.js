@@ -32,7 +32,7 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
 );
 
 const bookTechnicianNotifications = notifications.filter(
-  (item) => item.status === "Open"  && item.bookTechnicianId != null
+  (item) => item.status === "Open" && item.assignedTo !== "Customer Care"  && item.bookTechnicianId != null
 );
 
 const buyProductNotifications = notifications.filter(
@@ -430,7 +430,7 @@ const Notification = () => {
      }
 
      const bookTechnicianData = await BookTechnicianResponse.json();
-   const bookTechnicianFiltered = bookTechnicianData.filter((item) => item.status === "Open" && item.bookTechnicianId != null)
+   const bookTechnicianFiltered = bookTechnicianData.filter((item) => item.status === "Open" && item.assignedTo !== "Customer Care" && item.bookTechnicianId != null)
    .sort((a, b) => new Date(b.date) - new Date(a.date));
    const bookTechnicianCount = bookTechnicianFiltered.length;
      setTechnicianNotifications(bookTechnicianFiltered);
@@ -444,7 +444,7 @@ const Notification = () => {
      const buyProductData = await buyProductResponse.json();
    const buyProductFiltered = buyProductData.filter((item) => 
     item.status === "Open" && item.assignedTo === "Customer Care" && item.buyProductId != null)
-  //  .sort((a, b) => new Date(b.date) - new Date(a.date));
+   .sort((a, b) => new Date(b.date) - new Date(a.date));
    const buyProductCount = buyProductFiltered.length;
      setProductNotifications(buyProductFiltered);
      setNewProductCount(buyProductCount);

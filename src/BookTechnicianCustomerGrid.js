@@ -36,7 +36,7 @@ const CustomerBookTechnicianGrid = () => {
         const technicians = response.data.map((technician) => ({
           ...technician,
         }));
-        const filteredTechnicians = technicians.filter((technician) => technician.status === "Assigned" && technician.assignedTo === "Customer Care");
+        const filteredTechnicians = technicians.filter((technician) => (technician.status === "Closed" && technician.assignedTo === "Customer Care") || (technician.transactionStatus === "Success" && technician.assignedTo !== ""));
           // technician.status === "Closed" && technician.assignedTo === "Customer");
         setTechncianData(filteredTechnicians);
         setFilteredData(filteredTechnicians);

@@ -118,7 +118,7 @@ const handleUpdateJobDescription = async (e) => {
       return; 
     }  
 
-  const payload2 = {
+  const payload = {
     id: raiseTicketId,  
     bookTechnicianId: bookTechnicianIds,
     date: new Date(),
@@ -152,13 +152,21 @@ const handleUpdateJobDescription = async (e) => {
     InvoiceURL: "",
   };
 
+
+  const payload1 = {
+    ...payload, 
+    status: selectedPayment === "online" ? "Draft" : "Open",
+  };
+
   try {
-    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
+    let response;
+    if (selectedPayment === 'online') {
+     response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(payload2),
+      body: JSON.stringify(payload1),
     });
 
     if (!response.ok) {
@@ -168,27 +176,38 @@ const handleUpdateJobDescription = async (e) => {
 
     // Store confirmation code in state
     setTechnicianConfirmationCode(data.technicianConfirmationCode);
-    // setShowConfirmation(true); 
-    // alert("Book Technician Updated Successfully!");
+    window.alert(`We are Redirecting to the Payment Page! Your reference number is ${bookTechnicianIds}. Technician will contact you shortly.`);
+    window.location.href=`https://handymanserviceproviders.com/PaymentPage/${raiseTicketId}`;
+  } else if (selectedPayment === 'technician') {
+    response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload1),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to Update Technician.');
+    }
+    const data = await response.json();
+
+    // Store confirmation code in state
+    setTechnicianConfirmationCode(data.technicianConfirmationCode);
+    window.alert(`Thank You for choosing the HandyMan Services! Your reference number is ${bookTechnicianIds}. Technician will contact you shortly.`);
+    window.location.href = `/profilePage/${userType}/${userId}`;
+   }
   } catch (error) {
     console.error('Error:', error);
     window.alert('Failed to Update Technician. Please try again later.');
   }
 };
 
-const handleBothActions = (e) => {
-  e.preventDefault();
-  // handleBookTechnicianPayment(e);
-  handleUpdateJobDescription(e);
-  if (selectedPayment === 'online') {
-  window.alert(`We are Redirecting to the Payment Page! Your reference number is ${bookTechnicianIds}. Technician will contact you shortly.`);
-    window.location.href=`https://handymanserviceproviders.com/PaymentPage/${raiseTicketId}`;
-  } else if (selectedPayment === 'technician') {
-   window.alert(`Thank You for choosing the HandyMan Services! Your reference number is ${bookTechnicianIds}. Technician will contact you shortly.`);
-   window.location.href = `/profilePage/${userType}/${userId}`;
-  }
-
-};
+// const handleBothActions = (e) => {
+//   e.preventDefault();
+//   // handleBookTechnicianPayment(e);
+//   handleUpdateJobDescription(e);
+// };
 
   
 if (loading) {
@@ -327,7 +346,7 @@ if (loading) {
                     <div className="mt-20">
                         <h4>I. YOUR ACCEPTANCE OF THIS AGREEMENT</h4>
                         <p>
-                            This is an agreement between you ("you" or "your") and Lakshmi Sai Service Providers, a Proprietorship firm incorporated under the Registration of Establishment – Sec 2(b) and Sec 4(2) The Andhra Pradesh (Insurance of integrated Registration and Furnishing of Combined returns under various labour  Laws by certain Establishments) Act, 2015  with its registered office at Dr.No.44-40-12, Nandhagirinagar, Akkayyapalem, Visakhapatnam - 530016 ("Lakshmi Sai Service Provider" "we," or "our") that governs your use of the search services offered by Lakshmi Sai Service Providers through its websitehttp://handymanserviceproviders.com ("Website"), using which Lakshmi Sai Service Providers may provide the search services ("Platform"). When you access or use Platform you agree to be bound by these Terms and Conditions ("Terms").
+                            This is an agreement between you ("you" or "your") and Lakshmi Sai Service Providers, a Proprietorship firm incorporated under the Registration of Establishment – Sec 2(b) and Sec 4(2) The Andhra Pradesh (Insurance of integrated Registration and Furnishing of Combined returns under various labour  Laws by certain Establishments) Act, 2015  with its registered office at Dr.No.44-40-12, Nandhagirinagar, Akkayyapalem, Visakhapatnam - 530016 ("Lakshmi Sai Service Provider" "we," or "our") that governs your use of the search services offered by Lakshmi Sai Service Providers through its website http://handymanserviceproviders.com ("Website"), using which Lakshmi Sai Service Providers may provide the search services ("Platform"). When you access or use Platform you agree to be bound by these Terms and Conditions ("Terms").
                         </p>
                     </div>
                     <div className="mt-20">
@@ -634,7 +653,7 @@ if (loading) {
 
 <div className="button">
     {/* <button className="btn-back m-2">Back</button> */}
-    <button className="btn-continue m-2"  onClick={handleBothActions}>Save</button>
+    <button className="btn-continue m-2"  onClick={handleUpdateJobDescription}>Proceed</button>
   
 </div>
  

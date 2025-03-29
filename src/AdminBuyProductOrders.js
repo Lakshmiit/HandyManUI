@@ -6,7 +6,7 @@ import AdminSidebar from './AdminSidebar';
 import Footer from './Footer.js';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { Dashboard as MoreVertIcon} from '@mui/icons-material';
+import { ArrowBack, Dashboard as MoreVertIcon} from '@mui/icons-material';
 import ForwardIcon from '@mui/icons-material/Forward';
 import { Button } from 'react-bootstrap'; // Import Bootstrap components for modal
 // import axios from 'axios';
@@ -884,8 +884,11 @@ useEffect(() => {
               {error.assignedTo && <p className="text-danger">{error.assignedTo}</p>}
             </div>
 
-            <div className="mt-4 text-end">
-                <Button type="submit" className="btn btn-warning text-white mx-2"onClick={handleGetQuotation} title="Forward">
+            <div className="mt-3 d-flex justify-content-between">
+            <Button type="submit" className="btn btn-warning text-white mx-2" onClick={() => navigate(`/adminNotifications`)} title="Forward">
+                <ArrowBack />
+                </Button>
+                <Button type="submit" className="btn btn-warning text-white mx-2" onClick={handleGetQuotation} title="Forward">
                 <ForwardIcon />
                 </Button>
     

@@ -153,7 +153,8 @@ const Notification = () => {
         const raiseTicketFiltered = raiseTicketData.filter(
           (item) => item.assignedTo === "Customer"  && item.status === "Assigned"  && item.raiseTicketId != null
           // && item.internalStatus === "Pending"
-        );
+        )
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
         const raiseTicketCount = raiseTicketFiltered.length;
 
         setTicketNotifications(raiseTicketFiltered);
@@ -169,7 +170,8 @@ const Notification = () => {
 
         const getTechnicianFiltered = bookTechnicianData.filter(
           (item) => item.status === "Assigned" && item.assignedTo === "Customer"&& item.bookTechnicianId != null
-        );
+        )
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
         const getTechnicianCount = getTechnicianFiltered.length;
 
         setTechnicianNotifications(getTechnicianFiltered);
