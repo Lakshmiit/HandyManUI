@@ -147,9 +147,18 @@ const OffersProductCard = () => {
                     <p className="card-text fw-bold fs-5 text-muted">Rate: Rs {product.rate}</p>
                     <p className="card-text  fw-bold fs-5 text-danger">Discount: {product.discount}%</p>
                   </div>
-                  <Button className="btn btn-warning w-50 fw-bold mt-2"
-                   onClick={() => navigate(`/offersBuyProduct/${userType}/${userId}/${product.id}`)}
-                  >Buy Now</Button>
+                  <Button
+  className="btn btn-warning w-50 fw-bold mt-2"
+  onClick={() => {
+    if (userId === "guest") {
+      window.location.href = "https://handymanserviceproviders.com/";
+    } else {
+      navigate(`/offersBuyProduct/${userType}/${userId}/${product.id}`);
+    }
+  }}
+>
+  Buy Now
+</Button>
                 </div>
               </div>
             ))}
