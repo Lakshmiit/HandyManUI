@@ -148,6 +148,7 @@ useEffect(() => {
         useEffect(() => {
           const fetchAllTickets = async () => {
             try { 
+              alert("test");
               const [ticketResponse, productResponse, technicianResponse] = await Promise.all([
                 fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=raiseTicket`),
                 fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=buyProduct`),
