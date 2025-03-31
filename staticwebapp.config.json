@@ -1,6 +1,15 @@
 {
-    "navigationFallback": {
-      "rewrite": "/index.html",
-      "exclude": ["/images/*", "/styles/*", "/assets/*"]
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": ["/images/*", "/styles/*", "/assets/*"]
+  },
+  "routes": [
+    {
+      "route": "/*",
+      "headers": {
+        "Content-Security-Policy": "frame-ancestors 'self' https://handymanserviceproviders.com",
+        "X-Frame-Options": "ALLOW-FROM https://handymanserviceproviders.com"
+      }
     }
-  }
+  ]
+}
