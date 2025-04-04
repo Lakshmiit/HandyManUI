@@ -49,8 +49,8 @@ const {userType} = useParams();
     const [PaidAmount, setPaidAmount] = useState("");
     const [TransactionStatus, setTransactionStatus] = useState("");
     const [TransactionType, setTransactionType] = useState("");
-    const [InvoiceId, setInvoiceId] = useState("");
-    const [InvoiceURL, setInvoiceURL] = useState("");
+    // const [InvoiceId, setInvoiceId] = useState("");
+    // const [InvoiceURL, setInvoiceURL] = useState("");
   
   useEffect(() => {
     console.log(technicianData, afterDiscount);
@@ -93,8 +93,8 @@ const {userType} = useParams();
         setPaidAmount(data.paidAmount);
         setTransactionStatus(data.transactionStatus);
         setTransactionType(data.transactionType);
-        setInvoiceId(data.invoiceId);
-        setInvoiceURL(data.invoiceURL);
+        // setInvoiceId(data.invoiceId);
+        // setInvoiceURL(data.invoiceURL);
 
       } catch (error) {
         console.error('Error fetching technician data:', error);
@@ -524,7 +524,7 @@ const {userType} = useParams();
                 </Row>
 
                 {/* Invoice Id */}
-                <Row>
+                {/* <Row>
                   <Col md={12}>
                     <Form.Group>
                       <label>Invoice Id</label>
@@ -538,10 +538,10 @@ const {userType} = useParams();
                       />
                     </Form.Group>
                   </Col>
-                </Row>
+                </Row> */}
 
                 {/* Invoice URL*/}
-                <Row>
+                {/* <Row>
                   <Col md={12}>
                     <Form.Group>
                       <label>Invoice URL</label>
@@ -555,7 +555,7 @@ const {userType} = useParams();
                       />
                     </Form.Group>
                   </Col>
-                </Row>
+                </Row> */}
 
         {/* Assigned To */}
         <Row>

@@ -44,7 +44,10 @@ const {userType} = useParams();
   const [paymentTransactionDetails, setPaymentTransactionDetails] = useState('');
   const [paymentType, setPaymentType] = useState("");
   const [emailAddress, setEmailAddress] = useState("");
-  
+  const [technicianFullName, setTechnicianFullName] = useState("");
+  const [technicianName, setTechnicianName] = useState("");
+  const [technicianPincode, setTechnicianPincode] = useState("");
+
  
   useEffect(() => {
     console.log(technicianData);
@@ -79,7 +82,10 @@ const {userType} = useParams();
         setRemarks(data.remarks);
         setMoreInfo(data.moreInfo);
         setTechnicianConfirmationCode(data.technicianConfirmationCode);
-        setPaymentTransactionDetails(data.paymentTransactionDetails);
+        setTechnicianFullName(data.technicianFullName);
+        setTechnicianPincode(data.technicianPincode);
+        setTechnicianName(data.technicianName);
+        setPaymentTransactionDetails(data.utrTransactionNumber);
       } catch (error) {
         console.error('Error fetching technician data:', error);
       } finally {
@@ -183,7 +189,10 @@ if (paymentMode === "technician") {
     TransactionType: "",
     InvoiceId: "",
     InvoiceURL: "",
-  };
+    TechnicianPincode: technicianPincode,
+    TechnicianName: technicianName,
+    TechnicianFullName: technicianFullName,
+  }; 
 
   const payload1 = {
     ...payload, 
@@ -385,6 +394,18 @@ if (paymentMode === "technician") {
                     readOnly
                   />
                 </Form.Group>
+
+                <Form.Group>
+                  <label>Technician Name</label>
+                  <Form.Control
+                    name="technicianFullName"
+                    value={technicianFullName}
+                    onChange={handleChange}
+                    rows="4"
+                    placeholder="Technician Name"
+                    readOnly
+                  />
+                </Form.Group>
         
                 {/* Payment Mode */}
                 <Row>
@@ -403,22 +424,22 @@ if (paymentMode === "technician") {
                   </Col>
                 </Row>
 
-                {paymentMode === "technician" && (
-                  <>
-                  {/* <div className="form-group">
+                 <div className="form-group">
                 <label>Payment Transaction Details<span className="req_star">*</span></label>
                 <input
                   type="text"
                   className="form-control"
                   name="paymentTransactionDetails"
                   value={paymentTransactionDetails}
-                  onChange={handlePaymentTransactionDetailsChange}                
+                  // onChange={handlePaymentTransactionDetailsChange}                
                   placeholder="Payment Transaction Details"
-                  disabled={paymentType === "Pay Online"}
-                   required
+                  // disabled={paymentType === "Pay Online"}
+                   readOnly
                 />
-              {error && <div style={{ color: "red", marginTop: "5px" }}>{error}</div>} 
-              </div> */}
+              </div>
+
+                {paymentMode === "technician" && (
+                  <>
               <div className='radio'>
                  <label className='m-1'>
                   <input className='form-check-input m-1 border-dark'

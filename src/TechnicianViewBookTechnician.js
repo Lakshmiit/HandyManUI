@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Button, Form, Row, Col } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
@@ -17,9 +18,11 @@ import './App.css';
 const TechnicianViewBookTechnician = () => {
   const navigate = useNavigate(); 
 const {userType} = useParams();
+const {userId} = useParams();
+const {technicianName} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const [error, setError] = useState("");
+  // const [error, setError] = useState("");
   const [jobDescription, setJobDescription] = useState(''); 
   const [phoneNumber, setPhoneNumber] = useState(''); 
   const [technicianData, setTechnicianData] = useState('');
@@ -43,8 +46,10 @@ const {userType} = useParams();
   const [technicianConfirmationCode, setTechnicianConfirmationCode] = useState('');
   const [assignedTo] = useState('');
   const [paymentTransactionDetails, setPaymentTransactionDetails] = useState('');
-  const [paymentType, setPaymentType] = useState("");
+  // const [paymentType, setPaymentType] = useState("");
   const [emailAddress, setEmailAddress] = useState("");
+  const [technicianPincode, setTechnicianPincode] = useState("");
+  const [technicianFullName, setTechnicianName] = useState([]);
   
  
   useEffect(() => {
@@ -80,7 +85,7 @@ const {userType} = useParams();
         setRemarks(data.remarks);
         setMoreInfo(data.moreInfo);
         setTechnicianConfirmationCode(data.technicianConfirmationCode);
-        setPaymentTransactionDetails(data.paymentTransactionDetails);
+        setPaymentTransactionDetails(data.utrTransactionNumber);
       } catch (error) {
         console.error('Error fetching technician data:', error);
       } finally {
@@ -89,6 +94,31 @@ const {userType} = useParams();
     };
     fetchtechnicianData();
   }, [raiseTicketId]); 
+
+useEffect(() => {
+            if (!userId || !userType) return;
+            const fetchProfileData = async () => {
+              try {
+                let apiUrl = "";
+             
+                  apiUrl = `https://handymanapiv2.azurewebsites.net/api/technician/technicianProfileData?profileType=${userType}&UserId=${userId}`;
+                
+                if (!apiUrl) return;
+                const response = await axios.get(apiUrl);
+                //setProfile(response.data); 
+                setTechnicianPincode(response.data.zipCode);
+                setTechnicianName(response.data.fullName);                
+                  
+              } catch (error) {
+                console.log("Failed to fetch the data: ", error);
+              } finally {
+                setLoading(false);
+              }
+            };
+          
+            fetchProfileData();
+          }, [userType, userId]);
+          
 
 
   // Detect screen size for responsiveness
@@ -130,12 +160,12 @@ const {userType} = useParams();
   //   setError("");
   // };
 
-  const handlePaymenTypeChange = (e) => {
-    const selectedPayment = e.target.value;
-    setPaymentType(selectedPayment);
-    // setPaymentTransactionDetails("");
-    setError("");
-};
+//   const handlePaymenTypeChange = (e) => {
+//     const selectedPayment = e.target.value;
+//     setPaymentType(selectedPayment);
+//     // setPaymentTransactionDetails("");
+//     setError("");
+// };
 
  
   if (loading) {
@@ -144,15 +174,15 @@ const {userType} = useParams();
 
 const handleUpdateJobDescription = async (e) => {
   e.preventDefault();
-if (paymentMode === "technician") {
-  if (!paymentType) {
-    setError("Please select atleast one.");
-    return;
-  }
-  // }
-  // alert(`Payment method selected: ${paymentType || "Transaction Details entered"}`);
-  // return;
-}
+// if (paymentMode === "technician") {
+//   if (!paymentType) {
+//     setError("Please select atleast one.");
+//     return;
+//   }
+//   // }
+//   // alert(`Payment method selected: ${paymentType || "Transaction Details entered"}`);
+//   // return;
+// }
 
  
   const payload2 = {
@@ -174,11 +204,12 @@ if (paymentMode === "technician") {
     status: "Assigned",
     customerId: customerId,
     CustomerEmail: emailAddress,
-    assignedTo: "Customer Care",
+    assignedTo: "Customer",
     phoneNumber: phoneNumber,
     paymentMode: paymentMode,
     approvedAmount: afterDiscount,
-    UTRTransactionNumber: paymentType === "Pay Online" ? "online" : paymentType === "Cash" ? "cash" : paymentTransactionDetails || "",
+    UTRTransactionNumber: paymentTransactionDetails || "",
+    // paymentType === "Pay Online" ? "online" : paymentType === "Cash" ? "cash" : paymentTransactionDetails || "",
     technicianConfirmationCode: technicianConfirmationCode,
     OrderId: "",
     OrderDate: "",
@@ -187,6 +218,9 @@ if (paymentMode === "technician") {
     TransactionType: "",
     InvoiceId: "",
     InvoiceURL: "",
+    TechnicianPincode: zipCode,
+    TechnicianName: [technicianFullName],
+    TechnicianFullName: technicianName,
   };
 
   try {
@@ -199,29 +233,32 @@ if (paymentMode === "technician") {
     });
 
     if (!response.ok) {
-      throw new Error('Failed to forward Customer Care.');
+      throw new Error('Failed to forward Customer.');
     }
-    if ((paymentMode === "technician" && paymentType === "Cash") || 
-    (paymentMode === "technician" && paymentType === "Pay Online")) {
-      if (paymentType === "Pay Online") {
-      alert(`We are redirecting to Payment Page!`);
-      window.location.href = `https://handymanserviceproviders.com/PaymentPage/${raiseTicketId}`;
-    }  
-    else {
-      alert("Ticket Forwarded to Customer Care Successfully!");
-      navigate(`/bookTechnicianCustomerGrid/${userType}/${customerId}`);
-    }
-  }
-    if (paymentMode === "online") {
-      alert("Ticket Forwarded to Customer Care Successfully!");
-      navigate(`/bookTechnicianCustomerGrid/${userType}/${customerId}`);
-      return;
-    }
-    
+  //   if ((paymentMode === "technician" && paymentType === "Cash") || 
+  //   (paymentMode === "technician" && paymentType === "Pay Online")) {
+  //     if (paymentType === "Pay Online") {
+  //     alert(`We are redirecting to Payment Page!`);
+  //     window.location.href = `https://handymanserviceproviders.com/PaymentPage/${raiseTicketId}`;
+  //   }  
+  //   else {
+  //     alert("Ticket Forwarded to Customer Care Successfully!");
+  //     navigate(`/bookTechnicianCustomerGrid/${userType}/${userId}`);
+  //   }
+  // }
+  //   if (paymentMode === "online") {
+  //     alert("Ticket Forwarded to Customer Care Successfully!");
+  //     navigate(`/technicianGridDetails/${userType}/${userId}/${category}/${zipCode}/${technicianName}`);
+  //     return;
+  //   }
+     alert("Ticket Forwarded to Customer Successfully!");
+     navigate(`/technicianGridDetails/${userType}/${userId}/${category}/${zipCode}/${technicianName}`);
+
+    //  navigate(`/profilePage/${userType}/${userId}`);
   // window.location.href = `https://handymanapiv2.azurewebsites.net/CustomerProfilePage?ReactToken=${customerId}$${userType}`;
   } catch (error) {
     console.error('Error:', error);
-    window.alert('Failed to forward Customer Care. Please try again later.');
+    window.alert('Failed to forward Customer. Please try again later.');
   }
 };
 
@@ -391,7 +428,7 @@ if (paymentMode === "technician") {
                   </Col>
                 </Row>
 
-                {paymentMode === "technician" && (
+                {/* {paymentMode === "technician" && (
                   <>
                   {/* <div className="form-group">
                 <label>Payment Transaction Details<span className="req_star">*</span></label>
@@ -407,7 +444,7 @@ if (paymentMode === "technician") {
                 />
               {error && <div style={{ color: "red", marginTop: "5px" }}>{error}</div>} 
               </div> */}
-              <div className='radio'>
+              {/* <div className='radio'>
                  <label className='m-1'>
                   <input className='form-check-input m-1 border-dark'
                   type='radio'
@@ -419,7 +456,7 @@ if (paymentMode === "technician") {
                   required
                   /> 
                   Cash
-                </label>
+                </label> */}
                 {/* <label className='m-1'>
                   <input className='form-check-input m-2 border-dark'
                   type='radio'
@@ -430,7 +467,7 @@ if (paymentMode === "technician") {
                   required
                   />
                   Transaction Details
-                </label> */}
+                </label> 
 
                 <label className='m-1'>
                   <input className='form-check-input m-1 border-dark'
@@ -449,7 +486,7 @@ if (paymentMode === "technician") {
                   <div style={{ color: "red", marginTop: "5px" }}>{error}</div>
                 )}
                 </>
-                )}
+                )} */}
                 
                 
                 
@@ -477,7 +514,10 @@ if (paymentMode === "technician") {
                 as = "textarea"
                 type="text"
                 name="address"
-                value={`${address}, ${district}, ${state}, ${zipCode}, ${phoneNumber}`}
+                // value={`${address}, ${district}, ${state}, ${zipCode}, ${phoneNumber}`}
+                value={[address, district, state, zipCode, phoneNumber]
+                  .filter(Boolean) 
+                  .join(", ")} 
                 onChange={handleChange}
                 placeholder="Customer Address"
                 readOnly
@@ -493,8 +533,38 @@ if (paymentMode === "technician") {
             </Form.Group>
           </Col>
         </Row>
-
-        
+                {/* Technician Pincode */}
+                <Row>
+                  <Col md={12}>
+                    <Form.Group>
+                      <label>Technician Pincode</label>
+                      <Form.Control
+                        type="text"
+                        name="technicianPincode"
+                        value={technicianPincode}
+                        onChange={handleChange}
+                        placeholder="Technician Pincode"
+                        readOnly
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+                {/* Technician Name */}
+                <Row>
+                  <Col md={12}>
+                    <Form.Group>
+                      <label>Technician Name</label>
+                      <Form.Control
+                        type="text"
+                        name="technician Name"
+                        value={technicianName}
+                        onChange={handleChange}
+                        placeholder="Technician Name"
+                        readOnly
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
         
         {/* Assigned To */}
         <Row>
@@ -503,7 +573,7 @@ if (paymentMode === "technician") {
               <label>Assigned To</label>
               <Form.Control
                 name={assignedTo}
-                value="Customer Care"
+                value="Customer"
                 readOnly
               >
               </Form.Control>
@@ -515,7 +585,8 @@ if (paymentMode === "technician") {
       
         {/* Save Button */}
         <div className="mt-4 text-end">
-        <Link to={`/customerNotification/${userType}/${customerId}`} className="btn btn-warning text-white mx-2" title="Back">
+        <Link to={`/technicianDetailsNotifications/${userType}/${userId}/${category}/${technicianPincode}/${technicianName}`}
+         className="btn btn-warning text-white mx-2" title="Back">
           <ArrowLeftIcon />
         </Link>
 

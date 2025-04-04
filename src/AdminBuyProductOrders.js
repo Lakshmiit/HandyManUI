@@ -8,7 +8,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { ArrowBack, Dashboard as MoreVertIcon} from '@mui/icons-material';
 import ForwardIcon from '@mui/icons-material/Forward';
-import { Button } from 'react-bootstrap'; // Import Bootstrap components for modal
+import { Button, Form, Row, Col } from 'react-bootstrap';
 // import axios from 'axios';
 
 const AdminBuyProductOrders = () => {
@@ -68,7 +68,12 @@ const [date, setDate] = useState('');
 const [warrantyPeriod, setWarrantyPeriod] = useState('');
 const [error, setError] = useState('');
 const [emailAddress, setEmailAddress] = useState("");
-
+const [selectPincode, setSelectPincode] = useState("");
+  const [selectTechnician, setSelectTechnician] = useState("");
+  const [pincodes, setPincodes] = useState([]);
+  const [technicians, setTechnicians] = useState([]);
+  const [selectedTechnicians, setSelectedTechnicians] = useState([]);
+  const [selectAll, setSelectAll] = useState(false);
 
 
   const location = useLocation();
@@ -190,6 +195,15 @@ useEffect(() => {
     fetchProductData();
   }, [buyProductId]);
 
+  // Handle form data changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setProductData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
   const handleDeliveryDateChange = (e) => {
     setDeliveryDate(e.target.value);
     setError((prevErrors) => ({ ...prevErrors, deliveryDate: "" }));
@@ -210,12 +224,6 @@ useEffect(() => {
     setError((prevErrors) => ({ ...prevErrors, warrantyPeriod: "" }));
   };
   
-  const handleAssignedToChange = (e) => {
-    setAssignedTo(e.target.value);
-    setError((prevErrors) => ({ ...prevErrors, assignedTo: "" }));
-  };
-  
-
   const validateForm = () => {
     let newErrors = {};
 
@@ -225,10 +233,129 @@ useEffect(() => {
     if (!warrantyPeriod) newErrors.warrantyPeriod = "Warranty Period is required.";
     if (!assignedTo) newErrors.assignedTo = "Please select an assignedTo.";
     if (productInvoice.length === 0) newErrors.productInvoice = "Please upload an invoice.";
-
+    if (assignedTo === "Technician") {
+      if (!selectPincode) newErrors.selectPincode = "Pincode is required.";
+      if (!selectTechnician) newErrors.selectTechnician = "Technician is required.";
+    }
     setError(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
+   // Fetch pincodes based on category
+  const fetchPincodesByCategory = async (category) => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        ``
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch pincodes");
+      }
+      const data = await response.json();
+      setPincodes(data || []);  
+    } catch (error) {
+      console.error("Error fetching pincodes:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  // Fetch technicians based on pincode
+  const fetchTechniciansByPincode = async (pincode) => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        ``
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch technicians");
+      }
+      const data = await response.json();
+      setTechnicians(data || []);
+    } catch (error) {
+      console.error("Error fetching technicians:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  // Fetch pincodes when category changes
+  useEffect(() => {
+    if (category) {
+      fetchPincodesByCategory(category);
+    }
+  }, [category]);
+  
+  // Fetch category when assignedTo is "Technician"
+  useEffect(() => {
+    if (category && assignedTo === "Technician") { 
+      fetchPincodesByCategory(category);
+    }
+  }, [category, assignedTo]);
+  
+  // Fetch technicians when pincode changes
+  useEffect(() => {
+    if (selectPincode) {
+      fetchTechniciansByPincode(selectPincode);
+      setSelectTechnician(""); 
+    }
+  }, [selectPincode]);
+  
+
+  // Handle pincode selection
+const handlePincodeChange = (e) => {
+  setSelectPincode(e.target.value);
+  setError({ ...error, selectPincode: "" });
+};
+
+const handleSelectAllChange = () => {
+  if (selectAll) {
+    setSelectedTechnicians([]);
+  } else {
+    setSelectedTechnicians(technicians.map((tech) => tech.technicianFullName));
+  }
+  setSelectAll(!selectAll);
+};
+
+const handleTechnicianChange = (e) => {
+  const { value, checked } = e.target;
+  let updatedSelection = [...selectedTechnicians];
+  
+  if (checked) {
+    updatedSelection.push(value);
+  } else {
+    updatedSelection = updatedSelection.filter((name) => name !== value);
+  }
+  
+  setSelectedTechnicians(updatedSelection);
+  setSelectAll(updatedSelection.length === technicians.length);
+};
+
+const handleAssignedToChange = (e) => {
+  const selectedAssignedTo = e.target.value;
+  setAssignedTo(selectedAssignedTo);
+  setError({});
+  if (selectedAssignedTo === "Customer") {
+    setSelectPincode("");
+    setSelectTechnician("");
+    setPincodes([]);
+    setTechnicians([]);
+  }
+};
+
+
+// const validateFields = () => {
+//   let newErrors = {};
+
+//   if (assignedTo === "Technician") {
+//     if (!selectPincode) newErrors.selectPincode = "Pincode is required.";
+//     if (!selectTechnician) newErrors.selectTechnician = "Technician is required.";
+//   }
+
+//   setError(newErrors);
+//   return Object.keys(newErrors).length === 0; 
+// };
+
 
   const handleGetQuotation = async (e) => {
     e.preventDefault();
@@ -867,8 +994,7 @@ useEffect(() => {
                 readOnly
               />
             </div>
-
-            <div className="col-md-6">
+            {/* <div className="col-md-6">
               <label>Assigned To <span className="req_star">*</span></label>
               <select
                 type="text"
@@ -882,8 +1008,89 @@ useEffect(() => {
 
               </select>
               {error.assignedTo && <p className="text-danger">{error.assignedTo}</p>}
-            </div>
-
+            </div> */}
+            <Row>
+                  {/* Assigned To */}
+                  <Col md={12}>
+                    <Form.Group>
+                      <label>Assigned To</label>
+                      <Form.Control as="select" value={assignedTo} onChange={handleAssignedToChange} required>
+                        <option value="">Select Assigned</option>
+                        <option value="Customer">Customer</option>
+                        <option value="Technician">Technician</option>
+                      </Form.Control>
+                      {error.assignedTo && <p className="text-danger">{error.assignedTo}</p>}
+                    </Form.Group>
+                  </Col>
+            
+                  {/* Show these fields only if "Technician" is selected */}
+                  {assignedTo === "Technician" && (
+                    <>
+                      {/* Select Category */}
+                      <Col md={12}>
+                        <Form.Group>
+                          <label>Category</label>
+                          <Form.Control
+                            type="text"
+                            name="category"
+                            value={category}
+                            onChange={handleChange}
+                            placeholder="Category"
+                            readOnly
+                          >
+                          </Form.Control>
+                        </Form.Group>
+                      </Col>
+            
+            
+                      {/* Select Pincodes */}
+                      <Col md={12}>
+                        <Form.Group>
+                          <label>Select Pincode</label>
+                          <Form.Control as="select" value={selectPincode} onChange={handlePincodeChange} required>
+                            <option value="">Select Pincode</option>
+                            {pincodes.map((pincode, i) => (
+                              <option key={i} value={pincode.zipCode}>{pincode.zipCode}</option>
+                            ))}
+                          </Form.Control>
+                          {error.selectPincode && <div style={{ color: "red", marginTop: "5px" }}>{error.selectPincode}</div>}
+                        </Form.Group>
+                      </Col>
+            
+                      {/* Select Technician */}
+            
+                      <Col md={12}>
+                  <Form.Group>
+                    <label>Select Technician</label>
+                    <div>
+                      <Form.Check
+                        type="checkbox"
+                        className="custom-checkbox"
+                        label="Select All"
+                        checked={selectAll}
+                        onChange={handleSelectAllChange}
+                      />
+                      {technicians.map((technician, i) => (
+                        <div key={i}>
+                          <Form.Check
+                            type="checkbox"
+                            className="custom-checkbox"
+                            label={technician.technicianFullName}
+                            value={technician.technicianFullName}
+                            checked={selectedTechnicians.includes(technician.technicianFullName)}
+                            onChange={handleTechnicianChange}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                    {error.selectTechnician && (
+                      <div style={{ color: "red", marginTop: "5px" }}>{error.selectTechnician}</div>
+                    )}
+                  </Form.Group>
+                </Col>
+                    </>
+                  )}
+                </Row>
             <div className="mt-3 d-flex justify-content-between">
             <Button type="submit" className="btn btn-warning text-white mx-2" onClick={() => navigate(`/adminNotifications`)} title="Forward">
                 <ArrowBack />

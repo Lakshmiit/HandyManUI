@@ -12,7 +12,6 @@ const OffersProductCard = () => {
   const navigate = useNavigate();
   const {userType} = useParams();
   const {userId} = useParams(); 
-  // const {id} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const { selectedUserType } = useParams();
@@ -55,10 +54,6 @@ const OffersProductCard = () => {
     fetchData();
   }, []);
 
-  // const handleBackClick = () => {
-  //   navigate(`/offers/${userType}/${userId}`);
-  // };
-
   const handleImageClick = (imageSrc) => {
     setZoomImage(imageSrc);
     setShowZoomModal(true);
@@ -80,6 +75,8 @@ const OffersProductCard = () => {
       </div>
     );
   }
+
+  // const discountedPrice = product.rate - (product.rate * product.discount) / 100;
 
   return (
     <>
@@ -115,8 +112,9 @@ const OffersProductCard = () => {
         )}
 
         <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
-          <div className="row g-4">
+          {/* <div className="row g-4">
             {productData.map((product) => (
+              
               <div key={product.id} className="col-md-4">
                 <div className="card w-100 h-100 shadow-lg border-light rounded-4">
                   {imageUrls[product.id] && imageUrls[product.id].length > 0 ? (
@@ -144,8 +142,10 @@ const OffersProductCard = () => {
 
                   <div className="card-body">
                     <h5 className="card-title fs-5">{product.productName}</h5>
-                    <p className="card-text fw-bold fs-5 text-muted">Rate: Rs {product.rate}</p>
+                    <p className="card-text fw-bold fs-5 text-muted">MRP: Rs {product.rate}</p>
                     <p className="card-text  fw-bold fs-5 text-danger">Discount: {product.discount}%</p>
+                    <p className="card-text fw-bold fs-5 text-success">After Discount Price: Rs {discountedPrice.toFixed(2)}</p>
+
                   </div>
                   <Button
   className="btn btn-warning w-50 fw-bold mt-2"
@@ -162,7 +162,64 @@ const OffersProductCard = () => {
                 </div>
               </div>
             ))}
+          </div> */}
+
+<div className="row g-4">
+  {productData?.map((product) => {
+    const discountedPrice = product.rate && product.discount 
+      ? (product.rate - (product.rate * product.discount) / 100).toFixed(2) 
+      : product.rate;
+
+    return (
+      <div key={product.id} className="col-md-4">
+        <div className="card w-100 border-light rounded-4">
+          {imageUrls[product.id] && imageUrls[product.id].length > 0 ? (
+            <Carousel>
+              {imageUrls[product.id].map((img, index) => (
+                <Carousel.Item key={index}>
+                  <img
+                    src={`data:image/jpeg;base64,${img.imageData}`}
+                    className="card-img-top rounded-top zoomable-image"
+                    style={{ height: "250px", objectFit: "cover", cursor: "pointer" }}
+                    alt={`product-image-${index}`}
+                    onClick={() => handleImageClick(`data:image/jpeg;base64,${img.imageData}`)}
+                  />
+                </Carousel.Item>
+              ))}
+            </Carousel>
+          ) : (
+            <div
+              className="d-flex justify-content-center align-items-center"
+              style={{ height: '250px', background: '#f8f9fa' }}
+            >
+              No Image
+            </div>
+          )}
+
+          <div className="card-body p-1 m-1">
+            <h5 className="card-title">{product.productName}</h5>
+            <p className="card-text fw-bold text-primary">MRP: Rs {product.rate}</p>
+            <p className="card-text fw-bold text-danger">Discount: {product.discount}%</p>
+            <p className="card-text fw-bold text-success">After Discount Price: Rs {discountedPrice}</p>
           </div>
+          <Button
+  className="btn btn-warning w-50 fw-bold mt-2"
+  onClick={() => {
+    if (userId === "guest") {
+      window.location.href = "https://handymanserviceproviders.com/";
+    } else {
+      navigate(`/offersBuyProduct/${userType}/${userId}/${product.id}`);
+    }
+  }}
+>
+  Buy Now
+</Button>
+        </div>
+      </div>
+    );
+  })}
+</div>
+
         </div>
       </div>
       

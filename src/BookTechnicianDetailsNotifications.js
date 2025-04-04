@@ -13,47 +13,47 @@ import { Button } from "react-bootstrap";
 import "./App.css";
 
 const NotificationsList = ({ notifications, highlightedItem }) => {
-  const navigate = useNavigate();
+   const navigate = useNavigate();
 //   const {category} = useParams();
-  const {userType} = useParams();
-  const {userId} = useParams();
+   const {userType} = useParams();
+   const {userId} = useParams();
+   const {technicianName} = useParams();
 
-  const getTrackNotifications = notifications.filter(
-    (item) => item.assignedTo === "Customer" && (item.internalStatus === "Assigned" || item.internalStatus === "Pending" || item.internalStatus === "Customer Approved" ||  item.internalStatus === "PaymentDone")
-  );
+  const getTechnicianNotifications = notifications.filter(
+    (item) => item.assignedTo === "Technician" && item.status === "Assigned");
 
-  const handleTicketClick = (ticketId) => {
-    navigate(`/customerTrackConfirmation/${userType}/${userId}/${ticketId}`, { state: { ticketId } });
+  const handleTechnicianClick = (ticketId) => {
+     navigate(`/technicianViewBookTechnician/${userType}/${userId}/${technicianName}/${ticketId}`, { state: { ticketId } });
   };
 
   return (
     <div> 
     <div className="notification-list">
-      {getTrackNotifications.map((notification) => (
+      {getTechnicianNotifications.map((notification) => (
         <div
-          key={notification.raiseTicketId}
+          key={notification.bookTechnicianId}
           className={`notification-item ${
-            notification.raiseTicketId === highlightedItem ? "highlight" : ""
+            notification.bookTechnicianId === highlightedItem ? "highlight" : ""
           }`}
         >
           <div className="notification-header">
-            <strong>Ticket ID: </strong>
+            <strong>Book Technician ID: </strong>
             <span
-              onClick={() => handleTicketClick(notification.id)}
+              onClick={() => handleTechnicianClick(notification.id)}
               style={{
                 color: "blue",
                 cursor: "pointer",
                 textDecoration: "underline",
               }}
             >
-              {notification.raiseTicketId}
+              {notification.bookTechnicianId}
             </span>
           </div>
           <div>
-            <strong>Details:</strong> {notification.details}
+            <strong>Job Description:</strong> {notification.jobDescription}
           </div>
           <div>
-            <strong>Subject:</strong> {notification.subject}
+            <strong>Category:</strong> {notification.category}
           </div>
           <div className="notification-date">
             <strong>Date:</strong> {new Date(notification.date).toLocaleString()}
@@ -65,20 +65,23 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
   );  
 };
 
-const TrackNotification = () => {
+const TechnicianDetailsNotification = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const [trackNotifications, setTrackNotifications] = useState([]);
-  const [newTrackCount, setNewTrackCount] = useState(0);
+  const [technicianNotifications, setTechnicianNotifications] = useState([]);
+  const [newTechnicianCount, setNewTechnicianCount] = useState(0);
   const [newNotificationCount, setNewNotificationCount] = useState(0);
-  const [highlightedTrack, setHighlightedTrack] = useState(null);
+  const [highlightedTechnician, setHighlightedTechnician] = useState(null);
   const [activeTab, setActiveTab] = useState("");
   const [glow, setGlow] = useState(false);
-  const [glowTrack, setGlowTrack] = useState(false);
-  // const { userType } = useParams();
+  const [glowTechnician, setGlowTechnician] = useState(false);
+  const { category } = useParams();
+  const { pincode } = useParams();
+  const { technicianName } = useParams();
+  const { userType } = useParams();
   // const { raiseTicketId } = useParams('');
   const { userId } = useParams('');
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -88,41 +91,39 @@ const TrackNotification = () => {
   }, []); 
 
  useEffect(() => {
-  const fetchNotifications = async () => {
+  const fetchTechnicianNotifications = async () => {
     try {
-      const trackTicketResponse = await fetch(
-        `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTrackTicketsByCustomerId?customerId=${userId}
-`
+      const technicianTicketResponse = await fetch(
+        `https://handymanapiv2.azurewebsites.net/api/BookTechnician/GetBookTechnicianNotifications?category=${category}&pincode=${pincode}&technicianName=${technicianName}`
       );
-      const trackData = await trackTicketResponse.json();
-      const getTrackNotifications = trackData.filter(
-        (item) => item.assignedTo === "Customer"&& (item.internalStatus === "Assigned" || item.internalStatus === "Pending" || item.internalStatus === "Customer Approved" ||  item.internalStatus === "PaymentDone")
-      )
+      const technicianData = await technicianTicketResponse.json();
+      const getTechnicianNotifications = technicianData.filter(
+        (item) => item.assignedTo === "Technician" && item.status === "Assigned")
       .sort((a, b) => new Date(b.date) - new Date(a.date));
-        const trackCount = getTrackNotifications.length;
+        const technicianCount = getTechnicianNotifications.length;
 
-        setTrackNotifications(getTrackNotifications);
-        setNewTrackCount(trackCount);
-        setGlowTrack(trackCount > 0);
-        if (trackCount > 0) {
-          setHighlightedTrack(getTrackNotifications[0].raiseTicketId);
+        setTechnicianNotifications(getTechnicianNotifications);
+        setNewTechnicianCount(technicianCount);
+        setGlowTechnician(technicianCount > 0);
+        if (technicianCount > 0) {
+          setHighlightedTechnician(getTechnicianNotifications[0].bookTechnicianId);
         }
-        const totalNotifications = trackCount;
+        const totalNotifications = technicianCount;
         setNewNotificationCount(totalNotifications);
         setGlow(totalNotifications > 0);
       } catch (error) {
         console.error("Failed to fetch notifications:", error);
       }
     };
-    fetchNotifications();
- }, [userId]);
+    fetchTechnicianNotifications();
+ }, [category, pincode, technicianName]);
     
 
-  // const handleClearTrackNotifications = () => {
-  //   setNewTrackCount(0);
-  //   setGlowTrack(false);
-  //   setHighlightedTrack(null);
-  // };
+  const handleClearTechnicianNotifications = () => {
+    setNewTechnicianCount(0);
+    setGlowTechnician(false);
+    setHighlightedTechnician(null);
+  };
 
   const handleTabClick = (tab) => setActiveTab(tab);
 
@@ -161,7 +162,7 @@ const TrackNotification = () => {
             fontSize="large"
             className={glow ? "glow" : ""}
           />{" "}
-          My Tickets{" "}
+          Notifications{" "}
           {newNotificationCount > 0 && (
             <span className="badge bg-danger">{newNotificationCount}</span>
           )}
@@ -169,20 +170,20 @@ const TrackNotification = () => {
 
         <div className="notifications-container d-flex bg-white border rounded shadow-sm m-4 p-3">
           <div className="tabs d-flex mb-3">
-            {["Track Ticket Status"].map((tab) => (
+            {["Book Technician Notifications"].map((tab) => (
               <span
                 key={tab}
                 className={`tab-item ${activeTab === tab ? "active" : ""} 
-                ${tab === "Track Ticket Status" && glowTrack ? "glow" : ""}
+                ${tab === "Book Technician Notifications" && glowTechnician ? "glow" : ""}
                 }`}
                 onClick={() => handleTabClick(tab)}
                 style={{ cursor: "pointer" }}
               >
-                {tab === "Track Ticket Status" && (
+                {tab === "Book Technician Notifications" && (
                   <>
-                Track Ticket Status{" "}
-                {newTrackCount > 0 && (
-                  <span className="badge bg-danger">{newTrackCount}</span>
+                Book Technician Notifications{" "}
+                {newTechnicianCount > 0 && (
+                  <span className="badge bg-danger">{newTechnicianCount}</span>
                 )}
                 </>
                 )}
@@ -191,22 +192,22 @@ const TrackNotification = () => {
           </div>
 
           <div>
-            {activeTab === "Track Ticket Status" && (
+            {activeTab === "Book Technician Notifications" && (
               <>
                 <NotificationsList
-                  notifications={trackNotifications}
-                  highlightedItem={highlightedTrack}
+                  notifications={technicianNotifications}
+                  highlightedItem={highlightedTechnician}
                 />
-                {/* <div
+                <div
                   className="view-notifications text-info mx-2"
                   onClick={() => {
-                    navigate(`/customerTrackConfirmation/${raiseTicketId}/${userType}`);
-                    handleClearTrackNotifications();
+                     navigate(`/technicianGridDetails/${userType}/${userId}/${category}/${pincode}/${technicianName}`);
+                    handleClearTechnicianNotifications();
                   }}
                   style={{ cursor: "pointer" }}
                 >
                   View All Notifications
-                </div> */}
+                </div>
               </>
             )}
           </div>
@@ -237,4 +238,4 @@ const TrackNotification = () => {
   );
 };
 
-export default TrackNotification;
+export default TechnicianDetailsNotification;

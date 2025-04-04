@@ -22,7 +22,7 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
 
   const getQuoteNotifications = notifications.filter((item) => item.assignedTo === "Dealer/Trader" && item.internalStatus !== "Customer Approved");
 
-  const getOrdersNotifications = notifications.filter((item) => item.internalStatus === "Customer Approved" && item.lowestBidderDealerId === userId);
+  const getOrdersNotifications = notifications.filter((item) => (item.internalStatus === "Customer Approved" ||  item.internalStatus === "PaymentDone") && item.lowestBidderDealerId === userId);
 
   const handleQuoteClick = (ticketId) => {
     navigate(`/viewDealerRaiseTicket/${userType}/${userId}/${category}/${ticketId}`, { state: { ticketId } });
@@ -196,7 +196,7 @@ const Notification = () => {
           // alert(JSON.stringify(getOrderData));
           // alert(JSON.stringify(tickets));
           const orderTickets = getOrderData.tickets || [];
-          const getOrderFiltered = orderTickets.filter((item) => item.internalStatus === "Customer Approved" && item.lowestBidderDealerId === userId)
+          const getOrderFiltered = orderTickets.filter((item) => (item.internalStatus === "Customer Approved" ||  item.internalStatus === "PaymentDone") && item.lowestBidderDealerId === userId)
           .sort((a, b) => new Date(b.date) - new Date(a.date));    
           const getOrderCount = getOrderFiltered.length;
           // alert(getOrderCount);

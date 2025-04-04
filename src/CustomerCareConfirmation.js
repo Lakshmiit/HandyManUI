@@ -1,7 +1,7 @@
 import React, { useEffect, useState} from 'react';
 import AdminSidebar from './AdminSidebar';
 import Footer from './Footer.js';
-import { Button } from 'react-bootstrap';
+import { Button, Form, Row, Col } from 'react-bootstrap';
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
 // import image from './img/technician.png';
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -78,7 +78,13 @@ const CustomerCareConfirmation = () => {
   const [rateQuotedBy, setRateQuotedBy] = useState(''); 
   const [customerPhoneNumber, setCustomerPhoneNumber] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
-  
+  const [OrderId, setOrderId] = useState("");
+    const [OrderDate, setOrderDate] = useState("");
+    const [PaidAmount, setPaidAmount] = useState("");
+    const [TransactionStatus, setTransactionStatus] = useState("");
+    const [TransactionType, setTransactionType] = useState("");
+    const [InvoiceId, setInvoiceId] = useState("");
+    const [InvoiceURL, setInvoiceURL] = useState("");
   
   // const [isDealerChecked, setIsDealerChecked] = useState(false);
   // const [isTechnicianChecked, setIsTechnicianChecked] = useState(false);
@@ -169,6 +175,14 @@ const CustomerCareConfirmation = () => {
         setLowestDealerBidder(data.lowestBidderDealerId);
         setRequestType(data.requestType || 'Without Material');
         setAttachments(data.attachments);
+        setTransactionDetails(data.utrTransactionNumber);
+        setOrderId(data.orderId);
+        setOrderDate(data.orderDate);
+        setPaidAmount(data.paidAmount);
+        setTransactionStatus(data.transactionStatus);
+        setTransactionType(data.transactionType);
+        setInvoiceId(data.invoiceId);
+        setInvoiceURL(data.invoiceURL);
         setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: "" }]);
       } catch (error) {
         console.error('Error fetching ticket data:', error);
@@ -294,7 +308,7 @@ useEffect(() => {
               SetPaymentMode(paymentData.paymentMode);
               // setPaymentDateTime(paymentData.paymentDataTime);
               setCustomerCode(paymentData.technicianConfirmationCode);
-              setTransactionDetails(paymentData.utrTransactionNumber)
+              // setTransactionDetails(paymentData.utrTransactionNumber)
               } catch (error) {
               console.error('Error fetching payment data:', error);
             } finally {
@@ -1069,6 +1083,125 @@ const handleStatusChange = (event) => {
           // onChange={(e) => setTransactionDetails(e.target.value)}
           />
           </div>
+
+          {/* Order Id */}
+                  <Row>
+                            <Col md={12}>
+                              <Form.Group>
+                                <label>Order Id</label>
+                                <Form.Control
+                                  type="text"
+                                  name="OrderId"
+                                  value={OrderId}
+                                  // onChange={handleChange}
+                                  placeholder="Order Id"
+                                  readOnly
+                                />
+                              </Form.Group>
+                            </Col>
+                          </Row>
+          
+                          {/* Order Date */}
+                          <Row>
+                            <Col md={12}>
+                              <Form.Group>
+                                <label>Order Date</label>
+                                <Form.Control
+                                  type="text"
+                                  name="OrderDate"
+                                  value={OrderDate}
+                                  // onChange={handleChange}
+                                  placeholder="Order Date"
+                                  readOnly
+                                />
+                              </Form.Group>
+                            </Col>
+                          </Row>
+          
+                          {/* Paid Amount */}
+                          <Row>
+                            <Col md={12}>
+                              <Form.Group>
+                                <label>Paid Amount</label>
+                                <Form.Control
+                                  type="text"
+                                  name="PaidAmount"
+                                  value={PaidAmount}
+                                  // onChange={handleChange}
+                                  placeholder="Paid Amount"
+                                  readOnly
+                                />
+                              </Form.Group>
+                            </Col>
+                          </Row>
+          
+                          {/* Transaction Status */}
+                          <Row>
+                            <Col md={12}>
+                              <Form.Group>
+                                <label>Transaction Status</label>
+                                <Form.Control
+                                  type="text"
+                                  name="TransactionStatus"
+                                  value={TransactionStatus}
+                                  // onChange={handleChange}
+                                  placeholder="Transaction Status"
+                                  readOnly
+                                />
+                              </Form.Group>
+                            </Col>
+                          </Row>
+          
+                          {/* Transaction Type */}
+                          <Row>
+                            <Col md={12}>
+                              <Form.Group>
+                                <label>Transaction Type</label>
+                                <Form.Control
+                                  type="text"
+                                  name="TransactionType"
+                                  value={TransactionType}
+                                  // onChange={handleChange}
+                                  placeholder="Transaction Type"
+                                  readOnly
+                                />
+                              </Form.Group>
+                            </Col>
+                          </Row>
+          
+                          {/* Invoice Id */}
+                          <Row>
+                            <Col md={12}>
+                              <Form.Group>
+                                <label>Invoice Id</label>
+                                <Form.Control
+                                  type="text"
+                                  name="InvoiceId"
+                                  value={InvoiceId}
+                                  // onChange={handleChange}
+                                  placeholder="Invoice Id"
+                                  readOnly
+                                />
+                              </Form.Group>
+                            </Col>
+                          </Row>
+          
+                          {/* Invoice URL*/}
+                          <Row>
+                            <Col md={12}>
+                              <Form.Group>
+                                <label>Invoice URL</label>
+                                <Form.Control
+                                  type="text"
+                                  name="InvoiceURL"
+                                  value={InvoiceURL}
+                                  // onChange={handleChange}
+                                  placeholder="Invoice URL"
+                                  readOnly
+                                />
+                              </Form.Group>
+                            </Col>
+                          </Row>
          
       <div className='payment'>
           <h3 className='section-title mt-2'>Ticket Closing Status</h3>

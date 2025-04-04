@@ -35,7 +35,8 @@ import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 // import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 
-const getMenuList = (userType, userId, category, district ) => {
+
+const getMenuList = (userType, userId, category, district ,ZipCode,technicianFullName) => {
   // alert(category);
   // alert(district);
   const customer = [
@@ -85,7 +86,7 @@ const getMenuList = (userType, userId, category, district ) => {
   const technician = [
       { MenuIcon: <PersonIcon />, MenuTitle: "Add Technician"},
       { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: `/notificationTechnician/${userType}/${userId}/${category}/${district}` },
-      { MenuIcon: <NotificationsNoneIcon />, MenuTitle: "Notifications" },
+      { MenuIcon: <NotificationsNoneIcon />, MenuTitle: "Notifications" ,TargetUrl:`/technicianDetailsNotifications/${userType}/${userId}/${category}/${ZipCode}/${technicianFullName}`},
       { MenuIcon: <TransferWithinAStationIcon />, MenuTitle: "Track Technician" },
       { MenuIcon: <PersonIcon />, MenuTitle: "My Account"},
       { MenuIcon: <AccountBalanceIcon />, MenuTitle: "Add Bank Account" },
@@ -113,6 +114,9 @@ const ProfilePage = () => {
     const {userType} = useParams();
     const [category, setCategory] = useState('');
     const [district, setDistrict] = useState('');
+    const [zipCode, setZipCode] = useState('');
+    const [fullName, setFullName] = useState('');
+
    const [menuList, setMenuList] = useState([]);
     //  const menuList = getMenuList(userType, userId, category, district);
     const [profile, setProfile] = useState({});
@@ -295,10 +299,13 @@ useEffect(() => {
             setProfile(response.data); 
             setCategory(response.data.category);
             setDistrict(response.data.district);
+            setZipCode(response.data.zipCode);
+            setFullName(response.data.fullName);
+
             if (response.data.photoAttachmentId) {
               fetchImageUrl(response.data.photoAttachmentId);
             }
-            setMenuList(getMenuList(userType, userId, response.data.category, response.data.district));
+            setMenuList(getMenuList(userType, userId, response.data.category, response.data.district, response.data.zipCode, response.data.fullName));
 
           } catch (error) {
             console.log("Error Fetching Data:", error)
@@ -313,9 +320,9 @@ useEffect(() => {
 
       useEffect(() => {
         if (category && district) {
-          setMenuList(getMenuList(userType, userId, category, district));
+          setMenuList(getMenuList(userType, userId, category, district, zipCode, fullName));
         }
-      }, [category, district, userType, userId]);
+      }, [category, district, userType, userId, zipCode, fullName]);
       
 
 // useEffect(() => {
@@ -865,7 +872,6 @@ const fetchImageUrl = async (photoId) => {
                   <span className={ticket.status.toLowerCase()}> {ticket.status}</span>
                 </p>
                 <p><strong>Assigned To:</strong> {ticket.assignedTo}</p>
-                {/* <p><strong>Date:</strong> {ticket.date ? ticket.date.split("T")[0] : "N/A"}</p> */}
                 <p><strong>Date:</strong> {ticket.date ? new Date(ticket.date).toLocaleDateString('en-GB') : "N/A"}</p>
                 <p><strong>Transaction Status:</strong> {ticket.transactionStatus }</p>
                 <p><strong>Paid Amount:</strong> {ticket.paidAmount}</p>

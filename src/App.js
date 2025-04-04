@@ -89,7 +89,9 @@ import Offers from './Offers.js';
 import OffersBuyProductPage from './OffersBuyProductPage.js';
 import ViewOffersBuyProductPage from './ViewOffersBuyProductPage.js';
 // import FirebaseMainConfig from './FirebaseMainConfig.js';
-// import TechnicianViewBookTechnician from './TechnicianViewBookTechnician.js';
+ import TechnicianViewBookTechnician from './TechnicianViewBookTechnician.js';
+ import BookTechnicianDetailsNotifications from './BookTechnicianDetailsNotifications.js';
+ import BookTechnicianDetailsGrid from './BookTechnicianDetailsGrid.js';
 // import BuyProductCartView from './BuyProductCartView.js';
  
 const PreventBackNavigation = () => {
@@ -201,7 +203,7 @@ function App() {
             <Route path='/adminClosedOrdersFinalGridView/:buyProductId' element={<AdminClosedOrdersFinalGridView />} />
             <Route path='/buyProductsCustomerCart/:customerId/:userType' element={<BuyProductsCustomerCart />} />
             {/* <Route path='/buyProductsCartView/:customerId/:buyProductId/:userType' element={<BuyProductCartView />} /> */}
-            {/* <Route path='/technicianViewBookTechnician/:userType/:raiseTicketId' element={<TechnicianViewBookTechnician />} />  */}
+            <Route path='/technicianViewBookTechnician/:userType/:userId/:technicianName/:raiseTicketId' element={<TechnicianViewBookTechnician />} /> 
             <Route path='/customerBuyProductOrdersGrid/:userType/:userId' element={<CustomerBuyProductOrdersGrid />} /> 
             <Route path="/payment-selection/:raiseTicketId" element={<PaymentPage />} />
             <Route path="/notificationsbell/:userId" element={<NotificationsBell />} />
@@ -210,6 +212,8 @@ function App() {
             <Route path="/offers/:userType/:userId" element={<Offers />} />
             <Route path="/offersBuyProduct/:userType/:userId/:id" element={<OffersBuyProductPage />} />
             <Route path="/viewOffersBuyProduct/:userType/:userId/:id" element={<ViewOffersBuyProductPage />} />
+            <Route path="/technicianDetailsNotifications/:userType/:userId/:category/:pincode/:technicianName" element={<BookTechnicianDetailsNotifications />} />
+            <Route path="/technicianGridDetails/:userType/:userId/:category/:pincode/:technicianName" element={<BookTechnicianDetailsGrid />} />
 
             {/* <Route path="/raiseQuoteNotificationsBell/:userId" element={<RaiseQuoteNotificationBell />} /> */}
             </Routes>

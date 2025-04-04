@@ -28,7 +28,7 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
 
   
  const orderTicketNotifications = notifications.filter(
-  (item) => item.internalStatus === "Customer Approved"
+  (item) => item.internalStatus === "Customer Approved" || item.internalStatus === "PaymentDone" 
 );
 
 const bookTechnicianNotifications = notifications.filter(
@@ -181,7 +181,7 @@ const productClosedNotifications = notifications.filter(
             }`}
           >
             <div className="notification-header">
-              <strong>Buy Product Ticket ID: </strong>
+              <strong>Ticket ID: </strong>
               <span
                 onClick={() => handleOrderClick(notification.id)}
                 style={{
@@ -418,7 +418,7 @@ const Notification = () => {
         setHighlightedQuote(dealerTicketFiltered[0].raiseTicketId);
       }
      const getOrderData = await getOrderResponse.json();
-   const orderFiltered = getOrderData.filter((item) => item.internalStatus === "Customer Approved")
+   const orderFiltered = getOrderData.filter((item) => item.internalStatus === "Customer Approved" || item.internalStatus === "PaymentDone")
    .sort((a, b) => new Date(b.date) - new Date(a.date));
    const getOrderCount = orderFiltered.length;
      setOrderNotifications(orderFiltered);

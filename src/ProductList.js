@@ -236,6 +236,9 @@ const ProductView = () => {
               </ul>
             </nav>
           </div>
+          <div className='text-end m-1'>
+          <button className="btn btn-warning" title="back" onClick={() => navigate(`/Dashboard`)}>Back</button>
+          </div>
         </>
       )}
     </div>

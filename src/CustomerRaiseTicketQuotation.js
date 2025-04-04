@@ -623,7 +623,7 @@ const RaiseQuotation = () => {
   ) : (
     <div className='mobile-view'>
       {specifications.map((spec, index) => (
-        <div key={index} className='card border p-2 mb-2'>
+        <div key={index} className='card w-100 border p-2 mb-2'>
           {Object.entries(spec).map(([key, value]) => (
            <p key={key}><strong>{key.charAt(0).toUpperCase() + key.slice(1)}: </strong>{value}</p> 
           ))}
@@ -688,7 +688,7 @@ const RaiseQuotation = () => {
   ) : (
     <div className="mobile-view">
       {dealerDetails.map((dealer, index) => (
-        <div key={index} className="card border p-2 mb-3">
+        <div key={index} className="card w-100 border p-2 mb-3">
           {[
             [isCustomerCare ? "Customer Care ID" : "Trader ID", dealer.dealerId],
             ['Total', dealer.totalAmount],
@@ -779,7 +779,7 @@ const RaiseQuotation = () => {
   ) : (
     <div className="mobile-view">
       {technicianDetails.map((technician, index) => (
-        <div key={index} className="card border p-2 mb-3">
+        <div key={index} className="card w-100 border p-2 mb-3">
           {[
             ['Technician ID', technician.technicianId],
             ['Quoted Amount', technician.enterQuoteAmount],
@@ -925,7 +925,7 @@ const RaiseQuotation = () => {
       amount: Number(totalAmount || 0).toFixed(2),
       approved: isAgencyApproved, toggle: () => setIsAgencyApproved(!isAgencyApproved) 
     }].map(({label, id, amount, approved, toggle}, i) => (
-      <div key={i} className="card border p-2 mb-3">
+      <div key={i} className="card w-100 border p-2 mb-3">
         <p><strong>Description: </strong>{label} Quotation</p>
         <p><strong>Lowest Bidder ID:</strong> {id}</p>
         <p><strong>Lowest Amount Including Charges and Taxes:</strong> {amount}</p>

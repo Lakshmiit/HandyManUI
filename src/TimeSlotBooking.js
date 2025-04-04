@@ -36,7 +36,10 @@ const TimeSlotBooking = () => {
       ];
     const months = ["January", "February", "March", "April", "May", 
       "July", "August", "September", "October", "November", "December"];
-    const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+      const [daysOfWeek, setDaysOfWeek] = useState([]);
+    // const daysOfWeek = ["Sun", "Mon", "Tues", "Wed", "Thu", "Fri", "Sat"];
+
+    // const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
   const {raiseTicketId} = useParams();
   const [id, setId] = useState('');
@@ -73,6 +76,20 @@ const TimeSlotBooking = () => {
   useEffect(() => {
     console.log(loading, id, customerId);
   }, [loading, id, customerId]);
+
+  useEffect(() => {
+    const updateDaysOfWeek = () => {
+      if (window.innerWidth <= 768) {
+        setDaysOfWeek(["Sun", "Mon", "Tues", "Wed", "Thu", "Fri", "Sat"]); // Mobile view
+      } else {
+        setDaysOfWeek(["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]); // Desktop view
+      }
+    };
+    updateDaysOfWeek();
+    window.addEventListener("resize", updateDaysOfWeek);
+    return () => window.removeEventListener("resize", updateDaysOfWeek);
+  }, []);
+
 
   const handlePrevMonth = () => {
     setCurrentMonth((prev) => (prev === 0 ? 11 : prev - 1));

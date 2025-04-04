@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Form, Row, Col } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import { useCallback } from "react";
 import AdminSidebar from './AdminSidebar';
 import {  Dashboard as MoreVertIcon } from '@mui/icons-material';
 // import { FaEdit} from 'react-icons/fa'; // Correct icon import
@@ -47,12 +48,14 @@ const BookTechnicianActionView = () => {
   const [selectTechnician, setSelectTechnician] = useState("");
   // const [categories, setCategories] = useState([]);
   const [pincodes, setPincodes] = useState([]);
-  const [technicians, setTechnicians] = useState([]);
+  const [technicians, setTechnicians]                  = useState([]);
+  const [selectedTechnicians, setSelectedTechnicians]  = useState([]);
+  const [selectAll, setSelectAll] = useState(false);
 
 
   useEffect(() => {
-    console.log(technicianData);
-  }, [technicianData]);
+    console.log(technicianData, selectTechnician);
+  }, [technicianData, selectTechnician]);
 
   useEffect(() => {
     const fetchtechnicianData = async () => {
@@ -127,11 +130,11 @@ const fetchPincodesByCategory = async (category) => {
 };
 
 // Fetch technicians based on pincode
-const fetchTechniciansByPincode = async (pincode) => {
+const fetchTechniciansByPincode = useCallback(async (pincode) => {
   try {
     setLoading(true);
     const response = await fetch(
-      `https://handymanapiv2.azurewebsites.net/api/Technician/GetTechniciannamesByPincode?pincode=${pincode}`
+      `https://handymanapiv2.azurewebsites.net/api/Technician/GetTechniciannamesByPincodeAndCategory?pincode=${pincode}&category=${category}`
     );
     if (!response.ok) {
       throw new Error("Failed to fetch technicians");
@@ -143,7 +146,7 @@ const fetchTechniciansByPincode = async (pincode) => {
   } finally {
     setLoading(false);
   }
-};
+}, [category]);
 
 // Fetch pincodes when category changes
 useEffect(() => {
@@ -165,7 +168,7 @@ useEffect(() => {
     fetchTechniciansByPincode(selectPincode);
     setSelectTechnician(""); 
   }
-}, [selectPincode]);
+}, [selectPincode, fetchTechniciansByPincode]);
 
 // Handle pincode selection
 const handlePincodeChange = (e) => {
@@ -173,11 +176,35 @@ const handlePincodeChange = (e) => {
   setError({ ...error, selectPincode: "" });
 };
 
-// Handle technician selection
-const handleTechnicianChange = (e) => {
-  setSelectTechnician(e.target.value);
-  setError({ ...error, selectTechnician: "" });
+const handleSelectAllChange = () => {
+  if (selectAll) {
+    setSelectedTechnicians([]);
+  } else {
+    setSelectedTechnicians(technicians.map((tech) => tech.technicianFullName));
+  }
+  setSelectAll(!selectAll);
 };
+
+const handleTechnicianChange = (e) => {
+  const { value, checked } = e.target;
+  let updatedSelection = [...selectedTechnicians];
+  
+  if (checked) {
+    updatedSelection.push(value);
+  } else {
+    updatedSelection = updatedSelection.filter((name) => name !== value);
+  }
+  
+  setSelectedTechnicians(updatedSelection);
+  setSelectAll(updatedSelection.length === technicians.length);
+};
+
+
+// // Handle technician selection
+// const handleTechnicianChange = (e) => {
+//   setSelectTechnician(e.target.value);
+//   setError({ ...error, selectTechnician: "" });
+// };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -197,18 +224,18 @@ const handleTechnicianChange = (e) => {
   };
   
 
-  const validateFields = () => {
-    let newErrors = {};
+  // const validateFields = () => {
+  //   let newErrors = {};
 
-    if (assignedTo === "Technician") {
-      // if (!selectCategory) newErrors.selectCategory = "Category is required.";
-      if (!selectPincode) newErrors.selectPincode = "Pincode is required.";
-      if (!selectTechnician) newErrors.selectTechnician = "Technician is required.";
-    }
+  //   if (assignedTo === "Technician") {
+  //     // if (!selectCategory) newErrors.selectCategory = "Category is required.";
+  //     if (!selectPincode) newErrors.selectPincode = "Pincode is required.";
+  //     if (!selectTechnician) newErrors.selectTechnician = "Technician is required.";
+  //   }
 
-    setError(newErrors);
-    return Object.keys(newErrors).length === 0; 
-  };
+  //   setError(newErrors);
+  //   return Object.keys(newErrors).length === 0; 
+  // };
   
 
   // const handleCategoryChange = async (e) => {
@@ -249,11 +276,11 @@ const handleUpdateJobDescription = async (e) => {
     setError("You Must select AssignedTo");
     return;     
 }
-  if (validateFields()) {
-    console.log("Form submitted successfully.");
-    
-  }
 
+// if (validateFields()) {
+//   return;
+// } 
+ 
   const payload2 = {
     id: raiseTicketId,  
     bookTechnicianId: bookTechnicianId,
@@ -273,11 +300,11 @@ const handleUpdateJobDescription = async (e) => {
     status: "Assigned",
     customerId: customerId,
     CustomerEmail: emailAddress,
-    assignedTo: "Customer",
+    assignedTo: assignedTo,
     phoneNumber: phoneNumber,
     paymentMode: paymentMode,
     approvedAmount: afterDiscount,
-    utrTransactionNumber: "",
+    utrTransactionNumber: utrTransactionNumber || "",
     technicianConfirmationCode: technicianConfirmationCode,
     OrderId: "",
     OrderDate: "",
@@ -286,6 +313,9 @@ const handleUpdateJobDescription = async (e) => {
     TransactionType: "",
     InvoiceId: "",
     InvoiceURL: "",
+    TechnicianPincode: selectPincode,
+    TechnicianName: selectedTechnicians,
+    TechnicianFullName: "",
   }; 
  
   try {
@@ -298,13 +328,13 @@ const handleUpdateJobDescription = async (e) => {
     });
 
     if (!response.ok) {
-      throw new Error('Failed to forward Customer.');
+      throw new Error(`Failed to forward ${assignedTo}.`);
     }
-    alert("Ticket Forwarded to customer Successfully!");
+    alert(`Ticket Forwarded to ${assignedTo} Successfully!`);
     Navigate("/adminNotifications");
   } catch (error) {
     console.error('Error:', error);
-    window.alert('Failed to forward Customer. Please try again later.');
+    window.alert(`Failed to forward ${assignedTo} . Please try again later.`);
   }
 };
 
@@ -496,26 +526,18 @@ const handleUpdateJobDescription = async (e) => {
                 as="textarea"
                 type="text"
                 name="address"
-                value={`${address}, ${district}, ${state}, ${zipCode}, ${phoneNumber}`}
+                // value={`${address}, ${district}, ${state}, ${zipCode}, ${phoneNumber}`}
+                value={[address, district, state, zipCode, phoneNumber]
+                  .filter(Boolean) 
+                  .join(", ")}
                 onChange={handleChange}
                 placeholder="Customer Address"
                 readOnly
               />
-              {/* <Form.Control
-            name="phoneNumber"
-            value={phoneNumber}
-            onChange={handleChange}
-            rows="4"
-            placeholder="Phone Number"
-            readOnly
-          /> */}
             </Form.Group>
           </Col>
         </Row>
 
-        
-       
-        
         <Row>
       {/* Assigned To */}
       <Col md={12}>
@@ -565,7 +587,37 @@ const handleUpdateJobDescription = async (e) => {
           </Col>
 
           {/* Select Technician */}
-        <Col md={12}>
+
+          <Col md={12}>
+      <Form.Group>
+        <label>Select Technician</label>
+        <div>
+          <Form.Check
+            type="checkbox"
+             className="custom-checkbox"
+            label="Select All"
+            checked={selectAll}
+            onChange={handleSelectAllChange}
+          />
+          {technicians.map((technician, i) => (
+            <div key={i} >
+              <Form.Check
+                type="checkbox"
+                className="custom-checkbox"
+                label={technician.technicianFullName}
+                value={technician.technicianFullName}
+                checked={selectedTechnicians.includes(technician.technicianFullName)}
+                onChange={handleTechnicianChange}
+              />
+            </div>
+          ))}
+        </div>
+        {error.selectTechnician && (
+          <div style={{ color: "red", marginTop: "5px" }}>{error.selectTechnician}</div>
+        )}
+      </Form.Group>
+    </Col>
+        {/* <Col md={12}>
           <Form.Group>
             <label>Select Technician</label>
             <Form.Control as="select" value={selectTechnician} onChange={handleTechnicianChange} required>
@@ -576,7 +628,7 @@ const handleUpdateJobDescription = async (e) => {
             </Form.Control>
             {error.selectTechnician && <div style={{ color: "red", marginTop: "5px" }}>{error.selectTechnician}</div>}
           </Form.Group>
-        </Col>
+        </Col> */}
         </>
       )}
     </Row>

@@ -25,6 +25,8 @@ const Sidebar = () => {
   // const {UserId} = useParams();
   const {district} = useParams();
   const {category} = useParams();
+  const {ZipCode} =useParams();
+  const {technicianFullName}=useParams();
 
 const menuConfig = {
     customer: [
@@ -87,7 +89,7 @@ const menuConfig = {
       { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", TargetUrl: `/profilePage/${userType}/${userId}` },
       { MenuIcon: <PersonAddIcon />, MenuTitle: "Add Technician" },
     { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: `/notificationTechnician/${userType}/${userId}/${category}/${district}` },
-      { MenuIcon: <NotificationsActiveIcon />, MenuTitle: "Notifications" },
+      { MenuIcon: <NotificationsActiveIcon />, MenuTitle: "Notifications", TargetUrl:`/technicianDetailsNotifications/${userType}/${userId}/${category}/${ZipCode}/${technicianFullName}`},
       { MenuIcon: <TransferWithinAStationIcon />, MenuTitle: "Track Technician"},
       { MenuIcon: <AccountCircleIcon />, MenuTitle: "My Account" },
       { MenuIcon: <AccountBalanceIcon />, MenuTitle: "Add Bank Account" },

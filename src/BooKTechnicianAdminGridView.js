@@ -343,7 +343,7 @@ const BookTechnicianActionView = () => {
         </Row>
 
         {/* Payment Transaction Details */}
-        {paymentMode === "technician" && (
+        {/* {paymentMode === "technician" && ( */}
         <Form.Group>
           <label>Payment Transaction Details</label>
           <Form.Control
@@ -355,7 +355,7 @@ const BookTechnicianActionView = () => {
             readOnly
           />
         </Form.Group> 
-        )} 
+        {/* )}  */}
 
 
         {/* Phone Number

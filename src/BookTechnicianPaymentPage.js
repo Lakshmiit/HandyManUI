@@ -150,6 +150,9 @@ const handleUpdateJobDescription = async (e) => {
     TransactionType: "",
     InvoiceId: "", 
     InvoiceURL: "",
+    TechnicianPincode: "",
+    TechnicianName: [],
+    TechnicianFullName: "",
   };
 
 

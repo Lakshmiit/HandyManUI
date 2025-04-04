@@ -87,9 +87,9 @@ const RaiseQuoteTechnician = () => {
                 ...data,
                 technicianList: normalizedTechnicianList,
             });
-            setOtherCharge('100');
-            setServiceCharge('10');
-            setGST('18');  
+            setOtherCharge('10');
+            setServiceCharge('1');
+            setGST('1');  
             // setDiscount('0');  
             setState(data.state);
             setDistrict(data.district);

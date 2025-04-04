@@ -4,21 +4,22 @@ import Header from './Header.js';
 import Footer from './Footer.js';
 import { Button } from 'react-bootstrap';
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
-// import image from './img/technician.png';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import './App.css';
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 
 const CustomerTicketTrack = () => {
-  // const Navigate = useNavigate();
-  // const {userType} = useParams();
+  const Navigate = useNavigate();
+  const {userType} = useParams();
+  const {userId} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const {raiseTicketId} = useParams();
   const [id, setId] = useState('');
+  const [error, setError] = useState("");
   const [ticketData, setTicketData] = useState('');
   const [subject, setSubject] = useState('');
   const [details, setDetails] = useState('');
@@ -60,7 +61,7 @@ const CustomerTicketTrack = () => {
   const [dealerStatus, setDealerStatus] = useState('');
   const [paymentData, setPaymentData] = useState('');
   const [customerCode, setCustomerCode] = useState('');
-  // const [deliveryNoteId, setDeliveryNoteId]=useState('');
+ const [deliveryNoteId, setDeliveryNoteId]=useState('');
   // const [dealerAcceptance, setDealerAcceptance] = useState([{type: "", dealerRemarks: ""}]); 
   const [invoiceNumber, setInvoiceNumber] = useState('');
   const [invoiceDate, setInvoiceDate] = useState(''); 
@@ -68,14 +69,20 @@ const CustomerTicketTrack = () => {
   const [dealerAddress, setDealerAddress] = useState('');
   const [dealerData, setDealerData] = useState('');
   const [dealerName,setDealerName] = useState('');
-//   const [customerPhoneNumber, setCustomerPhoneNumber] = useState('');
-// const [customerEmail, setCustomerEmail] = useState('');
-
-  // const [rateQuotedBy, setRateQuotedBy] = useState(''); 
-
-  // const [technicianId, setTechnicianId] = useState([]);
-  // const [dealerId, setDealerId] = useState([]);
-  // const [isFinalized, setIsFinalized] = useState(false);
+  const [rateQuotedBy, setRateQuotedBy] = useState(''); 
+  const [paymentMode, setPaymentMode] = useState(''); 
+  const [technicianId, setTechnicianId] = useState([]);
+  const [dealerId, setDealerId] = useState([]);
+  const [isFinalized, setIsFinalized] = useState(false);
+  const [paymentType, setPaymentType] = useState("");
+  const [customerPhoneNumber, setCustomerPhoneNumber] = useState('');
+  const [customerEmail, setCustomerEmail] = useState('');
+  // const [paymentDataTime, setPaymentDateTime]=useState('');
+  // const [paymentId, setPaymentId] = useState('');
+  // const [technicianAmount, setTechnicianAmount] = useState('');
+  // const [dealerAmont, setDealerAmount] = useState('');
+  const [transactionDetails, setTransactionDetails] = useState("");
+  
   // const [isDealerChecked, setIsDealerChecked] = useState(false);
   // const [isTechnicianChecked, setIsTechnicianChecked] = useState(false);
 
@@ -138,24 +145,24 @@ useEffect(() => {
         const data = await response.json();
         setTicketData(data);
         setState(data.state);
-        setTicketId(data.raiseTicketId);  // Setting ticketId here
+        setTicketId(data.raiseTicketId);  
         setDistrict(data.district);
         setZipcode(data.zipCode);
         setAddress(data.address);
         setSubject(data.subject);
         setDetails(data.details);
         setId(data.id);
-        // setTechnicianId(data.technicianList || []);
-        // setDealerId(data.dealerList || []); 
+        setTechnicianId(data.technicianList || []);
+        setDealerId(data.dealerList || []); 
         setCategory(data.category);
         setCustomerId(data.customerId);
         setIsWithMaterial(data.isMaterialType);
         setAssignedTo(data.assignedTo);
         setStatus(data.status);
-        // setRateQuotedBy(data.rateQuotedBy);
+        setRateQuotedBy(data.rateQuotedBy);
         setFullName(data.customerName);
-        // setCustomerEmail(data.emailAddress);   
-        //  setCustomerPhoneNumber(data.customerPhoneNumber);
+        setCustomerEmail(data.emailAddress);   
+        setCustomerPhoneNumber(data.customerPhoneNumber);
         setApprovedAmount(data.approvedAmount);
         setLowestBidder(data.lowestBidderTechnicainId);
         setLowestDealerBidder(data.lowestBidderDealerId);
@@ -183,7 +190,7 @@ useEffect(() => {
         const data = await response.json();
         setDeliveryData(data);
         setId(data.id);
-        // setDeliveryNoteId(data.deliveryNoteId);
+        setDeliveryNoteId(data.deliveryNoteId);
         setOption1Day(data.option1Day || '');
         setOption2Day(data.option2Day || '');
         setOption1Time(data.option1Time || '');
@@ -305,8 +312,14 @@ useEffect(() => {
             }
             const paymentData = await response.json();
             setPaymentData(paymentData); 
-            // SetPaymentMode(paymentData.paymentMode);
-            setCustomerCode(paymentData.technicianConfirmationCode)
+            setPaymentMode(paymentData.paymentMode);
+            setCustomerCode(paymentData.technicianConfirmationCode);
+            // setPaymentId(paymentData.id);
+            // setApprovedAmount(paymentData.approvedAmount);
+            // setTechnicianAmount(paymentData.technicianAmount);
+            // setDealerAmount(paymentData.dealerAmont);
+            // setPaymentDateTime(paymentData.paymentDataTime);
+            setTransactionDetails(paymentData.utrTransactionNumber);
             } catch (error) {
             console.error('Error fetching payment data:', error);
           } finally {
@@ -315,6 +328,15 @@ useEffect(() => {
         };
         fetchPaymentData();
       }, [ticketId]);
+
+
+      const handlePaymenTypeChange = (e) => {
+        const selectedPayment = e.target.value;
+        setPaymentType(selectedPayment);
+        // setPaymentTransactionDetails("");
+        setError("");
+    };
+    
 
       const handleDownloadAllAttachments = async () => {
         if (uploadInvoice.length === 0) {
@@ -355,143 +377,259 @@ useEffect(() => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-//   const handleSaveTicket = async (e) => {
-//     e.preventDefault();
+  const handleSaveTicket = async (e) => {
+    e.preventDefault();
   
-//     const payload = {
-//       RaiseTicketId: ticketData.raiseTicketId,
-//       Date: new Date(),
-//       Address: address,
-//       Subject: subject,
-//       Details: details,
-//       Category: category,
-//       AssignedTo: assignedTo,
-//       id: raiseTicketId,
-//       status: status,
-//       internalStatus: "Closed",
-//       CustomerId: customerId,
-//       State: state,
-//       LowestBidderTechnicainId: lowestBidder,
-//       LowestBidderDealerId: lowestDealerBidder,
-//       ApprovedAmount: approvedAmount,
-//       customerName: fullName,
-//       Option1Day: option1Day,
-//       Option1Time: option1Time,
-//       Option2Day: option2Day,
-//       Option2Time: option2Time,
-//       IsMaterialType: isWithMaterial,
-//       District: district,
-//       ZipCode: zipCode,
-//       RequestType: requestType,
-//       Attachments: attachments,
-//       Materials: specifications.map((spec) => ({
-//         material: spec.material,
-//         Quantity: spec.quantity,
-//         price: spec.price,
-//         Total: spec.total,
-//       })),
-//       comments: commentsList.map((Comment) => ({
-//         updatedDate: Comment.updatedDate,
-//         commentText: Comment.commentText,
-//       })),
-//       TechnicianList: technicianId,
-//       DealerList: dealerId,
-//       Rating: rating.toString(),
-//       RateQuotedBy: rateQuotedBy,
-//     };
+    const payload1 = {
+      RaiseTicketId: ticketData.raiseTicketId,
+      Date: new Date(),
+      Address: address,
+      Subject: subject,
+      Details: details,
+      Category: category,
+      AssignedTo: assignedTo,
+      id: raiseTicketId,
+      status: status,
+      internalStatus: "Closed",
+      CustomerId: customerId,
+      State: state,
+      LowestBidderTechnicainId: lowestBidder,
+      LowestBidderDealerId: lowestDealerBidder,
+      ApprovedAmount: approvedAmount,
+      customerName: fullName,
+      Option1Day: option1Day,
+      Option1Time: option1Time,
+      Option2Day: option2Day,
+      Option2Time: option2Time,
+      IsMaterialType: isWithMaterial,
+      District: district,
+      ZipCode: zipCode,
+      RequestType: requestType,
+      Attachments: attachments,
+      Materials: specifications.map((spec) => ({
+        material: spec.material,
+        Quantity: spec.quantity,
+        price: spec.price,
+        Total: spec.total,
+      })),
+      comments: commentsList.map((Comment) => ({
+        updatedDate: Comment.updatedDate,
+        commentText: Comment.commentText,
+      })),
+      TechnicianList: technicianId,
+      DealerList: dealerId,
+      Rating: rating.toString(),
+      RateQuotedBy: rateQuotedBy,
+      CustomerPhoneNumber: customerPhoneNumber,
+      CustomerEmail: customerEmail,
+      utrTransactionNumber: paymentType === "Pay Online" ? "online" : paymentType === "Cash" ? "cash" : transactionDetails || "",
+      OrderId: "",
+      OrderDate: "",
+      PaidAmount: "",
+      TransactionStatus: "",
+      TransactionType: "",
+      InvoiceId: "",
+      InvoiceURL: "",
+    };
   
-//     try {
-//       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
-//         method: 'PUT',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify(payload),
-//       });
-//       if (!response.ok) {
-//         throw new Error('Failed to save ticket data');
-//       }
-//       alert('Ticket saved Successfully!');
-//       // Navigate(`/paymentConfirmation/${raiseTicketId}/${userType}`)
-//     } catch (error) {
-//       console.error('Error saving ticket data:', error);
-//       window.alert('Failed to save the ticket data. Please try again later.');
-//     }
+  const payload = {
+    ...payload1, 
+    status: paymentType === "Pay Online" ? "Draft" : "Closed",
+  };
+
+  try {
+    let response
+    if (paymentMode === "technician" && (paymentType === "Cash" || paymentType === "Pay Online")) {
+        response = await fetch(`https://localhost:7155/api/RaiseTicket/${raiseTicketId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+    
+        if (!response.ok) {
+          throw new Error('Failed to forward Customer Care.');
+        }
+        if (paymentType === "Pay Online") {
+          window.alert(`We are Redirecting to the Payment Page! Your reference number is ${ticketData.raiseTicketId}. Technician will contact you shortly.`);
+          window.location.href=`https://localhost:7155/RaiseTicketPayments/${id}`;
+        }  else {
+          alert("Ticket Forwarded to Customer Care Successfully!");
+          Navigate(`/profilePage/${userType}/${customerId}`);
+        } 
+      } else if (paymentMode === "online") {
+          response = await fetch(`https://localhost:7155/api/RaiseTicket/${raiseTicketId}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+          });
+  
+      if (!response.ok) {
+        throw new Error('Failed to forward Customer Care.');
+      }
+      window.alert("Ticket Forwarded to Customer Care Successfully!");
+      Navigate(`/profilePage/${userType}/${customerId}`);
+      return;
+    } 
+    else {
+      alert("Ticket Forwarded to Customer Care Successfully!");
+      Navigate(`/profilePage/${userType}/${customerId}`);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    window.alert('Failed to forward Customer Care. Please try again later.');
+  }
+};
+
+
+  const handleUpdateTicket = async (e) => {
+    e.preventDefault();
+
+    // if (!selectedSlot) {
+    //   alert("Please select a time slot.");
+    //   return;
+    // }
+  
+    // if (!selectedStatus) {
+    //   alert("Please select a ticket status.");
+    //   return;
+    // }
+    //  const selectedSpecifications = specifications.filter((spec) => spec.isSelected);
+  
+  const payload2 = {
+
+    id: id,
+    ticketId: ticketId,
+    deliveryNoteId: deliveryNoteId,
+    option1Day: selectedSlot === "option1" ? option1Day : "",
+    option1Time: selectedSlot === "option1" ? option1Time : "",
+    option2Day: selectedSlot === "option2" ? option2Day : "",
+    option2Time: selectedSlot === "option2" ? option2Time : "",
+    deliveryTime: new Date().toISOString(),
+    UploadInvoice: uploadInvoice.map((file) => file.src),
+    InvoiceNumber: invoiceNumber,
+    InvoiceDate: invoiceDate,
+    deliveryInvoiceId: "string",
+    internalStatus: status,
+    technicianStatus: "",
+    dealerStatus: "",
+    technicianAcceptance: "",
+    // technicianAcceptance.map((remarks) => ({
+    //   type: remarks.type,
+    //   technicianRemarks: remarks.technicianRemarks,
+    // })),
+    dealerAcceptance: "",
+    // dealerAcceptance.map((remarks) => ({
+    //   type: remarks.type,
+    //   dealerRemarks: remarks.dealerRemarks,
+    // })),
+    assignedTo: assignedTo,
+    materialCollection: specifications.map((collection) => ({
+      material: collection.material,
+      quantity: collection.quantity,
+      receivedQuantity: collection.receivedQuantity,
+      remainingQuantity: collection.remainingQuantity,
+    }))
+  };
+
+  try {
+    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/DeliveryNote/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload2),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to create a ticket.');
+    }
+    alert('Delivery saved Successfully!');
+  } catch (error) {
+    console.error('Error:', error);
+    window.alert('Failed to create the delivery. Please try again later.');
+  }
+};
+
+// const handlePaymentTicket = async (e) => {
+//   e.preventDefault();
+
+//   const payload3 = {
+//     id: paymentId,
+//     RaiseTicketId: ticketData.raiseTicketId,
+//     paymentId: "string",
+//     paymentMode: paymentMode,
+//     approvedAmount: approvedAmount,
+//     paidAmount: "string",
+//     balancedAmount: "string",
+//     paymentDataTime: paymentDataTime,
+//     technicianAmount: technicianAmount,
+//     dealerAmont: dealerAmont,
+//     customerCareAmount: "string",
+//     utrTransactionNumber: paymentType === "Pay Online" ? "online" : paymentType === "Cash" ? "cash" : transactionDetails || "",
+//     technicianConfirmationCode: customerCode,
 //   };
 
-
-//   const handleUpdateTicket = async (e) => {
-//     e.preventDefault();
-
-//     // if (!selectedSlot) {
-//     //   alert("Please select a time slot.");
-//     //   return;
-//     // }
-  
-//     // if (!selectedStatus) {
-//     //   alert("Please select a ticket status.");
-//     //   return;
-//     // }
-//     //  const selectedSpecifications = specifications.filter((spec) => spec.isSelected);
-  
-//   const payload1 = {
-
-//     id: id,
-//     ticketId: ticketId,
-//     deliveryNoteId: deliveryNoteId,
-//     option1Day: selectedSlot === "option1" ? option1Day : "",
-//     option1Time: selectedSlot === "option1" ? option1Time : "",
-//     option2Day: selectedSlot === "option2" ? option2Day : "",
-//     option2Time: selectedSlot === "option2" ? option2Time : "",
-//     deliveryTime: new Date().toISOString(),
-//     UploadInvoice: uploadInvoice.map((file) => file.src),
-//     InvoiceNumber: invoiceNumber,
-//     InvoiceDate: invoiceDate,
-//     deliveryInvoiceId: "string",
-//     internalStatus: status,
-//     technicianStatus: "",
-//     dealerStatus: "",
-//     technicianAcceptance: technicianAcceptance.map((remarks) => ({
-//       type: remarks.type,
-//       technicianRemarks: remarks.technicianRemarks,
-//     })),
-//     dealerAcceptance: dealerAcceptance.map((remarks) => ({
-//       type: remarks.type,
-//       dealerRemarks: remarks.dealerRemarks,
-//     })),
-//     assignedTo: assignedTo,
-//     materialCollection: specifications.map((collection) => ({
-//       material: collection.material,
-//       quantity: collection.quantity,
-//       receivedQuantity: collection.receivedQuantity,
-//       remainingQuantity: collection.remainingQuantity,
-//     }))
+//   const payload4 = {
+//     ...payload3, 
+//     status: paymentType === "Pay Online" ? "Draft" : "Closed",
 //   };
 
 //   try {
-//     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/DeliveryNote/${id}`, {
-//       method: 'PUT',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify(payload1),
-//     });
-//     if (!response.ok) {
-//       throw new Error('Failed to create a ticket.');
+//     let response
+//     if (paymentMode === "technician" && (paymentType === "Cash" || paymentType === "Pay Online")) {
+//         response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Payment/${paymentId}`, {
+//           method: 'PUT',
+//           headers: {
+//             'Content-Type': 'application/json',
+//           },
+//           body: JSON.stringify(payload4),
+//         });
+    
+//         if (!response.ok) {
+//           throw new Error('Failed to forward Customer Care.');
+//         }
+//         if (paymentType === "Pay Online") {
+//           window.alert(`We are Redirecting to the Payment Page! Your reference number is ${ticketData.raiseTicketId}. Technician will contact you shortly.`);
+//           window.location.href=`https://localhost:7155/RaiseTicketPayments/${id}`;
+//         }  else {
+//           alert("Ticket Forwarded to Customer Care Successfully!");
+//           Navigate(`/profilePage/${userType}/${customerId}`);
+//         } 
+//       } else if (paymentMode === "online") {
+//           response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Payment/${paymentId}`, {
+//             method: 'PUT',
+//             headers: {
+//               'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify(payload4),
+//           });
+  
+//       if (!response.ok) {
+//         throw new Error('Failed to forward Customer Care.');
+//       }
+//       window.alert("Ticket Forwarded to Customer Care Successfully!");
+//       Navigate(`/profilePage/${userType}/${customerId}`);
+//       return;
+//     } 
+//     else {
+//       alert("Ticket Forwarded to Customer Care Successfully!");
+//       Navigate(`/profilePage/${userType}/${customerId}`);
 //     }
-//     alert('Delivery saved Successfully!');
 //   } catch (error) {
 //     console.error('Error:', error);
-//     window.alert('Failed to create the delivery. Please try again later.');
+//     window.alert('Failed to forward Customer Care. Please try again later.');
 //   }
 // };
 
-// const handleBothActions =  (e) => {
-//   e.preventDefault();
-//   handleSaveTicket(e);
-//   handleUpdateTicket(e);
-//   setIsFinalized(true);
-// };
+const handleBothActions =  (e) => {
+  e.preventDefault();
+  handleSaveTicket(e);
+  handleUpdateTicket(e);
+  setIsFinalized(true);
+};
 
 // const handleStatusChange = (event) => {
 //   const { value } = event.target;
@@ -793,6 +931,61 @@ useEffect(() => {
                 </tbody>
             </table>
         </div> 
+
+        <label className='section-title text-dark bg-warning fw-bold w-100 p-1'>Payment Mode</label>
+        <div className='d-flex flex-column m-1'>
+        <label className='fs-5'>
+            <input 
+            type="checkbox" 
+            className="form-check-input border-secondary m-2 border-dark"
+            checked={paymentMode === 'online'}
+            readOnly
+             />
+            Pay Through Online
+          </label>
+          <label className='fs-5'>
+            <input 
+            type="checkbox" 
+            className="form-check-input border-secondary m-2 border-dark"
+            checked={paymentMode === 'technician'}
+            readOnly
+            />
+            Pay On In Presence of Technician
+          </label>
+          </div>
+
+{paymentMode === "technician" && (
+                  <>
+              <div className='radio'>
+                 <label className='m-1'>
+                  <input className='form-check-input m-1 border-dark'
+                  type='radio'
+                  name="paymentType"
+                  value="Cash"
+                  checked={paymentType === "Cash"}
+                  onChange = {handlePaymenTypeChange}
+                  required
+                  /> 
+                  Cash
+                </label>
+
+                <label className='m-1'>
+                  <input className='form-check-input m-1 border-dark'
+                  type='radio'
+                  name="paymentType"
+                  value="Pay Online"
+                  checked={paymentType === "Pay Online"}
+                  onChange = {handlePaymenTypeChange}
+                  required
+                  />
+                  Pay Online
+                </label>
+              </div>
+              {error && (
+                  <div style={{ color: "red", marginTop: "5px" }}>{error}</div>
+                )}
+                </>
+                )} 
         
       {/* <h3 className="section-title">Customer Details</h3>
       <table className="customer-details-table">
@@ -863,10 +1056,12 @@ useEffect(() => {
         ))}
       </div>
     </div>
-          {/* <div className='d-flex flex-row align-items-center gap-5'> 
-          <button className='btn btn-warning me-2 fs-5' title='save' 
-          onClick={handleBothActions} disabled={isFinalized}>Save</button>
-          </div> */}
+           <div className='d-flex justify-content-between gap-5'>
+           <button className='btn btn-warning me-2 fs-5' title='save' 
+          onClick={handleBothActions} disabled={isFinalized}>Proceed</button> 
+           <button className='btn btn-warning me-2 fs-5' title='back' 
+           onClick={() => Navigate(`/trackStatusNotifications/${userType}/${userId}`)} >Back</button>
+          </div> 
       </div>
     </div>
     </div>

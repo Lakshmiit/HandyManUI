@@ -9,10 +9,10 @@ import { Dashboard as MoreVertIcon } from '@mui/icons-material';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import './App.css';
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
  
 const TraderConfirmation = () => {
-  // const Navigate = useNavigate();
+  const Navigate = useNavigate();
   const {userType} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -887,6 +887,7 @@ const handleBothActions =  (e) => {
               >
                 {loading ? 'Uploading...' : 'Upload Invoice'}
               </button>
+
               <button className='btn btn-warning m-1' onClick={handleUploadInvoice}
               disabled={isSaved}
               >Save</button>
@@ -1016,11 +1017,15 @@ const handleBothActions =  (e) => {
           <option>Closed Ticket</option>
         </select>
           </div> */}
-          <div className='d-flex flex-row align-items-center gap-5'> 
+          <div className='d-flex justify-content-between gap-5'> 
           <button className='btn btn-warning fs-5 m-2' title='save' 
           onClick={handleBothActions} 
           // disabled={isSaved}
           >Save</button>
+          <button className='btn btn-warning fs-5 m-2' title='save' 
+          onClick={() => Navigate(`/traderConfirmationGrid/${userType}/${userId}/${category}/${district}`)} 
+          // disabled={isSaved}
+          >Back</button>
           {/* <button className='btn btn-warning fs-5'title='forward' >Forward</button> */}
           </div>
       </div>

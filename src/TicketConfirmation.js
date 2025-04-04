@@ -8,13 +8,12 @@ import { Dashboard as MoreVertIcon } from '@mui/icons-material';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import './App.css';
-import { useParams, } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 const BookingConfirmation = () => {
-  // const Navigate = useNavigate();
+  const Navigate = useNavigate();
    const {userType} = useParams();
    const {userId} = useParams();
-
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const {raiseTicketId} = useParams();
@@ -1227,10 +1226,13 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
             </label>
           
           </div> */}
-          <div className='d-flex flex-row align-items-center gap-5'> 
+          <div className='d-flex justify-content-between gap-5'> 
           <button className='btn btn-warning fs-5' title='save' onClick={handleBothActions}
           disabled={!transactionDetails.trim()} 
           >Save</button>
+          <button className='btn btn-warning fs-5' title='back' onClick={() => Navigate(`/ticketConfirmationGrid/${userType}/${userId}/${category}/${district}`)} 
+          >Back</button>
+
           {/* <button className='btn btn-warning fs-5'title='forward' >Forward</button> */}
           </div>
       </div>
@@ -1238,7 +1240,6 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
     </div>
     </div>
     </div>
-    
     </div>
     <Footer />
     </>
