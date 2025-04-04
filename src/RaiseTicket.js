@@ -359,6 +359,8 @@ useEffect(() => {
       InvoiceId: "",
       InvoiceURL: "", 
       CustomerPhoneNumber: mobileNumber,
+      PaymentMode: "",
+      UTRTransactionNumber: "",
     };
 
   try {
