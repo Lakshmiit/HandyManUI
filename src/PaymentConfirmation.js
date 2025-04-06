@@ -332,6 +332,9 @@ const PaymentConfirmation = () => {
     TransactionType: "",
     InvoiceId: "",
     InvoiceURL: "",
+    PaymentMode: "",
+UTRTransactionNumber: "",
+
     };
   
     try { 
@@ -489,7 +492,7 @@ const handleSendSMSLowestBidder = async (technicianConfirmationCode) => {
     alert('SMS to LowestBidder sent Successfully!');
     if (selectedPayment === 'online') {
       window.alert(`We are Redirecting to the Payment Page! Your reference number is ${ticketData.raiseTicketId}. Technician will contact you shortly.`);
-        window.location.href=`https://localhost:7155/RaiseTicketPayments/${id}`;
+        window.location.href=`https://handymanserviceproviders.com/RaiseTicketPayments/${id}`;
       } else if (selectedPayment === 'technician') {
        window.alert(`Thank You for choosing the HandyMan Services! Your reference number is ${ticketData.raiseTicketId}. Technician will contact you shortly.`);
        window.location.href = `/profilePage/${userType}/${userId}`;

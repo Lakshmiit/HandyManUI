@@ -465,6 +465,8 @@ const handleContinue = () => {
     TransactionType: "",
     InvoiceId: "",
     InvoiceURL: "", 
+    PaymentMode: "",
+UTRTransactionNumber: "",
     };
   
     try {

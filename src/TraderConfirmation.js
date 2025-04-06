@@ -432,6 +432,8 @@ useEffect(() => {
     TransactionType: "",
     InvoiceId: "",
     InvoiceURL: "",
+    PaymentMode: "",
+UTRTransactionNumber: "",
     };
   
     try {
@@ -635,8 +637,8 @@ const handleBothActions =  (e) => {
           </tr>
           <tr>
             <td><strong>Bid Amount</strong></td>
-            <td>{materialTotal - (materialQuotation?.[0]?.fixedDiscount || 0)}</td>
-          </tr>
+            <td>{(materialTotal - (materialQuotation?.[0]?.fixedDiscount || 0)).toFixed(2)}</td>
+            </tr>
           
 
 <tr> 

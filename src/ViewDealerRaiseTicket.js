@@ -376,6 +376,8 @@ useEffect(() => {
     TransactionType: "",
     InvoiceId: "",
     InvoiceURL: "",
+    PaymentMode: "",
+    UTRTransactionNumber: "",
     };
     
       // alert(JSON.stringify(payload));

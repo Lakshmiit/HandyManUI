@@ -70,10 +70,10 @@ const [error, setError] = useState('');
 const [emailAddress, setEmailAddress] = useState("");
 const [selectPincode, setSelectPincode] = useState("");
   const [selectTechnician, setSelectTechnician] = useState("");
-  const [pincodes, setPincodes] = useState([]);
-  const [technicians, setTechnicians] = useState([]);
-  const [selectedTechnicians, setSelectedTechnicians] = useState([]);
-  const [selectAll, setSelectAll] = useState(false);
+  // const [pincodes, setPincodes] = useState([]);
+  // const [technicians, setTechnicians] = useState([]);
+  // const [selectedTechnicians, setSelectedTechnicians] = useState([]);
+  // const [selectAll, setSelectAll] = useState(false);
 
 
   const location = useLocation();
@@ -195,14 +195,14 @@ useEffect(() => {
     fetchProductData();
   }, [buyProductId]);
 
-  // Handle form data changes
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setProductData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+  // // Handle form data changes
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setProductData((prevData) => ({
+  //     ...prevData,
+  //     [name]: value,
+  //   }));
+  // };
 
   const handleDeliveryDateChange = (e) => {
     setDeliveryDate(e.target.value);
@@ -251,8 +251,8 @@ useEffect(() => {
       if (!response.ok) {
         throw new Error("Failed to fetch pincodes");
       }
-      const data = await response.json();
-      setPincodes(data || []);  
+      // const data = await response.json();
+      // setPincodes(data || []);  
     } catch (error) {
       console.error("Error fetching pincodes:", error);
     } finally {
@@ -270,8 +270,8 @@ useEffect(() => {
       if (!response.ok) {
         throw new Error("Failed to fetch technicians");
       }
-      const data = await response.json();
-      setTechnicians(data || []);
+      // const data = await response.json();
+      // setTechnicians(data || []);
     } catch (error) {
       console.error("Error fetching technicians:", error);
     } finally {
@@ -303,33 +303,33 @@ useEffect(() => {
   
 
   // Handle pincode selection
-const handlePincodeChange = (e) => {
-  setSelectPincode(e.target.value);
-  setError({ ...error, selectPincode: "" });
-};
+// const handlePincodeChange = (e) => {
+//   setSelectPincode(e.target.value);
+//   setError({ ...error, selectPincode: "" });
+// };
 
-const handleSelectAllChange = () => {
-  if (selectAll) {
-    setSelectedTechnicians([]);
-  } else {
-    setSelectedTechnicians(technicians.map((tech) => tech.technicianFullName));
-  }
-  setSelectAll(!selectAll);
-};
+// const handleSelectAllChange = () => {
+//   if (selectAll) {
+//     setSelectedTechnicians([]);
+//   } else {
+//     setSelectedTechnicians(technicians.map((tech) => tech.technicianFullName));
+//   }
+//   setSelectAll(!selectAll);
+// };
 
-const handleTechnicianChange = (e) => {
-  const { value, checked } = e.target;
-  let updatedSelection = [...selectedTechnicians];
+// const handleTechnicianChange = (e) => {
+//   const { value, checked } = e.target;
+//   let updatedSelection = [...selectedTechnicians];
   
-  if (checked) {
-    updatedSelection.push(value);
-  } else {
-    updatedSelection = updatedSelection.filter((name) => name !== value);
-  }
+//   if (checked) {
+//     updatedSelection.push(value);
+//   } else {
+//     updatedSelection = updatedSelection.filter((name) => name !== value);
+//   }
   
-  setSelectedTechnicians(updatedSelection);
-  setSelectAll(updatedSelection.length === technicians.length);
-};
+//   setSelectedTechnicians(updatedSelection);
+//   setSelectAll(updatedSelection.length === technicians.length);
+// };
 
 const handleAssignedToChange = (e) => {
   const selectedAssignedTo = e.target.value;
@@ -338,8 +338,8 @@ const handleAssignedToChange = (e) => {
   if (selectedAssignedTo === "Customer") {
     setSelectPincode("");
     setSelectTechnician("");
-    setPincodes([]);
-    setTechnicians([]);
+    // setPincodes([]);
+    // setTechnicians([]);
   }
 };
 
@@ -1024,9 +1024,9 @@ useEffect(() => {
                   </Col>
             
                   {/* Show these fields only if "Technician" is selected */}
-                  {assignedTo === "Technician" && (
+                  {/* {assignedTo === "Technician" && (
                     <>
-                      {/* Select Category */}
+                      {/* Select Category 
                       <Col md={12}>
                         <Form.Group>
                           <label>Category</label>
@@ -1041,10 +1041,10 @@ useEffect(() => {
                           </Form.Control>
                         </Form.Group>
                       </Col>
-            
+             */}
             
                       {/* Select Pincodes */}
-                      <Col md={12}>
+                      {/* <Col md={12}>
                         <Form.Group>
                           <label>Select Pincode</label>
                           <Form.Control as="select" value={selectPincode} onChange={handlePincodeChange} required>
@@ -1056,10 +1056,10 @@ useEffect(() => {
                           {error.selectPincode && <div style={{ color: "red", marginTop: "5px" }}>{error.selectPincode}</div>}
                         </Form.Group>
                       </Col>
-            
+             */}
                       {/* Select Technician */}
             
-                      <Col md={12}>
+                      {/* <Col md={12}>
                   <Form.Group>
                     <label>Select Technician</label>
                     <div>
@@ -1089,8 +1089,8 @@ useEffect(() => {
                   </Form.Group>
                 </Col>
                     </>
-                  )}
-                </Row>
+                  )} */}
+                </Row> 
             <div className="mt-3 d-flex justify-content-between">
             <Button type="submit" className="btn btn-warning text-white mx-2" onClick={() => navigate(`/adminNotifications`)} title="Forward">
                 <ArrowBack />

@@ -1200,7 +1200,7 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
           </label>
           </div>
           
-          <div className='d-flex align-items-center'>
+          {/* <div className='d-flex align-items-center'>
           <h3 className='section-title m-2'>Payment Transaction Details</h3>
           <input
           type='text'
@@ -1209,7 +1209,7 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
           value={transactionDetails}
           onChange={(e) => setTransactionDetails(e.target.value)}
           />
-          </div>
+          </div> */}
 {/*           
           <h3 className='section-title'>Ticket Completion Status</h3>
           <div className='d-flex flex-column m-1'>
@@ -1228,7 +1228,7 @@ const total = Number(enterQuoteAmount) + Number(othercharges);
           </div> */}
           <div className='d-flex justify-content-between gap-5'> 
           <button className='btn btn-warning fs-5' title='save' onClick={handleBothActions}
-          disabled={!transactionDetails.trim()} 
+          // disabled={!transactionDetails.trim()} 
           >Save</button>
           <button className='btn btn-warning fs-5' title='back' onClick={() => Navigate(`/ticketConfirmationGrid/${userType}/${userId}/${category}/${district}`)} 
           >Back</button>

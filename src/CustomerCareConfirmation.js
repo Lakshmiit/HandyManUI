@@ -507,7 +507,8 @@ setShowAlert(true);
     TransactionType: "",
     InvoiceId: "",
     InvoiceURL: "",
-
+    PaymentMode: "",
+UTRTransactionNumber: transactionDetails,
     };
   
     try {
@@ -1168,8 +1169,8 @@ const handleStatusChange = (event) => {
                               </Form.Group>
                             </Col>
                           </Row>
-          
-                          {/* Invoice Id */}
+{/*           
+                          Invoice Id
                           <Row>
                             <Col md={12}>
                               <Form.Group>
@@ -1184,10 +1185,10 @@ const handleStatusChange = (event) => {
                                 />
                               </Form.Group>
                             </Col>
-                          </Row>
+                          </Row> */}
           
                           {/* Invoice URL*/}
-                          <Row>
+                          {/* <Row>
                             <Col md={12}>
                               <Form.Group>
                                 <label>Invoice URL</label>
@@ -1201,7 +1202,7 @@ const handleStatusChange = (event) => {
                                 />
                               </Form.Group>
                             </Col>
-                          </Row>
+                          </Row> */}
          
       <div className='payment'>
           <h3 className='section-title mt-2'>Ticket Closing Status</h3>

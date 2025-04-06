@@ -7,10 +7,11 @@ import {
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import Header from './Header.js';
 import Footer from './Footer.js';
-
+// import RaiseTicketConfirmation from './RaiseTicketConfirmation.js';
 import Sidebar from './Sidebar';
-import { useParams } from 'react-router-dom';
+import {  useParams } from 'react-router-dom';
 const AddressManager = () => {
+  // const Navigate = useNavigate();
   const {selectedUserType} = useParams();
   const {userType} = useParams();
   const [isMobile, setIsMobile] = useState(false);
@@ -54,6 +55,8 @@ const AddressManager = () => {
   });
   const [confirmationModal, setConfirmationModal] = useState(false);
   const [response, setResponse] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // const [videoRefId, setVideoRefId] = useState('');
 
 
@@ -249,24 +252,25 @@ useEffect(() => {
   };
   const phoneNumber = '7989328864';  // Phone number
   // Generate ticket ID in the format VSKPAKP002
-  const ticketIdPrefix = "VSKPAPREFV";
-  const ticketIdSuffix = String(Math.floor(Math.random() * 999) + 1).padStart(3, "0");
-  const ticketIds = `${ticketIdPrefix}${ticketIdSuffix}`;
+  // const ticketIdPrefix = "VSKPAPREFV";
+  // const ticketIdSuffix = String(Math.floor(Math.random() * 999) + 1).padStart(3, "0");
+  // const ticketIds = `${ticketIdPrefix}${ticketIdSuffix}`;
 
   // Generate WhatsApp link with the ticket ID
-  const generateWhatsAppLink = (ticketId, phoneNumber) => {
-    const message = `Hello, I'd like to continue uploading my video for ticket: ${ticketId}`;
- var url =`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-    // alert(url);
-    //console.log(url);
+//   const generateWhatsAppLink = (ticketId, phoneNumber) => {
+//     const message = `Hello, I'd like to continue uploading my video for ticket: ${ticketId}`;
+//  var url =`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+//     // alert(url);
+//     //console.log(url);
 
-    return url;
-  };
-  const handleWhatsAppClick = () => {
-    // handleSaveWhatsapp();
-    const link = generateWhatsAppLink(ticketIds, phoneNumber);
-    window.open(link, '_blank');
-  };
+//     return url;
+//   };
+
+  // const handleWhatsAppClick = () => {
+  //   // handleSaveWhatsapp();
+  //   const link = generateWhatsAppLink(ticketIds, phoneNumber);
+  //   window.open(link, '_blank');
+  // };
   const uploadFile = async (byteArray, fileName, mimeType, file) => {
     try {
       const formData = new FormData();
@@ -288,6 +292,7 @@ useEffect(() => {
       return '';
     }
   };
+
   const handleSaveTicket = async (e) => {
     e.preventDefault();
   
@@ -302,7 +307,8 @@ useEffect(() => {
       return;
     }
   
-  
+    if (isSubmitting) return;
+    setIsSubmitting(true);
 
     const primaryAddress = addresses.find((addr) => addr.type === "primary");
     const state = primaryAddress?.state || "";
@@ -398,13 +404,14 @@ useEffect(() => {
           // alert(error);
           console.error('Error sending message:', error);
         }
-  
+        // Navigate(`/raiseTicketConfirmation/${userType}/${userId}`);
     // Redirect to CustomerProfilePage
-    window.location.href = `/profilePage/${userType}/${userId}`;
+     window.location.href = `/profilePage/${userType}/${userId}`;
   
   } catch (error) {
     console.error('Error:', error);
     window.alert('Failed to create the ticket. Please try again later.');
+    setIsSubmitting(false);
   }
   };
   
@@ -728,9 +735,11 @@ useEffect(() => {
     <label className="text-danger m-2 fs-5">
       If any Videos Forward to Whatsapp Number
       <br />
-      <span className="text-success" onClick={handleWhatsAppClick} style={{ cursor: 'pointer' }}>
+      <span className="text-success" 
+      // onClick={handleWhatsAppClick} 
+      style={{ cursor: 'pointer' }}>
         <WhatsAppIcon />
-        <strong className="blinking-text m-2" style={{textDecoration: 'underline'}}>{phoneNumber}</strong>
+        <strong className="m-2" style={{textDecoration: 'underline'}}>{phoneNumber}</strong>
       </span>
     </label>
   
@@ -817,9 +826,9 @@ useEffect(() => {
 
         {/* Get Quote Button */}
         <div className="mt-4">
-          <Button variant="success" type="submit" onClick={handleSaveTicket}>
-            Get Quote
-          </Button>
+          <Button variant="success" type="submit" onClick={handleSaveTicket}
+          disabled = {isSubmitting}>
+ {isSubmitting ? 'Submitting...' : 'Get Quote'}          </Button>
         </div>
       {/* </Form> */}
 

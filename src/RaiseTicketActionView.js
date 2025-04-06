@@ -217,6 +217,8 @@ const RaiseActionView = () => {
     InvoiceId: "",
     InvoiceURL: "",
     CustomerPhoneNumber: customerPhoneNumber,
+    PaymentMode: "",
+    UTRTransactionNumber: "",
     };
     try {
       
@@ -361,6 +363,43 @@ const RaiseActionView = () => {
                 value={ticketData.customerId}
                 onChange={handleChange}
                 placeholder="Ticket Owner"
+                required
+                readOnly
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+
+{/*Customer Name*/}
+
+        <Row>
+          <Col md={12}>
+            <Form.Group>
+              <label>Customer Name</label>
+              <Form.Control
+                type="text"
+                name="customerName"
+                value={ticketData.customerName}
+                onChange={handleChange}
+                placeholder="Customer Name"
+                required
+                readOnly
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+
+{/* Customer Address */}
+        <Row>
+          <Col md={12}>
+            <Form.Group>
+              <label>Customer Address</label>
+              <Form.Control
+                type="text"
+                name="address"
+                value={ticketData.address}
+                onChange={handleChange}
+                placeholder="Customer Address"
                 required
                 readOnly
               />

@@ -55,14 +55,14 @@ const CustomerTicketTrack = () => {
   const [technicianDetails, setTechnicianDetails] = useState([]);
   const [totalAmount, setTotalAmount] = useState('');
   // const [selectedStatus, setSelectedStatus] = useState('');
-  // const [technicianAcceptance, setTechnicianAcceptance] = useState([{type: "", technicianRemarks: ""}]); 
+  const [technicianAcceptance, setTechnicianAcceptance] = useState([{type: "", technicianRemarks: ""}]); 
   const [technicianStatus, setTechnicianStatus] = useState('');
   const [deliveryData, setDeliveryData] = useState('');
   const [dealerStatus, setDealerStatus] = useState('');
   const [paymentData, setPaymentData] = useState('');
   const [customerCode, setCustomerCode] = useState('');
  const [deliveryNoteId, setDeliveryNoteId]=useState('');
-  // const [dealerAcceptance, setDealerAcceptance] = useState([{type: "", dealerRemarks: ""}]); 
+  const [dealerAcceptance, setDealerAcceptance] = useState([{type: "", dealerRemarks: ""}]); 
   const [invoiceNumber, setInvoiceNumber] = useState('');
   const [invoiceDate, setInvoiceDate] = useState(''); 
   const [uploadInvoice, setUploadInvoice] = useState([]);
@@ -211,8 +211,8 @@ useEffect(() => {
         setInvoiceNumber(data.invoiceNumber);
         setInvoiceDate(data.invoiceDate);
         setTechnicianStatus(data.technicianStatus);
-        // setTechnicianAcceptance(data.technicianAcceptance || [{ type: "", technicianRemarks: "" }]);
-        // setDealerAcceptance(data.dealerAcceptance || [{ type: "", dealerRemarks: "" }]);
+        setTechnicianAcceptance(data.technicianAcceptance || [{ type: "", technicianRemarks: "" }]);
+        setDealerAcceptance(data.dealerAcceptance || [{ type: "", dealerRemarks: "" }]);
         setDealerStatus(data.dealerStatus);
         // setIsDealerChecked(data.dealerStatus === "Material Delivered");
         // setIsTechnicianChecked(data.technicianStatus === "Job Completed");
@@ -421,7 +421,7 @@ useEffect(() => {
       Rating: rating.toString(),
       RateQuotedBy: rateQuotedBy,
       CustomerPhoneNumber: customerPhoneNumber,
-      CustomerEmail: customerEmail,
+      CustomerEmail: customerEmail || "",
       utrTransactionNumber: paymentType === "Pay Online" ? "online" : paymentType === "Cash" ? "cash" : transactionDetails || "",
       OrderId: "",
       OrderDate: "",
@@ -430,6 +430,8 @@ useEffect(() => {
       TransactionType: "",
       InvoiceId: "",
       InvoiceURL: "",
+      PaymentMode: "",
+UTRTransactionNumber: "",
     };
   
   const payload = {
@@ -440,7 +442,7 @@ useEffect(() => {
   try {
     let response
     if (paymentMode === "technician" && (paymentType === "Cash" || paymentType === "Pay Online")) {
-        response = await fetch(`https://localhost:7155/api/RaiseTicket/${raiseTicketId}`, {
+        response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -453,13 +455,13 @@ useEffect(() => {
         }
         if (paymentType === "Pay Online") {
           window.alert(`We are Redirecting to the Payment Page! Your reference number is ${ticketData.raiseTicketId}. Technician will contact you shortly.`);
-          window.location.href=`https://localhost:7155/RaiseTicketPayments/${id}`;
+          window.location.href=`https://handymanserviceproviders.com/RaiseTicketPayments/${raiseTicketId}`;
         }  else {
           alert("Ticket Forwarded to Customer Care Successfully!");
           Navigate(`/profilePage/${userType}/${customerId}`);
         } 
       } else if (paymentMode === "online") {
-          response = await fetch(`https://localhost:7155/api/RaiseTicket/${raiseTicketId}`, {
+          response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
@@ -516,16 +518,14 @@ useEffect(() => {
     internalStatus: status,
     technicianStatus: "",
     dealerStatus: "",
-    technicianAcceptance: "",
-    // technicianAcceptance.map((remarks) => ({
-    //   type: remarks.type,
-    //   technicianRemarks: remarks.technicianRemarks,
-    // })),
-    dealerAcceptance: "",
-    // dealerAcceptance.map((remarks) => ({
-    //   type: remarks.type,
-    //   dealerRemarks: remarks.dealerRemarks,
-    // })),
+    technicianAcceptance: technicianAcceptance.map((remarks) => ({
+      type: remarks.type,
+      technicianRemarks: remarks.technicianRemarks,
+    })),
+    dealerAcceptance: dealerAcceptance.map((remarks) => ({
+      type: remarks.type,
+      dealerRemarks: remarks.dealerRemarks,
+    })),
     assignedTo: assignedTo,
     materialCollection: specifications.map((collection) => ({
       material: collection.material,
@@ -593,7 +593,7 @@ useEffect(() => {
 //         }
 //         if (paymentType === "Pay Online") {
 //           window.alert(`We are Redirecting to the Payment Page! Your reference number is ${ticketData.raiseTicketId}. Technician will contact you shortly.`);
-//           window.location.href=`https://localhost:7155/RaiseTicketPayments/${id}`;
+//           window.location.href=`https://handymanserviceproviders.com/RaiseTicketPayments/${id}`;
 //         }  else {
 //           alert("Ticket Forwarded to Customer Care Successfully!");
 //           Navigate(`/profilePage/${userType}/${customerId}`);

@@ -92,6 +92,7 @@ import ViewOffersBuyProductPage from './ViewOffersBuyProductPage.js';
  import TechnicianViewBookTechnician from './TechnicianViewBookTechnician.js';
  import BookTechnicianDetailsNotifications from './BookTechnicianDetailsNotifications.js';
  import BookTechnicianDetailsGrid from './BookTechnicianDetailsGrid.js';
+ import RaiseTicketConfirmation from './RaiseTicketConfirmation.js';
 // import BuyProductCartView from './BuyProductCartView.js';
  
 const PreventBackNavigation = () => {
@@ -136,6 +137,8 @@ function App() {
             <Route path="/product-list/:ProductOwnedBy" element={<ProductList />} />
             <Route path="/product-edit/:id/:ProductOwnedBy" element={<EditUploadForm />} />           
             <Route path="/raiseTicket/:userType/:userId" element={<RaiseTicket />} />
+            <Route path="/raiseTicketConfirmation/:userType/:userId" element={<RaiseTicketConfirmation />} />
+            
             <Route path="/buyProducts/:userType/:userId" element={<BuyProducts />} />
             <Route path="/sidebar/:userType" element={<Sidebar />} />
             <Route path="/buyproduct-view/:userType/:userId/:id" element={<BuyProductView />} />

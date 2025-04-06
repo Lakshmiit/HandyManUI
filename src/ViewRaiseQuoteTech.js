@@ -87,9 +87,9 @@ const RaiseQuoteTechnician = () => {
                 ...data,
                 technicianList: normalizedTechnicianList,
             });
-            setOtherCharge('10');
-            setServiceCharge('1');
-            setGST('1');  
+            setOtherCharge('100');
+            setServiceCharge('10');
+            setGST('18');  
             // setDiscount('0');  
             setState(data.state);
             setDistrict(data.district);
@@ -373,6 +373,8 @@ const handleUpdateTicket = async (e) => {
           Rating: "",
           RateQuotedBy: "",
           CustomerPhoneNumber: customerPhoneNumber, 
+          PaymentMode: "",
+          UTRTransactionNumber: "",
       };
 
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {

@@ -336,6 +336,8 @@ const RaiseQuotation = () => {
     TransactionType: "",
     InvoiceId: "",
     InvoiceURL: "",
+    PaymentMode: "",
+UTRTransactionNumber: "",
     };
     try {
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {

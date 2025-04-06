@@ -23,6 +23,7 @@ const {technicianName} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   // const [error, setError] = useState("");
+
   const [jobDescription, setJobDescription] = useState(''); 
   const [phoneNumber, setPhoneNumber] = useState(''); 
   const [technicianData, setTechnicianData] = useState('');
@@ -44,12 +45,14 @@ const {technicianName} = useParams();
   const [remarks, setRemarks] = useState('');
   const [moreInfo, setMoreInfo] = useState('');
   const [technicianConfirmationCode, setTechnicianConfirmationCode] = useState('');
-  const [assignedTo] = useState('');
   const [paymentTransactionDetails, setPaymentTransactionDetails] = useState('');
   // const [paymentType, setPaymentType] = useState("");
   const [emailAddress, setEmailAddress] = useState("");
   const [technicianPincode, setTechnicianPincode] = useState("");
   const [technicianFullName, setTechnicianName] = useState([]);
+  const [isForwardDisabled, setIsForwardDisabled] = useState(false);
+  const [status, setStatus] = useState('');
+  const [assignedTo, setAssignedTo] = useState('');
   
  
   useEffect(() => {
@@ -84,6 +87,8 @@ const {technicianName} = useParams();
         setAfterDiscount(data.afterDiscount);
         setRemarks(data.remarks);
         setMoreInfo(data.moreInfo);
+         setStatus(data.status);
+         setAssignedTo (data.assignedTo);
         setTechnicianConfirmationCode(data.technicianConfirmationCode);
         setPaymentTransactionDetails(data.utrTransactionNumber);
       } catch (error) {
@@ -174,6 +179,7 @@ useEffect(() => {
 
 const handleUpdateJobDescription = async (e) => {
   e.preventDefault();
+  setIsForwardDisabled(true);
 // if (paymentMode === "technician") {
 //   if (!paymentType) {
 //     setError("Please select atleast one.");
@@ -597,7 +603,8 @@ const handleUpdateJobDescription = async (e) => {
           disabled={status === "Assigned" && assignedTo === "Technical Agency"}>
             <SaveAsIcon />
           </Button> */}
-          <Button className="btn btn-warning text-white mx-2" onClick={handleUpdateJobDescription} title="Forward">
+          <Button className="btn btn-warning text-white mx-2" onClick={handleUpdateJobDescription} 
+          title="Forward" disabled = {isForwardDisabled || (status === "Assigned" && assignedTo === "Customer") || (status === "Closed" && assignedTo === "Customer Care") }>
             <ForwardIcon />
           </Button>
 
