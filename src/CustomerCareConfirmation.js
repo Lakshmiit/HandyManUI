@@ -91,8 +91,8 @@ const CustomerCareConfirmation = () => {
 
   
   useEffect(() => {
-        console.log(technicianFullName, dealerData,deliveryId,id,technicianData, deliveryData, technicianAddress, paymentData,technicianStatus, dealerStatus);
-      }, [technicianFullName,dealerData, deliveryId,id,technicianData, deliveryData, technicianAddress, paymentData,technicianStatus, dealerStatus]);
+        console.log(technicianFullName,InvoiceId,InvoiceURL, dealerData,deliveryId,id,technicianData, deliveryData, technicianAddress, paymentData,technicianStatus, dealerStatus);
+      }, [technicianFullName, InvoiceId,InvoiceURL,dealerData, deliveryId,id,technicianData, deliveryData, technicianAddress, paymentData,technicianStatus, dealerStatus]);
   
 
   // useEffect(() => {
@@ -518,7 +518,7 @@ UTRTransactionNumber: transactionDetails,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload),
-      });
+      }); 
       if (!response.ok) {
         throw new Error('Failed to save ticket data');
       }
