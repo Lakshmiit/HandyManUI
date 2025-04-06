@@ -24,18 +24,18 @@ const UserIdLogin = () => {
       [name]: type === 'checkbox' ? checked : value,
     }));
   };
-
+  
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    const { username, password, consent } = formData;
-
-    if (!username || !password || !consent) {
+  
+    const { username, password } = formData;
+  
+    if (!username || !password ) {
       setError('Please fill all fields and accept terms.');
       setSubmitted(false);
       return;
-    }
-
+    } 
+  
     if (username === 'KrvSatya' && password === 'Ramesh@123') {
       setError('');
       setSubmitted(true);
@@ -45,12 +45,6 @@ const UserIdLogin = () => {
       setError('Invalid credentials');
       setSubmitted(false);
     }
-
-    if (!isChecked) {
-        alert("You must accept the terms and conditions.");
-        return;
-      } 
-  
   };
 
   return (
