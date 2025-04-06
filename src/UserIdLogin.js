@@ -1,99 +1,101 @@
- import React, { useState, useEffect } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import './App.css';
-import { useNavigate } from "react-router-dom";
-import Modal from 'react-bootstrap/Modal';
+import React, { useState } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import { useNavigate } from 'react-router-dom';
 import HandyManCharacter from "./img/hm_char.png";
 import HandyManLogo from "./img/Hm_Logo 1.png";
-import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 
-const LoginPage = () => {
-    const Navigate = useNavigate();
-    // const {userType} = useParams();
-    // const {userId} = useParams();
-  const [mobile, setMobile] = useState('');
-//     const [consent, setConsent] = useState(false);
+const UserIdLogin = () => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    username: '',
+    password: '',
+    consent: false,
+  });
   const [isChecked, setIsChecked] = useState('');
-  const [showTerms, setShowTerms] = useState(false);
-  const [showPrivacy, setShowPrivacy] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState('');
   const [submitted, setSubmitted] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const mobileNumber = "9885803193";
 
-
-  const handleMobileChange = (e) => {
-    const value = e.target.value;
-    if (/^\d{0,10}$/.test(value)) {
-        setMobile(value);   
-    }
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (mobile !== mobileNumber) {
-        setError(<span>This Number is not Registered, Please contact Customer care <WhatsAppIcon style={{color: 'green'}}/> 8498892222.</span>);
-        return;
+    const { username, password, consent } = formData;
+
+    if (!username || !password || !consent) {
+      setError('Please fill all fields and accept terms.');
+      setSubmitted(false);
+      return;
+    }
+
+    if (username === 'KrvSatya' && password === 'Ramesh@123') {
+      setError('');
+      setSubmitted(true);
+      console.log('Form submitted:', formData);
+      navigate(`/profilePage/customer/74991775-cfb7-47e0-b963-5d32e02a570a`);
+    } else {
+      setError('Invalid credentials');
+      setSubmitted(false);
     }
 
     if (!isChecked) {
         alert("You must accept the terms and conditions.");
-        return; 
+        return;
       } 
   
-    setError('');
-    setSubmitted(true);
-  
-    setTimeout(() => {
-    //   alert('Login submitted!');
-      setSubmitted(false);
-      Navigate(`/profilePage/customer/74991775-cfb7-47e0-b963-5d32e02a570a`);
-    }, 2000);
   };
-
-  useEffect(() => {
-    const input = document.getElementById('mobileInput');
-    const preventDefault = (e) => e.preventDefault();
-    ['copy', 'paste', 'cut', 'drop', 'contextmenu'].forEach(event =>
-      input.addEventListener(event, preventDefault)
-    );
-    return () => {
-      ['copy', 'paste', 'cut', 'drop', 'contextmenu'].forEach(event =>
-        input.removeEventListener(event, preventDefault)
-      );
-    };
-  }, []);
 
   return (
     <div className="h-100 d-flex align-items-center py-2 flex-column">
-      <div className="login_section bg-light rounded-3">
-        <div className="d-flex justify-content-center mb-3">
+      <div className="login_section bg-light rounded-3 p-4">
+        <div className="d-flex align-items-center justify-content-center mb-3">
           <img src={HandyManCharacter} alt="Handy Man Character" />
         </div>
+
         <form className="d-flex gap-3 flex-column" onSubmit={handleSubmit} autoComplete="off">
           <img src={HandyManLogo} alt="Handy Man Logo" />
           <h4>Sign into your account</h4>
 
+          <input
+            type="text"
+            name="username"
+            className="form-control"
+            placeholder="User ID"
+            value={formData.username}
+            onChange={handleChange}
+          />
+
+          <input
+            type="password"
+            name="password"
+            className="form-control"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
+          />
+
           <div>
-            <label htmlFor="mobileInput">
-              Mobile Number<span className="req_star">*</span>
-            </label>
-            <input
-              id="mobileInput"
-              type="number"
-              className="form-control"
-              placeholder="Enter Mobile Number"
-              value={mobile}
-              onChange={handleMobileChange}
-              autoComplete="off"
-            />
+            <a href="/">Login With Mobile</a>
           </div>
 
-          <a className="link" href="/UserIdLogin">Login With User ID</a>
-
-          <div>
-          <label className='fs-5'>
+          <div className="form-check d-flex gap-2 align-items-start">
+            {/* <input
+              type="checkbox"
+              name="consent"
+              className="form-check-input mt-1"
+              checked={formData.consent}
+              onChange={handleChange}
+              id="consentCheckbox"
+            /> */}
+            <label className='fs-5'>
             <input 
             type="checkbox" 
             className="form-check-input border-dark"
@@ -106,7 +108,7 @@ const LoginPage = () => {
               }}
               className="text-dark ms-1"
               style={{ background: "none", border: "none", padding: 0, textDecoration: "underline", cursor: "pointer" }}
-              > 
+              >
                 Terms and conditions & Privacy Policy ..
               </button>
           </label>
@@ -395,38 +397,48 @@ const LoginPage = () => {
           {error && <span className="text-danger">{error}</span>}
 
           <div style={{ width: '100%', textAlign: 'start', padding: '1rem' }}>
-          <button
-            type="submit"
-            className={`responsive-login-btn ${submitted ? 'disabled' : ''}`}
+            <button
+              type="submit"
+              className={`responsive-login-btn  ${submitted ? 'disabled' : ''}`}
+              disabled={submitted}
             >
-            {submitted ? 'Loading...' : 'Login'}
-         </button>
-
+              {submitted ? 'Loading...' : 'Login'}
+            </button>
           </div>
         </form>
       </div>
 
       {/* Terms Modal */}
-      <Modal show={showTerms} onHide={() => setShowTerms(false)} size="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>Terms and Conditions</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <iframe src="/TermsAndConditions" width="100%" height="400px" title="Terms" />
-        </Modal.Body>
-      </Modal>
+      <div className="modal fade" id="termsModal" tabIndex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+        <div className="modal-dialog modal-lg">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="termsModalLabel">Terms and Conditions</h5>
+              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+            </div>
+            <div className="modal-body">
+              <iframe src="/TermsAndConditions" width="100%" height="400px" title="Terms" />
+            </div>
+          </div>
+        </div>
+      </div>
 
-      {/* Privacy Policy Modal */}
-      <Modal show={showPrivacy} onHide={() => setShowPrivacy(false)} size="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>Privacy Policy</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <iframe src="/PrivacyPolicy" width="100%" height="400px" title="Privacy Policy" />
-        </Modal.Body>
-      </Modal>
+      {/* Privacy Modal */}
+      <div className="modal fade" id="privacyModal" tabIndex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
+        <div className="modal-dialog modal-lg">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="privacyModalLabel">Privacy Policy</h5>
+              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+            </div>
+            <div className="modal-body">
+              <iframe src="/PrivacyPolicy" width="100%" height="400px" title="Privacy Policy" />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default LoginPage;
+export default UserIdLogin;
