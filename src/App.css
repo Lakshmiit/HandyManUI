@@ -2813,4 +2813,23 @@ h2 {
   accent-color: black; 
 }
 
+.responsive-login-btn {
+  padding: 10px 20px;
+  font-size: 16px;
+  width: 30%;
+  max-width: 300px;
+  background-color: #000;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+
+
+.responsive-login-btn.disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
 

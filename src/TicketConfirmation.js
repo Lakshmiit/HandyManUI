@@ -924,7 +924,7 @@ const handleMaterialSave = () => {
     }
 };
 
-const total = Number(enterQuoteAmount) + Number(othercharges);
+const total = Number(enterQuoteAmount- fixedDiscount) + Number(othercharges);
 
   return (
     <>
