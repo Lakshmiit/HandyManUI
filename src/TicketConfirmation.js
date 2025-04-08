@@ -83,6 +83,12 @@ const [noteId, setNoteId] = useState('');
 const [technicianMaterial, setTechnicianMaterial] = useState([{ material: "", quantity: "", receivedQuantity: "", remainingQuantity: "", isSelected: false}]);
 const [customerPhoneNumber, setCustomerPhoneNumber] = useState('');
 const [customerEmail, setCustomerEmail] = useState('');
+const [utrTransactionNumber, setUTRTransactionNumber] = useState('');
+const [orderId, setOrderId] = useState('');
+const [orderDate, setOrderDate] = useState('');
+const [paidAmount, setPaidAmount] = useState('');
+const [transactionType, setTransactionType] = useState('');
+const [transactionStatus, setTransactionStatus] = useState('');
 
 
   useEffect(() => {
@@ -205,6 +211,12 @@ const [customerEmail, setCustomerEmail] = useState('');
           setRequestType(data.requestType || 'Without Material');
           setAttachments(data.attachments);
           setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: "" }]);
+          setUTRTransactionNumber(data.utrTransactionNumber);
+          setOrderId(data.orderId);
+          setOrderDate(data.orderDate);
+          setPaidAmount(data.paidAmount);
+          setTransactionStatus(data.transactionStatus);
+          setTransactionType(data.transactionType);
         } catch (error) {
           console.error('Error fetching ticket data:', error);
         } finally {
@@ -508,13 +520,16 @@ const handleSlotSave = () => {
       RateQuotedBy: rateQuotedBy,
       CustomerPhoneNumber: customerPhoneNumber,
     CustomerEmail: customerEmail,
-    OrderId: "",
-    OrderDate: "",
-    PaidAmount: "",
-    TransactionStatus: "",
-    TransactionType: "",
+    utrTransactionNumber: transactionDetails || "",
+    OrderId: orderId,
+    OrderDate: orderDate,
+    PaidAmount: paidAmount,
+    TransactionStatus: transactionStatus,
+    TransactionType: transactionType,
     InvoiceId: "",
     InvoiceURL: "",
+    PaymentMode: paymentMode,
+    UTRTransactionNumber: utrTransactionNumber || "",
     };
   
     try {
@@ -866,12 +881,9 @@ const handleStatusAction = (e) => {
 const handleBothActions =  (e) => {
   e.preventDefault();
   handleRaiseTicket(e);
-  // handleDeliveryNoteUpdate(e)
-  // handleMaterialUpdate(e);
-  //handleTimeSlotSave(e)
   handlePaymentTicket(e);
   setIsSaved(true);
- window.location.href = `/profilePage/${userType}/${userId}`;
+  window.location.href = `/profilePage/${userType}/${userId}`;
 };
 
 // const handleCheckboxChange = (mode) => {

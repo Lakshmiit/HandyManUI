@@ -95,6 +95,7 @@ import ViewOffersBuyProductPage from './ViewOffersBuyProductPage.js';
  import RaiseTicketConfirmation from './RaiseTicketConfirmation.js';
  import LoginPage from './LoginPage.js';
  import UserIdLogin from './UserIdLogin.js';
+ import CustomerRaiseTicketGridView from './CustomerRaiseTicketGridView.js';
 // import BuyProductCartView from './BuyProductCartView.js';
  
 const PreventBackNavigation = () => {
@@ -167,6 +168,8 @@ function App() {
             <Route path="/viewCustomer/:userType/:userId" element={<ViewCustomerGrid />} />
             <Route path="/ShortAdminNotifications" element={<ShortAdminNotifications />} />
             <Route path="/customerRaiseTicketQuotation/:userType/:userId/:raiseTicketId" element={<CustomerRaiseTicketQuotation />} />
+            <Route path="/customerRaiseTicketGridView/:userType/:userId/:raiseTicketId" element={<CustomerRaiseTicketGridView />} />
+            
             <Route path="/dealerNotifications/:userType/:userId/:category/:district" element={<DealerNotifications />} /> 
             <Route path="/dealerNotificationsGrid/:userType/:userId/:category/:district" element={<DealerNotificationsGrid />} />
             <Route path="/viewDealerRaiseTicket/:userType/:userId/:category/:raiseTicketId" element={<ViewDealerRaiseTicket />} />

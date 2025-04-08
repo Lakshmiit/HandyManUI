@@ -19,26 +19,22 @@ const TrackStatusNotificationBell = () => {
           `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTrackTicketsByCustomerId?customerId=${userId}`
         );
         const data = await response.json();
-// const productOrdersFiltered = data.filter(
-//     (item) => item.assignedTo === "Customer" && item.status === "Assigned"
-//   );
-
-
+        const getTrackNotifications = data.filter(
+          (item) => item.assignedTo === "Customer"&& (item.internalStatus === "Assigned" || item.internalStatus === "Pending" || item.internalStatus === "Customer Approved" ||  item.internalStatus === "PaymentDone")
+        )
         // Check for new notifications
-        if (data.length > notifications.length) {
-          setUnreadCount(data.length - notifications.length);
-          // playNotificationSound();
+        if (getTrackNotifications.length > notifications.length) {
+          setUnreadCount(getTrackNotifications.length - notifications.length);
         }
-
-        setNotifications(data);
+        setNotifications(getTrackNotifications);
       } catch (error) {
         console.error("Error fetching notifications:", error);
       }
     });
 
     return () => unsubscribe();
-  }, [userId, notifications]); // Added dependencies to re-run effect when `userId` or `notifications` change
-
+  }, [userId, notifications]); 
+  
   //   const playNotificationSound = () => {
   //     const audio = new Audio(notificationSound);
   //     audio.play();

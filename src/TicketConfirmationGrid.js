@@ -176,10 +176,10 @@ useEffect(() => {
         <div className="mobile-ticket-grid">
   {currentRaiseTicket.map((ticket, index) => (
     <div key={index} className="ticket-card">
-      <div className="ticket-header">
+      {/* <div className="ticket-header"> */}
       <strong>Customer ID:</strong> {ticket.customerId} <br />
       <strong>Ticket ID:</strong> {ticket.raiseTicketId}
-      </div>
+      {/* </div> */}
       <div className="ticket-body">
         <p><strong>Category:</strong> {ticket.category}</p>
         <p><strong>Description:</strong> {ticket.details}</p>

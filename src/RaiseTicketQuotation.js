@@ -521,7 +521,7 @@ materialQuotation: material.map((mat) => ({
       throw new Error('Failed to save Dealer ticket data');
     }
     
-    alert('Ticket  Dealer saved Successfully!');
+    alert('Ticket Dealer saved Successfully!');
   } catch (error) {
     console.error('Error saving Dealer ticket data:', error);
     window.alert('Failed to save the Dealer ticket data. Please try again later.')
@@ -962,7 +962,7 @@ materialQuotation: material.map((mat) => ({
   </div>
 )}
       
-
+    {requestType === "With Material" && (
     <table className="table table-bordered m-1">
     <tbody>
   {/* Material Amount */}
@@ -1128,6 +1128,7 @@ materialQuotation: material.map((mat) => ({
   </tr>
 </tbody>
  </table>
+  )}
 
  <div>
   <p><strong>Technician Quotation</strong></p>

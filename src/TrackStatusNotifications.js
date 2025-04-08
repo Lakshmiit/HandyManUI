@@ -75,10 +75,10 @@ const TrackNotification = () => {
   const [activeTab, setActiveTab] = useState("");
   const [glow, setGlow] = useState(false);
   const [glowTrack, setGlowTrack] = useState(false);
-  // const { userType } = useParams();
+  const { userType } = useParams();
   // const { raiseTicketId } = useParams('');
   const { userId } = useParams('');
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -117,6 +117,10 @@ const TrackNotification = () => {
     fetchNotifications();
  }, [userId]);
     
+ const handleBackClick = () => {
+  navigate(`/profilePage/${userType}/${userId}`);
+};
+
 
   // const handleClearTrackNotifications = () => {
   //   setNewTrackCount(0);
@@ -156,15 +160,18 @@ const TrackNotification = () => {
 
       <div className={`container m-1 ${isMobile ? "w-100" : "w-75"}`}>
         <h2 className="text-start mb-2 fs-20">
+        <div onClick={handleBackClick} style={{ cursor: 'pointer' }}>
           <ArrowBackIcon fontSize="large" />{" "}
           <NotificationsNoneIcon
             fontSize="large"
+            style={{ color: '#f1b61f' }}
             className={glow ? "glow" : ""}
           />{" "}
           My Tickets{" "}
           {newNotificationCount > 0 && (
             <span className="badge bg-danger">{newNotificationCount}</span>
           )}
+          </div>
         </h2>
 
         <div className="notifications-container d-flex bg-white border rounded shadow-sm m-4 p-3">

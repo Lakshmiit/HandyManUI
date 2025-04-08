@@ -5,7 +5,6 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import Sidebar from './Sidebar';
 import Header from './Header.js';
 import Footer from './Footer.js';
-
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
 // import { FaEdit} from 'react-icons/fa'; // Correct icon import
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
@@ -38,6 +37,7 @@ const RaiseQuoteTechnician = () => {
   const [zipCode,setzipCode]=useState('');
   const [status, setStatus] = useState("");
   const [assignedTo, setAssignedTo] = useState('');
+  const [validated, setValidated] = useState(false);
   const [newPhotoCount , setPhotoCount] = useState(0);
   const [othercharges, setOtherCharge] = useState('');
   const [fixedOtherCharge, setFixedOtherCharge] = useState('');
@@ -66,8 +66,8 @@ const RaiseQuoteTechnician = () => {
   // const [serviceCharge, setServiceCharges] = useState('10');
   // const [gstCharge, setGSTCharge] = useState('18');
   useEffect(() => {
-    console.log(ticketData, status, id, technicianData, userId);
-  }, [ticketData, status, id, technicianData, userId]); 
+    console.log(ticketData, status, id, technicianData, userId, assignedTo);
+  }, [ticketData, status, id, technicianData, userId, assignedTo]); 
 
   // alert(enableForward);
 
@@ -315,6 +315,13 @@ const RaiseQuoteTechnician = () => {
 
 const handleUpdateTicket = async (e) => {
   e.preventDefault();
+  
+  if (!assignedTo) {
+    setValidated(true);
+  } else {
+    setValidated(false);
+    console.log("Assigned To:", assignedTo);
+  }  
 
   try {
       
@@ -749,7 +756,7 @@ setTotalAmount(roundedGrandTotal);
 
       <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
         <h1 className="text-center mb-2">View Raise a Quote</h1>
-        <Form onSubmit={handleUpdateTicket}>
+        <Form noValidate onSubmit={handleUpdateTicket}>
         <Row>
             <Col md={6}>
             <Form.Group>
@@ -923,20 +930,22 @@ setTotalAmount(roundedGrandTotal);
         {/* Assigned To */}
         <Row>
         <Col md={12}>
-            <Form.Group>
-              <label>Assigned To</label>
-              <Form.Control
-                as="select"
+            <Form.Group controlId="assignedTo">
+              <Form.Label>Assigned To</Form.Label>
+              <Form.Select
                 name="assignedTo"
-                 value={assignedTo}
+                value={assignedTo}
                 onChange={(e) => setAssignedTo(e.target.value)}
-                required
+                isInvalid={validated && !assignedTo}
               >
                 <option>Select Assigned</option>
                 <option>Customer Care</option>
                 <option>Customer</option>
                 <option>Technical Agency</option>
-              </Form.Control>
+              </Form.Select>
+              <Form.Control.Feedback type="invalid">
+              Please select an Assigned To.
+            </Form.Control.Feedback>
             </Form.Group>
           </Col>
         </Row>

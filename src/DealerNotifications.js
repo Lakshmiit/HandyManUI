@@ -181,7 +181,7 @@ const Notification = () => {
       ]);
         const getQuoteData = await getQuoteResponse.json();
         const tickets = getQuoteData.tickets || [];
-        const getQuoteFiltered = tickets.filter((item) => item.assignedTo === "Dealer/Trader" && item.internalStatus !== "Technician Approved")
+        const getQuoteFiltered = tickets.filter((item) => item.assignedTo === "Dealer/Trader" && item.internalStatus !== "Customer Approved")
         .sort((a, b) => new Date(b.date) - new Date(a.date));
         const getQuoteCount = getQuoteFiltered.length;
   

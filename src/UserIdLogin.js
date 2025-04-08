@@ -431,6 +431,38 @@ const UserIdLogin = () => {
           </div>
         </div>
       </div>
+{/* Styles for floating menu */}
+<style jsx>{`
+        .floating-menu {
+          position: fixed;
+          top: 80px; /* Increased from 20px to avoid overlapping with the logo */
+          left: 20px; /* Adjusted for placement on the left side */
+          z-index: 1000;
+        }
+        .modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 110%;
+          height: 110%;
+          background: rgba(0, 0, 0, 0.5);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 1000;
+        }
+
+        .modal-content {
+          background: white;
+          padding: 20px;
+          border-radius: 20px;
+          width: 100%;
+          max-width: 600px;
+          max-height: 80vh;
+          overflow-y: auto;
+          text-align: left;
+        }
+      `}</style>
     </div>
   );
 };

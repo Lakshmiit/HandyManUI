@@ -72,6 +72,7 @@ const PaymentConfirmation = () => {
   const [dealerPhoneNumber, setDealerPhoneNumber] = useState(''); 
   const [customerEmail, setCustomerEmail] = useState('');
   const [customerPhoneNumber, setCustomerPhoneNumber] = useState('');
+  const [utrTransactionNumber, setUTRTransactionNumber] = useState('');
 
 
 
@@ -126,6 +127,8 @@ const PaymentConfirmation = () => {
         setLowestDealerBidder(data.lowestBidderDealerId)
         setRequestType(data.requestType || 'Without Material');
         setAttachments(data.attachments);
+        setUTRTransactionNumber(data.utrTransactionNumber);
+        setSelectedPayment(data.paymentMode);
         setSpecifications(data.materials || [{material: "", quantity: "", price: "", total: ""}]);
         setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: ""}]);
       } catch (error) {
@@ -332,8 +335,8 @@ const PaymentConfirmation = () => {
     TransactionType: "",
     InvoiceId: "",
     InvoiceURL: "",
-    PaymentMode: "",
-UTRTransactionNumber: "",
+    PaymentMode: selectedPayment,
+    UTRTransactionNumber: utrTransactionNumber || "",
 
     };
   
@@ -349,6 +352,13 @@ UTRTransactionNumber: "",
         throw new Error('Failed to save ticket data');
       }
       alert('Ticket saved Successfully!');
+      if (selectedPayment === 'online') {
+        window.alert(`We are Redirecting to the Payment Page! Your reference number is ${ticketData.raiseTicketId}. Technician will contact you shortly.`);
+          window.location.href=`https://handymanserviceproviders.com/RaiseTicketPayments/${raiseTicketId}`;
+        } else if (selectedPayment === 'technician') {
+         window.alert(`Thank You for choosing the HandyMan Services! Your reference number is ${ticketData.raiseTicketId}. Technician will contact you shortly.`);
+         window.location.href = `/profilePage/${userType}/${userId}`;
+        }
       setShowConfirmation(true);
 
     } catch (error) {
@@ -452,15 +462,7 @@ const handlePaymentTicket = async (e) => {
       return data.technicianConfirmationCode;
     } 
     setId(data.id);
-    // alert(id);
-  //   if (selectedPayment === 'online') {
-  //     window.alert(`We are Redirecting to the Payment Page! Your reference number is ${ticketData.raiseTicketId}. Technician will contact you shortly.`);
-  //       window.location.href=`https://handymanserviceproviders.com/PaymentPage/${id}`;
-  //     } else if (selectedPayment === 'technician') {
-  //      window.alert(`Thank You for choosing the HandyMan Services! Your reference number is ${ticketData.raiseTicketId}. Technician will contact you shortly.`);
-  //      window.location.href = `/profilePage/${userType}/${userId}`;
-    
-  //     }
+   
   // //  handleSendSMSLowestBidder(e);
 
   //   window.alert(`Thank You for choosing the HandyMan Services! Your reference number is ${ticketData.raiseTicketId}. Technician will contact you shortly.`);

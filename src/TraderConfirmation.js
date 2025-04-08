@@ -79,6 +79,14 @@ const TraderConfirmation = () => {
   const [rateQuotedBy, setRateQuotedBy] = useState(''); 
   const [customerPhoneNumber, setCustomerPhoneNumber] = useState('');
 const [customerEmail, setCustomerEmail] = useState('');
+const [orderId, setOrderId] = useState('');
+const [orderDate, setOrderDate] = useState('');
+const [paidAmount, setPaidAmount] = useState('');
+const [transactionType, setTransactionType] = useState('');
+const [transactionStatus, setTransactionStatus] = useState('');
+const [paymentMode, setPaymentMode] = useState('');
+const [utrTransactionNumber, setUTRTransactionNumber] = useState('');
+
   // const [paymentType, setPaymentType] = useState("");
 
  useEffect(() => {
@@ -140,6 +148,17 @@ const [customerEmail, setCustomerEmail] = useState('');
         setRequestType(raiseTicketData.requestType || 'Without Material');
         setAttachments(raiseTicketData.attachments);
         setCommentsList(raiseTicketData.comments || [{ updatedDate: new Date(), commentText: "" }]);
+        setOrderId(raiseTicketData.orderId);
+        setOrderDate(raiseTicketData.orderDate);
+        setPaidAmount(raiseTicketData.paidAmount);
+        setTransactionStatus(raiseTicketData.transactionStatus);
+        setTransactionType(raiseTicketData.transactionType);
+        setPaymentMode(raiseTicketData.paymentMode);
+        setUTRTransactionNumber(raiseTicketData.utrTransactionNumber);
+        setOption1Day(raiseTicketData.option1Day);
+        setOption2Day(raiseTicketData.option2Day);
+        setOption1Time(raiseTicketData.option1Time);
+        setOption2Time(raiseTicketData.option2Time);
       } catch (error) {
         console.error('Error fetching ticket data:', error);
       } finally {
@@ -164,11 +183,11 @@ useEffect(() => {
         setDeliveryId(deliveryNoteData.id);
         // alert(deliveryId);
         setDeliveryNoteId(deliveryNoteData.deliveryNoteId);
-        setOption1Day(deliveryNoteData.option1Day);
-        setOption2Day(deliveryNoteData.option2Day);
-        setOption1Time(deliveryNoteData.option1Time);
+        // setOption1Day(deliveryNoteData.option1Day);
+        // setOption2Day(deliveryNoteData.option2Day);
+        // setOption1Time(deliveryNoteData.option1Time);
         
-        setOption2Time(deliveryNoteData.option2Time);
+        // setOption2Time(deliveryNoteData.option2Time);
         setTechnicianStatus(deliveryNoteData.technicianStatus);
         // alert(technicianStatus);
         setInvoiceDate(deliveryNoteData.invoiceDate);
@@ -425,15 +444,16 @@ useEffect(() => {
       RateQuotedBy: rateQuotedBy,
       CustomerPhoneNumber: customerPhoneNumber,
     CustomerEmail: customerEmail,
-    OrderId: "",
-    OrderDate: "",
-    PaidAmount: "",
-    TransactionStatus: "",
-    TransactionType: "",
+    utrTransactionNumber: utrTransactionNumber || "",
+    OrderId: orderId,
+    OrderDate: orderDate,
+    PaidAmount: paidAmount,
+    TransactionStatus: transactionStatus,
+    TransactionType: transactionType,
     InvoiceId: "",
     InvoiceURL: "",
-    PaymentMode: "",
-UTRTransactionNumber: "",
+    PaymentMode: paymentMode,
+    UTRTransactionNumber: utrTransactionNumber || "",
     };
   
     try {

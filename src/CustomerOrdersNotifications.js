@@ -18,7 +18,7 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
   const {userId} = useParams();
 
   const customerOrdersNotifications = notifications.filter(
-    (item) => item.assignedTo === "Customer" && item.status === "Assigned"
+    (item) => (item.assignedTo === "Customer" && item.status === "Assigned" ) || (item.assignedTo === "Admin" && item.status === "Draft" && item.buyProductId !== null)
   );
   
   const handleOrdersClick = (buyProductId) => {
@@ -100,8 +100,7 @@ const CustomerOrders = () => {
         const productOrdersData = await buyProductResponse.json();
 
         const productOrdersFiltered = productOrdersData.filter(
-          (item) => item.assignedTo === "Customer" && item.status === "Assigned") 
-          .sort((a, b) => new Date(b.date) - new Date(a.date));
+          (item) => (item.assignedTo === "Customer" && item.status === "Assigned" ) || (item.assignedTo === "Admin" && item.status === "Draft"  && item.buyProductId !== null));
         const ordersCount = productOrdersFiltered.length;
 
         setProductNotifications(productOrdersFiltered);

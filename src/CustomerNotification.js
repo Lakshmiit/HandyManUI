@@ -18,7 +18,7 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
 
 
   const raiseTicketNotifications = notifications.filter(
-    (item) => item.assignedTo === "Customer"  && item.status === "Assigned" && item.raiseTicketId != null
+    (item) => item.assignedTo === "Customer"  && item.internalStatus === "Assign" && item.raiseTicketId != null
     // && item.internalStatus === "Pending"
   );
 
@@ -151,7 +151,7 @@ const Notification = () => {
         const raiseTicketData = await raiseTicketResponse.json();
 
         const raiseTicketFiltered = raiseTicketData.filter(
-          (item) => item.assignedTo === "Customer"  && item.status === "Assigned"  && item.raiseTicketId != null
+          (item) => item.assignedTo === "Customer"  && item.internalStatus === "Assign"  && item.raiseTicketId != null
           // && item.internalStatus === "Pending"
         )
         .sort((a, b) => new Date(b.date) - new Date(a.date));

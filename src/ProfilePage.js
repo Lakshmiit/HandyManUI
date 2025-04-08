@@ -25,7 +25,9 @@ import { TextField, IconButton } from "@mui/material";
 // import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import EditIcon from "@mui/icons-material/Edit";
 // import Header from "./Header";
-import HandyMan from './img/HandymanLogo.png';
+import Banner1 from './img/banner-1 copy.jpg';
+import Banner2 from './img/banner-2.jpg';
+import Banner3 from './img/banner-4.jpg';
 import { useParams } from "react-router-dom";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Logo from "./img/Hm_Logo 1.png";
@@ -917,8 +919,88 @@ const fetchImageUrl = async (photoId) => {
             </table>
             </div> */}
           
-          <img src={HandyMan} className="w-100 m-2 d-block mx-auto" alt="Advertisement for our product"/>
-          
+              {/* Carousel */}
+              <div className="container">
+                <div className="mx-auto">
+              <div
+                id="productCarousel"
+                className="carousel slide mb-4 rounded "
+                data-bs-ride="carousel"
+                data-bs-interval="2000"
+              >
+                {/* Indicators */}
+                <div className="carousel-indicators">
+                    <button
+                      type="button"
+                      data-bs-target="#productCarousel"
+                      data-bs-slide-to="0"
+                      className="active"
+                      aria-current="true"
+                      aria-label="Slide 1"
+                    ></button>
+                    <button
+                      type="button"
+                      data-bs-target="#productCarousel"
+                      data-bs-slide-to="1"
+                      aria-label="Slide 2"
+                    ></button><button
+                    type="button"
+                    data-bs-target="#productCarousel"
+                    data-bs-slide-to="2"
+                    aria-label="Slide 3"
+                  ></button>
+                </div>
+
+                {/* Carousel items */}
+                <div className="carousel-inner">
+                    <div className="carousel-item active">
+                      <img
+                        src={Banner1}
+                        className="d-block w-100 img-fluid rounded"
+                        style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
+                        alt="Slide 1"
+                      />
+                    </div>
+                    <div className="carousel-item">
+                      <img
+                        src={Banner2}
+                        className="d-block w-100 img-fluid rounded"
+                        style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
+                        alt="Slide 2"
+                      />
+                    </div>
+                    <div className="carousel-item">
+                      <img
+                        src={Banner3}
+                        className="d-block w-100 img-fluid rounded"
+                        style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
+                        alt="Slide 3"
+                      />
+                    </div>
+                </div> 
+
+                {/* Controls */}
+                <button
+                  className="carousel-control-prev"
+                  type="button"
+                  data-bs-target="#productCarousel"
+                  data-bs-slide="prev"
+                >
+                  <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span className="visually-hidden">Previous</span>
+                </button>
+                <button
+                  className="carousel-control-next"
+                  type="button"
+                  data-bs-target="#productCarousel"
+                  data-bs-slide="next"
+                >
+                  <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span className="visually-hidden">Next</span>
+                </button>
+              </div>
+              </div>
+              </div>
         </div>
         </div> 
         </div>

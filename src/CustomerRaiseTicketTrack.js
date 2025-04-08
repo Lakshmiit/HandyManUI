@@ -82,6 +82,12 @@ const CustomerTicketTrack = () => {
   // const [technicianAmount, setTechnicianAmount] = useState('');
   // const [dealerAmont, setDealerAmount] = useState('');
   const [transactionDetails, setTransactionDetails] = useState("");
+  const [orderId, setOrderId] = useState('');
+const [orderDate, setOrderDate] = useState('');
+const [paidAmount, setPaidAmount] = useState('');
+const [transactionType, setTransactionType] = useState('');
+const [transactionStatus, setTransactionStatus] = useState('');
+const [utrTransactionNumber, setUTRTransactionNumber] = useState('');
   
   // const [isDealerChecked, setIsDealerChecked] = useState(false);
   // const [isTechnicianChecked, setIsTechnicianChecked] = useState(false);
@@ -169,6 +175,16 @@ useEffect(() => {
         setRequestType(data.requestType || 'Without Material');
         setAttachments(data.attachments);
         setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: "" }]);
+        setOrderId(data.orderId);
+        setOrderDate(data.orderDate);
+        setPaidAmount(data.paidAmount);
+        setTransactionStatus(data.transactionStatus);
+        setTransactionType(data.transactionType);
+        setUTRTransactionNumber(data.utrTransactionNumber);
+        setOption1Day(data.option1Day || '');
+        setOption2Day(data.option2Day || '');
+        setOption1Time(data.option1Time || '');
+        setOption2Time(data.option2Time || '');
       } catch (error) {
         console.error('Error fetching ticket data:', error);
       } finally {
@@ -191,10 +207,10 @@ useEffect(() => {
         setDeliveryData(data);
         setId(data.id);
         setDeliveryNoteId(data.deliveryNoteId);
-        setOption1Day(data.option1Day || '');
-        setOption2Day(data.option2Day || '');
-        setOption1Time(data.option1Time || '');
-        setOption2Time(data.option2Time || '');
+        // setOption1Day(data.option1Day || '');
+        // setOption2Day(data.option2Day || '');
+        // setOption1Time(data.option1Time || '');
+        // setOption2Time(data.option2Time || '');
         const imageRequests =
         data.uploadInvoice?.map((photo) => fetch(
             `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
@@ -423,15 +439,15 @@ useEffect(() => {
       CustomerPhoneNumber: customerPhoneNumber,
       CustomerEmail: customerEmail || "",
       utrTransactionNumber: paymentType === "Pay Online" ? "online" : paymentType === "Cash" ? "cash" : transactionDetails || "",
-      OrderId: "",
-      OrderDate: "",
-      PaidAmount: "",
-      TransactionStatus: "",
-      TransactionType: "",
+      OrderId: orderId,
+      OrderDate: orderDate,
+      PaidAmount: paidAmount,
+      TransactionStatus: transactionStatus,
+      TransactionType: transactionType,
       InvoiceId: "",
       InvoiceURL: "",
-      PaymentMode: "",
-UTRTransactionNumber: "",
+      PaymentMode: paymentMode,
+      UTRTransactionNumber:paymentType === "Pay Online" ? "online" : paymentType === "Cash" ? "cash" : utrTransactionNumber || "",
     };
   
   const payload = {

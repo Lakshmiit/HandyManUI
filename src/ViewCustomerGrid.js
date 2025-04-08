@@ -138,7 +138,7 @@ const RaiseTicketNotification = () => {
                 <td>{ticket.assignedTo}</td>
                 <td className="d-flex align-items-center">
                   <Link
-                    to={`/customerRaiseTicketQuotation/${userType}/${userId}/${ticket.id}`}
+                    to={`/customerRaiseTicketGridView/${userType}/${userId}/${ticket.id}`}
                     className="btn btn-info mx-2"
                   >
                     <FaEye />   
@@ -171,7 +171,7 @@ const RaiseTicketNotification = () => {
         <p><strong>Assigned To:</strong> {ticket.assignedTo}</p>
       </div>
       <div className="ticket-actions">
-        <Link to={`/customerRaiseTicketQuotation/${userType}/${userId}/${ticket.id}`} className="btn btn-info mx-2">
+        <Link to={`/customerRaiseTicketGridView/${userType}/${userId}/${ticket.id}`} className="btn btn-info mx-2">
           <FaEye />
         </Link>
         <Button onClick={() => handleDelete(ticket.id)} className="btn btn-danger mx-2">

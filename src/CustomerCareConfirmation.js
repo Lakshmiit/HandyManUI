@@ -184,6 +184,10 @@ const CustomerCareConfirmation = () => {
         setInvoiceId(data.invoiceId);
         setInvoiceURL(data.invoiceURL);
         setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: "" }]);
+        setOption1Day(data.option1Day);
+        setOption2Day(data.option2Day);
+        setOption1Time(data.option1Time);
+        setOption2Time(data.option2Time);
       } catch (error) {
         console.error('Error fetching ticket data:', error);
       } finally {
@@ -222,10 +226,10 @@ useEffect(() => {
         setUploadInvoice(images);
         setInvoiceNumber(data.invoiceNumber);
         setInvoiceDate(data.invoiceDate);
-        setOption1Day(data.option1Day || '');
-        setOption2Day(data.option2Day || '');
-        setOption1Time(data.option1Time || '');
-        setOption2Time(data.option2Time || '');
+        // setOption1Day(data.option1Day || '');
+        // setOption2Day(data.option2Day || '');
+        // setOption1Time(data.option1Time || '');
+        // setOption2Time(data.option2Time || '');
         setTechnicianStatus(data.technicianStatus);
         setDealerStatus(data.dealerStatus);
         // setIsDealerChecked(data.dealerStatus === "Material Delivered");
@@ -500,15 +504,16 @@ setShowAlert(true);
       RateQuotedBy: rateQuotedBy,
       CustomerPhoneNumber: customerPhoneNumber,
     CustomerEmail: customerEmail,
-    OrderId: "",
-    OrderDate: "",
-    PaidAmount: "",
-    TransactionStatus: "",
-    TransactionType: "",
+    utrTransactionNumber: transactionDetails || "",    
+    OrderId: OrderId,
+    OrderDate: OrderDate,
+    PaidAmount: PaidAmount,
+    TransactionStatus: TransactionStatus,
+    TransactionType: TransactionType,
     InvoiceId: "",
     InvoiceURL: "",
-    PaymentMode: "",
-UTRTransactionNumber: transactionDetails,
+    PaymentMode: paymentMode,
+UTRTransactionNumber: transactionDetails || "",
     };
   
     try {
