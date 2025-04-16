@@ -12,20 +12,31 @@ import { Button, Form, Modal } from 'react-bootstrap'; // Import Bootstrap compo
 
 const BuyProduct = () => { 
   const navigate = useNavigate();
+  const location = useLocation();
+  const [category, setCategory] = useState(location.state?.category || "");
+  const [productName, setProductName] = useState(location.state?.productName || "");
+  const [productCatalogue, setProductCatalogue] = useState(location.state?.catalogue || "");
+  const [productSize, setProductSize] = useState(location.state?.productSize || "");
+  const [chooseColor, setChooseColor] = useState(location.state?.color || "");
+  const [rate, setRate] = useState(location.state?.rate || "");
+  const [discount, setDiscount] = useState(location.state?.discount || "");
+  const [requiredQuality, setRequiredQuality] = useState(location.state?.requiredQuality || "");
+  const [units, setUnits] = useState(location.state?.units || "");
+  // const [afterDiscountPrice, setAfterDiscountPrice] = useState(location.state?.afterDiscountPrice || "");
   const {userType} = useParams();
   const [buyProductId, setBuyProductId] = useState('');
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const { selectedUserType } = useParams(); 
-  const [category, setCategory] = useState("");
-  const [productSize, setProductSize] = useState("");
-  const [productCatalogue, setProductCatalogue] = useState("");
-  const [chooseColor, setChooseColor] = useState([]);
-  const [selectedColors, setSelectedColors] = useState("");
-  const [requiredQuality, setRequiredQuality] = useState("");
-  const [rate, setRate] = useState("");
-  const [discount, setDiscount] = useState("");
-  const [productName, setProductName] = useState("");
+  // const [category, setCategory] = useState("");
+  // const [productSize, setProductSize] = useState("");
+  // const [productCatalogue, setProductCatalogue] = useState("");
+  // const [chooseColor, setChooseColor] = useState([]);
+   const [selectedColors, setSelectedColors] = useState("");
+  // const [requiredQuality, setRequiredQuality] = useState("");
+  // const [rate, setRate] = useState("");
+  // const [discount, setDiscount] = useState("");
+  // const [productName, setProductName] = useState("");
   const [showSecondaryAddresses, setShowSecondaryAddresses] = useState(false);
   const [newAddress, setNewAddress] = useState('');
   const [addresses, setAddresses] = useState([]);
@@ -49,7 +60,8 @@ const BuyProduct = () => {
   const [selectedProduct, setSelectedProduct] = useState({});
   const [id, setId] = useState("");
   const { userId } = useParams(); 
-  const location = useLocation();
+  const [noProductNameError, setNoProductNameError] = useState('');
+  const [loading, setLoading] = useState(true);
   // const [emailAddress, setEmailAddress] = useState("");
 
  // Check if there's state passed from ViewProduct page
@@ -524,6 +536,8 @@ useEffect(() => {
 
 const fetchProductsByCategory = async (selectedCategory) => {
   try {
+    setLoading(true);
+    setNoProductNameError("");
     const response = await fetch(
       `https://handymanapiv2.azurewebsites.net/api/Product/GetProductsByCategory?Category=${selectedCategory}`
     );
@@ -533,17 +547,32 @@ const fetchProductsByCategory = async (selectedCategory) => {
     const data = await response.json();
     console.log("Fetched Products:", data);
     // alert(JSON.stringify(productOptions));
-      setProductOptions(data);
-      setProductName("");
-      setProductCatalogue("");
-      setProductSize("");
-      setChooseColor([]);
-      setRate("");
-      setDiscount("");
-      setId("");
 
+    const validProducts = data.filter(
+      (item) => item.productName && item.productName.trim() !== ""
+    );
+
+    if (validProducts.length === 0) {
+      setProductOptions([]);
+      setNoProductNameError(
+        "No products found for the selected category. Please choose another category."
+      );
+      return;
+    }
+
+    setProductOptions(validProducts);
+    setProductName("");
+    setProductCatalogue("");
+    setProductSize("");
+    setChooseColor([]);
+    setRate("");
+    setDiscount("");
+    setId("");
   } catch (error) {
     console.error("Error fetching products:", error);
+    setNoProductNameError("No products found for the selected category. Please select another category.");
+  } finally {
+    setLoading(false);
   }
 };
 useEffect(() => {
@@ -862,6 +891,11 @@ useEffect(() => {
                 <option>Hardware items</option>
                 <option>Civil & Waterproofing Materials</option>
               </select>
+              {noProductNameError && (
+                <div style={{ color: "red", margin: "10px 0" }}>
+                  {noProductNameError}
+                </div>
+              )}
             </div>
 
       <div className="form-group position-relative">
@@ -869,6 +903,18 @@ useEffect(() => {
         Product Name <span className="req_star">*</span>
       </label>
       <select
+  className="form-control"
+  value={productName}
+  onChange={handleProductChange}
+>
+  <option value="">Select Product</option>
+  {productOptions.map((productOption, i) => (
+    <option key={i} value={productOption.productName}>
+      {productOption.productName}
+    </option>
+  ))}
+</select>
+      {/* <select
         className="form-control"
         value={productName}
         onChange={handleProductChange}
@@ -878,37 +924,9 @@ useEffect(() => {
             {productOptions.map((productOption, i) => (
               <option key={i} value={productOption.productName}>{productOption.productName}</option>
             ))}
-        </select>
+        </select> */}
         </div>
-        {/* // onFocus={() => 
-        //     setShowDropdown(true)
-        //   } 
-        //   onBlur={(e) => {
-        //     if (!e.relatedTarget || !e.relatedTarget.classList.contains("dropdown-item")) {
-        //       setShowDropdown(false);
-        //     }
-        //   }} */}
       
-      {/* {error && <p style={{ color: "red", fontSize: "14px", marginTop: "5px" }}>{error}</p>}
-
-      {showDropdown && filteredSuggestions.length > 0 && (
-        <ul
-          className="list-group position-absolute w-100 mt-1 shadow bg-white"
-          style={{ zIndex: 1000 }}
-        >
-          {filteredSuggestions.map((suggestion, index) => (
-            <li
-              key={index}
-              className="list-group-item list-group-item-action"
-              onMouseDown={() => handleProductSelect(suggestion)}
-            >
-              {suggestion}
-            </li>
-          ))}
-        </ul>
-      )} */}
-    
-
             <div className="form-group">
               <label>
                 Product Catalogue <span className="req_star">*</span>
@@ -970,49 +988,25 @@ useEffect(() => {
                   readOnly
                 />
               </div>
-
-            {/* <div className="form-group">
-              <label>Color (Optional)</label>
-              <input
-                type="text"
-                className="form-control"
-                value={color}
-                onChange={(e) => setChooseColor(e.target.value)}
-                placeholder="Enter Color"
-              />
-            </div> */}
-
             <button
               type="button"
               className="btn btn-warning text-white w-50 mt-2"
-              onClick={() => {
-                setSelectedProduct({
-                  category,
-                  productName,
-                  productCatalogue,
-                  productSize,
-                  chooseColor,
-                  rate,
-                  discount,
-                  requiredQuality,
-                });
-                navigate(`/buyproduct-view/${userType}/${userId}/${id}`);
-              }}
-              // onClick={() =>
-              //   navigate(`/buyproduct-view/${id}/${userId}/${userType}`, {
-              //     state: {
-              //       category,
-              //       productName,
-              //       productCatalogue,
-              //       productSize,
-              //       color,
-              //       rate,
-              //       discount,
-              //       // afterDiscount,
-              //       requiredQuality,
-              //     },
-              //   })
-              // }
+              disabled={noProductNameError}
+
+              onClick={() =>
+                navigate(`/buyproduct-view/${userType}/${userId}/${id}`, {
+                  state: {
+                    category,
+                    productName,
+                    catalogue: productCatalogue, // match expected key
+                    productSize,
+                    color: chooseColor,          // match expected key
+                    rate,
+                    discount,
+                    requiredQuality,
+                  },
+                })
+              }
             >
               View Product
             </button>
@@ -1476,6 +1470,14 @@ useEffect(() => {
               >
                 Add to Cart
               </button> */}
+               <button
+                type="button"
+                className="text-white btn btn-warning w-30"
+                onClick={handleGetQuotation}
+                disabled={noProductNameError}
+              >
+                Buy Product
+              </button>
               <button
                 type="button"
                 className="text-white btn btn-warning w-30"
@@ -1483,13 +1485,7 @@ useEffect(() => {
               >
                 Back
               </button>
-              <button
-                type="button"
-                className="text-white btn btn-warning w-30"
-                onClick={handleGetQuotation}
-              >
-                Buy Product
-              </button>
+             
             </div>
           </form>
         </div>

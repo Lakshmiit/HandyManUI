@@ -28,7 +28,7 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
 
   
  const orderTicketNotifications = notifications.filter(
-  (item) => item.internalStatus === "Customer Approved" || item.internalStatus === "PaymentDone" 
+  (item) => (item.internalStatus === "Customer Approved" || item.internalStatus === "PaymentDone" || item.internalStatus === "Closed")
 );
 
 const bookTechnicianNotifications = notifications.filter(
@@ -418,7 +418,7 @@ const Notification = () => {
         setHighlightedQuote(dealerTicketFiltered[0].raiseTicketId);
       }
      const getOrderData = await getOrderResponse.json();
-   const orderFiltered = getOrderData.filter((item) => item.internalStatus === "Customer Approved" || item.internalStatus === "PaymentDone")
+   const orderFiltered = getOrderData.filter((item) => item.internalStatus === "Customer Approved" || item.internalStatus === "PaymentDone" || item.internalStatus === "Closed")
    .sort((a, b) => new Date(b.date) - new Date(a.date));
    const getOrderCount = orderFiltered.length;
      setOrderNotifications(orderFiltered);

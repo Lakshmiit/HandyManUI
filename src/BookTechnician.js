@@ -41,13 +41,15 @@ const [mobileNumber, setPhoneNumber] = useState('');
   const [confirmationModal, setConfirmationModal] = useState(false);
   const [jobDescriptions, setJobDescriptions] = useState([]);
   const [showModals, setShowModals] = useState(false);
+ const [loading, setLoading] = useState(true);
+ const [noJobsError, setNoJobsError] = useState("");
 
 // const [response, setResponse] = useState(null);
 
 
   useEffect(() => {
-    console.log(ticketId, fullName, mobileNumber, raiseTicketId);
-  }, [ticketId, fullName,  mobileNumber, raiseTicketId]);
+    console.log(ticketId, loading, fullName, mobileNumber, raiseTicketId);
+  }, [ticketId, loading, fullName,  mobileNumber, raiseTicketId]);
 
   const API_URL = 'https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/';
   // Fetch customer profile data
@@ -174,29 +176,33 @@ useEffect(() => {
  
   const fetchJobsByCategory = async (selectedCategory) => {
     try {
+      setLoading(true);
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/UploadJobDescriptionBookTechnician/GetSelctedJobsByCategory?Category=${selectedCategory}`);
       if (!response.ok) {
         throw new Error("Failed to fetch jobs");
       }
       const data = await response.json();
       console.log("Fetched Jobs:", data);
+
+      if (data.length === 0 || !data[0].selectedJobs || data[0].selectedJobs.length === 0) {
+        setJobDescriptions([]);
+        setSelectedJobs([]);
+        setNoJobsError("No jobs found for this category. Please select another category.");
+        return;
+      }
+  
       const extractedJobs = data.flatMap((item) => item.selectedJobs);
       setJobDescriptions(extractedJobs);
-      //  alert(JSON.stringify(extractedJobs));
       setDescriptionId(data[0].id);
-      // setRemarks(data[0].remarks);
-      // setMoreInfo(data[0].moreInfo);
-      if (data.length > 0) {
-        setSelectedJobs(data[0].selectedJobs || []);
-      } else {
-        setSelectedJobs([]);
-      } 
+      setSelectedJobs(data[0].selectedJobs || []);
+      setNoJobsError("");
     } catch (error) {
       console.error("Error fetching jobs:", error);
+      setNoJobsError("Failed to load jobs. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
-
-
 
   const handleJobChange = (index, field, value) => {
     const updatedJobs = [...selectedJobs];
@@ -231,7 +237,6 @@ useEffect(() => {
     }
   };
 
-
   const phoneNumber = '7989328864';  // Phone number
   // Generate ticket ID in the format BTWV0002
   const ticketIdPrefix = "BTWV";
@@ -258,7 +263,6 @@ const handleUpdateJobDescription = async (e) => {
   const pincode = primaryAddress?.zipCode || primaryAddress?.pincode || "";
   const mobileNumber = primaryAddress?.mobileNumber || primaryAddress?.mobileNumber || "";
   const emailAddress = primaryAddress?.emailAddress || primaryAddress?.emailAddress || "";
-
 
   if (!category) {
     setError("Must select a category");
@@ -321,11 +325,8 @@ const handleUpdateJobDescription = async (e) => {
       throw new Error('Failed to Book Technician.');
     }
     const data = await response.json(); 
-    // setBookTechnicianId(data.bookTechnicianId); 
     setRaiseTicketId(data.raiseTicketId);
-    // Show alert message with the correct ticketId
-    //window.alert(`Ticket has been submitted successfully! Your reference number is ${data.bookTechnicianId}. Technician will contact you shortly.`);
-        Navigate(`/bookTechnicianPaymentPage/${userType}/${userId}/${data.raiseTicketId}`)
+   Navigate(`/bookTechnicianPaymentPage/${userType}/${userId}/${data.raiseTicketId}`)
   } catch (error) {
     console.error('Error:', error);
     window.alert('Failed to Book Technician. Please try again later.');
@@ -366,27 +367,6 @@ const handleUpdateJobDescription = async (e) => {
     }
   };
 
-
-
-//   const handleJobChange = (index, field, value) => {
-//     const updatedJobs = [...selectedJobs];
-//     updatedJobs[index][field] = field === "rate" || field === "discount" ? parseFloat(value) || 0 : value;
-
-//     if (field === "rate" || field === "discount") {
-//         const rate = parseFloat(updatedJobs[index].rate) || 0;
-//         const discount = parseFloat(updatedJobs[index].discount) || 0;
-//         updatedJobs[index].afterDiscount = (rate - (rate * discount) / 100).toFixed(2);
-//     }
-
-//     setSelectedJobs(updatedJobs);
-// };
-
-//   useEffect(() => {
-//     return () => {
-//       uploadedFiles.forEach((file) => URL.revokeObjectURL(file));
-//     };
-//   }, [uploadedFiles]);
-
   return (
     <div>
   {isMobile && <Header />}
@@ -420,8 +400,6 @@ const handleUpdateJobDescription = async (e) => {
       {/* Main Content */}
       <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
       <h1 className="text-center mb-2">Book A Technician</h1>
-      {/* Ticket Form */}
-      {/* <Form  > */}
         {/* Display primary address with "Change Address" link */}
         <Form.Group>
           <label>Address</label>
@@ -554,15 +532,20 @@ const handleUpdateJobDescription = async (e) => {
                 <option>Plumbing and Sanitary</option>
                 <option>Electrical</option>
                 <option>Painting</option>
-                <option>Interior</option>
                 <option>Carpentry</option>
                 <option>Pest Control</option>
                 <option>Electronics Appliance Repairs</option>
+                <option>Interior</option>
                 <option>Tiles Repairs</option>
                 <option>Civil Works</option>
                 <option>Water Proofing Works</option>
               </Form.Control>
               {error && <div style={{ color: "red", marginTop: "5px" }}>{error}</div>}
+              {noJobsError && (
+                <div style={{ color: "red", margin: "10px 0" }}>
+                  {noJobsError}
+                </div>
+              )}
             </Form.Group>
           </Col>
         </Row>
@@ -983,7 +966,8 @@ const handleUpdateJobDescription = async (e) => {
    
         {/*  Book a Technician */}
         <div className='d-flex justify-content-between m-1'>
-        <Button variant="success" className="m-1" type="submit" onClick={handleUpdateJobDescription}>
+        <Button variant="success" className="m-1" type="submit" onClick={handleUpdateJobDescription}
+      disabled={noJobsError}>
             Book A Technician
         </Button>
         <Button variant='success' className="m-1" onClick={handleWhatsAppClick}><WhatsAppIcon /> WhatsApp</Button>

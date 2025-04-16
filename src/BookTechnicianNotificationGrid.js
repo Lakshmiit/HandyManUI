@@ -39,7 +39,7 @@ const BookTechnicianNotification = () => {
         const technicians = response.data.map((technician) => ({
           ...technician,
         }));
-        const assignedTechnicians = technicians.filter((technician) =>  (technician.status === "Assigned" && technician.assignedTo === "Customer") || (technician.status === "Closed" && technician.assignedTo === "Customer Care") || (technician.transactionStatus === "Success" && technician.assignedTo !== ""));
+        const assignedTechnicians = technicians.filter((technician) =>  (technician.status === "Assigned" && technician.assignedTo === "Customer") || (technician.status === "Closed" && technician.assignedTo === "Customer Care") || (technician.transactionStatus === "Success" && technician.assignedTo !== "") || (technician.status === "Assigned" && technician.assignedTo === "Technician"));
           // technician.status === "Assigned" && technician.assignedTo === "Customer Care");
         setFilteredData(assignedTechnicians);
         setTechnicianData(assignedTechnicians);
