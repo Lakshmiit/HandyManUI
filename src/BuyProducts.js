@@ -21,7 +21,7 @@ const BuyProduct = () => {
   const [rate, setRate] = useState(location.state?.rate || "");
   const [discount, setDiscount] = useState(location.state?.discount || "");
   const [requiredQuality, setRequiredQuality] = useState(location.state?.requiredQuality || "");
-  const [units, setUnits] = useState(location.state?.units || "");
+  // const [units, setUnits] = useState(location.state?.units || "");
   // const [afterDiscountPrice, setAfterDiscountPrice] = useState(location.state?.afterDiscountPrice || "");
   const {userType} = useParams();
   const [buyProductId, setBuyProductId] = useState('');
@@ -57,7 +57,7 @@ const BuyProduct = () => {
   const [colorError, setColorError] = useState("");
   // const [error, setError] = useState("");
   const [productOptions, setProductOptions] = useState([]);
-  const [selectedProduct, setSelectedProduct] = useState({});
+  const [selectedProduct] = useState({});
   const [id, setId] = useState("");
   const { userId } = useParams(); 
   const [noProductNameError, setNoProductNameError] = useState('');
@@ -134,8 +134,8 @@ const BuyProduct = () => {
 
 
 useEffect(() => {
-  console.log(buyProductId);
-}, [buyProductId]);
+  console.log(buyProductId, loading);
+}, [buyProductId, loading]);
   // Fetch customer profile data
   useEffect(() => {
     const fetchProfileType = async () => {
