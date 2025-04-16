@@ -18,12 +18,12 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
 
 
   const raiseTicketNotifications = notifications.filter(
-    (item) => item.assignedTo === "Customer"  && item.internalStatus === "Assign" && item.raiseTicketId != null
+    (item) => (item.assignedTo === "Customer"  && item.internalStatus === "Assign" && item.raiseTicketId != null) || (item.assignedTo === "Customer"  && item.internalStatus === "Pending"  && item.raiseTicketId != null) || (item.internalStatus === "Assigned")
     // && item.internalStatus === "Pending"
   );
 
   const getTechnicianNotifications = notifications.filter(
-    (item) => item.status === "Assigned" && item.assignedTo === "Customer" && item.bookTechnicianId != null
+    (item) => (item.status === "Assigned" && item.assignedTo === "Customer"  && item.bookTechnicianId != null) || (item.status === "Draft" && item.assignedTo === "Customer Care"  && item.bookTechnicianId != null)
   );
   const handleTicketClick = (raiseTicketId) => { 
     navigate(`/customerRaiseTicketQuotation/${userType}/${userId}/${raiseTicketId}`, { state: { raiseTicketId } });
@@ -151,7 +151,7 @@ const Notification = () => {
         const raiseTicketData = await raiseTicketResponse.json();
 
         const raiseTicketFiltered = raiseTicketData.filter(
-          (item) => item.assignedTo === "Customer"  && item.internalStatus === "Assign"  && item.raiseTicketId != null
+          (item) => (item.assignedTo === "Customer"  && item.internalStatus === "Assign"  && item.raiseTicketId != null) || (item.assignedTo === "Customer"  && item.internalStatus === "Pending"  && item.raiseTicketId != null) || (item.internalStatus === "Assigned")
           // && item.internalStatus === "Pending"
         )
         .sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -169,7 +169,7 @@ const Notification = () => {
         const bookTechnicianData = await getTechnicianResponse.json();
 
         const getTechnicianFiltered = bookTechnicianData.filter(
-          (item) => item.status === "Assigned" && item.assignedTo === "Customer"&& item.bookTechnicianId != null
+          (item) => (item.status === "Assigned" && item.assignedTo === "Customer"&& item.bookTechnicianId != null) || (item.status === "Draft" && item.assignedTo === "Customer Care"  && item.bookTechnicianId != null)
         )
         .sort((a, b) => new Date(b.date) - new Date(a.date));
         const getTechnicianCount = getTechnicianFiltered.length;

@@ -19,7 +19,10 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
   const {userId} = useParams();
 
   const getTrackNotifications = notifications.filter(
-    (item) => item.assignedTo === "Customer" && (item.internalStatus === "Assigned" || item.internalStatus === "Pending" || item.internalStatus === "Customer Approved" ||  item.internalStatus === "PaymentDone")
+    (item) => item.assignedTo === "Customer" && (item.internalStatus === "Assigned" || 
+      item.internalStatus === "Closed" 
+      // || item.internalStatus === "Pending" 
+      || item.internalStatus === "Customer Approved" ||  item.internalStatus === "PaymentDone")
   );
 
   const handleTicketClick = (ticketId) => {
@@ -96,9 +99,11 @@ const TrackNotification = () => {
       );
       const trackData = await trackTicketResponse.json();
       const getTrackNotifications = trackData.filter(
-        (item) => item.assignedTo === "Customer"&& (item.internalStatus === "Assigned" || item.internalStatus === "Pending" || item.internalStatus === "Customer Approved" ||  item.internalStatus === "PaymentDone")
-      )
-      .sort((a, b) => new Date(b.date) - new Date(a.date));
+        (item) => item.assignedTo === "Customer" && (item.internalStatus === "Assigned" || item.internalStatus === "Closed" 
+          // || item.internalStatus === "Pending" 
+
+          || item.internalStatus === "Customer Approved" ||  item.internalStatus === "PaymentDone")
+      );
         const trackCount = getTrackNotifications.length;
 
         setTrackNotifications(getTrackNotifications);
