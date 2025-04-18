@@ -167,7 +167,7 @@ const OffersProductCard = () => {
 <div className="row g-4">
   {productData?.map((product) => {
     const discountedPrice = product.rate && product.discount 
-      ? (product.rate - (product.rate * product.discount) / 100).toFixed(2) 
+      ? ((product.rate - (product.rate * product.discount) / 100).toFixed(0)) 
       : product.rate;
 
     return (
@@ -198,9 +198,9 @@ const OffersProductCard = () => {
 
           <div className="card-body p-1 m-1">
             <h5 className="card-title">{product.productName}</h5>
-            <p className="card-text fw-bold text-primary">MRP: Rs {product.rate}</p>
-            <p className="card-text fw-bold text-danger">Discount: {product.discount}%</p>
-            <p className="card-text fw-bold text-success">After Discount Price: Rs {discountedPrice}</p>
+            <p className="card-text fw-bold text-primary fs-6">MRP: Rs {product.rate}</p>
+            <p className="card-text fw-bold text-danger fs-6">Discount: {product.discount}%</p>
+            <p className="card-text fw-bold text-success fs-5">After Discount Price: Rs {discountedPrice}</p>
           </div>
           <Button
   className="btn btn-warning w-50 fw-bold mt-2"
@@ -300,15 +300,6 @@ const OffersProductCard = () => {
           0% { transform: scale(1); }
           100% { transform: scale(1.05); }
         }
-
-        .floating-menu {
-          position: fixed;
-          top: 80px;
-          left: 20px;
-          z-index: 1000;
-          transition: transform 0.3s ease-in-out;
-        }
-
         .card:hover {
           transform: translateY(-5px);
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);

@@ -48,9 +48,10 @@ const getMenuList = (userType, userId, category, district ,ZipCode,technicianFul
       { MenuIcon: <NotificationBell/>, MenuTitle: "Notifications", TargetUrl: `/customerNotification/${userType}/${userId}` },
       { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
       { MenuIcon: <OrdersNotificationBell />, MenuTitle: "Orders", TargetUrl: `/customerOrders/${userType}/${userId}` },
-      { MenuIcon: <LocalOfferIcon />, MenuTitle: "Offers", TargetUrl: `/offers/${userType}/${userId}` },
+      { MenuIcon: <LocalOfferIcon />, MenuTitle: "Buy Product Offers", TargetUrl: `/offers/${userType}/${userId}` },
       { MenuIcon: <PersonIcon />, MenuTitle: "Accounts"}
   ];
+
 
   const builder = [
       { MenuIcon: <PersonIcon />, MenuTitle: "Add Member" },

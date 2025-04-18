@@ -397,7 +397,9 @@ const RaiseActionView = () => {
               <Form.Control
                 type="text"
                 name="address"
-                value={ticketData.address}
+                value={[address, district, state, zipCode, customerPhoneNumber]
+                  .filter(Boolean) 
+                  .join(", ")}
                 onChange={handleChange}
                 placeholder="Customer Address"
                 required

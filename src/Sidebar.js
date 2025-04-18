@@ -38,7 +38,7 @@ const menuConfig = {
     { MenuIcon: <NotificationsActiveIcon />, MenuTitle: "Notifications", TargetUrl: `/customerNotification/${userType}/${userId}` }, 
       { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
       { MenuIcon: <InventoryIcon />, MenuTitle: "Orders", TargetUrl: `/customerOrders/${userType}/${userId}` },
-      { MenuIcon: <LocalOfferIcon />, MenuTitle: "Offers", TargetUrl: `/offers/${userType}/${userId}` },
+      { MenuIcon: <LocalOfferIcon />, MenuTitle: "Buy Product Offers", TargetUrl: `/offers/${userType}/${userId}` },
       { MenuIcon: <AccountCircleIcon />, MenuTitle: "Accounts" },
     ],
     builder: [

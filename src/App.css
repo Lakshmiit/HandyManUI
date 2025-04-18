@@ -2262,7 +2262,7 @@ textarea {
   transition: all 0.5s;
   cursor: pointer;
   text-align: center;
-  padding: 1rem;
+  padding: 10px;
   /* background-color: #f1b61f30; */
  border-radius: 15px !important;
  
@@ -2355,7 +2355,7 @@ hr {
 
 .card h5 {
   color: black;
-  margin-top: 10px;
+  margin-top: 8px;
 }
 
 
@@ -2437,7 +2437,7 @@ h2 {
   max-width: 1000px;
   margin: auto;
   overflow: hidden;
-  padding: 5px;
+  padding: 3px;
 }
 
 .ticket-scroll {
@@ -2455,7 +2455,7 @@ h2 {
 
 .ticket-card1 {
   flex: 0 0 auto;
-  max-width: 235px;
+  max-width: 200px;
   width: 100%;
   border-radius: 5px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
@@ -2518,8 +2518,8 @@ h2 {
 }
 
 .ticket-content p {
-  margin: 4px;
-  font-size: 14px;
+  margin: 3px;
+  font-size: 12px;
 }
 
 .open {
@@ -2551,7 +2551,7 @@ h2 {
   display: flex;
   justify-content: space-between;
   align-items: start;
-  margin: 5px;
+  margin: 3px;
 }
 
 .profile-card-container {
@@ -2833,3 +2833,93 @@ h2 {
   pointer-events: none;
 }
 
+
+.otp_input {
+  display: flex;
+  gap: 0.5rem;
+}
+
+  .otp_input input[type=text],
+  .otp_input input[type=number] {
+      width: 40px;
+      height: 40px;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+  }
+
+  .otp-container {
+    max-width: 500px;
+    margin: auto;
+    padding: 2rem;
+    border-radius: 1rem;
+    background: #fff;
+    box-shadow: 0px 5px 25px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .logo {
+    width: 200px;
+    margin-bottom: 1rem;
+  }
+  
+  .otp-inputs {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin: 1rem 0;
+  }
+  
+  .otp-inputs input {
+    width: 40px;
+    height: 50px;
+    font-size: 24px;
+    text-align: center;
+    border: 2px solid #ccc;
+    border-radius: 6px;
+  }
+  
+  .otp-inputs input:focus {
+    border-color: #fcb900;
+    outline: none;
+  }
+  
+  .links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 1rem 0;
+    font-size: 14px;
+  }
+  
+  .links a,
+  .links button {
+    color: #007bff;
+    text-decoration: underline;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+  
+  .submit-btn {
+    background: black;
+    color: white;
+    padding: 0.5rem 2rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    margin-top: 1rem;
+    cursor: pointer;
+  }
+  
+  .submit-btn:hover {
+    background: #333;
+  }
+  
+  .card-title {
+    white-space: normal;
+    word-break: break-word;
+  }
+  
