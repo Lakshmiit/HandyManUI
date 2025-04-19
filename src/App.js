@@ -49,7 +49,7 @@ import RaiseOrdersGrid from './RaiseOrdersGrid.js';
 import CustomerCareConfirmation from './CustomerCareConfirmation.js';
 import CustomerRaiseTicketTrack from './CustomerRaiseTicketTrack.js';
 import TrackStatusNotifications from './TrackStatusNotifications.js';
-import TrackStatusGrid from './TrackStatusGrid.js';
+// import TrackStatusGrid from './TrackStatusGrid.js';
 import TicketConfirmationGrid from './TicketConfirmationGrid.js';
 import TraderConfirmationGrid from './TraderConfirmationGrid.js';
 // import TermsandConditions from './TermsandConditions.js';
@@ -84,8 +84,15 @@ import NotificationsBell from './NotificationsBell.js';
 import OrdersNotificationBell from './OrdersBellNotifications.js';
 import TrackStatusNotificationBell from './TrackStatusBellNotifications.js';
 // import WebProfilePage from './WebProfilePage.js';
-import Device from './Device.js';       
+import Device from './Device.js';   
+import IconsOffersProducts from './IconsOffersProducts.js';    
 import Offers from './Offers.js';
+// import GuestOffers from './GuestOffers.js';
+// import GuestOffersBuyProduct from './GuestOffersBuyProduct.js';
+// import GuestUserLogin from './GuestUserLogin.js';
+// import GuestMobileNumberLogin from './GuestMobileNumberLogin.js';
+// import GuestProductPaymentPage from './GuestProductPaymentPage.js';
+// import GuestProfilePage from './GuestProfilePage.js';
 import OffersBuyProductPage from './OffersBuyProductPage.js';
 import ViewOffersBuyProductPage from './ViewOffersBuyProductPage.js';
 // import FirebaseMainConfig from './FirebaseMainConfig.js';
@@ -96,20 +103,20 @@ import ViewOffersBuyProductPage from './ViewOffersBuyProductPage.js';
  import LoginPage from './LoginPage.js';
  import UserIdLogin from './UserIdLogin.js';
  import CustomerRaiseTicketGridView from './CustomerRaiseTicketGridView.js';
+ import CustomerRegistration from './CustomerRegistration.js';
+//  import TechnicianRegistration from './TechnicianRegistration.js';
+//  import OTPVerificationPage from './OTPVerificationPage.js';
 // import BuyProductCartView from './BuyProductCartView.js';
  
 const PreventBackNavigation = () => {
   const navigate = useNavigate(); 
-  
   useEffect(() => { 
     const handlePopState = (event) => {
       event.preventDefault();
-      navigate(1); // Moves user forward, preventing back navigation
+      navigate(1); 
     };
-
     window.history.pushState(null, null, window.location.href);
     window.addEventListener("popstate", handlePopState);
-
     return () => {
       window.removeEventListener("popstate", handlePopState);
     };
@@ -117,7 +124,6 @@ const PreventBackNavigation = () => {
 
   return null;
 };
-
 
 function App() {
   return ( 
@@ -128,12 +134,15 @@ function App() {
         {/* <Header /> */}
         {/* Main content */}
         <main 
-        className="py-3 mt-mob-50"
+        className=" mt-mob-50"
         >
           <Routes>
-          <Route path="/device" element={<Device />} />
+            <Route path="/device" element={<Device />} />
+            <Route path="/customerRegistration" element={<CustomerRegistration />} />
+            {/* <Route path="/technicianRegistration" element={<TechnicianRegistration />} /> */}
             <Route path="/profilePage/:userType/:userId" element={<ProfilePage />} />
             <Route path="/" element={<LoginPage />} />
+            {/* <Route path="/otpVerification" element={<OTPVerificationPage />} /> */}
             <Route path="/UserIdLogin" element={<UserIdLogin />} />
             {/* <Route path="/webProfilePage/:userType/:userId" element={<WebProfilePage />} /> */}
             <Route path="/product/:ProductOwnedBy" element={<UploadForm />} />
@@ -143,7 +152,6 @@ function App() {
             <Route path="/product-edit/:id/:ProductOwnedBy" element={<EditUploadForm />} />           
             <Route path="/raiseTicket/:userType/:userId" element={<RaiseTicket />} />
             <Route path="/raiseTicketConfirmation/:userType/:userId" element={<RaiseTicketConfirmation />} />
-            
             <Route path="/buyProducts/:userType/:userId" element={<BuyProducts />} />
             <Route path="/sidebar/:userType" element={<Sidebar />} />
             <Route path="/buyproduct-view/:userType/:userId/:id" element={<BuyProductView />} />
@@ -187,9 +195,9 @@ function App() {
             <Route path="/trackStatusNotifications/:userType/:userId" element={<TrackStatusNotifications />} />
             <Route path="/ticketConfirmationGrid/:userType/:userId/:category/:district" element={<TicketConfirmationGrid />} />
             <Route path="/traderConfirmationGrid/:userType/:userId/:category/:district" element={<TraderConfirmationGrid />} />
-            {/* <Route path="/termsandConditions" element={<TermsandConditions />} />*/}
+            {/* <Route path="/termsandConditions" element={<TermsandConditions />} /> */}
             <Route path="/customerCareGrid" element={<CustomerCareGrid />} /> 
-            <Route path="/trackStatus/:userType" element={<TrackStatusGrid />} />
+            {/* <Route path="/trackStatusGrid/:userType/:userId" element={<TrackStatusGrid />} /> */}
             <Route path="/bookTechnician/:userType/:userId" element={<BookTechnician />} />
             <Route path="/bookTechnicianActionView/:raiseTicketId" element={<BookTechnicianActionView />} />
             <Route path="/uploadBookTechnician" element={<UploadBookTechnician />} />
@@ -219,15 +227,21 @@ function App() {
             <Route path="/notificationsbell/:userId" element={<NotificationsBell />} />
             <Route path="/ordersNotificationsbell/:userId" element={<OrdersNotificationBell />} />
             <Route path="/trackStatusNotificationsbell/:userId" element={<TrackStatusNotificationBell />} />
+            <Route path="/offersIcons/:userType/:userId" element={<IconsOffersProducts />} />
             <Route path="/offers/:userType/:userId" element={<Offers />} />
+            {/* <Route path="/guestProfilePage/:userType/:userId" element={<GuestProfilePage />} /> */}
+            {/* <Route path="/offersGuest/customer/guest" element={<GuestOffers />} />
+            <Route path="/offersGuestBuyProduct/customer/guest/:id" element={<GuestOffersBuyProduct />} /> */}
+
+            {/* <Route path="/guestLogin" element={<GuestMobileNumberLogin />} />
+            <Route path="/guestOTPVerification" element={<GuestUserLogin />} /> */}
             <Route path="/offersBuyProduct/:userType/:userId/:id" element={<OffersBuyProductPage />} />
+            {/* <Route path='/guestProductPaymentPage/:userType/:userId/:buyProductId' element={<GuestProductPaymentPage />} /> */}
             <Route path="/viewOffersBuyProduct/:userType/:userId/:id" element={<ViewOffersBuyProductPage />} />
             <Route path="/technicianDetailsNotifications/:userType/:userId/:category/:pincode/:technicianName" element={<BookTechnicianDetailsNotifications />} />
             <Route path="/technicianGridDetails/:userType/:userId/:category/:pincode/:technicianName" element={<BookTechnicianDetailsGrid />} />
-
             {/* <Route path="/raiseQuoteNotificationsBell/:userId" element={<RaiseQuoteNotificationBell />} /> */}
             </Routes>
-         
         </main>
         {/* <Footer /> */}
       </div>

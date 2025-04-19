@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import './App.css';
 import Sidebar from './Sidebar.js';
 import Footer from './Footer.js';
 import Header from './Header.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import MoreVertIcon from '@mui/icons-material/Dashboard';
 import { Button, Carousel, Modal } from 'react-bootstrap';
 
 const OffersProductCard = () => {
   const navigate = useNavigate();
-  const {userType} = useParams();
+   const location = useLocation();
+   const encodedCategory = location.state?.encodedCategory || localStorage.getItem('encodedCategory');  
+   const {userType} = useParams();
   const {userId} = useParams(); 
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -19,6 +22,10 @@ const OffersProductCard = () => {
   const [imageUrls, setImageUrls] = useState([]);
  const [showZoomModal, setShowZoomModal] = useState(false);
   const [zoomImage, setZoomImage] = useState("");
+  const [products, setProducts] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -59,6 +66,22 @@ const OffersProductCard = () => {
     setShowZoomModal(true);
   };
 
+useEffect(() => {
+  const handleCategoryClick = async () => {
+    try {
+      setSelectedCategory(encodedCategory);
+      setProducts([]); 
+      const url = `https://handymanapiv2.azurewebsites.net/api/Product/GetProductsByCategory?Category=${encodedCategory}`;
+      const response = await axios.get(url);
+      setProducts(response.data);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      setProducts([]); 
+    }
+  };
+  handleCategoryClick();
+}, [encodedCategory]);
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     handleResize();
@@ -76,14 +99,10 @@ const OffersProductCard = () => {
     );
   }
 
-  // const discountedPrice = product.rate - (product.rate * product.discount) / 100;
 
   return (
     <>
       <Header />
-      <div className="offer-banner text-center text-white py-3">
-        🎉 <b>Special Inaugural  Offers!</b> Enjoy Free Delivery and Installation on all Products. 🛒
-      </div>
 
       {isMobile && <Header />}
       <div className="wrapper bg-light d-flex">
@@ -112,64 +131,18 @@ const OffersProductCard = () => {
         )}
 
         <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
-          {/* <div className="row g-4">
-            {productData.map((product) => (
-              
-              <div key={product.id} className="col-md-4">
-                <div className="card w-100 h-100 shadow-lg border-light rounded-4">
-                  {imageUrls[product.id] && imageUrls[product.id].length > 0 ? (
-                    <Carousel>
-                      {imageUrls[product.id].map((img, index) => (
-                        <Carousel.Item key={index}>
-                          <img
-                            src={`data:image/jpeg;base64,${img.imageData}`}
-                            className="card-img-top rounded-top zoomable-image"
-                            style={{ height: "250px", objectFit: "cover", cursor: "pointer" }}
-                            alt={`product-image-${index}`}
-                            onClick={() => handleImageClick(`data:image/jpeg;base64,${img.imageData}`)}
-                          />
-                        </Carousel.Item>
-                      ))}
-                    </Carousel>
-                  ) : (
-                    <div
-                      className="d-flex justify-content-center align-items-center"
-                      style={{ height: '250px', background: '#f8f9fa' }}
-                    >
-                      No Image
-                    </div>
-                  )}
-
-                  <div className="card-body">
-                    <h5 className="card-title fs-5">{product.productName}</h5>
-                    <p className="card-text fw-bold fs-5 text-muted">MRP: Rs {product.rate}</p>
-                    <p className="card-text  fw-bold fs-5 text-danger">Discount: {product.discount}%</p>
-                    <p className="card-text fw-bold fs-5 text-success">After Discount Price: Rs {discountedPrice.toFixed(2)}</p>
-
-                  </div>
-                  <Button
-  className="btn btn-warning w-50 fw-bold mt-2"
-  onClick={() => {
-    if (userId === "guest") {
-      window.location.href = "https://handymanserviceproviders.com/";
-    } else {
-      navigate(`/offersBuyProduct/${userType}/${userId}/${product.id}`);
-    }
-  }}
->
-  Buy Now
-</Button>
-                </div>
-              </div>
-            ))}
-          </div> */}
-
-<div className="row g-4">
-  {productData?.map((product) => {
+        {selectedCategory && (
+  <div className="text-end">
+    <Button variant="btn btn-warning m-2" size="sm" onClick={() => setSelectedCategory(null)}>
+      Show All Products
+    </Button>
+  </div>
+)}
+            <div className="row g-4">
+  {(selectedCategory ? products : productData)?.map((product) => {
     const discountedPrice = product.rate && product.discount 
       ? ((product.rate - (product.rate * product.discount) / 100).toFixed(0)) 
       : product.rate;
-
     return (
       <div key={product.id} className="col-md-4">
         <div className="card w-100 border-light rounded-4">
@@ -195,7 +168,6 @@ const OffersProductCard = () => {
               No Image
             </div>
           )}
-
           <div className="card-body p-1 m-1">
             <h5 className="card-title">{product.productName}</h5>
             <p className="card-text fw-bold text-primary fs-6">MRP: Rs {product.rate}</p>
@@ -203,23 +175,31 @@ const OffersProductCard = () => {
             <p className="card-text fw-bold text-success fs-5">After Discount Price: Rs {discountedPrice}</p>
           </div>
           <Button
-  className="btn btn-warning w-50 fw-bold mt-2"
-  onClick={() => {
-    if (userId === "guest") {
-      window.location.href = "https://handymanserviceproviders.com/";
-    } else {
-      navigate(`/offersBuyProduct/${userType}/${userId}/${product.id}`);
-    }
-  }}
->
-  Buy Now
-</Button>
+            className="btn btn-warning w-50 fw-bold mt-2"
+            onClick={() => {
+              if (userId === "guest") {
+                window.location.href = "https://handymanserviceproviders.com/";
+              } else {
+                navigate(`/offersBuyProduct/${userType}/${userId}/${product.id}`);
+              }
+            }}
+          >
+            Buy Now
+          </Button>
         </div>
       </div>
     );
   })}
 </div>
 
+
+{/* {selectedCategory && (
+  <div className="text-end">
+    <Button variant="btn btn-warning m-2" size="sm" onClick={() => setSelectedCategory(null)}>
+      Show All Products
+    </Button>
+  </div>
+)} */}
         </div>
       </div>
       
@@ -240,17 +220,14 @@ const OffersProductCard = () => {
         </Modal.Body>
       </Modal>
 
-      <div className="text-end">
+      <div className="text-start">
   <button 
     className="btn btn-warning m-2" 
-    onClick={() => navigate(`/profilePage/${userType}/${userId}`)}
+    onClick={() => navigate(`/offersIcons/${userType}/${userId}`)}
   >
     Back
   </button>
 </div>
-
-
-
       <style jsx>{`
        .zoomable-image {
           transition: transform 0.3s ease-in-out;

@@ -2923,3 +2923,9 @@ h2 {
     word-break: break-word;
   }
   
+  .offer-banner {
+    background: linear-gradient(90deg, #ff9800, #ff5722);
+    font-size: 1.3rem;
+    font-weight: bold;
+    animation: pulse 1.5s infinite alternate;
+  }

@@ -4,7 +4,6 @@ import './App.css';
 import NotificationBell from "./NotificationsBell";
 import OrdersNotificationBell from "./OrdersBellNotifications";
 import TrackStatusNotificationBell from "./TrackStatusBellNotifications";
-// import RaiseQuoteNotificationBell from "./RaiseQuoteBellNotifications.js";
 import axios from "axios";
 import Footer from './Footer.js';
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
@@ -12,19 +11,13 @@ import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import RouteIcon from "@mui/icons-material/Route";
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import StorefrontIcon from '@mui/icons-material/Storefront'; 
-// import OrdersIcon from '@mui/icons-material/Assignment';
-// import AccountCircle from "@mui/icons-material/AccountCircle";
-// import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
-import PersonIcon from '@mui/icons-material/Person'; 
+import PermIdentityIcon from '@mui/icons-material/PermIdentity';
 import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 import { TextField, IconButton } from "@mui/material"; 
-// import CancelIcon from "@mui/icons-material/Cancel";
-// import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import EditIcon from "@mui/icons-material/Edit";
-// import Header from "./Header";
 import Banner1 from './img/banner-1 copy.jpg';
 import Banner2 from './img/banner-2.jpg';
 import Banner3 from './img/banner-4.jpg';
@@ -34,70 +27,64 @@ import Logo from "./img/Hm_Logo 1.png";
 import SearchIcon from "@mui/icons-material/Search";
 import LogoutIcon from "@mui/icons-material/Logout";
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
-// import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-
-
+import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 
 const getMenuList = (userType, userId, category, district ,ZipCode,technicianFullName) => {
-  // alert(category);
-  // alert(district);
   const customer = [
-      { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
-      { MenuIcon: <PersonOutlineIcon />, MenuTitle: "Book A Technician", TargetUrl: `/bookTechnician/${userType}/${userId}` },
-      { MenuIcon: <TrackStatusNotificationBell />, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}` },
-      { MenuIcon: <NotificationBell/>, MenuTitle: "Notifications", TargetUrl: `/customerNotification/${userType}/${userId}` },
-      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
-      { MenuIcon: <OrdersNotificationBell />, MenuTitle: "Orders", TargetUrl: `/customerOrders/${userType}/${userId}` },
-      { MenuIcon: <LocalOfferIcon />, MenuTitle: "Buy Product Offers", TargetUrl: `/offers/${userType}/${userId}` },
-      { MenuIcon: <PersonIcon />, MenuTitle: "Accounts"}
+      { MenuIcon: <SupportAgentIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
+      { MenuIcon: <PersonOutlineIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Book A Technician", TargetUrl: `/bookTechnician/${userType}/${userId}` },
+      { MenuIcon: <TrackStatusNotificationBell sx={{ fontSize: 35 }}/>, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}` },
+      { MenuIcon: <NotificationBell sx={{ fontSize: 35 }}/>, MenuTitle: "Notifications", TargetUrl: `/customerNotification/${userType}/${userId}` },
+      { MenuIcon: <StorefrontIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
+      { MenuIcon: <OrdersNotificationBell sx={{ fontSize: 35 }}/>, MenuTitle: "Orders", TargetUrl: `/customerOrders/${userType}/${userId}` },
+      { MenuIcon: <LocalOfferIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Buy Product Offers", TargetUrl: `/offersIcons/${userType}/${userId}` },
+      { MenuIcon: <PermIdentityIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Accounts"} 
   ];
 
-
   const builder = [
-      { MenuIcon: <PersonIcon />, MenuTitle: "Add Member" },
-      { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote" },
-      { MenuIcon: <NotificationsNoneIcon />, MenuTitle: "Notifications" },
-      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: "/BuyProducts" },
-      { MenuIcon: <PersonIcon />, MenuTitle: "My Account" },
-      { MenuIcon: <AccountBalanceIcon />, MenuTitle: "Add Bank Account" },
-      { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: "/TicketRaise" },
-      { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status" }
+      { MenuIcon: <PermIdentityIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Add Member" },
+      { MenuIcon: <RequestQuoteIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Raise a Quote" },
+      { MenuIcon: <NotificationsNoneIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Notifications" },
+      { MenuIcon: <StorefrontIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Buy Products", TargetUrl: "/BuyProducts" },
+      { MenuIcon: <PermIdentityIcon sx={{ fontSize: 35 }}/>, MenuTitle: "My Account" },
+      { MenuIcon: <AccountBalanceIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Add Bank Account" },
+      { MenuIcon: <SupportAgentIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Raise Ticket", TargetUrl: "/TicketRaise" },
+      { MenuIcon: <RouteIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Track Ticket Status" }
   ];
  
   const dealer = [
-      { MenuIcon: <UploadIcon />, MenuTitle: "Upload Products" },
-      { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote" },
-      { MenuIcon: <NotificationsNoneIcon />, MenuTitle: "Notifications", TargetUrl: `/dealerNotifications/${userType}/${userId}/${category}/${district}` },
-      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
-      { MenuIcon: <PersonIcon />, MenuTitle: "My Account" },
-      { MenuIcon: <AccountBalanceIcon />, MenuTitle: "Add Bank Account" },
-      { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
-      { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}` }
+      { MenuIcon: <UploadIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Upload Products" },
+      { MenuIcon: <RequestQuoteIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Raise a Quote" },
+      { MenuIcon: <NotificationsNoneIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Notifications", TargetUrl: `/dealerNotifications/${userType}/${userId}/${category}/${district}` },
+      { MenuIcon: <StorefrontIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
+      { MenuIcon: <PermIdentityIcon sx={{ fontSize: 35 }}/>, MenuTitle: "My Account" },
+      { MenuIcon: <AccountBalanceIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Add Bank Account" },
+      { MenuIcon: <SupportAgentIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
+      { MenuIcon: <RouteIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}` }
   ];
 
   const trader = [
-    { MenuIcon: <UploadIcon />, MenuTitle: "Upload Products" },
-    { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote"},
-    { MenuIcon: <NotificationsNoneIcon />, MenuTitle: "Notifications", TargetUrl: `/dealerNotifications/${userType}/${userId}/${category}/${district}` },
-    { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
-    { MenuIcon: <PersonIcon />, MenuTitle: "My Account" },
-    { MenuIcon: <AccountBalanceIcon />, MenuTitle: "Add Bank Account"},
-    { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
-    { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}` }
+    { MenuIcon: <UploadIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Upload Products" },
+    { MenuIcon: <RequestQuoteIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Raise a Quote"},
+    { MenuIcon: <NotificationsNoneIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Notifications", TargetUrl: `/dealerNotifications/${userType}/${userId}/${category}/${district}` },
+    { MenuIcon: <StorefrontIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
+    { MenuIcon: <PermIdentityIcon sx={{ fontSize: 35 }}/>, MenuTitle: "My Account" },
+    { MenuIcon: <AccountBalanceIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Add Bank Account"},
+    { MenuIcon: <SupportAgentIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
+    { MenuIcon: <RouteIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}` }
 ];
 
   const technician = [
-      { MenuIcon: <PersonIcon />, MenuTitle: "Add Technician"},
-      { MenuIcon: <RequestQuoteIcon />, MenuTitle: "Raise a Quote", TargetUrl: `/notificationTechnician/${userType}/${userId}/${category}/${district}` },
-      { MenuIcon: <NotificationsNoneIcon />, MenuTitle: "Notifications" ,TargetUrl:`/technicianDetailsNotifications/${userType}/${userId}/${category}/${ZipCode}/${technicianFullName}`},
-      { MenuIcon: <TransferWithinAStationIcon />, MenuTitle: "Track Technician" },
-      { MenuIcon: <PersonIcon />, MenuTitle: "My Account"},
-      { MenuIcon: <AccountBalanceIcon />, MenuTitle: "Add Bank Account" },
-      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
-      { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
-      { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status" }
+      { MenuIcon: <PersonAddAltIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Add Technician"},
+      { MenuIcon: <RequestQuoteIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Raise a Quote", TargetUrl: `/notificationTechnician/${userType}/${userId}/${category}/${district}` },
+      { MenuIcon: <NotificationsNoneIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Notifications" ,TargetUrl:`/technicianDetailsNotifications/${userType}/${userId}/${category}/${ZipCode}/${technicianFullName}`},
+      { MenuIcon: <TransferWithinAStationIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Track Technician" },
+      { MenuIcon: <PermIdentityIcon sx={{ fontSize: 35 }}/>, MenuTitle: "My Account"},
+      { MenuIcon: <AccountBalanceIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Add Bank Account" },
+      { MenuIcon: <StorefrontIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
+      { MenuIcon: <SupportAgentIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
+      { MenuIcon: <RouteIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Track Ticket Status" }
   ];
-
      switch (userType) {
       case "builder":
           return builder;
@@ -119,35 +106,21 @@ const ProfilePage = () => {
     const [district, setDistrict] = useState('');
     const [zipCode, setZipCode] = useState('');
     const [fullName, setFullName] = useState('');
-
-   const [menuList, setMenuList] = useState([]);
-    //  const menuList = getMenuList(userType, userId, category, district);
+    const [menuList, setMenuList] = useState([]);
     const [profile, setProfile] = useState({});
-      // const [ticketData, setTicketData] = useState([]);
-      // const [selectedFile, setSelectedFile] = useState(null);
-      const [isEditing, setIsEditing] = useState(false);
-      const [name, setName] = useState(profile.fullName);
-      const [loading, setLoading] = useState(true);
-      // const [error, setError] = useState(null);
-      const [profileImage, setProfileImage] = useState(null);
-      const fileInputRef = useRef(null);
-      const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-        const [showDropdown, setShowDropdown] = useState(false);
-        const [showMenu, setShowMenu] = useState(false);
-        const [showProfile, setShowProfile] = useState(false);
-      // const [ticketId, setTicketId] = useState("");
-      // const [subject, setSubject] = useState("");
-      // const [category, setCategory] = useState("");
-      // const [status, setStatus] = useState("");
-      // const [assignedTo, setAssignedTo] = useState("");
-      const [allTickets, setAllTickets] = useState([]);
-      // const [userStatus, setUserStatus] = useState(null);
-      // const [loadingStatus, setLoadingStatus] = useState(true);
+    const [isEditing, setIsEditing] = useState(false);
+    const [name, setName] = useState(profile.fullName);
+    const [loading, setLoading] = useState(true);
+    const [profileImage, setProfileImage] = useState(null);
+    const fileInputRef = useRef(null);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+    const [showDropdown, setShowDropdown] = useState(false);
+    const [showMenu, setShowMenu] = useState(false);
+    const [showProfile, setShowProfile] = useState(false);
+    const [allTickets, setAllTickets] = useState([]);
+    const menuRef = useRef(null);
+    const scrollRef = useRef(null);
 
-
-        const menuRef = useRef(null);
-
-        const scrollRef = useRef(null);
 useEffect(() => {
   console.log(showMenu);
 }, [showMenu]);
@@ -166,14 +139,11 @@ useEffect(() => {
                 throw new Error("Failed to fetch ticket, product and technician data");
 
               }
-      
+
               const ticketData = await ticketResponse.json();
               const productData = await productResponse.json();
-              const technicianData = await technicianResponse.json();
-              // alert(ticketData);
-      
+              const technicianData = await technicianResponse.json();      
               setAllTickets([...ticketData, ...productData, ...technicianData]);
-              // alert(JSON.stringify(allTickets));
             } catch (error) {
               console.error("Error fetching ticket, product and technician data:", error);
             } finally {

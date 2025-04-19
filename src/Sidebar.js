@@ -6,7 +6,6 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import RouteIcon from '@mui/icons-material/Route';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import StorefrontIcon from '@mui/icons-material/Storefront';
-// import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import UploadIcon from '@mui/icons-material/Upload';
@@ -15,14 +14,9 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import { useParams } from 'react-router-dom';
-// Sidebar component
 const Sidebar = () => {  
   const {userType} = useParams();
   const {userId} = useParams();
-  // const {dealerId} = useParams();
-  // const {technicianId} = useParams();
-  // const {ProductOwnedBy} = useParams();
-  // const {UserId} = useParams();
   const {district} = useParams();
   const {category} = useParams();
   const {ZipCode} =useParams();
@@ -38,7 +32,7 @@ const menuConfig = {
     { MenuIcon: <NotificationsActiveIcon />, MenuTitle: "Notifications", TargetUrl: `/customerNotification/${userType}/${userId}` }, 
       { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
       { MenuIcon: <InventoryIcon />, MenuTitle: "Orders", TargetUrl: `/customerOrders/${userType}/${userId}` },
-      { MenuIcon: <LocalOfferIcon />, MenuTitle: "Buy Product Offers", TargetUrl: `/offers/${userType}/${userId}` },
+      { MenuIcon: <LocalOfferIcon />, MenuTitle: "Buy Product Offers", TargetUrl: `/offersIcons/${userType}/${userId}` },
       { MenuIcon: <AccountCircleIcon />, MenuTitle: "Accounts" },
     ],
     builder: [
