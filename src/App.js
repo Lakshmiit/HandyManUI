@@ -103,7 +103,7 @@ import ViewOffersBuyProductPage from './ViewOffersBuyProductPage.js';
  import LoginPage from './LoginPage.js';
  import UserIdLogin from './UserIdLogin.js';
  import CustomerRaiseTicketGridView from './CustomerRaiseTicketGridView.js';
- import CustomerRegistration from './CustomerRegistration.js';
+//  import CustomerRegistration from './CustomerRegistration.js';
 //  import TechnicianRegistration from './TechnicianRegistration.js';
 //  import OTPVerificationPage from './OTPVerificationPage.js';
 // import BuyProductCartView from './BuyProductCartView.js';
@@ -138,7 +138,7 @@ function App() {
         >
           <Routes>
             <Route path="/device" element={<Device />} />
-            <Route path="/customerRegistration" element={<CustomerRegistration />} />
+            {/* <Route path="/customerRegistration" element={<CustomerRegistration />} /> */}
             {/* <Route path="/technicianRegistration" element={<TechnicianRegistration />} /> */}
             <Route path="/profilePage/:userType/:userId" element={<ProfilePage />} />
             <Route path="/" element={<LoginPage />} />
