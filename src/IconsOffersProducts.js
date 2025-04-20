@@ -10,12 +10,13 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Footer from './Footer';
 import { Button } from 'react-bootstrap';
 import axios from 'axios';
+import HardwareIcon from '@mui/icons-material/Hardware';
 
 const categories = [
     { label: 'Electrical items', icon: <ElectricalServicesIcon sx={{ fontSize: 40, color: '#1976d2' }} /> },
     { label: 'Electronics appliances', icon: <IronIcon sx={{ fontSize: 40, color: '#f57c00' }} /> },
-    { label: 'Plumbing Materials', icon: <PlumbingIcon sx={{ fontSize: 40, color: '#388e3c' }} /> },
-    { label: 'Sanitary items', icon: <BathtubIcon sx={{ fontSize: 40, color: '#512da8' }} /> },
+    { label: 'Plumbing and Sanitary', icon: <PlumbingIcon sx={{ fontSize: 40, color: '#388e3c' }} /> },
+    { label: 'Hardware items', icon: <HardwareIcon sx={{ fontSize: 40, color: '#512da8' }} /> },
     
   ];
 

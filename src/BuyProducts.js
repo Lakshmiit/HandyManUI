@@ -675,11 +675,11 @@ useEffect(() => {
 
   return (
     <div>
-  {isMobile && <Header />}
+   <Header />
     <div className="d-flex flex-row justify-content-start align-items-start">
       {/* Sidebar menu for Larger Screens */}
       {!isMobile && (
-        <div className=" ml-0 m-4 p-0 sde_mnu">
+        <div className=" ml-0 p-0 sde_mnu">
           <Sidebar userType={selectedUserType} />
         </div>
       )}
@@ -884,8 +884,7 @@ useEffect(() => {
               >
                 <option value="">Choose Category</option>
                 <option>Electrical items</option>
-                <option>Plumbing Materials</option>
-                <option>Sanitary items</option>
+                <option>Plumbing and Sanitary</option>
                 <option>Electronics appliances</option>
                 <option>Paints</option>
                 <option>Hardware items</option>

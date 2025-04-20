@@ -259,8 +259,7 @@ useEffect(() => {
               >
                 <option>Choose Category</option>
                 <option>Electrical items</option>
-                <option>Plumbing Materials</option>
-                <option>Sanitary items</option>
+                <option>Plumbing and Sanitary</option>     
                 <option>Electronics appliances</option>
                 <option>Paints</option>
                 <option>Hardware items</option>
