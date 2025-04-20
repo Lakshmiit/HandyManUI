@@ -1,7 +1,6 @@
 import ElectricalServicesIcon from '@mui/icons-material/ElectricalServices';
 import IronIcon from '@mui/icons-material/Iron';
 import PlumbingIcon from '@mui/icons-material/Plumbing';
-import BathtubIcon from '@mui/icons-material/Bathtub';
 import Sidebar from './Sidebar';
 import { useState, useEffect } from 'react';
 import Header from './Header';
