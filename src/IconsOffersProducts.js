@@ -12,11 +12,10 @@ import axios from 'axios';
 import HardwareIcon from '@mui/icons-material/Hardware';
 
 const categories = [
-    { label: 'Electrical items', icon: <ElectricalServicesIcon sx={{ fontSize: 40, color: '#1976d2' }} /> },
-    { label: 'Electronics appliances', icon: <IronIcon sx={{ fontSize: 40, color: '#f57c00' }} /> },
-    { label: 'Plumbing and Sanitary', icon: <PlumbingIcon sx={{ fontSize: 40, color: '#388e3c' }} /> },
-    { label: 'Hardware items', icon: <HardwareIcon sx={{ fontSize: 40, color: '#512da8' }} /> },
-    
+    { label: 'Electrical items',value:'Electrical items', icon: <ElectricalServicesIcon sx={{ fontSize: 40, color: '#1976d2' }} /> },
+    { label: 'Electronics appliances', value:'Electronics appliances',icon: <IronIcon sx={{ fontSize: 40, color: '#f57c00' }} /> },
+    { label: 'Plumbing And Sanitary',value: 'Sanitary items',  icon: <PlumbingIcon sx={{ fontSize: 40, color: '#388e3c' }} /> },
+    { label: 'Hardware items',value:'Hardware items', icon: <HardwareIcon sx={{ fontSize: 40, color: '#512da8' }} /> },
   ];
 
 export default function CategoryIcons() {
@@ -40,28 +39,16 @@ const [error, setError] = useState('');
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    // const fetchData = async () => {
-    //   try {
-    //     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/GetAllProductList`);
-    //     const data = await response.json();
-  
-    //     localStorage.setItem('allProducts', JSON.stringify(data));
-    //     localStorage.removeItem('encodedCategory'); 
-  
-    //     navigate(`/offers/${userType}/${userId}`, {
-    //       state: { allProducts: true },
-    //     });
-    //   } catch (error) {
-    //     console.error('Error fetching all products:', error);
-    //   }
-    // };
 
-    const handleCategoryClick = async (categoryLabel) => {
+    const handleCategoryClick = async (category) => {
+        const { value } = category; 
+      
         try {
-          setSelectedCategory(categoryLabel);
+          setSelectedCategory(category);
           setProducts([]);
-          setError(""); 
-          const encodedCategory = encodeURIComponent(categoryLabel);
+          setError("");
+      
+          const encodedCategory = encodeURIComponent(value);
           const url = `https://handymanapiv2.azurewebsites.net/api/Product/GetProductsByCategory?Category=${encodedCategory}`;
           const response = await axios.get(url);
           const productsData = response.data;
@@ -82,9 +69,10 @@ const [error, setError] = useState('');
         } catch (error) {
           console.error('Error fetching products:', error);
           setProducts([]);
-          setError(`Oops! No products found for ${categoryLabel} category.`);
+          setError(`Oops! No products found for ${value} category.`);
         }
       };
+      
       
   return (
     <>
@@ -92,20 +80,12 @@ const [error, setError] = useState('');
     <div className="offer-banner text-center text-white py-3">
         🎉 <b>Special Inaugural Offers!</b> Enjoy Free Delivery and Installation on all Products. 🛒
       </div>
-      {/* {selectedCategory && ( */}
-        {/* <div className="text-end">
-          <Button variant="btn btn-warning m-2" size="sm" onClick={fetchData}>
-            Show All Products
-          </Button>
-        </div> */}
-      {/* )} */}
     <div className="wrapper bg-light d-flex">
         {!isMobile && (
             <div className="ml-0 p-0 sde_mnu">
                 <Sidebar userType={selectedUserType} />
             </div>
         )}
-
         {isMobile && (
             <div className="floating-menu">
                 <Button
@@ -124,26 +104,35 @@ const [error, setError] = useState('');
             </div>
         )}
 
-    <div className={`container m-5 ${isMobile ? 'w-100' : 'w-75'}`}>
-        <div className="row justify-content-center">
-            {categories.map((cat) => (
-                <div className="col-6 col-sm-3 mb-2" key={cat.label} onClick={() => handleCategoryClick(cat.label)}>
-                    <div
-                        className="m-2 card text-center border-0 shadow-sm"
-                        style={{ height: '120px', width: '120px',  backgroundColor: '#F1B61F30', cursor: 'pointer' }}
-                    >
-                        <div style={{ color: '#1976d2' }}>
-                            {cat.icon}
-                        </div>
-                        <span style={{ fontSize: '12px', fontWeight: '500' }}>{cat.label}</span>
-                    </div>
-                </div>
-            ))}
-            {error && <div className="text-danger">{error}</div>}
-        </div> 
-    </div>
+<div className={`container m-5 ${isMobile ? 'w-100' : 'w-75'}`}>
+  <div className="row justify-content-center">
+    {categories.map((cat) => (
+      <div
+        className="col-6 col-sm-3 mb-2"
+        key={cat.label}
+        onClick={() => handleCategoryClick(cat)} 
+      >
+        <div
+          className="m-2 card text-center border-0 shadow-sm"
+          style={{
+            height: '120px',
+            width: '120px',
+            backgroundColor: '#F1B61F30',
+            cursor: 'pointer',
+          }}
+        >
+          <div style={{ color: '#1976d2' }}>
+            {cat.icon}
+          </div>
+          <span style={{ fontSize: '12px', fontWeight: '500' }}>{cat.label}</span>
+        </div>
+      </div>
+    ))}
+    {error && <div className="text-danger">{error}</div>}
+  </div>
+</div>
     </div>
     <Footer />
     </> 
   );
-}
+} 

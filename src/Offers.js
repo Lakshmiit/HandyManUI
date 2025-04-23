@@ -24,7 +24,7 @@ const OffersProductCard = () => {
   const [zoomImage, setZoomImage] = useState("");
   const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  
+  const [imageLoading, setImageLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,6 +54,7 @@ const OffersProductCard = () => {
           if (img) imageMap[img.id] = img.images;
         });
         setImageUrls(imageMap);
+        setImageLoading(false);
       } catch (error) {
         console.error('Error fetching product data:', error);
       }
@@ -99,12 +100,9 @@ useEffect(() => {
     );
   }
 
-
   return (
     <>
       <Header />
-
-      {isMobile && <Header />}
       <div className="wrapper bg-light d-flex">
         {!isMobile && (
           <div className="ml-0 m-4 p-0 sde_mnu">
@@ -132,76 +130,133 @@ useEffect(() => {
 
         <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
         {selectedCategory && (
-  <div className="text-end">
-    <Button variant="btn btn-warning m-2" size="sm" onClick={() => setSelectedCategory(null)}>
-      Show All Products
-    </Button>
-  </div>
-)}
-            <div className="row g-4">
-  {(selectedCategory ? products : productData)?.map((product) => {
-    const discountedPrice = product.rate && product.discount 
-      ? ((product.rate - (product.rate * product.discount) / 100).toFixed(0)) 
-      : product.rate;
-    return (
-      <div key={product.id} className="col-md-4">
-        <div className="card w-100 border-light rounded-4">
-          {imageUrls[product.id] && imageUrls[product.id].length > 0 ? (
-            <Carousel>
-              {imageUrls[product.id].map((img, index) => (
-                <Carousel.Item key={index}>
-                  <img
-                    src={`data:image/jpeg;base64,${img.imageData}`}
-                    className="card-img-top rounded-top zoomable-image"
-                    style={{ height: "250px", objectFit: "cover", cursor: "pointer" }}
-                    alt={`product-image-${index}`}
-                    onClick={() => handleImageClick(`data:image/jpeg;base64,${img.imageData}`)}
-                  />
-                </Carousel.Item>
-              ))}
-            </Carousel>
-          ) : (
-            <div
-              className="d-flex justify-content-center align-items-center"
-              style={{ height: '250px', background: '#f8f9fa' }}
-            >
-              No Image
-            </div>
-          )}
-          <div className="card-body p-1 m-1">
-            <h5 className="card-title">{product.productName}</h5>
-            <p className="card-text fw-bold text-primary fs-6">MRP: Rs {product.rate}</p>
-            <p className="card-text fw-bold text-danger fs-6">Discount: {product.discount}%</p>
-            <p className="card-text fw-bold text-success fs-5">After Discount Price: Rs {discountedPrice}</p>
+          <div className="text-end">
+            <Button variant="btn btn-warning m-2" size="sm" onClick={() => setSelectedCategory(null)}>
+              Show All Products
+            </Button>
           </div>
-          <Button
-            className="btn btn-warning w-50 fw-bold mt-2"
-            onClick={() => {
-              if (userId === "guest") {
-                window.location.href = "https://handymanserviceproviders.com/";
-              } else {
-                navigate(`/offersBuyProduct/${userType}/${userId}/${product.id}`);
-              }
-            }}
-          >
-            Buy Now
-          </Button>
-        </div>
+        )}
+            <div className="row g-4">
+            {(selectedCategory ? products : productData)?.map((product) => {
+              const discountedPrice = product.rate && product.discount 
+                ? ((product.rate - (product.rate * product.discount) / 100).toFixed(0)) 
+                : product.rate;
+              return (
+                <div key={product.id} className="col-md-4">
+                  {!isMobile ? (
+                  <div className="card w-100 border-light rounded-4">
+                  {imageLoading ? (
+                    <div
+                      className="d-flex justify-content-center align-items-center"
+                      style={{ height: '250px', background: '#f8f9fa' }}
+                    >
+                      <div className="spinner-border text-secondary" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                      </div>
+                    </div>
+                  ) : imageUrls[product.id]?.length > 0 ? (
+                    <Carousel>
+                      {imageUrls[product.id].map((img, index) => (
+                        <Carousel.Item key={index}>
+                          <img
+                            src={`data:image/jpeg;base64,${img.imageData}`}
+                            className="card-img-top rounded-top zoomable-image"
+                            style={{ height: "250px", objectFit: "cover", cursor: "pointer" }}
+                            alt={`product-image-${index}`}
+                            onClick={() => handleImageClick(`data:image/jpeg;base64,${img.imageData}`)}
+                          />
+                        </Carousel.Item>
+                      ))}
+                    </Carousel>
+                  ) : (
+                    <div
+                      className="d-flex justify-content-center align-items-center"
+                      style={{ height: '250px', background: '#f8f9fa' }}
+                    >
+                      No Image
+                    </div>
+                  )}
+                      <div className="card-body p-1 m-1">
+                        <h5 className="card-title">{product.productName}</h5>
+                        <div className="card-text fw-bold text-primary fs-5">After Discount Price: Rs {discountedPrice}</div>
+                            <div className="card-text fw-bold text-muted fs-6" style={{ textDecoration: 'line-through' }}>MRP: Rs {product.rate}</div>
+                            <div className="card-text fw-bold text-danger fs-6">Discount: {product.discount}%</div>
+                            <div className="card-text fw-bold text-dark fs-5">Free Delivery and Installation</div>
+
+                      <Button
+                        className="btn btn-warning w-50 fw-bold mt-2"
+                        onClick={() => {
+                          if (userId === "guest") {
+                            window.location.href = "https://handymanserviceproviders.com/";
+                          } else {
+                            navigate(`/offersBuyProduct/${userType}/${userId}/${product.id}`);
+                          }
+                        }}
+                      >
+                        Buy Now
+                      </Button>
+                      </div>
+                    </div>
+                    ) : (
+                      <div className="card w-100 border-light rounded-4 d-md-none">
+                      <div className="d-flex">
+                        <div style={{ flex: '0 0 55%' }}>
+                        {imageLoading ? (
+                        <div
+                          className="d-flex justify-content-center align-items-center"
+                          style={{ height: '250px', background: '#f8f9fa' }}
+                        >
+                          <div className="spinner-border text-secondary" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                          </div>
+                        </div>
+                      ) : imageUrls[product.id]?.length > 0 ? (
+                        <Carousel>
+                          {imageUrls[product.id].map((img, index) => (
+                            <Carousel.Item key={index}>
+                              <img
+                                src={`data:image/jpeg;base64,${img.imageData}`}
+                                className="card-img-top rounded-top zoomable-image"
+                                style={{ height: "250px", objectFit: "cover", cursor: "pointer" }}
+                                alt={`product-image-${index}`}
+                                onClick={() => handleImageClick(`data:image/jpeg;base64,${img.imageData}`)}
+                              />
+                            </Carousel.Item>
+                          ))}
+                        </Carousel>
+                      ) : (
+                        <div
+                          className="d-flex justify-content-center align-items-center"
+                          style={{ height: '250px', background: '#f8f9fa' }}
+                        >
+                          No Image
+                        </div>
+                      )}
+                        </div>
+                        <div >
+                          <h6 className="mb-1">{product.productName}</h6>
+                          <div className="small text-primary">Rs {discountedPrice}</div>
+                          <div className="small text-muted fw-bold" style={{ textDecoration: 'line-through' }}>MRP: Rs {product.rate}</div>
+                          <div className="small text-danger">Discount: {product.discount}%</div>
+                          <div className="small text-dark fw-bold">Free Delivery and Installation</div>
+                          <button
+                            className="btn btn-warning btn-sm fw-bold mt-1"
+                            onClick={() => {
+                              navigate(`/offersGuestBuyProduct/customer/guest/${product.id}`);
+                            }}
+                          >
+                            Buy Now
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                     )}
       </div>
     );
   })}
 </div>
-
-
-{/* {selectedCategory && (
-  <div className="text-end">
-    <Button variant="btn btn-warning m-2" size="sm" onClick={() => setSelectedCategory(null)}>
-      Show All Products
-    </Button>
-  </div>
-)} */}
-        </div>
-      </div>
+</div>
+</div>
       
 
 {/* Zoom Modal */}

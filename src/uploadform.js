@@ -259,14 +259,13 @@ useEffect(() => {
               >
                 <option>Choose Category</option>
                 <option>Electrical items</option>
-                <option>Plumbing and Sanitary</option>     
+                <option>Sanitary items</option>     
                 <option>Electronics appliances</option>
                 <option>Paints</option>
                 <option>Hardware items</option>
                 <option>Civil & Waterproofing Materials</option>
               </select>
             </div>
-
 
             {/* Catalogue */}
             <div className="form-group">
