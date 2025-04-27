@@ -12,7 +12,7 @@ import { Button, Carousel, Modal } from 'react-bootstrap';
 const OffersProductCard = () => {
   const navigate = useNavigate();
    const location = useLocation();
-   const encodedCategory = location.state?.encodedCategory || localStorage.getItem('encodedCategory');  
+   const encodedCategory = location.state?.encodedCategory || localStorage.getItem('encodedCategory');
    const {userType} = useParams();
   const {userId} = useParams(); 
   const [isMobile, setIsMobile] = useState(false);
@@ -66,6 +66,7 @@ const OffersProductCard = () => {
     setZoomImage(imageSrc);
     setShowZoomModal(true);
   };
+  
 
 useEffect(() => {
   const handleCategoryClick = async () => {
@@ -130,14 +131,14 @@ useEffect(() => {
 
         <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
         {selectedCategory && (
-          <div className="text-end">
+          <div className="text-end m-3">
             <Button variant="btn btn-warning m-2" size="sm" onClick={() => setSelectedCategory(null)}>
               Show All Products
             </Button>
           </div>
         )}
             <div className="row g-4">
-            {(selectedCategory ? products : productData)?.map((product) => {
+            {products?.slice().reverse().map((product) => {
               const discountedPrice = product.rate && product.discount 
                 ? ((product.rate - (product.rate * product.discount) / 100).toFixed(0)) 
                 : product.rate;
@@ -181,8 +182,7 @@ useEffect(() => {
                         <div className="card-text fw-bold text-primary fs-5">After Discount Price: Rs {discountedPrice}</div>
                             <div className="card-text fw-bold text-muted fs-6" style={{ textDecoration: 'line-through' }}>MRP: Rs {product.rate}</div>
                             <div className="card-text fw-bold text-danger fs-6">Discount: {product.discount}%</div>
-                            <div className="card-text fw-bold text-dark fs-5">Free Delivery and Installation</div>
-
+                            <div className="card-text fw-bold text-success fs-5">Free Delivery and Installation</div>
                       <Button
                         className="btn btn-warning w-50 fw-bold mt-2"
                         onClick={() => {
@@ -238,11 +238,11 @@ useEffect(() => {
                           <div className="small text-primary">Rs {discountedPrice}</div>
                           <div className="small text-muted fw-bold" style={{ textDecoration: 'line-through' }}>MRP: Rs {product.rate}</div>
                           <div className="small text-danger">Discount: {product.discount}%</div>
-                          <div className="small text-dark fw-bold">Free Delivery and Installation</div>
+                          <div className="small text-success fw-bold">Free Delivery and Installation</div>
                           <button
                             className="btn btn-warning btn-sm fw-bold mt-1"
                             onClick={() => {
-                              navigate(`/offersGuestBuyProduct/customer/guest/${product.id}`);
+                              navigate(`/offersBuyProduct/${userType}/${userId}/${product.id}`);
                             }}
                           >
                             Buy Now

@@ -28,6 +28,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import LogoutIcon from "@mui/icons-material/Logout";
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
+// import { Carousel } from 'react-bootstrap';
 
 const getMenuList = (userType, userId, category, district ,ZipCode,technicianFullName) => {
   const customer = [
@@ -120,10 +121,13 @@ const ProfilePage = () => {
     const [allTickets, setAllTickets] = useState([]);
     const menuRef = useRef(null);
     const scrollRef = useRef(null);
+    const [imageLoading, setImageLoading] = useState(true);
+    const [productData, setProductData] = useState(null);
+    const [imageUrls, setImageUrls] = useState([]);
 
 useEffect(() => {
-  console.log(showMenu);
-}, [showMenu]);
+  console.log(showMenu, imageLoading, productData, imageUrls);
+}, [showMenu, imageLoading, productData, imageUrls]);
 
         useEffect(() => {
           const fetchAllTickets = async () => {
@@ -134,12 +138,10 @@ useEffect(() => {
                 fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=buyProduct`),
                 fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=bookTechnician`),
               ]);
-              
               if (!ticketResponse.ok || !productResponse.ok || !technicianResponse) {
                 throw new Error("Failed to fetch ticket, product and technician data");
 
               }
-
               const ticketData = await ticketResponse.json();
               const productData = await productResponse.json();
               const technicianData = await technicianResponse.json();      
@@ -211,7 +213,46 @@ useEffect(() => {
 //     fetchproductData();
 //   }, [userId]); 
 
+useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/GetAllProductList`);
+        const data = await response.json();
+        setProductData(data);
 
+        const imageRequests = data.map(async (product) => {
+          if (product.productPhotos?.length) {
+            const photo = product.productPhotos.map(async (photo) => {  
+              const res = await fetch(
+                `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+              );
+              const imgData = await res.json();
+              return { id: product.id, imageData: imgData.imageData, allPhotos: product.productPhotos };
+            });
+            const allImages = await Promise.all(photo);
+            return { id: product.id, images: allImages };
+          }
+          return null;
+        });
+
+        const images = await Promise.all(imageRequests);
+        const imageMap = {};
+        images.forEach((img) => {
+          if (img) imageMap[img.id] = img.images;
+        });
+        setImageUrls(imageMap);
+        setImageLoading(false);
+      } catch (error) {
+        console.error('Error fetching product data:', error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  // const handleImageClick = (imageSrc) => {
+  //   setZoomImage(imageSrc);
+  //   setShowZoomModal(true);
+  // };
   
       useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -803,9 +844,9 @@ const fetchImageUrl = async (photoId) => {
           )} */}
           {isMobile && (
             <div>
-            <p className="text-warning cust-fullname fs-3">Welcome <br /> <strong className="text-dark">{profile.fullName}{" "}</strong></p>
-            <h5 className="fw-bold fs-3">Lakshmi Sai Service Providers</h5>
-            <p className="text-warning fs-3">{profile.userProfileType}</p>
+            <div className="text-warning cust-fullname fs-4">Welcome <br /> <strong className="text-dark">{profile.fullName}{" "}</strong></div>
+            <div className="fw-bold fs-5">Lakshmi Sai Service Providers</div>
+            <div className="text-warning fs-3">{profile.userProfileType}</div>
             </div>
           )}
         <div className="col-md-9 bg-white">
@@ -858,38 +899,6 @@ const fetchImageUrl = async (photoId) => {
       </div>
     </div>
             
-          {/* Tickets Section */}
-          {/* <div className="mt-5">
-            <div className="heading-container"> 
-                <h2> My Tickets</h2>
-                <div className="underline"></div>
-            </div>
-          <table className="table table-bordered mt-3">
-          <thead className="table-white">
-          <tr>
-            <th>Ticket ID</th>
-            <th>Subject</th>
-            <th>Category</th>
-            <th>Status</th>
-            <th>Assigned To</th>
-          </tr>
-        </thead>
-        <tbody>
-        {tickets.length > 0 ? tickets.map((ticket, index) => (
-          <tr key={index}>
-            <td>{ticket.id}</td>
-            <td>{ticket.subject}</td>
-            <td>{ticket.category}</td>
-            <td>{ticket.status}</td>
-            <td>{ticket.assignedTo}</td>
-          </tr>
-        )) : (
-          <tr><td colSpan="5">No tickets found for this customer.</td></tr>
-        )}
-      </tbody>
-            </table>
-            </div> */}
-          
               {/* Carousel */}
               <div className="container">
                 <div className="mx-auto">
@@ -972,6 +981,57 @@ const fetchImageUrl = async (photoId) => {
               </div>
               </div>
               </div>
+
+              {/* <div className="scrolling-wrapper auto-scroll py-3">
+          {productData && productData.map((product) => {
+            const discountedPrice = product.rate && product.discount
+              ? ((product.rate - (product.rate * product.discount) / 100).toFixed(0))
+              : product.rate;
+
+            return (
+              <div key={product.id} className="me-1" style={{ minWidth: "250px" }}>
+                <div className="card w-100">
+                  {imageLoading ? (
+                    <div
+                      className="d-flex justify-content-center align-items-center"
+                      style={{ height: '250px', background: '#f8f9fa' }}
+                    >
+                      <div className="spinner-border text-secondary" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                      </div>
+                    </div>
+                  ) : imageUrls[product.id]?.length > 0 ? (
+                    <Carousel>
+                      {imageUrls[product.id].map((img, index) => (
+                        <Carousel.Item key={index}>
+                          <img
+                            src={`data:image/jpeg;base64,${img.imageData}`}
+                            className="card-img-top rounded-top zoomable-image"
+                            style={{ height: "250px", objectFit: "cover", cursor: "pointer" }}
+                            alt={`product-image-${index}`}
+                          />
+                        </Carousel.Item>
+                      ))}
+                    </Carousel>
+                  ) : (
+                    <div
+                      className="d-flex justify-content-center align-items-center"
+                      style={{ height: '250px', background: '#f8f9fa' }}
+                    >
+                      No Image
+                    </div>
+                  )}
+                    <div className="card-title fw-bold">{product.productName}</div>
+                    <div className="card-text fw-bold text-primary fs-5">Rs: {discountedPrice}</div>
+                    <div className="card-text fw-bold text-muted fs-6" style={{ textDecoration: 'line-through' }}>MRP: Rs {product.rate}</div>
+                    <div className="card-text fw-bold text-danger fs-6">Discount: {product.discount}%</div>
+                    <div className="card-text fw-bold text-dark fs-5">Free Delivery and Installation</div>
+                </div>
+              </div>
+            );
+          })}
+        </div> */}
+
         </div>
         </div> 
         </div>
