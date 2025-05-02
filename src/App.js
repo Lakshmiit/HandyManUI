@@ -107,7 +107,7 @@ import ViewOffersBuyProductPage from './ViewOffersBuyProductPage.js';
  import CustomerRaiseTicketGridView from './CustomerRaiseTicketGridView.js';
 //  import CustomerRegistration from './CustomerRegistration.js';
 //  import TechnicianRegistration from './TechnicianRegistration.js';
-  import OTPVerificationPage from './OTPVerificationPage.js';
+  // import OTPVerificationPage from './OTPVerificationPage.js';
 // import BuyProductCartView from './BuyProductCartView.js';
  
 const PreventBackNavigation = () => {
@@ -144,7 +144,7 @@ function App() {
             {/* <Route path="/technicianRegistration" element={<TechnicianRegistration />} /> */}
             <Route path="/profilePage/:userType/:userId" element={<ProfilePage />} />
             <Route path="/" element={<LoginPage />} />
-            <Route path="/otpVerification" element={<OTPVerificationPage />} />
+            {/* <Route path="/otpVerification" element={<OTPVerificationPage />} /> */}
             <Route path="/UserIdLogin" element={<UserIdLogin />} />
             {/* <Route path="/webProfilePage/:userType/:userId" element={<WebProfilePage />} /> */}
             <Route path="/product/:ProductOwnedBy" element={<UploadForm />} />
