@@ -85,13 +85,15 @@ import OrdersNotificationBell from './OrdersBellNotifications.js';
 import TrackStatusNotificationBell from './TrackStatusBellNotifications.js';
 // import WebProfilePage from './WebProfilePage.js';
 import Device from './Device.js';   
-import IconsOffersProducts from './IconsOffersProducts.js';    
+import IconsOffersProducts from './IconsOffersProducts.js'; 
+import GuestIconsBuyProducts from './GuestIconsBuyProducts.js'; 
+import GuestBuyProductView from './GuestBuyProductView.js';  
 import Offers from './Offers.js';
-// import GuestOffers from './GuestOffers.js';
-// import GuestOffersBuyProduct from './GuestOffersBuyProduct.js';
+import GuestOffers from './GuestOffers.js';
+import GuestOffersBuyProduct from './GuestOffersBuyProduct.js';
 // import GuestUserLogin from './GuestUserLogin.js';
 // import GuestMobileNumberLogin from './GuestMobileNumberLogin.js';
-// import GuestProductPaymentPage from './GuestProductPaymentPage.js';
+import GuestProductPaymentPage from './GuestProductPaymentPage.js';
 // import GuestProfilePage from './GuestProfilePage.js';
 import OffersBuyProductPage from './OffersBuyProductPage.js';
 import ViewOffersBuyProductPage from './ViewOffersBuyProductPage.js';
@@ -105,7 +107,7 @@ import ViewOffersBuyProductPage from './ViewOffersBuyProductPage.js';
  import CustomerRaiseTicketGridView from './CustomerRaiseTicketGridView.js';
 //  import CustomerRegistration from './CustomerRegistration.js';
 //  import TechnicianRegistration from './TechnicianRegistration.js';
-//  import OTPVerificationPage from './OTPVerificationPage.js';
+  import OTPVerificationPage from './OTPVerificationPage.js';
 // import BuyProductCartView from './BuyProductCartView.js';
  
 const PreventBackNavigation = () => {
@@ -142,7 +144,7 @@ function App() {
             {/* <Route path="/technicianRegistration" element={<TechnicianRegistration />} /> */}
             <Route path="/profilePage/:userType/:userId" element={<ProfilePage />} />
             <Route path="/" element={<LoginPage />} />
-            {/* <Route path="/otpVerification" element={<OTPVerificationPage />} /> */}
+            <Route path="/otpVerification" element={<OTPVerificationPage />} />
             <Route path="/UserIdLogin" element={<UserIdLogin />} />
             {/* <Route path="/webProfilePage/:userType/:userId" element={<WebProfilePage />} /> */}
             <Route path="/product/:ProductOwnedBy" element={<UploadForm />} />
@@ -177,7 +179,6 @@ function App() {
             <Route path="/ShortAdminNotifications" element={<ShortAdminNotifications />} />
             <Route path="/customerRaiseTicketQuotation/:userType/:userId/:raiseTicketId" element={<CustomerRaiseTicketQuotation />} />
             <Route path="/customerRaiseTicketGridView/:userType/:userId/:raiseTicketId" element={<CustomerRaiseTicketGridView />} />
-            
             <Route path="/dealerNotifications/:userType/:userId/:category/:district" element={<DealerNotifications />} /> 
             <Route path="/dealerNotificationsGrid/:userType/:userId/:category/:district" element={<DealerNotificationsGrid />} />
             <Route path="/viewDealerRaiseTicket/:userType/:userId/:category/:raiseTicketId" element={<ViewDealerRaiseTicket />} />
@@ -230,13 +231,14 @@ function App() {
             <Route path="/offersIcons/:userType/:userId" element={<IconsOffersProducts />} />
             <Route path="/offers/:userType/:userId" element={<Offers />} />
             {/* <Route path="/guestProfilePage/:userType/:userId" element={<GuestProfilePage />} /> */}
-            {/* <Route path="/offersGuest/customer/guest" element={<GuestOffers />} />
-            <Route path="/offersGuestBuyProduct/customer/guest/:id" element={<GuestOffersBuyProduct />} /> */}
-
-            {/* <Route path="/guestLogin" element={<GuestMobileNumberLogin />} />
-            <Route path="/guestOTPVerification" element={<GuestUserLogin />} /> */}
+            <Route path="/offersGuestIcons/customer/guest" element={<GuestIconsBuyProducts />} />
+            <Route path="/offersGuest/customer/guest" element={<GuestOffers />} />
+            <Route path="/offersGuestBuyProduct/customer/guest/:id" element={<GuestOffersBuyProduct />} />
+            <Route path="/offersGuestViewProduct/customer/guest/:id" element={<GuestBuyProductView />} />
+            {/* <Route path="/guestLogin" element={<GuestMobileNumberLogin />} /> */}
+            {/* <Route path="/guestOTPVerification" element={<GuestUserLogin />} /> */}
             <Route path="/offersBuyProduct/:userType/:userId/:id" element={<OffersBuyProductPage />} />
-            {/* <Route path='/guestProductPaymentPage/:userType/:userId/:buyProductId' element={<GuestProductPaymentPage />} /> */}
+            <Route path='/guestProductPaymentPage/:userType/:userId/:buyProductId' element={<GuestProductPaymentPage />} />
             <Route path="/viewOffersBuyProduct/:userType/:userId/:id" element={<ViewOffersBuyProductPage />} />
             <Route path="/technicianDetailsNotifications/:userType/:userId/:category/:pincode/:technicianName" element={<BookTechnicianDetailsNotifications />} />
             <Route path="/technicianGridDetails/:userType/:userId/:category/:pincode/:technicianName" element={<BookTechnicianDetailsGrid />} />

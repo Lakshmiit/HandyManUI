@@ -515,7 +515,25 @@ const handleUpdateJobDescription = async (e) => {
             placeholder="Phone Number"
             readOnly
           />
-        </Form.Group> */}
+        </Form.Group> */} 
+ 
+        {/*Customer Name*/}
+          <Row>
+            <Col md={12}>
+              <Form.Group>
+                <label>Customer Name</label>
+                <Form.Control
+                  type="text"
+                  name="customerName"
+                  value={customerName}
+                  onChange={handleChange}
+                  placeholder="Customer Name"
+                  required
+                  readOnly
+                />
+              </Form.Group>
+            </Col>
+          </Row>
 
         {/* Customer Address*/}
         <Row>

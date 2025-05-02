@@ -370,8 +370,7 @@ const RaiseActionView = () => {
           </Col>
         </Row>
 
-{/*Customer Name*/}
-
+{/*Customer Name*/} 
         <Row>
           <Col md={12}>
             <Form.Group>
@@ -395,14 +394,14 @@ const RaiseActionView = () => {
             <Form.Group>
               <label>Customer Address</label>
               <Form.Control
-                type="text"
-                name="address"
+               as="textarea"
+               type="text"
+               name="address"
                 value={[address, district, state, zipCode, customerPhoneNumber]
                   .filter(Boolean) 
                   .join(", ")}
                 onChange={handleChange}
                 placeholder="Customer Address"
-                required
                 readOnly
               />
             </Form.Group>
