@@ -8,6 +8,7 @@ import Header from './Header.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import MoreVertIcon from '@mui/icons-material/Dashboard';
 import { Button, Carousel, Modal } from 'react-bootstrap';
+import SearchIcon from '@mui/icons-material/Search';
 
 const OffersProductCard = () => {
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ const OffersProductCard = () => {
   const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [imageLoading, setImageLoading] = useState(true);
+const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -130,15 +132,40 @@ useEffect(() => {
         )}
 
         <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
-        {selectedCategory && (
-          <div className="text-end m-3">
-            <Button variant="btn btn-warning m-2" size="sm" onClick={() => setSelectedCategory(null)}>
-              Show All Products
-            </Button>
+        <div className="position-relative flex-grow-1">
+          <input
+            type="text"
+            className="form-control w-50 m-2 ps-5"
+            placeholder="Search Products"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value.trimStart())}
+            />
+            <SearchIcon
+              className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"
+              style={{ pointerEvents: 'none' }}
+            />
           </div>
+        {selectedCategory && (
+          <div className="d-flex align-items-center position-relative" style={{ gap: '10px' }}>
+          
+          <Button
+            variant="warning"
+            size="sm"
+            className="ms-2"
+            onClick={() => setSelectedCategory(null)}
+          >
+            Show All Products
+          </Button>
+        </div>
         )}
             <div className="row g-4">
-            {products?.slice().reverse().map((product) => {
+            {(selectedCategory ? products : productData)
+  ?.filter(product =>
+    product.productName?.toLowerCase().trim().includes(searchQuery.toLowerCase().trim())
+  )
+  .slice()
+  .reverse()
+  .map((product) => {
               const discountedPrice = product.rate && product.discount 
                 ? ((product.rate - (product.rate * product.discount) / 100).toFixed(0)) 
                 : product.rate;
