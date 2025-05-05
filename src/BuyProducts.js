@@ -1,12 +1,13 @@
 import React, { useState, useEffect} from "react";
 import "./App.css";
-import { v4 as uuidv4 } from 'uuid'; 
+// import { v4 as uuidv4 } from 'uuid'; 
 import Sidebar from './Sidebar';
 import Header from './Header.js';
 import Footer from './Footer.js';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
+import BuyProductView from "./BuyProductView.js";
 import { Button, Form, Modal } from 'react-bootstrap'; // Import Bootstrap components for modal
 // import axios from 'axios';
 
@@ -37,13 +38,13 @@ const BuyProduct = () => {
   // const [rate, setRate] = useState("");
   // const [discount, setDiscount] = useState("");
   // const [productName, setProductName] = useState("");
-  const [showSecondaryAddresses, setShowSecondaryAddresses] = useState(false);
+  // const [showSecondaryAddresses, setShowSecondaryAddresses] = useState(false);
   const [newAddress, setNewAddress] = useState('');
   const [addresses, setAddresses] = useState([]);
-  const [addressType, setAddressType] = useState('');
-  const [state, setState] = useState('');
-  const [district, setDistrict] = useState('');
-  const [pincode, setPincode] = useState('');
+  // const [addressType, setAddressType] = useState('');
+  // const [state, setState] = useState('');
+  // const [district, setDistrict] = useState('');
+  // const [pincode, setPincode] = useState('');
   const [fullName, setFullName] = useState('');
   const [showModal, setShowModal] = useState(false);
   // const [productSuggestions, setProductSuggestions] = useState([]);
@@ -62,50 +63,63 @@ const BuyProduct = () => {
   const { userId } = useParams(); 
   const [noProductNameError, setNoProductNameError] = useState('');
   const [loading, setLoading] = useState(true);
-  // const [emailAddress, setEmailAddress] = useState("");
+const [mobileNumber, setMobileNumber] = useState('');
+  // const [firstName, setFirstName] = useState('');
+  const [zipCode, setZipCode] = useState('');
+  const [guestCustomerId, setGuestCustomerId] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingAddressId, setEditingAddressId] = useState(null);
+const [addressData, setAddressData] = useState({
+fullName  : '',
+mobileNumber: '',
+address: '',
+zipCode: '',
+});
+const [showProductModal, setShowProductModal] = useState(false);
+
 
  // Check if there's state passed from ViewProduct page
- useEffect(() => {
-  const storedState = sessionStorage.getItem("buyProductState");
-  if (location.state) {
-    const {
-      category,
-      productName,
-      catalogue, 
-      productSize,
-      color,
-      rate,
-      discount, 
-      // afterDiscount,
-      requiredQuality,
-      id,
-    } = location.state;
-    setCategory(category);
-    setProductName(productName);
-    setProductCatalogue(catalogue);
-    setProductSize(productSize);
-    setChooseColor(color);
-    setRate(rate);
-    setDiscount(discount);
-    // setAfterDiscount(afterDiscount);
-    setRequiredQuality(requiredQuality);
-    setId(id);
+//  useEffect(() => {
+//   const storedState = sessionStorage.getItem("buyProductState");
+//   if (location.state) {
+//     const {
+//       category,
+//       productName,
+//       catalogue, 
+//       productSize,
+//       color,
+//       rate,
+//       discount, 
+//       // afterDiscount,
+//       requiredQuality,
+//       id,
+//     } = location.state;
+//     setCategory(category);
+//     setProductName(productName);
+//     setProductCatalogue(catalogue);
+//     setProductSize(productSize);
+//     setChooseColor(color);
+//     setRate(rate);
+//     setDiscount(discount);
+//     // setAfterDiscount(afterDiscount);
+//     setRequiredQuality(requiredQuality);
+//     setId(id);
 
-    sessionStorage.setItem("buyProductState", JSON.stringify(location.state));
-  } else if (storedState) {
-    const parsedState = JSON.parse(storedState);
-    setCategory(parsedState.category);
-    setProductName(parsedState.productName);
-    setProductCatalogue(parsedState.catalogue);
-    setProductSize(parsedState.productSize);
-    setChooseColor(parsedState.color);
-    setRate(parsedState.rate);
-    setDiscount(parsedState.discount);
-    // setAfterDiscount(afterDiscount);
-    setRequiredQuality(parsedState.requiredQuality);
-    setId(parsedState.id);
-  }
-}, [location.state]);
+//     sessionStorage.setItem("buyProductState", JSON.stringify(location.state));
+//   } else if (storedState) {
+//     const parsedState = JSON.parse(storedState);
+//     setCategory(parsedState.category);
+//     setProductName(parsedState.productName);
+//     setProductCatalogue(parsedState.catalogue);
+//     setProductSize(parsedState.productSize);
+//     setChooseColor(parsedState.color);
+//     setRate(parsedState.rate);
+//     setDiscount(parsedState.discount);
+//     // setAfterDiscount(afterDiscount);
+//     setRequiredQuality(parsedState.requiredQuality);
+//     setId(parsedState.id);
+//   }
+// }, [location.state]);
 
 // const handleViewProduct = () => {
 //   const hasViewed = sessionStorage.getItem("hasViewedProduct");
@@ -134,8 +148,8 @@ const BuyProduct = () => {
 
 
 useEffect(() => {
-  console.log(buyProductId, loading);
-}, [buyProductId, loading]);
+  console.log(buyProductId, loading, editingAddressId);
+}, [buyProductId, loading, editingAddressId]);
   // Fetch customer profile data
   useEffect(() => {
     const fetchProfileType = async () => {
@@ -158,6 +172,7 @@ useEffect(() => {
           mobileNumber: addr.mobileNumber,
           customerName: addr.customerName,
           emailAddress: addr.emailAddress,
+          fullName: addr.fullName,
         }));
         
         setAddresses(formattedAddresses);
@@ -198,8 +213,8 @@ useEffect(() => {
 
   
     const primaryAddress = addresses.find((addr) => addr.type === "primary");
-    const state = primaryAddress?.state || "";
-    const district = primaryAddress?.district || "";
+    // const state = primaryAddress?.state || "";
+    // const district = primaryAddress?.district || "";
     const pincode = primaryAddress?.zipCode || "";
     const mobileNumber = primaryAddress?.mobileNumber || "";
     const emailAddress = primaryAddress?.emailAddress || "";
@@ -208,8 +223,8 @@ useEffect(() => {
       BuyProductId:"string",
       id: "string",
       date: new Date(),
-      Address: primaryAddress?.address || "",
-      CustomerPhoneNumber: mobileNumber,
+      Address: addressData.address || primaryAddress?.address || "",
+      CustomerPhoneNumber:addressData.mobileNumber || mobileNumber,
       category:category,
       status: "Draft",
       productName,
@@ -227,11 +242,11 @@ useEffect(() => {
       ServiceCharges: "",
       TotalPaymentAmount: "",
       AddressType: primaryAddress ? "primary" : "secondary",
-      State: state,
-      District: district,
-      ZipCode: pincode,
+      State: "Andhra Pradesh",  
+      District: "Visakhapatnam",
+      ZipCode: addressData.zipCode || pincode,
       CustomerId: userId,
-      CustomerName: fullName,
+      CustomerName: addressData.fullName || fullName,
       RequestedBy: userId,
       PaymentMode:"",
       UTRTransactionNumber:"",
@@ -411,11 +426,11 @@ useEffect(() => {
      e.preventDefault();
    };
 
-  const states = ['Andhra Pradesh', 'Telangana'];
-  const districts = {
-    'Andhra Pradesh': ['Visakhapatnam', 'Vijayawada', 'Guntur'],
-    'Telangana': ['Hyderabad', 'Warangal', 'Khammam'],
-  };
+  // const states = ['Andhra Pradesh', 'Telangana'];
+  // const districts = {
+  //   'Andhra Pradesh': ['Visakhapatnam', 'Vijayawada', 'Guntur'],
+  //   'Telangana': ['Hyderabad', 'Warangal', 'Khammam'],
+  // };
 
 
   // // Handle adding a new address
@@ -451,81 +466,146 @@ useEffect(() => {
   // };
 
 
-  const handleAddAddress = () => {
-    if (
-      newAddress.trim() === '' ||
-      addressType.trim() === '' ||
-      state.trim() === '' ||
-      district.trim() === '' ||
-      pincode.trim() === ''
-    ) {
-      alert('Please fill in all the fields.');
-      return;
-    }
+  // const handleAddAddress = () => {
+  //   if (
+  //     newAddress.trim() === '' ||
+  //     addressType.trim() === '' ||
+  //     state.trim() === '' ||
+  //     district.trim() === '' ||
+  //     pincode.trim() === ''
+  //   ) {
+  //     alert('Please fill in all the fields.');
+  //     return;
+  //   }
   
-    if (addresses.length >= 4) {
-      alert('You can only add up to 4 addresses.');
-      return;
-    }
+  //   if (addresses.length >= 4) {
+  //     alert('You can only add up to 4 addresses.');
+  //     return;
+  //   }
   
-    const newAddr = {
-      id: uuidv4(),
-      type: addressType,
-      address: newAddress,
-      state,
-      district,
-      zipCode: pincode, // Corrected field name for consistency
-    };
+  //   const newAddr = {
+  //     id: uuidv4(),
+  //     type: addressType,
+  //     address: newAddress,
+  //     state,
+  //     district,
+  //     zipCode: pincode, // Corrected field name for consistency
+  //   };
   
-    console.log('New Address:', newAddr); // Debugging
+  //   console.log('New Address:', newAddr); // Debugging
   
-    setAddresses((prevAddresses) => [...prevAddresses, newAddr]);
-    resetAddressForm();
-    setShowModal(false);
-  };
+  //   setAddresses((prevAddresses) => [...prevAddresses, newAddr]);
+  //   resetAddressForm();
+  //   setShowModal(false);
+  // };
   
 
-  // Reset address form fields
-  const resetAddressForm = () => {
-    setNewAddress('');
-    setAddressType('');
-    setState('');
-    setDistrict('');
-    setPincode('');
-  };
+  // // Reset address form fields
+  // const resetAddressForm = () => {
+  //   setNewAddress('');
+  //   setAddressType('');
+  //   setState('');
+  //   setDistrict('');
+  //   setPincode('');
+  // };
 
   // Handle secondary address selection
-  const handleSecondaryAddressSelect = (id) => {
-    const updatedAddresses = addresses.map((address) =>
-      address.id === id
-        ? { ...address, type: 'primary' }
-        : address.type === 'primary'
-        ? { ...address, type: 'secondary' }
-        : address
-    );
-    setAddresses(updatedAddresses);
-    setShowSecondaryAddresses(false); // Collapse secondary addresses view
-  };
+  // const handleSecondaryAddressSelect = (id) => {
+  //   const updatedAddresses = addresses.map((address) =>
+  //     address.id === id
+  //       ? { ...address, type: 'primary' }
+  //       : address.type === 'primary'
+  //       ? { ...address, type: 'secondary' }
+  //       : address
+  //   );
+  //   setAddresses(updatedAddresses);
+  //   setShowSecondaryAddresses(false); // Collapse secondary addresses view
+  // };
 
-  // Handle address editing
-  const handleAddressEdit = (id) => {
-    const addressToEdit = addresses.find((address) => address.id === id);
-    if (addressToEdit) {
-      setNewAddress(addressToEdit.address);
-      setAddressType(addressToEdit.type);
-      setState(addressToEdit.state);
-      setDistrict(addressToEdit.district);
-      setPincode(addressToEdit.pincode);
-      setShowModal(true);
-      handleAddressDelete(id); // Remove the address to re-add it after edit
+  const resetAddressForm = () => {
+    setFullName('');
+    setMobileNumber('');
+    setNewAddress(''); 
+    setZipCode('');
+  };
+  
+  const handleAddressEdit = async () => {
+
+  if (!newAddress || !zipCode || !mobileNumber) {
+    alert("Please fill in all required fields.");
+    return; 
+  }
+  if (fullName.trim().toLowerCase() === 'guest') {
+    alert("Please Change Your Full Name.");
+    return;
+  }  
+
+  if (!/^\d{6}$/.test(zipCode)) {
+    alert("Pincode must be exactly 6 digits.");
+    return;
+  }
+
+    const updatedAddress = {
+      id: guestCustomerId,
+      fullName,
+      mobileNumber,
+      address: newAddress,
+      zipCode,
+    };
+  
+    const payload3 = {
+      id: guestCustomerId,
+      profileType: "profileType",
+      addressId: guestCustomerId,
+      isPrimaryAddress: true,
+      address: newAddress,
+      state: "state",
+      district: "district",
+      zipCode: zipCode,
+      mobileNumber: mobileNumber,
+      emailAddress: "emailAddress",
+      userId: userId,
+      firstName: fullName,
+      lastName: "lastName",
+      fullName: fullName,
+    };
+  
+    try {
+      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Customer/CustomerAddressEdit`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload3),
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Error Response:", errorText);
+        throw new Error("Failed to edit address.");
+      }
+  
+      setAddresses(prev =>
+        prev.map(addr => addr.id === guestCustomerId ? updatedAddress : addr)
+      );
+  
+      setAddressData(updatedAddress);
+      alert("Address Updated Successfully!");
+      setShowModal(false);
+      resetAddressForm();
+      setIsEditing(false);
+      setEditingAddressId(null);
+    } catch (error) {
+      console.error("Error editing address:", error);
+      alert("Failed to edit address. Please try again later.");
     }
   };
 
-  // Handle address deletion
-  const handleAddressDelete = (id) => {
-    const updatedAddresses = addresses.filter((address) => address.id !== id);
-    setAddresses(updatedAddresses);
-  };
+  // // Handle address deletion
+  // const handleAddressDelete = (id) => {
+  //   const updatedAddresses = addresses.filter((address) => address.id !== id);
+  //   setAddresses(updatedAddresses);
+  // };
 
 //   // Fetch products when category changes
 // useEffect(() => {
@@ -708,7 +788,127 @@ useEffect(() => {
       <h3 className="mb-2 text-center">Buy Products</h3>
         <div className="bg-white rounded-3 p-4 bx_sdw w-100">
           <form className="form" onSubmit={handleSubmit}>
-            <div className="m-1">
+<div className="d-flex justify-content-between align-items-center">
+                    <label>Address <span className="req_star">*</span></label>
+                    {/* <Button variant="success m-1 text-white" onClick={() => setShowModal(true)}>
+                      Add Address
+                    </Button> */}
+    
+          {/* Modal */}
+                <Modal show={showModal} onHide={() => setShowModal(false)}>
+            <Modal.Header closeButton>
+                <Modal.Title>{isEditing ? 'Edit Address' : 'Add Address'}</Modal.Title>
+              </Modal.Header>
+            <Modal.Body>
+              <Form>
+                <Form.Group className="mb-3">
+                  <Form.Label>Full Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder="Enter Full name"
+                    required
+                  />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Mobile Number</Form.Label>
+                  <Form.Control
+                    name="MobileNumber"
+                    className="form-control"
+                    placeholder="Enter Mobile Number"
+                    maxLength="10"
+                    value={mobileNumber}
+                    onChange={(e) => setMobileNumber(e.target.value)}
+                    
+                  />
+                  </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Control
+                    type="hidden"
+                    name="UserId"
+                    className="form-control"
+                    placeholder="UserId"
+                    value={guestCustomerId}
+                  />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Address</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={newAddress}
+                    onChange={(e) => setNewAddress(e.target.value)}
+                    placeholder="Enter address"
+                    required
+                  />
+                  
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Pincode</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={zipCode}
+                    onChange={(e) => {
+                      const numericValue = e.target.value.replace(/\D/g, ""); 
+                      if (numericValue.length <= 6) {
+                        setZipCode(numericValue);
+                      }
+                    }}              
+                      placeholder="Enter pincode"
+                      required
+                  />
+                </Form.Group>
+                <Button type="button" variant="primary" onClick={handleAddressEdit}>
+                  {isEditing ? 'Edit Address' : 'Add Address'}
+                </Button>
+              </Form>
+            </Modal.Body>
+          </Modal>
+                  </div>
+    
+              <div className="p-3 border rounded bg-light">
+              {addresses
+                  .map((address) => (
+                    <div 
+                      key={address.id}
+                      className="list-group-item d-flex justify-content-between align-items-center bg-white text-dark"
+                    >
+                      <div>
+                        {/* <span className="m1-2">{address.id}</span>
+                        <br /> */}
+                        <span className="ml-2">{address.fullName}</span>
+                        <br />
+                        <span className="ml-2">{address.mobileNumber}</span>
+                        <br />
+                        <span className="ml-2">{address.address}</span>
+                        <br />
+                        <span className="ml-2">{address.zipCode}</span> 
+                        <br />
+                        {/* <hr /> */}
+                      </div>
+                      <div className="text-end">
+                      {addresses.map((address) => (
+                        <button
+                          key={address.id}
+                          className="btn btn-warning text-white btn-sm mx-1"
+                          onClick={() => {
+                            setGuestCustomerId(address.id);
+                            setFullName(address.fullName);
+                            setMobileNumber(address.mobileNumber);
+                            setNewAddress(address.address);
+                            setZipCode(address.zipCode);
+                            setIsEditing(true);
+                            setShowModal(true);
+                          }}
+                        >
+                          {address.address === "" ? "Add Address" : "Edit Address"}
+                        </button>
+                      ))}
+                  </div> 
+                    </div>
+                  ))}       
+                  </div>
+            {/* <div className="m-1">
               <div className="d-flex justify-content-between align-items-center">
                 <label>Address</label>
                 <button
@@ -869,7 +1069,7 @@ useEffect(() => {
       {newAddress ? 'Save Address' : 'Add Address'}
     </Button>
   </Modal.Body>
-</Modal>
+</Modal> */}
 
   
             <div className="form-group">
@@ -884,7 +1084,7 @@ useEffect(() => {
               >
                 <option value="">Choose Category</option>
                 <option>Electrical items</option>
-                <option>Plumbing and Sanitary</option>
+                <option>Sanitary items</option>
                 <option>Electronics appliances</option>
                 <option>Paints</option>
                 <option>Hardware items</option>
@@ -987,7 +1187,20 @@ useEffect(() => {
                   readOnly
                 />
               </div>
-            <button
+
+              <button
+                type="button"
+                className="btn btn-warning text-white w-50 mt-2"
+                onClick={() => setShowProductModal(true)}
+              >
+                View Product
+              </button>
+              <BuyProductView
+                show={showProductModal}
+                handleClose={() => setShowProductModal(false)}
+                productId={id}
+              />
+            {/* <button
               type="button"
               className="btn btn-warning text-white w-50 mt-2"
               disabled={noProductNameError}
@@ -1008,7 +1221,7 @@ useEffect(() => {
               }
             >
               View Product
-            </button>
+            </button> */}
 
 
             {/* <div className="form-group mb-3">

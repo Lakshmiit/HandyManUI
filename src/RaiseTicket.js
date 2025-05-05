@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap'; // Import Bootstrap components for modal
 import { v4 as uuidv4 } from 'uuid'; // To generate unique IDs for addresses
 import {
+  
   Dashboard as MoreVertIcon,
 } from '@mui/icons-material';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
@@ -19,24 +20,11 @@ const AddressManager = () => {
   const { userId } = useParams(); 
  const [addresses, setAddresses] = useState([]);
  const [ticketId, setTicketId] = useState('');
-//  const [showConfirmation, setShowConfirmation] = useState(false);
-
-    
- // {
-  //  "fullName": "K R V Satyanarayn ",
-  //  "email": "satyanarayana.krv26@gmail.com",
-  //  "mobileNumber": "9885803193",
-   // "address": "trt",
-   // "photoAttachmentId": "e3290014-78c0-4336-b7a3-c0fc8690b1af_technician.png",
-   // "userId": "b9c63b8b-9db8-4af2-966c-059448ecafdc",
-  //  "userProfileType": "customer"
-  //}
-//https://otpauthservices20240928024709.azurewebsites.net/api/Customer/customerProfileData?profileType=customer&UserId=b9c63b8b-9db8-4af2-966c-059448ecafdc
-  const [newAddress, setNewAddress] = useState('');
-  const [addressType, setAddressType] = useState('');
-  const [state, setState] = useState('');
-  const [district, setDistrict] = useState('');
-  const [pincode, setPincode] = useState('');
+ const [newAddress, setNewAddress] = useState('');
+  // const [addressType, setAddressType] = useState('');
+  // const [state, setState] = useState('');
+  // const [district, setDistrict] = useState('');
+  // const [pincode, setPincode] = useState('');
   const [fullName, setFullName] = useState('');
   const [assignedTo, setAssignedTo] = useState('');
   const [requestType, setRequestType] = useState('');
@@ -46,23 +34,32 @@ const AddressManager = () => {
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [specifications] = useState([{ material : "", Quantity : "" }]);
   const [showModal, setShowModal] = useState(false);
-  const [showSecondaryAddresses, setShowSecondaryAddresses] = useState(false);
+  // const [showSecondaryAddresses, setShowSecondaryAddresses] = useState(false);
   const [commentsList] = useState([{updatedDate: new Date(), commentText: ""}]);
   const [formData, setFormData] = useState({
     subject: '',
     details: '',
     category: '',
   });
-  const [confirmationModal, setConfirmationModal] = useState(false);
+  // const [confirmationModal, setConfirmationModal] = useState(false);
   const [response, setResponse] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // const [videoRefId, setVideoRefId] = useState('');
-
+const [mobileNumber, setMobileNumber] = useState('');
+  // const [firstName, setFirstName] = useState('');
+  const [zipCode, setZipCode] = useState('');
+  const [guestCustomerId, setGuestCustomerId] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingAddressId, setEditingAddressId] = useState(null);
+const [addressData, setAddressData] = useState({
+fullName  : '',
+mobileNumber: '',
+address: '',
+zipCode: '',
+});
 
   useEffect(() => {
-    console.log(ticketId, response);
-  }, [ticketId, response]);
+    console.log(ticketId, response, editingAddressId);
+  }, [ticketId, response, editingAddressId]);
 
   const API_URL = 'https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/';
   // Fetch customer profile data
@@ -76,7 +73,6 @@ const AddressManager = () => {
         const data = await response.json();
         console.log(data);
         const addresses = Array.isArray(data) ? data : [data];
-        
         // Format addresses if necessary
         const formattedAddresses = addresses.map((addr) => ({
           id: addr.addressId, // Use addressId
@@ -87,13 +83,15 @@ const AddressManager = () => {
           zipCode: addr.zipCode, 
           emailAddress: addr.emailAddress,
           mobileNumber: addr.mobileNumber,
-          // fullName: addr.FullName,
+          fullName: addr.fullName,
         }));
+
+        console.log("address1", addresses);
         setAddresses(formattedAddresses);
         const customerName = Array.isArray(data) ? data[0]?.fullName || '' : data.fullName || '';
         setFullName(customerName);
-        // setFullName(data.fullName);
-        // alert(JSON.stringify(data));
+        // alert(JSON.stringify(customerName));
+        //  alert(JSON.stringify(data));
       } catch (error) {
         console.error('Error fetching customer data:', error);
       }
@@ -102,7 +100,7 @@ const AddressManager = () => {
     fetchCustomerData();
   }, [userId]);
   
-    
+ 
 // Detect screen size for responsiveness
 useEffect(() => {
   const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -112,11 +110,11 @@ useEffect(() => {
   return () => window.removeEventListener('resize', handleResize);
 }, []);
 
-  const states = ['Andhra Pradesh', 'Telangana'];
-  const districts = {
-    'Andhra Pradesh': ['Visakhapatnam', 'Vijayawada', 'Guntur'],
-    'Telangana': ['Hyderabad', 'Warangal', 'Khammam'],
-  };
+  // const states = ['Andhra Pradesh', 'Telangana'];
+  // const districts = {
+  //   'Andhra Pradesh': ['Visakhapatnam', 'Vijayawada', 'Guntur'],
+  //   'Telangana': ['Hyderabad', 'Warangal', 'Khammam'],
+  // };
 
   // Handle form data changes
   const handleChange = (e) => {
@@ -127,49 +125,7 @@ useEffect(() => {
     }));
   };
 
-  // Handle adding a new address
-  const handleAddAddress = () => {
-    if (
-      newAddress.trim() === '' ||
-      addressType.trim() === '' ||
-      state.trim() === '' ||
-      district.trim() === '' ||
-      pincode.trim() === ''
-    ) {
-      alert('Please fill in all the fields.');
-      return;
-    }
-
-    if (addresses.length >= 4) {
-      alert('You can only add up to 4 addresses.');
-      return;
-    }
-
-    const newAddr = {
-      id: uuidv4(),
-      type: addressType,
-      address: newAddress,
-      state,
-      district,
-      pincode,
-      // name,
-    };
-
-    setAddresses((prevAddresses) => [...prevAddresses, newAddr]);
-    resetAddressForm();
-    setShowModal(false);
-  };
-
-  // Reset address form fields
-  const resetAddressForm = () => {
-    setNewAddress('');
-    setAddressType('');
-    setState('');
-    setDistrict('');
-    setPincode('');
-    // setFullName('');
-  };
-
+  
   // // Handle file upload
   // const handleFileChange = (e) => {
   //   const files = Array.from(e.target.files);
@@ -212,8 +168,6 @@ useEffect(() => {
     setShowAlert(validFiles.length > 0);
   };
   
-  
-
 
   const handleUploadFiles = async () => {
     setLoading(true);
@@ -293,6 +247,14 @@ useEffect(() => {
     }
   };
 
+
+
+//  const handleBothActions =  (e) => {
+//     e.preventDefault();
+//     // handleSubmit(e);   
+//     handleAddressEdit(e);
+//   };
+  
   const handleSaveTicket = async (e) => {
     e.preventDefault();
   
@@ -301,7 +263,9 @@ useEffect(() => {
       !formData.subject ||
       !formData.details ||
       !formData.category ||
-      !assignedTo
+      !assignedTo ||
+      !requestType || 
+      !uploadedFiles
     ) {
       window.alert('Please fill in all mandatory fields.');
       return;
@@ -311,30 +275,29 @@ useEffect(() => {
     setIsSubmitting(true);
 
     const primaryAddress = addresses.find((addr) => addr.type === "primary");
-    const state = primaryAddress?.state || "";
-    const district = primaryAddress?.district || "";
+    // const state = primaryAddress?.state || "";
+    // const district = primaryAddress?.district || "";
     const pincode = primaryAddress?.zipCode || primaryAddress?.pincode || "";
-    const emailAddress = primaryAddress?.emailAddress || primaryAddress?.emailAddress || "";
+    // const emailAddress = primaryAddress?.emailAddress || primaryAddress?.emailAddress || "";
     const mobileNumber = primaryAddress?.mobileNumber || primaryAddress?.mobileNumber || "";
-
 
     const payload = {
       RaiseTicketId:"string",
       date: new Date(),
-      address: addresses.find((addr) => addr.type === 'primary')?.address || '',
+      address: addressData.address || addresses.find((addr) => addr.type === 'primary')?.address || '',
       subject: formData.subject,
       details: formData.details,
       category: formData.category,
       assignedTo: assignedTo,
-      state:state,
-      district:district,
-      zipcode:pincode,
+      state:"Andhra Pradesh",
+      district:"Visakhapatnam",
+      zipcode: addressData.zipCode || pincode,
       requestType: requestType,
       status:'open',
       internalStatus:'Open',
       SupportTicketId: uuidv4(),
-      id: uuidv4(),// Unique identifier for the API call
-      customerId: userId, // Replace with actual customer ID logic
+      id: uuidv4(),
+      customerId: userId, 
       attachments: uploadedFiles.map((file) => file.src), 
       comments: commentsList.map((comment) => ({
         UpdatedDate : comment.updatedDate,
@@ -347,8 +310,8 @@ useEffect(() => {
       LowestBidderTechnicainId: "",
       LowestBidderDealerId: "",
       ApprovedAmount: "",
-      CustomerName: fullName, 
-      CustomerEmail: emailAddress,
+      CustomerName: addressData.fullName || fullName, 
+      CustomerEmail: "",
       Option1Day: "",
       Option1Time: "",
       Option2Day: "",
@@ -364,7 +327,7 @@ useEffect(() => {
       TransactionType: "",
       InvoiceId: "",
       InvoiceURL: "", 
-      CustomerPhoneNumber: mobileNumber,
+      CustomerPhoneNumber: addressData.mobileNumber || mobileNumber,
       PaymentMode: "",
       UTRTransactionNumber: "",
     };
@@ -414,6 +377,13 @@ useEffect(() => {
     setIsSubmitting(false);
   }
   };
+
+  // const handleBothActions =  (e) => {
+  //   e.preventDefault();
+  //   handleSaveAddress();
+  //   // handleGuestAddress(e);
+  //   handleUserUpload(e);
+  // };
   
   // const handleSaveWhatsapp = async (e) => {
   //   e.preventDefault();
@@ -480,48 +450,160 @@ useEffect(() => {
   // }
   // };
   // Handle secondary address selection
-  const handleSecondaryAddressSelect = (id) => {
-    const updatedAddresses = addresses.map((address) =>
-      address.id === id
-        ? { ...address, type: 'primary' }
-        : address.type === 'primary'
-        ? { ...address, type: 'secondary' }
-        : address
-    );
-    setAddresses(updatedAddresses);
-    setShowSecondaryAddresses(false); // Collapse secondary addresses view
-  };
+  // const handleSecondaryAddressSelect = (id) => {
+  //   const updatedAddresses = addresses.map((address) =>
+  //     address.id === id
+  //       ? { ...address, type: 'primary' }
+  //       : address.type === 'primary'
+  //       ? { ...address, type: 'secondary' }
+  //       : address
+  //   );
+  //   setAddresses(updatedAddresses);
+  //   setShowSecondaryAddresses(false); // Collapse secondary addresses view
+  // };
 
-  // Handle address deletion
-  const handleAddressDelete = (id) => {
-    const updatedAddresses = addresses.filter((address) => address.id !== id);
-    setAddresses(updatedAddresses);
-  };
+  // // Handle address deletion
+  // const handleAddressDelete = (id) => {
+  //   const updatedAddresses = addresses.filter((address) => address.id !== id);
+  //   setAddresses(updatedAddresses);
+  // };
 
-  // Handle address editing
-  const handleAddressEdit = (id) => {
-    const addressToEdit = addresses.find((address) => address.id === id);
-    if (addressToEdit) {
-      setNewAddress(addressToEdit.address);
-      setAddressType(addressToEdit.type);
-      setState(addressToEdit.state);
-      setDistrict(addressToEdit.district);
-      setPincode(addressToEdit.pincode);
-      setFullName(addressToEdit.fullName);
-      setShowModal(true);
-      handleAddressDelete(id); // Remove the address to re-add it after edit
+// const handleSaveAddress = () => {
+//     if (
+//       !fullName?.trim() ||
+//       !mobileNumber?.trim() ||
+//       !newAddress?.trim() ||
+//       !zipCode?.trim()
+//     ) {
+//       alert('Please fill in all the fields.');
+//       return;
+//     }
+
+//   setAddressData({
+//     fullName  ,
+//   mobileNumber,
+//   address: newAddress,
+//   zipCode,
+// });
+
+//     if (isEditing) {
+//       setNewAddress(newAddress);
+//       setFullName(fullName);
+//       setMobileNumber(mobileNumber);
+//       setZipCode(zipCode);
+//       setIsEditing(null); 
+//       setShowModal(false); 
+//       resetAddressForm(); 
+//     }
+//      else {
+//         if (addresses.length >= 1) {
+//           alert('You can only add up to 1 address.');
+//           return;
+//         }
+   
+//       const newAddr = {
+//         id: uuidv4(),
+//         fullName,
+//         mobileNumber,
+//         address: newAddress,
+//         zipCode, 
+//       };
+    
+//       setAddresses(prev => [...prev, newAddr]);
+//   }    
+//       resetAddressForm();
+//       setIsEditing(false);
+//       setShowModal(false);
+//     };
+
+  const resetAddressForm = () => {
+    setFullName('');
+    setMobileNumber('');
+    setNewAddress(''); 
+    setZipCode('');
+  };
+  
+  const handleAddressEdit = async () => {
+
+  if (!newAddress || !zipCode || !mobileNumber) {
+    alert("Please fill in all required fields.");
+    return; 
+  }
+  if (fullName.trim().toLowerCase() === 'guest') {
+    alert("Please Change Your Full Name.");
+    return;
+  }  
+
+  if (!/^\d{6}$/.test(zipCode)) {
+    alert("Pincode must be exactly 6 digits.");
+    return;
+  }
+
+    const updatedAddress = {
+      id: guestCustomerId,
+      fullName,
+      mobileNumber,
+      address: newAddress,
+      zipCode,
+    };
+  
+    const payload3 = {
+      id: guestCustomerId,
+      profileType: "profileType",
+      addressId: guestCustomerId,
+      isPrimaryAddress: true,
+      address: newAddress,
+      state: "state",
+      district: "district",
+      zipCode: zipCode,
+      mobileNumber: mobileNumber,
+      emailAddress: "emailAddress",
+      userId: userId,
+      firstName: fullName,
+      lastName: "lastName",
+      fullName: fullName,
+    };
+  
+    try {
+      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Customer/CustomerAddressEdit`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload3),
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Error Response:", errorText);
+        throw new Error("Failed to edit address.");
+      }
+  
+      setAddresses(prev =>
+        prev.map(addr => addr.id === guestCustomerId ? updatedAddress : addr)
+      );
+  
+      setAddressData(updatedAddress);
+      alert("Address Updated Successfully!");
+      setShowModal(false);
+      resetAddressForm();
+      setIsEditing(false);
+      setEditingAddressId(null);
+    } catch (error) {
+      console.error("Error editing address:", error);
+      alert("Failed to edit address. Please try again later.");
     }
   };
-
+  
   useEffect(() => {
-    return () => {
+    return () => {  
       uploadedFiles.forEach((file) => URL.revokeObjectURL(file));
     };
   }, [uploadedFiles]);
 
   return (
     <div>
-      {isMobile && <Header />}
+      <Header />
     <div className="d-flex flex-row justify-content-start align-items-start">
        {/* Sidebar for larger screens */}
        {!isMobile && (
@@ -555,89 +637,126 @@ useEffect(() => {
       {/* Ticket Form */}
       {/* <Form > */}
         {/* Display primary address with "Change Address" link */}
-        <Form.Group>
-          <label>Address</label>
-          <button
-          type="button"
-            className="btn btn-link ml-2"
-            onClick={() => setShowSecondaryAddresses(true)}
-          >
-            Change Address
-          </button>
-        </Form.Group>
-
-        {/* Show primary address */}
-        {addresses
-          .filter((addr) => addr.type === 'primary')
-          .map((address) => (
-            <div
-              key={address.id}
-              className="list-group-item d-flex justify-content-between align-items-center bg-white text-dark"
-            >
-              <div>
-                <span className="ml-2">{address.address}</span>
-                <br />
-                <span className="ml-2">{address.state}</span>
-                <br />
-                <span className="ml-2">{address.district}</span>
-                <br />
-                <span className="ml-2">{address.zipCode}</span>
-                <br />
-                <small className="text-muted">Primary Address</small>
-              </div>
-            </div>
-          ))}
-
-        {/* Show secondary addresses when "Change Address" is clicked */}
-        {showSecondaryAddresses && (
-          <>
-            <div className="list-group">
-              {addresses
-                .filter((addr) => addr.type === 'secondary')
-                .map((address) => (
-                  <div
-                    key={address.id}
-                    className="list-group-item d-flex justify-content-between align-items-center"
-                  >
-                    <div>
-                      <input
-                        type="radio"
-                        name="address"
-                        checked={address.type === 'primary'}
-                        onChange={() => handleSecondaryAddressSelect(address.id)}
+         <div className="d-flex justify-content-between align-items-center">
+                        <label>Address <span className="req_star">*</span></label>
+                        {/* <Button variant="success m-1 text-white" onClick={() => setShowModal(true)}>
+                          Add Address
+                        </Button> */}
+        
+              {/* Modal */}
+                    <Modal show={showModal} onHide={() => setShowModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>{isEditing ? 'Edit Address' : 'Add Address'}</Modal.Title>
+                  </Modal.Header>
+                <Modal.Body>
+                  <Form>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Full Name</Form.Label>
+                      <Form.Control
+                        type="text"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        placeholder="Enter Full name"
+                        required
                       />
-                      <span className="ml-2">{address.address}</span>
-                      <br />
-                      <small className="text-muted">Secondary Address</small>
-                    </div>
-                    <div>
-                      <button
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Mobile Number</Form.Label>
+                      <Form.Control
+                        name="MobileNumber"
+                        className="form-control"
+                        placeholder="Enter Mobile Number"
+                        maxLength="10"
+                        value={mobileNumber}
+                        onChange={(e) => setMobileNumber(e.target.value)}
+                        
+                      />
+                      </Form.Group>
+                    <Form.Group className="mb-3">
+                      <Form.Control
+                        type="hidden"
+                        name="UserId"
+                        className="form-control"
+                        placeholder="UserId"
+                        value={guestCustomerId}
+                      />
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Address</Form.Label>
+                      <Form.Control
+                        type="text"
+                        value={newAddress}
+                        onChange={(e) => setNewAddress(e.target.value)}
+                        placeholder="Enter address"
+                        required
+                      />
                       
-                        className="btn btn-warning btn-sm mx-1"
-                        onClick={() => handleAddressEdit(address.id)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="btn btn-danger btn-sm mx-1"
-                        onClick={() => handleAddressDelete(address.id)}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                ))}
-            </div>
-            <div className="mt-3">
-              <button
-                className="btn btn-success"
-                onClick={() => setShowModal(true)}
-              >
-                Add Address
-              </button>
-            </div>
-          </>
-        )}
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Pincode</Form.Label>
+                      <Form.Control
+                        type="text"
+                        value={zipCode}
+                        onChange={(e) => {
+                          const numericValue = e.target.value.replace(/\D/g, ""); 
+                          if (numericValue.length <= 6) {
+                            setZipCode(numericValue);
+                          }
+                        }}              
+                         placeholder="Enter pincode"
+                         required
+                      />
+                    </Form.Group>
+                    <Button type="button" variant="primary" onClick={handleAddressEdit}>
+                      {isEditing ? 'Edit Address' : 'Add Address'}
+                    </Button>
+                  </Form>
+                </Modal.Body>
+              </Modal>
+                      </div>
+        
+                  <div className="p-3 border rounded bg-light">
+                  {addresses
+                      .map((address) => (
+                        <div 
+                          key={address.id}
+                          className="list-group-item d-flex justify-content-between align-items-center bg-white text-dark"
+                        >
+                          <div>
+                            {/* <span className="m1-2">{address.id}</span>
+                            <br /> */}
+                            <span className="ml-2">{address.fullName}</span>
+                            <br />
+                            <span className="ml-2">{address.mobileNumber}</span>
+                            <br />
+                            <span className="ml-2">{address.address}</span>
+                            <br />
+                            <span className="ml-2">{address.zipCode}</span> 
+                            <br />
+                            {/* <hr /> */}
+                          </div>
+                          <div className="text-end">
+                          {addresses.map((address) => (
+                            <button
+                              key={address.id}
+                              className="btn btn-warning text-white btn-sm mx-1"
+                              onClick={() => {
+                                setGuestCustomerId(address.id);
+                                setFullName(address.fullName);
+                                setMobileNumber(address.mobileNumber);
+                                setNewAddress(address.address);
+                                setZipCode(address.zipCode);
+                                setIsEditing(true);
+                                setShowModal(true);
+                              }}
+                            >
+                              {address.address === "" ? "Add Address" : "Edit Address"}
+                            </button>
+                          ))}
+                      </div> 
+                        </div>
+                      ))}       
+                      </div>
 
         {/* Subject */}
         <Row>
@@ -830,103 +949,6 @@ useEffect(() => {
           disabled = {isSubmitting}>
  {isSubmitting ? 'Submitting...' : 'Get Quote'}          </Button>
         </div>
-      {/* </Form> */}
-
-      {/* Address Modal */}
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>{newAddress ? 'Edit Address' : 'Add Address'}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form.Group controlId="address">
-            <Form.Label>Address</Form.Label>
-            <Form.Control
-              type="text"
-              value={newAddress}
-              onChange={(e) => setNewAddress(e.target.value)}
-              placeholder="Enter address"
-            />
-          </Form.Group>
-
-          <Form.Group controlId="addressType">
-            <Form.Label>Address Type</Form.Label>
-            <Form.Control
-              as="select"
-              value={addressType}
-              onChange={(e) => setAddressType(e.target.value)}
-            >
-              <option value="">Select Address Type</option>
-              <option value="primary">Primary</option>
-              <option value="secondary">Secondary</option>
-            </Form.Control>
-          </Form.Group>
-
-          <Form.Group controlId="state">
-            <Form.Label>State</Form.Label>
-            <Form.Control
-              as="select"
-              value={state}
-              onChange={(e) => setState(e.target.value)}
-            >
-              <option value="">Select State</option>
-              {states.map((state, index) => (
-                <option key={index} value={state}>
-                  {state}
-                </option>
-              ))}
-            </Form.Control>
-          </Form.Group>
-
-          <Form.Group controlId="district">
-            <Form.Label>District</Form.Label>
-            <Form.Control
-              as="select"
-              value={district}
-              onChange={(e) => setDistrict(e.target.value)}
-            >
-              <option value="">Select District</option>
-              {districts[state]?.map((district, index) => (
-                <option key={index} value={district}>
-                  {district}
-                </option>
-              ))}
-            </Form.Control>
-          </Form.Group>
-
-          <Form.Group controlId="pincode">
-            <Form.Label>Pincode</Form.Label>
-            <Form.Control
-              type="text"
-              value={pincode}
-              onChange={(e) => setPincode(e.target.value)}
-              placeholder="Enter pincode"
-            />
-          </Form.Group>
-
-          <Button type="button" variant="primary" onClick={handleAddAddress}>
-            {newAddress ? 'Save Address' : 'Add Address'}
-          </Button>
-        </Modal.Body>
-      </Modal>
-
-      {/* Confirmation Modal */}
-      <Modal show={confirmationModal} onHide={() => setConfirmationModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Confirm Ticket Submission</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>Do you want to save this ticket?</p>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setConfirmationModal(false)}>
-            No
-          </Button>
-          <Button variant="primary" onClick={handleSaveTicket}>
-            Yes
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
       </div>
 
     </div>

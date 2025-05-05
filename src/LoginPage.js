@@ -1,25 +1,31 @@
- import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import './App.css';
-import { useNavigate } from "react-router-dom";
-import Modal from 'react-bootstrap/Modal';
+import {useNavigate } from "react-router-dom";
+// import Modal from 'react-bootstrap/Modal';
 import HandyManCharacter from "./img/hm_char.png";
 import HandyManLogo from "./img/Hm_Logo 1.png";
-import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+// import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+
 
 const LoginPage = () => {
     const Navigate = useNavigate();
     // const {userType} = useParams();
     // const {userId} = useParams();
   const [mobile, setMobile] = useState('');
-//     const [consent, setConsent] = useState(false);
+// const [consent, setConsent] = useState(false);
   const [isChecked, setIsChecked] = useState('');
-  const [showTerms, setShowTerms] = useState(false);
-  const [showPrivacy, setShowPrivacy] = useState(false);
+  // const [showTerms, setShowTerms] = useState(false);
+  // const [showPrivacy, setShowPrivacy] = useState(false);
   const [error, setError] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const mobileNumber = "9885803193";
+  // const [countryCode, setCountryCode] = useState("+91"); 
+  // const fullMobileNumber = `${countryCode}${mobile}`;
+//   const mobileNumber = "9885803193";
+// const [mobileNumber] = useState('');
+
+// const{mobileError,setMobileError}=useState("");
 
 
   const handleMobileChange = (e) => {
@@ -29,28 +35,30 @@ const LoginPage = () => {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
 
-    if (mobile !== mobileNumber) {
-        setError(<span>This Number is not Registered, Please contact Customer care <WhatsAppIcon style={{color: 'green'}}/> 8498892222.</span>);
-        return;
-    }
+  //   // if (mobile !== mobileNumber) {
+  //   //     setError(<span>This Number is not Registered, Please contact Customer care <WhatsAppIcon style={{color: 'green'}}/> 8498892222.</span>);
+  //   //     return;
+  //   // }
 
-    if (!isChecked) {
-        alert("You must accept the terms and conditions.");
-        return; 
-      } 
+  //   if (!isChecked) {
+  //       alert("You must accept the terms and conditions.");
+  //       return; 
+  //     } 
   
-    setError('');
-    setSubmitted(true);
+  //   setError('');
+  //   setSubmitted(true);
   
-    setTimeout(() => {
-    //   alert('Login submitted!');
-      setSubmitted(false);
-      Navigate(`/profilePage/customer/74991775-cfb7-47e0-b963-5d32e02a570a`);
-    }, 2000);
-  };
+  //   setTimeout(() => {
+  //   //   alert('Login submitted!');
+  //     setSubmitted(false);
+  //     // Navigate('/otpVerification', {
+  //     //   state: { mobile }
+  //     // });
+  //   }, 2000);
+  // };
 
   useEffect(() => {
     const input = document.getElementById('mobileInput');
@@ -65,39 +73,126 @@ const LoginPage = () => {
     };
   }, []);
 
-  return (
-    <div className="h-100 d-flex align-items-center py-2 flex-column">
-      <div className="login_section bg-light rounded-3">
-        <div className="d-flex justify-content-center mb-3">
-          <img src={HandyManCharacter} alt="Handy Man Character" />
-        </div>
-        <form className="d-flex gap-3 flex-column" onSubmit={handleSubmit} autoComplete="off">
-          <img src={HandyManLogo} alt="Handy Man Logo" />
-          <h4>Sign into your account</h4>
+  
+//   const handleOTP = async (e) => {
+//     e.preventDefault();
+//     if(!mobile)
+//     {setError("Please Enter mobile Number");
+//     };
+//   setError("");
 
-          <div>
-            <label htmlFor="mobileInput">
-              Mobile Number<span className="req_star">*</span>
-            </label>
-            <input
-              id="mobileInput"
-              type="number"
-              className="form-control"
-              placeholder="Enter Mobile Number"
-              value={mobile}
-              onChange={handleMobileChange}
-              autoComplete="off"
-            />
-          </div>
+//     const payload = {
+//       senderValue: mobile,
+//       type: "sms",
+//     };
+// try {
+//       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Auth/sendotp`,{
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify(payload),
+//       });
+//       if (!response.ok) {
+//        throw new Error("Failed to send sms.");
+//       }
+//       localStorage.setItem('mobile', mobile);
+//       Navigate('/otpVerification', {
+//         state: { mobile }
+//       });
+//     } catch (error) {
+//       console.error("Error sending sms:", error);
+//       window.alert('Failed to send sms. Please try again later.');    }
+//   };
+const handleOTP = async (e) => {
+  e.preventDefault();
 
-          <a className="link" href="/UserIdLogin">Login With User ID</a>
+  if (!mobile) {
+    setError("Please enter a mobile number");
+    return;
+  }
 
+  setError("");
+  setSubmitted(true);
+
+  const payload = {
+    senderValue: mobile,
+    type: "sms",
+  };
+
+  try {
+    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Auth/sendotp`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to send sms.");
+    }
+
+    localStorage.setItem('mobile', mobile);
+    Navigate('/otpVerification', { state: { mobile } });
+
+  } catch (error) {
+    console.error("Error sending sms:", error);
+    setError('Failed to send sms. Please try again later.');
+  } finally {
+    setSubmitted(false);
+  }
+};
+
+ return (
+  <div className="h-100 d-flex align-items-center py-2 flex-column">
+  <div className="login_section bg-light rounded-3 p-4">
+    <div className="d-flex align-items-center justify-content-center mb-3">
+      <img src={HandyManCharacter} alt="Handy Man Character" />
+    </div>
+        <form className="d-flex gap-3 flex-column" onSubmit={handleOTP} autoComplete="off">
+  <img src={HandyManLogo} alt="Handy Man Logo" />
+  <h4>Sign into your account</h4>
+  <div>
+    <label htmlFor="mobileInput">
+      Mobile Number<span className="req_star">*</span>
+    </label>
+    <div style={{ display: 'flex', gap: '0.5rem' }}>
+    {/* <select
+      value={countryCode}
+      onChange={(e) => setCountryCode(e.target.value)}
+      className="form-control"
+      style={{ width: '40%' }}
+    >
+      <option value="+91">🇮🇳 +91 (India)</option>
+      <option value="+1">🇺🇸 +1 (USA)</option>
+      <option value="+44">🇬🇧 +44 (UK)</option>
+      <option value="+971">🇦🇪 +971 (UAE)</option>
+    </select> */}
+    <input
+    id="mobileInput"
+    type="text"
+    inputMode="numeric"
+    pattern="[0-9]*"
+    className="form-control"
+    placeholder="Enter Mobile Number"
+    value={mobile}
+    onChange={handleMobileChange}
+    autoComplete="off"
+    required
+    style={{ width: '70%' }}
+  />
+  </div>
+    {error && <div className="text-danger mt-1">{error}</div>}
+  </div>
+          {/* <a className="link" href="/UserIdLogin">Login With User ID</a> */}
           <div>
           <label className='fs-5'>
             <input 
             type="checkbox" 
             className="form-check-input border-dark"
             checked={isChecked}
+            required
             onChange={(e) => setIsChecked(e.target.checked)}/>
             <button
               onClick={(e) => {
@@ -396,17 +491,17 @@ const LoginPage = () => {
 
           <div style={{ width: '100%', textAlign: 'start', padding: '1rem' }}>
           <button
-            type="submit"
-            className={`responsive-login-btn ${submitted ? 'disabled' : ''}`}
-            >
-            {submitted ? 'Loading...' : 'Login'}
-         </button>
-
-          </div>
+    type="submit"
+    className={`responsive-login-btn ${submitted ? 'disabled' : ''}`}
+    disabled={submitted}
+  >
+    {submitted ? 'Loading...' : 'Login'}
+  </button>
+    </div>
         </form>
       </div>
 
-      {/* Terms Modal */}
+      {/* Terms Modal
       <Modal show={showTerms} onHide={() => setShowTerms(false)} size="lg">
         <Modal.Header closeButton>
           <Modal.Title>Terms and Conditions</Modal.Title>
@@ -416,7 +511,7 @@ const LoginPage = () => {
         </Modal.Body>
       </Modal>
 
-      {/* Privacy Policy Modal */}
+      {/* Privacy Policy Modal 
       <Modal show={showPrivacy} onHide={() => setShowPrivacy(false)} size="lg">
         <Modal.Header closeButton>
           <Modal.Title>Privacy Policy</Modal.Title>
@@ -424,7 +519,7 @@ const LoginPage = () => {
         <Modal.Body>
           <iframe src="/PrivacyPolicy" width="100%" height="400px" title="Privacy Policy" />
         </Modal.Body>
-      </Modal>
+      </Modal> */}
       {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {

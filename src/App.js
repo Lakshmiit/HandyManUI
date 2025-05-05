@@ -103,11 +103,11 @@ import ViewOffersBuyProductPage from './ViewOffersBuyProductPage.js';
  import BookTechnicianDetailsGrid from './BookTechnicianDetailsGrid.js';
  import RaiseTicketConfirmation from './RaiseTicketConfirmation.js';
  import LoginPage from './LoginPage.js';
- import UserIdLogin from './UserIdLogin.js';
+//  import UserIdLogin from './UserIdLogin.js';
  import CustomerRaiseTicketGridView from './CustomerRaiseTicketGridView.js';
 //  import CustomerRegistration from './CustomerRegistration.js';
 //  import TechnicianRegistration from './TechnicianRegistration.js';
-  // import OTPVerificationPage from './OTPVerificationPage.js';
+  import OTPVerificationPage from './OTPVerificationPage.js';
 // import BuyProductCartView from './BuyProductCartView.js';
  
 const PreventBackNavigation = () => {
@@ -144,8 +144,8 @@ function App() {
             {/* <Route path="/technicianRegistration" element={<TechnicianRegistration />} /> */}
             <Route path="/profilePage/:userType/:userId" element={<ProfilePage />} />
             <Route path="/" element={<LoginPage />} />
-            {/* <Route path="/otpVerification" element={<OTPVerificationPage />} /> */}
-            <Route path="/UserIdLogin" element={<UserIdLogin />} />
+            <Route path="/otpVerification" element={<OTPVerificationPage />} />
+            {/* <Route path="/UserIdLogin" element={<UserIdLogin />} /> */}
             {/* <Route path="/webProfilePage/:userType/:userId" element={<WebProfilePage />} /> */}
             <Route path="/product/:ProductOwnedBy" element={<UploadForm />} />
             {/* Dynamic product ID route for ProductView */}                

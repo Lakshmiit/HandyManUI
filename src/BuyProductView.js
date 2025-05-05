@@ -1,161 +1,61 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Modal } from 'react-bootstrap';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useNavigate } from 'react-router-dom';
-import Sidebar from './Sidebar';
-import Header from './Header.js';
-import Footer from './Footer.js';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { Button } from 'react-bootstrap'; // Import Bootstrap components for modal
+// import Sidebar from './Sidebar';
+// import Header from './Header.js';
+// import Footer from './Footer.js';
 
-const BuyProdcutView = () => {
-  const [isMobile, setIsMobile] = useState(false);
-  const [showMenu, setShowMenu] = useState(false);
-  const {selectedUserType} = useParams();
-  const {userType} = useParams();
+const ProductViewModal = ({ show, handleClose, productId }) => {
   const [productData, setProductData] = useState(null);
   const [imageUrls, setImageUrls] = useState([]);
-  const [otherThanProduct] = useState("");
-    const [requiredQuality] = useState("");
-    const [units] = useState("");
-    //const [catalogue, setProductCatalogue] = useState("");
-  const { id } = useParams();
-  const navigate = useNavigate(); // Hook to programmatically navigate
-    const { userId } = useParams(); 
+//  const [isMobile, setIsMobile] = useState(false); 
+//   const [otherThanProduct] = useState("");
+//     const [requiredQuality] = useState("");
+//     const [units] = useState("");
+
   useEffect(() => {
+    if (!productId) return;
+
     const fetchData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/${id}`);
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/${productId}`);
         const data = await response.json();
         setProductData(data);
 
-        const imageRequests =
-          data.productPhotos?.map((photo) =>
-            fetch(
-              `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
-            )
-              .then((res) => res.json())
-              .then((data) => ({
-                src: photo,
-                imageData: data.imageData,
-              }))
-          ) || [];
+        const imageRequests = data.productPhotos?.map((photo) =>
+          fetch(`https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`)
+            .then((res) => res.json())
+            .then((data) => ({ src: photo, imageData: data.imageData }))
+        ) || [];
+
         const images = await Promise.all(imageRequests);
         setImageUrls(images);
       } catch (error) {
-        console.error("Error fetching product data:", error);
+        console.error("Error loading product:", error);
       }
     };
+
     fetchData();
-  }, [id]);
+  }, [productId]);
 
-  // Detect screen size for responsiveness
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 768);
-    handleResize(); // Set initial state
-    window.addEventListener('resize', handleResize);
-  
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  if (!productData) return null;
 
-  // const handleSubmit = async () => {
-  //   if (!productData) {
-  //     console.error("No product data to submit.");
-  //     return;
-  //   }
-
-  //   const payload = {
-  //     ...productData,
-  //     productStatus: productType,
-  //     comments,
-  //   };
-
-  //   try {
-  //     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/${id}`, {
-  //       method: "PUT",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(payload),
-  //     });
-
-  //     if (response.ok) {
-  //       alert("Product status updated successfully.");
-  //     } else {
-  //       const errorData = await response.json();
-  //       console.error("Error updating product:", errorData);
-  //       alert("Failed to update product. Please try again.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error submitting product data:", error);
-  //     alert("An error occurred. Please try again later.");
-  //   }
-  // };
-
-  if (!productData) {
-    return (
-      <div className="d-flex justify-content-center align-items-center vh-100">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
-      </div>
-    );
-  }
-
-  const {
-    productName,
-    category,
-    catalogue,
-    productSize,
-    color,
-    rate,
-    discount,
-    specifications,
-    warranty,
-    additionalInformation,
-  } = productData;
-
+  const { productName, category, catalogue, productSize, color, rate, discount, specifications, warranty, additionalInformation } = productData;
   const afterDiscountPrice = rate - (rate * discount) / 100;
 
   return (
-    <div>
-  {isMobile && <Header />}
-    <div className="wrapper bg-light d-flex">
-      {/* Sidebar menu for Larger Screens */}
-      {!isMobile && (
-        <div className=" ml-0 m-4 p-0 sde_mnu">
-          <Sidebar  userType={selectedUserType}/>
-        </div>
-      )}
-
-      {/* Floating menu for mobile */}
-      {isMobile && (
-        <div className="floating-menu">
-          <Button
-            variant="primary"
-            className="rounded-circle shadow"
-            onClick={() => setShowMenu(!showMenu)}
-          >
-            <MoreVertIcon />
-          </Button>
-
-          {showMenu && (
-              <div className="sidebar-container">
-                <Sidebar userType={selectedUserType}/>
-              </div>
-          )}
-        </div>
-      )}
-
-      {/* Main Content */}
-      <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
-              <h3 className="mb-4 text-primary">Product Details</h3>
-
-              {/* Carousel */}
-              <div
+    <>
+    <Modal show={show} onHide={handleClose} size="lg" centered scrollable>
+      <Modal.Header closeButton>
+        <Modal.Title>Product Details</Modal.Title>
+      </Modal.Header>
+      
+      <Modal.Body>
+         {/* Carousel */}
+         <div
                 id="productCarousel"
-                className="carousel slide mb-4 rounded"
+                className="carousel slide rounded"
                 data-bs-ride="carousel"
               >
                 {/* Indicators */}
@@ -182,12 +82,12 @@ const BuyProdcutView = () => {
                     >
                       <img
                         src={`data:image/jpeg;base64,${img.imageData}`}
-                        className="d-block w-100 rounded"
-                        style={{ height: '300px', objectFit: 'cover' }}
+                        className="d-block rounded"
+                        style={{ height: '400px', width: '500px', objectFit: 'cover' }}
                         alt={`Slide ${index + 1}`}
                       />
                     </div>
-                  ))}
+                  ))} 
                 </div> 
 
                 {/* Controls */}
@@ -210,10 +110,9 @@ const BuyProdcutView = () => {
                   <span className="visually-hidden">Next</span>
                 </button>
               </div>
-
-              {/* Product Details */}
               <div className="row">
                 <div className="col-md-6">
+                  <p><strong>Product Name:</strong> {productName}</p>
                   <p><strong>Category:</strong> {category}</p>
                   <p><strong>Name:</strong> {productName}</p>
                   <p><strong>Catalogue:</strong> {catalogue}</p>
@@ -238,52 +137,18 @@ const BuyProdcutView = () => {
                   <p>{additionalInformation}</p>
                 </div>
               </div>
-
-           
-              {/* Submit Button */}
-              <div className="mt-3">
-                {/* View Single Product Button */}
-    
-     
-     <button
-  type="button"
-  className="btn btn-warning text-white w-50 mt-2"
-  onClick={() => 
-    navigate(`/buyProducts/${userType}/${userId}`, {
-      state: {
-        category,
-        productName, 
-        catalogue,
-        productSize,
-        color, 
-        otherThanProduct,
-        requiredQuality,
-        units,
-        rate,
-        discount,
-        afterDiscountPrice,
-      },
-    })
-  }
->
-  <span>Back</span>
-      </button>
-              </div>
-            </div>
-            </div>
-            <Footer />  
-
-        {/* Styles for floating menu */}
-<style jsx>{`
-        .floating-menu {
-          position: fixed;
-          top: 80px; /* Increased from 20px to avoid overlapping with the logo */
-          left: 20px; /* Adjusted for placement on the left side */
-          z-index: 1000;
-        }
-      `}</style>
-      </div>
+        {/* {imageUrls.map((img, idx) => (
+          <img
+            key={idx}
+            src={`data:image/jpeg;base64,${img.imageData}`}
+            alt="Product"
+            style={{ maxWidth: '100%', margin: '10px 0' }}
+          />
+        ))} */}
+      </Modal.Body>
+    </Modal>
+    </>
   );
 };
 
-export default BuyProdcutView;
+export default ProductViewModal;
