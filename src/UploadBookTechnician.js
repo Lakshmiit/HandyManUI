@@ -9,8 +9,6 @@ import { ArrowBack, Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import {  Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import Footer from './Footer.js';
-
-
 const UploadBookTechnician = () => {
 const [error, setError] = useState("");
 const [isMobile, setIsMobile] = useState(false);
@@ -52,7 +50,7 @@ const handleJobChange = (index, field, value) => {
     if (field === "rate" || field === "discount") {
         const rate = parseFloat(updatedJobs[index].rate) || 0;
         const discount = parseFloat(updatedJobs[index].discount) || 0;
-        updatedJobs[index].afterDiscount = (rate - (rate * discount) / 100).toFixed(2);
+        updatedJobs[index].afterDiscount = (rate - (rate * discount) / 100).toFixed(0);
     }
 
     setSelectedJobs(updatedJobs);

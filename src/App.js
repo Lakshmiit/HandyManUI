@@ -1,10 +1,6 @@
 import React, { useEffect } from 'react';
 import './App.css';
-import { BrowserRouter as Router, Route, Routes, useNavigate} from 'react-router-dom';
-
-// Importing necessary components
-// import Header from './Header';
-//  import Footer from './Footer.js'; 
+import { BrowserRouter as Router, Route, Routes, useNavigate} from 'react-router-dom'; 
 import UploadForm from './uploadform';
 import ProductView from './ProductView'; 
 import EditUploadForm from './EditUploadForm'; 
@@ -49,10 +45,8 @@ import RaiseOrdersGrid from './RaiseOrdersGrid.js';
 import CustomerCareConfirmation from './CustomerCareConfirmation.js';
 import CustomerRaiseTicketTrack from './CustomerRaiseTicketTrack.js';
 import TrackStatusNotifications from './TrackStatusNotifications.js';
-// import TrackStatusGrid from './TrackStatusGrid.js';
 import TicketConfirmationGrid from './TicketConfirmationGrid.js';
 import TraderConfirmationGrid from './TraderConfirmationGrid.js';
-// import TermsandConditions from './TermsandConditions.js';
 import CustomerCareGrid from './CustomerCareGrid.js';
 import BookTechnician from './BookTechnician.js';
 import BookTechnicianActionView from './BookTechnicianActionView.js';
@@ -80,10 +74,8 @@ import BuyProductsCustomerCart from './BuyProductsCustomerCart.js';
 import ProfilePage from './ProfilePage.js';
 import PaymentPage from './PaymentPage';
 import NotificationsBell from './NotificationsBell.js'; 
-// import RaiseQuoteNotificationBell from './RaiseQuoteBellNotifications.js';
 import OrdersNotificationBell from './OrdersBellNotifications.js';
 import TrackStatusNotificationBell from './TrackStatusBellNotifications.js';
-// import WebProfilePage from './WebProfilePage.js';
 import Device from './Device.js';   
 import IconsOffersProducts from './IconsOffersProducts.js'; 
 import GuestIconsBuyProducts from './GuestIconsBuyProducts.js'; 
@@ -91,25 +83,34 @@ import GuestBuyProductView from './GuestBuyProductView.js';
 import Offers from './Offers.js';
 import GuestOffers from './GuestOffers.js';
 import GuestOffersBuyProduct from './GuestOffersBuyProduct.js';
-// import GuestUserLogin from './GuestUserLogin.js';
-// import GuestMobileNumberLogin from './GuestMobileNumberLogin.js';
 import GuestProductPaymentPage from './GuestProductPaymentPage.js';
-// import GuestProfilePage from './GuestProfilePage.js';
 import OffersBuyProductPage from './OffersBuyProductPage.js';
 import ViewOffersBuyProductPage from './ViewOffersBuyProductPage.js';
-// import FirebaseMainConfig from './FirebaseMainConfig.js';
  import TechnicianViewBookTechnician from './TechnicianViewBookTechnician.js';
  import BookTechnicianDetailsNotifications from './BookTechnicianDetailsNotifications.js';
  import BookTechnicianDetailsGrid from './BookTechnicianDetailsGrid.js';
  import RaiseTicketConfirmation from './RaiseTicketConfirmation.js';
+ import HandyManLogo from './HandyManLogo.js';
  import LoginPage from './LoginPage.js';
-//  import UserIdLogin from './UserIdLogin.js';
  import CustomerRaiseTicketGridView from './CustomerRaiseTicketGridView.js';
-//  import CustomerRegistration from './CustomerRegistration.js';
-//  import TechnicianRegistration from './TechnicianRegistration.js';
   import OTPVerificationPage from './OTPVerificationPage.js';
+  import ApartmentRaiseTicket from './ApartmentRaiseTicket.js';
+  import ApartmentRaiseActionView from './ApartmentRaiseActionView.js';
+  import ApartmentNotificationGrid from './ApartmentNotificationGrid.js';
+  import AboutApartmentRaiseTicket from './AboutApartmentRaiseTicket.js';
+  // import ApartmentSubscription from './ApartmentSubscription.js';
+// import TrackStatusGrid from './TrackStatusGrid.js';
 // import BuyProductCartView from './BuyProductCartView.js';
- 
+ //  import CustomerRegistration from './CustomerRegistration.js';
+//  import TechnicianRegistration from './TechnicianRegistration.js';
+// import GuestUserLogin from './GuestUserLogin.js';
+// import GuestMobileNumberLogin from './GuestMobileNumberLogin.js';
+// import RaiseQuoteNotificationBell from './RaiseQuoteBellNotifications.js';
+// import TermsandConditions from './TermsandConditions.js';
+// import WebProfilePage from './WebProfilePage.js';
+// import GuestProfilePage from './GuestProfilePage.js';
+// import FirebaseMainConfig from './FirebaseMainConfig.js';
+
 const PreventBackNavigation = () => {
   const navigate = useNavigate(); 
   useEffect(() => { 
@@ -143,7 +144,8 @@ function App() {
             {/* <Route path="/customerRegistration" element={<CustomerRegistration />} /> */}
             {/* <Route path="/technicianRegistration" element={<TechnicianRegistration />} /> */}
             <Route path="/profilePage/:userType/:userId" element={<ProfilePage />} />
-            <Route path="/" element={<LoginPage />} />
+            <Route path="/" element={<HandyManLogo />} />
+            <Route path="/loginnew" element={<LoginPage />} />
             <Route path="/otpVerification" element={<OTPVerificationPage />} />
             {/* <Route path="/UserIdLogin" element={<UserIdLogin />} /> */}
             {/* <Route path="/webProfilePage/:userType/:userId" element={<WebProfilePage />} /> */}
@@ -242,6 +244,13 @@ function App() {
             <Route path="/viewOffersBuyProduct/:userType/:userId/:id" element={<ViewOffersBuyProductPage />} />
             <Route path="/technicianDetailsNotifications/:userType/:userId/:category/:pincode/:technicianName" element={<BookTechnicianDetailsNotifications />} />
             <Route path="/technicianGridDetails/:userType/:userId/:category/:pincode/:technicianName" element={<BookTechnicianDetailsGrid />} />
+            <Route path="/apartmentRaiseTicket/:userType/:userId" element={<ApartmentRaiseTicket />} />
+            <Route path="/apartmentRaiseTicketActionView/:apartmentRaiseTicketId" element={<ApartmentRaiseActionView />} />
+            <Route path="/apartmentNotificationGrid" element={<ApartmentNotificationGrid />} />
+            <Route path="/aboutApartmentRaiseTicket/:userType/:userId" element={<AboutApartmentRaiseTicket />} />
+            
+            {/* <Route path="/apartmentSubscription/:id" element={<ApartmentSubscription />} /> */}
+            
             {/* <Route path="/raiseQuoteNotificationsBell/:userId" element={<RaiseQuoteNotificationBell />} /> */}
             </Routes>
         </main>

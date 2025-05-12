@@ -5,7 +5,7 @@ import Sidebar from './Sidebar';
 import Header from './Header.js';
 import Footer from './Footer.js';
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import BuyProductView from "./BuyProductView.js";
 import { Button, Form, Modal } from 'react-bootstrap'; // Import Bootstrap components for modal
@@ -13,15 +13,15 @@ import { Button, Form, Modal } from 'react-bootstrap'; // Import Bootstrap compo
 
 const BuyProduct = () => { 
   const navigate = useNavigate();
-  const location = useLocation();
-  const [category, setCategory] = useState(location.state?.category || "");
-  const [productName, setProductName] = useState(location.state?.productName || "");
-  const [productCatalogue, setProductCatalogue] = useState(location.state?.catalogue || "");
-  const [productSize, setProductSize] = useState(location.state?.productSize || "");
-  const [chooseColor, setChooseColor] = useState(location.state?.color || "");
-  const [rate, setRate] = useState(location.state?.rate || "");
-  const [discount, setDiscount] = useState(location.state?.discount || "");
-  const [requiredQuality, setRequiredQuality] = useState(location.state?.requiredQuality || "");
+  // const location = useLocation();
+  const [category, setCategory] = useState('');
+  const [productName, setProductName] = useState('');
+  const [productCatalogue, setProductCatalogue] = useState('');
+  const [productSize, setProductSize] = useState('');
+  const [chooseColor, setChooseColor] = useState('');
+  const [rate, setRate] = useState('');
+  const [discount, setDiscount] = useState('');
+  const [requiredQuality, setRequiredQuality] = useState('');
   // const [units, setUnits] = useState(location.state?.units || "");
   // const [afterDiscountPrice, setAfterDiscountPrice] = useState(location.state?.afterDiscountPrice || "");
   const {userType} = useParams();
@@ -190,8 +190,8 @@ useEffect(() => {
 
   const validRate = Number(rate) || 0;
   const validDiscount = Number(discount) || 0;
-  const afterDiscountPrice = parseFloat((validRate - (validRate * validDiscount) / 100).toFixed(2));
-  const totalAmount = parseFloat((requiredQuality * afterDiscountPrice).toFixed(2));
+  const afterDiscountPrice = parseFloat((validRate - (validRate * validDiscount) / 100).toFixed(0));
+  const totalAmount = parseFloat((requiredQuality * afterDiscountPrice).toFixed(0));
 
   const handleGetQuotation = async (e) => {
     e.preventDefault();
@@ -559,8 +559,8 @@ useEffect(() => {
       addressId: guestCustomerId,
       isPrimaryAddress: true,
       address: newAddress,
-      state: "state",
-      district: "district",
+      state: "Andhra Pradesh",
+      district: "Visakhapatnam",
       zipCode: zipCode,
       mobileNumber: mobileNumber,
       emailAddress: "emailAddress",

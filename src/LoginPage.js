@@ -155,7 +155,7 @@ const handleOTP = async (e) => {
   <h4>Sign into your account</h4>
   <div>
     <label htmlFor="mobileInput">
-      Mobile Number<span className="req_star">*</span>
+      Mobile Number <span className="req_star">*</span>
     </label>
     <div style={{ display: 'flex', gap: '0.5rem' }}>
     {/* <select

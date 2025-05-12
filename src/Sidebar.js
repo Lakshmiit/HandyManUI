@@ -13,6 +13,8 @@ import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import ApartmentIcon from '@mui/icons-material/Apartment';
+
 import { useParams } from 'react-router-dom';
 const Sidebar = () => {  
   const {userType} = useParams();
@@ -34,6 +36,8 @@ const menuConfig = {
       { MenuIcon: <InventoryIcon />, MenuTitle: "Orders", TargetUrl: `/customerOrders/${userType}/${userId}` },
       { MenuIcon: <LocalOfferIcon />, MenuTitle: "Buy Product Offers", TargetUrl: `/offersIcons/${userType}/${userId}` },
       { MenuIcon: <AccountCircleIcon />, MenuTitle: "Accounts" },
+      { MenuIcon: <ApartmentIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Apartment Common Area Maintenance", TargetUrl: `/aboutApartmentRaiseTicket/${userType}/${userId}`}, 
+      
     ],
     builder: [
       { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", TargetUrl: `/profilePage/${userType}/${userId}` },

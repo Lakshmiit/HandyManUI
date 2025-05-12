@@ -28,6 +28,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import LogoutIcon from "@mui/icons-material/Logout";
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
+import ApartmentIcon from '@mui/icons-material/Apartment';
 // import { Carousel } from 'react-bootstrap';
 
 const getMenuList = (userType, userId, category, district ,ZipCode,technicianFullName) => {
@@ -39,7 +40,8 @@ const getMenuList = (userType, userId, category, district ,ZipCode,technicianFul
       { MenuIcon: <StorefrontIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
       { MenuIcon: <OrdersNotificationBell sx={{ fontSize: 35 }}/>, MenuTitle: "Orders", TargetUrl: `/customerOrders/${userType}/${userId}` },
       { MenuIcon: <LocalOfferIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Buy Product Offers", TargetUrl: `/offersIcons/${userType}/${userId}` },
-      { MenuIcon: <PermIdentityIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Accounts"} 
+      { MenuIcon: <PermIdentityIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Accounts"},
+      { MenuIcon: <ApartmentIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Apartment Common Area Maintenance", TargetUrl: `/aboutApartmentRaiseTicket/${userType}/${userId}`}, 
   ];
 
   const builder = [
@@ -156,6 +158,11 @@ useEffect(() => {
           fetchAllTickets();
         }, [userId]);
       
+        useEffect(() => {
+          if (profile?.mobileNumber) {
+            localStorage.setItem('mobileNumber', profile.mobileNumber);
+          }
+        }, [profile]);        
 
          // Handle "more" icon click to toggle profile card visibility
   const handleMoreIconClick = () => {
@@ -844,9 +851,9 @@ const fetchImageUrl = async (photoId) => {
           )} */}
           {isMobile && (
             <div>
-            <div className="text-warning cust-fullname fs-4">Welcome <br /> <strong className="text-dark">{profile.fullName}{" "}</strong></div>
+            <div className="text-warning cust-fullname fs-5 mt-1">Welcome <br /> <strong className="text-dark">{profile.fullName}{" "}</strong></div>
             <div className="fw-bold fs-5">Lakshmi Sai Service Providers</div>
-            <div className="text-warning fs-3">{profile.userProfileType}</div>
+            <div className="text-warning fs-4">{profile.userProfileType}</div>
             </div>
           )}
         <div className="col-md-9 bg-white">
@@ -855,18 +862,16 @@ const fetchImageUrl = async (photoId) => {
     {menuList.map((menu, index) => (
         <div className="col-4 col-sm-4 col-md-3" key={index}>
             <a href={menu.TargetUrl} className="text-decoration-none" style={{ color: "inherit" }}>
-                <div className="mnu_mn text-center d-flex flex-column justify-content-center align-items-center p-2" style={{ cursor: "pointer" }}>
+                <div className="mnu_mn text-center d-flex flex-column justify-content-center align-items-center" style={{ cursor: "pointer" }}>
                     <span className="material-symbols-outlined custom-icon">
                         {menu.MenuIcon} 
                     </span>
-                    <span className="mt-2">{menu.MenuTitle}</span>
+                    <span>{menu.MenuTitle}</span>
                 </div>
             </a>
         </div>
     ))}
 </div>
-
-
                 {/* </>
                 )} */}
               <div className="ticket-container">

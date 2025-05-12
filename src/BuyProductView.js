@@ -9,6 +9,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 const ProductViewModal = ({ show, handleClose, productId }) => {
   const [productData, setProductData] = useState(null);
   const [imageUrls, setImageUrls] = useState([]);
+  const [showZoomModal, setShowZoomModal] = useState(false);
+    const [zoomImage, setZoomImage] = useState("");
 //  const [isMobile, setIsMobile] = useState(false); 
 //   const [otherThanProduct] = useState("");
 //     const [requiredQuality] = useState("");
@@ -39,6 +41,11 @@ const ProductViewModal = ({ show, handleClose, productId }) => {
     fetchData();
   }, [productId]);
 
+  const handleImageClick = (imageSrc) => {
+    setZoomImage(imageSrc);
+    setShowZoomModal(true);
+  };
+
   if (!productData) return null;
 
   const { productName, category, catalogue, productSize, color, rate, discount, specifications, warranty, additionalInformation } = productData;
@@ -46,6 +53,21 @@ const ProductViewModal = ({ show, handleClose, productId }) => {
 
   return (
     <>
+    <Modal show={showZoomModal} onHide={() => setShowZoomModal(false)} centered>
+            <Modal.Body className="text-center position-relative">
+              <div className="zoom-container">
+                 {/* Close Button (X) */}    
+        <button
+          className="close-button text-end"
+          onClick={() => setShowZoomModal(false)}
+        >
+          &times;
+        </button>
+                <img src={zoomImage} alt="Zoomed Product" className="zoom-image" />
+              </div>
+            </Modal.Body>
+          </Modal>
+    
     <Modal show={show} onHide={handleClose} size="lg" centered scrollable>
       <Modal.Header closeButton>
         <Modal.Title>Product Details</Modal.Title>
@@ -82,9 +104,10 @@ const ProductViewModal = ({ show, handleClose, productId }) => {
                     >
                       <img
                         src={`data:image/jpeg;base64,${img.imageData}`}
-                        className="d-block rounded"
+                        className="d-block rounded zoomable-image"
                         style={{ height: '400px', width: '500px', objectFit: 'cover' }}
                         alt={`Slide ${index + 1}`}
+                        onClick={() => handleImageClick(`data:image/jpeg;base64,${img.imageData}`)}
                       />
                     </div>
                   ))} 

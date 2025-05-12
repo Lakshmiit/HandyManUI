@@ -531,8 +531,8 @@ useEffect(() => {
       addressId: guestCustomerId,
       isPrimaryAddress: true,
       address: newAddress,
-      state: "state",
-      district: "district",
+      state: "Andhra Pradesh",
+      district: "Visakhapatnam",
       zipCode: zipCode,
       mobileNumber: mobileNumber,
       emailAddress: "emailAddress",
@@ -1148,7 +1148,7 @@ fetchProducts();
                     <div className="mt-20">
                         <h4>I. YOUR ACCEPTANCE OF THIS AGREEMENT</h4>
                         <p>
-                            This is an agreement between you ("you" or "your") and Lakshmi Sai Service Providers, a Proprietorship firm incorporated under the Registration of Establishment – Sec 2(b) and Sec 4(2) The Andhra Pradesh (Insurance of integrated Registration and Furnishing of Combined returns under various labour  Laws by certain Establishments) Act, 2015  with its registered office at Dr.No.44-40-12, Nandhagirinagar, Akkayyapalem, Visakhapatnam - 530016 ("Lakshmi Sai Service Provider" "we," or "our") that governs your use of the search services offered by Lakshmi Sai Service Providers through its website https://handymanapiv2.azurewebsites.net ("Website"), using which Lakshmi Sai Service Providers may provide the search services ("Platform"). When you access or use Platform you agree to be bound by these Terms and Conditions ("Terms").
+                            This is an agreement between you ("you" or "your") and Lakshmi Sai Service Providers, a Proprietorship firm incorporated under the Registration of Establishment – Sec 2(b) and Sec 4(2) The Andhra Pradesh (Insurance of integrated Registration and Furnishing of Combined returns under various labour  Laws by certain Establishments) Act, 2015  with its registered office at Dr.No.44-40-12, Nandhagirinagar, Akkayyapalem, Visakhapatnam - 530016 ("Lakshmi Sai Service Provider" "we," or "our") that governs your use of the search services offered by Lakshmi Sai Service Providers through its website http://handymanserviceproviders.com ("Website"), using which Lakshmi Sai Service Providers may provide the search services ("Platform"). When you access or use Platform you agree to be bound by these Terms and Conditions ("Terms").
                         </p>
                     </div>
                     <div className="mt-20">
@@ -1227,7 +1227,7 @@ fetchProducts();
                             It is also clarified that, if there are any issues or claims due to your posts by way of Reviews, Ratings and Comments, then Lakshmi Sai Service Provider reserves right to take appropriate legal action against you. Further, you shall indemnify and protect Lakshmi Sai Service Provider against such claims or damages or any issues, due to your posting of such Reviews, Ratings and Comments Lakshmi Sai Service Provider takes no responsibility and assumes no liability for any content posted by you or any third party on Lakshmi Sai Service Provider site or on any mediums of Lakshmi Sai Service Provider.
                         </p>
                         <p>
-                            You further acknowledge that conduct prohibited in connection with your use of the Lakshmi Sai Service Provider (https://handymanapiv2.azurewebsites.net) website includes, but is not limited to, breaching or attempting to breach the security of the Site.
+                            You further acknowledge that conduct prohibited in connection with your use of the Lakshmi Sai Service Provider (http://handymanserviceproviders.com) website includes, but is not limited to, breaching or attempting to breach the security of the Site.
                         </p>
                         <div className="mt-20">
                         <h4>VII. PRIVACY POLICY</h4>
@@ -1347,7 +1347,7 @@ fetchProducts();
                         <div className="mt-20">
                         <h4>XII. ADDITIONAL DISCLAIMER</h4>
                         <p>
-                            Users using any of Lakshmi Sai Service Provider service across the following mediums ie. through internet ie<a href="https://handymanapiv2.azurewebsites.net"> https://handymanapiv2.azurewebsites.net </a>Websiteis bound by this additional disclaimer wherein they are cautioned to make proper enquiry before they (Users) rely, act upon or enter into any transaction (any kind or any sort of transaction including but not limited to monetary transaction ) with the Advertiser listed with Lakshmi Sai Service Provider.
+                            Users using any of Lakshmi Sai Service Provider service across the following mediums ie. through internet ie<a href="http://handymanserviceproviders.com"> http://handymanserviceproviders.com </a>Websiteis bound by this additional disclaimer wherein they are cautioned to make proper enquiry before they (Users) rely, act upon or enter into any transaction (any kind or any sort of transaction including but not limited to monetary transaction ) with the Advertiser listed with Lakshmi Sai Service Provider.
                         </p>
                         <p>
                             All the Users are cautioned that all and any information of whatsoever nature provided or received from the Advertiser/s is taken in good faith, without least suspecting the bonafides of the Advertiser/s and Lakshmi Sai Service Provider does not confirm, does not acknowledge, or subscribe to the claims and representation made by the Advertiser/s listed with Lakshmi Sai Service Provider. Further, Lakshmi Sai Service Provider is not at all responsible for any act of Advertiser/s listed at Lakshmi Sai Service Provider.

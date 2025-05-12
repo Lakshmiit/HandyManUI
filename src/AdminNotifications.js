@@ -40,8 +40,13 @@ const buyProductNotifications = notifications.filter(
 );
 
 const productClosedNotifications = notifications.filter(
-  (item) => (item.assignedTo !== "Customer Care" && item.status === "Closed" && item.assignedTo === "Admin" && item.buyProductId != null) || (item.assignedTo === "Admin" && item.transactionStatus === "Success" && item.buyProductId != null));
+  (item) => (item.assignedTo !== "Customer Care" && item.status === "Closed" && item.assignedTo === "Admin" && item.buyProductId != null) || (item.assignedTo === "Admin" && item.transactionStatus === "Success" && item.buyProductId != null)
+);
   
+const apartmentMaintenanceNotifications = notifications.filter(
+  (item) => item.status === "Open" && item.apartmentRaiseTicketId != null
+);
+
   const handleTicketClick = (ticketId) => {
     navigate(`/raiseTicketActionView/${ticketId}`, { state: { ticketId } });
   };
@@ -69,6 +74,10 @@ const productClosedNotifications = notifications.filter(
   const handleClosedClick = (buyProductId) => {
     navigate(`/adminClosedBuyProductOrders/${buyProductId}`, { state: { buyProductId}});
   }
+
+   const handleApartmentClick = (apartmentRaiseTicketId) => {
+    navigate(`/apartmentRaiseTicketActionView/${apartmentRaiseTicketId}`, { state: { apartmentRaiseTicketId } });
+  };
   return (
     <div>
       <div className="notification-list">
@@ -308,6 +317,39 @@ const productClosedNotifications = notifications.filter(
         ))}
       </div>
 
+      <div className="notification-list">
+        {apartmentMaintenanceNotifications.map((notification) => (
+          <div
+            key={notification.apartmentRaiseTicketId}
+            className={`notification-item ${
+              notification.apartmentRaiseTicketId === highlightedItem ? "highlight" : ""
+            }`}
+          >
+            <div className="notification-header">
+              <strong>Ticket ID: </strong>
+              <span
+                onClick={() => handleApartmentClick(notification.id)}
+                style={{
+                  color: "blue",
+                  cursor: "pointer",
+                  textDecoration: "underline",
+                }}
+              >
+                {notification.apartmentRaiseTicketId}
+              </span>
+            </div>
+            <div>
+              <strong>Subject:</strong> {notification.subject}
+            </div>
+            <div>
+              <strong>Details:</strong> {notification.details}
+            </div>
+            <div className="notification-date">
+              <strong>Date:</strong> {new Date(notification.date).toLocaleString()}
+            </div>
+          </div>
+        ))}
+      </div>
 
     </div>
   );
@@ -323,6 +365,7 @@ const Notification = () => {
  const [technicianNotifications, setTechnicianNotifications] = useState([]);
  const [productNotifications, setProductNotifications] = useState([]);
  const [closedProductNotifications, setClosedProductNotifications] = useState([]);
+  const [apartmentNotifications, setApartmentTicketNotifications] = useState([]);
   const [newTicketCount, setNewTicketCount] = useState(0);
   const [newQuoteCount, setNewQuoteCount] = useState(0);
   const [newDealerCount, setNewDealerCount] = useState(0);
@@ -331,6 +374,7 @@ const Notification = () => {
   const [newProductCount, setNewProductCount] = useState(0);
   const [newClosedCount, setNewClosedCount] = useState(0); 
   const [newNotificationCount, setNewNotificationCount] = useState(0);
+  const [newApartmentCount, setNewApartmentCount] = useState(0);
   const [glow, setGlow] = useState(false);
   const [glowTicket, setGlowTicket] = useState(false);
   const [glowQuote, setGlowQuote] = useState(false);
@@ -339,6 +383,7 @@ const Notification = () => {
   const [glowTechnician, setGlowTechnician] = useState(false);
   const [glowProduct, setGlowProduct] = useState(false);
   const [glowClosed, setGlowClosed] = useState(false);
+  const [glowApartment, setGlowApartment] = useState(false);
   const [highlightedTicket, setHighlightedTicket] = useState(null);
   const [highlightedQuote, setHighlightedQuote] = useState(null);
   const [highlightedDealer, setHighlightedDealer] = useState(null);
@@ -346,6 +391,7 @@ const Notification = () => {
   const [highlightedTechnician, setHighlightedTechnician] = useState(null);
   const [highlightedProduct, setHighlightedProduct] = useState(null);
   const [highlightedClosed, setHighlightedClosed] = useState(null);
+  const [highlightedApartment, setHighlightedApartment] = useState(null);
   const [activeTab, setActiveTab] = useState("");
   // const {raiseTicketId} = useParams();
   const navigate = useNavigate();
@@ -360,7 +406,7 @@ const Notification = () => {
 
   const fetchNotifications = async () => {
     try {   
-      const [raiseTicketResponse, getQuoteResponse, getDealerResponse, getOrderResponse, BookTechnicianResponse, buyProductResponse, productClosedResponse] = await Promise.all([
+      const [raiseTicketResponse, getQuoteResponse, getDealerResponse, getOrderResponse, BookTechnicianResponse, buyProductResponse, productClosedResponse, apartmentRaiseTicketResponse] = await Promise.all([
         fetch(
           "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications"
         ),
@@ -374,6 +420,7 @@ const Notification = () => {
         fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/GetBookTechnicianForAdminList`),
         fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForAdminList`),
         fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForAdminList`),
+        fetch(`https://handymanapiv2.azurewebsites.net/api/ApartmentRaiseTicket/GetGetApartmentMaintenanceForAdminList`),
       ]);
 
       const raiseTicketData = await raiseTicketResponse.json();
@@ -466,7 +513,22 @@ const Notification = () => {
      if (productClosedCount > 0) {
       setHighlightedProduct(productClosedFiltered[0].buyProductId);
      }
-      const totalNotifications = raiseTicketCount + getQuoteCount + getDealerCount + getOrderCount + bookTechnicianCount + buyProductCount + productClosedCount;
+
+     const apartmentMaintenanceTicketData = await apartmentRaiseTicketResponse.json();
+      const apartmentRaiseTicketFiltered = apartmentMaintenanceTicketData.filter(
+        (item) => item.status === "Open"  && item.apartmentRaiseTicketId != null)
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
+      const apartmentTicketCount = apartmentRaiseTicketFiltered.length;
+
+      setApartmentTicketNotifications(apartmentRaiseTicketFiltered);
+      setNewApartmentCount(apartmentTicketCount);
+      setGlowApartment(apartmentTicketCount > 0);
+
+      if (apartmentTicketCount > 0) {
+        setHighlightedApartment(apartmentRaiseTicketFiltered[0].apartmentRaiseTicketId);
+      }
+
+      const totalNotifications = raiseTicketCount + getQuoteCount + getDealerCount + getOrderCount + bookTechnicianCount + buyProductCount + productClosedCount + apartmentTicketCount;
       setNewNotificationCount(totalNotifications);
       setGlow(totalNotifications > 0);
     } catch (error) {
@@ -476,7 +538,7 @@ const Notification = () => {
 
   useEffect(() => {
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 60000); // Poll every 60 seconds
+    const interval = setInterval(fetchNotifications, 60000); 
     return () => clearInterval(interval);
   }, []);
 
@@ -522,6 +584,11 @@ const Notification = () => {
     setHighlightedClosed(null);
   };
 
+  const handleClearApartmentNotifications = () => {
+    setNewApartmentCount(0);
+    setGlowApartment(false);
+    setHighlightedApartment(null);
+  };
   const handleTabClick = (tab) => setActiveTab(tab);
 
   return ( 
@@ -568,7 +635,8 @@ const Notification = () => {
 <div className="notifications-container1 d-flex bg-white">
 {isMobile ? (
   <div className="tabs-mobile d-flex flex-column">
-    {["Raise Ticket", "Technician Get Quote", "Dealer Get Quote", "Raise Ticket Orders", "Book Technician", "Buy Product Orders", "Buy Product Closed Orders"].map((tab) => (
+    {["Raise Ticket", "Technician Get Quote", "Dealer Get Quote", "Raise Ticket Orders", "Book Technician", 
+    "Buy Product Orders", "Buy Product Closed Orders", "Apartment Raise Ticket"].map((tab) => (
       <div
         key={tab}
         className={`tab-item ${activeTab === tab ? "active" : ""} 
@@ -579,6 +647,8 @@ const Notification = () => {
           ${tab === "Book Technician" && glowTechnician ? "glow" : ""}
           ${tab === "Buy Product Orders" && glowProduct ? "glow" : ""}
           ${tab === "Buy Product Closed Orders" && glowClosed ? "glow" : ""}
+          ${tab === "Apartment Raise Ticket" && glowApartment ? "glow" : ""}
+
           `}
         onClick={() => handleTabClick(tab)}
         style={{ cursor: "pointer" }}
@@ -602,16 +672,19 @@ const Notification = () => {
         {tab === "Buy Product Orders" && newProductCount > 0 && (
           <span className="badge bg-danger">{newProductCount}</span>
         )}
-
         {tab === "Buy Product Closed Orders" && newClosedCount > 0 && (
           <span className="badge bg-danger">{newClosedCount}</span>
+        )}
+        {tab === "Apartment Raise Ticket" && newApartmentCount > 0 && (
+          <span className="badge bg-danger">{newApartmentCount}</span>
         )}
       </div>
     ))}
   </div>
 ) : (
   <div className="tabs d-flex">
-    {["Raise Ticket", "Technician Get Quote", "Dealer Get Quote", "Raise Ticket Orders", "Book Technician", "Buy Product Orders", "Buy Product Closed Orders"].map((tab) => (
+    {["Raise Ticket", "Technician Get Quote", "Dealer Get Quote", "Raise Ticket Orders", "Book Technician", 
+    "Buy Product Orders", "Buy Product Closed Orders", "Apartment Raise Ticket"].map((tab) => (
       <span
         key={tab}
         className={`tab-item ${activeTab === tab ? "active" : ""} 
@@ -622,6 +695,7 @@ const Notification = () => {
           ${tab === "Book Technician" && glowTechnician ? "glow" : ""} 
           ${tab === "Buy Product Orders" && glowProduct ? "glow" : ""} 
           ${tab === "Buy Product Closed Orders" && glowClosed ? "glow" : ""} 
+          ${tab === "Apartment Raise Ticket" && glowApartment ? "glow" : ""} 
           `}
         onClick={() => handleTabClick(tab)}
         style={{ cursor: "pointer", marginRight: "15px" }}
@@ -648,11 +722,14 @@ const Notification = () => {
          {tab === "Buy Product Closed Orders" && newClosedCount > 0 && (
           <span className="badge bg-danger">{newClosedCount}</span>
         )}
+        {tab === "Apartment Raise Ticket" && newApartmentCount > 0 && (
+          <span className="badge bg-danger">{newApartmentCount}</span>
+        )}
       </span>
     ))}
   </div>
 )}
-<div>
+        <div>
           {activeTab === "Raise Ticket" && (
             <>
               <NotificationsList
@@ -796,6 +873,27 @@ const Notification = () => {
             </>
           )}
           </div> 
+           <div>
+          {activeTab === "Apartment Raise Ticket" && (
+            <>
+              <NotificationsList
+                notifications={apartmentNotifications}
+                highlightedItem={highlightedApartment}
+              />
+              <div
+                className="view-notifications text-info mx-2"
+                onClick={() => {
+                  navigate(`/apartmentNotificationGrid`);
+                  handleClearApartmentNotifications();
+                }}
+                style={{ cursor: "pointer" }}
+
+              > 
+                View All Notifications
+              </div>
+            </>
+          )}
+          </div>
         </div>
         </div>
       </div>

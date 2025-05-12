@@ -132,6 +132,7 @@ useEffect(() => {
         )}
 
         <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
+          <div className='d-flex justify-content-center'>
         <div className="position-relative flex-grow-1">
           <input
             type="text"
@@ -158,11 +159,20 @@ useEffect(() => {
           </Button>
         </div>
         )}
+</div>
             <div className="row g-4">
             {(selectedCategory ? products : productData)
-  ?.filter(product =>
-    product.productName?.toLowerCase().trim().includes(searchQuery.toLowerCase().trim())
-  )
+  ?.filter(product => {
+    const productName = product.productName?.toLowerCase().trim();
+    const query = searchQuery.toLowerCase().trim();
+
+    const normalize = str => str.endsWith('s') ? str.slice(0, -1) : str;
+
+    return (
+      productName.includes(query) ||
+      normalize(productName).includes(normalize(query))
+    );
+  })
   .slice()
   .reverse()
   .map((product) => {

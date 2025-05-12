@@ -41,13 +41,23 @@ useEffect(() => {
     }
   }, [timeLeft]);
   
+    // const handleChange = (value, index) => {
+    //   const newOtp = [...otp];
+    //   newOtp[index] = value.slice(-1); 
+    //   setOtp(newOtp);
+  
+    //   if (value && index < 5) {
+    //     inputsRef.current[index + 1]?.focus();
+    //   }
+    // };
+
     const handleChange = (value, index) => {
       const newOtp = [...otp];
-      newOtp[index] = value.slice(-1); 
+      newOtp[index] = value;
       setOtp(newOtp);
-  
-      if (value && index < 5) {
-        inputsRef.current[index + 1]?.focus();
+    
+      if (value && index < otp.length - 1) {
+        inputsRef.current[index + 1].focus();
       }
     };
   
@@ -291,6 +301,11 @@ useEffect(() => {
   //   }
   // };
   
+  useEffect(() => {
+    if (inputsRef.current[0]) {
+      inputsRef.current[0].focus();
+    }
+  }, []);
 
 const handleBothMethods = (e) => {
   e.preventDefault();
@@ -300,18 +315,18 @@ const handleBothMethods = (e) => {
 };
     
     return (
-        <div class="h-100 d-flex align-items-center py-2 flex-column">
-        <div class="login_section bg-light">
-            <div class="d-flex align-items-center">
+        <div className="h-100 d-flex align-items-center py-2 flex-column">
+        <div className="login_section bg-light">
+            <div className="d-flex align-items-center">
                 <img src={HandyManCharacter} alt="Handy Man Character" />
             </div>
-            <div class="rgt_cnt" id="MobileVerify">
+            <div className="rgt_cnt" id="MobileVerify">
                 {/* <form id="myForm" class="d-flex gap-3 flex-column" method="post" enctype="multipart/form-data"> */}
 
                     <img src={HandyManLogo} alt="Handy Man Logo" />
                     <h4 className='m-1'>Enter Verification Code</h4>
-                    <div id="test" class="test"></div>
-                    <div class="otp_input" id="otp_input">
+                    <div id="test" className="test"></div>
+                    <div className="otp_input" id="otp_input">
                         {otp.map((digit, i) => (
                         <input
                             key={i}
@@ -384,13 +399,6 @@ const handleBothMethods = (e) => {
                     <div className="timer" style={{ color: "red", fontWeight: "bold", marginTop: "15px" }}>
                         {timeLeft > 0 ? `Time Left: ${timeLeft} seconds` : 'You can resend the OTP now.'}
                     </div>
-
-                    {/* {timeLeft > 0 && (
-                    <div className="timer" style={{ color: "red", fontWeight: "bold", marginTop: "15px" }}>
-                        Time Left: {timeLeft} seconds
-                    </div>
-                    )} */}
-                {/* </form> */}
             </div>
         </div>
     </div>

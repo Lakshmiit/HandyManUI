@@ -227,6 +227,22 @@ h4 {
   font-weight: bold;
 }
 
+.otp_input input {
+  width: 40px;
+  height: 40px;
+  font-size: 24px;
+  text-align: center;
+  margin: 0 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  caret-color: black; 
+  outline: none;
+}
+
+.otp_input input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 3px #007bff;
+}
 .mt_100px {
   margin-top: 100px;
 }
@@ -692,7 +708,7 @@ footer.footer {
 
 .src_input {
   background-image: url(./img/search.svg);
-  padding-right: 32px !important;
+  padding-right: 20px !important;
   background-position: calc(100% - 10px) center;
   background-repeat: no-repeat;
 }
@@ -1372,8 +1388,10 @@ textarea {
 
 
 .notifications-container1 {
-  width: 100%;
-  max-width: 940px;
+  /* width: 100%;
+  max-width: 1200px; */
+  width: 1030px;
+max-width: none;
   border: 1px solid #ccc;
   font-family: Arial, sans-serif;
   background-color: #fff;
@@ -1383,18 +1401,19 @@ textarea {
   height: 100%;
   /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);  */
   border-radius: 25px;
-  padding: 8px;
+  padding: 4px;
 }
+
 .tabs {
   display: flex;
   justify-content: space-around;
-  padding: 8px;
+  padding: 4px;
   color: black;
 }
 
 .tab-item {
-  margin: 10px;
-  padding: 8px 16px;
+  margin: 5px;
+  padding: 4px 8x;
   cursor: pointer;
   border-radius: 50px;
   border: none; 
@@ -2276,7 +2295,18 @@ textarea {
   padding: 10px;
   /* background-color: #f1b61f30; */
  border-radius: 15px !important;
- 
+}
+
+.apartment {
+  width: 250px;
+  height: 720px;
+  background-color: #fff;
+  border: none;
+  gap: 1rem;
+  transition: all 0.5s;
+  cursor: pointer;
+  padding: 15px;
+ border-radius: 15px !important;
 }
 
 .profilecard {
@@ -2936,7 +2966,7 @@ h2 {
   
   .offer-banner {
     background: linear-gradient(90deg, #ff9800, #ff5722);
-    font-size: 1.3rem;
+    font-size: 30px;
     font-weight: bold;
     animation: pulse 1.5s infinite alternate;
   }
@@ -2957,6 +2987,61 @@ h2 {
   .card {
     flex: 0 0 auto;
   }
-  
 
+  .word {
+    opacity: 0;
+    transition: opacity 0.5s ease-in;
+  }
+  
+  .word.show {
+    opacity: 1;
+  }
+
+  .zoomable-image {
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .zoomable-image:hover {
+    transform: scale(1.1);
+  }
+
+  .zoom-container {
+    position: relative;
+    display: inline-block;
+  }
+
+.close-button {
+position: absolute;
+top: 8px;  
+right: 10px;  
+background: red;
+border: none;
+font-size: 24px;
+color: white;
+padding: 5px 10px;
+border-radius: 50%;
+cursor: pointer;
+transition: 0.3s;
+}
+
+.close-button:hover {
+background: darkred;
+}
+
+  .zoom-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 5px;
+  }
+
+ .blinking-button {
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% { opacity: 0; }
+}
+
+  
+  
   
