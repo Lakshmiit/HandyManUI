@@ -40,7 +40,7 @@ const ApartmentRaiseActionView = () => {
   const [isSubscription, setIsSubscription] = useState('');
   const [numberOfFlats, setNumberOfFlats] = useState('');
   const [totalAmount, setTotalAmount] = useState('');
-  // const [apartmentRaiseTicketId, setApartmentRaiseTicketId] = useState('');
+//  const [apartmentRaiseTicketId, setApartmentRaiseTicketId] = useState('');
   const [subject, setSubject] = useState('');
   const [details, setDetails] = useState('');
   const [userId, setUserId] = useState('');
@@ -72,7 +72,7 @@ const ApartmentRaiseActionView = () => {
         setDistrict(data.district);
         setApartmentName(data.apartmentName);
         setStatus(data.status);
-        setPhoneNumber(data.cusphoneNumbertomerName);
+        setPhoneNumber(data.phoneNumber);
         setNumberOfFlats(data.numberOfFlats);
         setTotalAmount(data.totalAmount);
         setConsentPersonName(data.consentPersonName);
@@ -98,7 +98,7 @@ const ApartmentRaiseActionView = () => {
       } catch (error) {
         console.error('Error fetching Apartment data:', error);
         // window.alert('Failed to load ticket data. Please try again later.');
-      } finally {
+      } finally { 
         setLoading(false);
       }
     };
@@ -306,7 +306,7 @@ const ApartmentRaiseActionView = () => {
                 <Form.Control
                 type="text"
                 name="ticketID"
-                value={apartmentRaiseTicketId}
+                value={apartmentData.apartmentRaiseTicketId}
                 onChange={handleChange}
                 placeholder="Ticket ID"
                 required
@@ -314,7 +314,7 @@ const ApartmentRaiseActionView = () => {
             </Form.Group>
             </Col>
       
-        {/* Status */}
+        {/* Status
                   <Col md={6}>
                     <Form.Group>
                       <label>Status</label>
@@ -332,8 +332,10 @@ const ApartmentRaiseActionView = () => {
                         <option>Closed Tickets</option>
                       </Form.Control>
                     </Form.Group>
-                  </Col>
-                </Row>
+                  </Col>*/}
+                </Row> 
+
+
         {/* Subject */}
         <Row>
           <Col md={12}>
@@ -423,6 +425,40 @@ const ApartmentRaiseActionView = () => {
           </Col>
         </Row>
 
+{/*Number of Flats*/} 
+        <Row>
+          <Col md={12}>
+            <Form.Group>
+              <label>Number of Flats</label>
+              <Form.Control
+                type="text"
+                name="numberofFlats"
+                value={numberOfFlats}
+                onChange={handleChange}
+                placeholder="Number of Flats"
+                required
+                readOnly
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+        {/* Total Amount */} 
+        <Row>
+          <Col md={12}>
+            <Form.Group>
+              <label>Total Amount</label>
+              <Form.Control
+                type="text"
+                name="totalAmount"
+                value={`Rs ${totalAmount}/-`}
+                onChange={handleChange}
+                placeholder="Total Amount"
+                required
+                readOnly
+              />
+            </Form.Group>
+          </Col>
+        </Row>
         {/* Category */}
         <Row>
           <Col md={12}>

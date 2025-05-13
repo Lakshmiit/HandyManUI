@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap'; // Import Bootstrap components for modal
 // import { v4 as uuidv4 } from 'uuid'; // To generate unique IDs for addresses
 import {
@@ -60,6 +60,8 @@ const [paymentId, setPaymentId] = useState('');
 const [paidAmount, setPaidAmount] = useState('');
 const [shouldBlink,setShouldBlink] = useState(false);
 const [apartmentMaintenanceId, setApartmentMaintenanceId] = useState('');
+// const [userNotFound, setUserNotFound] = useState('User not found.');
+
 
   useEffect(() => {
     if (isSubscription === "No" && isRegisterDisabled) {
@@ -175,11 +177,53 @@ const [apartmentMaintenanceId, setApartmentMaintenanceId] = useState('');
 
 //   return new Date() > expiryDate;
 // };
-
+ 
 useEffect(() => {
   console.log(selectedFiles, ticketId, response, editingAddressId, addressData, subscriptionDate);
 }, [selectedFiles, ticketId, response, editingAddressId, addressData, subscriptionDate]);
-  
+
+const fetchApartmentData = useCallback(async () => {
+  setLoading(true);
+  try {
+    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/ApartmentMaintenance/GetAddressMaintenanceDataByMobileNo?mobileNo=${mobileNumber}`);
+    if (!response.ok) throw new Error('Failed to fetch Apartment data');
+    const data = await response.json();
+    const addressArray = Array.isArray(data) ? data : [data];
+    setAddresses(addressArray);
+
+    if (addressArray.length > 0) {
+      const address = addressArray[0];
+      setId(address.id);
+      setApartmentName(address.apartmentName || '');
+      setApartmentAddress(address.apartmentAddress || '');
+      setPinCode(address.pinCode || '');
+      setConsentPersonName(address.consentPersonName || '');
+      setMobileNumber(address.mobileNumber || '');
+      setNumberOfFlats(address.numberOfFlats || '');
+      setTotalAmount(address.totalAmount || 0);
+      setIsSubscription(address.isSubscription);
+      setPaymentId(address.paymentId);
+      setSubscriptionDate(address.subscriptionDate);
+      setPaidAmount(address.paidAmount);
+      setApartmentMaintenanceId(address.apartmentMaintenanceId);
+      setIsRegisterDisabled(true);
+    } else {
+      setIsRegisterDisabled(false);
+    }
+  } catch (error) {
+    console.error('Error fetching Apartment data:', error);
+    setIsRegisterDisabled(false);
+  } finally {
+    setLoading(false);
+  }
+}, [mobileNumber]);
+
+useEffect(() => {
+  fetchApartmentData();
+}, [fetchApartmentData]);
+
+
+
 // useEffect(() => {
 //   axios.get(`https://handymanapiv2.azurewebsites.net/api/ApartmentMaintenance/GetAddressMaintenanceDataByMobileNo?mobileNo=${mobileNumber}`)
 //     .then((response) => {
@@ -222,46 +266,46 @@ useEffect(() => {
 // zipCode: '',
 // });
 
-useEffect(() => {
-  setLoading(true);
-  const fetchApartmentData = async () => {
-    try {
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/ApartmentMaintenance/GetAddressMaintenanceDataByMobileNo?mobileNo=${mobileNumber}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch Apartment data');
-      }
-      const data = await response.json();
-      console.log("Fetched data:", data);
-      const addressArray = Array.isArray(data) ? data : [data];
-      setAddresses(addressArray);
-      if (addressArray.length > 0) {
-        const address = addressArray[0];
-        setId(address.id);
-        setApartmentName(address.apartmentName || '');
-        setApartmentAddress(address.apartmentAddress || '');
-        setPinCode(address.pinCode || '');
-        setConsentPersonName(address.consentPersonName || '');
-        setMobileNumber(address.mobileNumber || '');
-        setNumberOfFlats(address.numberOfFlats || '');
-        setTotalAmount(address.totalAmount || 0);
-        setIsSubscription(address.isSubscription);
-        setPaymentId(address.paymentId);
-        setSubscriptionDate(address.subscriptionDate);
-        setPaidAmount(address.paidAmount);
-        setApartmentMaintenanceId(address.apartmentMaintenanceId);
-        setIsRegisterDisabled(true);
-      } else {
-        setIsRegisterDisabled(false);
-      }
-    } catch (error) {
-      console.error('Error fetching Apartment data:', error);
-      setIsRegisterDisabled(false);
-    } finally {
-      setLoading(false);
-    }
-  };
-  fetchApartmentData();
-}, [mobileNumber]);
+// useEffect(() => {
+//   setLoading(true);
+//   const fetchApartmentData = async () => {
+//     try {
+//       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/ApartmentMaintenance/GetAddressMaintenanceDataByMobileNo?mobileNo=${mobileNumber}`);
+//       if (!response.ok) {
+//         throw new Error('Failed to fetch Apartment data');
+//       }
+//       const data = await response.json();
+//       console.log("Fetched data:", data);
+//       const addressArray = Array.isArray(data) ? data : [data];
+//       setAddresses(addressArray);
+//       if (addressArray.length > 0) {
+//         const address = addressArray[0];
+//         setId(address.id);
+//         setApartmentName(address.apartmentName || '');
+//         setApartmentAddress(address.apartmentAddress || '');
+//         setPinCode(address.pinCode || '');
+//         setConsentPersonName(address.consentPersonName || '');
+//         setMobileNumber(address.mobileNumber || '');
+//         setNumberOfFlats(address.numberOfFlats || '');
+//         setTotalAmount(address.totalAmount || 0);
+//         setIsSubscription(address.isSubscription);
+//         setPaymentId(address.paymentId);
+//         setSubscriptionDate(address.subscriptionDate);
+//         setPaidAmount(address.paidAmount);
+//         setApartmentMaintenanceId(address.apartmentMaintenanceId);
+//         setIsRegisterDisabled(true);
+//       } else {
+//         setIsRegisterDisabled(false);
+//       }
+//     } catch (error) {
+//       console.error('Error fetching Apartment data:', error);
+//       setIsRegisterDisabled(false);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+//   fetchApartmentData();
+// }, [mobileNumber]);
 
 // Detect screen size for responsiveness
 useEffect(() => {
@@ -657,21 +701,15 @@ useEffect(() => {
   };
   
   const handleAddressRegister = async () => {
-
   if (!apartmentName || !apartmentAddress || !pinCode || !mobileNumber || !consentPersonName || !numberOfFlats) {
     alert("Please fill in all required fields.");
     return; 
   }
-  // if (personName.trim().toLowerCase() === 'guest') {
-  //   alert("Please Change Your Full Name.");
-  //   return;
-  // }  
-
   if (!/^\d{6}$/.test(pinCode)) {
     alert("Pincode must be exactly 6 digits.");
     return;
   }
-  
+
     const payload3 = {
       id: "string",
       userId: userId,
@@ -708,6 +746,7 @@ useEffect(() => {
         throw new Error("Failed to Register address.");
       }
       alert("Apartment Registration Done Successfully!");
+      await fetchApartmentData();
       setShowModal(false);
     } catch (error) {
       console.error("Error Register address:", error);
@@ -746,10 +785,10 @@ useEffect(() => {
         mobileNumber: mobileNumber,
         numberOfFlats: numberOfFlats,
         totalAmount: totalAmount.toString(),
-        paymentId: "",
-        isSubscription: "",
-        paidAmount: "",
-        SubscriptionDate: "",
+        paymentId: paymentId,
+        isSubscription: isSubscription,
+        paidAmount: paidAmount,
+        SubscriptionDate: subscriptionDate,
       };
     
       try {
@@ -773,6 +812,7 @@ useEffect(() => {
     
         setAddressData(updatedAddress);
         alert("Address Updated Successfully!");
+        await fetchApartmentData();
         setShowModal(false);
         resetAddressForm();
         setIsEditing(false);
@@ -804,7 +844,7 @@ const isFormDisabled = isSubscription !== "Yes";
     return <div>Loading...</div>;
   }
 
-  return (
+  return ( 
     <div>
       <Header />
     <div className="d-flex flex-row justify-content-start align-items-start">
@@ -843,20 +883,10 @@ const isFormDisabled = isSubscription !== "Yes";
          <div className="d-flex justify-content-between align-items-center">
                         <label>Address <span className="req_star">*</span></label>
                         <div className='d-flex justify-content-between'>                        
-                          <Button variant="success m-1 text-white" onClick={() => setShowModal(true)} disabled={isRegisterDisabled}>
+                          <Button variant="success m-1 text-white" onClick={() => setShowModal(true)} 
+                          disabled={isRegisterDisabled}>
                           Register
                         </Button>
-                        {/* <Button
-                          variant={isSubscription === "No" && isRegisterDisabled ? "danger" : "primary"}
-                          className={`m-1 text-white ${
-                            isSubscription === "No" && isRegisterDisabled && shouldBlink ? "blinking-button" : ""
-                          }`}
-                          onClick={() => window.location.href = `https://localhost:7155/ApartmentSubscription/${id}`}
-                          disabled={!isRegisterDisabled || isSubscription === "Yes"}
-                        >
-                          Subscription
-                        </Button> */}
-                          
                         <Button
                           variant={isSubscription === "No" && isRegisterDisabled ? "danger" : "primary"}
                           className={`m-1 text-white ${
@@ -989,14 +1019,14 @@ const isFormDisabled = isSubscription !== "Yes";
                       </div>
         
                   <div className="p-3 border rounded bg-light">
-                  {Array.isArray(addresses) &&
+                  {/* {Array.isArray(addresses) &&
                     addresses.map((address) => (
                       <div key={address.id}
                           className="list-group-item d-flex justify-content-between align-items-center bg-white text-dark"
                         >
                           <div>
                             {/* <span className="m1-2">{address.id}</span>
-                            <br /> */}
+                            <br /> 
                             <span className="ml-2">{address.apartmentName}</span>
                             <br />
                             <span className="ml-2">{address.apartmentAddress}</span>
@@ -1009,9 +1039,7 @@ const isFormDisabled = isSubscription !== "Yes";
                             <br />
                             {/* <span className="ml-2">{address.numberOfFlats}</span> 
                             <br />
-                            <span className="ml-2">{address.totalAmount}</span>  */}
-
-                          </div>
+                            <span className="ml-2">{address.totalAmount}</span>  
                           <div className="text-end">
                           {addresses.map((address) => (
                             <button
@@ -1031,9 +1059,36 @@ const isFormDisabled = isSubscription !== "Yes";
                                 setShowModal(true);
                               }}
                             >
-                              {address.apartmentAddress === "" ? "" : "Edit Address"}
-                            </button>
-                          ))}
+                              {address.apartmentAddress === "" ? "Register" : "Edit Address"}
+                            </button> */}
+                            {Array.isArray(addresses) &&
+  addresses.map((address) => (
+    <div key={address.id} className="list-group-item d-flex justify-content-between align-items-center bg-white text-dark">
+      <div>
+        <span className="ml-2">{address.apartmentName}</span><br />
+        <span className="ml-2">{address.apartmentAddress}</span><br />
+        <span className="ml-2">{address.pinCode}</span><br />
+        <span className="ml-2">{address.consentPersonName}</span><br />
+        <span className="ml-2">{address.mobileNumber}</span><br />
+      </div>
+      <div className="text-end">
+        <button
+          className="btn btn-warning text-white btn-sm mx-1"
+          onClick={() => {
+            setId(address.id);
+            setApartmentName(address.apartmentName);
+            setApartmentAddress(address.apartmentAddress);
+            setConsentPersonName(address.consentPersonName);
+            setMobileNumber(address.mobileNumber);
+            setPinCode(address.pinCode);
+            setNumberOfFlats(address.numberOfFlats);
+            setTotalAmount(address.totalAmount);
+            setIsEditing(true);
+            setShowModal(true);
+          }}
+        >
+         {address.apartmentAddress === "" ? "" : "Edit Address"}
+        </button>
                       </div> 
                         </div>
                       ))}       

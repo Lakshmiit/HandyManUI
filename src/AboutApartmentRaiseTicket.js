@@ -29,10 +29,10 @@ const AboutApartmentRaiseTicket = () => {
   return (
     <>
     <Header />
-    <div className="offer-banner text-center text-white py-3">
+    <div className="mt-2 offer-banner text-center text-white py-2">
          <b>Apartment Common Area Monthly Maintenance Plan</b>
       </div>
-       <p className="text-center fw-bold">
+       <p className="mb-0 text-center fw-bold">
         Say Goodbye to Delays and Hassles! Our Monthly Maintenance Package Ensures Your Community Stays Clean, Functional, and Pest-Free – All in one Plan!
       </p>
 
@@ -64,7 +64,7 @@ const AboutApartmentRaiseTicket = () => {
       )} 
 
       {/* Main Content */}
-      <div className={`apartment container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
+      <div className={`apartment container ${isMobile ? 'w-100' : 'w-75'}`}>
       <div className="space-y-6">
         <div>
           <h4 className="flex items-center text-lg font-semibold text-blue-600">
@@ -74,7 +74,7 @@ const AboutApartmentRaiseTicket = () => {
             <li>Corridor & staircase lights, meter panel inspections</li>
             <li>Bulb/switch replacement</li>
           </ul>
-        </div>
+        </div> 
 
         <div>
           <h4 className="flex items-center text-lg font-semibold text-blue-600">
@@ -115,19 +115,21 @@ const AboutApartmentRaiseTicket = () => {
         </div>
       </div>
 
-
-      <div className="mt-2 p-2 bg-blue-50 rounded-lg">
+      <div className="p-2 bg-blue-50 rounded-lg">
       <p className="">💡 Materials charged extra if required</p>
         <p className="">💰 Just ₹200 per flat per month</p>
         <p className="">📥 Collected via Association</p>
         <p className="">🧑‍🔧 Includes Technician Visits & Labor</p>
       </div>
 
-      <div className="text-center">
-        <button className="btn btn-success text-white btn-sm" onClick={() => Navigate(`/apartmentRaiseTicket/${userType}/${userId}`)}>
-          📱 Raise Complaints
-        </button>
-      </div>
+     <div className="text-center p-2 w-full" style={{ position: 'sticky', bottom: 0, background: '#fff', zIndex: 10 }}>
+  <button className="btn btn-success text-white btn-sm w-full max-w-xs mx-auto"
+          onClick={() => Navigate(`/apartmentRaiseTicket/${userType}/${userId}`)}>
+    📱 Raise Complaints
+  </button>
+</div>
+
+
     </div>
     </div>
 <Footer />

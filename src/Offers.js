@@ -132,11 +132,11 @@ useEffect(() => {
         )}
 
         <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
-          <div className='d-flex justify-content-center'>
-        <div className="position-relative flex-grow-1">
+          <div className='d-flex justify-content-center mt-3'>
+        <div className="position-relative flex-grow-1 ms-4">
           <input
             type="text"
-            className="form-control w-50 m-2 ps-5"
+            className="form-control w-60 m-2 ps-5"
             placeholder="Search Products"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value.trimStart())}
@@ -147,7 +147,7 @@ useEffect(() => {
             />
           </div>
         {selectedCategory && (
-          <div className="d-flex align-items-center position-relative" style={{ gap: '10px' }}>
+          <div className="m-1 d-flex align-items-center position-relative" style={{ gap: '10px' }}>
           
           <Button
             variant="warning"
