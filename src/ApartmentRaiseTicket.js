@@ -60,9 +60,6 @@ const [paymentId, setPaymentId] = useState('');
 const [paidAmount, setPaidAmount] = useState('');
 const [shouldBlink,setShouldBlink] = useState(false);
 const [apartmentMaintenanceId, setApartmentMaintenanceId] = useState('');
-// const [userNotFound, setUserNotFound] = useState('User not found.');
-
-
   useEffect(() => {
     if (isSubscription === "No" && isRegisterDisabled) {
       setShouldBlink(true);
@@ -222,91 +219,6 @@ useEffect(() => {
   fetchApartmentData();
 }, [fetchApartmentData]);
 
-
-
-// useEffect(() => {
-//   axios.get(`https://handymanapiv2.azurewebsites.net/api/ApartmentMaintenance/GetAddressMaintenanceDataByMobileNo?mobileNo=${mobileNumber}`)
-//     .then((response) => {
-//       setAddresses(data);
-
-//       if (response.data === null) {
-//         setIsRegisterDisabled(false); 
-//       } else if (Array.isArray(response.data) && response.data.length > 0) {
-//         setIsRegisterDisabled(true); 
-//       } else {
-//         setIsRegisterDisabled(false); 
-//       }
-//     })
-//     .catch((error) => {
-//       console.error("API call failed:", error);
-//       setIsRegisterDisabled(false); 
-//     });
-// }, []);
-
-// const [requestType, setRequestType] = useState(''); 
-//  const [addresses, setAddresses] = useState([]);
-  // const [addressType, setAddressType] = useState('');
-  // const [state, setState] = useState('');
-  // const [district, setDistrict] = useState('');
-  // const [pincode, setPincode] = useState('');
-//   const [specifications] = useState([{ material : "", Quantity : "" }]);
-  // const [showSecondaryAddresses, setShowSecondaryAddresses] = useState(false);
-//   const [commentsList] = useState([{updatedDate: new Date(), commentText: ""}]);
-  // const [confirmationModal, setConfirmationModal] = useState(false);
-//   const [response, setResponse] = useState(null);
-//   const [isSubmitting, setIsSubmitting] = useState(false);
-  // const [firstName, setFirstName] = useState('');
-//   const [guestCustomerId, setGuestCustomerId] = useState('');
-//   const [isEditing, setIsEditing] = useState(false);
-//   const [editingAddressId, setEditingAddressId] = useState(null);
-// const [addressData, setAddressData] = useState({
-// apartmentName  : '',
-// mobileNumber: '', {/* <Button disabled={isRegisterDisabled}>Register</Button> */}
-// address: '',
-// zipCode: '',
-// });
-
-// useEffect(() => {
-//   setLoading(true);
-//   const fetchApartmentData = async () => {
-//     try {
-//       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/ApartmentMaintenance/GetAddressMaintenanceDataByMobileNo?mobileNo=${mobileNumber}`);
-//       if (!response.ok) {
-//         throw new Error('Failed to fetch Apartment data');
-//       }
-//       const data = await response.json();
-//       console.log("Fetched data:", data);
-//       const addressArray = Array.isArray(data) ? data : [data];
-//       setAddresses(addressArray);
-//       if (addressArray.length > 0) {
-//         const address = addressArray[0];
-//         setId(address.id);
-//         setApartmentName(address.apartmentName || '');
-//         setApartmentAddress(address.apartmentAddress || '');
-//         setPinCode(address.pinCode || '');
-//         setConsentPersonName(address.consentPersonName || '');
-//         setMobileNumber(address.mobileNumber || '');
-//         setNumberOfFlats(address.numberOfFlats || '');
-//         setTotalAmount(address.totalAmount || 0);
-//         setIsSubscription(address.isSubscription);
-//         setPaymentId(address.paymentId);
-//         setSubscriptionDate(address.subscriptionDate);
-//         setPaidAmount(address.paidAmount);
-//         setApartmentMaintenanceId(address.apartmentMaintenanceId);
-//         setIsRegisterDisabled(true);
-//       } else {
-//         setIsRegisterDisabled(false);
-//       }
-//     } catch (error) {
-//       console.error('Error fetching Apartment data:', error);
-//       setIsRegisterDisabled(false);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-//   fetchApartmentData();
-// }, [mobileNumber]);
-
 // Detect screen size for responsiveness
 useEffect(() => {
   const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -315,12 +227,6 @@ useEffect(() => {
 
   return () => window.removeEventListener('resize', handleResize);
 }, []);
-
-  // const states = ['Andhra Pradesh', 'Telangana'];
-  // const districts = {
-  //   'Andhra Pradesh': ['Visakhapatnam', 'Vijayawada', 'Guntur'],
-  //   'Telangana': ['Hyderabad', 'Warangal', 'Khammam'],
-  // };
 
   // Handle form data changes
   const handleChange = (e) => {
@@ -340,28 +246,24 @@ useEffect(() => {
       setNumberOfFlats(value);
   
       if (!isNaN(numFlats)) {
-        setTotalAmount(numFlats * 1);
+        setTotalAmount(numFlats * 200);
       } else {
         setTotalAmount("");
       }
     }
   };
   
-  
   const handleFileChange = (e) => {
 
     const files = Array.from(e.target.files);
     const validFiles = [];
     for (const file of files) {
-      // const fileSizeMB = file.size / (1024 * 1024);
       const isValidType = file.type === "image/jpeg" || file.type === "image/png";
-      // const isValidSize = fileSizeMB <= 100; 
   
       if (!isValidType) {
         alert(`Only JPG and PNG formats are allowed: ${file.name}`);
         continue;
       }
-  
       validFiles.push(file);
     }
   
@@ -369,7 +271,6 @@ useEffect(() => {
       alert("You can upload up to 5 files.");
       return;
     }
-  
     setTicketPhotos([...ticketPhotos, ...validFiles]);
     setShowAlert(validFiles.length > 0);
     setSelectedFiles(Array.from(e.target.files));
@@ -411,26 +312,7 @@ useEffect(() => {
     });
   };
   const phoneNumber = '7989328864';  // Phone number
-  // Generate ticket ID in the format VSKPAKP002
-  // const ticketIdPrefix = "VSKPAPREFV";
-  // const ticketIdSuffix = String(Math.floor(Math.random() * 999) + 1).padStart(3, "0");
-  // const ticketIds = `${ticketIdPrefix}${ticketIdSuffix}`;
-
-  // Generate WhatsApp link with the ticket ID
-//   const generateWhatsAppLink = (ticketId, phoneNumber) => {
-//     const message = `Hello, I'd like to continue uploading my video for ticket: ${ticketId}`;
-//  var url =`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-//     // alert(url);
-//     //console.log(url);
-
-//     return url;
-//   };
-
-  // const handleWhatsAppClick = () => {
-  //   // handleSaveWhatsapp();
-  //   const link = generateWhatsAppLink(ticketIds, phoneNumber);
-  //   window.open(link, '_blank');
-  // };
+  
   const uploadFile = async (byteArray, fileName, mimeType, file) => {
     try {
       const formData = new FormData();
@@ -471,13 +353,6 @@ useEffect(() => {
     if (isSubmitting) return;
     setIsSubmitting(true);
 
-    // const primaryAddress = addresses.find((addr) => addr.type === "primary");
-    // // const state = primaryAddress?.state || "";
-    // // const district = primaryAddress?.district || "";
-    // const pincode = primaryAddress?.zipCode || primaryAddress?.pincode || "";
-    // // const emailAddress = primaryAddress?.emailAddress || primaryAddress?.emailAddress || "";
-    // const mobileNumber = primaryAddress?.mobileNumber || primaryAddress?.mobileNumber || "";
-
     const payload = {
       id:"string",
       userId: userId,
@@ -501,7 +376,6 @@ useEffect(() => {
       paymentId: paymentId,
       paidAmount: paidAmount,
       IsSubscription: isSubscription,
-      // address: addressData.address || addresses.find((addr) => addr.type === 'primary')?.address || '',
     };
 
   try {
@@ -539,7 +413,6 @@ useEffect(() => {
           // alert(error);
           console.error('Error sending message:', error);
         }
-        // Navigate(`/raiseTicketConfirmation/${userType}/${userId}`);
     // Redirect to CustomerProfilePage
      window.location.href = `/profilePage/${userType}/${userId}`;
   
@@ -549,146 +422,6 @@ useEffect(() => {
     setIsSubmitting(false);
   }
   };
-
-  // const handleBothActions =  (e) => {
-  //   e.preventDefault();
-  //   handleSaveAddress();
-  //   // handleGuestAddress(e);
-  //   handleUserUpload(e);
-  // };
-  
-  // const handleSaveWhatsapp = async (e) => {
-  //   e.preventDefault();
-  
-  //   const payload = {
-  //     RaiseTicketId:"string",
-  //     raiseTicketIdVideoRef: "string",
-  //     date: new Date(),
-  //     address: addresses.find((addr) => addr.type === 'primary')?.address || '',
-  //     subject: formData.subject,
-  //     details: formData.details,
-  //     category: formData.category,
-  //     assignedTo: assignedTo,
-  //     state:state,
-  //     district:district,
-  //     zipcode:pincode,
-  //     requestType: requestType,
-  //     status:'open',
-  //     internalStatus:'Open',
-  //     id: uuidv4(),// Unique identifier for the API call
-  //     customerId: customerId, // Replace with actual customer ID logic
-  //     attachments: uploadedFiles.map((file) => file.src), 
-  //     comments: commentsList.map((comment) => ({
-  //       UpdatedDate : comment.updatedDate,
-  //       CommentText: comment.commentText,
-  //   })),
-  //     Materials:specifications.map(spec => ({
-  //       material : spec.material,
-  //       Quantity : spec.Quantity ,
-  //     })),
-  //     LowestBidderTechnicainId: "",
-  //     LowestBidderDealerId: "",
-  //     ApprovedAmount: "",
-  //     CustomerName: fullName, 
-  //     Option1Day: "",
-  //     Option1Time: "",
-  //     Option2Day: "",
-  //     Option2Time: "",
-  //     TechnicianList: [],
-  //     DealerList: [],
-  //     Rating: "",
-  //     isMaterialType: 0,
-  //   };
-
-  // try {
-  //   const response = await fetch('https://handymanapiv2.azurewebsites.net/api/RaiseTicketExtention/CreateRaiseTicketExtension', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify(payload),
-  //   });
-  
-  //   if (!response.ok) {
-  //     throw new Error('Failed to create a ticket.');
-  //   }
-  //   // const videoData = await response.json();
-  //   // setVideoRefId(videoData.videoRefId);
-  //   // alert(videoRefId);
-
-  // } catch (error) {
-  //   console.error('Error:', error);
-  //   window.alert('Failed to create the ticket. Please try again later.');
-  // }
-  // };
-  // Handle secondary address selection
-  // const handleSecondaryAddressSelect = (id) => {
-  //   const updatedAddresses = addresses.map((address) =>
-  //     address.id === id
-  //       ? { ...address, type: 'primary' }
-  //       : address.type === 'primary'
-  //       ? { ...address, type: 'secondary' }
-  //       : address
-  //   );
-  //   setAddresses(updatedAddresses);
-  //   setShowSecondaryAddresses(false); // Collapse secondary addresses view
-  // };
-
-  // // Handle address deletion
-  // const handleAddressDelete = (id) => {
-  //   const updatedAddresses = addresses.filter((address) => address.id !== id);
-  //   setAddresses(updatedAddresses);
-  // };
-
-// const handleSaveAddress = () => {
-//     if (
-//       !apartmentName?.trim() ||
-//       !newAddress?.trim() ||
-//       !newAddress?.trim() ||
-//       !mobileNumber?.trim() ||
-//       !newAddress?.trim() ||
-//       !zipCode?.trim()
-//     ) {
-//       alert('Please fill in all the fields.');
-//       return;
-//     }
-
-//   setAddressData({
-//     fullName  ,
-//   mobileNumber,
-//   address: newAddress,
-//   zipCode,
-// });
-
-//     if (isEditing) {
-//       setNewAddress(newAddress);
-//       setFullName(fullName);
-//       setMobileNumber(mobileNumber);
-//       setZipCode(zipCode);
-//       setIsEditing(null); 
-//       setShowModal(false); 
-//       resetAddressForm(); 
-//     }
-//      else {
-//         if (addresses.length >= 1) {
-//           alert('You can only add up to 1 address.');
-//           return;
-//         }
-   
-//       const newAddr = {
-//         id: uuidv4(),
-//         fullName,
-//         mobileNumber,
-//         address: newAddress,
-//         zipCode, 
-//       };
-    
-//       setAddresses(prev => [...prev, newAddr]);
-//   }    
-//       resetAddressForm();
-//       setIsEditing(false);
-//       setShowModal(false);
-//     };
 
   const resetAddressForm = () => {
     setApartmentName('');
@@ -823,7 +556,6 @@ useEffect(() => {
       }
     };
     
-
 useEffect(() => {
   const storedMobileNumber = localStorage.getItem('mobileNumber');
   if (storedMobileNumber) {
@@ -831,7 +563,7 @@ useEffect(() => {
   }
 }, []);
 
-const total = Number(numberOfFlats) * 1;
+const total = Number(numberOfFlats) * 200;
 const isFormDisabled = isSubscription !== "Yes";
 
   useEffect(() => {
@@ -877,28 +609,25 @@ const isFormDisabled = isSubscription !== "Yes";
       {/* Main Content */}
       <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
       <h1 className="text-center mb-2">Apartment Common Area Maintenance</h1>
-      {/* Ticket Form */}
-      {/* <Form > */}
-        {/* Display primary address with "Change Address" link */}
          <div className="d-flex justify-content-between align-items-center">
-                        <label>Address <span className="req_star">*</span></label>
-                        <div className='d-flex justify-content-between'>                        
-                          <Button variant="success m-1 text-white" onClick={() => setShowModal(true)} 
-                          disabled={isRegisterDisabled}>
-                          Register
-                        </Button>
-                        <Button
-                          variant={isSubscription === "No" && isRegisterDisabled ? "danger" : "primary"}
-                          className={`m-1 text-white ${
-                            shouldBlink ? "blinking-button" : ""
-                          }`}
-                          onClick={() => window.location.href = `https://handymanserviceproviders.com/ApartmentSubscription/${id}`}
-                          disabled={!isRegisterDisabled || isSubscription === "Yes"}
-                        >
-                          Subscription
-                        </Button>
+              <label>Address <span className="req_star">*</span></label>
+              <div className='d-flex justify-content-between'>                        
+                <Button variant="success m-1 text-white" onClick={() => setShowModal(true)} 
+                disabled={isRegisterDisabled}>
+                Register
+              </Button>
+              <Button
+                variant={isSubscription === "No" && isRegisterDisabled ? "danger" : "primary"}
+                className={`m-1 text-white ${
+                  shouldBlink ? "blinking-button" : ""
+                }`}
+                onClick={() => window.location.href = `https://handymanserviceproviders.com/ApartmentSubscription/${id}`}
+                disabled={!isRegisterDisabled || isSubscription === "Yes"}
+              >
+                Subscription
+              </Button>
 
-                        </div>
+              </div>
               {/* Modal */}
                     <Modal show={showModal} onHide={() => setShowModal(false)}>
                 <Modal.Header closeButton>
@@ -962,7 +691,6 @@ const isFormDisabled = isSubscription !== "Yes";
                         placeholder="Enter Mobile Number"
                         maxLength="10"
                         value={mobileNumber}
-                        // onChange={(e) => setMobileNumber(e.target.value)}
                       />
                       </Form.Group>
 
@@ -979,32 +707,11 @@ const isFormDisabled = isSubscription !== "Yes";
                       <Form.Group className="mb-3">
                       <Form.Label>Total</Form.Label>
                       <Form.Control
-                        // type="number"
                         placeholder="Total"
                         value={total}
                         readonly
                       />
                       </Form.Group>
-
-                      {/* <Form.Group className="mb-3">
-                      <Form.Label>Rate</Form.Label>
-                      <Form.Control
-                        className="form-control"
-                        placeholder="rate"
-                        value={flats}
-                        readOnly
-                        // onChange={(e) => setMobileNumber(e.target.value)}
-                      />
-                      </Form.Group> */}
-                    {/* <Form.Group className="mb-3">
-                      <Form.Control
-                        type="hidden"
-                        name="UserId"
-                        className="form-control"
-                        placeholder="UserId"
-                        value={guestCustomerId}
-                      />
-                    </Form.Group> */} 
                        <Button 
                           type="button" 
                           variant="primary" 
@@ -1019,37 +726,23 @@ const isFormDisabled = isSubscription !== "Yes";
                       </div>
         
                   <div className="p-3 border rounded bg-light">
-                  {/* {Array.isArray(addresses) &&
-                    addresses.map((address) => (
-                      <div key={address.id}
-                          className="list-group-item d-flex justify-content-between align-items-center bg-white text-dark"
-                        >
+                    {Array.isArray(addresses) &&
+                      addresses.map((address) => (
+                        <div key={address.id} className="list-group-item d-flex justify-content-between align-items-center bg-white text-dark">
                           <div>
-                            {/* <span className="m1-2">{address.id}</span>
-                            <br /> 
-                            <span className="ml-2">{address.apartmentName}</span>
-                            <br />
-                            <span className="ml-2">{address.apartmentAddress}</span>
-                            <br />
-                            <span className="ml-2">{address.pinCode}</span>
-                            <br />
-                            <span className="ml-2">{address.consentPersonName}</span> 
-                            <br />
-                            <span className="ml-2">{address.mobileNumber}</span> 
-                            <br />
-                            {/* <span className="ml-2">{address.numberOfFlats}</span> 
-                            <br />
-                            <span className="ml-2">{address.totalAmount}</span>  
+                            <span className="ml-2">{address.apartmentName}</span><br />
+                            <span className="ml-2">{address.apartmentAddress}</span><br />
+                            <span className="ml-2">{address.pinCode}</span><br />
+                            <span className="ml-2">{address.consentPersonName}</span><br />
+                            <span className="ml-2">{address.mobileNumber}</span><br />
+                          </div>
                           <div className="text-end">
-                          {addresses.map((address) => (
                             <button
-                              key={address.id}
                               className="btn btn-warning text-white btn-sm mx-1"
                               onClick={() => {
                                 setId(address.id);
                                 setApartmentName(address.apartmentName);
                                 setApartmentAddress(address.apartmentAddress);
-
                                 setConsentPersonName(address.consentPersonName);
                                 setMobileNumber(address.mobileNumber);
                                 setPinCode(address.pinCode);
@@ -1059,40 +752,12 @@ const isFormDisabled = isSubscription !== "Yes";
                                 setShowModal(true);
                               }}
                             >
-                              {address.apartmentAddress === "" ? "Register" : "Edit Address"}
-                            </button> */}
-                            {Array.isArray(addresses) &&
-  addresses.map((address) => (
-    <div key={address.id} className="list-group-item d-flex justify-content-between align-items-center bg-white text-dark">
-      <div>
-        <span className="ml-2">{address.apartmentName}</span><br />
-        <span className="ml-2">{address.apartmentAddress}</span><br />
-        <span className="ml-2">{address.pinCode}</span><br />
-        <span className="ml-2">{address.consentPersonName}</span><br />
-        <span className="ml-2">{address.mobileNumber}</span><br />
-      </div>
-      <div className="text-end">
-        <button
-          className="btn btn-warning text-white btn-sm mx-1"
-          onClick={() => {
-            setId(address.id);
-            setApartmentName(address.apartmentName);
-            setApartmentAddress(address.apartmentAddress);
-            setConsentPersonName(address.consentPersonName);
-            setMobileNumber(address.mobileNumber);
-            setPinCode(address.pinCode);
-            setNumberOfFlats(address.numberOfFlats);
-            setTotalAmount(address.totalAmount);
-            setIsEditing(true);
-            setShowModal(true);
-          }}
-        >
-         {address.apartmentAddress === "" ? "" : "Edit Address"}
-        </button>
-                      </div> 
-                        </div>
-                      ))}       
-                      </div>
+                            {address.apartmentAddress === "" ? "" : "Edit Address"}
+                            </button>
+                              </div> 
+                                </div>
+                              ))}       
+                              </div>
 
         {/* Subject */}
         <Row>
@@ -1144,13 +809,6 @@ const isFormDisabled = isSubscription !== "Yes";
                 <option>Plumbing</option>
                 <option>Electrical</option>
                 <option>Carpentry</option>
-                {/* <option>Painting</option>
-                <option>Interior</option>
-                <option>Pest Control</option>
-                <option>Electronics Appliance Repairs</option>
-                <option>Tiles Repairs</option>
-                <option>Civil Works</option>
-                <option>Water Proofing Works</option> */}
               </Form.Control>
             </Form.Group>
           </Col>
@@ -1196,13 +854,11 @@ const isFormDisabled = isSubscription !== "Yes";
       If any Videos Forward to Whatsapp Number
       <br />
       <span className="text-success" 
-      // onClick={handleWhatsAppClick} 
       style={{ cursor: 'pointer' }}>
         <WhatsAppIcon />
         <strong className="m-2" style={{textDecoration: 'underline'}}>{phoneNumber}</strong>
       </span>
     </label>
-  
               <div className="mt-2">
                 {ticketPhotos.map((file, index) => (
                 <p key={index}>{file.name}</p>
@@ -1217,72 +873,6 @@ const isFormDisabled = isSubscription !== "Yes";
                 {loading ? 'Uploading...' : 'Upload Files'}
               </button>
           </div>
-
-        {/* File Preview
-        <div className="preview-container mt-3">
-          {uploadedFiles.length > 0 &&
-            uploadedFiles.map((file, index) => {
-              const fileUrl = URL.createObjectURL(file);
-              return (
-                <div key={index} className="file-preview">
-                  <span>{file.name}</span>
-                  <button
-                    type="button"
-                    className="btn btn-danger btn-sm ml-2"
-                    onClick={() => handleFileDelete(index)}
-                  >
-                    Delete
-                  </button>
-                  <div className="mt-2">
-                     Preview the file (image or video) 
-                    {file.type.startsWith('image') && (
-                      <img
-                        src={fileUrl}
-                        alt={file.name}
-                        className="img-fluid"
-                        style={{ maxWidth: '200px' }}
-                      />
-                    )}
-                    {file.type.startsWith('video') && (
-                      <video
-                        controls
-                        src={fileUrl}
-                        className="img-fluid"
-                        style={{ maxWidth: '200px' }}
-                      />
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-        </div> */}
-{/* 
-        <div className="radio">
-      <label className="m-1">
-        <input
-          className="form-check-input m-2 border-dark"
-          type="radio"
-          name="RequestType"
-          value="With Material" // Unique value
-          checked={requestType === "With Material"} // Binding state
-          onChange={(e) => setRequestType(e.target.value)} // Update state
-          required
-        />
-        With Material
-      </label>
-
-      <label className="m-1">
-        <input
-          className="form-check-input m-2 border-dark"
-          type="radio"
-          name="RequestType"
-          value="Without Material" // Unique value
-          checked={requestType === "Without Material"} // Binding state
-          onChange={(e) => setRequestType(e.target.value)} // Update state
-        />
-        Without Material
-      </label>
-    </div> */}
 
         {/* Get Quote Button */}
         <div className="mt-4">
