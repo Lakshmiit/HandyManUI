@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import './App.css';
+import { Carousel, Modal } from 'react-bootstrap';
 import NotificationBell from "./NotificationsBell";
 import OrdersNotificationBell from "./OrdersBellNotifications";
 import TrackStatusNotificationBell from "./TrackStatusBellNotifications";
@@ -21,7 +22,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import Banner1 from './img/banner-1 copy.jpg';
 import Banner2 from './img/banner-2.jpg';
 import Banner3 from './img/banner-4.jpg';
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Logo from "./img/Hm_Logo 1.png";
 import SearchIcon from "@mui/icons-material/Search";
@@ -103,6 +104,7 @@ const getMenuList = (userType, userId, category, district ,ZipCode,technicianFul
 };
 
 const ProfilePage = () => {
+  const navigate = useNavigate();
     const {userId} = useParams();
     const {userType} = useParams();
     const [category, setCategory] = useState('');
@@ -122,19 +124,33 @@ const ProfilePage = () => {
     const [showProfile, setShowProfile] = useState(false);
     const [allTickets, setAllTickets] = useState([]);
     const menuRef = useRef(null);
-    const scrollRef = useRef(null);
+    const productScrollRef = useRef(null); 
+    const ticketScrollRef = useRef(null);  
     const [imageLoading, setImageLoading] = useState(true);
     const [productData, setProductData] = useState(null);
     const [imageUrls, setImageUrls] = useState([]);
-
+    const [searchQuery, setSearchQuery] = useState('');
+    const [showZoomModal, setShowZoomModal] = useState(false);
+    const [zoomImage, setZoomImage] = useState("");
 useEffect(() => {
   console.log(showMenu, imageLoading, productData, imageUrls);
 }, [showMenu, imageLoading, productData, imageUrls]);
 
+const scroll = (direction, target) => {
+  const scrollAmount = 300;
+  const ref = target === 'product' ? productScrollRef : ticketScrollRef;
+
+  if (ref.current) {
+    ref.current.scrollBy({
+      left: direction === 'right' ? scrollAmount : -scrollAmount,
+      behavior: 'smooth',
+    });
+  }
+};
+
         useEffect(() => {
           const fetchAllTickets = async () => {
             try { 
-              // alert("test");
               const [ticketResponse, productResponse, technicianResponse] = await Promise.all([
                 fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=raiseTicket`),
                 fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=buyProduct`),
@@ -168,6 +184,12 @@ useEffect(() => {
   const handleMoreIconClick = () => {
     setShowProfile(!showProfile);
   };
+
+  const handleImageClick = (imageSrc) => {
+    setZoomImage(imageSrc);
+    setShowZoomModal(true);
+  };
+  
 // useEffect(() => {
 //     const fetchticketData = async () => {
 //       try {
@@ -256,11 +278,6 @@ useEffect(() => {
     fetchData();
   }, []);
 
-  // const handleImageClick = (imageSrc) => {
-  //   setZoomImage(imageSrc);
-  //   setShowZoomModal(true);
-  // };
-  
       useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth <= 768);
         window.addEventListener("resize", handleResize);
@@ -426,6 +443,12 @@ const fetchImageUrl = async (photoId) => {
   //   }
   // }; 
   const handleEditClick = () => setIsEditing(true);
+
+  const cardStyle = {
+    minWidth: isMobile ? '800px' : '260px',
+    height: '220px',
+  };
+
   // const handleCancel = () => {
   //   setIsEditing(false);
   //   setName(profile.fullName);
@@ -690,9 +713,9 @@ const fetchImageUrl = async (photoId) => {
              <div className="profile-info">
                <div className="webprofile-section">
                <div className="text-warning cust-name">Welcome <br /> 
-               <p className="text-dark">{profile.fullName}{" "}</p></div>
-                   <div className="fw-bold fs-3">Lakshmi Sai Service Providers</div>
-                   <div className="text-warning fs-3">{profile.userProfileType}</div>
+               <div className="text-dark">{profile.fullName}{" "}</div></div>
+                   <div className="fw-bold fs-4">Lakshmi Sai Service Providers</div>
+                   <div className="text-warning fs-3 mt-0">{profile.userProfileType}</div>
                    <div className="webprofile-img-wrapper">
                      <img src={profileImage} alt="Profile" 
                      className="webprofile-img" onClick={handleProfileClick}/>
@@ -852,11 +875,116 @@ const fetchImageUrl = async (photoId) => {
           {isMobile && (
             <div>
             <div className="text-warning cust-fullname fs-5 mt-1">Welcome <br /> <strong className="text-dark">{profile.fullName}{" "}</strong></div>
-            <div className="fw-bold fs-5">Lakshmi Sai Service Providers</div>
-            <div className="text-warning fs-4">{profile.userProfileType}</div>
-            </div>
+            {/* <div className="fw-bold fs-5">Lakshmi Sai Service Providers</div>
+            <div className="text-warning fs-4">{profile.userProfileType}</div> */}
+             </div>
           )}
         <div className="col-md-9 bg-white">
+          <div className="position-relative flex-grow-1 ms-4">
+        <input
+          type="text"
+          className="form-control w-60 m-2 ps-5"
+          placeholder="Search Products"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value.trimStart())}
+        />
+        <SearchIcon
+          className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"
+          style={{ pointerEvents: 'none' }}
+        />
+      </div>
+      <div className="d-flex align-items-center">
+<button className="btn text-primary" onClick={() => scroll('left', 'product')}>
+  &lt;
+</button>
+
+<div ref={productScrollRef} className="d-flex flex-row overflow-auto">
+          {productData &&
+            productData
+              .filter((product) => {
+                const productName = product.productName?.toLowerCase().trim();
+                const query = searchQuery.toLowerCase().trim();
+                const normalize = (str) => (str.endsWith('s') ? str.slice(0, -1) : str);
+                return productName.includes(query) || normalize(productName).includes(normalize(query));
+              })
+              .map((product) => {
+                const discountedPrice =
+                  product.rate && product.discount
+                    ? (product.rate - (product.rate * product.discount) / 100).toFixed(0)
+                    : product.rate;
+
+                return (
+                  <div key={product.id} className="m-2">
+                    <div className="card" style={{cardStyle}}>
+                      <div className="d-flex">
+                        <div style={{ flex: '0 0 55%' }}>
+                          {imageLoading ? (
+                            <div
+                              className="d-flex justify-content-center align-items-center"
+                              style={{ height: '250px', background: '#f8f9fa' }}
+                            >
+                              <div className="spinner-border text-secondary" role="status">
+                                <span className="visually-hidden">Loading...</span>
+                              </div>
+                            </div>
+                          ) : imageUrls[product.id]?.length > 0 ? (
+                            <Carousel>
+                              {imageUrls[product.id].map((img, index) => (
+                                <Carousel.Item key={index}>
+                                  <img
+                                    src={`data:image/jpeg;base64,${img.imageData}`}
+                                    className="card-img-top zoomable-image"
+                                    style={{
+                                      height: '250px',
+                                      objectFit: 'cover',
+                                      cursor: 'pointer',
+                                    }}
+                                    alt={`product-image-${index}`}
+                                    onClick={() =>
+                                      handleImageClick(`data:image/jpeg;base64,${img.imageData}`)
+                                    }
+                                  />
+                                </Carousel.Item>
+                              ))}
+                            </Carousel>
+                          ) : (
+                            <div
+                              className="d-flex justify-content-center align-items-center"
+                              style={{ height: '250px', background: '#f8f9fa' }}
+                            >
+                              No Image
+                            </div>
+                          )}
+                        </div>
+
+                        <div>
+                          <h6 className="mb-1">{product.productName}</h6>
+                          <div className="small text-primary">Rs {discountedPrice}</div>
+                          <div className="small text-muted fw-bold" style={{ textDecoration: 'line-through' }}>
+                            MRP: Rs {product.rate}
+                          </div>
+                          <div className="small text-danger">Discount: {product.discount}%</div>
+                          <div className="small text-success fw-bold">Free Delivery and Installation</div>
+                          <button
+                            className="btn btn-warning btn-sm fw-bold mt-1 mb-0"
+                            onClick={() => {
+                              navigate(`/offersBuyProduct/${userType}/${userId}/${product.id}`);
+                            }}
+                          >
+                            Buy Now
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+        </div>
+
+<button className="btn text-primary" onClick={() => scroll('right', 'product')}>
+  &gt;
+</button>
+      </div>
           <h5 className="mb-2 fs-4">Dashboard</h5>
           <div className="row g-2">
     {menuList.map((menu, index) => (
@@ -879,7 +1007,7 @@ const fetchImageUrl = async (photoId) => {
                 <h4 className="ticket-title">My Tickets</h4>
                 {/* <h4 className="ticket-title">View All</h4> */}
                 </div>
-      <div className="ticket-scroll" ref={scrollRef}>
+      <div className="ticket-scroll" ref={ticketScrollRef}>
       {!loading && allTickets.length > 0 ? (
           allTickets.map((ticket, index) => (
             <div key={index} className={`ticket-card1 ${ticket.raiseTicketId ? "raise-ticket-bg" : ticket.buyProductId ? "buy-product-bg" : "book-technician-bg"}`}>
@@ -986,63 +1114,43 @@ const fetchImageUrl = async (photoId) => {
               </div>
               </div>
               </div>
-
-              {/* <div className="scrolling-wrapper auto-scroll py-3">
-          {productData && productData.map((product) => {
-            const discountedPrice = product.rate && product.discount
-              ? ((product.rate - (product.rate * product.discount) / 100).toFixed(0))
-              : product.rate;
-
-            return (
-              <div key={product.id} className="me-1" style={{ minWidth: "250px" }}>
-                <div className="card w-100">
-                  {imageLoading ? (
-                    <div
-                      className="d-flex justify-content-center align-items-center"
-                      style={{ height: '250px', background: '#f8f9fa' }}
-                    >
-                      <div className="spinner-border text-secondary" role="status">
-                        <span className="visually-hidden">Loading...</span>
-                      </div>
-                    </div>
-                  ) : imageUrls[product.id]?.length > 0 ? (
-                    <Carousel>
-                      {imageUrls[product.id].map((img, index) => (
-                        <Carousel.Item key={index}>
-                          <img
-                            src={`data:image/jpeg;base64,${img.imageData}`}
-                            className="card-img-top rounded-top zoomable-image"
-                            style={{ height: "250px", objectFit: "cover", cursor: "pointer" }}
-                            alt={`product-image-${index}`}
-                          />
-                        </Carousel.Item>
-                      ))}
-                    </Carousel>
-                  ) : (
-                    <div
-                      className="d-flex justify-content-center align-items-center"
-                      style={{ height: '250px', background: '#f8f9fa' }}
-                    >
-                      No Image
-                    </div>
-                  )}
-                    <div className="card-title fw-bold">{product.productName}</div>
-                    <div className="card-text fw-bold text-primary fs-5">Rs: {discountedPrice}</div>
-                    <div className="card-text fw-bold text-muted fs-6" style={{ textDecoration: 'line-through' }}>MRP: Rs {product.rate}</div>
-                    <div className="card-text fw-bold text-danger fs-6">Discount: {product.discount}%</div>
-                    <div className="card-text fw-bold text-dark fs-5">Free Delivery and Installation</div>
-                </div>
-              </div>
-            );
-          })}
-        </div> */}
-
         </div>
         </div> 
         </div>
+        {/* Zoom Modal */}
+        <Modal show={showZoomModal} onHide={() => setShowZoomModal(false)} centered>
+                <Modal.Body className="text-center position-relative">
+                  <div className="zoom-container">
+                     {/* Close Button (X) */}    
+            <button
+              className="close-button text-end"
+              onClick={() => setShowZoomModal(false)}
+            >
+              &times;
+            </button>
+                    <img src={zoomImage} alt="Zoomed Product" className="zoom-image" />
+                  </div>
+                </Modal.Body>
+              </Modal>
          <Footer />
+         <style jsx>
+          {`
+          .btn-warning {
+          background: linear-gradient(45deg, #ff9800, #ff5722);
+          border: none;
+          transition: all 0.3s ease-in-out;
+        }
+
+        .btn-warning:hover {
+          background: linear-gradient(45deg, #ff5722, #ff9800);
+          transform: scale(1.05);
+        }
+`}
+         </style>
         </>
   );
 };
+
+
 
 export default ProfilePage;
