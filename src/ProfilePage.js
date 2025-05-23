@@ -17,77 +17,94 @@ import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-import { TextField, IconButton } from "@mui/material"; 
-import EditIcon from "@mui/icons-material/Edit";
+// import { TextField } from "@mui/material"; 
 import Banner1 from './img/banner-1 copy.jpg';
 import Banner2 from './img/banner-2.jpg';
 import Banner3 from './img/banner-4.jpg';
 import { useNavigate, useParams } from "react-router-dom";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
+// import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Logo from "./img/Hm_Logo 1.png";
 import SearchIcon from "@mui/icons-material/Search";
 import LogoutIcon from "@mui/icons-material/Logout";
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import ApartmentIcon from '@mui/icons-material/Apartment';
+import ElectricalServicesIcon from '@mui/icons-material/ElectricalServices';
+import IronIcon from '@mui/icons-material/Iron';
+import PlumbingIcon from '@mui/icons-material/Plumbing';
+import HardwareIcon from '@mui/icons-material/Hardware';
+import HomeIcon from '@mui/icons-material/Home';
+import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
+import MenuIcon from '@mui/icons-material/Menu';
 // import { Carousel } from 'react-bootstrap';
 
-const getMenuList = (userType, userId, category, district ,ZipCode,technicianFullName) => {
+const getMenuList = (userType, userId, category, district ,ZipCode,technicianFullName, isMobile) => {
+  const iconSize = isMobile ? 20 : 40;
   const customer = [
-      { MenuIcon: <SupportAgentIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
-      { MenuIcon: <PersonOutlineIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Book A Technician", TargetUrl: `/bookTechnician/${userType}/${userId}` },
-      { MenuIcon: <TrackStatusNotificationBell sx={{ fontSize: 35 }}/>, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}` },
-      { MenuIcon: <NotificationBell sx={{ fontSize: 35 }}/>, MenuTitle: "Notifications", TargetUrl: `/customerNotification/${userType}/${userId}` },
-      { MenuIcon: <StorefrontIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
-      { MenuIcon: <OrdersNotificationBell sx={{ fontSize: 35 }}/>, MenuTitle: "Orders", TargetUrl: `/customerOrders/${userType}/${userId}` },
-      { MenuIcon: <LocalOfferIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Buy Product Offers", TargetUrl: `/offersIcons/${userType}/${userId}` },
-      { MenuIcon: <PermIdentityIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Accounts"},
-      { MenuIcon: <ApartmentIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Apartment Common Area Maintenance", TargetUrl: `/aboutApartmentRaiseTicket/${userType}/${userId}`}, 
-  ];
+      { MenuIcon: <SupportAgentIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
+      { MenuIcon: <PersonOutlineIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Book Technician", TargetUrl: `/bookTechnician/${userType}/${userId}` },
+      { MenuIcon: <StorefrontIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
+      // { MenuIcon: <LocalOfferIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Buy Product Offers", TargetUrl: `/offersIcons/${userType}/${userId}` },
+      ...(!isMobile ? [{MenuIcon: <LocalOfferIcon sx={{ fontSize: iconSize }} />, MenuTitle: "Buy Product Offers", TargetUrl: `/offersIcons/${userType}/${userId}`
+    }] : []),
+      { MenuIcon: <ApartmentIcon sx={{ fontSize: 40 }} />,  MenuTitle: isMobile ? "Apartment AMC" : "Apartment Common Area Maintenance", TargetUrl: `/aboutApartmentRaiseTicket/${userType}/${userId}` },
+      // { MenuIcon: <TrackStatusNotificationBell sx={{ fontSize: iconSize }}/>, MenuTitle: isMobile ? "Track Ticket" : "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}` },
+      ...(!isMobile ? [{MenuIcon: <TrackStatusNotificationBell sx={{ fontSize: iconSize }} />, MenuTitle: isMobile ? "Track Ticket" : "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}`
+    }] : []),
+      ...(!isMobile ? [{MenuIcon: <NotificationBell sx={{ fontSize: 40 }} />, MenuTitle: "Notifications", TargetUrl: `/customerNotification/${userType}/${userId}`
+    }] : []),
+     ...(!isMobile ? [{MenuIcon: <OrdersNotificationBell sx={{ fontSize: iconSize }} />, MenuTitle: "Orders", TargetUrl: `/customerOrders/${userType}/${userId}`
+    }] : []),
+    ...(!isMobile ? [{MenuIcon: <PermIdentityIcon sx={{ fontSize: iconSize }} />, MenuTitle: "Accounts"
+    }] : []),
+       // { MenuIcon: <PermIdentityIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Accounts"},
+       // { MenuIcon: <NotificationBell sx={{ fontSize: 40 }}/>, MenuTitle: "Notifications", TargetUrl: `/customerNotification/${userType}/${userId}` },
+      //  { MenuIcon: <OrdersNotificationBell sx={{ fontSize: 40 }}/>, MenuTitle: "Orders", TargetUrl: `/customerOrders/${userType}/${userId}` },
+      ];
 
   const builder = [
-      { MenuIcon: <PermIdentityIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Add Member" },
-      { MenuIcon: <RequestQuoteIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Raise a Quote" },
-      { MenuIcon: <NotificationsNoneIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Notifications" },
-      { MenuIcon: <StorefrontIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Buy Products", TargetUrl: "/BuyProducts" },
-      { MenuIcon: <PermIdentityIcon sx={{ fontSize: 35 }}/>, MenuTitle: "My Account" },
-      { MenuIcon: <AccountBalanceIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Add Bank Account" },
-      { MenuIcon: <SupportAgentIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Raise Ticket", TargetUrl: "/TicketRaise" },
-      { MenuIcon: <RouteIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Track Ticket Status" }
+      { MenuIcon: <PermIdentityIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Add Member" },
+      { MenuIcon: <RequestQuoteIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise a Quote" },
+      { MenuIcon: <NotificationsNoneIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Notifications" },
+      { MenuIcon: <StorefrontIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Buy Products", TargetUrl: "/BuyProducts" },
+      { MenuIcon: <PermIdentityIcon sx={{ fontSize: 40 }}/>, MenuTitle: "My Account" },
+      { MenuIcon: <AccountBalanceIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Add Bank Account" },
+      { MenuIcon: <SupportAgentIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise Ticket", TargetUrl: "/TicketRaise" },
+      { MenuIcon: <RouteIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Track Ticket Status" }
   ];
  
   const dealer = [
-      { MenuIcon: <UploadIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Upload Products" },
-      { MenuIcon: <RequestQuoteIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Raise a Quote" },
-      { MenuIcon: <NotificationsNoneIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Notifications", TargetUrl: `/dealerNotifications/${userType}/${userId}/${category}/${district}` },
-      { MenuIcon: <StorefrontIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
-      { MenuIcon: <PermIdentityIcon sx={{ fontSize: 35 }}/>, MenuTitle: "My Account" },
-      { MenuIcon: <AccountBalanceIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Add Bank Account" },
-      { MenuIcon: <SupportAgentIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
-      { MenuIcon: <RouteIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}` }
+      { MenuIcon: <UploadIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Upload Products" },
+      { MenuIcon: <RequestQuoteIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise a Quote" },
+      { MenuIcon: <NotificationsNoneIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Notifications", TargetUrl: `/dealerNotifications/${userType}/${userId}/${category}/${district}` },
+      { MenuIcon: <StorefrontIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
+      { MenuIcon: <PermIdentityIcon sx={{ fontSize: 40 }}/>, MenuTitle: "My Account" },
+      { MenuIcon: <AccountBalanceIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Add Bank Account" },
+      { MenuIcon: <SupportAgentIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
+      { MenuIcon: <RouteIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}` }
   ];
 
   const trader = [
-    { MenuIcon: <UploadIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Upload Products" },
-    { MenuIcon: <RequestQuoteIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Raise a Quote"},
-    { MenuIcon: <NotificationsNoneIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Notifications", TargetUrl: `/dealerNotifications/${userType}/${userId}/${category}/${district}` },
-    { MenuIcon: <StorefrontIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
-    { MenuIcon: <PermIdentityIcon sx={{ fontSize: 35 }}/>, MenuTitle: "My Account" },
-    { MenuIcon: <AccountBalanceIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Add Bank Account"},
-    { MenuIcon: <SupportAgentIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
-    { MenuIcon: <RouteIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}` }
+    { MenuIcon: <UploadIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Upload Products" },
+    { MenuIcon: <RequestQuoteIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise a Quote"},
+    { MenuIcon: <NotificationsNoneIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Notifications", TargetUrl: `/dealerNotifications/${userType}/${userId}/${category}/${district}` },
+    { MenuIcon: <StorefrontIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
+    { MenuIcon: <PermIdentityIcon sx={{ fontSize: 40 }}/>, MenuTitle: "My Account" },
+    { MenuIcon: <AccountBalanceIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Add Bank Account"},
+    { MenuIcon: <SupportAgentIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
+    { MenuIcon: <RouteIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}` }
 ];
 
   const technician = [
-      { MenuIcon: <PersonAddAltIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Add Technician"},
-      { MenuIcon: <RequestQuoteIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Raise a Quote", TargetUrl: `/notificationTechnician/${userType}/${userId}/${category}/${district}` },
-      { MenuIcon: <NotificationsNoneIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Notifications" ,TargetUrl:`/technicianDetailsNotifications/${userType}/${userId}/${category}/${ZipCode}/${technicianFullName}`},
-      { MenuIcon: <TransferWithinAStationIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Track Technician" },
-      { MenuIcon: <PermIdentityIcon sx={{ fontSize: 35 }}/>, MenuTitle: "My Account"},
-      { MenuIcon: <AccountBalanceIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Add Bank Account" },
-      { MenuIcon: <StorefrontIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
-      { MenuIcon: <SupportAgentIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
-      { MenuIcon: <RouteIcon sx={{ fontSize: 35 }}/>, MenuTitle: "Track Ticket Status" }
+      { MenuIcon: <PersonAddAltIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Add Technician"},
+      { MenuIcon: <RequestQuoteIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise a Quote", TargetUrl: `/notificationTechnician/${userType}/${userId}/${category}/${district}` },
+      { MenuIcon: <NotificationsNoneIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Notifications" ,TargetUrl:`/technicianDetailsNotifications/${userType}/${userId}/${category}/${ZipCode}/${technicianFullName}`},
+      { MenuIcon: <TransferWithinAStationIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Track Technician" },
+      { MenuIcon: <PermIdentityIcon sx={{ fontSize: 40 }}/>, MenuTitle: "My Account"},
+      { MenuIcon: <AccountBalanceIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Add Bank Account" },
+      { MenuIcon: <StorefrontIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
+      { MenuIcon: <SupportAgentIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
+      { MenuIcon: <RouteIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Track Ticket Status" }
   ];
      switch (userType) {
       case "builder":
@@ -103,6 +120,13 @@ const getMenuList = (userType, userId, category, district ,ZipCode,technicianFul
   }
 };
 
+const categories = [
+    { label: 'Electrical Items',value:'Electrical items', icon: <ElectricalServicesIcon sx={{ fontSize: 30, color: '#1976d2' }} /> },
+    { label: 'Electronic Appliances', value:'Electronics appliances',icon: <IronIcon sx={{ fontSize: 30, color: '#f57c00' }} /> },
+    { label: 'Plumbing & Sanitary',value: 'Sanitary items',  icon: <PlumbingIcon sx={{ fontSize: 30, color: '#388e3c' }} /> },
+    { label: 'Hardware Items',value:'Hardware items', icon: <HardwareIcon sx={{ fontSize: 30, color: '#512da8' }} /> },
+  ];
+
 const ProfilePage = () => {
   const navigate = useNavigate();
     const {userId} = useParams();
@@ -113,11 +137,12 @@ const ProfilePage = () => {
     const [fullName, setFullName] = useState('');
     const [menuList, setMenuList] = useState([]);
     const [profile, setProfile] = useState({});
-    const [isEditing, setIsEditing] = useState(false);
-    const [name, setName] = useState(profile.fullName);
-    const [loading, setLoading] = useState(true);
+    // const [isEditing, setIsEditing] = useState(false);
+    // const [name, setName] = useState(profile.fullName);
+    const [loading, setLoading] = useState(true); 
     const [profileImage, setProfileImage] = useState(null);
     const fileInputRef = useRef(null);
+    const bottomRefs = useRef({});
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
     const [showDropdown, setShowDropdown] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
@@ -126,27 +151,69 @@ const ProfilePage = () => {
     const menuRef = useRef(null);
     const productScrollRef = useRef(null); 
     const ticketScrollRef = useRef(null);  
-    const [imageLoading, setImageLoading] = useState(true);
-    const [productData, setProductData] = useState(null);
-    const [imageUrls, setImageUrls] = useState([]);
+    const [productData, setProductData] = useState([]);
+    const [imageUrls, setImageUrls] = useState({});
     const [searchQuery, setSearchQuery] = useState('');
     const [showZoomModal, setShowZoomModal] = useState(false);
     const [zoomImage, setZoomImage] = useState("");
+    const [loadingStatus, setLoadingStatus] = useState({}); 
+    const [error, setError] = useState('');
+    const [products, setProducts] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState(null);
+    
 useEffect(() => {
-  console.log(showMenu, imageLoading, productData, imageUrls);
-}, [showMenu, imageLoading, productData, imageUrls]);
+  console.log(showMenu, products, selectedCategory);
+}, [showMenu, products, selectedCategory]);
 
-const scroll = (direction, target) => {
-  const scrollAmount = 300;
-  const ref = target === 'product' ? productScrollRef : ticketScrollRef;
+const scroll = (direction, type) => {
+  const scrollRef = productScrollRef.current;
+  const cardWidth = scrollRef.querySelector('.product-card-wrapper')?.offsetWidth || 320;
+  const scrollAmount = direction === 'left' ? -cardWidth : cardWidth;
 
-  if (ref.current) {
-    ref.current.scrollBy({
-      left: direction === 'right' ? scrollAmount : -scrollAmount,
-      behavior: 'smooth',
-    });
+  if (scrollRef) {
+    scrollRef.scrollBy({ left: scrollAmount, behavior: 'smooth' });
   }
 };
+
+useEffect(() => {
+  bottomRefs.current = {};
+  productData?.forEach(product => {
+    bottomRefs.current[product.id] = React.createRef();
+  });
+}, [productData]);
+
+ const handleCategoryClick = async (category) => {
+        const { value } = category; 
+      
+        try {
+          setSelectedCategory(category);
+          setProducts([]);
+          setError("");
+      
+          const encodedCategory = encodeURIComponent(value);
+          const url = `https://handymanapiv2.azurewebsites.net/api/Product/GetProductsByCategory?Category=${encodedCategory}`;
+          const response = await axios.get(url);
+          const productsData = response.data;
+      
+          if (productsData.length === 0) {
+            setError("Oops! No products found for this category.");
+            console.log("No products found.");
+          } else {
+            setProducts(productsData);
+          }
+      
+          localStorage.setItem('encodedCategory', encodedCategory);
+          navigate(`/offers/${userType}/${userId}`, {
+            state: encodedCategory,
+          });
+      
+          console.log('encodedCategory:', encodedCategory);
+        } catch (error) {
+          console.error('Error fetching products:', error);
+          setProducts([]);
+          setError(`Oops! No products found for ${value} category.`);
+        }
+      };
 
         useEffect(() => {
           const fetchAllTickets = async () => {
@@ -189,94 +256,85 @@ const scroll = (direction, target) => {
     setZoomImage(imageSrc);
     setShowZoomModal(true);
   };
-  
+
+
 // useEffect(() => {
-//     const fetchticketData = async () => {
+//     const fetchData = async () => {
 //       try {
-//         const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=raiseTicket`);
-//         if (!response.ok) {
-//           throw new Error('Failed to fetch ticket data');
-//         }
+//         const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/GetAllProductList`);
 //         const data = await response.json();
-//         //  alert(JSON.stringify(data));
-//         setTicketData(data);
-
-//         // setTicketId(data.raiseTicketId);
-//         // setSubject(data.subject);
-//         // setCategory(data.category);
-//         // setStatus(data.internalStatus);
-//         // setAssignedTo(data.assignedTo);
-      
-//         } catch (error) {
-//         console.error('Error fetching ticket data:', error);
-//       } finally {
-//         setLoading(false); 
-//       }
-//     };
-//     fetchticketData();
-//   }, [userId]); 
-
-//   useEffect(() => {
-//     const fetchproductData = async () => {
-//       try {
-//         const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=buyProduct`);
-//         if (!response.ok) {
-//           throw new Error('Failed to fetch product data');
-//         }
-//         const data = await response.json();
-//         //  alert(JSON.stringify(data));
 //         setProductData(data);
 
-//         // setTicketId(data.raiseTicketId);
-//         // setSubject(data.subject);
-//         // setCategory(data.category);
-//         // setStatus(data.internalStatus);
-//         // setAssignedTo(data.assignedTo);
-      
-//         } catch (error) {
+//         const imageRequests = data.map(async (product) => {
+//           if (product.productPhotos?.length) {
+//             const photo = product.productPhotos.map(async (photo) => {  
+//               const res = await fetch(
+//                 `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+//               );
+//               const imgData = await res.json();
+//               return { id: product.id, imageData: imgData.imageData, allPhotos: product.productPhotos };
+//             });
+//             const allImages = await Promise.all(photo);
+//             return { id: product.id, images: allImages };
+//           }
+//           return null;
+//         });
+
+//         const images = await Promise.all(imageRequests);
+//         const imageMap = {};
+//         images.forEach((img) => {
+//           if (img) imageMap[img.id] = img.images;
+//         });
+//         setImageUrls(imageMap);
+//         setImageLoading(false);
+//       } catch (error) {
 //         console.error('Error fetching product data:', error);
-//       } finally {
-//         setLoading(false); 
 //       }
 //     };
-//     fetchproductData();
-//   }, [userId]); 
+//     fetchData();
+//   }, []);
+
 
 useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/GetAllProductList`);
-        const data = await response.json();
-        setProductData(data);
+  const fetchProductsAndImages = async () => {
+    try {
+      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/GetAllProductList`);
+      const data = await response.json();
+      setProductData(data);
+      data.forEach((product) => {
+        if (product.productPhotos?.length) {
+          fetchImagesForProduct(product);
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching product data:', error);
+    }
+  };
 
-        const imageRequests = data.map(async (product) => {
-          if (product.productPhotos?.length) {
-            const photo = product.productPhotos.map(async (photo) => {  
-              const res = await fetch(
-                `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
-              );
-              const imgData = await res.json();
-              return { id: product.id, imageData: imgData.imageData, allPhotos: product.productPhotos };
-            });
-            const allImages = await Promise.all(photo);
-            return { id: product.id, images: allImages };
-          }
-          return null;
-        });
+  const fetchImagesForProduct = async (product) => {
+    try {
+      setLoadingStatus((prev) => ({ ...prev, [product.id]: true }));
 
-        const images = await Promise.all(imageRequests);
-        const imageMap = {};
-        images.forEach((img) => {
-          if (img) imageMap[img.id] = img.images;
-        });
-        setImageUrls(imageMap);
-        setImageLoading(false);
-      } catch (error) {
-        console.error('Error fetching product data:', error);
-      }
-    };
-    fetchData();
-  }, []);
+      const photoPromises = product.productPhotos.map(async (photo) => {
+        const res = await fetch(
+          `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+        );
+        const imgData = await res.json();
+        return { imageData: imgData.imageData };
+      });
+
+      const allImages = await Promise.all(photoPromises);
+
+      setImageUrls((prev) => ({ ...prev, [product.id]: allImages }));
+    } catch (err) {
+      console.error(`Failed to fetch images for product ${product.id}`, err);
+    } finally {
+      setLoadingStatus((prev) => ({ ...prev, [product.id]: false }));
+    }
+  };
+
+  fetchProductsAndImages();
+}, []);
 
       useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -303,7 +361,6 @@ useEffect(() => {
             setShowDropdown(false);
           }
         };
-      
         document.addEventListener("click", handleClickOutside);
         return () => document.removeEventListener("click", handleClickOutside);
       }, []);
@@ -315,7 +372,6 @@ useEffect(() => {
             setShowMenu(false);
           }
         };
-      
         document.addEventListener("mousedown", handleCloseMenuOnClickOutside);
         return () => document.removeEventListener("mousedown", handleCloseMenuOnClickOutside);
       }, []);
@@ -343,67 +399,23 @@ useEffect(() => {
             if (response.data.photoAttachmentId) {
               fetchImageUrl(response.data.photoAttachmentId);
             }
-            setMenuList(getMenuList(userType, userId, response.data.category, response.data.district, response.data.zipCode, response.data.fullName));
-
+              setMenuList(getMenuList(userType, userId, response.data.category, response.data.district, response.data.zipCode, response.data.fullName, isMobile));
           } catch (error) {
             console.log("Error Fetching Data:", error)
           } finally {
             setLoading(false);
           }
         };
-      
         fetchProfileData();
-      }, [userType, userId]);
+      }, [userType, userId, isMobile]);
       
-
       useEffect(() => {
         if (category && district) {
-          setMenuList(getMenuList(userType, userId, category, district, zipCode, fullName));
+          setMenuList(getMenuList(userType, userId, category, district, zipCode, fullName, isMobile));
         }
-      }, [category, district, userType, userId, zipCode, fullName]);
+      }, [category, district, userType, userId, zipCode, fullName, isMobile]);
       
 
-// useEffect(() => {
-//   if (!userId || !userType) return;
-//   const fetchProfileData = async () => {
-//     if (userType === "customer") {
-//       try {
-//         const [customerResponse, technicianResponse, dealerResponse]= await Promise.all([
-//           axios.get(`https://handymanapiv2.azurewebsites.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`),
-//           axios.get(`https://handymanapiv2.azurewebsites.net/api/technician/technicianProfileData?profileType=${userType}&UserId=${userId}`),
-//           axios.get(`https://handymanapiv2.azurewebsites.net/api/dealer/dealerProfileData?profileType=${userType}&UserId=${userId}`)
-//         ]
-//           // `https://handymanapiv2.azurewebsites.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`,
-//         );
-//         const customerData = customerResponse.data;
-//         const technicianData = technicianResponse.data;
-//         const dealerData = dealerResponse.data;
-  
-//         if (userType === "Customer") {
-//           setProfile(customerData);
-//         } else if (userType === "Technician") {
-//           setProfile(technicianData);
-//         } else {
-//           setProfile(dealerData);
-//         }
-//         // setProfile(response.data);
-//         // setUserStatus(response.data.status);
-//         // alert(response.data.status);
-//         const photoId = customerData.photoAttachmentId || technicianData.photoAttachmentId || dealerData.photoAttachmentId;
-  
-//         if (photoId) {
-//           fetchImageUrl(photoId);
-//         }
-//       } 
-//     } catch (err) {
-//       setError(err.message);
-//     } finally { 
-//       setLoading(false);
-//     }
-//   };
-
-//   fetchProfileData();
-// }, [userType, userId]);
 
 const fetchImageUrl = async (photoId) => {
   try {
@@ -442,12 +454,10 @@ const fetchImageUrl = async (photoId) => {
   //     console.error("Error fetching user details:", error)
   //   }
   // }; 
-  const handleEditClick = () => setIsEditing(true);
-
-  const cardStyle = {
-    minWidth: isMobile ? '800px' : '260px',
-    height: '220px',
-  };
+  // const handleEditClick = () => setIsEditing(true);
+  //  const handleProfileClick = () => {
+  //   fileInputRef.current.click(); 
+  // };
 
   // const handleCancel = () => {
   //   setIsEditing(false);
@@ -475,11 +485,6 @@ const fetchImageUrl = async (photoId) => {
   //     console.error("Error uploading file:", error);
   //   }
   // };
-
-  const handleProfileClick = () => {
-    fileInputRef.current.click(); 
-  };
-
   // const handleFileChange = async (event) => {
   //   const file = event.target.files[0];
   //   if (!file) return;
@@ -556,19 +561,21 @@ const fetchImageUrl = async (photoId) => {
   //   }
   // };
   
- if (loading) return 
-//  <p>Loading...</p>;
-  // if (error) return <p>Error: {error}</p>;
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-  // const updatedMenuList = getMenuList(userType, userId).map(menu => ({
-  //   ...menu,
-  //   url: userStatus === "Pending" ? "#" : menu.url,
-  // }));
-  
   return (
     <>
     <header className="header d-flex align-items-center justify-content-between p-2 bg-white shadow-sm">
-        <img className="h-90" src={Logo} alt="Handy Man Logo" style={{ height: "60px", width: "auto", paddingLeft: "10px" }}/>
+       {/* Menu Icon */}
+       {isMobile ? (
+          <div onClick={handleMoreIconClick} style={{ cursor: "pointer" }}>
+          <MenuIcon className="floating-menuIcon" fontSize="medium" />
+        </div>
+       ) : (null)}
+       <img src={Logo} alt="Handy Man Logo" className="logo-img" />
+        {/* <img className="h-90" src={Logo} alt="Handy Man Logo" style={{ height: "60px", width: "190px", paddingLeft: "10px" }}/> */}
         <div className="spacer"></div>
         <div className="d-flex align-items-center w-100">
       {!isMobile && (
@@ -586,24 +593,25 @@ const fetchImageUrl = async (photoId) => {
       </span> */}
     
       <div id="dropdown-container" className="dropdown-container" style={{ position: "relative" }}>
-        <div className="profile-button"
-        //  onClick={handleMoreIconClick} 
-          style={{ cursor: "pointer" }}>
-      <div className="profile-img-container">
+       {isMobile && (
+        <div className="d-flex align-items-center gap-2">
+  {/* Profile Image */}
   <div className="profile-img-wrapper">
     <img
       src={profileImage}
       alt="Profile"
       className="profile-img"
-      onClick={handleProfileClick}
+      style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "cover" }}
     />
   </div>
-  {/* <NotificationBell /> */}
+
+  {/* Notification Bell */}
+  <div className="d-flex align-items-center" onClick={() => navigate(`/customerNotification/${userType}/${userId}`)} style={{ cursor: "pointer" }}>
+  <NotificationBell fontSize="medium" />
 </div>
+</div>
+)}
 
-
-          {/* <AccountCircleIcon fontSize="large" /> */}
-        </div>
        {showDropdown && (
         <div className="dropdown-menu">                   
           <div className="dropdown-content">
@@ -620,20 +628,6 @@ const fetchImageUrl = async (photoId) => {
        )}
       </div>
 
-      {isMobile ? (
-        <div>
-      {/* More Icon */}
-      <div className="mob-menu">
-      {/* <NotificationBell /> */}
-      <div className="profile-button" onClick={handleMoreIconClick} 
-          style={{ cursor: "pointer" }}>
-          <MoreVertIcon fontSize="large" />
-        </div>
-      </div>
-      </div>
-      ) : null}
-
-    
       {/* More Icon for Mobile */}
       {/* <div className="mob_mnu">
       {/* {isMobile && ( 
@@ -699,26 +693,23 @@ const fetchImageUrl = async (photoId) => {
     >
       {/* <Header /> */}
       <div className="row">
-        {/* Profile Section */}
         <div className="col-md-3">
-        {/* {profile && ( */}
         <div>
       
       {!isMobile ? (
-        // <div className="row">
-        // <div className="col-md-3">
                    <div className="profile-card">
                      <div className="profile-img-container "> 
                    <div className="profile-container"> 
              <div className="profile-info">
                <div className="webprofile-section">
-               <div className="text-warning cust-name">Welcome <br /> 
+               <div className="text-primary fw-bold cust-name">Welcome <br /> 
                <div className="text-dark">{profile.fullName}{" "}</div></div>
                    <div className="fw-bold fs-4">Lakshmi Sai Service Providers</div>
                    <div className="text-warning fs-3 mt-0">{profile.userProfileType}</div>
                    <div className="webprofile-img-wrapper">
                      <img src={profileImage} alt="Profile" 
-                     className="webprofile-img" onClick={handleProfileClick}/>
+                     className="webprofile-img" 
+                     />
                      <input
                        type="file"
                        ref={fileInputRef}
@@ -728,32 +719,32 @@ const fetchImageUrl = async (photoId) => {
                      />
                     </div>
                  <div className="label fw-bold fs-5">Name</div>
-                 {isEditing ? (
+                 {/* {isEditing ? (
                    <TextField
                      value={name}
                      onChange={(e) => setName(e.target.value)}
                      variant="outlined"
                      size="small"
                    />
-                 ) : (
+                 ) : ( */}
                    <p className="value">
                      {profile.fullName}
-                     <IconButton size="small" onClick={handleEditClick}>
+                     {/* <IconButton size="small" onClick={handleEditClick}>
                        <EditIcon fontSize="small" />
-                     </IconButton>
+                     </IconButton> */}
                    </p>
-                 )}
+                 {/* )} */}
                   <hr />
                {/* </div>
        
                <div className="profile-section"> */}
-                 <div className="label fw-bold fs-5">Mobile</div>
+                 <div className="label fw-bold mt-0 fs-5">Mobile</div>
                  <p className="value">{profile.mobileNumber}</p>
-               <hr />
-                 <div className="label fw-bold fs-5">Email</div>
-                 <p className="value">{profile.email}</p>
+               {/* <hr />
+                 <div className="label fw-bold mt-0 fs-5">Email</div>
+                 <p className="value">{profile.email}</p> */}
               <hr />
-                 <div className="label fw-bold fs-5">Address</div>
+                 <div className="label fw-bold mt-0 fs-5">Address</div>
                  <p className="value">{profile.address}</p>
                <hr />
        
@@ -770,8 +761,51 @@ const fetchImageUrl = async (photoId) => {
               //  </div>
       ) : null}
             </div> 
+
+           {showProfile && (
+              <div
+                className="floating-profile-menu"
+                style={{
+                  position: 'fixed',
+                  top: '60px', 
+                  left: '10px', 
+                  backgroundColor: '#fff',
+                  zIndex: 1050,
+                  borderRadius: '8px',
+                  boxShadow: '0px 4px 10px rgba(0,0,0,0.2)',
+                  padding: '5px',
+                  width: '180px'
+                }}
+              >
+                <div className="profile-info">
+                  <div className="fw-bold">Name</div>
+                  <p>{profile.fullName}</p>
+                  <hr />
+                  <div className="fw-bold">Mobile</div>
+                  <p>{profile.mobileNumber}</p>
+                  <hr />
+                  <div className="fw-bold">Address</div>
+                  <p>{profile.address}</p>
+                  <hr />
+                  <div className="d-flex" style={{ cursor: "pointer" }} onClick={() => navigate(`/customerOrders/${userType}/${userId}`)}>
+                    <OrdersNotificationBell className="mt-2" fontSize="medium" />
+                    <small className="mt-2">Orders</small>
+                  </div>
+                  <hr />
+                  <div className="d-flex" style={{ cursor: "pointer" }} onClick={() => navigate(`/trackStatusNotifications/${userType}/${userId}`)}>
+                    <TrackStatusNotificationBell className="mt-2" fontSize="medium" />
+                    <small className="mt-2">Track Ticket</small>
+                  </div>
+                  <hr />
+                  <div className="logout-btn" onClick={() => window.location.href = "https://handymanserviceproviders.com/Logout"}>
+                    <LogoutIcon />
+                    <span>Logout</span>
+                  </div>
+                </div>
+              </div>
+            )}
           {/* Wrap profile-card and profile-info inside a parent div */}
-          <div className="row">
+          {/* <div className="row">
  <div className="col-md-3">
           <div>
           <div 
@@ -788,10 +822,10 @@ const fetchImageUrl = async (photoId) => {
                 style={{ display: "none" }}
                 accept="image/*"
                 onChange={handleFileChange}
-              /> */}
+              /> 
               </div>
               <div className="profile-info">
-                {isEditing ? (
+                {/* {isEditing ? (
                   <div className="edit-name d-flex">
                     <label className="fw-bold">
                       Full Name <span className="text-danger">*</span>
@@ -802,31 +836,32 @@ const fetchImageUrl = async (photoId) => {
                       variant="outlined"
                       size="small"
                     />
-                    {/* <div className="edit-icons d-flex">
+                     <div className="edit-icons d-flex">
                       <IconButton onClick={handleCancel} color="error">
                         <CancelIcon />
                       </IconButton>
                       <IconButton onClick={handleSave} color="success">
                         <CheckCircleIcon />
                       </IconButton>
-                    </div> */}
+                    </div> 
                   </div>
                 ) : (
+                   )} 
                   <div className="name-section">
                     <div className="fw-bold">Name</div>
                     <p>
                       {profile.fullName}{" "}
-                      <IconButton size="small" onClick={handleEditClick}>
+                      {/* <IconButton size="small" onClick={handleEditClick}>
                         <EditIcon fontSize="small" />
-                      </IconButton>
+                      </IconButton> 
                     </p>
                     <hr />
-                    {/* <p className="text-warning text-center">customer</p> */}
+                    {/* <p className="text-warning text-center">customer</p> 
                     <div className="fw-bold">Mobile</div>
                     <p className="profile">{profile.mobileNumber}</p>
-                    <hr />
+                    {/* <hr />
                     <div className="fw-bold">Email</div>
-                    <p className="profile">{profile.email}</p>
+                    <p className="profile">{profile.email}</p> 
                     <hr />
                     <div className="fw-bold">Address</div>
                     <p className="profile">
@@ -842,45 +877,51 @@ const fetchImageUrl = async (photoId) => {
                     </p>
 
                     <hr /> */}
+                    {/* Orders Icon */}
+                    {/* <div className="d-flex" style={{ cursor: "pointer" }} onClick={() => navigate(`/customerOrders/${userType}/${userId}`)}>
+                      <OrdersNotificationBell className="mt-2" fontSize="medium" />
+                      <small className="mt-2" style={{ fontSize: "13px", fontFamily: 'Poppins' }}>
+                        Orders
+                      </small>
+                    </div>
+                    <hr />
+                    <div className="d-flex" style={{ cursor: "pointer" }} onClick={() => navigate(`/trackStatusNotifications/${userType}/${userId}`)}>
+                      <TrackStatusNotificationBell className="mt-2" fontSize="medium" />
+                      <small className="mt-2" style={{ fontSize: "13px", fontFamily: 'Poppins' }}>
+                        Track Ticket
+                      </small>
+                    </div>
+                    <hr />
                     <div className="logout-btn" onClick={() => window.location.href = "https://handymanserviceproviders.com/Logout"}>
                       <LogoutIcon />
                       <span>Logout</span>
-                    </div>
+                    </div> */}
                     
                     {/* Logout Button */}
                     {/* <p className="logout-btn" onClick={`https://handymanserviceproviders.com`}>
                       <LogoutIcon />
                       <span>Logout</span>
                     </p> */}
-                  </div>
-                )}
+                  {/* </div>
+               
               </div>
             </div>
           </div>
+        </div> */}
+        {/* )}
         </div>
-        {/* )} */}
-        </div>
-        </div>
+        </div> */}
          </div> 
-        {/* Dashboard Section */}
-        {/* {loadingStatus ? (
-          <p>Loading...</p>
-        ) : (
-          <>
-          {userStatus === "pending" && (
-            <div className="alert alert-warning text-start">
-              <strong></strong>
-              </div>
-          )} */}
+    
           {isMobile && (
             <div>
-            <div className="text-warning cust-fullname fs-5 mt-1">Welcome <br /> <strong className="text-dark">{profile.fullName}{" "}</strong></div>
+            <div className="text-primary fw-bold cust-fullname fs-5 mt-1">Welcome <br /> <strong className="text-dark">{profile.fullName}{" "}</strong></div>
             {/* <div className="fw-bold fs-5">Lakshmi Sai Service Providers</div>
             <div className="text-warning fs-4">{profile.userProfileType}</div> */}
              </div>
           )}
         <div className="col-md-9 bg-white">
-          <div className="position-relative flex-grow-1 ms-4">
+          <div className="position-relative flex-grow-1 m-1">
         <input
           type="text"
           className="form-control w-60 m-2 ps-5"
@@ -893,146 +934,7 @@ const fetchImageUrl = async (photoId) => {
           style={{ pointerEvents: 'none' }}
         />
       </div>
-      <div className="d-flex align-items-center">
-<button className="btn text-primary" onClick={() => scroll('left', 'product')}>
-  &lt;
-</button>
-
-<div ref={productScrollRef} className="d-flex flex-row overflow-auto">
-          {productData &&
-            productData
-              .filter((product) => {
-                const productName = product.productName?.toLowerCase().trim();
-                const query = searchQuery.toLowerCase().trim();
-                const normalize = (str) => (str.endsWith('s') ? str.slice(0, -1) : str);
-                return productName.includes(query) || normalize(productName).includes(normalize(query));
-              })
-              .map((product) => {
-                const discountedPrice =
-                  product.rate && product.discount
-                    ? (product.rate - (product.rate * product.discount) / 100).toFixed(0)
-                    : product.rate;
-
-                return (
-                  <div key={product.id} className="m-2">
-                    <div className="card" style={{cardStyle}}>
-                      <div className="d-flex">
-                        <div style={{ flex: '0 0 55%' }}>
-                          {imageLoading ? (
-                            <div
-                              className="d-flex justify-content-center align-items-center"
-                              style={{ height: '250px', background: '#f8f9fa' }}
-                            >
-                              <div className="spinner-border text-secondary" role="status">
-                                <span className="visually-hidden">Loading...</span>
-                              </div>
-                            </div>
-                          ) : imageUrls[product.id]?.length > 0 ? (
-                            <Carousel>
-                              {imageUrls[product.id].map((img, index) => (
-                                <Carousel.Item key={index}>
-                                  <img
-                                    src={`data:image/jpeg;base64,${img.imageData}`}
-                                    className="card-img-top zoomable-image"
-                                    style={{
-                                      height: '250px',
-                                      objectFit: 'cover',
-                                      cursor: 'pointer',
-                                    }}
-                                    alt={`product-image-${index}`}
-                                    onClick={() =>
-                                      handleImageClick(`data:image/jpeg;base64,${img.imageData}`)
-                                    }
-                                  />
-                                </Carousel.Item>
-                              ))}
-                            </Carousel>
-                          ) : (
-                            <div
-                              className="d-flex justify-content-center align-items-center"
-                              style={{ height: '250px', background: '#f8f9fa' }}
-                            >
-                              No Image
-                            </div>
-                          )}
-                        </div>
-
-                        <div>
-                          <h6 className="mb-1">{product.productName}</h6>
-                          <div className="small text-primary">Rs {discountedPrice}</div>
-                          <div className="small text-muted fw-bold" style={{ textDecoration: 'line-through' }}>
-                            MRP: Rs {product.rate}
-                          </div>
-                          <div className="small text-danger">Discount: {product.discount}%</div>
-                          <div className="small text-success fw-bold">Free Delivery and Installation</div>
-                          <button
-                            className="btn btn-warning btn-sm fw-bold mt-1 mb-0"
-                            onClick={() => {
-                              navigate(`/offersBuyProduct/${userType}/${userId}/${product.id}`);
-                            }}
-                          >
-                            Buy Now
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-        </div>
-
-<button className="btn text-primary" onClick={() => scroll('right', 'product')}>
-  &gt;
-</button>
-      </div>
-          <h5 className="mb-2 fs-4">Dashboard</h5>
-          <div className="row g-2">
-    {menuList.map((menu, index) => (
-        <div className="col-4 col-sm-4 col-md-3" key={index}>
-            <a href={menu.TargetUrl} className="text-decoration-none" style={{ color: "inherit" }}>
-                <div className="mnu_mn text-center d-flex flex-column justify-content-center align-items-center" style={{ cursor: "pointer" }}>
-                    <span className="material-symbols-outlined custom-icon">
-                        {menu.MenuIcon} 
-                    </span>
-                    <span>{menu.MenuTitle}</span>
-                </div>
-            </a>
-        </div>
-    ))}
-</div>
-                {/* </>
-                )} */}
-              <div className="ticket-container">
-                <div className="ticket-header">
-                <h4 className="ticket-title">My Tickets</h4>
-                {/* <h4 className="ticket-title">View All</h4> */}
-                </div>
-      <div className="ticket-scroll" ref={ticketScrollRef}>
-      {!loading && allTickets.length > 0 ? (
-          allTickets.map((ticket, index) => (
-            <div key={index} className={`ticket-card1 ${ticket.raiseTicketId ? "raise-ticket-bg" : ticket.buyProductId ? "buy-product-bg" : "book-technician-bg"}`}>
-              <div className="ticket-content">
-                <p><strong>{ticket.raiseTicketId ? "Raise TicketId": ticket.buyProductId? "Buy ProductId" : "Book TechnicianId"}:</strong> {ticket.raiseTicketId || ticket.buyProductId || ticket.bookTechnicianId}</p>
-                <p><strong>{ticket.subject ? "Subject" : ticket.productName ? "Product Name" : "Job Description"}:</strong> {ticket.subject || ticket.productName || ticket.jobDescription}</p>
-                <p><strong>Category:</strong> {ticket.category}</p>
-                <p><strong>Status:</strong> 
-                  <span className={ticket.status.toLowerCase()}> {ticket.status}</span>
-                </p>
-                <p><strong>Assigned To:</strong> {ticket.assignedTo}</p>
-                <p><strong>Date:</strong> {ticket.date ? new Date(ticket.date).toLocaleDateString('en-GB') : "N/A"}</p>
-                <p><strong>Transaction Status:</strong> {ticket.transactionStatus }</p>
-                <p><strong>Paid Amount:</strong> {ticket.paidAmount}</p>
-                <p><strong>Paid Date: </strong> {ticket.orderDate}</p>
-              </div>
-            </div>
-          ))
-        ) : ( 
-          !loading && <p>No tickets found for this {userType}.</p>
-        )}
-      </div>
-    </div>
-            
-              {/* Carousel */}
+      {/* Carousel */}
               <div className="container">
                 <div className="mx-auto">
               <div
@@ -1114,6 +1016,271 @@ const fetchImageUrl = async (photoId) => {
               </div>
               </div>
               </div>
+     <div
+  className="category-scroll d-flex flex-nowrap overflow-auto px-3 py-2"
+  style={{ gap: '8px', WebkitOverflowScrolling: 'touch' }}
+>
+  {categories.map((cat) => (
+    <div
+      key={cat.label}
+      onClick={() => handleCategoryClick(cat)}
+      style={{ flex: '0 0 auto' }}
+    >
+      <div className="card text-center border-0"
+  style={{
+    height: isMobile ? '80px' : '120px',
+    width: isMobile ? '70px' : '170px',
+    backgroundColor: '#ffffff',
+    cursor: 'pointer',
+    display: 'flex',          
+    flexDirection: 'column',   
+    alignItems: 'center',      
+    justifyContent: 'center',  
+    padding: '4px',            
+  }}
+>
+  <div style={{ marginBottom: '0px' }}>{cat.icon}</div> 
+  <span
+  style={{
+    fontSize: '9px',
+    fontWeight: '600',
+    lineHeight: 1,
+    fontFamily: 'Poppins, sans-serif',
+  }}
+>
+  {cat.label.toUpperCase()}
+</span>
+</div>
+    </div>
+  ))}
+   {error && <div className="text-danger">{error}</div>}
+</div>
+ 
+<h4>Top Deals For You!</h4>
+      <div
+  className="product-scroll-wrapper"
+  ref={productScrollRef}
+>
+  <div className="product-row">
+    {productData &&
+      productData
+        .filter((product) => {
+          const productName = product.productName?.toLowerCase().trim();
+          const query = searchQuery.toLowerCase().trim();
+          const normalize = (str) => (str.endsWith('s') ? str.slice(0, -1) : str);
+          return productName.includes(query) || normalize(productName).includes(normalize(query));
+        })
+        .map((product) => {
+          const discountedPrice =
+            product.rate && product.discount
+              ? (product.rate - (product.rate * product.discount) / 100).toFixed(0)
+              : product.rate;
+
+          return (
+            <div
+          key={product.id}
+          className="product-card"
+          onClick={() => {
+            const targetRef = bottomRefs.current[product.id];
+            if (targetRef && targetRef.current) {
+              targetRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              targetRef.current.classList.add('highlight');
+              setTimeout(() => {
+                targetRef.current.classList.remove('highlight');
+              }, 2000);
+            }
+          }}
+          style={{ cursor: 'pointer' }}   
+        >
+          {loadingStatus[product.id] ? (
+            <div className="image-placeholder">Loading...</div>
+          ) : imageUrls[product.id]?.length > 0 ? (
+            <img
+              src={`data:image/jpeg;base64,${imageUrls[product.id][0].imageData}`}
+              className="product-image"
+              alt="product"
+            />
+          ) : (
+            <div className="image-placeholder">No Image</div>
+          )}
+          <div>
+            <h6 className="product-name">{product.productName.toUpperCase()}</h6>
+            <div className="product-price">Rs {discountedPrice} /-</div>
+          </div>
+        </div>
+          );
+        })}
+  </div>
+</div>
+
+      {/* <div className="d-flex align-items-center"> */}
+{/* <button className="btn text-primary" onClick={() => scroll('left', 'product')}>
+  &lt;
+</button> */}
+
+<div className="card-scroll-container" ref={productScrollRef}>
+          {productData &&
+            productData
+              .filter((product) => {
+                const productName = product.productName?.toLowerCase().trim();
+                const query = searchQuery.toLowerCase().trim();
+                const normalize = (str) => (str.endsWith('s') ? str.slice(0, -1) : str);
+                return productName.includes(query) || normalize(productName).includes(normalize(query));
+              })
+              .map((product) => {
+                const discountedPrice =
+                  product.rate && product.discount
+                    ? (product.rate - (product.rate * product.discount) / 100).toFixed(0)
+                    : product.rate;
+
+                return (
+                  <div key={product.id} className="product-card-wrapper" ref={bottomRefs.current[product.id]}>
+                    <div className="custom-card" >
+                      <div className="d-flex">
+                        <div style={{ flex: '0 0 55%' }}>
+  {loadingStatus[product.id] ? (
+    <div className="d-flex justify-content-center align-items-center" style={{ height: '250px', background: '#f8f9fa' }}>
+      <div className="spinner-border text-secondary" role="status">
+        <span className="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  ) : imageUrls[product.id]?.length > 0 ? (
+    <Carousel>
+      {imageUrls[product.id].map((img, index) => (
+        <Carousel.Item key={index}>
+          <img
+            src={`data:image/jpeg;base64,${img.imageData}`}
+            className="card-img-top zoomable-image"
+            style={{ height: '250px', objectFit: 'cover', cursor: 'pointer' }}
+            alt={`product-image-${index}`}
+            onClick={() => handleImageClick(`data:image/jpeg;base64,${img.imageData}`)}
+          />
+        </Carousel.Item>
+      ))}
+    </Carousel>
+  ) : (
+    <div className="d-flex justify-content-center align-items-center" style={{ height: '250px', background: '#f8f9fa' }}>
+      No Image
+    </div>
+  )}
+</div>
+                        <div>
+                          <h6 className="mb-1 fw-bold fs-6" style={{fontFamily: "Rubik"}}>{product.productName.toUpperCase()}</h6>
+                          <div className="small text-primary fw-bold">Rs {discountedPrice} /-</div>
+                          <div className="small text-muted fw-bold" style={{ textDecoration: 'line-through' }}>
+                            MRP: Rs {product.rate}
+                          </div>
+                          <div className="blinking-row small text-danger fw-bold">Discount: {product.discount}%</div>
+                          <div className="blinking-text small text-success fw-bold m-1 fs-6" style={{fontFamily: "Italianno, cursive"}}>Free Delivery & Installation</div>
+                          <button
+                            className="buy-now-btn" 
+                            onClick={() => {
+                              navigate(`/offersBuyProduct/${userType}/${userId}/${product.id}`);
+                            }}
+                          >
+                            Buy Now
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+        </div>
+
+        <div className="text-end">
+        <button className="btn text-primary" onClick={() => scroll('left', 'product')}>Prev</button>
+        <button className="btn text-primary" onClick={() => scroll('right', 'product')}>Next</button>
+      </div>
+
+
+      {/* </div> */}
+      {!isMobile ? (
+        <>
+<h5 className="mb-2 fs-4">Dashboard</h5>
+          <div className="row g-2">
+            {menuList.map((menu, index) => (
+              <div className="col-4" key={index}>
+                <a href={menu.TargetUrl} className="text-decoration-none" style={{ color: "inherit" }}>
+                  <div className="mnu_mn text-center d-flex flex-column justify-content-center align-items-center" style={{ cursor: "pointer" }}>
+                    <span className="material-symbols-outlined custom-icon" style={{fontSize: '40px'}}>
+                      {menu.MenuIcon}
+                    </span>
+                    <span className="fs-6">{menu.MenuTitle}</span>
+                  </div>
+                </a>
+              </div>
+            ))}
+          </div>
+          </>
+      ) : (
+  <div className="bottom-scrollbar-container position-fixed bottom-0 start-0 end-0 bg-white border-top px-1 py-1 shadow" style={{ zIndex: 1020 }}>
+  <div className="d-flex overflow-auto flex-nowrap scroll-area justify-content-start align-items-center">
+    <a
+      href={`/profilePage/${userType}/${userId}`}
+      className="d-flex flex-column align-items-center justify-content-center text-decoration-none text-dark"
+      style={{ minWidth: '60px' }}
+    >
+      <HomeIcon sx={{ fontSize: 30 }} />
+      <small style={{ fontSize: "15px", fontFamily: 'Poppins', textAlign: 'center' }}>Home</small>
+    </a>
+
+    {menuList.map((menu, index) => (
+      <a
+        key={index}
+        href={menu.TargetUrl}
+        className="d-flex flex-column align-items-center justify-content-center text-decoration-none text-dark mx-3"
+        style={{ minWidth: '60px' }}
+      >
+        {React.cloneElement(menu.MenuIcon, { sx: { fontSize: 28 } })}
+        <small style={{ fontSize: "13px", fontFamily: 'Poppins', textAlign: 'center' }}>
+          {menu.MenuTitle}
+        </small>
+      </a>
+    ))}
+
+    <a
+      href="#myTicketsSection"
+      className="d-flex flex-column align-items-center justify-content-center text-decoration-none text-dark mx-3"
+      style={{ minWidth: '60px' }}
+    >
+      <ConfirmationNumberIcon sx={{ fontSize: 28 }} />
+      <small style={{ fontSize: "13px", fontFamily: "Poppins", textAlign: "center" }}>My Tickets</small>
+    </a>
+  </div>
+</div>
+
+)}
+
+              <div id="myTicketsSection" className="ticket-container">
+                <div className="ticket-header">
+                <h4 className="ticket-title">My Tickets</h4>
+                {/* <h4 className="ticket-title">View All</h4> */}
+                </div>
+      <div className="ticket-scroll" ref={ticketScrollRef}>
+      {!loading && allTickets.length > 0 ? (
+          allTickets.map((ticket, index) => (
+            <div key={index} className={`ticket-card1 ${ticket.raiseTicketId ? "raise-ticket-bg" : ticket.buyProductId ? "buy-product-bg" : "book-technician-bg"}`}>
+              <div className="ticket-content">
+                <p><strong>{ticket.raiseTicketId ? "Raise TicketId": ticket.buyProductId? "Buy ProductId" : "Book TechnicianId"}:</strong> {ticket.raiseTicketId || ticket.buyProductId || ticket.bookTechnicianId}</p>
+                <p><strong>{ticket.subject ? "Subject" : ticket.productName ? "Product Name" : "Job Description"}:</strong> {ticket.subject || ticket.productName || ticket.jobDescription}</p>
+                <p><strong>Category:</strong> {ticket.category}</p>
+                <p><strong>Status:</strong> 
+                  <span className={ticket.status.toLowerCase()}> {ticket.status}</span>
+                </p>
+                <p><strong>Assigned To:</strong> {ticket.assignedTo}</p>
+                <p><strong>Date:</strong> {ticket.date ? new Date(ticket.date).toLocaleDateString('en-GB') : "N/A"}</p>
+                <p><strong>Transaction Status:</strong> {ticket.transactionStatus }</p>
+                <p><strong>Paid Amount:</strong> {ticket.paidAmount}</p>
+                <p><strong>Paid Date: </strong> {ticket.orderDate}</p>
+              </div>
+            </div>
+          ))
+        ) : ( 
+          !loading && <p>No tickets found for this {userType}.</p>
+        )}
+      </div>
+    </div>    
         </div>
         </div> 
         </div>

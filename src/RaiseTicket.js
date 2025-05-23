@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback} from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap'; // Import Bootstrap components for modal
 import { v4 as uuidv4 } from 'uuid'; // To generate unique IDs for addresses
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
@@ -23,7 +23,7 @@ const AddressManager = () => {
   // const [district, setDistrict] = useState('');
   // const [pincode, setPincode] = useState('');
   const [fullName, setFullName] = useState('');
-  const [assignedTo, setAssignedTo] = useState('');
+  // const [assignedTo, setAssignedTo] = useState('');
   const [requestType, setRequestType] = useState('');
   const [loading, setLoading] = useState(false); 
   const [showAlert, setShowAlert] = useState(false);
@@ -54,17 +54,18 @@ address: '',
 zipCode: '',
 });
 const [selectedFiles, setSelectedFiles] = useState([]);
+const [shouldBlink,setShouldBlink] = useState(false);
 
   useEffect(() => {
     console.log(ticketId, response, editingAddressId);
   }, [ticketId, response, editingAddressId]);
 
-  const API_URL = 'https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/';
+  // const API_URL = 'https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/';
   // Fetch customer profile data
-  useEffect(() => {
-    const fetchCustomerData = async () => {
+  
+    const fetchCustomerData = useCallback(async () => {
       try {
-        const response = await fetch(`${API_URL}${userId}`);
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/${userId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch customer profile data');
         }
@@ -93,11 +94,11 @@ const [selectedFiles, setSelectedFiles] = useState([]);
       } catch (error) {
         console.error('Error fetching customer data:', error);
       }
-    };
-  
-    fetchCustomerData();
   }, [userId]);
   
+useEffect(() => {
+  fetchCustomerData();
+}, [fetchCustomerData]);
  
 // Detect screen size for responsiveness
 useEffect(() => {
@@ -256,12 +257,11 @@ useEffect(() => {
   const handleSaveTicket = async (e) => {
     e.preventDefault();
   
-    // Ensure all fields are filled before submitting
     if (
       !formData.subject ||
       !formData.details ||
       !formData.category ||
-      !assignedTo ||
+      // !assignedTo ||
       !requestType || 
       !selectedFiles.length
     ) {
@@ -282,11 +282,11 @@ useEffect(() => {
     const payload = {
       RaiseTicketId:"string",
       date: new Date(),
-      address: addressData.address || addresses.find((addr) => addr.type === 'primary')?.address || '',
+      address: addressData.address || primaryAddress?.address || "",
       subject: formData.subject,
       details: formData.details,
       category: formData.category,
-      assignedTo: assignedTo,
+      assignedTo: "Customer Care",
       state:"Andhra Pradesh",
       district:"Visakhapatnam",
       zipcode: addressData.zipCode || pincode,
@@ -342,7 +342,6 @@ useEffect(() => {
     if (!response.ok) {
       throw new Error('Failed to create a ticket.');
     } 
-
   
     const data = await response.json(); 
     setTicketId(data.ticketId); 
@@ -365,9 +364,8 @@ useEffect(() => {
           // alert(error);
           console.error('Error sending message:', error);
         }
-        // Navigate(`/raiseTicketConfirmation/${userType}/${userId}`);
     // Redirect to CustomerProfilePage
-     window.location.href = `/profilePage/${userType}/${userId}`;
+      window.location.href = `/profilePage/${userType}/${userId}`;
   
   } catch (error) {
     console.error('Error:', error);
@@ -376,11 +374,32 @@ useEffect(() => {
   }
   };
 
+//   const handleSendSMSCustomerCare = async (e) => {
+//    e.preventDefault();
+  
+//   try { 
+//     const response = await fetch(``, {
+//       method: 'GET',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//     });
+//     if (!response.ok) {
+//       throw new Error('Failed to send SMS to Customer Care');
+//     }   
+//     alert('SMS to Customer Care sent Successfully!');
+
+//     window.location.href = `/profilePage/${userType}/${userId}`;
+
+//   } catch (error) {
+//     console.error('Error sending SMS to Customer Care:', error);
+//     window.alert('Failed to sending SMS to Customer Care. Please try again later.');
+//   }
+// };
   // const handleBothActions =  (e) => {
   //   e.preventDefault();
-  //   handleSaveAddress();
-  //   // handleGuestAddress(e);
-  //   handleUserUpload(e);
+  //   handleSaveTicket(e);
+  //   handleSendSMSCustomerCare(e);
   // };
   
   // const handleSaveWhatsapp = async (e) => {
@@ -582,6 +601,7 @@ useEffect(() => {
       );
   
       setAddressData(updatedAddress);
+      await fetchCustomerData();
       alert("Address Updated Successfully!");
       setShowModal(false);
       resetAddressForm();
@@ -598,6 +618,16 @@ useEffect(() => {
       uploadedFiles.forEach((file) => URL.revokeObjectURL(file));
     };
   }, [uploadedFiles]);
+
+const primaryAddress = addresses.find(addr => addr.type === 'primary');
+const isAddressInvalid = !primaryAddress || !primaryAddress.address || !primaryAddress.zipCode;
+useEffect(() => {
+    if (isAddressInvalid) {
+      setShouldBlink(true);
+    } else {
+      setShouldBlink(false);
+    }
+  }, [isAddressInvalid]);
 
   return (
     <div>
@@ -649,7 +679,7 @@ useEffect(() => {
                 <Modal.Body>
                   <Form>
                     <Form.Group className="mb-3">
-                      <Form.Label>Full Name</Form.Label>
+                      <Form.Label>Full Name <span className="req_star">*</span></Form.Label>
                       <Form.Control
                         type="text"
                         value={fullName}
@@ -659,7 +689,7 @@ useEffect(() => {
                       />
                     </Form.Group>
                     <Form.Group className="mb-3">
-                      <Form.Label>Mobile Number</Form.Label>
+                      <Form.Label>Mobile Number <span className="req_star">*</span></Form.Label>
                       <Form.Control
                         name="MobileNumber"
                         className="form-control"
@@ -680,7 +710,7 @@ useEffect(() => {
                       />
                     </Form.Group>
                     <Form.Group className="mb-3">
-                      <Form.Label>Address</Form.Label>
+                      <Form.Label>Address <span className="req_star">*</span></Form.Label>
                       <Form.Control
                         type="text"
                         value={newAddress}
@@ -691,7 +721,7 @@ useEffect(() => {
                     </Form.Group>
       
                     <Form.Group className="mb-3">
-                      <Form.Label>Pincode</Form.Label>
+                      <Form.Label>Pincode <span className="req_star">*</span></Form.Label>
                       <Form.Control
                         type="text"
                         value={zipCode}
@@ -735,9 +765,12 @@ useEffect(() => {
                           </div>
                           <div className="text-end">
                           {addresses.map((address) => (
-                            <button
+                            <Button
                               key={address.id}
-                              className="btn btn-warning text-white btn-sm mx-1"
+                              variant={isAddressInvalid ? "primary" : "warning"}
+                              className={`text-white mx-1 ${
+                  shouldBlink ? "blinking-button" : ""
+                }`}
                               onClick={() => {
                                 setGuestCustomerId(address.id);
                                 setFullName(address.fullName);
@@ -749,18 +782,19 @@ useEffect(() => {
                               }}
                             >
                               {address.address === "" ? "Add Address" : "Edit Address"}
-                            </button>
+                            </Button>
                           ))}
                       </div> 
                         </div>
                       ))}       
                       </div>
+                      {/* <p className='text-danger'>Note: Please Add Your Address if Address is not Present</p> */}
 
         {/* Subject */}
         <Row>
           <Col md={12}>
             <Form.Group>
-              <label>Subject</label>
+              <label>Subject <span className="req_star">*</span></label>
               <Form.Control
                 type="text"
                 name="subject"
@@ -775,7 +809,7 @@ useEffect(() => {
 
         {/* Details */}
         <Form.Group>
-          <label>Details</label>
+          <label>Details <span className="req_star">*</span></label>
           <Form.Control
             as="textarea"
             name="details"
@@ -791,7 +825,7 @@ useEffect(() => {
         <Row>
           <Col md={6}>
             <Form.Group>
-              <label>Category</label>
+              <label>Category <span className="req_star">*</span></label>
               <Form.Control
                 as="select"
                 name="category"
@@ -815,10 +849,10 @@ useEffect(() => {
           </Col>
         </Row>
 
-        <Row>
+        {/* <Row>
         <Col md={6}>
             <Form.Group>
-              <label>Assigned To</label>
+              <label>Assigned To <span className="req_star">*</span></label>
               <Form.Control
                 as="select"
                 name="assignedTo"
@@ -831,11 +865,11 @@ useEffect(() => {
               </Form.Control>
             </Form.Group>
           </Col>
-        </Row>
+        </Row> */}
 
         {/* File Upload */}
         <div className="form-group">
-          <label className="text-danger m-2">Upload your Query Photos<span className="req_star">*</span></label>
+          <label className="text-danger m-2">Upload your Query Photos <span className="req_star">*</span></label>
           <input
                 type="file"
                 className="form-control"
@@ -942,11 +976,16 @@ useEffect(() => {
     </div>
 
         {/* Get Quote Button */}
-        <div className="mt-4">
-          <Button variant="success" type="submit" onClick={handleSaveTicket}
-          disabled = {isSubmitting}>
- {isSubmitting ? 'Submitting...' : 'Get Quote'}          </Button>
-        </div>
+        <Button 
+          variant="success" 
+          type="submit" 
+          onClick={handleSaveTicket}
+          disabled={isSubmitting || isAddressInvalid}
+        >
+          {isSubmitting ? 'Submitting...' : 'Get Quote'}
+        </Button>
+
+
       </div>
 
     </div>

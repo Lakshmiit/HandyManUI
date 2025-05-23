@@ -28,48 +28,70 @@ const OffersProductCard = () => {
   const [imageLoading, setImageLoading] = useState(true);
 const [searchQuery, setSearchQuery] = useState('');
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/GetAllProductList`);
-        const data = await response.json();
-        setProductData(data);
+useEffect(() => {
+  const fetchProductsAndAllImages = async () => {
+    try {
+      const start = performance.now();
 
-        const imageRequests = data.map(async (product) => {
-          if (product.productPhotos?.length) {
-            const photo = product.productPhotos.map(async (photo) => {  
-              const res = await fetch(
-                `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
-              );
-              const imgData = await res.json();
-              return { id: product.id, imageData: imgData.imageData, allPhotos: product.productPhotos };
-            });
-            const allImages = await Promise.all(photo);
-            return { id: product.id, images: allImages };
+      // 1. Fetch product metadata
+      const productRes = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/GetAllProductList`);
+      const productList = await productRes.json();
+      setProductData(productList);
+
+      // 2. Prepare all image fetch promises for all productPhotos
+      const allImagePromises = [];
+
+      productList.forEach((product) => {
+        if (product.productPhotos?.length > 0) {
+          product.productPhotos.forEach((photo) => {
+            allImagePromises.push(
+              fetch(`https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`)
+                .then(res => res.json())
+                .then(data => ({
+                  productId: product.id,
+                  imageData: data.imageData,
+                }))
+                .catch(() => null)
+            );
+          });
+        }
+      });
+
+      // 3. Wait for all image requests to resolve
+      const imageResults = await Promise.all(allImagePromises);
+
+      // 4. Map productId to array of imageData
+      const imageMap = {};
+
+      imageResults.forEach(result => {
+        if (result) {
+          if (!imageMap[result.productId]) {
+            imageMap[result.productId] = [];
           }
-          return null;
-        });
+          imageMap[result.productId].push({ imageData: result.imageData });
+        }
+      });
 
-        const images = await Promise.all(imageRequests);
-        const imageMap = {};
-        images.forEach((img) => {
-          if (img) imageMap[img.id] = img.images;
-        });
-        setImageUrls(imageMap);
-        setImageLoading(false);
-      } catch (error) {
-        console.error('Error fetching product data:', error);
-      }
-    };
-    fetchData();
-  }, []);
+      // 5. Set state
+      setImageUrls(imageMap);
+      setImageLoading(false);
+
+      const duration = performance.now() - start;
+      console.log(`All images loaded in ${duration.toFixed(2)} ms`);
+
+    } catch (error) {
+      console.error("Error loading all images fast:", error);
+    }
+  };
+
+  fetchProductsAndAllImages();
+}, []);
 
   const handleImageClick = (imageSrc) => {
     setZoomImage(imageSrc);
     setShowZoomModal(true);
   };
   
-
 useEffect(() => {
   const handleCategoryClick = async () => {
     try {
@@ -102,6 +124,7 @@ useEffect(() => {
       </div>
     );
   }
+  
 
   return (
     <>
@@ -197,6 +220,7 @@ useEffect(() => {
                       {imageUrls[product.id].map((img, index) => (
                         <Carousel.Item key={index}>
                           <img
+                            loading="eager"
                             src={`data:image/jpeg;base64,${img.imageData}`}
                             className="card-img-top rounded-top zoomable-image"
                             style={{ height: "250px", objectFit: "cover", cursor: "pointer" }}
@@ -216,7 +240,8 @@ useEffect(() => {
                   )}
                       <div className="card-body p-1 m-1">
                         <h5 className="card-title">{product.productName}</h5>
-                        <div className="card-text fw-bold text-primary fs-5">After Discount Price: Rs {discountedPrice}</div>
+                        <div className="card-text fw-bold text-primary fs-5 no-break"> After Discount Price: Rs {discountedPrice}</div>
+
                             <div className="card-text fw-bold text-muted fs-6" style={{ textDecoration: 'line-through' }}>MRP: Rs {product.rate}</div>
                             <div className="card-text fw-bold text-danger fs-6">Discount: {product.discount}%</div>
                             <div className="card-text fw-bold text-success fs-5">Free Delivery and Installation</div>
@@ -252,6 +277,7 @@ useEffect(() => {
                           {imageUrls[product.id].map((img, index) => (
                             <Carousel.Item key={index}>
                               <img
+                                loading="lazy"
                                 src={`data:image/jpeg;base64,${img.imageData}`}
                                 className="card-img-top rounded-top zoomable-image"
                                 style={{ height: "250px", objectFit: "cover", cursor: "pointer" }}
@@ -272,9 +298,9 @@ useEffect(() => {
                         </div>
                         <div >
                           <h6 className="mb-1">{product.productName}</h6>
-                          <div className="small text-primary">Rs {discountedPrice}</div>
+                          <div className="small text-primary fw-bold">Rs {discountedPrice}</div>
                           <div className="small text-muted fw-bold" style={{ textDecoration: 'line-through' }}>MRP: Rs {product.rate}</div>
-                          <div className="small text-danger">Discount: {product.discount}%</div>
+                          <div className="small text-danger fw-bold">Discount: {product.discount}%</div>
                           <div className="small text-success fw-bold">Free Delivery and Installation</div>
                           <button
                             className="btn btn-warning btn-sm fw-bold mt-1"

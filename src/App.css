@@ -1368,6 +1368,7 @@ textarea {
   max-height: 100vh;
   padding: 5px;
   margin: 10px;
+  overflow-y: auto;
 }
 
 
@@ -1526,7 +1527,9 @@ max-width: none;
 }
 
 .blinking-row {
-  animation: blinking-background 1.5s infinite;
+  margin: 2px;
+  border-radius: 20px;
+  animation: blinking-background 2s infinite;
 }
 
 @keyframes blinking-background {
@@ -1943,7 +1946,7 @@ max-width: none;
 }
 
 .blinking-text {
-  animation: blink-animation 2s infinite;
+  animation: blink-animation 1.5s infinite;
 }
 
 @keyframes blink-animation {
@@ -2237,6 +2240,17 @@ max-width: none;
   z-index: 1000;
 }
 
+.floating-popup {
+  position: absolute; /* or fixed if you want it relative to viewport */
+  top: 60px; /* adjust as needed */
+  right: 10px;
+  background: white;
+  z-index: 1050; /* make sure this is higher than your page content */
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+  border-radius: 8px;
+  padding: 10px;
+}
+
 
 .profile-section {
   width: 300px;
@@ -2278,9 +2292,8 @@ max-width: none;
   font-weight: normal;
 }
 
-
 .card {
-  width: 250px;
+  width: 320px;
   height: 200px;
   background-color: #f1b61f30;
   border: none;
@@ -2295,6 +2308,63 @@ max-width: none;
   padding: 10px;
   /* background-color: #f1b61f30; */
  border-radius: 15px !important;
+}
+
+.card-scroll-container {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  gap: 1rem;
+  padding: 1rem;
+  scroll-behavior: smooth;
+}
+
+.product-card-wrapper {
+  flex: 0 0 100%; 
+  scroll-snap-align: center;
+  box-sizing: border-box;
+  /* margin: 5px; */
+}
+
+@media (min-width: 768px) {
+  .product-card-wrapper {
+    flex: 0 0 260px; 
+  }
+}
+
+/* .category-card-wrapper {
+  flex: 0 0 500%; 
+  scroll-snap-align: center;
+  box-sizing: border-box;
+  margin: 3px;
+  padding: 5px;
+}
+
+@media (min-width: 768px) {
+  .category-card-wrapper {
+    flex: 0 0 250px; 
+  }
+} */
+
+.custom-card {
+  height: auto;
+  background-color: #ffffff;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: all 0.5s;
+  cursor: pointer;
+  text-align: center;
+  /* padding: 10px; */
+  border-radius: 15px !important;
+}
+
+.custom-card:hover {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  background-color: #ffc107 !important;
+
 }
 
 .apartment {
@@ -2361,12 +2431,17 @@ max-width: none;
   align-items: center;
 }
 
+.profile-img-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .profile-img {
-  width: 130px;
-  height: 130px;
-  object-fit: cover;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
-  border: 5px solid gold; 
+  object-fit: cover;
 }
 
 .icon-size {
@@ -2596,62 +2671,53 @@ h2 {
 }
 
 .profile-card-container {
-  display: none; /* Hidden by default */
-  position: absolute; /* Position it relative to the parent */
-  top: 50px; /* Adjust as needed */
-  right: 0; /* Align it to the right */
+  width: 150px;
+  display: none; 
+  position: start; 
+  top: 50px; 
+  right: 0; 
   background: white;
-  padding: 10px;
+  /* padding: 10px; */
   border-radius: 5px;
-  /* box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); */
-  z-index: 1000; /* Ensure it appears above other elements */
+  z-index: 1000; 
 }
 
-/* Show when active */
 .profile-card-container.active {
   display: block;
 }
 
-/* Default profile card container visibility */
 .profile-card-container {
-  display: block; /* Visible on larger screens */
+  display: block; 
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
-  max-height: 0; /* Start with hidden */
+  max-height: 0; 
   overflow: hidden;
 }
 
-/* When the "show" class is added, make the container visible */
 .profile-card-container.show {
   opacity: 1;
-  max-height: 500px; /* Adjust max height if needed */
+  max-height: 500px; 
 }
 
-/* Mobile view - Hide by default */
 @media (max-width: 768px) {
   .profile-card-container {
-    display: none; /* Hidden by default on mobile screens */
+    display: none; 
   }
 
-  /* When showProfile is true, show the profile container on mobile */
   .profile-card-container.show {
     display: block;
   }
 }
 
-/* Style for the "more" icon button */
 .more-icon {
   font-size: 24px;
-  color: #f1b61f; /* Or any color you want */
+  color: #f1b61f; 
   display: inline-block;
 }
 
-/* Profile card and text styling */
 .profile-card {
   background-color: #ffffff;
-  /* padding: 20px; */
   border-radius: 8px;
-  /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
 }
 
 .profile-img-container {
@@ -2695,16 +2761,6 @@ h2 {
   position: relative;
   display: inline-block;
   cursor: pointer;
-}
-
-.profile-img-wrapper {
-  position: relative;
-  width: 120px;  /* Set size of the profile image */
-  height: 120px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 4px solid #f1b61f;  /* Add border to the image */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Add shadow for better look */
 }
 
 .profile-img {
@@ -3042,6 +3098,152 @@ background: darkred;
   50% { opacity: 0; }
 }
 
-  
-  
-  
+.no-break {
+  white-space: nowrap;
+}
+
+.category-scroll {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; 
+}
+
+.bottom-navbar {
+  height: 60px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 1020;
+  background-color: #fff;
+}
+
+.bottom-navbar a {
+  font-size: 12px;
+  color: #333;
+}
+
+.bottom-navbar svg {
+  font-size: 20px;
+}
+
+.home-button {
+  transform: translateY(-30%);
+}
+
+.scroll-area::-webkit-scrollbar {
+  height: 6px;
+}
+
+.scroll-area::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 10px;
+}
+
+
+.logo-img {
+  height: auto;
+  width: 320px; /* default desktop size */
+  padding-left: 10px;
+}
+
+@media (max-width: 768px) {
+  .logo-img {
+    width: 180px; /* medium for mobile */
+  }
+}
+
+.buy-now-btn {
+  background-color: #007bff;
+  color: #000000;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  /* text-shadow: 0 0 8px white; */
+  animation: full-glow 1.5s ease-in-out infinite alternate;
+  /* margin: 10px; */
+}
+
+.buy-now-btn:hover {
+  transform: scale(1.05);
+  background-color: #007bff;
+}
+
+@keyframes full-glow {
+  0% {
+    background-color: #007bff;
+    /* text-shadow: 0 0 5px white; */
+    filter: brightness(0.5);
+  }
+  100% {
+    background-color: #007bff;
+    /* text-shadow: 0 0 5px white; */
+    filter: brightness(1.3);
+  }
+}
+
+.product-scroll-wrapper {
+  overflow-x: visible;
+  padding: 0.3rem;
+}
+
+.product-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(25%, 1fr)); 
+  gap: 0.5rem;
+}
+
+/* Card styles */
+.product-card {
+  background: #fff;
+  border-radius: 5px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  padding: 0.5rem;
+  text-align: center;
+}
+
+.product-image {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin: 5px;
+}
+
+.image-placeholder {
+  width: 100%;
+  height: 100px;
+  background: #f0f0f0;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-size: 12px;
+}
+
+/* .product-info {
+  margin-top: 0.5rem;
+} */
+
+.product-name {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.product-price {
+  color: #007bff;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+/* Desktop view (more columns) */
+@media (min-width: 768px) {
+  .product-row {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+}
