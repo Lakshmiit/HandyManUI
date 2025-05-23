@@ -790,7 +790,7 @@ const fetchImageUrl = async (photoId) => {
                   <hr />
                   <div className="d-flex" style={{ cursor: "pointer" }} onClick={() => navigate(`/customerOrders/${userType}/${userId}`)}>
                     <OrdersNotificationBell className="mt-2" fontSize="medium" />
-                    <small className="mt-2">Orders</small>
+                    <small className="mt-2">My Orders</small>
                   </div>
                   <hr />
                   <div className="d-flex" style={{ cursor: "pointer" }} onClick={() => navigate(`/trackStatusNotifications/${userType}/${userId}`)}>
@@ -926,7 +926,7 @@ const fetchImageUrl = async (photoId) => {
   <div
     className="mobile-top-icons position-fixed start-0 end-0 bg-white border-bottom shadow-sm"
     style={{
-      top: '90px', 
+      top: '80px', 
       zIndex: 1050,
       height: '70px',
       padding: '10px 12px',

@@ -249,7 +249,7 @@ h4 {
 
 .header {
   width: 100%;
-  height: 100px !important;
+  height: 80px !important;
   background-color: white;
   padding: 1rem;
   position: fixed;
@@ -3159,6 +3159,7 @@ background: darkred;
 
 @media (max-width: 768px) {
   .logo-img {
+    height: 70px;
     width: 180px; /* medium for mobile */
   }
 }
