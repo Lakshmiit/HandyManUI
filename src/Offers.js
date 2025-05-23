@@ -86,7 +86,7 @@ useEffect(() => {
 
   fetchProductsAndAllImages();
 }, []);
-
+  
   const handleImageClick = (imageSrc) => {
     setZoomImage(imageSrc);
     setShowZoomModal(true);

@@ -191,13 +191,13 @@ const fetchApartmentData = useCallback(async () => {
     if (addressArray.length > 0) {
       const address = addressArray[0];
       setId(address.id);
-      setApartmentName(address.apartmentName || '');
-      setApartmentAddress(address.apartmentAddress || '');
-      setPinCode(address.pinCode || '');
-      setConsentPersonName(address.consentPersonName || '');
-      setMobileNumber(address.mobileNumber || '');
-      setNumberOfFlats(address.numberOfFlats || '');
-      setTotalAmount(address.totalAmount || 0);
+      setApartmentName(address.apartmentName);
+      setApartmentAddress(address.apartmentAddress);
+      setPinCode(address.pinCode);
+      setConsentPersonName(address.consentPersonName);
+      setMobileNumber(address.mobileNumber);
+      setNumberOfFlats(address.numberOfFlats);
+      setTotalAmount(address.totalAmount);
       setIsSubscription(address.isSubscription);
       setPaymentId(address.paymentId);
       setSubscriptionDate(address.subscriptionDate);
@@ -239,9 +239,7 @@ useEffect(() => {
 
   const handleFlatTotal = (e) => {
     const value = e.target.value;
-  
-    // Allow only digits
-    if (/^\d*$/.test(value)) {
+      if (/^\d*$/.test(value)) {
       const numFlats = parseInt(value, 10);
       setNumberOfFlats(value);
   
@@ -254,7 +252,6 @@ useEffect(() => {
   };
   
   const handleFileChange = (e) => {
-
     const files = Array.from(e.target.files);
     const validFiles = [];
     for (const file of files) {
@@ -266,7 +263,7 @@ useEffect(() => {
       }
       validFiles.push(file);
     }
-  
+
     if (validFiles.length + ticketPhotos.length > 5) {
       alert("You can upload up to 5 files.");
       return;
@@ -300,7 +297,6 @@ useEffect(() => {
     setLoading(false);
   };
 
-  // Convert the file to a byte array
   const getFileByteArray = (file) => {
     return new Promise((resolve) => {
       const reader = new FileReader();
@@ -311,7 +307,7 @@ useEffect(() => {
       reader.readAsArrayBuffer(file);
     });
   };
-  const phoneNumber = '7989328864';  // Phone number
+  const phoneNumber = '7989328864';  
   
   const uploadFile = async (byteArray, fileName, mimeType, file) => {
     try {
@@ -337,9 +333,7 @@ useEffect(() => {
 
   const handleApartmentTicket = async (e) => {
     e.preventDefault();
-  
-    // Ensure all fields are filled before submitting
-    if (
+      if (
       !formData.subject ||
       !formData.details ||
       !formData.category ||
@@ -349,7 +343,6 @@ useEffect(() => {
       window.alert('Please fill in all mandatory fields.');
       return;
     }
-  
     if (isSubmitting) return;
     setIsSubmitting(true);
 
@@ -391,7 +384,6 @@ useEffect(() => {
       throw new Error('Failed to create a ticket.');
     } 
 
-
     const data = await response.json(); 
     setTicketId(data.apartmentRaiseTicketId); 
     // Show alert message with the correct ticketId
@@ -407,15 +399,12 @@ useEffect(() => {
             headers: headers,
           });
           const data = await res.json();
-          // alert(data);
           setResponse(data);
         } catch (error) { 
-          // alert(error);
           console.error('Error sending message:', error);
         }
     // Redirect to CustomerProfilePage
      window.location.href = `/profilePage/${userType}/${userId}`;
-  
   } catch (error) {
     console.error('Error:', error);
     window.alert('Failed to create the ticket. Please try again later.');
@@ -442,7 +431,6 @@ useEffect(() => {
     alert("Pincode must be exactly 6 digits.");
     return;
   }
-
     const payload3 = {
       id: "string",
       userId: userId,
@@ -618,15 +606,12 @@ const isFormDisabled = isSubscription !== "Yes";
               </Button>
               <Button
                 variant={isSubscription === "No" && isRegisterDisabled ? "danger" : "primary"}
-                className={`m-1 text-white ${
-                  shouldBlink ? "blinking-button" : ""
-                }`}
+                className={`m-1 text-white ${ shouldBlink ? "blinking-button" : ""}`}
                 onClick={() => window.location.href = `https://handymanserviceproviders.com/ApartmentSubscription/${id}`}
                 disabled={!isRegisterDisabled || isSubscription === "Yes"}
               >
                 Subscription
               </Button>
-
               </div>
               {/* Modal */}
                     <Modal show={showModal} onHide={() => setShowModal(false)}>
@@ -636,7 +621,7 @@ const isFormDisabled = isSubscription !== "Yes";
                 <Modal.Body>
                   <Form>
                     <Form.Group className="mb-3">
-                      <Form.Label>Apartment Name</Form.Label>
+                      <Form.Label>Apartment Name <span className="req_star">*</span></Form.Label>
                       <Form.Control
                         type="text"
                         value={apartmentName}
@@ -647,7 +632,7 @@ const isFormDisabled = isSubscription !== "Yes";
                     </Form.Group>
                     
                     <Form.Group className="mb-3">
-                      <Form.Label>Apartment Address</Form.Label>
+                      <Form.Label>Apartment Address <span className="req_star">*</span></Form.Label>
                       <Form.Control
                         type="text"
                         value={apartmentAddress}
@@ -658,7 +643,7 @@ const isFormDisabled = isSubscription !== "Yes";
                     </Form.Group>
 
                     <Form.Group className="mb-3">
-                      <Form.Label>Pincode</Form.Label>
+                      <Form.Label>Pincode <span className="req_star">*</span></Form.Label>
                       <Form.Control
                         type="text"
                         value={pinCode}
@@ -674,7 +659,7 @@ const isFormDisabled = isSubscription !== "Yes";
                     </Form.Group>
 
                     <Form.Group className="mb-3">
-                      <Form.Label>Consent Person Name</Form.Label>
+                      <Form.Label>Consent Person Name <span className="req_star">*</span></Form.Label>
                       <Form.Control
                         type="text"
                         value={consentPersonName}
@@ -685,7 +670,7 @@ const isFormDisabled = isSubscription !== "Yes";
                     </Form.Group>
 
                     <Form.Group className="mb-3">
-                      <Form.Label>Mobile Number</Form.Label>
+                      <Form.Label>Mobile Number <span className="req_star">*</span></Form.Label>
                       <Form.Control
                         name="MobileNumber"
                         placeholder="Enter Mobile Number"
@@ -695,7 +680,7 @@ const isFormDisabled = isSubscription !== "Yes";
                       </Form.Group>
 
                       <Form.Group className="mb-3">
-                      <Form.Label>No Of Flats</Form.Label>
+                      <Form.Label>No Of Flats <span className="req_star">*</span></Form.Label>
                       <Form.Control
                         type="text"
                         placeholder="Enter Number Of Flats"
@@ -705,7 +690,7 @@ const isFormDisabled = isSubscription !== "Yes";
                       </Form.Group>
 
                       <Form.Group className="mb-3">
-                      <Form.Label>Total</Form.Label>
+                      <Form.Label>Total <span className="req_star">*</span></Form.Label>
                       <Form.Control
                         placeholder="Total"
                         value={total}
@@ -763,7 +748,7 @@ const isFormDisabled = isSubscription !== "Yes";
         <Row>
           <Col md={12}>
             <Form.Group>
-              <label>Subject</label>
+              <label>Subject <span className="req_star">*</span></label>
               <Form.Control
                 type="text"
                 name="subject"
@@ -779,7 +764,7 @@ const isFormDisabled = isSubscription !== "Yes";
 
         {/* Details */}
         <Form.Group>
-          <label>Details</label>
+          <label>Details <span className="req_star">*</span></label>
           <Form.Control
             as="textarea"
             name="details"
@@ -796,7 +781,7 @@ const isFormDisabled = isSubscription !== "Yes";
         <Row>
           <Col md={6}>
             <Form.Group>
-              <label>Category</label>
+              <label>Category <span className="req_star">*</span></label>
               <Form.Control
                 as="select"
                 name="category"
@@ -817,7 +802,7 @@ const isFormDisabled = isSubscription !== "Yes";
         <Row>
         <Col md={6}>
             <Form.Group>
-              <label>Assigned To</label>
+              <label>Assigned To <span className="req_star">*</span></label>
               <Form.Control
                 as="select"
                 name="assignedTo"
@@ -879,10 +864,11 @@ const isFormDisabled = isSubscription !== "Yes";
           <Button variant="success" type="submit" 
           onClick={handleApartmentTicket}
           disabled = {isSubmitting}>
- {isSubmitting ? 'Submitting...' : 'Get Quote'}          </Button>
+          {isSubmitting ? 'Submitting...' : 'Get Quote'}          
+          </Button>
         </div>
       </div>
-
+ 
     </div>
     <Footer /> 
 

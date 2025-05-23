@@ -2333,6 +2333,16 @@ max-width: none;
   }
 }
 
+.bottom-scrollbar-container {
+  overflow-y: hidden;
+}
+
+.bottom-scrollbar-container > div {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
 /* .category-card-wrapper {
   flex: 0 0 500%; 
   scroll-snap-align: center;

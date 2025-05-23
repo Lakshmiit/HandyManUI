@@ -688,7 +688,7 @@ const fetchImageUrl = async (photoId) => {
       style={{
         padding: "8px",
         borderRadius: "5px",
-        minHeight: "100vh", 
+        minHeight: "100vh",
       }}
     >
       {/* <Header /> */}
@@ -1056,7 +1056,10 @@ const fetchImageUrl = async (photoId) => {
    {error && <div className="text-danger">{error}</div>}
 </div>
  
-<h4>Top Deals For You!</h4>
+<h4 style={{ color: '#ff5722', fontFamily: 'Poppins, sans-serif', fontWeight: 700,fontSize: '24px', textTransform: 'uppercase',
+    letterSpacing: '1px', textAlign: 'center', marginTop: '20px', marginBottom: '16px'}}>
+   Top Deals For You!
+</h4>
       <div
   className="product-scroll-wrapper"
   ref={productScrollRef}
@@ -1213,49 +1216,7 @@ const fetchImageUrl = async (photoId) => {
             ))}
           </div>
           </>
-      ) : (
-  <div
-  className="bottom-scrollbar-container position-fixed bottom-0 start-0 end-0 bg-white border-top px-1 py-1 shadow"
-  style={{
-    zIndex: 1020,
-    height: '80px',
-  }}
->
-  <div className="d-flex overflow-auto flex-nowrap scroll-area justify-content-start align-items-center">
-    <a
-      href={`/profilePage/${userType}/${userId}`}
-      className="d-flex flex-column align-items-center justify-content-center text-decoration-none text-dark"
-      style={{ minWidth: '60px' }}
-    >
-      <HomeIcon sx={{ fontSize: 30 }} />
-      <small style={{ fontSize: "13px", fontFamily: 'Poppins', textAlign: 'center' }}>Home</small>
-    </a>
-
-    {menuList.map((menu, index) => (
-      <a
-        key={index}
-        href={menu.TargetUrl}
-        className="d-flex flex-column align-items-center justify-content-center text-decoration-none text-dark mx-3"
-        style={{ minWidth: '60px' }}
-      >
-        {React.cloneElement(menu.MenuIcon, { sx: { fontSize: 28 } })}
-        <small style={{ fontSize: "13px", fontFamily: 'Poppins', textAlign: 'center' }}>
-          {menu.MenuTitle}
-        </small>
-      </a>
-    ))}
-
-    <a
-      href="#myTicketsSection"
-      className="d-flex flex-column align-items-center justify-content-center text-decoration-none text-dark mx-3"
-      style={{ minWidth: '60px' }}
-    >
-      <ConfirmationNumberIcon sx={{ fontSize: 28 }} />
-      <small style={{ fontSize: "13px", fontFamily: "Poppins", textAlign: "center" }}>My Tickets</small>
-    </a>
-  </div>
-</div>
-)}
+      ) : null}
 
               <div id="myTicketsSection" className="ticket-container">
                 <div className="ticket-header">
@@ -1289,6 +1250,58 @@ const fetchImageUrl = async (photoId) => {
         </div>
         </div> 
         </div>
+        {isMobile ? (
+          <div
+        className="bottom-scrollbar-container position-fixed bottom-0 start-0 end-0 bg-white border-top px-1 py-1 shadow"
+        style={{
+          zIndex: 1020,
+          height: '80px',
+          overflowY: 'hidden',  
+        }}
+      >
+        <div
+          className="d-flex overflow-auto flex-nowrap scroll-area justify-content-start align-items-center h-100"
+          style={{
+            overflowX: 'auto', 
+            overflowY: 'hidden',
+            WebkitOverflowScrolling: 'touch',
+          }}
+        >
+          <a
+            href={`/profilePage/${userType}/${userId}`}
+            className="d-flex flex-column align-items-center justify-content-center text-decoration-none text-dark me-3"
+            style={{ minWidth: '60px', flex: '0 0 auto' }}
+          >
+            <HomeIcon sx={{ fontSize: 30 }} />
+            <small style={{ fontSize: "13px", fontFamily: 'Poppins', textAlign: 'center' }}>Home</small>
+          </a>
+
+          {menuList.map((menu, index) => (
+            <a
+              key={index}
+              href={menu.TargetUrl}
+              className="d-flex flex-column align-items-center justify-content-center text-decoration-none text-dark me-3"
+              style={{ minWidth: '60px', flex: '0 0 auto' }}
+            >
+              {React.cloneElement(menu.MenuIcon, { sx: { fontSize: 28 } })}
+              <small style={{ fontSize: "13px", fontFamily: 'Poppins', textAlign: 'center' }}>
+                {menu.MenuTitle}
+              </small>
+            </a>
+          ))}
+
+          <a
+            href="#myTicketsSection"
+            className="d-flex flex-column align-items-center justify-content-center text-decoration-none text-dark"
+            style={{ minWidth: '60px', flex: '0 0 auto' }}
+          >
+            <ConfirmationNumberIcon sx={{ fontSize: 28 }} />
+            <small style={{ fontSize: "13px", fontFamily: "Poppins", textAlign: "center" }}>My Tickets</small>
+          </a>
+        </div>
+      </div>
+        ) : null}
+        
         {/* Zoom Modal */}
         <Modal show={showZoomModal} onHide={() => setShowZoomModal(false)} centered>
                 <Modal.Body className="text-center position-relative">

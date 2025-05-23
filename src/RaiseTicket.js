@@ -68,7 +68,7 @@ const [shouldBlink,setShouldBlink] = useState(false);
         const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/${userId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch customer profile data');
-        }
+        } 
         const data = await response.json();
         console.log(data);
         const addresses = Array.isArray(data) ? data : [data];

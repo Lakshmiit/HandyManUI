@@ -112,7 +112,7 @@ const AartmentRaiseTicketNotification = () => {
  const indexOfLastTicket = currentPage * rowsPerPage;
  const indexOfFirstTicket = indexOfLastTicket - rowsPerPage;
  const currentRaiseTicket = filteredData.slice(indexOfFirstTicket, indexOfLastTicket);
-
+ 
  if (loading) {
    return <div>Loading...</div>; // Show loading message while data is fetching
  }
