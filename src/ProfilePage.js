@@ -33,7 +33,7 @@ import ElectricalServicesIcon from '@mui/icons-material/ElectricalServices';
 import IronIcon from '@mui/icons-material/Iron';
 import PlumbingIcon from '@mui/icons-material/Plumbing';
 import HardwareIcon from '@mui/icons-material/Hardware';
-import HomeIcon from '@mui/icons-material/Home';
+// import HomeIcon from '@mui/icons-material/Home';
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import MenuIcon from '@mui/icons-material/Menu';
 // import { Carousel } from 'react-bootstrap';
@@ -689,7 +689,7 @@ const fetchImageUrl = async (photoId) => {
         padding: "8px",
         borderRadius: "5px",
         minHeight: "100vh",
-        paddingBottom: "100px"
+        paddingTop: "90px"
       }}
     >
       {/* <Header /> */}
@@ -771,7 +771,7 @@ const fetchImageUrl = async (photoId) => {
                   top: '60px', 
                   left: '10px', 
                   backgroundColor: '#fff',
-                  zIndex: 1050,
+                  zIndex: 1200,
                   borderRadius: '8px',
                   boxShadow: '0px 4px 10px rgba(0,0,0,0.2)',
                   padding: '5px',
@@ -915,12 +915,63 @@ const fetchImageUrl = async (photoId) => {
          </div> 
     
           {isMobile && (
-            <div>
-            <div className="text-primary fw-bold cust-fullname fs-5 mt-2">Welcome <small className="text-dark" style={{fontSize: "18px", fontFamily: 'Poppins, sans-serif'}}>{profile.fullName}{" "}</small></div>
-            {/* <div className="fw-bold fs-5">Lakshmi Sai Service Providers</div>
-            <div className="text-warning fs-4">{profile.userProfileType}</div> */}
-             </div>
+            <div className="text-primary fw-bold cust-fullname fs-5 ">
+              Welcome <small className="text-dark" style={{ fontSize: "18px", fontFamily: 'Poppins, sans-serif' }}>
+                {profile.fullName}
+              </small>
+            </div>
           )}
+
+          {isMobile && (
+  <div
+    className="mobile-top-icons position-fixed start-0 end-0 bg-white border-bottom shadow-sm"
+    style={{
+      top: '90px', 
+      zIndex: 1050,
+      height: '70px',
+      padding: '10px 12px',
+      overflowX: 'auto',
+      overflowY: 'hidden',
+      whiteSpace: 'nowrap',
+      WebkitOverflowScrolling: 'touch',
+    }}
+  >
+    <div className="d-flex flex-nowrap align-items-center">
+      {/* <a
+        href={`/profilePage/${userType}/${userId}`}
+        className="d-flex flex-column align-items-center justify-content-center text-decoration-none text-dark me-3"
+        style={{ minWidth: '60px', flex: '0 0 auto' }}
+      >
+        <HomeIcon sx={{ fontSize: 30 }} />
+        <small style={{ fontSize: "13px", fontFamily: 'Poppins', textAlign: 'center' }}>Home</small>
+      </a> */}
+
+      {menuList.map((menu, index) => (
+        <a
+          key={index}
+          href={menu.TargetUrl}
+          className="d-flex flex-column align-items-center justify-content-center text-decoration-none text-dark me-3"
+          style={{ minWidth: '60px', flex: '0 0 auto' }}
+        >
+          {React.cloneElement(menu.MenuIcon, { sx: { fontSize: 28 } })}
+          <small style={{ fontSize: "13px", fontFamily: 'Poppins', textAlign: 'center' }}>
+            {menu.MenuTitle}
+          </small>
+        </a>
+      ))}
+
+      <a
+        href="#myTicketsSection"
+        className="d-flex flex-column align-items-center justify-content-center m-1 text-decoration-none text-dark"
+        style={{ minWidth: '60px', flex: '0 0 auto' }}
+      >
+        <ConfirmationNumberIcon sx={{ fontSize: 28 }} />
+        <small style={{ fontSize: "13px", fontFamily: "Poppins", textAlign: "center" }}>My Tickets</small>
+      </a>
+    </div>
+  </div>
+)}
+
         <div className="col-md-9 bg-white">
           <div className="position-relative flex-grow-1 m-1">
         <input
@@ -1251,7 +1302,7 @@ const fetchImageUrl = async (photoId) => {
         </div>
         </div> 
         </div>
-        {isMobile ? (
+        {/* {isMobile ? (
           <div
         className="bottom-scrollbar-container position-fixed bottom-0 start-0 end-0 bg-white border-top px-1 py-1 shadow"
         style={{
@@ -1301,7 +1352,7 @@ const fetchImageUrl = async (photoId) => {
           </a>
         </div>
       </div>
-        ) : null}
+        ) : null} */}
         
         {/* Zoom Modal */}
         <Modal show={showZoomModal} onHide={() => setShowZoomModal(false)} centered>
