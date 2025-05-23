@@ -915,7 +915,7 @@ const fetchImageUrl = async (photoId) => {
     
           {isMobile && (
             <div>
-            <div className="text-primary fw-bold cust-fullname fs-5 mt-1">Welcome <br /> <strong className="text-dark">{profile.fullName}{" "}</strong></div>
+            <div className="text-primary fw-bold cust-fullname fs-5 mt-2">Welcome <small className="text-dark" style={{fontSize: "18px", fontFamily: 'Poppins, sans-serif'}}>{profile.fullName}{" "}</small></div>
             {/* <div className="fw-bold fs-5">Lakshmi Sai Service Providers</div>
             <div className="text-warning fs-4">{profile.userProfileType}</div> */}
              </div>
@@ -1214,7 +1214,13 @@ const fetchImageUrl = async (photoId) => {
           </div>
           </>
       ) : (
-  <div className="bottom-scrollbar-container position-fixed bottom-0 start-0 end-0 bg-white border-top px-1 py-1 shadow" style={{ zIndex: 1020 }}>
+  <div
+  className="bottom-scrollbar-container position-fixed bottom-0 start-0 end-0 bg-white border-top px-1 py-1 shadow"
+  style={{
+    zIndex: 1020,
+    height: '80px',
+  }}
+>
   <div className="d-flex overflow-auto flex-nowrap scroll-area justify-content-start align-items-center">
     <a
       href={`/profilePage/${userType}/${userId}`}
@@ -1222,7 +1228,7 @@ const fetchImageUrl = async (photoId) => {
       style={{ minWidth: '60px' }}
     >
       <HomeIcon sx={{ fontSize: 30 }} />
-      <small style={{ fontSize: "15px", fontFamily: 'Poppins', textAlign: 'center' }}>Home</small>
+      <small style={{ fontSize: "13px", fontFamily: 'Poppins', textAlign: 'center' }}>Home</small>
     </a>
 
     {menuList.map((menu, index) => (
@@ -1249,7 +1255,6 @@ const fetchImageUrl = async (photoId) => {
     </a>
   </div>
 </div>
-
 )}
 
               <div id="myTicketsSection" className="ticket-container">
