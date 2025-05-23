@@ -689,6 +689,7 @@ const fetchImageUrl = async (photoId) => {
         padding: "8px",
         borderRadius: "5px",
         minHeight: "100vh",
+        paddingBottom: "100px"
       }}
     >
       {/* <Header /> */}
