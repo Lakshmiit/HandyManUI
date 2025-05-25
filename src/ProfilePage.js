@@ -160,20 +160,21 @@ const ProfilePage = () => {
     const [error, setError] = useState('');
     const [products, setProducts] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
-    
+    const [selectedProduct, setSelectedProduct] = useState(null);
+
 useEffect(() => {
   console.log(showMenu, products, selectedCategory);
 }, [showMenu, products, selectedCategory]);
 
-const scroll = (direction, type) => {
-  const scrollRef = productScrollRef.current;
-  const cardWidth = scrollRef.querySelector('.product-card-wrapper')?.offsetWidth || 320;
-  const scrollAmount = direction === 'left' ? -cardWidth : cardWidth;
+// const scroll = (direction, type) => {
+//   const scrollRef = productScrollRef.current;
+//   const cardWidth = scrollRef.querySelector('.product-card-wrapper')?.offsetWidth || 320;
+//   const scrollAmount = direction === 'left' ? -cardWidth : cardWidth;
 
-  if (scrollRef) {
-    scrollRef.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-  }
-};
+//   if (scrollRef) {
+//     scrollRef.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+//   }
+// };
 
 useEffect(() => {
   bottomRefs.current = {};
@@ -686,10 +687,10 @@ const fetchImageUrl = async (photoId) => {
     <div
       className="container"
       style={{
-        padding: "8px",
+        padding: isMobile ? "8px" : "0px",
         borderRadius: "5px",
         minHeight: "100vh",
-        paddingTop: "90px"
+        paddingTop:isMobile ? "70px" : "0px"
       }}
     >
       {/* <Header /> */}
@@ -703,8 +704,7 @@ const fetchImageUrl = async (photoId) => {
                    <div className="profile-container"> 
              <div className="profile-info">
                <div className="webprofile-section">
-               <div className="text-primary fw-bold cust-name">Welcome <br /> 
-               <div className="text-dark">{profile.fullName}{" "}</div></div>
+               <div className="text-primary fw-bold cust-name">Welcome  <small className="text-dark" style={{fontFamily: "Poppins, sans-serif"}}>{profile.fullName}{" "}</small></div>
                    <div className="fw-bold fs-4">Lakshmi Sai Service Providers</div>
                    <div className="text-warning fs-3 mt-0">{profile.userProfileType}</div>
                    <div className="webprofile-img-wrapper">
@@ -768,43 +768,54 @@ const fetchImageUrl = async (photoId) => {
                 className="floating-profile-menu"
                 style={{
                   position: 'fixed',
-                  top: '60px', 
-                  left: '10px', 
+                  top: '60px',
+                  left: '10px',
                   backgroundColor: '#fff',
                   zIndex: 1200,
                   borderRadius: '8px',
                   boxShadow: '0px 4px 10px rgba(0,0,0,0.2)',
-                  padding: '5px',
+                  padding: '10px',
                   width: '180px'
                 }}
               >
                 <div className="profile-info">
                   <div className="fw-bold">Name</div>
-                  <p>{profile.fullName}</p>
-                  <hr />
+                  <p className="mb-2">{profile.fullName}</p>
+                  <hr style={{ margin: '8px 0' }} />
+                  
                   <div className="fw-bold">Mobile</div>
-                  <p>{profile.mobileNumber}</p>
-                  <hr />
+                  <p className="mb-2">{profile.mobileNumber}</p>
+                  <hr style={{ margin: '8px 0' }} />
+                  
                   <div className="fw-bold">Address</div>
-                  <p>{profile.address}</p>
-                  <hr />
-                  <div className="d-flex" style={{ cursor: "pointer" }} onClick={() => navigate(`/customerOrders/${userType}/${userId}`)}>
-                    <OrdersNotificationBell className="mt-2" fontSize="medium" />
-                    <small className="mt-2">My Orders</small>
-                  </div>
-                  <hr />
-                  <div className="d-flex" style={{ cursor: "pointer" }} onClick={() => navigate(`/trackStatusNotifications/${userType}/${userId}`)}>
-                    <TrackStatusNotificationBell className="mt-2" fontSize="medium" />
-                    <small className="mt-2">Track Ticket</small>
-                  </div>
-                  <hr />
-                  <div className="logout-btn" onClick={() => window.location.href = "https://handymanserviceproviders.com/Logout"}>
-                    <LogoutIcon />
+                  <p className="mb-2">{profile.address}</p>
+                  <hr style={{ margin: '8px 0' }} />
+
+                  <div className="d-flex align-items-start" style={{ cursor: "pointer" }} onClick={() => navigate(`/customerOrders/${userType}/${userId}`)}>
+                      <OrdersNotificationBell sx={{ fontSize: 24, marginRight: '8px' }} />
+                      <small style={{ fontSize: "13px", fontFamily: "Poppins", lineHeight: "28px" }}>My Orders</small>
+                    </div>
+                    <hr style={{ margin: '8px 0' }} />
+
+                    <div className="d-flex align-items-start" style={{ cursor: "pointer" }} onClick={() => navigate(`/trackStatusNotifications/${userType}/${userId}`)}>
+                      <TrackStatusNotificationBell sx={{ fontSize: 24, marginRight: '8px' }} />
+                      <small style={{ fontSize: "13px", fontFamily: "Poppins", lineHeight: "28px" }}>Track Ticket</small>
+                    </div>
+                    <hr style={{ margin: '8px 0' }} />
+
+                    <div className="d-flex align-items-start" style={{ cursor: "pointer" }} onClick={() => document.getElementById('myTicketsSection')?.scrollIntoView({ behavior: 'smooth' })}>
+                      <ConfirmationNumberIcon sx={{ fontSize: 24, marginRight: '8px' }} />
+                      <small style={{ fontSize: "13px", fontFamily: "Poppins", lineHeight: "28px" }}>My Tickets</small>
+                    </div>
+                    <hr style={{ margin: '8px 0' }} />
+                  <div className="d-flex align-items-center logout-btn" style={{ cursor: 'pointer' }} onClick={() => window.location.href = "https://handymanserviceproviders.com/Logout"}>
+                    <LogoutIcon className="me-2" />
                     <span>Logout</span>
                   </div>
                 </div>
               </div>
             )}
+
           {/* Wrap profile-card and profile-info inside a parent div */}
           {/* <div className="row">
  <div className="col-md-3">
@@ -930,13 +941,10 @@ const fetchImageUrl = async (photoId) => {
       zIndex: 1050,
       height: '70px',
       padding: '10px 12px',
-      overflowX: 'auto',
       overflowY: 'hidden',
-      whiteSpace: 'nowrap',
-      WebkitOverflowScrolling: 'touch',
     }}
   >
-    <div className="d-flex flex-nowrap align-items-center">
+    <div className="d-flex flex-wrap justify-content-around align-items-center">
       {/* <a
         href={`/profilePage/${userType}/${userId}`}
         className="d-flex flex-column align-items-center justify-content-center text-decoration-none text-dark me-3"
@@ -945,35 +953,31 @@ const fetchImageUrl = async (photoId) => {
         <HomeIcon sx={{ fontSize: 30 }} />
         <small style={{ fontSize: "13px", fontFamily: 'Poppins', textAlign: 'center' }}>Home</small>
       </a> */}
-
       {menuList.map((menu, index) => (
         <a
           key={index}
           href={menu.TargetUrl}
-          className="d-flex flex-column align-items-center justify-content-center text-decoration-none text-dark me-3"
-          style={{ minWidth: '60px', flex: '0 0 auto' }}
+          className="d-flex flex-column align-items-center justify-content-center text-decoration-none text-dark ms-1"
+          style={{ minWidth: '10px', flex: '0 0 auto' }}  
         >
           {React.cloneElement(menu.MenuIcon, { sx: { fontSize: 28 } })}
-          <small style={{ fontSize: "13px", fontFamily: 'Poppins', textAlign: 'center' }}>
+          <small style={{
+            fontSize: "12px",
+            fontFamily: 'Poppins',
+            textAlign: 'center',
+            // wordBreak: 'break-word',    
+            lineHeight: '16px'
+          }}>
             {menu.MenuTitle}
           </small>
         </a>
       ))}
-
-      <a
-        href="#myTicketsSection"
-        className="d-flex flex-column align-items-center justify-content-center m-1 text-decoration-none text-dark"
-        style={{ minWidth: '60px', flex: '0 0 auto' }}
-      >
-        <ConfirmationNumberIcon sx={{ fontSize: 28 }} />
-        <small style={{ fontSize: "13px", fontFamily: "Poppins", textAlign: "center" }}>My Tickets</small>
-      </a>
     </div>
   </div>
 )}
 
         <div className="col-md-9 bg-white">
-          <div className="position-relative flex-grow-1 m-1">
+          <div className="position-relative flex-grow-1">
         <input
           type="text"
           className="form-control w-60 m-2 ps-5"
@@ -1135,16 +1139,7 @@ const fetchImageUrl = async (photoId) => {
             <div
           key={product.id}
           className="product-card"
-          onClick={() => {
-            const targetRef = bottomRefs.current[product.id];
-            if (targetRef && targetRef.current) {
-              targetRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              targetRef.current.classList.add('highlight');
-              setTimeout(() => {
-                targetRef.current.classList.remove('highlight');
-              }, 2000);
-            }
-          }}
+         onClick={() => setSelectedProduct(product)}
           style={{ cursor: 'pointer' }}   
         >
           {loadingStatus[product.id] ? (
@@ -1173,80 +1168,62 @@ const fetchImageUrl = async (photoId) => {
   &lt;
 </button> */}
 
-<div className="card-scroll-container" ref={productScrollRef}>
-          {productData &&
-            productData
-              .filter((product) => {
-                const productName = product.productName?.toLowerCase().trim();
-                const query = searchQuery.toLowerCase().trim();
-                const normalize = (str) => (str.endsWith('s') ? str.slice(0, -1) : str);
-                return productName.includes(query) || normalize(productName).includes(normalize(query));
-              })
-              .map((product) => {
-                const discountedPrice =
-                  product.rate && product.discount
-                    ? (product.rate - (product.rate * product.discount) / 100).toFixed(0)
-                    : product.rate;
-
-                return (
-                  <div key={product.id} className="product-card-wrapper" ref={bottomRefs.current[product.id]}>
-                    <div className="custom-card" >
-                      <div className="d-flex">
-                        <div style={{ flex: '0 0 55%' }}>
-  {loadingStatus[product.id] ? (
-    <div className="d-flex justify-content-center align-items-center" style={{ height: '250px', background: '#f8f9fa' }}>
-      <div className="spinner-border text-secondary" role="status">
-        <span className="visually-hidden">Loading...</span>
+{selectedProduct && (
+  <div className="custom-modal-backdrop" onClick={() => setSelectedProduct(null)}>
+    <div className="custom-modal-content" onClick={(e) => e.stopPropagation()}>
+      <button className="close-button" onClick={() => setSelectedProduct(null)}>×</button>
+      <div className="custom-card">
+        <div className="d-flex">
+          <div style={{ flex: '0 0 55%' }}>
+            {loadingStatus[selectedProduct.id] ? (
+              <div className="d-flex justify-content-center align-items-center" style={{ height: '250px', background: '#f8f9fa' }}>
+                <div className="spinner-border text-secondary" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </div>
+              </div>
+            ) : imageUrls[selectedProduct.id]?.length > 0 ? (
+              <Carousel>
+                {imageUrls[selectedProduct.id].map((img, index) => (
+                  <Carousel.Item key={index}>
+                    <img
+                      src={`data:image/jpeg;base64,${img.imageData}`}
+                      className="card-img-top zoomable-image"
+                      style={{ height: '250px', objectFit: 'cover' }}
+                      alt={`product-image-${index}`}
+                      onClick={() => handleImageClick(`data:image/jpeg;base64,${img.imageData}`)}
+                    />
+                  </Carousel.Item>
+                ))}
+              </Carousel>
+            ) : (
+              <div className="d-flex justify-content-center align-items-center" style={{ height: '250px', background: '#f8f9fa' }}>
+                No Image
+              </div>
+            )}
+          </div>
+          <div>
+            <h6 className="mb-1 fw-bold fs-6" style={{ fontFamily: "Rubik" }}>{selectedProduct.productName.toUpperCase()}</h6>
+            <div className="small text-primary fw-bold">Rs {(selectedProduct.rate - (selectedProduct.rate * selectedProduct.discount) / 100).toFixed(0)} /-</div>
+            <div className="small text-muted fw-bold" style={{ textDecoration: 'line-through' }}>MRP: Rs {selectedProduct.rate}</div>
+            <div className="blinking-row small text-danger fw-bold">Discount: {selectedProduct.discount}%</div>
+            <div className="blinking-text small text-success fw-bold m-1 fs-6" style={{ fontFamily: "Italianno, cursive" }}>Free Delivery & Installation</div>
+            <button
+              className="buy-now-btn"
+              onClick={() => navigate(`/offersBuyProduct/${userType}/${userId}/${selectedProduct.id}`)}
+            >
+              Buy Now
+            </button>
+          </div>
+        </div>
       </div>
     </div>
-  ) : imageUrls[product.id]?.length > 0 ? (
-    <Carousel>
-      {imageUrls[product.id].map((img, index) => (
-        <Carousel.Item key={index}>
-          <img
-            src={`data:image/jpeg;base64,${img.imageData}`}
-            className="card-img-top zoomable-image"
-            style={{ height: '250px', objectFit: 'cover', cursor: 'pointer' }}
-            alt={`product-image-${index}`}
-            onClick={() => handleImageClick(`data:image/jpeg;base64,${img.imageData}`)}
-          />
-        </Carousel.Item>
-      ))}
-    </Carousel>
-  ) : (
-    <div className="d-flex justify-content-center align-items-center" style={{ height: '250px', background: '#f8f9fa' }}>
-      No Image
-    </div>
-  )}
-</div>
-                        <div>
-                          <h6 className="mb-1 fw-bold fs-6" style={{fontFamily: "Rubik"}}>{product.productName.toUpperCase()}</h6>
-                          <div className="small text-primary fw-bold">Rs {discountedPrice} /-</div>
-                          <div className="small text-muted fw-bold" style={{ textDecoration: 'line-through' }}>
-                            MRP: Rs {product.rate}
-                          </div>
-                          <div className="blinking-row small text-danger fw-bold">Discount: {product.discount}%</div>
-                          <div className="blinking-text small text-success fw-bold m-1 fs-6" style={{fontFamily: "Italianno, cursive"}}>Free Delivery & Installation</div>
-                          <button
-                            className="buy-now-btn" 
-                            onClick={() => {
-                              navigate(`/offersBuyProduct/${userType}/${userId}/${product.id}`);
-                            }}
-                          >
-                            Buy Now
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-        </div>
+  </div>
+)}
 
-        <div className="text-end">
+        {/* <div className="text-end">
         <button className="btn text-primary" onClick={() => scroll('left', 'product')}>Prev</button>
         <button className="btn text-primary" onClick={() => scroll('right', 'product')}>Next</button>
-      </div>
+      </div> */}
 
 
       {/* </div> */}

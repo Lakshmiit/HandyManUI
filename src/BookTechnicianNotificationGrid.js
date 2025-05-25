@@ -256,11 +256,9 @@ const BookTechnicianNotification = () => {
           <div className="mobile-ticket-grid">
   {currentBookTechnician.map((technician, index) => (
     <div key={index} className="ticket-card">
-      <div className="ticket-header">
+      <div className="ticket-body">
       <strong>Customer ID:</strong> {technician.customerId} <br />
       <strong>Ticket ID:</strong> {technician.bookTechnicianId}
-      </div>
-      <div className="ticket-body">
         <p><strong>Category:</strong> {technician.category}</p>
         <p><strong>Description:</strong> {technician.jobDescription}</p>
         {/* <p><strong>Status:</strong> {technician.status}</p> */}

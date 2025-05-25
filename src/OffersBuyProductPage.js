@@ -1,6 +1,5 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect, useCallback} from "react";
 import "./App.css";
-// import { v4 as uuidv4 } from 'uuid'; 
 import Sidebar from './Sidebar';
 import Header from './Header.js';
 import Footer from './Footer.js';
@@ -8,8 +7,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useParams, useNavigate } from "react-router-dom";
 import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import ViewOffersBuyProductPage from "./ViewOffersBuyProductPage.js";
-import { Button, Form, Modal } from 'react-bootstrap'; // Import Bootstrap components for modal
-// import axios from 'axios';
+import { Button, Form, Modal } from 'react-bootstrap'; 
 
 const OffersBuyProduct = () => { 
   const navigate = useNavigate();
@@ -25,39 +23,23 @@ const OffersBuyProduct = () => {
   const [productCatalogue, setProductCatalogue] = useState("");
   const [chooseColor, setChooseColor] = useState([]);
   const [selectedColor, setSelectedColor] = useState("");
-  // const [colorInput, setColorInput] = useState("");
   const [requiredQuality, setRequiredQuality] = useState("");
   const [rate, setRate] = useState("");
   const [discount, setDiscount] = useState("");
-  // const [priceAfterDiscount, setPriceAfterDiscount] = useState("");
   const [productName, setProductName] = useState("");
-  // const [showSecondaryAddresses, setShowSecondaryAddresses] = useState(false);
   const [newAddress, setNewAddress] = useState('');
   const [addresses, setAddresses] = useState([]);
-  // const [addressType, setAddressType] = useState('');
-  // const [state, setState] = useState('');
-  // const [district, setDistrict] = useState('');
-  // const [pincode, setPincode] = useState('');
   const [fullName, setFullName] = useState('');
   const [showModal, setShowModal] = useState(false);
-  // const [productSuggestions, setProductSuggestions] = useState([]);
-  // const [filteredSuggestions, setFilteredSuggestions] = useState([]);
-  // const [showDropdown, setShowDropdown] = useState(false);
-  // const [allProducts, setAllProducts] = useState([]);
   const [quantityError, setQuantityError] = useState("");
   const [checkError, setCheckError] = useState("");
   const [isChecked, setIsChecked] = useState(false);
   const [showModals, setShowModals] = useState(false);
   const [colorError, setColorError] = useState("");
-  // const [error, setError] = useState("");
   const [productOptions, setProductOptions] = useState([]);
-  // const [selectedProduct, setSelectedProduct] = useState({});
-  // const [id, setId] = useState("");
   const { userId } = useParams(); 
-  // const location = useLocation();
   const [showProductModal, setShowProductModal] = useState(false);
   const [mobileNumber, setMobileNumber] = useState('');
-    // const [firstName, setFirstName] = useState('');
     const [zipCode, setZipCode] = useState('');
     const [guestCustomerId, setGuestCustomerId] = useState('');
     const [isEditing, setIsEditing] = useState(false);
@@ -68,86 +50,13 @@ const OffersBuyProduct = () => {
   address: '',
   zipCode: '',
   });
-  // const [emailAddress, setEmailAddress] = useState("");
+  const [shouldBlink,setShouldBlink] = useState(false);
   
   useEffect(() => {
-    console.log(loading, productOptions, editingAddressId);
-  }, [loading, productOptions, editingAddressId]);
-
- // Check if there's state passed from ViewProduct page
-//  useEffect(() => {
-//   const storedState = sessionStorage.getItem("buyProductState");
-//   if (location.state) {
-//     const {
-//       category,
-//       productName,
-//       catalogue, 
-//       productSize,
-//       color,
-//       rate,
-//       discount, 
-//       // afterDiscount,
-//       requiredQuality,
-//     } = location.state;
-//     setCategory(category);
-//     setProductName(productName);
-//     setProductCatalogue(catalogue);
-//     setProductSize(productSize);
-//     setChooseColor(color);
-//     setRate(rate);
-//     setDiscount(discount);
-//     // setAfterDiscount(afterDiscount);
-//     setRequiredQuality(requiredQuality);
-//     // setId(id);
-
-//     sessionStorage.setItem("buyProductState", JSON.stringify(location.state));
-//   } else if (storedState) {
-//     const parsedState = JSON.parse(storedState);
-//     setCategory(parsedState.category);
-//     setProductName(parsedState.productName);
-//     setProductCatalogue(parsedState.catalogue);
-//     setProductSize(parsedState.productSize);
-//     setChooseColor(parsedState.color);
-//     setRate(parsedState.rate);
-//     setDiscount(parsedState.discount);
-//     // setAfterDiscount(afterDiscount);
-//     setRequiredQuality(parsedState.requiredQuality);
-//     // setId(parsedState.id);
-//   }
-// }, [location.state]);
-
-// const handleViewProduct = () => {
-//   const hasViewed = sessionStorage.getItem("hasViewedProduct");
-
-//   if (!productName.trim()) {
-//     setError("Please select a product name!");
-//     return;
-//   }
-
-//   setError("");
-//   sessionStorage.setItem("hasViewedProduct", "true");
-
-//   navigate(`/buyproduct-view/${id}/${userId}/${userType}`, {
-//     state: {
-//       category,
-//       productName,
-//       productCatalogue,
-//       productSize,
-//       color,
-//       rate,
-//       discount,
-//       requiredQuality,
-//     },
-//   });
-// };
-
-
-useEffect(() => {
-  console.log(buyProductId);
-}, [buyProductId]);
-  // Fetch customer profile data
-  useEffect(() => {
-    const fetchProfileType = async () => {
+    console.log(loading, productOptions, editingAddressId, buyProductId);
+  }, [loading, productOptions, editingAddressId, buyProductId]);
+  
+    const fetchProfileType = useCallback(async () => {
       try {
         const API_URL = "https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/";
         const response = await fetch(`${API_URL}${userId}`);
@@ -176,12 +85,11 @@ useEffect(() => {
       } catch (error) {
         console.error("Error fetching customer data:", error);
       }
-    };
-
-    if (userId) {
-      fetchProfileType();
-    }
   }, [userId]);
+
+  useEffect(() => {
+    fetchProfileType();
+  }, [fetchProfileType]);
 
   const validRate = Number(rate) || 0;
   const validDiscount = Number(discount) || 0;
@@ -197,7 +105,7 @@ useEffect(() => {
       }
 
     if (!requiredQuality) {
-      setQuantityError("Please Enter ZRequired Quantity Field!");
+      setQuantityError("Please Enter Required Quantity Field!");
       return;
     }
 
@@ -205,7 +113,6 @@ useEffect(() => {
       setCheckError("You must accept the terms and conditions before submitting.");
       return;
     }
-
   
     const primaryAddress = addresses.find((addr) => addr.type === "primary");
     // const state = primaryAddress?.state || "";
@@ -309,76 +216,6 @@ useEffect(() => {
     }
   };
 
-
-  // const handleAddToCart = async (e) => {
-  //   e.preventDefault();
-   
-  //   const primaryAddress = addresses.find((addr) => addr.type === "primary");
-  //   const state = primaryAddress?.state || "";
-  //   const district = primaryAddress?.district || "";
-  //   const pincode = primaryAddress?.zipCode || "";
-  //   const mobileNumber = primaryAddress?.mobileNumber || "";
-  
-  //   const payload = {
-  //     BuyProductId:"string",
-  //     id: "string",
-  //     date: new Date(),
-  //     Address: primaryAddress?.address || "",
-  //     CustomerPhoneNumber: mobileNumber,
-  //     category,
-  //     status: "Draft",
-  //     productName,
-  //     ProductCatalogue: productCatalogue,
-  //     productSize,
-  //     rate: rate.toString(),
-  //     discount: discount.toString(),
-  //     afterDiscountPrice: afterDiscountPrice.toString(),
-  //     color: color,
-  //     selectedColors: colors,
-  //     requiredQuantity: requiredQuality.toString(),
-  //     totalAmount: totalAmount.toString(),
-  //     AssignedTo: "Customer Care",
-  //     DeliveryCharges: "",
-  //     ServiceCharges: "",
-  //     TotalPaymentAmount: "",
-  //     AddressType: primaryAddress ? "primary" : "secondary",
-  //     State: state,
-  //     District: district,
-  //     ZipCode: pincode,
-  //     CustomerId: userId,
-  //     CustomerName: fullName,
-  //     RequestedBy: userId,
-  //     PaymentMode:"",
-  //     UTRTransactionNumber:"",
-  //     TechnicianConfirmationCode:"",
-  //     DeliveryDate:"",
-  //     TechnicianDetils:"",
-  //     ProductView: "Draft",
-  //     InvoiceDetails:"",
-  //     UploadInvoice: [],
-  //     WarrantyPeriod: "",
-  //   };
-  
-  //   try {
-  //     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/BuyProductUpload`,{
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify(payload),
-  //     });
-  //     if (!response.ok) {
-  //      throw new Error("Failed to submit quotation.");
-  //     }
-  //     const buyProductData = await response.json();
-  //     setBuyProductId(buyProductData.buyProductId);
-  //     alert(`Add to Cart Successfully`);
-  //     // navigate(`/buyProductPaymentPage/${buyProductData.buyProductId}/${userType}`);
-  //   } catch (error) {
-  //     console.error("Error submitting quotation:", error);
-  //     window.alert('Failed to submitting quotation. Please try again later.');    }
-  // };
-  
   // Detect screen size for responsiveness
 useEffect(() => {
   const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -388,110 +225,9 @@ useEffect(() => {
   return () => window.removeEventListener('resize', handleResize);
 }, []);
 
-
-  // const handleAddToCart = () => {
-  //   alert("Item added to cart!");
-  // };
-
    const handleSubmit = (e) => {
      e.preventDefault();
    };
-
-  // const states = ['Andhra Pradesh', 'Telangana'];
-  // const districts = {
-  //   'Andhra Pradesh': ['Visakhapatnam', 'Vijayawada', 'Guntur'],
-  //   'Telangana': ['Hyderabad', 'Warangal', 'Khammam'],
-  // };
-
-
-  // // Handle adding a new address
-  // const handleAddAddress = () => {
-  //   if (
-  //     newAddress.trim() === '' ||
-  //     addressType.trim() === '' ||
-  //     state.trim() === '' ||
-  //     district.trim() === '' ||
-  //     pincode.trim() === ''
-  //   ) {
-  //     alert('Please fill in all the fields.');
-  //     return;
-  //   }
-
-  //   if (addresses.length >= 4) {
-  //     alert('You can only add up to 4 addresses.');
-  //     return;
-  //   }
-
-  //   const newAddr = {
-  //     id: uuidv4(),
-  //     type: addressType,
-  //     address: newAddress,
-  //     state,
-  //     district,
-  //     pincode,
-  //   };
-
-  //   setAddresses((prevAddresses) => [...prevAddresses, newAddr]);
-  //   resetAddressForm();
-  //   setShowModal(false);
-  // };
-
-
-  // const handleAddAddress = () => {
-  //   if (
-  //     newAddress.trim() === '' ||
-  //     addressType.trim() === '' ||
-  //     state.trim() === '' ||
-  //     district.trim() === '' ||
-  //     pincode.trim() === ''
-  //   ) {
-  //     alert('Please fill in all the fields.');
-  //     return;
-  //   }
-  
-  //   if (addresses.length >= 4) {
-  //     alert('You can only add up to 4 addresses.');
-  //     return;
-  //   }
-  
-  //   const newAddr = {
-  //     id: uuidv4(),
-  //     type: addressType,
-  //     address: newAddress,
-  //     state,
-  //     district,
-  //     zipCode: pincode, // Corrected field name for consistency
-  //   };
-  
-  //   console.log('New Address:', newAddr); // Debugging
-  
-  //   setAddresses((prevAddresses) => [...prevAddresses, newAddr]);
-  //   resetAddressForm();
-  //   setShowModal(false);
-  // };
-  
-
-  // // Reset address form fields
-  // const resetAddressForm = () => {
-  //   setNewAddress('');
-  //   setAddressType('');
-  //   setState('');
-  //   setDistrict('');
-  //   setPincode('');
-  // };
-
-  // // Handle secondary address selection
-  // const handleSecondaryAddressSelect = (id) => {
-  //   const updatedAddresses = addresses.map((address) =>
-  //     address.id === id
-  //       ? { ...address, type: 'primary' }
-  //       : address.type === 'primary'
-  //       ? { ...address, type: 'secondary' }
-  //       : address
-  //   );
-  //   setAddresses(updatedAddresses);
-  //   setShowSecondaryAddresses(false); // Collapse secondary addresses view
-  // };
 
   // Handle address editing
   const resetAddressForm = () => {
@@ -562,6 +298,7 @@ useEffect(() => {
       );
   
       setAddressData(updatedAddress);
+      await fetchProfileType();
       alert("Address Updated Successfully!");
       setShowModal(false);
       resetAddressForm();
@@ -573,18 +310,6 @@ useEffect(() => {
     }
   };
 
-  // // Handle address deletion
-  // const handleAddressDelete = (id) => {
-  //   const updatedAddresses = addresses.filter((address) => address.id !== id);
-  //   setAddresses(updatedAddresses);
-  // };
-
-//   // Fetch products when category changes
-// useEffect(() => {
-//   if (category) {
-//     fetchProductsByCategory(category);
-//   }
-// }, [category]);
 useEffect(() => {
 const fetchProducts = async () => {
   try {
@@ -596,7 +321,6 @@ const fetchProducts = async () => {
     }
     const data = await response.json();
     console.log("Fetched Products:", data);
-    // alert(JSON.stringify(productOptions));
       setProductOptions(data);
       setProductName(data.productName);
       setProductCatalogue(data.catalogue);
@@ -617,100 +341,15 @@ fetchProducts();
 }, [id]);
 
 
-// const handleCategoryChange = (e) => {
-//   setCategory(e.target.value);
-//   setProductName(""); 
-// };
-
-// const handleProductChange = (e) => {
-//   const selectedProduct = productOptions.find(prod => prod.productName === e.target.value);
-  
-//   if (selectedProduct) {
-//     setProductName(selectedProduct.productName);
-//     setProductCatalogue(selectedProduct.catalogue || "");
-//     setProductSize(selectedProduct.productSize || "");
-//     setChooseColor(selectedProduct.color || []);
-//     setRate(selectedProduct.rate || "");
-//     setDiscount(selectedProduct.discount || "");
-//     setId(selectedProduct.id || "");
-//   }
-// };
-
-// useEffect(() => {
-//   if (!selectedProduct.category && category) {
-//     fetchProductsByCategory(category);
-//   }
-// }, [category, selectedProduct]);
-
-
-  // useEffect(() => {
-  //   // if (!category || category === "Choose Category") {
-  //   //   setProductSuggestions([]);
-  //   //   setFilteredSuggestions([]);
-  //   //   return;
-  //   // }
-
-  //   const fetchProducts = async () => {
-  //     if (!category) return;
-  //     try {
-  //       const response = await axios.get(
-  //         `https://handymanapiv2.azurewebsites.net/api/Product/GetProductsByCategory?category=${category}`
-  //       );
-  //       setAllProducts(response.data);
-  //       // alert(JSON.stringify(allProducts));
-  //       setProductSuggestions(response.data.map((product) => product.productName));
-  //     } catch (error) {
-  //       console.error("Error fetching products by category:", error);
-  //     }
-  //   };
-  //   fetchProducts();
-  // }, [category]);
-  
-  // useEffect(() => {
-  //   if (productName) {
-  //     const filtered = productSuggestions.filter((product) =>
-  //       // name.toLowerCase().startsWith(productName.toLowerCase())
-  //     product.toLowerCase().includes(productName.toLowerCase())
-  //     );
-  //     setFilteredSuggestions(filtered);
-  //     setShowDropdown(filtered.length > 0);
-  //   } else {
-  //     setFilteredSuggestions([]);
-  //     setShowDropdown(false);
-  //   }
-  // }, [productName, productSuggestions]);
-
-  
-  // const handleProductSelect = (selectedProductName) => {
-  //   setProductName(selectedProductName); // Update the input field to reflect the selected name
-  //   setShowDropdown(false);
-
-  //   const selectedProduct = allProducts.find(
-  //     (product) => product.productName === selectedProductName
-  //   );
-  //   if (selectedProduct) {
-  //     setProductCatalogue(selectedProduct.catalogue);
-  //     setProductSize(selectedProduct.productSize);
-  //     setChooseColor(selectedProduct.color);
-  //     setRate(selectedProduct.rate);
-  //     setDiscount(selectedProduct.discount);
-  //     // setAfterDiscount(selectedProduct.afterDiscount);
-  //     setId(selectedProduct.id);
-  //   }
-    
-  //   setFilteredSuggestions([]);
-  // };
-
-  // // Handle product selection
-  // const handleProductSelect = (selectedProduct) => {
-  //   setProductName(selectedProduct);
-  //   setShowDropdown(false);
-  // };
-  // const validRate = Number(rate) || 0;
-  // const validDiscount = Number(discount) || 0;
-  // const afterDiscountPrice = parseFloat((validRate - (validRate * validDiscount) / 100).toFixed(2));
-  // const totalAmount = parseFloat((requiredQuality * afterDiscountPrice).toFixed(2));
-
+const primaryAddress = addresses.find(addr => addr.type === 'primary');
+const isAddressInvalid = !primaryAddress || !primaryAddress.address || !primaryAddress.zipCode;
+useEffect(() => {
+    if (isAddressInvalid) {
+      setShouldBlink(true);
+    } else {
+      setShouldBlink(false);
+    }
+  }, [isAddressInvalid]);
 
   return (
     <div>
@@ -847,10 +486,10 @@ fetchProducts();
                                  </div>
                                  <div className="text-end">
                                  {addresses.map((address) => (
-                                   <button
-                                     key={address.id}
-                                     className="btn btn-warning text-white btn-sm mx-1"
-                                     onClick={() => {
+                                   <Button
+                                    key={address.id}
+                                    variant={isAddressInvalid ? "primary" : "warning"}
+                                    className={`text-white mx-1 ${shouldBlink ? "blinking-button" : ""}`}                                     onClick={() => {
                                        setGuestCustomerId(address.id);
                                        setFullName(address.fullName);
                                        setMobileNumber(address.mobileNumber);
@@ -861,7 +500,7 @@ fetchProducts();
                                      }}
                                    >
                                      {address.address === "" ? "Add Address" : "Edit Address"}
-                                   </button>
+                                   </Button>
                                  ))}
                              </div> 
                                </div>
@@ -894,35 +533,7 @@ fetchProducts();
         readOnly
         />
         </div>
-        {/* // onFocus={() => 
-        //     setShowDropdown(true)
-        //   } 
-        //   onBlur={(e) => {
-        //     if (!e.relatedTarget || !e.relatedTarget.classList.contains("dropdown-item")) {
-        //       setShowDropdown(false);
-        //     }
-        //   }} */}
-      
-      {/* {error && <p style={{ color: "red", fontSize: "14px", marginTop: "5px" }}>{error}</p>}
-
-      {showDropdown && filteredSuggestions.length > 0 && (
-        <ul
-          className="list-group position-absolute w-100 mt-1 shadow bg-white"
-          style={{ zIndex: 1000 }}
-        >
-          {filteredSuggestions.map((suggestion, index) => (
-            <li
-              key={index}
-              className="list-group-item list-group-item-action"
-              onMouseDown={() => handleProductSelect(suggestion)}
-            >
-              {suggestion}
-            </li>
-          ))}
-        </ul>
-      )} */}
-    
-
+        
             <div className="form-group">
               <label>
                 Product Catalogue <span className="req_star">*</span>
@@ -998,54 +609,8 @@ fetchProducts();
                 productId={id}
               />
 
-
-            {/* <div className="form-group mb-3">
-              <label>Other Than Product</label>
-              <input
-                type="text"
-                className="form-control"
-                value={otherThanProduct}
-                onChange={(e) => setOtherThanProduct(e.target.value)}
-                placeholder="Enter Product Name"
-              />
-            </div> */}
-
             <div className="row">
-            {/* <div className="col-md-6">
-                <label>Rate <span className="req_star">*</span></label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={rate}
-                  onChange={(e) => setRate(e.target.value)}
-                  placeholder="Enter Rate"
-                />
-              </div> */}
-              {/* <div className="form-group">
-              <label> Available Colours (Optional)</label>
-              <input
-                type="text"
-                className="form-control"
-                value={chooseColor}
-                // onChange={(e) => setChooseColor(e.target.value)}
-                placeholder="Color"
-                readOnly
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Select Required Colour</label>
-              <input
-                type="text"
-                className="form-control"
-                value={selectedColor}
-                onChange={handleColorChange}
-                placeholder="Select Required Color"
-                required
-              />
-             {colorError && <p style={{ color: "red" }}>{colorError}</p>}
-            </div> */}
-
+            
 <div className="form-group">
   <label>Available Colours (Optional)</label>
   <input
@@ -1105,18 +670,7 @@ fetchProducts();
                   readOnly
                 />
               </div>
-              {/* <div className="col-md-6">
-                <label>
-                  Units <span className="req_star">*</span>
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={units}
-                  onChange={(e) => setUnits(e.target.value)}
-                  placeholder="Enter Units"
-                />
-              </div> */}
+             
             </div>
 
             <div className="note m-1">
@@ -1477,7 +1031,7 @@ fetchProducts();
             <button
                 type="button"
                 className="text-white text-end btn btn-warning w-20 m-3"
-                onClick={handleGetQuotation}
+                onClick={handleGetQuotation} disabled={isAddressInvalid}
               >
                 Buy Product
               </button>

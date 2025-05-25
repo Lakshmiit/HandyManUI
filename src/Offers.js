@@ -6,7 +6,7 @@ import Sidebar from './Sidebar.js';
 import Footer from './Footer.js';
 import Header from './Header.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import MoreVertIcon from '@mui/icons-material/Dashboard';
+import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import { Button, Carousel, Modal } from 'react-bootstrap';
 import SearchIcon from '@mui/icons-material/Search';
 

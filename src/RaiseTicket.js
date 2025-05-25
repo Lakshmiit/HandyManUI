@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useCallback} from 'react';
-import { Modal, Button, Form, Row, Col } from 'react-bootstrap'; // Import Bootstrap components for modal
-import { v4 as uuidv4 } from 'uuid'; // To generate unique IDs for addresses
+import { Modal, Button, Form, Row, Col } from 'react-bootstrap'; 
+import { v4 as uuidv4 } from 'uuid'; 
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import Header from './Header.js';
 import Footer from './Footer.js';
-// import RaiseTicketConfirmation from './RaiseTicketConfirmation.js';
 import Sidebar from './Sidebar';
 import {  useParams } from 'react-router-dom';
 const AddressManager = () => { 
@@ -18,12 +17,7 @@ const AddressManager = () => {
  const [addresses, setAddresses] = useState([]);
  const [ticketId, setTicketId] = useState('');
  const [newAddress, setNewAddress] = useState('');
-  // const [addressType, setAddressType] = useState('');
-  // const [state, setState] = useState('');
-  // const [district, setDistrict] = useState('');
-  // const [pincode, setPincode] = useState('');
   const [fullName, setFullName] = useState('');
-  // const [assignedTo, setAssignedTo] = useState('');
   const [requestType, setRequestType] = useState('');
   const [loading, setLoading] = useState(false); 
   const [showAlert, setShowAlert] = useState(false);
@@ -31,18 +25,15 @@ const AddressManager = () => {
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [specifications] = useState([{ material : "", Quantity : "" }]);
   const [showModal, setShowModal] = useState(false);
-  // const [showSecondaryAddresses, setShowSecondaryAddresses] = useState(false);
   const [commentsList] = useState([{updatedDate: new Date(), commentText: ""}]);
   const [formData, setFormData] = useState({
     subject: '',
     details: '',
     category: '',
   });
-  // const [confirmationModal, setConfirmationModal] = useState(false);
   const [response, setResponse] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 const [mobileNumber, setMobileNumber] = useState('');
-  // const [firstName, setFirstName] = useState('');
   const [zipCode, setZipCode] = useState('');
   const [guestCustomerId, setGuestCustomerId] = useState('');
   const [isEditing, setIsEditing] = useState(false);
@@ -62,7 +53,6 @@ const [shouldBlink,setShouldBlink] = useState(false);
 
   // const API_URL = 'https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/';
   // Fetch customer profile data
-  
     const fetchCustomerData = useCallback(async () => {
       try {
         const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/${userId}`);
@@ -246,14 +236,6 @@ useEffect(() => {
     }
   };
 
-
-
-//  const handleBothActions =  (e) => {
-//     e.preventDefault();
-//     // handleSubmit(e);   
-//     handleAddressEdit(e);
-//   };
-  
   const handleSaveTicket = async (e) => {
     e.preventDefault();
   
@@ -801,6 +783,7 @@ useEffect(() => {
                 value={formData.subject}
                 onChange={handleChange}
                 placeholder="Enter subject"
+                disabled={isAddressInvalid}
                 required
               />
             </Form.Group>
@@ -817,6 +800,7 @@ useEffect(() => {
             onChange={handleChange}
             rows="4"
             placeholder="Enter details"
+            disabled={isAddressInvalid}
             required
           />
         </Form.Group>
@@ -831,6 +815,7 @@ useEffect(() => {
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
+                disabled={isAddressInvalid}
                 required
               >
                 <option value="">Select Category</option>
@@ -875,6 +860,7 @@ useEffect(() => {
                 className="form-control"
                 multiple
                 onChange={handleFileChange}
+                disabled={isAddressInvalid}
                 required
               />
               {showAlert && (
@@ -903,50 +889,11 @@ useEffect(() => {
                 type="button"
                 className="btn btn-primary mt-2"
                 onClick={handleUploadFiles}
-                disabled={loading || ticketPhotos.length === 0}
+                disabled={loading || ticketPhotos.length === 0 || isAddressInvalid}
               >
                 {loading ? 'Uploading...' : 'Upload Files'}
               </button>
           </div>
-
-        {/* File Preview
-        <div className="preview-container mt-3">
-          {uploadedFiles.length > 0 &&
-            uploadedFiles.map((file, index) => {
-              const fileUrl = URL.createObjectURL(file);
-              return (
-                <div key={index} className="file-preview">
-                  <span>{file.name}</span>
-                  <button
-                    type="button"
-                    className="btn btn-danger btn-sm ml-2"
-                    onClick={() => handleFileDelete(index)}
-                  >
-                    Delete
-                  </button>
-                  <div className="mt-2">
-                     Preview the file (image or video) 
-                    {file.type.startsWith('image') && (
-                      <img
-                        src={fileUrl}
-                        alt={file.name}
-                        className="img-fluid"
-                        style={{ maxWidth: '200px' }}
-                      />
-                    )}
-                    {file.type.startsWith('video') && (
-                      <video
-                        controls
-                        src={fileUrl}
-                        className="img-fluid"
-                        style={{ maxWidth: '200px' }}
-                      />
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-        </div> */}
 
         <div className="radio">
       <label className="m-1">
@@ -954,9 +901,10 @@ useEffect(() => {
           className="form-check-input m-2 border-dark"
           type="radio"
           name="RequestType"
-          value="With Material" // Unique value
-          checked={requestType === "With Material"} // Binding state
-          onChange={(e) => setRequestType(e.target.value)} // Update state
+          value="With Material" 
+          checked={requestType === "With Material"} 
+          onChange={(e) => setRequestType(e.target.value)} 
+          disabled={isAddressInvalid}
           required
         />
         With Material
@@ -967,9 +915,11 @@ useEffect(() => {
           className="form-check-input m-2 border-dark"
           type="radio"
           name="RequestType"
-          value="Without Material" // Unique value
-          checked={requestType === "Without Material"} // Binding state
-          onChange={(e) => setRequestType(e.target.value)} // Update state
+          value="Without Material" 
+          checked={requestType === "Without Material"} 
+          onChange={(e) => setRequestType(e.target.value)} 
+          required
+          disabled={isAddressInvalid}
         />
         Without Material
       </label>

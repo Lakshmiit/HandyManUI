@@ -259,11 +259,9 @@ const BuyProductNotificationGrid = () => {
           <div className="mobile-ticket-grid">
   {currentBuyProduct.map((product, index) => (
     <div key={index} className="ticket-card">
-      <div className="ticket-header">
+      <div className="ticket-body">
       <strong>Customer ID:</strong> {product.customerId} <br />
       <strong>Buy Product ID:</strong> {product.buyProductId}
-      </div>
-      <div className="ticket-body">
         <p><strong>Category:</strong> {product.category}</p>
         <p><strong>Product Name:</strong> {product.productName}</p>
         {/* <p><strong>Status:</strong> {technician.status}</p> */}

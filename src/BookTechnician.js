@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap'; // Import Bootstrap components for modal
 // import { v4 as uuidv4 } from 'uuid'; // To generate unique IDs for addresses
 import {
@@ -49,6 +49,7 @@ const [mobileNumber, setMobileNumber] = useState('');
   const [guestCustomerId, setGuestCustomerId] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [editingAddressId, setEditingAddressId] = useState(null);
+  const [shouldBlink,setShouldBlink] = useState(false);
 const [addressData, setAddressData] = useState({
 fullName  : '',
 mobileNumber: '',
@@ -62,12 +63,11 @@ zipCode: '',
     console.log(ticketId, loading, fullName, mobileNumber, raiseTicketId, editingAddressId);
   }, [ticketId, loading, fullName,  mobileNumber, raiseTicketId, editingAddressId]);
 
-  const API_URL = 'https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/';
+  // const API_URL = 'https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/';
   // Fetch customer profile data
-  useEffect(() => {
-    const fetchCustomerData = async () => {
+    const fetchCustomerData = useCallback(async () => {
       try {
-        const response = await fetch(`${API_URL}${userId}`);
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/${userId}`);
         if (!response.ok) {
 
           throw new Error('Failed to fetch customer profile data');
@@ -97,11 +97,12 @@ zipCode: '',
       } catch (error) {
         console.error('Error fetching customer data:', error);
       }
-    };
-    fetchCustomerData();
   }, [userId]);
 
-  
+  useEffect(() => {
+    fetchCustomerData();
+  }, [fetchCustomerData]);
+
   useEffect(() => {
     if (remarksRef.current) {
       remarksRef.current.style.height = "auto";
@@ -290,7 +291,7 @@ const handleUpdateJobDescription = async (e) => {
     bookTechnicianId: "string",  
     date: new Date(),
     customerName: addressData.fullName || fullName,
-    address: addressData.address || addresses.find((addr) => addr.type === 'primary')?.address || '', 
+    address: addressData.address || primaryAddress?.address || "", 
     category: category,
     status: "Draft",
     assignedTo: "",
@@ -405,6 +406,7 @@ const handleUpdateJobDescription = async (e) => {
         );
     
         setAddressData(updatedAddress);
+        await fetchCustomerData();
         alert("Address Updated Successfully!");
         setShowModal(false);
         resetAddressForm();
@@ -415,6 +417,17 @@ const handleUpdateJobDescription = async (e) => {
         alert("Failed to edit address. Please try again later.");
       }
     };
+
+    const primaryAddress = addresses.find(addr => addr.type === 'primary');
+    const isAddressInvalid = !primaryAddress || !primaryAddress.address || !primaryAddress.zipCode;
+    
+    useEffect(() => {
+        if (isAddressInvalid) {
+          setShouldBlink(true);
+        } else {
+          setShouldBlink(false);
+        }
+      }, [isAddressInvalid]);
     
   return (
     <div>
@@ -550,21 +563,22 @@ const handleUpdateJobDescription = async (e) => {
                                   </div>
                                   <div className="text-end">
                                   {addresses.map((address) => (
-                                    <button
-                                      key={address.id}
-                                      className="btn btn-warning text-white btn-sm mx-1"
-                                      onClick={() => {
-                                        setGuestCustomerId(address.id);
-                                        setFullName(address.fullName);
-                                        setMobileNumber(address.mobileNumber);
-                                        setNewAddress(address.address);
-                                        setZipCode(address.zipCode);
-                                        setIsEditing(true);
-                                        setShowModal(true);
-                                      }}
+                                    <Button
+                                        key={address.id}
+                                        variant={isAddressInvalid ? "primary" : "warning"}
+                                        className={`text-white mx-1 ${shouldBlink ? "blinking-button" : ""}`}
+                                        onClick={() => {
+                                          setGuestCustomerId(address.id);
+                                          setFullName(address.fullName);
+                                          setMobileNumber(address.mobileNumber);
+                                          setNewAddress(address.address);
+                                          setZipCode(address.zipCode);
+                                          setIsEditing(true);
+                                          setShowModal(true);
+                                        }}
                                     >
                                       {address.address === "" ? "Add Address" : "Edit Address"}
-                                    </button>
+                                    </Button>
                                   ))}
                               </div> 
                                 </div>
@@ -610,7 +624,8 @@ const handleUpdateJobDescription = async (e) => {
                 as="select"
                 name="category"
                 value={category}
-                onChange={handleCategoryChange}               
+                onChange={handleCategoryChange}    
+                disabled={isAddressInvalid}
                 required
               >
                 <option value="">Select Category</option>
@@ -646,6 +661,7 @@ const handleUpdateJobDescription = async (e) => {
             className="form-control"
             value={job.jobDescription}
             onChange={(e) => handleJobChange(index, "jobDescription", e.target.value)}
+            disabled={isAddressInvalid}
             required
           >
             <option value="Select Job">Select Job</option>
@@ -672,6 +688,7 @@ const handleUpdateJobDescription = async (e) => {
                 value={job.rate}
                 onChange={(e) => handleJobChange(index, "rate", e.target.value)}
                 placeholder="Rate"
+                disabled={isAddressInvalid}
                 readOnly
               />
             </div>
@@ -685,6 +702,7 @@ const handleUpdateJobDescription = async (e) => {
                 value={job.discount}
                 onChange={(e) => handleJobChange(index, "discount", e.target.value)}
                 placeholder="Discount"
+                disabled={isAddressInvalid}
                 readOnly
               />
             </div>
@@ -697,6 +715,7 @@ const handleUpdateJobDescription = async (e) => {
               value={job.afterDiscount}
               onChange={(e) => handleJobChange(index, "afterDiscount", e.target.value)}
               placeholder="After Discount" 
+              disabled={isAddressInvalid}
               readOnly
               />
             </div>
@@ -710,6 +729,7 @@ const handleUpdateJobDescription = async (e) => {
             value={job.remarks}            
             onChange={(e) => handleJobChange(index, "remarks", e.target.value)}
             placeholder="Detailed Job Description"
+            disabled={isAddressInvalid}
             style={{
               resize: "none",
               overflow: "auto",
@@ -730,6 +750,7 @@ const handleUpdateJobDescription = async (e) => {
                 value={job.moreInfo}
                 onChange={(e) => handleJobChange(index, "moreInfo", e.target.value)}
                 placeholder="Additional Information"
+                disabled={isAddressInvalid}
                 style={{
                   resize: "none",
                   overflow: "auto",
@@ -1049,7 +1070,7 @@ const handleUpdateJobDescription = async (e) => {
         {/*  Book a Technician */}
         <div className='d-flex justify-content-between m-1'>
         <Button variant="success" className="m-1" type="submit" onClick={handleUpdateJobDescription}
-      disabled={noJobsError}>
+        disabled={noJobsError || isAddressInvalid} >
             Book A Technician
         </Button>
         <Button variant='success' className="m-1" onClick={handleWhatsAppClick}><WhatsAppIcon /> WhatsApp</Button>

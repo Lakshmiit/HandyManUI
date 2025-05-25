@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect, useCallback} from "react";
 import "./App.css";
 // import { v4 as uuidv4 } from 'uuid'; 
 import Sidebar from './Sidebar';
@@ -76,6 +76,7 @@ address: '',
 zipCode: '',
 });
 const [showProductModal, setShowProductModal] = useState(false);
+const [shouldBlink,setShouldBlink] = useState(false);
 
 
  // Check if there's state passed from ViewProduct page
@@ -146,13 +147,12 @@ const [showProductModal, setShowProductModal] = useState(false);
 //   });
 // };
 
-
 useEffect(() => {
   console.log(buyProductId, loading, editingAddressId);
 }, [buyProductId, loading, editingAddressId]);
+
   // Fetch customer profile data
-  useEffect(() => {
-    const fetchProfileType = async () => {
+    const fetchProfileType = useCallback(async () => {
       try {
         const API_URL = "https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/";
         const response = await fetch(`${API_URL}${userId}`);
@@ -181,12 +181,11 @@ useEffect(() => {
       } catch (error) {
         console.error("Error fetching customer data:", error);
       }
-    };
-
-    if (userId) {
-      fetchProfileType();
-    }
   }, [userId]);
+
+  useEffect(() => {
+    fetchProfileType();
+  }, [fetchProfileType]);
 
   const validRate = Number(rate) || 0;
   const validDiscount = Number(discount) || 0;
@@ -590,6 +589,7 @@ useEffect(() => {
       );
   
       setAddressData(updatedAddress);
+      await fetchProfileType();
       alert("Address Updated Successfully!");
       setShowModal(false);
       resetAddressForm();
@@ -752,6 +752,16 @@ useEffect(() => {
   //   setShowDropdown(false);
   // };
 
+  const primaryAddress = addresses.find(addr => addr.type === 'primary');
+  const isAddressInvalid = !primaryAddress || !primaryAddress.address || !primaryAddress.zipCode;
+  useEffect(() => {
+      if (isAddressInvalid) {
+        setShouldBlink(true);
+      } else {
+        setShouldBlink(false);
+      }
+    }, [isAddressInvalid]);
+
 
   return (
     <div>
@@ -888,9 +898,10 @@ useEffect(() => {
                       </div>
                       <div className="text-end">
                       {addresses.map((address) => (
-                        <button
+                        <Button
                           key={address.id}
-                          className="btn btn-warning text-white btn-sm mx-1"
+                          variant={isAddressInvalid ? "primary" : "warning"}
+                          className={`text-white mx-1 ${shouldBlink ? "blinking-button" : ""}`}
                           onClick={() => {
                             setGuestCustomerId(address.id);
                             setFullName(address.fullName);
@@ -902,175 +913,13 @@ useEffect(() => {
                           }}
                         >
                           {address.address === "" ? "Add Address" : "Edit Address"}
-                        </button>
+                        </Button>
                       ))}
                   </div> 
                     </div>
                   ))}       
                   </div>
-            {/* <div className="m-1">
-              <div className="d-flex justify-content-between align-items-center">
-                <label>Address</label>
-                <button
-                  type="button"
-                  className="btn btn-link ml-2"
-                  onClick={() =>  setShowSecondaryAddresses(true)}
-                >
-                  Change Address
-                </button>
-              </div>
-
-              
-
-<div className="p-3 border rounded bg-light">
-  {addresses
-    .filter((addr) => addr.type === 'primary')
-    .map((address) => (
-      <div
-        key={address.id}
-        className="list-group-item d-flex justify-content-between align-items-center bg-white text-dark"
-      >
-        <div>
-          <span className="ml-2">{address.address}</span>
-          <br />
-          <span className="ml-2">{address.state}</span>
-          <br />
-          <span className="ml-2">{address.district}</span>
-          <br />
-          <span className="ml-2">{address.zipCode}</span> 
-          <br />
-          <small className="text-muted">Primary Address</small>
-        </div>
-      </div>
-    ))}
-
-                {showSecondaryAddresses && (
-                  <>
-                    <div className="list-group">
-                      {addresses
-                        .filter((addr) => addr.type === 'secondary')
-                        .map((address) => (
-                          <div
-                            key={address.id}
-                            className="list-group-item d-flex justify-content-between align-items-center"
-                          >
-                            <div>
-                              <input
-                                type="radio"
-                                name="address"
-                                checked={address.type === 'primary'}
-                                onChange={() => handleSecondaryAddressSelect(address.id)}
-                              />
-                              <span className="ml-2">{address.address}</span>
-                              <br />
-                              <small className="text-muted">Secondary Address</small>
-                            </div>
-                            <div>
-                              <button
-                                className="btn btn-warning btn-sm mx-1"
-                                onClick={() => handleAddressEdit(address.id)}
-                              >
-                                Edit
-                              </button>
-                              <button
-                                className="btn btn-danger btn-sm mx-1"
-                                onClick={() => handleAddressDelete(address.id)}
-                              >
-                                Delete
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                    </div>
-                    <div className="mt-3">
-                    <button
-                      className="btn btn-success"
-                      onClick={() => setShowModal(true)}
-                    >
-                      Add Address
-                    </button>
-                  </div>
-                  </>
-                )}
-              </div>
-            </div>
-
-            <Modal show={showModal} onHide={() => setShowModal(false)}>
-  <Modal.Header closeButton>
-    <Modal.Title>{newAddress ? 'Edit Address' : 'Add Address'}</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    <Form.Group controlId="address">
-      <Form.Label>Address</Form.Label>
-      <Form.Control
-        type="text"
-        value={newAddress}
-        onChange={(e) => setNewAddress(e.target.value)}
-        placeholder="Enter address"
-      />
-    </Form.Group>
-
-    <Form.Group controlId="addressType">
-      <Form.Label>Address Type</Form.Label>
-      <Form.Control
-        as="select"
-        value={addressType}
-        onChange={(e) => setAddressType(e.target.value)}
-      >
-        <option value="">Select Address Type</option>
-        <option value="primary">Primary</option>
-        <option value="secondary">Secondary</option>
-      </Form.Control>
-    </Form.Group>
-
-    <Form.Group controlId="state">
-      <Form.Label>State</Form.Label>
-      <Form.Control
-        as="select"
-        value={state}
-        onChange={(e) => setState(e.target.value)}
-      >
-        <option value="">Select State</option>
-        {states.map((state, index) => (
-          <option key={index} value={state}>
-            {state}
-          </option>
-        ))}
-      </Form.Control>
-    </Form.Group>
-
-    <Form.Group controlId="district">
-      <Form.Label>District</Form.Label>
-      <Form.Control
-        as="select"
-        value={district}
-        onChange={(e) => setDistrict(e.target.value)}
-      >
-        <option value="">Select District</option>
-        {districts[state]?.map((district, index) => (
-          <option key={index} value={district}>
-            {district}
-          </option>
-        ))}
-      </Form.Control>
-    </Form.Group>
-
-    <Form.Group controlId="pincode">
-      <Form.Label>Pincode</Form.Label>
-      <Form.Control
-        type="text"
-        value={pincode}
-        onChange={(e) => setPincode(e.target.value)}
-        placeholder="Enter pincode"
-      />
-    </Form.Group>
-
-    <Button type="button" variant="primary" onClick={handleAddAddress}>
-      {newAddress ? 'Save Address' : 'Add Address'}
-    </Button>
-  </Modal.Body>
-</Modal> */}
-
+          
   
             <div className="form-group">
               <label>
@@ -1080,6 +929,7 @@ useEffect(() => {
                 className="form-control"
                 value={category}
                 onChange={handleCategoryChange}
+                disabled={isAddressInvalid}
                 required
               >
                 <option value="">Choose Category</option>
@@ -1105,6 +955,7 @@ useEffect(() => {
   className="form-control"
   value={productName}
   onChange={handleProductChange}
+  disabled={isAddressInvalid}
 >
   <option value="">Select Product</option>
   {productOptions.map((productOption, i) => (
@@ -1136,6 +987,7 @@ useEffect(() => {
                 value={productCatalogue}
                  onChange={(e) => setProductCatalogue(e.target.value)}
                 placeholder="Product Catalogue"
+                disabled={isAddressInvalid}
                 readOnly
               />
             </div>
@@ -1150,6 +1002,7 @@ useEffect(() => {
                 value={productSize}
                 // onChange={(e) => setProductSize(e.target.value)}
                 placeholder="Product Size"
+                disabled={isAddressInvalid}
                 readOnly
               />
             </div>
@@ -1162,6 +1015,7 @@ useEffect(() => {
                   value={rate}
                   // onChange={rate}
                   placeholder="Price"
+                  disabled={isAddressInvalid}
                   readOnly
                 />
               </div>
@@ -1173,6 +1027,7 @@ useEffect(() => {
                   value={discount}
                   // onChange={(e) => setDiscount(e.target.value)}
                   placeholder="Discount"
+                  disabled={isAddressInvalid}
                   readOnly
                 />
               </div>
@@ -1184,6 +1039,7 @@ useEffect(() => {
                   value={afterDiscountPrice}
                   // onChange={(e) => setAfterDiscount(e.target.value)}
                   placeholder="After Discount"
+                  disabled={isAddressInvalid}
                   readOnly
                 />
               </div>
@@ -1200,53 +1056,7 @@ useEffect(() => {
                 handleClose={() => setShowProductModal(false)}
                 productId={id}
               />
-            {/* <button
-              type="button"
-              className="btn btn-warning text-white w-50 mt-2"
-              disabled={noProductNameError}
-
-              onClick={() =>
-                navigate(`/buyproduct-view/${userType}/${userId}/${id}`, {
-                  state: {
-                    category,
-                    productName,
-                    catalogue: productCatalogue, // match expected key
-                    productSize,
-                    color: chooseColor,          // match expected key
-                    rate,
-                    discount,
-                    requiredQuality,
-                  },
-                })
-              }
-            >
-              View Product
-            </button> */}
-
-
-            {/* <div className="form-group mb-3">
-              <label>Other Than Product</label>
-              <input
-                type="text"
-                className="form-control"
-                value={otherThanProduct}
-                onChange={(e) => setOtherThanProduct(e.target.value)}
-                placeholder="Enter Product Name"
-              />
-            </div> */}
-
             <div className="row">
-            {/* <div className="col-md-6">
-                <label>Rate <span className="req_star">*</span></label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={rate}
-                  onChange={(e)
-                   => setRate(e.target.value)}
-                  placeholder="Enter Rate"
-                />
-              </div> */}
               <div className="form-group">
   <label>Available Colours (Optional)</label>
   <input
@@ -1254,6 +1064,7 @@ useEffect(() => {
     className="form-control"
     value={chooseColor || ""}
     placeholder="Color"
+    disabled={isAddressInvalid}
     readOnly
   />
 </div>
@@ -1264,6 +1075,7 @@ useEffect(() => {
     className="form-control"
     value={selectedColors}
     onChange={handleColorChange}
+    disabled={isAddressInvalid}
     required
   >
     <option value="">Select Required Color</option>
@@ -1288,6 +1100,7 @@ useEffect(() => {
                   value={requiredQuality}
                   onChange={handleQuantityChange}
                   placeholder="Enter Required Quantity"
+                  disabled={isAddressInvalid}
                   required
                 />
                 {quantityError && <p style={{ color: "red" }}>{quantityError}</p>}
@@ -1301,23 +1114,10 @@ useEffect(() => {
                   type="text"
                   className="form-control"
                   value={totalAmount}
-                  // onChange={(e) => setTotalAmounts(e.target.value)}
-                  // placeholder="Enter Total Amount"
+                  disabled={isAddressInvalid}
                   readOnly
                 />
               </div>
-              {/* <div className="col-md-6">
-                <label>
-                  Units <span className="req_star">*</span>
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={units}
-                  onChange={(e) => setUnits(e.target.value)}
-                  placeholder="Enter Units"
-                />
-              </div> */}
             </div>
 
             <div className="note m-1">
@@ -1675,18 +1475,11 @@ useEffect(() => {
     </div>
 
             <div className="d-flex justify-content-between mt-3">
-              {/* <button
-                type="button"
-                className="text-white btn btn-warning w-50"
-                onClick={handleAddToCart}
-              >
-                Add to Cart
-              </button> */}
                <button
                 type="button"
                 className="text-white btn btn-warning w-30"
                 onClick={handleGetQuotation}
-                disabled={noProductNameError}
+                disabled={noProductNameError || isAddressInvalid} 
               >
                 Buy Product
               </button>

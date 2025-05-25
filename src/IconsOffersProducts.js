@@ -4,7 +4,7 @@ import PlumbingIcon from '@mui/icons-material/Plumbing';
 import Sidebar from './Sidebar';
 import { useState, useEffect } from 'react';
 import Header from './Header';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import MoreVertIcon from '@mui/icons-material/Dashboard';
 import { useParams, useNavigate } from 'react-router-dom';  
 import Footer from './Footer';
 import { Button } from 'react-bootstrap';
@@ -12,10 +12,10 @@ import axios from 'axios';
 import HardwareIcon from '@mui/icons-material/Hardware';
 
 const categories = [
-    { label: 'Electrical items',value:'Electrical items', icon: <ElectricalServicesIcon sx={{ fontSize: 40, color: '#1976d2' }} /> },
-    { label: 'Electronics appliances', value:'Electronics appliances',icon: <IronIcon sx={{ fontSize: 40, color: '#f57c00' }} /> },
+    { label: 'Electrical Items',value:'Electrical items', icon: <ElectricalServicesIcon sx={{ fontSize: 40, color: '#1976d2' }} /> },
+    { label: 'Electronics Appliances', value:'Electronics appliances',icon: <IronIcon sx={{ fontSize: 40, color: '#f57c00' }} /> },
     { label: 'Plumbing And Sanitary',value: 'Sanitary items',  icon: <PlumbingIcon sx={{ fontSize: 40, color: '#388e3c' }} /> },
-    { label: 'Hardware items',value:'Hardware items', icon: <HardwareIcon sx={{ fontSize: 40, color: '#512da8' }} /> },
+    { label: 'Hardware Items',value:'Hardware items', icon: <HardwareIcon sx={{ fontSize: 40, color: '#512da8' }} /> },
   ];
 
 export default function CategoryIcons() {
