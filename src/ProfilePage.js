@@ -17,12 +17,10 @@ import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-// import { TextField } from "@mui/material"; 
 import Banner1 from './img/banner-1 copy.jpg';
 import Banner2 from './img/banner-2.jpg';
 import Banner3 from './img/banner-4.jpg';
 import { useNavigate, useParams } from "react-router-dom";
-// import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Logo from "./img/Hm_Logo 1.png";
 import SearchIcon from "@mui/icons-material/Search";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -33,10 +31,8 @@ import ElectricalServicesIcon from '@mui/icons-material/ElectricalServices';
 import IronIcon from '@mui/icons-material/Iron';
 import PlumbingIcon from '@mui/icons-material/Plumbing';
 import HardwareIcon from '@mui/icons-material/Hardware';
-// import HomeIcon from '@mui/icons-material/Home';
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import MenuIcon from '@mui/icons-material/Menu';
-// import { Carousel } from 'react-bootstrap';
 
 const getMenuList = (userType, userId, category, district ,ZipCode,technicianFullName, isMobile) => {
   const iconSize = isMobile ? 20 : 40;
@@ -44,11 +40,9 @@ const getMenuList = (userType, userId, category, district ,ZipCode,technicianFul
       { MenuIcon: <SupportAgentIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
       { MenuIcon: <PersonOutlineIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Book Technician", TargetUrl: `/bookTechnician/${userType}/${userId}` },
       { MenuIcon: <StorefrontIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
-      // { MenuIcon: <LocalOfferIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Buy Product Offers", TargetUrl: `/offersIcons/${userType}/${userId}` },
       ...(!isMobile ? [{MenuIcon: <LocalOfferIcon sx={{ fontSize: iconSize }} />, MenuTitle: "Buy Product Offers", TargetUrl: `/offersIcons/${userType}/${userId}`
     }] : []),
       { MenuIcon: <ApartmentIcon sx={{ fontSize: 40 }} />,  MenuTitle: isMobile ? "Apartment AMC" : "Apartment Common Area Maintenance", TargetUrl: `/aboutApartmentRaiseTicket/${userType}/${userId}` },
-      // { MenuIcon: <TrackStatusNotificationBell sx={{ fontSize: iconSize }}/>, MenuTitle: isMobile ? "Track Ticket" : "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}` },
       ...(!isMobile ? [{MenuIcon: <TrackStatusNotificationBell sx={{ fontSize: iconSize }} />, MenuTitle: isMobile ? "Track Ticket" : "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}`
     }] : []),
       ...(!isMobile ? [{MenuIcon: <NotificationBell sx={{ fontSize: 40 }} />, MenuTitle: "Notifications", TargetUrl: `/customerNotification/${userType}/${userId}`
@@ -57,9 +51,6 @@ const getMenuList = (userType, userId, category, district ,ZipCode,technicianFul
     }] : []),
     ...(!isMobile ? [{MenuIcon: <PermIdentityIcon sx={{ fontSize: iconSize }} />, MenuTitle: "Accounts"
     }] : []),
-       // { MenuIcon: <PermIdentityIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Accounts"},
-       // { MenuIcon: <NotificationBell sx={{ fontSize: 40 }}/>, MenuTitle: "Notifications", TargetUrl: `/customerNotification/${userType}/${userId}` },
-      //  { MenuIcon: <OrdersNotificationBell sx={{ fontSize: 40 }}/>, MenuTitle: "Orders", TargetUrl: `/customerOrders/${userType}/${userId}` },
       ];
 
   const builder = [
@@ -94,7 +85,6 @@ const getMenuList = (userType, userId, category, district ,ZipCode,technicianFul
     { MenuIcon: <SupportAgentIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
     { MenuIcon: <RouteIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}` }
 ];
-
   const technician = [
       { MenuIcon: <PersonAddAltIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Add Technician"},
       { MenuIcon: <RequestQuoteIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise a Quote", TargetUrl: `/notificationTechnician/${userType}/${userId}/${category}/${district}` },
@@ -137,12 +127,10 @@ const ProfilePage = () => {
     const [fullName, setFullName] = useState('');
     const [menuList, setMenuList] = useState([]);
     const [profile, setProfile] = useState({});
-    // const [isEditing, setIsEditing] = useState(false);
-    // const [name, setName] = useState(profile.fullName);
     const [loading, setLoading] = useState(true); 
     const [profileImage, setProfileImage] = useState(null);
     const fileInputRef = useRef(null);
-    const bottomRefs = useRef({});
+    // const bottomRefs = useRef({});
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
     const [showDropdown, setShowDropdown] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
@@ -166,22 +154,12 @@ useEffect(() => {
   console.log(showMenu, products, selectedCategory);
 }, [showMenu, products, selectedCategory]);
 
-// const scroll = (direction, type) => {
-//   const scrollRef = productScrollRef.current;
-//   const cardWidth = scrollRef.querySelector('.product-card-wrapper')?.offsetWidth || 320;
-//   const scrollAmount = direction === 'left' ? -cardWidth : cardWidth;
-
-//   if (scrollRef) {
-//     scrollRef.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-//   }
-// };
-
-useEffect(() => {
-  bottomRefs.current = {};
-  productData?.forEach(product => {
-    bottomRefs.current[product.id] = React.createRef();
-  });
-}, [productData]);
+// useEffect(() => {
+//   bottomRefs.current = {};
+//   productData?.forEach(product => {
+//     bottomRefs.current[product.id] = React.createRef();
+//   });
+// }, [productData]);
 
  const handleCategoryClick = async (category) => {
         const { value } = category; 
@@ -248,7 +226,6 @@ useEffect(() => {
           }
         }, [profile]);        
 
-         // Handle "more" icon click to toggle profile card visibility
   const handleMoreIconClick = () => {
     setShowProfile(!showProfile);
   };
@@ -257,44 +234,6 @@ useEffect(() => {
     setZoomImage(imageSrc);
     setShowZoomModal(true);
   };
-
-
-// useEffect(() => {
-//     const fetchData = async () => {
-//       try {
-//         const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/GetAllProductList`);
-//         const data = await response.json();
-//         setProductData(data);
-
-//         const imageRequests = data.map(async (product) => {
-//           if (product.productPhotos?.length) {
-//             const photo = product.productPhotos.map(async (photo) => {  
-//               const res = await fetch(
-//                 `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
-//               );
-//               const imgData = await res.json();
-//               return { id: product.id, imageData: imgData.imageData, allPhotos: product.productPhotos };
-//             });
-//             const allImages = await Promise.all(photo);
-//             return { id: product.id, images: allImages };
-//           }
-//           return null;
-//         });
-
-//         const images = await Promise.all(imageRequests);
-//         const imageMap = {};
-//         images.forEach((img) => {
-//           if (img) imageMap[img.id] = img.images;
-//         });
-//         setImageUrls(imageMap);
-//         setImageLoading(false);
-//       } catch (error) {
-//         console.error('Error fetching product data:', error);
-//       }
-//     };
-//     fetchData();
-//   }, []);
-
 
 useEffect(() => {
   const fetchProductsAndImages = async () => {
@@ -343,19 +282,6 @@ useEffect(() => {
         return () => window.removeEventListener("resize", handleResize);
       }, []);
       
-      // const toggleDropdown = (event) => {
-      //   event.stopPropagation();
-      //   console.log("Icon clicked!");
-      //   setShowProfile(!showProfile);
-      //   setShowDropdown((prev) => !prev);
-      // };
-
-      // const toggleMenu = (event) => { 
-      //   event.stopPropagation(); 
-      //   console.log("Menu Toggled!");
-      //   setShowMenu((prev) => !prev);
-      // };
-      
       useEffect(() => {
         const handleClickOutside = (event) => {
           if (!document.getElementById("dropdown-container")?.contains(event.target)) {
@@ -366,7 +292,6 @@ useEffect(() => {
         return () => document.removeEventListener("click", handleClickOutside);
       }, []);
 
-      
       useEffect(() => { 
         const handleCloseMenuOnClickOutside = (event) => {
           if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -416,8 +341,6 @@ useEffect(() => {
         }
       }, [category, district, userType, userId, zipCode, fullName, isMobile]);
       
-
-
 const fetchImageUrl = async (photoId) => {
   try {
     if (!photoId) return;
@@ -430,11 +353,8 @@ const fetchImageUrl = async (photoId) => {
     }
   } catch (error) {
     console.error("Error fetching image:", error);
-    // setProfileImage();
   }
 };
-
-
   // const fetchUserDetails = async () => {
   //   const userId = sessionStorage.getItem("UserId");
   //   const userType = sessionStorage.getItem("UserProfileType");
@@ -563,7 +483,8 @@ const fetchImageUrl = async (photoId) => {
   // };
   
   if (loading) {
-    return <div>Loading...</div>;
+    return 
+    // <div>Loading...</div>;
   }
 
   return (
@@ -576,7 +497,6 @@ const fetchImageUrl = async (photoId) => {
         </div>
        ) : (null)}
        <img src={Logo} alt="Handy Man Logo" className="logo-img" />
-        {/* <img className="h-90" src={Logo} alt="Handy Man Logo" style={{ height: "60px", width: "190px", paddingLeft: "10px" }}/> */}
         <div className="spacer"></div>
         <div className="d-flex align-items-center w-100">
       {!isMobile && (
@@ -589,10 +509,6 @@ const fetchImageUrl = async (photoId) => {
       )}
     </div>
         <div className="hdr_icns d-flex align-items-center gap-2 m-2">
-      {/* <span className="material-symbols-outlined">
-        <ShoppingBagIcon />
-      </span> */}
-    
       <div id="dropdown-container" className="dropdown-container" style={{ position: "relative" }}>
        {isMobile && (
         <div className="d-flex align-items-center gap-2">
@@ -605,7 +521,6 @@ const fetchImageUrl = async (photoId) => {
       style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "cover" }}
     />
   </div>
-
   {/* Notification Bell */}
   <div className="d-flex align-items-center" onClick={() => navigate(`/customerNotification/${userType}/${userId}`)} style={{ cursor: "pointer" }}>
   <NotificationBell fontSize="medium" />
@@ -628,61 +543,8 @@ const fetchImageUrl = async (photoId) => {
         </div>
        )}
       </div>
-
-      {/* More Icon for Mobile */}
-      {/* <div className="mob_mnu">
-      {/* {isMobile && ( 
-        <span 
-        className="more-icon" 
-        onClick={toggleMenu}  
-        style={{ cursor: "pointer" }}>
-        <MoreVertIcon />
-      </span> */}
-      
-      {/* )} */}
-
-{/* {showMenu && (
-        <div ref={menuRef} id="mobile-menu" className="dropdown-menu p-3 mw_250px">
-          <div className="profl_dets mt-3 d-flex flex-column gap-3">
-            <div className="profl_dets_mn">
-              <span>Name &nbsp; <i className="fas fa-pen"></i></span>
-              <span className="h5">{profile.fullName}</span>
-            </div>
-            <div className="profl_dets_mn">
-              <span>Mobile</span>
-              <span className="h5">{profile.mobileNumber}</span>
-            </div>
-            <div className="profl_dets_mn">
-              <span>Email</span>
-              <span className="h5">{profile.email}</span>
-            </div>
-            <div className="profl_dets_mn">
-              <span>Address</span>
-              <span className="h5">
-              {profile.address}
-              </span>
-            </div>
-            <div className="profl_dets_mn">
-              <span>Change Password</span>
-              <a href="#">Click to change</a>
-            </div>
-            <div className="profl_dets_mn">
-              <span>Settings</span>
-              <a href="#">User Settings</a>
-            </div>
-
-            {/* Logout Button 
-            <div className="d-flex align-items-center logout-btn" onClick={() => console.log("Logging out...")}>
-              <LogoutIcon />
-              <span>Logout</span>
-            </div>
-          </div>
-        </div>
-      )}
-      </div> */}
     </div>
     </header>
-
 
     <div
       className="container"
@@ -693,11 +555,9 @@ const fetchImageUrl = async (photoId) => {
         paddingTop:isMobile ? "70px" : "0px"
       }}
     >
-      {/* <Header /> */}
       <div className="row">
         <div className="col-md-3">
         <div>
-      
       {!isMobile ? (
                    <div className="profile-card">
                      <div className="profile-img-container "> 
@@ -716,39 +576,19 @@ const fetchImageUrl = async (photoId) => {
                        ref={fileInputRef}
                        style={{ display: "none" }}
                        accept="image/*"
-                       // onChange={handleFileChange}
                      />
                     </div>
                  <div className="label fw-bold fs-5">Name</div>
-                 {/* {isEditing ? (
-                   <TextField
-                     value={name}
-                     onChange={(e) => setName(e.target.value)}
-                     variant="outlined"
-                     size="small"
-                   />
-                 ) : ( */}
                    <p className="value">
                      {profile.fullName}
-                     {/* <IconButton size="small" onClick={handleEditClick}>
-                       <EditIcon fontSize="small" />
-                     </IconButton> */}
                    </p>
-                 {/* )} */}
                   <hr />
-               {/* </div>
-       
-               <div className="profile-section"> */}
                  <div className="label fw-bold mt-0 fs-5">Mobile</div>
                  <p className="value">{profile.mobileNumber}</p>
-               {/* <hr />
-                 <div className="label fw-bold mt-0 fs-5">Email</div>
-                 <p className="value">{profile.email}</p> */}
               <hr />
                  <div className="label fw-bold mt-0 fs-5">Address</div>
                  <p className="value">{profile.address}</p>
                <hr />
-       
                <p className="logout-btn m-1" onClick={() => window.location.href = "https://handymanserviceproviders.com/Logout"}>
                  <LogoutIcon />
                  <span className="fs-5">Logout</span>
@@ -758,8 +598,6 @@ const fetchImageUrl = async (photoId) => {
            </div>
            </div>
                    </div>
-              //  </div>
-              //  </div>
       ) : null}
             </div> 
 
@@ -815,114 +653,6 @@ const fetchImageUrl = async (photoId) => {
                 </div>
               </div>
             )}
-
-          {/* Wrap profile-card and profile-info inside a parent div */}
-          {/* <div className="row">
- <div className="col-md-3">
-          <div>
-          <div 
-          // className={`${showProfile ? "show" : ""}`}
-        className={`profile-card-container ${showProfile ? "show" : ""}`}
-      >
-            <div className="profile-card">
-              <div className="profile-img-container">
-              {/* <img src={profileImage} alt="Profile" 
-              className="profile-img" onClick={handleProfileClick}/>
-              <input
-                type="file"
-                ref={fileInputRef}
-                style={{ display: "none" }}
-                accept="image/*"
-                onChange={handleFileChange}
-              /> 
-              </div>
-              <div className="profile-info">
-                {/* {isEditing ? (
-                  <div className="edit-name d-flex">
-                    <label className="fw-bold">
-                      Full Name <span className="text-danger">*</span>
-                    </label>
-                    <TextField
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      variant="outlined"
-                      size="small"
-                    />
-                     <div className="edit-icons d-flex">
-                      <IconButton onClick={handleCancel} color="error">
-                        <CancelIcon />
-                      </IconButton>
-                      <IconButton onClick={handleSave} color="success">
-                        <CheckCircleIcon />
-                      </IconButton>
-                    </div> 
-                  </div>
-                ) : (
-                   )} 
-                  <div className="name-section">
-                    <div className="fw-bold">Name</div>
-                    <p>
-                      {profile.fullName}{" "}
-                      {/* <IconButton size="small" onClick={handleEditClick}>
-                        <EditIcon fontSize="small" />
-                      </IconButton> 
-                    </p>
-                    <hr />
-                    {/* <p className="text-warning text-center">customer</p> 
-                    <div className="fw-bold">Mobile</div>
-                    <p className="profile">{profile.mobileNumber}</p>
-                    {/* <hr />
-                    <div className="fw-bold">Email</div>
-                    <p className="profile">{profile.email}</p> 
-                    <hr />
-                    <div className="fw-bold">Address</div>
-                    <p className="profile">
-                    {profile.address}
-                    </p>
-                    <hr />
-                    {/* <p className="fw-bold m-1 text-primary" style={{ cursor: "pointer" }}>
-                      <a href="/change-password">Click to change password</a>
-                    </p> */}
-
-                    {/* <p className="fw-bold m-1 text-primary" style={{ cursor: "pointer" }}>
-                      <a href="/user-settings">User Settings</a>
-                    </p>
-
-                    <hr /> */}
-                    {/* Orders Icon */}
-                    {/* <div className="d-flex" style={{ cursor: "pointer" }} onClick={() => navigate(`/customerOrders/${userType}/${userId}`)}>
-                      <OrdersNotificationBell className="mt-2" fontSize="medium" />
-                      <small className="mt-2" style={{ fontSize: "13px", fontFamily: 'Poppins' }}>
-                        Orders
-                      </small>
-                    </div>
-                    <hr />
-                    <div className="d-flex" style={{ cursor: "pointer" }} onClick={() => navigate(`/trackStatusNotifications/${userType}/${userId}`)}>
-                      <TrackStatusNotificationBell className="mt-2" fontSize="medium" />
-                      <small className="mt-2" style={{ fontSize: "13px", fontFamily: 'Poppins' }}>
-                        Track Ticket
-                      </small>
-                    </div>
-                    <hr />
-                    <div className="logout-btn" onClick={() => window.location.href = "https://handymanserviceproviders.com/Logout"}>
-                      <LogoutIcon />
-                      <span>Logout</span>
-                    </div> */}
-                    
-                    {/* Logout Button */}
-                    {/* <p className="logout-btn" onClick={`https://handymanserviceproviders.com`}>
-                      <LogoutIcon />
-                      <span>Logout</span>
-                    </p> */}
-                  {/* </div>
-               
-              </div>
-            </div>
-          </div>
-        </div> */}
-        {/* )}
-        </div>
-        </div> */}
          </div> 
     
           {isMobile && (
@@ -945,14 +675,6 @@ const fetchImageUrl = async (photoId) => {
     }}
   >
     <div className="d-flex flex-wrap justify-content-around align-items-center">
-      {/* <a
-        href={`/profilePage/${userType}/${userId}`}
-        className="d-flex flex-column align-items-center justify-content-center text-decoration-none text-dark me-3"
-        style={{ minWidth: '60px', flex: '0 0 auto' }}
-      >
-        <HomeIcon sx={{ fontSize: 30 }} />
-        <small style={{ fontSize: "13px", fontFamily: 'Poppins', textAlign: 'center' }}>Home</small>
-      </a> */}
       {menuList.map((menu, index) => (
         <a
           key={index}
@@ -965,7 +687,6 @@ const fetchImageUrl = async (photoId) => {
             fontSize: "12px",
             fontFamily: 'Poppins',
             textAlign: 'center',
-            // wordBreak: 'break-word',    
             lineHeight: '16px'
           }}>
             {menu.MenuTitle}
@@ -975,7 +696,6 @@ const fetchImageUrl = async (photoId) => {
     </div>
   </div>
 )}
-
         <div className="col-md-9 bg-white">
           <div className="position-relative flex-grow-1">
         <input
@@ -1134,7 +854,6 @@ const fetchImageUrl = async (photoId) => {
             product.rate && product.discount
               ? (product.rate - (product.rate * product.discount) / 100).toFixed(0)
               : product.rate;
-
           return (
             <div
           key={product.id}
@@ -1163,15 +882,10 @@ const fetchImageUrl = async (photoId) => {
   </div>
 </div>
 
-      {/* <div className="d-flex align-items-center"> */}
-{/* <button className="btn text-primary" onClick={() => scroll('left', 'product')}>
-  &lt;
-</button> */}
-
 {selectedProduct && (
   <div className="custom-modal-backdrop" onClick={() => setSelectedProduct(null)}>
     <div className="custom-modal-content" onClick={(e) => e.stopPropagation()}>
-      <button className="close-button" onClick={() => setSelectedProduct(null)}>×</button>
+      <button className="close-button" onClick={() => setSelectedProduct(null)}>&times;</button>
       <div className="custom-card">
         <div className="d-flex">
           <div style={{ flex: '0 0 55%' }}>
@@ -1220,13 +934,6 @@ const fetchImageUrl = async (photoId) => {
   </div>
 )}
 
-        {/* <div className="text-end">
-        <button className="btn text-primary" onClick={() => scroll('left', 'product')}>Prev</button>
-        <button className="btn text-primary" onClick={() => scroll('right', 'product')}>Next</button>
-      </div> */}
-
-
-      {/* </div> */}
       {!isMobile ? (
         <>
 <h5 className="mb-2 fs-4">Dashboard</h5>
@@ -1250,7 +957,6 @@ const fetchImageUrl = async (photoId) => {
               <div id="myTicketsSection" className="ticket-container">
                 <div className="ticket-header">
                 <h4 className="ticket-title">My Tickets</h4>
-                {/* <h4 className="ticket-title">View All</h4> */}
                 </div>
       <div className="ticket-scroll" ref={ticketScrollRef}>
       {!loading && allTickets.length > 0 ? (
@@ -1279,63 +985,11 @@ const fetchImageUrl = async (photoId) => {
         </div>
         </div> 
         </div>
-        {/* {isMobile ? (
-          <div
-        className="bottom-scrollbar-container position-fixed bottom-0 start-0 end-0 bg-white border-top px-1 py-1 shadow"
-        style={{
-          zIndex: 1020,
-          height: '80px',
-          overflowY: 'hidden',  
-        }}
-      >
-        <div
-          className="d-flex overflow-auto flex-nowrap scroll-area justify-content-start align-items-center h-100"
-          style={{
-            overflowX: 'auto', 
-            overflowY: 'hidden',
-            WebkitOverflowScrolling: 'touch',
-          }}
-        >
-          <a
-            href={`/profilePage/${userType}/${userId}`}
-            className="d-flex flex-column align-items-center justify-content-center text-decoration-none text-dark me-3"
-            style={{ minWidth: '60px', flex: '0 0 auto' }}
-          >
-            <HomeIcon sx={{ fontSize: 30 }} />
-            <small style={{ fontSize: "13px", fontFamily: 'Poppins', textAlign: 'center' }}>Home</small>
-          </a>
-
-          {menuList.map((menu, index) => (
-            <a
-              key={index}
-              href={menu.TargetUrl}
-              className="d-flex flex-column align-items-center justify-content-center text-decoration-none text-dark me-3"
-              style={{ minWidth: '60px', flex: '0 0 auto' }}
-            >
-              {React.cloneElement(menu.MenuIcon, { sx: { fontSize: 28 } })}
-              <small style={{ fontSize: "13px", fontFamily: 'Poppins', textAlign: 'center' }}>
-                {menu.MenuTitle}
-              </small>
-            </a>
-          ))}
-
-          <a
-            href="#myTicketsSection"
-            className="d-flex flex-column align-items-center justify-content-center text-decoration-none text-dark"
-            style={{ minWidth: '60px', flex: '0 0 auto' }}
-          >
-            <ConfirmationNumberIcon sx={{ fontSize: 28 }} />
-            <small style={{ fontSize: "13px", fontFamily: "Poppins", textAlign: "center" }}>My Tickets</small>
-          </a>
-        </div>
-      </div>
-        ) : null} */}
-        
+      
         {/* Zoom Modal */}
         <Modal show={showZoomModal} onHide={() => setShowZoomModal(false)} centered>
                 <Modal.Body className="text-center position-relative">
                   <div className="zoom-container">
-                     {/* Close Button (X) */}    
             <button
               className="close-button text-end"
               onClick={() => setShowZoomModal(false)}
@@ -1347,24 +1001,7 @@ const fetchImageUrl = async (photoId) => {
                 </Modal.Body>
               </Modal>
          <Footer />
-         <style jsx>
-          {`
-          .btn-warning {
-          background: linear-gradient(45deg, #ff9800, #ff5722);
-          border: none;
-          transition: all 0.3s ease-in-out;
-        }
-
-        .btn-warning:hover {
-          background: linear-gradient(45deg, #ff5722, #ff9800);
-          transform: scale(1.05);
-        }
-`}
-         </style>
         </>
   );
 };
-
-
-
 export default ProfilePage;

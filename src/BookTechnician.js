@@ -377,6 +377,8 @@ const handleUpdateJobDescription = async (e) => {
         address: newAddress,
         state: "Andhra Pradesh",
         district: "Visakhapatnam",
+        StateId: "1",
+        DistrictId: "110",
         zipCode: zipCode,
         mobileNumber: mobileNumber,
         emailAddress: "emailAddress",

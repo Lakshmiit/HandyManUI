@@ -33,52 +33,46 @@ useEffect(() => {
     try {
       const start = performance.now();
 
-      // 1. Fetch product metadata
-      const productRes = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/GetAllProductList`);
+      const productRes = await fetch('https://handymanapiv2.azurewebsites.net/api/Product/GetAllProductList');
       const productList = await productRes.json();
       setProductData(productList);
 
-      // 2. Prepare all image fetch promises for all productPhotos
-      const allImagePromises = [];
+      const allImagePromises = productList.flatMap(product => 
+        product.productPhotos?.map(photo => 
+          fetch(`https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`)
+            .then(res => res.json())
+            .then(data => {
+              const byteCharacters = atob(data.imageData);
+              const byteNumbers = new Array(byteCharacters.length);
+              for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+              }
+              const byteArray = new Uint8Array(byteNumbers);
+              const blob = new Blob([byteArray], { type: 'image/jpeg' });
+              const imageUrl = URL.createObjectURL(blob);
+              return { productId: product.id, imageUrl };
+            })
+            .catch(() => null)
+        ) || []
+      );
 
-      productList.forEach((product) => {
-        if (product.productPhotos?.length > 0) {
-          product.productPhotos.forEach((photo) => {
-            allImagePromises.push(
-              fetch(`https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`)
-                .then(res => res.json())
-                .then(data => ({
-                  productId: product.id,
-                  imageData: data.imageData,
-                }))
-                .catch(() => null)
-            );
-          });
-        }
-      });
-
-      // 3. Wait for all image requests to resolve
-      const imageResults = await Promise.all(allImagePromises);
-
-      // 4. Map productId to array of imageData
+      const imageResults = await Promise.allSettled(allImagePromises);
       const imageMap = {};
-
       imageResults.forEach(result => {
-        if (result) {
-          if (!imageMap[result.productId]) {
-            imageMap[result.productId] = [];
+        if (result.status === 'fulfilled' && result.value) {
+          const { productId, imageUrl } = result.value;
+          if (!imageMap[productId]) {
+            imageMap[productId] = [];
           }
-          imageMap[result.productId].push({ imageData: result.imageData });
+          imageMap[productId].push(imageUrl);
         }
       });
 
-      // 5. Set state
       setImageUrls(imageMap);
       setImageLoading(false);
 
       const duration = performance.now() - start;
       console.log(`All images loaded in ${duration.toFixed(2)} ms`);
-
     } catch (error) {
       console.error("Error loading all images fast:", error);
     }
@@ -86,6 +80,7 @@ useEffect(() => {
 
   fetchProductsAndAllImages();
 }, []);
+
   
   const handleImageClick = (imageSrc) => {
     setZoomImage(imageSrc);
@@ -125,7 +120,6 @@ useEffect(() => {
     );
   }
   
-
   return (
     <>
       <Header />
@@ -216,20 +210,20 @@ useEffect(() => {
                       </div>
                     </div>
                   ) : imageUrls[product.id]?.length > 0 ? (
-                    <Carousel>
-                      {imageUrls[product.id].map((img, index) => (
-                        <Carousel.Item key={index}>
-                          <img
-                            loading="eager"
-                            src={`data:image/jpeg;base64,${img.imageData}`}
-                            className="card-img-top rounded-top zoomable-image"
-                            style={{ height: "250px", objectFit: "cover", cursor: "pointer" }}
-                            alt={`product-image-${index}`}
-                            onClick={() => handleImageClick(`data:image/jpeg;base64,${img.imageData}`)}
-                          />
-                        </Carousel.Item>
-                      ))}
-                    </Carousel>
+                        <Carousel>
+                        {imageUrls[product.id]?.map((img, index) => (
+                          <Carousel.Item key={index}>
+                            <img
+                              loading="eager"
+                              src={img}
+                              className="card-img-top rounded-top zoomable-image"
+                              style={{ height: "250px", objectFit: "cover", cursor: "pointer" }}
+                              alt={`product-image-${index}`}
+                              onClick={() => handleImageClick(img)}
+                            />
+                          </Carousel.Item>
+                        ))}
+                      </Carousel>
                   ) : (
                     <div
                       className="d-flex justify-content-center align-items-center"
@@ -241,7 +235,6 @@ useEffect(() => {
                       <div className="card-body p-1 m-1">
                         <h5 className="card-title">{product.productName}</h5>
                         <div className="card-text fw-bold text-primary fs-5 no-break"> After Discount Price: Rs {discountedPrice}</div>
-
                             <div className="card-text fw-bold text-muted fs-6" style={{ textDecoration: 'line-through' }}>MRP: Rs {product.rate}</div>
                             <div className="card-text fw-bold text-danger fs-6">Discount: {product.discount}%</div>
                             <div className="card-text fw-bold text-success fs-5">Free Delivery and Installation</div>
@@ -277,13 +270,12 @@ useEffect(() => {
                           {imageUrls[product.id].map((img, index) => (
                             <Carousel.Item key={index}>
                               <img
-                                loading="lazy"
-                                src={`data:image/jpeg;base64,${img.imageData}`}
+                                loading="eager"
+                                src={img}
                                 className="card-img-top rounded-top zoomable-image"
                                 style={{ height: "250px", objectFit: "cover", cursor: "pointer" }}
                                 alt={`product-image-${index}`}
-                                onClick={() => handleImageClick(`data:image/jpeg;base64,${img.imageData}`)}
-                              />
+                                onClick={() => handleImageClick(img)}/>
                             </Carousel.Item>
                           ))}
                         </Carousel>
@@ -320,7 +312,6 @@ useEffect(() => {
 </div>
 </div>
 </div>
-      
 
 {/* Zoom Modal */}
 <Modal show={showZoomModal} onHide={() => setShowZoomModal(false)} centered>
@@ -350,16 +341,13 @@ useEffect(() => {
        .zoomable-image {
           transition: transform 0.3s ease-in-out;
         }
-
         .zoomable-image:hover {
           transform: scale(1.1);
         }
-
         .zoom-container {
           position: relative;
           display: inline-block;
         }
-
     .close-button {
       position: absolute;
       top: 8px;  
@@ -373,24 +361,20 @@ useEffect(() => {
       cursor: pointer;
       transition: 0.3s;
     }
-
     .close-button:hover {
       background: darkred;
     }
-
          .zoom-image {
         max-width: 100%;
         height: auto;
         border-radius: 5px;
         }
-
         .offer-banner {
           background: linear-gradient(90deg, #ff9800, #ff5722);
           font-size: 1.3rem;
           font-weight: bold;
           animation: pulse 1.5s infinite alternate;
         }
-
         @keyframes pulse {
           0% { transform: scale(1); }
           100% { transform: scale(1.05); }
@@ -400,25 +384,21 @@ useEffect(() => {
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
           transition: all 0.3s ease-in-out;
         }
-
         .carousel-control-prev-icon,
         .carousel-control-next-icon {
           background-color: rgba(0, 0, 0, 0.5);
           border-radius: 50%;
         }
-
         .btn-warning {
           background: linear-gradient(45deg, #ff9800, #ff5722);
           border: none;
           transition: all 0.3s ease-in-out;
         }
-
         .btn-warning:hover {
           background: linear-gradient(45deg, #ff5722, #ff9800);
           transform: scale(1.05);
         }
       `}</style>
-      
       <Footer />
     </>
   );

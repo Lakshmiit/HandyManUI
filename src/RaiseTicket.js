@@ -8,7 +8,6 @@ import Footer from './Footer.js';
 import Sidebar from './Sidebar';
 import {  useParams } from 'react-router-dom';
 const AddressManager = () => { 
-  // const Navigate = useNavigate();
   const {selectedUserType} = useParams();
   const {userType} = useParams();
   const [isMobile, setIsMobile] = useState(false);
@@ -62,9 +61,8 @@ const [shouldBlink,setShouldBlink] = useState(false);
         const data = await response.json();
         console.log(data);
         const addresses = Array.isArray(data) ? data : [data];
-        // Format addresses if necessary
         const formattedAddresses = addresses.map((addr) => ({
-          id: addr.addressId, // Use addressId
+          id: addr.addressId, 
           type: addr.isPrimaryAddress ? 'primary' : 'secondary',
           address: addr.address,
           state: addr.state,
@@ -79,8 +77,6 @@ const [shouldBlink,setShouldBlink] = useState(false);
         setAddresses(formattedAddresses);
         const customerName = Array.isArray(data) ? data[0]?.fullName || '' : data.fullName || '';
         setFullName(customerName);
-        // alert(JSON.stringify(customerName));
-        //  alert(JSON.stringify(data));
       } catch (error) {
         console.error('Error fetching customer data:', error);
       }
@@ -114,18 +110,6 @@ useEffect(() => {
     }));
   };
 
-  
-  // // Handle file upload
-  // const handleFileChange = (e) => {
-  //   const files = Array.from(e.target.files);
-  //   if (files.length + ticketPhotos.length > 5) {
-  //     alert("You can upload up to 5 files.");
-  //     return;
-  //   }
-  //   setTicketPhotos([...ticketPhotos, ...files]);
-  //   setShowAlert(true);
-  // };
-
   const handleFileChange = (e) => {
 
     const files = Array.from(e.target.files);
@@ -139,11 +123,6 @@ useEffect(() => {
         alert(`Only JPG and PNG formats are allowed: ${file.name}`);
         continue;
       }
-  
-      // if (!isValidSize) {
-      //   alert(`File size should be up to 100MB: ${file.name}`);
-      //   continue;
-      // }
   
       validFiles.push(file);
     }
@@ -340,13 +319,10 @@ useEffect(() => {
             headers: headers,
           });
           const data = await res.json();
-          // alert(data);
           setResponse(data);
         } catch (error) { 
-          // alert(error);
           console.error('Error sending message:', error);
         }
-    // Redirect to CustomerProfilePage
       window.location.href = `/profilePage/${userType}/${userId}`;
   
   } catch (error) {
@@ -554,6 +530,8 @@ useEffect(() => {
       address: newAddress,
       state: "Andhra Pradesh",
       district: "Visakhapatnam",
+      StateId: "1",
+      DistrictId: "110",
       zipCode: zipCode,
       mobileNumber: mobileNumber,
       emailAddress: "emailAddress",
@@ -621,7 +599,6 @@ useEffect(() => {
           <Sidebar userType={selectedUserType} />
         </div>
       )}
-
       {/* Floating menu for mobile */}
       {isMobile && (
         <div className="floating-menu">
