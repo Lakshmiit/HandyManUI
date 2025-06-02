@@ -132,6 +132,13 @@ const [error, setError] = useState('');
   </div>
 </div>
     </div>
+    <Button
+  type="button"
+  className="back-btn"
+  onClick={() => navigate(`/profilePage/${userType}/${userId}`)}
+>
+  Back
+</Button>
     <Footer />
     </> 
   );

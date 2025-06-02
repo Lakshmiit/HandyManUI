@@ -11,9 +11,9 @@ import Footer from './Footer.js';
 // import axios from 'axios';
 // import RaiseTicketConfirmation from './RaiseTicketConfirmation.js';
 import Sidebar from './Sidebar';
-import {  useParams } from 'react-router-dom';
+import {  useParams, useNavigate } from 'react-router-dom';
 const ApartmentRaiseTicket = () => {
-  // const Navigate = useNavigate();
+   const navigate = useNavigate();
    const {userType} = useParams();
    const {userId} = useParams();
   const {selectedUserType} = useParams();
@@ -337,8 +337,7 @@ useEffect(() => {
       !formData.subject ||
       !formData.details ||
       !formData.category ||
-      !assignedTo || 
-      !selectedFiles.length
+      !assignedTo 
     ) {
       window.alert('Please fill in all mandatory fields.');
       return;
@@ -860,11 +859,18 @@ const isFormDisabled = isSubscription !== "Yes";
           </div>
 
         {/* Get Quote Button */}
-        <div className="mt-4">
+        <div className="d-flex justify-content-between mt-3">
           <Button variant="success" type="submit" 
           onClick={handleApartmentTicket}
           disabled = {isSubmitting}>
           {isSubmitting ? 'Submitting...' : 'Get Quote'}          
+          </Button>
+          <Button
+            type="button"
+            className="back-btn"
+            onClick={() => navigate(`/profilePage/${userType}/${userId}`)}
+          >
+            Back
           </Button>
         </div>
       </div>

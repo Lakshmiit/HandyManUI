@@ -2310,6 +2310,24 @@ max-width: none;
  border-radius: 15px !important;
 }
 
+.category-card {
+  width: 200px;
+  height: 100px;
+  background-color: #f1b61f30;
+  border: none;
+  display: flex;
+  /* align-items: start;
+  justify-content: start; */
+  flex-direction: row;
+  /* gap: 1rem; */
+  transition: all 0.5s;
+  cursor: pointer;
+  /* text-align: start; */
+  padding: 8px;
+  /* background-color: #f1b61f30; */
+ border-radius: 10px !important;
+}
+
 .card-scroll-container {
   display: flex;
   overflow-x: auto;
@@ -3078,8 +3096,8 @@ h2 {
 
 .close-button {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 12px;
+  right: 16px;
   background: red;
   border: none;
   font-size: 20px;
@@ -3283,6 +3301,14 @@ background: darkred;
   overflow-y: auto;
 }
 
+.back-btn {
+  background-color: #007bff !important;
+  color: white; 
+  /* border: none; 
+  padding: 8px 16px;  */
+  border-radius: 4px; 
+}
+
 /* .close-btn {
   position: absolute;
   top: 0.5rem;
@@ -3294,3 +3320,65 @@ background: darkred;
   padding: 0.25rem 0.5rem;
   cursor: pointer;
 } */
+
+.custom-carousel-icon {
+  filter: brightness(0) saturate(100%) invert(32%) sepia(99%) saturate(2154%) hue-rotate(201deg) brightness(97%) contrast(101%);
+  width: 3rem;
+  height: 3rem;
+  background-size: 100% 100%;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 999;
+}
+
+.location-modal {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  padding: 10px;
+  max-height: 60%;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease-out forwards;
+  z-index: 1000;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.modal-content {
+  padding: 10px;
+}
+
+/* .modal-title {
+  font-size: 18px;
+  margin-bottom: 12px;
+  text-align: start;
+} */
+
+.address-card {
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  padding: 16px;
+  width: 300px;
+  height: 190px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  text-align: left;
+  font-size: 16px;
+  margin-top: 16px;
+}
+
+

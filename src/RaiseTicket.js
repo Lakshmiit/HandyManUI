@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useCallback} from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap'; 
 import { v4 as uuidv4 } from 'uuid'; 
+import axios from 'axios';
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import Header from './Header.js';
 import Footer from './Footer.js';
 import Sidebar from './Sidebar';
-import {  useParams } from 'react-router-dom';
+import {  useParams, useNavigate} from 'react-router-dom';
 const AddressManager = () => { 
+  const navigate = useNavigate();
   const {selectedUserType} = useParams();
   const {userType} = useParams();
   const [isMobile, setIsMobile] = useState(false);
@@ -33,6 +35,12 @@ const AddressManager = () => {
   const [response, setResponse] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 const [mobileNumber, setMobileNumber] = useState('');
+  const [state, setState] = useState('');
+  const [districtList, setDistrictList] = useState([]);  
+const [stateList, setStateList] = useState([]);
+  const [district, setDistrict] = useState('');  
+  const [districtId, setDistrictId] = useState('');    
+  const [stateId, setStateId] = useState(null);          
   const [zipCode, setZipCode] = useState('');
   const [guestCustomerId, setGuestCustomerId] = useState('');
   const [isEditing, setIsEditing] = useState(false);
@@ -42,8 +50,10 @@ fullName  : '',
 mobileNumber: '',
 address: '',
 zipCode: '',
+state: '',
+district: '',
 });
-const [selectedFiles, setSelectedFiles] = useState([]);
+// const [selectedFiles, setSelectedFiles] = useState([]);
 const [shouldBlink,setShouldBlink] = useState(false);
 
   useEffect(() => {
@@ -85,7 +95,35 @@ const [shouldBlink,setShouldBlink] = useState(false);
 useEffect(() => {
   fetchCustomerData();
 }, [fetchCustomerData]);
+
+useEffect(() => {
+  axios.get('https://handymanapiv2.azurewebsites.net/api/MasterData/getStates')
+    .then(response => {
+      const data = response.data;
+      console.log("States API Response:", data); 
+      setStateList(data);
+      setStateId('');
+    })
+    .catch(error => {
+      console.error('Error fetching states:', error);
+    });
+}, []);
+
  
+ useEffect(() => {
+  if (stateId) {
+    axios.get(`https://handymanapiv2.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
+      .then(response => {
+        setDistrictList(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching districts:', error);
+      });
+  } else {
+    setDistrictList([]);
+  }
+}, [stateId]);
+
 // Detect screen size for responsiveness
 useEffect(() => {
   const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -134,7 +172,7 @@ useEffect(() => {
   
     setTicketPhotos([...ticketPhotos, ...validFiles]);
     setShowAlert(validFiles.length > 0);
-    setSelectedFiles(Array.from(e.target.files));
+    // setSelectedFiles(Array.from(e.target.files));
   };
   
   const handleUploadFiles = async () => {
@@ -223,8 +261,7 @@ useEffect(() => {
       !formData.details ||
       !formData.category ||
       // !assignedTo ||
-      !requestType || 
-      !selectedFiles.length
+      !requestType 
     ) {
       window.alert('Please fill in all mandatory fields.');
       return;
@@ -234,8 +271,8 @@ useEffect(() => {
     setIsSubmitting(true);
 
     const primaryAddress = addresses.find((addr) => addr.type === "primary");
-    // const state = primaryAddress?.state || "";
-    // const district = primaryAddress?.district || "";
+    const state = primaryAddress?.state || "";
+    const district = primaryAddress?.district || "";
     const pincode = primaryAddress?.zipCode || primaryAddress?.pincode || "";
     // const emailAddress = primaryAddress?.emailAddress || primaryAddress?.emailAddress || "";
     const mobileNumber = primaryAddress?.mobileNumber || primaryAddress?.mobileNumber || "";
@@ -248,8 +285,8 @@ useEffect(() => {
       details: formData.details,
       category: formData.category,
       assignedTo: "Customer Care",
-      state:"Andhra Pradesh",
-      district:"Visakhapatnam",
+      state: addressData.state || state,
+      district: addressData.district || district,
       zipcode: addressData.zipCode || pincode,
       requestType: requestType,
       status:'open',
@@ -494,13 +531,15 @@ useEffect(() => {
   const resetAddressForm = () => {
     setFullName('');
     setMobileNumber('');
-    setNewAddress(''); 
+    setNewAddress('');
+    setState('');
+    setDistrict(''); 
     setZipCode('');
   };
   
   const handleAddressEdit = async () => {
 
-  if (!newAddress || !zipCode || !mobileNumber) {
+  if (!newAddress || !zipCode || !mobileNumber || !state || !district) {
     alert("Please fill in all required fields.");
     return; 
   }
@@ -520,6 +559,8 @@ useEffect(() => {
       mobileNumber,
       address: newAddress,
       zipCode,
+      state,
+      district
     };
   
     const payload3 = {
@@ -528,10 +569,10 @@ useEffect(() => {
       addressId: guestCustomerId,
       isPrimaryAddress: true,
       address: newAddress,
-      state: "Andhra Pradesh",
-      district: "Visakhapatnam",
-      StateId: "1",
-      DistrictId: "110",
+      state: state,
+      district: district,
+      StateId: stateId,
+      DistrictId: districtId,
       zipCode: zipCode,
       mobileNumber: mobileNumber,
       emailAddress: "emailAddress",
@@ -678,7 +719,57 @@ useEffect(() => {
                         required
                       />
                     </Form.Group>
-      
+                     <Form.Group className="mb-3">
+                      <Form.Label>State <span className="req_star">*</span></Form.Label>
+                      <Form.Select
+                        value={stateId || ''}
+                        onChange={(e) => {
+                          const selectedId = e.target.value;
+                          setStateId(selectedId);
+                          const selectedState = stateList.find(
+                            (s) => s?.StateId?.toString() === selectedId
+                          );
+                          if (selectedState) {
+                            setState(selectedState.StateName);
+                          }
+                        }}
+                        required
+                      >
+                        <option value="">Select State</option>
+                        {Array.isArray(stateList) &&
+                          stateList
+                            .filter((s) => s && s.StateId && s.StateName)
+                            .map((s) => (
+                              <option key={s.StateId} value={s.StateId.toString()}>
+                                {s.StateName}
+                              </option>
+                            ))}
+                      </Form.Select>
+                    </Form.Group>
+
+                    <Form.Group className="mb-3">
+                      <Form.Label>District <span className="req_star">*</span></Form.Label>
+                     <Form.Select
+                        value={districtId || ''}
+                        onChange={(e) => {
+                          const selectedId = e.target.value;
+                          setDistrictId(selectedId);
+                          const selectedDistrict = districtList.find(d => d.districtId.toString() === selectedId);
+                          if (selectedDistrict) {
+                            setDistrict(selectedDistrict.districtName);
+                          }
+                        }}
+                        required
+                      >
+                        <option value="">Select District</option>
+                        {districtList.map((d) => (
+                          <option key={d.districtId} value={d.districtId.toString()}>
+                            {d.districtName}
+                          </option>
+                        ))}
+                      </Form.Select>
+                       </Form.Group>
+
                     <Form.Group className="mb-3">
                       <Form.Label>Pincode <span className="req_star">*</span></Form.Label>
                       <Form.Control
@@ -718,6 +809,10 @@ useEffect(() => {
                             <br />
                             <span className="ml-2">{address.address}</span>
                             <br />
+                            <span className="ml-2">{address.state}</span> 
+                            <br />
+                            <span className="ml-2">{address.district}</span> 
+                            <br />
                             <span className="ml-2">{address.zipCode}</span> 
                             <br />
                             {/* <hr /> */}
@@ -735,6 +830,8 @@ useEffect(() => {
                                 setFullName(address.fullName);
                                 setMobileNumber(address.mobileNumber);
                                 setNewAddress(address.address);
+                                setState(address.state);
+                                setDistrict(address.district);
                                 setZipCode(address.zipCode);
                                 setIsEditing(true);
                                 setShowModal(true);
@@ -901,7 +998,7 @@ useEffect(() => {
         Without Material
       </label>
     </div>
-
+<div className="d-flex justify-content-between mt-3">
         {/* Get Quote Button */}
         <Button 
           variant="success" 
@@ -911,10 +1008,15 @@ useEffect(() => {
         >
           {isSubmitting ? 'Submitting...' : 'Get Quote'}
         </Button>
-
-
+        <Button
+          type="button"
+          className="back-btn"
+          onClick={() => navigate(`/profilePage/${userType}/${userId}`)}
+        >
+          Back
+        </Button>
+     </div>
       </div>
-
     </div>
     <Footer /> 
 

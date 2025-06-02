@@ -9,8 +9,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import BuyProductView from "./BuyProductView.js";
 import { Button, Form, Modal } from 'react-bootstrap'; // Import Bootstrap components for modal
-// import axios from 'axios';
-
+import axios from 'axios';
 const BuyProduct = () => { 
   const navigate = useNavigate();
   // const location = useLocation();
@@ -42,8 +41,12 @@ const BuyProduct = () => {
   const [newAddress, setNewAddress] = useState('');
   const [addresses, setAddresses] = useState([]);
   // const [addressType, setAddressType] = useState('');
-  // const [state, setState] = useState('');
-  // const [district, setDistrict] = useState('');
+  const [state, setState] = useState('');
+    const [districtList, setDistrictList] = useState([]);  
+  const [stateList, setStateList] = useState([]);
+    const [district, setDistrict] = useState('');  
+    const [districtId, setDistrictId] = useState('');    
+    const [stateId, setStateId] = useState(null); 
   // const [pincode, setPincode] = useState('');
   const [fullName, setFullName] = useState('');
   const [showModal, setShowModal] = useState(false);
@@ -73,6 +76,8 @@ const [addressData, setAddressData] = useState({
 fullName  : '',
 mobileNumber: '',
 address: '',
+state: '',
+district: '',
 zipCode: '',
 });
 const [showProductModal, setShowProductModal] = useState(false);
@@ -187,6 +192,34 @@ useEffect(() => {
     fetchProfileType();
   }, [fetchProfileType]);
 
+  useEffect(() => {
+    axios.get('https://handymanapiv2.azurewebsites.net/api/MasterData/getStates')
+      .then(response => {
+        const data = response.data;
+        console.log("States API Response:", data); 
+        setStateList(data);
+        setStateId('');
+      })
+      .catch(error => {
+        console.error('Error fetching states:', error);
+      });
+  }, []);
+  
+   
+   useEffect(() => {
+    if (stateId) {
+      axios.get(`https://handymanapiv2.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
+        .then(response => {
+          setDistrictList(response.data);
+        })
+        .catch(error => {
+          console.error('Error fetching districts:', error);
+        });
+    } else {
+      setDistrictList([]);
+    }
+  }, [stateId]);
+
   const validRate = Number(rate) || 0;
   const validDiscount = Number(discount) || 0;
   const afterDiscountPrice = parseFloat((validRate - (validRate * validDiscount) / 100).toFixed(0));
@@ -212,8 +245,8 @@ useEffect(() => {
 
   
     const primaryAddress = addresses.find((addr) => addr.type === "primary");
-    // const state = primaryAddress?.state || "";
-    // const district = primaryAddress?.district || "";
+    const state = primaryAddress?.state || "";
+    const district = primaryAddress?.district || "";
     const pincode = primaryAddress?.zipCode || "";
     const mobileNumber = primaryAddress?.mobileNumber || "";
     const emailAddress = primaryAddress?.emailAddress || "";
@@ -241,8 +274,8 @@ useEffect(() => {
       ServiceCharges: "",
       TotalPaymentAmount: "",
       AddressType: primaryAddress ? "primary" : "secondary",
-      State: "Andhra Pradesh",  
-      District: "Visakhapatnam",
+      State: addressData.state || state,  
+      District: addressData.district || district,
       ZipCode: addressData.zipCode || pincode,
       CustomerId: userId,
       CustomerName: addressData.fullName || fullName,
@@ -525,12 +558,14 @@ useEffect(() => {
     setFullName('');
     setMobileNumber('');
     setNewAddress(''); 
+    setState('');
+    setDistrict('');
     setZipCode('');
   };
   
   const handleAddressEdit = async () => {
 
-  if (!newAddress || !zipCode || !mobileNumber) {
+  if (!newAddress || !zipCode || !mobileNumber || !state || !district) {
     alert("Please fill in all required fields.");
     return; 
   }
@@ -549,6 +584,8 @@ useEffect(() => {
       fullName,
       mobileNumber,
       address: newAddress,
+      state,
+      district,
       zipCode,
     };
   
@@ -558,10 +595,10 @@ useEffect(() => {
       addressId: guestCustomerId,
       isPrimaryAddress: true,
       address: newAddress,
-      state: "Andhra Pradesh",
-      district: "Visakhapatnam",
-      StateId: "1",
-      DistrictId: "110",
+      state: state,
+      district: district,
+      StateId: stateId,
+      DistrictId: districtId,
       zipCode: zipCode,
       mobileNumber: mobileNumber,
       emailAddress: "emailAddress",
@@ -814,7 +851,7 @@ useEffect(() => {
             <Modal.Body>
               <Form>
                 <Form.Group className="mb-3">
-                  <Form.Label>Full Name</Form.Label>
+                  <Form.Label>Full Name <span className="req_star">*</span></Form.Label>
                   <Form.Control
                     type="text"
                     value={fullName}
@@ -824,7 +861,7 @@ useEffect(() => {
                   />
                 </Form.Group>
                 <Form.Group className="mb-3">
-                  <Form.Label>Mobile Number</Form.Label>
+                  <Form.Label>Mobile Number <span className="req_star">*</span></Form.Label>
                   <Form.Control
                     name="MobileNumber"
                     className="form-control"
@@ -845,7 +882,7 @@ useEffect(() => {
                   />
                 </Form.Group>
                 <Form.Group className="mb-3">
-                  <Form.Label>Address</Form.Label>
+                  <Form.Label>Address <span className="req_star">*</span></Form.Label>
                   <Form.Control
                     type="text"
                     value={newAddress}
@@ -853,10 +890,59 @@ useEffect(() => {
                     placeholder="Enter address"
                     required
                   />
-                  
                 </Form.Group>
                 <Form.Group className="mb-3">
-                  <Form.Label>Pincode</Form.Label>
+                <Form.Label>State <span className="req_star">*</span></Form.Label>
+                <Form.Select
+                  value={stateId || ''}
+                  onChange={(e) => {
+                    const selectedId = e.target.value;
+                    setStateId(selectedId);
+                    const selectedState = stateList.find(
+                      (s) => s?.StateId?.toString() === selectedId
+                    );
+                    if (selectedState) {
+                      setState(selectedState.StateName);
+                    }
+                  }}
+                  required
+                >
+                  <option value="">Select State</option>
+                  {Array.isArray(stateList) &&
+                    stateList
+                      .filter((s) => s && s.StateId && s.StateName)
+                      .map((s) => (
+                        <option key={s.StateId} value={s.StateId.toString()}>
+                          {s.StateName}
+                        </option>
+                      ))}
+                </Form.Select>
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label>District <span className="req_star">*</span></Form.Label>
+                <Form.Select
+                  value={districtId || ''}
+                  onChange={(e) => {
+                    const selectedId = e.target.value;
+                    setDistrictId(selectedId);
+                    const selectedDistrict = districtList.find(d => d.districtId.toString() === selectedId);
+                    if (selectedDistrict) {
+                      setDistrict(selectedDistrict.districtName);
+                    }
+                  }}
+                  required
+                >
+                  <option value="">Select District</option>
+                  {districtList.map((d) => (
+                    <option key={d.districtId} value={d.districtId.toString()}>
+                      {d.districtName}
+                    </option>
+                  ))}
+                </Form.Select>
+                  </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Pincode <span className="req_star">*</span></Form.Label>
                   <Form.Control
                     type="text"
                     value={zipCode}
@@ -894,6 +980,10 @@ useEffect(() => {
                         <br />
                         <span className="ml-2">{address.address}</span>
                         <br />
+                        <span className="ml-2">{address.state}</span>
+                        <br />
+                        <span className="ml-2">{address.district}</span>
+                        <br />
                         <span className="ml-2">{address.zipCode}</span> 
                         <br />
                         {/* <hr /> */}
@@ -909,6 +999,8 @@ useEffect(() => {
                             setFullName(address.fullName);
                             setMobileNumber(address.mobileNumber);
                             setNewAddress(address.address);
+                            setState(address.state);
+                            setDistrict(address.district);
                             setZipCode(address.zipCode);
                             setIsEditing(true);
                             setShowModal(true);
@@ -1485,14 +1577,13 @@ useEffect(() => {
               >
                 Buy Product
               </button>
-              <button
+              <Button
                 type="button"
-                className="text-white btn btn-warning w-30"
+                className="back-btn"
                 onClick={() => navigate(`/profilePage/${userType}/${userId}`)}
               >
                 Back
-              </button>
-             
+              </Button>
             </div>
           </form>
         </div>

@@ -105,13 +105,20 @@ const AboutApartmentRaiseTicket = () => {
         <div className="">📥 Collected via Association</div>
         <div className="">🧑‍🔧 Includes Technician Visits & Labor</div>
 
-     <div className="text-center p-2 w-full">  
+     <div className="d-flex justify-content-between mt-2">  
   <button
     className="btn btn-success text-white btn-sm w-23 fs-6"
     onClick={() => Navigate(`/apartmentRaiseTicket/${userType}/${userId}`)}
   >
     📱 Raise Complaints
   </button>
+<Button
+    type="button"
+    className="back-btn"
+    onClick={() => Navigate(`/profilePage/${userType}/${userId}`)}
+  >
+    Back
+  </Button>
 </div>
 <Footer />
     </div>

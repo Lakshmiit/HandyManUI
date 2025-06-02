@@ -4,7 +4,8 @@ import { Modal, Button, Form, Row, Col } from 'react-bootstrap'; // Import Boots
 import {
   Dashboard as MoreVertIcon,
 } from '@mui/icons-material';
-import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import axios from 'axios';
+// import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import Header from './Header.js';
 import Footer from './Footer.js';
 import Sidebar from './Sidebar';
@@ -26,8 +27,12 @@ const AddressManager = () => {
 const [newAddress, setNewAddress] = useState('');
 // const [mobileNumber, setPhoneNumber] = useState('');
   // const [addressType, setAddressType] = useState('');
-  // const [state, setState] = useState('');
-  // const [district, setDistrict] = useState('');
+ const [state, setState] = useState('');
+   const [districtList, setDistrictList] = useState([]);  
+ const [stateList, setStateList] = useState([]);
+   const [district, setDistrict] = useState('');  
+   const [districtId, setDistrictId] = useState('');    
+   const [stateId, setStateId] = useState(null);  
   // const [pincode, setPincode] = useState('');
   const [fullName, setFullName] = useState('');
   // const [emailAddress, setEmailAddress] = useState('');
@@ -54,6 +59,8 @@ const [addressData, setAddressData] = useState({
 fullName  : '',
 mobileNumber: '',
 address: '',
+state: '',
+district: '',
 zipCode: '',
 });
 // const [response, setResponse] = useState(null);
@@ -102,6 +109,34 @@ zipCode: '',
   useEffect(() => {
     fetchCustomerData();
   }, [fetchCustomerData]);
+
+  useEffect(() => {
+    axios.get('https://handymanapiv2.azurewebsites.net/api/MasterData/getStates')
+      .then(response => {
+        const data = response.data;
+        console.log("States API Response:", data); 
+        setStateList(data);
+        setStateId('');
+      })
+      .catch(error => {
+        console.error('Error fetching states:', error);
+      });
+  }, []);
+  
+   
+   useEffect(() => {
+    if (stateId) {
+      axios.get(`https://handymanapiv2.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
+        .then(response => {
+          setDistrictList(response.data);
+        })
+        .catch(error => {
+          console.error('Error fetching districts:', error);
+        });
+    } else {
+      setDistrictList([]);
+    }
+  }, [stateId]);
 
   useEffect(() => {
     if (remarksRef.current) {
@@ -176,6 +211,8 @@ useEffect(() => {
     setFullName('');
     setMobileNumber('');
     setNewAddress(''); 
+    setState('');
+    setDistrict('');
     setZipCode('');
   };
 
@@ -248,29 +285,29 @@ useEffect(() => {
     }
   };
 
-  const phoneNumber = '7989328864';  // Phone number
+  // const phoneNumber = '7989328864';  // Phone number
   // Generate ticket ID in the format BTWV0002
-  const ticketIdPrefix = "BTWV";
-  const ticketIdSuffix = String(Math.floor(Math.random() * 9999) + 1).padStart(4, "0");
-  const ticketIds = `${ticketIdPrefix}${ticketIdSuffix}`;
+  // const ticketIdPrefix = "BTWV";
+  // const ticketIdSuffix = String(Math.floor(Math.random() * 9999) + 1).padStart(4, "0");
+  // const ticketIds = `${ticketIdPrefix}${ticketIdSuffix}`;
 
   // Generate WhatsApp link with the ticket ID
-  const generateWhatsAppLink = (ticketId, phoneNumber) => {
-    const message = `Hello, I'd like to continue uploading my video for ticket: ${ticketId}`;
-    return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-  };
-  const handleWhatsAppClick = () => {
-    // handleSaveWhatsapp();
-    const link = generateWhatsAppLink(ticketIds, phoneNumber);
-    window.open(link, '_blank');
-  };
+  // const generateWhatsAppLink = (ticketId, phoneNumber) => {
+  //   const message = `Hello, I'd like to continue uploading my video for ticket: ${ticketId}`;
+  //   return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+  // };
+  // const handleWhatsAppClick = () => {
+  //   // handleSaveWhatsapp();
+  //   const link = generateWhatsAppLink(ticketIds, phoneNumber);
+  //   window.open(link, '_blank');
+  // };
 
 const handleUpdateJobDescription = async (e) => {
   e.preventDefault();
 
   const primaryAddress = addresses.find((addr) => addr.type === "primary");
-    // const state = primaryAddress?.state || "";
-    // const district = primaryAddress?.district || "";
+    const state = primaryAddress?.state || "";
+    const district = primaryAddress?.district || "";
     const pincode = primaryAddress?.zipCode || primaryAddress?.pincode || "";
     // const emailAddress = primaryAddress?.emailAddress || primaryAddress?.emailAddress || "";
     const mobileNumber = primaryAddress?.mobileNumber || primaryAddress?.mobileNumber || "";
@@ -296,8 +333,8 @@ const handleUpdateJobDescription = async (e) => {
     status: "Draft",
     assignedTo: "",
     customerId: userId,
-    state: "Andhra Pradesh",
-    district: "Visakhapatnam",
+    state: addressData.state || state,
+    district: addressData.district || district,
     zipCode: addressData.zipCode || pincode,
     phoneNumber: addressData.mobileNumber || mobileNumber,
     CustomerEmail: "emailAddress",
@@ -347,7 +384,7 @@ const handleUpdateJobDescription = async (e) => {
   // Handle address editing
   const handleAddressEdit = async () => {
 
-    if (!newAddress || !zipCode || !mobileNumber) {
+    if (!newAddress || !zipCode || !mobileNumber || !state || !district) {
       alert("Please fill in all required fields.");
       return; 
     }
@@ -366,6 +403,8 @@ const handleUpdateJobDescription = async (e) => {
         fullName,
         mobileNumber,
         address: newAddress,
+        state,
+        district,
         zipCode,
       };
     
@@ -375,10 +414,10 @@ const handleUpdateJobDescription = async (e) => {
         addressId: guestCustomerId,
         isPrimaryAddress: true,
         address: newAddress,
-        state: "Andhra Pradesh",
-        district: "Visakhapatnam",
-        StateId: "1",
-        DistrictId: "110",
+        state: state,
+        district: district,
+        StateId: stateId,
+        DistrictId: districtId,
         zipCode: zipCode,
         mobileNumber: mobileNumber,
         emailAddress: "emailAddress",
@@ -465,7 +504,7 @@ const handleUpdateJobDescription = async (e) => {
       <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
       <h1 className="text-center mb-2">Book A Technician</h1>
         {/* Display primary address with "Change Address" link */}
-        <div className="d-flex justify-content-between align-items-center">
+         <div className="d-flex justify-content-between align-items-center">
                                 <label>Address <span className="req_star">*</span></label>
                                 {/* <Button variant="success m-1 text-white" onClick={() => setShowModal(true)}>
                                   Add Address
@@ -479,7 +518,7 @@ const handleUpdateJobDescription = async (e) => {
                         <Modal.Body>
                           <Form>
                             <Form.Group className="mb-3">
-                              <Form.Label>Full Name</Form.Label>
+                              <Form.Label>Full Name <span className="req_star">*</span></Form.Label>
                               <Form.Control
                                 type="text"
                                 value={fullName}
@@ -489,7 +528,7 @@ const handleUpdateJobDescription = async (e) => {
                               />
                             </Form.Group>
                             <Form.Group className="mb-3">
-                              <Form.Label>Mobile Number</Form.Label>
+                              <Form.Label>Mobile Number <span className="req_star">*</span></Form.Label>
                               <Form.Control
                                 name="MobileNumber"
                                 className="form-control"
@@ -510,7 +549,7 @@ const handleUpdateJobDescription = async (e) => {
                               />
                             </Form.Group>
                             <Form.Group className="mb-3">
-                              <Form.Label>Address</Form.Label>
+                              <Form.Label>Address <span className="req_star">*</span></Form.Label>
                               <Form.Control
                                 type="text"
                                 value={newAddress}
@@ -518,10 +557,60 @@ const handleUpdateJobDescription = async (e) => {
                                 placeholder="Enter address"
                                 required
                               />
-                              
                             </Form.Group>
+                           <Form.Group className="mb-3">
+                              <Form.Label>State <span className="req_star">*</span></Form.Label>
+                              <Form.Select
+                                value={stateId || ''}
+                                onChange={(e) => {
+                                  const selectedId = e.target.value;
+                                  setStateId(selectedId);
+                                  const selectedState = stateList.find(
+                                    (s) => s?.StateId?.toString() === selectedId
+                                  );
+                                  if (selectedState) {
+                                    setState(selectedState.StateName);
+                                  }
+                                }}
+                                required
+                              >
+                                <option value="">Select State</option>
+                                {Array.isArray(stateList) &&
+                                  stateList
+                                    .filter((s) => s && s.StateId && s.StateName)
+                                    .map((s) => (
+                                      <option key={s.StateId} value={s.StateId.toString()}>
+                                        {s.StateName}
+                                      </option>
+                                    ))}
+                              </Form.Select>
+                            </Form.Group>
+        
                             <Form.Group className="mb-3">
-                              <Form.Label>Pincode</Form.Label>
+                              <Form.Label>District <span className="req_star">*</span></Form.Label>
+                            <Form.Select
+                                value={districtId || ''}
+                                onChange={(e) => {
+                                  const selectedId = e.target.value;
+                                  setDistrictId(selectedId);
+                                  const selectedDistrict = districtList.find(d => d.districtId.toString() === selectedId);
+                                  if (selectedDistrict) {
+                                    setDistrict(selectedDistrict.districtName);
+                                  }
+                                }}
+                                required
+                              >
+                                <option value="">Select District</option>
+                                {districtList.map((d) => (
+                                  <option key={d.districtId} value={d.districtId.toString()}>
+                                    {d.districtName}
+                                  </option>
+                                ))}
+                              </Form.Select>
+                              </Form.Group>
+              
+                            <Form.Group className="mb-3">
+                              <Form.Label>Pincode <span className="req_star">*</span></Form.Label>
                               <Form.Control
                                 type="text"
                                 value={zipCode}
@@ -543,6 +632,7 @@ const handleUpdateJobDescription = async (e) => {
                       </Modal>
                               </div>
                 
+                
                           <div className="p-3 border rounded bg-light">
                           {addresses
                               .map((address) => (
@@ -559,6 +649,10 @@ const handleUpdateJobDescription = async (e) => {
                                     <br />
                                     <span className="ml-2">{address.address}</span>
                                     <br />
+                                    <span className="ml-2">{address.state}</span>
+                                    <br />
+                                    <span className="ml-2">{address.district}</span>
+                                    <br />
                                     <span className="ml-2">{address.zipCode}</span> 
                                     <br />
                                     {/* <hr /> */}
@@ -574,11 +668,12 @@ const handleUpdateJobDescription = async (e) => {
                                           setFullName(address.fullName);
                                           setMobileNumber(address.mobileNumber);
                                           setNewAddress(address.address);
+                                          setState(address.state);
+                                          setDistrict(address.district);
                                           setZipCode(address.zipCode);
                                           setIsEditing(true);
                                           setShowModal(true);
-                                        }}
-                                    >
+                                        }}>
                                       {address.address === "" ? "Add Address" : "Edit Address"}
                                     </Button>
                                   ))}
@@ -1075,9 +1170,14 @@ const handleUpdateJobDescription = async (e) => {
         disabled={noJobsError || isAddressInvalid} >
             Book A Technician
         </Button>
-        <Button variant='success' className="m-1" onClick={handleWhatsAppClick}><WhatsAppIcon /> WhatsApp</Button>
-        <Button variant='success' className="m-1" onClick={() => Navigate(`/profilePage/${userType}/${userId}`)}>Back</Button>
-
+        {/* <Button variant='success' className="m-1" onClick={handleWhatsAppClick}><WhatsAppIcon /> WhatsApp</Button> */}
+        <Button
+          type="button"
+          className="back-btn"
+          onClick={() => Navigate(`/profilePage/${userType}/${userId}`)}
+        >
+          Back
+        </Button>
         </div>
       {/* </Form> */}
     </div>

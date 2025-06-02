@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import './App.css';
-import { Carousel, Modal } from 'react-bootstrap';
+import { Modal, Button, Form, Carousel } from 'react-bootstrap';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import NotificationBell from "./NotificationsBell";
 import OrdersNotificationBell from "./OrdersBellNotifications";
 import TrackStatusNotificationBell from "./TrackStatusBellNotifications";
@@ -17,9 +19,10 @@ import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-import Banner1 from './img/banner-1 copy.jpg';
-import Banner2 from './img/banner-2.jpg';
-import Banner3 from './img/banner-4.jpg';
+// import Banner1 from './img/Ads1.jpeg';
+import BannerVideo from './img/Video1.mp4';
+// import Banner3 from './img/banner-4.jpg';
+// import Banner2 from './img/Ads2.jpeg';
 import { useNavigate, useParams } from "react-router-dom";
 import Logo from "./img/Hm_Logo 1.png";
 import SearchIcon from "@mui/icons-material/Search";
@@ -122,7 +125,6 @@ const ProfilePage = () => {
     const {userId} = useParams();
     const {userType} = useParams();
     const [category, setCategory] = useState('');
-    const [district, setDistrict] = useState('');
     const [zipCode, setZipCode] = useState('');
     const [fullName, setFullName] = useState('');
     const [menuList, setMenuList] = useState([]);
@@ -130,9 +132,8 @@ const ProfilePage = () => {
     const [loading, setLoading] = useState(true); 
     const [profileImage, setProfileImage] = useState(null);
     const fileInputRef = useRef(null);
-    // const bottomRefs = useRef({});
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-    const [showDropdown, setShowDropdown] = useState(false);
+    // const [showDropdown, setShowDropdown] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
     const [allTickets, setAllTickets] = useState([]);
@@ -149,11 +150,32 @@ const ProfilePage = () => {
     const [products, setProducts] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [selectedProduct, setSelectedProduct] = useState(null);
-
+    const [showLocationModal, setShowLocationModal] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [newAddress, setNewAddress] = useState('');
+    const [mobileNumber, setMobileNumber] = useState('');
+    const [guestCustomerId, setGuestCustomerId] = useState('');
+    const [addresses, setAddresses] = useState([]);
+    const [editingAddressId, setEditingAddressId] = useState(null);
+    const [state, setState] = useState('');
+    const [districtList, setDistrictList] = useState([]);  
+    const [stateList, setStateList] = useState([]);
+    const [district, setDistrict] = useState('');  
+    const [districtId, setDistrictId] = useState('');    
+    const [stateId, setStateId] = useState(null);   
+    const [addressData, setAddressData] = useState({
+    fullName  : '',
+    mobileNumber: '',
+    address: '',
+    zipCode: '',
+    state: '',
+    district: '',
+    });
 useEffect(() => {
-  console.log(showMenu, products, selectedCategory);
-}, [showMenu, products, selectedCategory]);
-
+  console.log(showMenu, products, selectedCategory, addresses, editingAddressId, addressData);
+}, [showMenu, products, selectedCategory, addresses, editingAddressId, addressData]);
+    // const bottomRefs = useRef({});
 // useEffect(() => {
 //   bottomRefs.current = {};
 //   productData?.forEach(product => {
@@ -163,29 +185,24 @@ useEffect(() => {
 
  const handleCategoryClick = async (category) => {
         const { value } = category; 
-      
         try {
           setSelectedCategory(category);
           setProducts([]);
           setError("");
-      
           const encodedCategory = encodeURIComponent(value);
           const url = `https://handymanapiv2.azurewebsites.net/api/Product/GetProductsByCategory?Category=${encodedCategory}`;
           const response = await axios.get(url);
           const productsData = response.data;
-      
           if (productsData.length === 0) {
             setError("Oops! No products found for this category.");
             console.log("No products found.");
           } else {
             setProducts(productsData);
           }
-      
           localStorage.setItem('encodedCategory', encodedCategory);
           navigate(`/offers/${userType}/${userId}`, {
             state: encodedCategory,
           });
-      
           console.log('encodedCategory:', encodedCategory);
         } catch (error) {
           console.error('Error fetching products:', error);
@@ -204,7 +221,6 @@ useEffect(() => {
               ]);
               if (!ticketResponse.ok || !productResponse.ok || !technicianResponse) {
                 throw new Error("Failed to fetch ticket, product and technician data");
-
               }
               const ticketData = await ticketResponse.json();
               const productData = await productResponse.json();
@@ -216,7 +232,6 @@ useEffect(() => {
               setLoading(false);
             }
           };
-      
           fetchAllTickets();
         }, [userId]);
       
@@ -233,6 +248,144 @@ useEffect(() => {
   const handleImageClick = (imageSrc) => {
     setZoomImage(imageSrc);
     setShowZoomModal(true);
+  };
+
+   const fetchCustomerData = useCallback(async () => {
+        try {
+          const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/${userId}`);
+          if (!response.ok) {
+            throw new Error('Failed to fetch customer profile data');
+          } 
+          const data = await response.json();
+          console.log(data);
+          const addresses = Array.isArray(data) ? data : [data];
+          const formattedAddresses = addresses.map((addr) => ({
+            id: addr.addressId, 
+            type: addr.isPrimaryAddress ? 'primary' : 'secondary',
+            address: addr.address,
+            state: addr.state,
+            district: addr.district,
+            zipCode: addr.zipCode, 
+            emailAddress: addr.emailAddress,
+            mobileNumber: addr.mobileNumber,
+            fullName: addr.fullName,
+          }));
+          console.log("address1", addresses);
+          setAddresses(formattedAddresses);
+          const customerName = Array.isArray(data) ? data[0]?.fullName || '' : data.fullName || '';
+          setFullName(customerName);
+        } catch (error) {
+          console.error('Error fetching customer data:', error);
+        }
+    }, [userId]);
+    
+  useEffect(() => {
+    fetchCustomerData();
+  }, [fetchCustomerData]);
+
+  useEffect(() => {
+    axios.get('https://handymanapiv2.azurewebsites.net/api/MasterData/getStates')
+      .then(response => {
+        const data = response.data;
+        console.log("States API Response:", data); 
+        setStateList(data);
+        setStateId('');
+      })
+      .catch(error => {
+        console.error('Error fetching states:', error);
+      });
+  }, []);
+  
+   useEffect(() => {
+    if (stateId) {
+      axios.get(`https://handymanapiv2.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
+        .then(response => {
+          setDistrictList(response.data);
+        })
+        .catch(error => {
+          console.error('Error fetching districts:', error);
+        });
+    } else {
+      setDistrictList([]);
+    }
+  }, [stateId]);
+  
+   const resetAddressForm = () => {
+    setFullName('');
+    setMobileNumber('');
+    setNewAddress(''); 
+    setState('');
+    setDistrict('');
+    setZipCode('');
+  };
+  
+   const handleAddressEdit = async () => {
+  if (!newAddress || !zipCode || !mobileNumber || !state || !district) {
+    alert("Please fill in all required fields.");
+    return; 
+  }
+  if (fullName.trim().toLowerCase() === 'guest') {
+    alert("Please Change Your Full Name.");
+    return;
+  }  
+  if (!/^\d{6}$/.test(zipCode)) {
+    alert("Pincode must be exactly 6 digits.");
+    return;
+  }
+    const updatedAddress = {
+      id: guestCustomerId,
+      fullName,
+      mobileNumber,
+      address: newAddress,
+      state,
+      district,
+      zipCode,
+    };
+    const payload3 = {
+      id: guestCustomerId,
+      profileType: "profileType",
+      addressId: guestCustomerId,
+      isPrimaryAddress: true,
+      address: newAddress,
+      state: state,
+      district: district,
+      StateId: "1",
+      DistrictId: districtId,
+      zipCode: zipCode,
+      mobileNumber: mobileNumber,
+      emailAddress: "emailAddress",
+      userId: userId,
+      firstName: fullName,
+      lastName: "lastName",
+      fullName: fullName,
+    };
+    try {
+      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Customer/CustomerAddressEdit`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload3),
+      });
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Error Response:", errorText);
+        throw new Error("Failed to edit address.");
+      }
+      setAddresses(prev =>
+        prev.map(addr => addr.id === guestCustomerId ? updatedAddress : addr)
+      );
+      setAddressData(updatedAddress);
+      await fetchCustomerData();
+      alert("Address Updated Successfully!");
+      setShowModal(false);
+      resetAddressForm();
+      setIsEditing(false);
+      setEditingAddressId(null);
+    } catch (error) {
+      console.error("Error editing address:", error);
+      alert("Failed to edit address. Please try again later.");
+    }
   };
 
 useEffect(() => {
@@ -254,7 +407,6 @@ useEffect(() => {
   const fetchImagesForProduct = async (product) => {
     try {
       setLoadingStatus((prev) => ({ ...prev, [product.id]: true }));
-
       const photoPromises = product.productPhotos.map(async (photo) => {
         const res = await fetch(
           `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
@@ -262,9 +414,7 @@ useEffect(() => {
         const imgData = await res.json();
         return { imageData: imgData.imageData };
       });
-
       const allImages = await Promise.all(photoPromises);
-
       setImageUrls((prev) => ({ ...prev, [product.id]: allImages }));
     } catch (err) {
       console.error(`Failed to fetch images for product ${product.id}`, err);
@@ -272,7 +422,6 @@ useEffect(() => {
       setLoadingStatus((prev) => ({ ...prev, [product.id]: false }));
     }
   };
-
   fetchProductsAndImages();
 }, []);
 
@@ -285,7 +434,7 @@ useEffect(() => {
       useEffect(() => {
         const handleClickOutside = (event) => {
           if (!document.getElementById("dropdown-container")?.contains(event.target)) {
-            setShowDropdown(false);
+            // setShowDropdown(false);
           }
         };
         document.addEventListener("click", handleClickOutside);
@@ -301,7 +450,7 @@ useEffect(() => {
         document.addEventListener("mousedown", handleCloseMenuOnClickOutside);
         return () => document.removeEventListener("mousedown", handleCloseMenuOnClickOutside);
       }, []);
-      
+            
       useEffect(() => {
         if (!userId || !userType) return;
         const fetchProfileData = async () => {
@@ -321,7 +470,6 @@ useEffect(() => {
             setDistrict(response.data.district);
             setZipCode(response.data.zipCode);
             setFullName(response.data.fullName);
-
             if (response.data.photoAttachmentId) {
               fetchImageUrl(response.data.photoAttachmentId);
             }
@@ -379,18 +527,14 @@ const fetchImageUrl = async (photoId) => {
   //  const handleProfileClick = () => {
   //   fileInputRef.current.click(); 
   // };
-
   // const handleCancel = () => {
   //   setIsEditing(false);
   //   setName(profile.fullName);
   // };
-
   // const handleSave = async () => {
   //   setProfile((prev) => ({ ...prev, fullName: name }));
   //   setIsEditing(false);
   // };
-
-
   // const uploadFile = async () => {
   //   if (!profile.photoUrl) return;
   //   const formData = new FormData();
@@ -409,30 +553,25 @@ const fetchImageUrl = async (photoId) => {
   // const handleFileChange = async (event) => {
   //   const file = event.target.files[0];
   //   if (!file) return;
-
   //   const reader = new FileReader();
   //   reader.onloadend = () => {
   //     setProfileImage(reader.result);
   //   };
   //   reader.readAsDataURL(file);
-
   //   const uploadedFile = await uploadFile(file);
   //   if (uploadedFile?.fileId) {
   //     await updateProfileImage(uploadedFile.fileId);
   //   }  
   // };
-
   // const uploadFile = async (file) => {
   //   const formData = new FormData();
   //   formData.append("file", file);
-
   //   try {
   //     const response = await axios.post(
   //       "https://handymanapiv2.azurewebsites.net/api/FileUpload/upload",
   //       formData,
   //       { headers: { "Content-Type": "multipart/form-data" } }
   //     );
-
   //     if (response.data.fileId) {
   //       await updateProfileImage(response.data.fileId);
   //     }
@@ -440,7 +579,6 @@ const fetchImageUrl = async (photoId) => {
   //     console.error("Error uploading file:", error);
   //   }
   // };
-
   // const updateProfileImage = async (fileId) => {
   //   try {
   //     await axios.post(
@@ -456,13 +594,9 @@ const fetchImageUrl = async (photoId) => {
   //     console.error("Error updating profile image:", error);
   //   }
   // };
-
-
   // const handleSubmit = async () => {
   //   if (!profile) return;
-    
   //   const fileId = profile.photoUrl ? await uploadFile() : profile.PhotoAttachmentId;
-  
   //   try {
   //     const response = await axios.post(
   //       `https://handymanapiv2.azurewebsites.net/api/${profile.UserProfileType}/Edit`,
@@ -472,9 +606,7 @@ const fetchImageUrl = async (photoId) => {
   //         PhotoDocumentId: fileId,
   //       }
   //     );
-  
   //     alert(response.data.message || "Profile updated successfully!");
-  
   //     fetchUserDetails();
   //   } catch (error) {
   //     console.error("Error updating profile:", error);
@@ -484,13 +616,11 @@ const fetchImageUrl = async (photoId) => {
   
   if (loading) {
     return 
-    // <div>Loading...</div>;
   }
 
   return (
     <>
     <header className="header d-flex align-items-center justify-content-between p-2 bg-white shadow-sm">
-       {/* Menu Icon */}
        {isMobile ? (
           <div onClick={handleMoreIconClick} style={{ cursor: "pointer" }}>
           <MenuIcon className="floating-menuIcon" fontSize="medium" />
@@ -499,14 +629,14 @@ const fetchImageUrl = async (photoId) => {
        <img src={Logo} alt="Handy Man Logo" className="logo-img" />
         <div className="spacer"></div>
         <div className="d-flex align-items-center w-100">
-      {!isMobile && (
+      {/* {!isMobile && (
         <div className="srch_dv flex-grow-1 position-relative">
           <input type="text" className="form-control src_input" placeholder="Search / Ask a question" />
           <SearchIcon
             className="position-absolute search-icon"
           />
         </div>
-      )}
+      )} */}
     </div>
         <div className="hdr_icns d-flex align-items-center gap-2 m-2">
       <div id="dropdown-container" className="dropdown-container" style={{ position: "relative" }}>
@@ -521,14 +651,12 @@ const fetchImageUrl = async (photoId) => {
       style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "cover" }}
     />
   </div>
-  {/* Notification Bell */}
   <div className="d-flex align-items-center" onClick={() => navigate(`/customerNotification/${userType}/${userId}`)} style={{ cursor: "pointer" }}>
   <NotificationBell fontSize="medium" />
 </div>
 </div>
 )}
-
-       {showDropdown && (
+       {/* {showDropdown && (
         <div className="dropdown-menu">                   
           <div className="dropdown-content">
             <div className="dropdown-item">
@@ -541,13 +669,12 @@ const fetchImageUrl = async (photoId) => {
             </div>
           </div>
         </div>
-       )}
+       )} */}
       </div>
     </div>
     </header>
-
     <div
-      className="container"
+      className={`container m-1`}
       style={{
         padding: isMobile ? "8px" : "0px",
         borderRadius: "5px",
@@ -558,6 +685,7 @@ const fetchImageUrl = async (photoId) => {
       <div className="row">
         <div className="col-md-3">
         <div>
+          {/* Desktop Profile Details */}
       {!isMobile ? (
                    <div className="profile-card">
                      <div className="profile-img-container "> 
@@ -600,7 +728,7 @@ const fetchImageUrl = async (photoId) => {
                    </div>
       ) : null}
             </div> 
-
+          {/* Mobile Profile Details */}
            {showProfile && (
               <div
                 className="floating-profile-menu"
@@ -620,27 +748,22 @@ const fetchImageUrl = async (photoId) => {
                   <div className="fw-bold">Name</div>
                   <p className="mb-2">{profile.fullName}</p>
                   <hr style={{ margin: '8px 0' }} />
-                  
                   <div className="fw-bold">Mobile</div>
                   <p className="mb-2">{profile.mobileNumber}</p>
                   <hr style={{ margin: '8px 0' }} />
-                  
                   <div className="fw-bold">Address</div>
                   <p className="mb-2">{profile.address}</p>
                   <hr style={{ margin: '8px 0' }} />
-
                   <div className="d-flex align-items-start" style={{ cursor: "pointer" }} onClick={() => navigate(`/customerOrders/${userType}/${userId}`)}>
                       <OrdersNotificationBell sx={{ fontSize: 24, marginRight: '8px' }} />
                       <small style={{ fontSize: "13px", fontFamily: "Poppins", lineHeight: "28px" }}>My Orders</small>
                     </div>
                     <hr style={{ margin: '8px 0' }} />
-
                     <div className="d-flex align-items-start" style={{ cursor: "pointer" }} onClick={() => navigate(`/trackStatusNotifications/${userType}/${userId}`)}>
                       <TrackStatusNotificationBell sx={{ fontSize: 24, marginRight: '8px' }} />
                       <small style={{ fontSize: "13px", fontFamily: "Poppins", lineHeight: "28px" }}>Track Ticket</small>
                     </div>
                     <hr style={{ margin: '8px 0' }} />
-
                     <div className="d-flex align-items-start" style={{ cursor: "pointer" }} onClick={() => document.getElementById('myTicketsSection')?.scrollIntoView({ behavior: 'smooth' })}>
                       <ConfirmationNumberIcon sx={{ fontSize: 24, marginRight: '8px' }} />
                       <small style={{ fontSize: "13px", fontFamily: "Poppins", lineHeight: "28px" }}>My Tickets</small>
@@ -662,7 +785,7 @@ const fetchImageUrl = async (photoId) => {
               </small>
             </div>
           )}
-
+          {/* Mobile Dashboard Icons */}
           {isMobile && (
   <div
     className="mobile-top-icons position-fixed start-0 end-0 bg-white border-bottom shadow-sm"
@@ -696,11 +819,201 @@ const fetchImageUrl = async (photoId) => {
     </div>
   </div>
 )}
-        <div className="col-md-9 bg-white">
+        {/* Address with Location */}
+        <div className="col-md-8 m-1 p-1 bg-white">
+        {profile && profile.fullName && profile.address && profile.zipCode && (
+  <div className="w-100 bg-dark text-white d-flex" style={{ backgroundColor: '#2d3e50', padding: "5px", borderRadius: '8px'}}
+        onClick={() => setShowLocationModal(true)}>
+    <LocationOnIcon
+      className="me-2"
+      style={{ cursor: 'pointer' }}
+      // onClick={() => {
+      //   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(profile.address + ', ' + profile.zipCode)}`;
+      //   window.open(mapsUrl, '_blank');
+      // }}
+    />
+    <p className="mb-0 text-truncate" style={{ fontSize: '14px', fontFamily: 'Poppins, sans-serif'}}>
+      Deliver to <span className="fw-bold">{profile.fullName?.charAt(0)}</span> - {profile.address}, {profile.zipCode}
+    </p>
+      <KeyboardArrowDownIcon
+        className="me-2"
+        style={{ cursor: 'pointer' }}
+      />
+  </div>
+)}
+
+      {/* Modal */}
+          <Modal show={showModal} onHide={() => setShowModal(false)}>
+          <Modal.Header closeButton>
+              <Modal.Title>{isEditing ? 'Edit Address' : 'Add Address'}</Modal.Title>
+            </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <Form.Group className="mb-3">
+                <Form.Label>Full Name <span className="req_star">*</span></Form.Label>
+                <Form.Control
+                  type="text"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="Enter Full name"
+                  required
+                />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Mobile Number <span className="req_star">*</span></Form.Label>
+                <Form.Control
+                  name="MobileNumber"
+                  className="form-control"
+                  placeholder="Enter Mobile Number"
+                  maxLength="10"
+                  value={mobileNumber}
+                  // onChange={(e) => setMobileNumber(e.target.value)}
+                />
+                </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Control
+                  type="hidden"
+                  name="UserId"
+                  className="form-control"
+                  placeholder="UserId"
+                  value={guestCustomerId}
+                />
+              </Form.Group>
+             <Form.Group className="mb-3">
+                <Form.Label>State <span className="req_star">*</span></Form.Label>
+                <Form.Select
+                  value={stateId || ''}
+                  onChange={(e) => {
+                    const selectedId = e.target.value;
+                    setStateId(selectedId);
+                    const selectedState = stateList.find(
+                      (s) => s?.StateId?.toString() === selectedId
+                    );
+                    if (selectedState) {
+                      setState(selectedState.StateName);
+                    }
+                  }}
+                  required
+                >
+                  <option value="">Select State</option>
+                  {Array.isArray(stateList) &&
+                    stateList
+                      .filter((s) => s && s.StateId && s.StateName)
+                      .map((s) => (
+                        <option key={s.StateId} value={s.StateId.toString()}>
+                          {s.StateName}
+                        </option>
+                      ))}
+                </Form.Select>
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label>District <span className="req_star">*</span></Form.Label>
+              <Form.Select
+                  value={districtId || ''}
+                  onChange={(e) => {
+                    const selectedId = e.target.value;
+                    setDistrictId(selectedId);
+                    const selectedDistrict = districtList.find(d => d.districtId.toString() === selectedId);
+                    if (selectedDistrict) {
+                      setDistrict(selectedDistrict.districtName);
+                    }
+                  }}
+                  required
+                >
+                  <option value="">Select District</option>
+                  {districtList.map((d) => (
+                    <option key={d.districtId} value={d.districtId.toString()}>
+                      {d.districtName}
+                    </option>
+                  ))}
+                </Form.Select>
+                </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Pincode <span className="req_star">*</span></Form.Label>
+                <Form.Control
+                  type="text"
+                  value={zipCode}
+                  onChange={(e) => {
+                    const numericValue = e.target.value.replace(/\D/g, ""); 
+                    if (numericValue.length <= 6) {
+                      setZipCode(numericValue);
+                    }
+                  }}              
+                    placeholder="Enter pincode"
+                    required
+                />
+              </Form.Group>
+              <Button type="button" variant="primary" onClick={handleAddressEdit}>
+                {isEditing ? 'Edit Address' : 'Add Address'}
+              </Button>
+            </Form>
+          </Modal.Body>
+        </Modal>
+{/* Location Arrow OnClick */}
+{showLocationModal && (
+        <div className="modal-overlay" onClick={() => setShowLocationModal(false)}>
+          <div className="location-modal bg-white" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-content">
+              <button className="close-button" onClick={() => setShowLocationModal(false)}>
+                &times;
+              </button>
+              <h4 >Confirm Your Location</h4>
+              <div className="address-card border rounded bg-light">
+                          {addresses
+                              .map((address) => (
+                                <div 
+                                  key={address.id}
+                                  className="list-group-item d-flex justify-content-between align-items-center bg-white text-dark"
+                                >
+                                  <div>
+                                    <span className="ml-2">{address.fullName}</span>
+                                    <br />
+                                    <span className="ml-2">{address.mobileNumber}</span>
+                                    <br />
+                                    <span className="ml-2">{address.address}</span>
+                                    <br />
+                                    <span className="ml-2">{address.state}</span>
+                                    <br />
+                                    <span className="ml-2">{address.district}</span>
+                                    <br />
+                                    <span className="ml-2">{address.zipCode}</span> 
+                                    <br />
+                                  </div>
+                                  <div className="text-end">
+                                  {addresses.map((address) => (
+                                    <Button
+                                      key={address.id}
+                                      variant= "primary"
+                                      className={`text-white mx-1  }`}
+                                      onClick={() => {
+                                        setGuestCustomerId(address.id);
+                                        setFullName(address.fullName);
+                                        setMobileNumber(address.mobileNumber);
+                                        setNewAddress(address.address);
+                                        setState(address.state);
+                                        setDistrict(address.district);
+                                        setZipCode(address.zipCode);
+                                        setIsEditing(true);
+                                        setShowModal(true);
+                                      }}
+                                    >
+                                      {address.address === "" ? "Add Address" : "Edit Address"}
+                                    </Button>
+                                  ))}
+                              </div> 
+                                </div>
+                              ))}       
+                              </div>
+            </div>
+          </div>
+        </div>
+      )} 
+      {/* Search Icon */}
           <div className="position-relative flex-grow-1">
         <input
           type="text"
-          className="form-control w-60 m-2 ps-5"
+          className="form-control w-100 m-2 ps-5"
           placeholder="Search Products"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value.trimStart())}
@@ -710,6 +1023,57 @@ const fetchImageUrl = async (photoId) => {
           style={{ pointerEvents: 'none' }}
         />
       </div>
+
+       {/* Category Cards */}
+     <div
+  className="category-scroll d-flex flex-nowrap overflow-auto"
+  style={{ WebkitOverflowScrolling: 'touch' }}>
+  {categories.map((cat) => (
+    <div
+      key={cat.label}
+      onClick={() => handleCategoryClick(cat)}
+      style={{ flex: '0 0 auto' }}>
+      <div
+        className="category-card"
+        style={{
+          height: isMobile ? '80px' : '120px',
+          width: isMobile ? '105px' : '160px',
+          backgroundColor: '#ffffff',
+          cursor: 'pointer',
+          display: 'flex',
+          padding: '5px',
+          flexDirection: 'column',
+          // alignItems: 'center',
+          // justifyContent: 'center'
+        }}>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            padding: '4px',
+            // alignItems: 'center',
+            // justifyContent: 'center',
+            // gap: '8px', 
+          }}>
+          <span>{cat.icon}</span>
+          <span
+            style={{
+              fontSize: '9px',
+              fontWeight: '600',
+              lineHeight: 1,
+              fontFamily: 'Poppins, sans-serif',
+              textAlign: 'center',
+              padding: '4px',
+            }}>
+            {cat.label.toUpperCase()}
+          </span>
+        </div>
+      </div>
+    </div>
+  ))}
+  {error && <div className="text-danger">{error}</div>}
+</div>
+
       {/* Carousel */}
               <div className="container">
                 <div className="mx-auto">
@@ -717,129 +1081,105 @@ const fetchImageUrl = async (photoId) => {
                 id="productCarousel"
                 className="carousel slide mb-4 rounded "
                 data-bs-ride="carousel"
-                data-bs-interval="2000"
+                data-bs-interval="6000"
               >
                 {/* Indicators */}
                 <div className="carousel-indicators">
-                    <button
+                    {/* <button
                       type="button"
                       data-bs-target="#productCarousel"
                       data-bs-slide-to="0"
                       className="active"
                       aria-current="true"
                       aria-label="Slide 1"
-                    ></button>
-                    <button
+                    ></button> */}
+                    {/* <button
                       type="button"
                       data-bs-target="#productCarousel"
                       data-bs-slide-to="1"
                       aria-label="Slide 2"
-                    ></button><button
+                    ></button>
+                    <button
                     type="button"
                     data-bs-target="#productCarousel"
                     data-bs-slide-to="2"
-                    aria-label="Slide 3"
+                    aria-label="Slide 3" 
                   ></button>
+                   <button
+                    type="button"
+                    data-bs-target="#productCarousel"
+                    data-bs-slide-to="3"
+                    aria-label="Slide 4" 
+                  ></button> */}
                 </div>
-
                 {/* Carousel items */}
                 <div className="carousel-inner">
-                    <div className="carousel-item active">
-                      <img
-                        src={Banner1}
-                        className="d-block w-100 img-fluid rounded"
-                        style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
-                        alt="Slide 1"
-                      />
-                    </div>
-                    <div className="carousel-item">
-                      <img
-                        src={Banner2}
-                        className="d-block w-100 img-fluid rounded"
-                        style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
-                        alt="Slide 2"
-                      />
-                    </div>
-                    <div className="carousel-item">
-                      <img
-                        src={Banner3}
-                        className="d-block w-100 img-fluid rounded"
-                        style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
-                        alt="Slide 3"
-                      />
-                    </div>
-                </div> 
-
+                  <div className="carousel-item active">
+                  <video
+                    className="d-block w-100 rounded"
+                    style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                  >
+                    <source src={BannerVideo} type="video/mp4" />
+                  </video>
+                </div>
+                  {/* <div className="carousel-item ">
+                  <img
+                    src={Banner1}
+                    className="d-block w-100 img-fluid rounded"
+                    style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
+                    alt="Slide 1"
+                  />
+                </div>
+                <div className="carousel-item">
+                  <img
+                    src={Banner2}
+                    className="d-block w-100 img-fluid rounded"
+                    style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
+                    alt="Slide 2"
+                  />
+                </div>
+                <div className="carousel-item">
+                  <img
+                    src={Banner3}
+                    className="d-block w-100 img-fluid rounded"
+                    style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
+                    alt="Slide 3"
+                  />
+                </div> */}
+              </div>
                 {/* Controls */}
-                <button
+                {/* <button
                   className="carousel-control-prev"
                   type="button"
                   data-bs-target="#productCarousel"
-                  data-bs-slide="prev"
-                >
-                  <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                  data-bs-slide="prev">
+                  <span className="carousel-control-prev-icon custom-carousel-icon" aria-hidden="true"></span>
                   <span className="visually-hidden">Previous</span>
                 </button>
                 <button
                   className="carousel-control-next"
                   type="button"
                   data-bs-target="#productCarousel"
-                  data-bs-slide="next"
-                >
-                  <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                  data-bs-slide="next">
+                  <span className="carousel-control-next-icon custom-carousel-icon" aria-hidden="true"></span>
                   <span className="visually-hidden">Next</span>
-                </button>
+                </button> */}
               </div>
               </div>
               </div>
-     <div
-  className="category-scroll d-flex flex-nowrap overflow-auto px-3 py-2"
-  style={{ gap: '8px', WebkitOverflowScrolling: 'touch' }}
->
-  {categories.map((cat) => (
-    <div
-      key={cat.label}
-      onClick={() => handleCategoryClick(cat)}
-      style={{ flex: '0 0 auto' }}
-    >
-      <div className="card text-center border-0"
-  style={{
-    height: isMobile ? '80px' : '120px',
-    width: isMobile ? '70px' : '170px',
-    backgroundColor: '#ffffff',
-    cursor: 'pointer',
-    display: 'flex',          
-    flexDirection: 'column',   
-    alignItems: 'center',      
-    justifyContent: 'center',  
-    padding: '4px',            
-  }}
->
-  <div style={{ marginBottom: '0px' }}>{cat.icon}</div> 
-  <span
-  style={{
-    fontSize: '9px',
-    fontWeight: '600',
-    lineHeight: 1,
-    fontFamily: 'Poppins, sans-serif',
-  }}
->
-  {cat.label.toUpperCase()}
-</span>
-</div>
-    </div>
-  ))}
-   {error && <div className="text-danger">{error}</div>}
-</div>
- 
+
 <h4 style={{ color: '#ff5722', fontFamily: 'Poppins, sans-serif', fontWeight: 700,fontSize: '24px', textTransform: 'uppercase',
-    letterSpacing: '1px', textAlign: 'center', marginTop: '20px', marginBottom: '16px'}}>
+    letterSpacing: '1px', textAlign: 'center', marginTop: '2px', marginBottom: '2px'}}>
    Top Deals For You!
 </h4>
+{/* Products Display */}
       <div
   className="product-scroll-wrapper"
-  ref={productScrollRef}
->
+  ref={productScrollRef}>
   <div className="product-row">
     {productData &&
       productData
@@ -855,12 +1195,8 @@ const fetchImageUrl = async (photoId) => {
               ? (product.rate - (product.rate * product.discount) / 100).toFixed(0)
               : product.rate;
           return (
-            <div
-          key={product.id}
-          className="product-card"
-         onClick={() => setSelectedProduct(product)}
-          style={{ cursor: 'pointer' }}   
-        >
+            <div key={product.id} className="product-card" 
+            onClick={() => setSelectedProduct(product)} style={{ cursor: 'pointer' }}>
           {loadingStatus[product.id] ? (
             <div className="image-placeholder">Loading...</div>
           ) : imageUrls[product.id]?.length > 0 ? (
@@ -881,7 +1217,7 @@ const fetchImageUrl = async (photoId) => {
         })}
   </div>
 </div>
-
+ {/* Selected Product Display */}
 {selectedProduct && (
   <div className="custom-modal-backdrop" onClick={() => setSelectedProduct(null)}>
     <div className="custom-modal-content" onClick={(e) => e.stopPropagation()}>
@@ -922,7 +1258,7 @@ const fetchImageUrl = async (photoId) => {
             <div className="blinking-row small text-danger fw-bold">Discount: {selectedProduct.discount}%</div>
             <div className="blinking-text small text-success fw-bold m-1 fs-6" style={{ fontFamily: "Italianno, cursive" }}>Free Delivery & Installation</div>
             <button
-              className="buy-now-btn"
+              className="buy-now-btn mb-0"
               onClick={() => navigate(`/offersBuyProduct/${userType}/${userId}/${selectedProduct.id}`)}
             >
               Buy Now
@@ -933,7 +1269,7 @@ const fetchImageUrl = async (photoId) => {
     </div>
   </div>
 )}
-
+  {/* Dashboard Desktop */}
       {!isMobile ? (
         <>
 <h5 className="mb-2 fs-4">Dashboard</h5>
@@ -953,7 +1289,7 @@ const fetchImageUrl = async (photoId) => {
           </div>
           </>
       ) : null}
-
+              {/* Tickets Section */}
               <div id="myTicketsSection" className="ticket-container">
                 <div className="ticket-header">
                 <h4 className="ticket-title">My Tickets</h4>
@@ -967,7 +1303,7 @@ const fetchImageUrl = async (photoId) => {
                 <p><strong>{ticket.subject ? "Subject" : ticket.productName ? "Product Name" : "Job Description"}:</strong> {ticket.subject || ticket.productName || ticket.jobDescription}</p>
                 <p><strong>Category:</strong> {ticket.category}</p>
                 <p><strong>Status:</strong> 
-                  <span className={ticket.status.toLowerCase()}> {ticket.status}</span>
+                <span className={ticket.status.toLowerCase()}> {ticket.status}</span>
                 </p>
                 <p><strong>Assigned To:</strong> {ticket.assignedTo}</p>
                 <p><strong>Date:</strong> {ticket.date ? new Date(ticket.date).toLocaleDateString('en-GB') : "N/A"}</p>
@@ -985,17 +1321,12 @@ const fetchImageUrl = async (photoId) => {
         </div>
         </div> 
         </div>
-      
         {/* Zoom Modal */}
         <Modal show={showZoomModal} onHide={() => setShowZoomModal(false)} centered>
                 <Modal.Body className="text-center position-relative">
                   <div className="zoom-container">
-            <button
-              className="close-button text-end"
-              onClick={() => setShowZoomModal(false)}
-            >
-              &times;
-            </button>
+                  <button className="close-button text-end" onClick={() => setShowZoomModal(false)}>
+              &times; </button>
                     <img src={zoomImage} alt="Zoomed Product" className="zoom-image" />
                   </div>
                 </Modal.Body>
