@@ -258,6 +258,7 @@ useEffect(() => {
                 onChange={(e) => setCategory(e.target.value)}
               >
                 <option>Choose Category</option>
+                <option>Home Decors</option>
                 <option>Electrical items</option>
                 <option>Sanitary items</option>     
                 <option>Electronics appliances</option>

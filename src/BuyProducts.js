@@ -1027,6 +1027,7 @@ useEffect(() => {
                 required
               >
                 <option value="">Choose Category</option>
+                <option>Home Decors</option>
                 <option>Electrical items</option>
                 <option>Sanitary items</option>
                 <option>Electronics appliances</option>

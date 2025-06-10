@@ -10,8 +10,12 @@ import Footer from './Footer';
 import { Button } from 'react-bootstrap';
 import axios from 'axios';
 import HardwareIcon from '@mui/icons-material/Hardware';
+// import HomeIcon from '@mui/icons-material/Home';
+import MapsHomeWorkIcon from '@mui/icons-material/MapsHomeWork';
+
 
 const categories = [
+    { label: 'Home Decors',value:'Home Decors', icon: <MapsHomeWorkIcon sx={{ fontSize: 30, color: '#fe6f5e' }} /> },
     { label: 'Electrical Items',value:'Electrical items', icon: <ElectricalServicesIcon sx={{ fontSize: 40, color: '#1976d2' }} /> },
     { label: 'Electronics Appliances', value:'Electronics appliances',icon: <IronIcon sx={{ fontSize: 40, color: '#f57c00' }} /> },
     { label: 'Plumbing And Sanitary',value: 'Sanitary items',  icon: <PlumbingIcon sx={{ fontSize: 40, color: '#388e3c' }} /> },
@@ -108,7 +112,7 @@ const [error, setError] = useState('');
   <div className="row justify-content-center">
     {categories.map((cat) => (
       <div
-        className="col-6 col-sm-3 mb-2"
+        className="col-6 col-sm-1 mb-2"
         key={cat.label}
         onClick={() => handleCategoryClick(cat)} 
       >

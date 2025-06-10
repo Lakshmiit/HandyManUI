@@ -19,10 +19,10 @@ import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-// import Banner1 from './img/Ads1.jpeg';
-import BannerVideo from './img/Video1.mp4';
+import Banner1 from './img/Ads1.jpeg';
+// import BannerVideo from './img/Video1.mp4';
 // import Banner3 from './img/banner-4.jpg';
-// import Banner2 from './img/Ads2.jpeg';
+import Banner2 from './img/Ads2.jpeg';
 import { useNavigate, useParams } from "react-router-dom";
 import Logo from "./img/Hm_Logo 1.png";
 import SearchIcon from "@mui/icons-material/Search";
@@ -36,6 +36,11 @@ import PlumbingIcon from '@mui/icons-material/Plumbing';
 import HardwareIcon from '@mui/icons-material/Hardware';
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import MenuIcon from '@mui/icons-material/Menu';
+// import HomeIcon from '@mui/icons-material/Home';
+import MapsHomeWorkIcon from '@mui/icons-material/MapsHomeWork';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import BuildIcon from '@mui/icons-material/Build';
+// import TimelapseIcon from '@mui/icons-material/Timelapse';
 
 const getMenuList = (userType, userId, category, district ,ZipCode,technicianFullName, isMobile) => {
   const iconSize = isMobile ? 20 : 40;
@@ -114,6 +119,7 @@ const getMenuList = (userType, userId, category, district ,ZipCode,technicianFul
 };
 
 const categories = [
+    { label: 'Home Decors',value:'Home Decors', icon: <MapsHomeWorkIcon sx={{ fontSize: 30, color: '#fe6f5e' }} /> },
     { label: 'Electrical Items',value:'Electrical items', icon: <ElectricalServicesIcon sx={{ fontSize: 30, color: '#1976d2' }} /> },
     { label: 'Electronic Appliances', value:'Electronics appliances',icon: <IronIcon sx={{ fontSize: 30, color: '#f57c00' }} /> },
     { label: 'Plumbing & Sanitary',value: 'Sanitary items',  icon: <PlumbingIcon sx={{ fontSize: 30, color: '#388e3c' }} /> },
@@ -879,6 +885,16 @@ const fetchImageUrl = async (photoId) => {
                   value={guestCustomerId}
                 />
               </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Address <span className="req_star">*</span></Form.Label>
+                <Form.Control
+                  type="text"
+                  value={newAddress}
+                  onChange={(e) => setNewAddress(e.target.value)}
+                  placeholder="Enter address"
+                  required
+                />
+              </Form.Group>
              <Form.Group className="mb-3">
                 <Form.Label>State <span className="req_star">*</span></Form.Label>
                 <Form.Select
@@ -952,63 +968,58 @@ const fetchImageUrl = async (photoId) => {
         </Modal>
 {/* Location Arrow OnClick */}
 {showLocationModal && (
-        <div className="modal-overlay" onClick={() => setShowLocationModal(false)}>
-          <div className="location-modal bg-white" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-content">
-              <button className="close-button" onClick={() => setShowLocationModal(false)}>
-                &times;
-              </button>
-              <h4 >Confirm Your Location</h4>
-              <div className="address-card border rounded bg-light">
-                          {addresses
-                              .map((address) => (
-                                <div 
-                                  key={address.id}
-                                  className="list-group-item d-flex justify-content-between align-items-center bg-white text-dark"
-                                >
-                                  <div>
-                                    <span className="ml-2">{address.fullName}</span>
-                                    <br />
-                                    <span className="ml-2">{address.mobileNumber}</span>
-                                    <br />
-                                    <span className="ml-2">{address.address}</span>
-                                    <br />
-                                    <span className="ml-2">{address.state}</span>
-                                    <br />
-                                    <span className="ml-2">{address.district}</span>
-                                    <br />
-                                    <span className="ml-2">{address.zipCode}</span> 
-                                    <br />
-                                  </div>
-                                  <div className="text-end">
-                                  {addresses.map((address) => (
-                                    <Button
-                                      key={address.id}
-                                      variant= "primary"
-                                      className={`text-white mx-1  }`}
-                                      onClick={() => {
-                                        setGuestCustomerId(address.id);
-                                        setFullName(address.fullName);
-                                        setMobileNumber(address.mobileNumber);
-                                        setNewAddress(address.address);
-                                        setState(address.state);
-                                        setDistrict(address.district);
-                                        setZipCode(address.zipCode);
-                                        setIsEditing(true);
-                                        setShowModal(true);
-                                      }}
-                                    >
-                                      {address.address === "" ? "Add Address" : "Edit Address"}
-                                    </Button>
-                                  ))}
-                              </div> 
-                                </div>
-                              ))}       
-                              </div>
+  <div className="modal-overlay" onClick={() => setShowLocationModal(false)}>
+    <div
+      className="location-modal bg-white"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <div className="modal-content p-4">
+        <button
+          className="close-button"
+          onClick={() => setShowLocationModal(false)}
+        >
+          &times;
+        </button>
+        <h4>Confirm Your Location</h4>
+        <div className="address-list">
+          {addresses.map((address) => (
+            <div
+              key={address.id}
+              className="address-card border rounded bg-light p-3 mb-3 d-flex justify-content-between align-items-start"
+            >
+              <div className="address-details">
+                <p><strong>{address.fullName}</strong></p>
+                <p>{address.mobileNumber}</p>
+                <p>{address.address}</p>
+                <p>{address.state}</p>
+                <p>{address.district}</p>
+                <p>{address.zipCode}</p>
+              </div>
+              <Button
+                variant="primary"
+                className="text-white"
+                onClick={() => {
+                  setGuestCustomerId(address.id);
+                  setFullName(address.fullName);
+                  setMobileNumber(address.mobileNumber);
+                  setNewAddress(address.address);
+                  setState(address.state);
+                  setDistrict(address.district);
+                  setZipCode(address.zipCode);
+                  setIsEditing(true);
+                  setShowModal(true);
+                }}
+              >
+                {address.address === "" ? "Add Address" : "Edit Address"}
+              </Button>
             </div>
-          </div>
+          ))}
         </div>
-      )} 
+      </div>
+    </div>
+  </div>
+)}
+
       {/* Search Icon */}
           <div className="position-relative flex-grow-1">
         <input
@@ -1041,7 +1052,7 @@ const fetchImageUrl = async (photoId) => {
           backgroundColor: '#ffffff',
           cursor: 'pointer',
           display: 'flex',
-          padding: '5px',
+          padding: '2px',
           flexDirection: 'column',
           // alignItems: 'center',
           // justifyContent: 'center'
@@ -1050,7 +1061,7 @@ const fetchImageUrl = async (photoId) => {
           style={{
             display: 'flex',
             flexDirection: 'row',
-            padding: '4px',
+            padding: '2px',
             // alignItems: 'center',
             // justifyContent: 'center',
             // gap: '8px', 
@@ -1063,7 +1074,7 @@ const fetchImageUrl = async (photoId) => {
               lineHeight: 1,
               fontFamily: 'Poppins, sans-serif',
               textAlign: 'center',
-              padding: '4px',
+              padding: '2px',
             }}>
             {cat.label.toUpperCase()}
           </span>
@@ -1085,27 +1096,27 @@ const fetchImageUrl = async (photoId) => {
               >
                 {/* Indicators */}
                 <div className="carousel-indicators">
-                    {/* <button
+                    <button
                       type="button"
                       data-bs-target="#productCarousel"
                       data-bs-slide-to="0"
                       className="active"
                       aria-current="true"
                       aria-label="Slide 1"
-                    ></button> */}
-                    {/* <button
+                    ></button>
+                    <button
                       type="button"
                       data-bs-target="#productCarousel"
                       data-bs-slide-to="1"
                       aria-label="Slide 2"
                     ></button>
-                    <button
+                    {/* <button
                     type="button"
                     data-bs-target="#productCarousel"
                     data-bs-slide-to="2"
                     aria-label="Slide 3" 
-                  ></button>
-                   <button
+                  ></button> */}
+                   {/* <button
                     type="button"
                     data-bs-target="#productCarousel"
                     data-bs-slide-to="3"
@@ -1114,7 +1125,7 @@ const fetchImageUrl = async (photoId) => {
                 </div>
                 {/* Carousel items */}
                 <div className="carousel-inner">
-                  <div className="carousel-item active">
+                  {/* <div className="carousel-item active">
                   <video
                     className="d-block w-100 rounded"
                     style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
@@ -1125,8 +1136,8 @@ const fetchImageUrl = async (photoId) => {
                   >
                     <source src={BannerVideo} type="video/mp4" />
                   </video>
-                </div>
-                  {/* <div className="carousel-item ">
+                </div> */}
+                  <div className="carousel-item active">
                   <img
                     src={Banner1}
                     className="d-block w-100 img-fluid rounded"
@@ -1142,7 +1153,7 @@ const fetchImageUrl = async (photoId) => {
                     alt="Slide 2"
                   />
                 </div>
-                <div className="carousel-item">
+                {/* <div className="carousel-item">
                   <img
                     src={Banner3}
                     className="d-block w-100 img-fluid rounded"
@@ -1152,7 +1163,7 @@ const fetchImageUrl = async (photoId) => {
                 </div> */}
               </div>
                 {/* Controls */}
-                {/* <button
+                <button
                   className="carousel-control-prev"
                   type="button"
                   data-bs-target="#productCarousel"
@@ -1167,14 +1178,14 @@ const fetchImageUrl = async (photoId) => {
                   data-bs-slide="next">
                   <span className="carousel-control-next-icon custom-carousel-icon" aria-hidden="true"></span>
                   <span className="visually-hidden">Next</span>
-                </button> */}
+                </button>
               </div>
               </div>
               </div>
 
-<h4 style={{ color: '#ff5722', fontFamily: 'Poppins, sans-serif', fontWeight: 700,fontSize: '24px', textTransform: 'uppercase',
+<h4 style={{ color: '#ff5722', fontFamily: 'Poppins, sans-serif', fontWeight: 700,fontSize: '22px', textTransform: 'uppercase',
     letterSpacing: '1px', textAlign: 'center', marginTop: '2px', marginBottom: '2px'}}>
-   Top Deals For You!
+   🎉 Top Deals For You! 🎉
 </h4>
 {/* Products Display */}
       <div
@@ -1195,24 +1206,37 @@ const fetchImageUrl = async (photoId) => {
               ? (product.rate - (product.rate * product.discount) / 100).toFixed(0)
               : product.rate;
           return (
-            <div key={product.id} className="product-card" 
-            onClick={() => setSelectedProduct(product)} style={{ cursor: 'pointer' }}>
-          {loadingStatus[product.id] ? (
-            <div className="image-placeholder">Loading...</div>
-          ) : imageUrls[product.id]?.length > 0 ? (
-            <img
-              src={`data:image/jpeg;base64,${imageUrls[product.id][0].imageData}`}
-              className="product-image"
-              alt="product"
-            />
-          ) : (
-            <div className="image-placeholder">No Image</div>
-          )}
-          <div>
-            <h6 className="product-name">{product.productName.toUpperCase()}</h6>
-            <div className="product-price">Rs {discountedPrice} /-</div>
-          </div>
-        </div>
+            <div
+  className="product-card"
+  onClick={() => setSelectedProduct(product)}
+  style={{ cursor: 'pointer' }}
+>
+  {product.discount ? (
+    <div className="discount-badge-wrapper">
+      <span className="discount-badge">{product.discount}% OFF</span>
+      {/* <span className="">Deals Ends Soon! <TimelapseIcon /></span> */}
+    </div>
+  ) : null}
+
+  <div className="image-container">
+    {loadingStatus[product.id] ? (
+      <div className="image-placeholder">Loading...</div>
+    ) : imageUrls[product.id]?.length > 0 ? (
+      <img
+        src={`data:image/jpeg;base64,${imageUrls[product.id][0].imageData}`}
+        className="product-image"
+        alt="product"
+      />
+    ) : (
+      <div className="image-placeholder">No Image</div>
+    )}
+  </div>
+
+  <div className="product-info">
+    <h6 className="product-name">{product.productName.toUpperCase()}</h6>
+    <div className="product-price">Rs {discountedPrice} /-</div>
+  </div>
+</div>
           );
         })}
   </div>
@@ -1222,7 +1246,7 @@ const fetchImageUrl = async (photoId) => {
   <div className="custom-modal-backdrop" onClick={() => setSelectedProduct(null)}>
     <div className="custom-modal-content" onClick={(e) => e.stopPropagation()}>
       <button className="close-button" onClick={() => setSelectedProduct(null)}>&times;</button>
-      <div className="custom-card">
+      {/* <div className="custom-card"> */}
         <div className="d-flex">
           <div style={{ flex: '0 0 55%' }}>
             {loadingStatus[selectedProduct.id] ? (
@@ -1237,8 +1261,8 @@ const fetchImageUrl = async (photoId) => {
                   <Carousel.Item key={index}>
                     <img
                       src={`data:image/jpeg;base64,${img.imageData}`}
-                      className="card-img-top zoomable-image"
-                      style={{ height: '250px', objectFit: 'cover' }}
+                     className="card-img-top object-fit-cover"
+                      style={{ height: '380px', objectFit: 'cover' }}
                       alt={`product-image-${index}`}
                       onClick={() => handleImageClick(`data:image/jpeg;base64,${img.imageData}`)}
                     />
@@ -1252,20 +1276,25 @@ const fetchImageUrl = async (photoId) => {
             )}
           </div>
           <div>
-            <h6 className="mb-1 fw-bold fs-6" style={{ fontFamily: "Rubik" }}>{selectedProduct.productName.toUpperCase()}</h6>
+            <h6 className="mb-1 fw-bold" style={{ fontFamily: "Rubik" }}>{selectedProduct.productName.toUpperCase()}</h6>
             <div className="small text-primary fw-bold">Rs {(selectedProduct.rate - (selectedProduct.rate * selectedProduct.discount) / 100).toFixed(0)} /-</div>
-            <div className="small text-muted fw-bold" style={{ textDecoration: 'line-through' }}>MRP: Rs {selectedProduct.rate}</div>
-            <div className="blinking-row small text-danger fw-bold">Discount: {selectedProduct.discount}%</div>
-            <div className="blinking-text small text-success fw-bold m-1 fs-6" style={{ fontFamily: "Italianno, cursive" }}>Free Delivery & Installation</div>
+            <div className="small text-muted fw-bold" style={{ textDecoration: 'line-through' }}>MRP: Rs {selectedProduct.rate} /-</div>
+            <div className=" small text-danger fw-bold">Discount: {selectedProduct.discount}%</div>
+             <div className="blinking-text small fw-bold m-1 fs-6" style={{ color: '#7851a9', fontFamily: "Italianno, cursive" }}> <LocalShippingIcon style={{ color: '#f88379', fontSize: '1.25rem' }} /> Free Delivery and <BuildIcon style={{ color: '#f7bfbe', fontSize: '1.25rem' }} /> Free Installation</div>
+            <div className="">
+            <span className="badge text-success">✔️ Genuine Product</span>
+            <span className="badge text-secondary">↩️ Easy Returns</span>
+            <span className="badge text-primary">💳 COD Available</span>
+          </div>
             <button
-              className="buy-now-btn mb-0"
+              className=" buy-now-btn mt-2"
               onClick={() => navigate(`/offersBuyProduct/${userType}/${userId}/${selectedProduct.id}`)}
             >
               Buy Now
             </button>
           </div>
         </div>
-      </div>
+      {/* </div> */}
     </div>
   </div>
 )}
