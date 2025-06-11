@@ -19,10 +19,11 @@ import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-import Banner1 from './img/Ads1.jpeg';
-// import BannerVideo from './img/Video1.mp4';
+// import Banner1 from './img/Ads1.jpeg';
+// import BannerVideo from './img/TicketVideo.mp4';
+import BannerVideo from './img/TicketVideo.mp4';
 // import Banner3 from './img/banner-4.jpg';
-import Banner2 from './img/Ads2.jpeg';
+// import Banner2 from './img/Ads2.jpeg';
 import { useNavigate, useParams } from "react-router-dom";
 import Logo from "./img/Hm_Logo 1.png";
 import SearchIcon from "@mui/icons-material/Search";
@@ -1043,7 +1044,8 @@ const fetchImageUrl = async (photoId) => {
     <div
       key={cat.label}
       onClick={() => handleCategoryClick(cat)}
-      style={{ flex: '0 0 auto' }}>
+      // style={{ flex: '0 0 auto' }}
+      >
       <div
         className="category-card"
         style={{
@@ -1061,7 +1063,7 @@ const fetchImageUrl = async (photoId) => {
           style={{
             display: 'flex',
             flexDirection: 'row',
-            padding: '2px',
+            // padding: '2px',
             // alignItems: 'center',
             // justifyContent: 'center',
             // gap: '8px', 
@@ -1069,9 +1071,9 @@ const fetchImageUrl = async (photoId) => {
           <span>{cat.icon}</span>
           <span
             style={{
-              fontSize: '9px',
+              fontSize: '10px',
               fontWeight: '600',
-              lineHeight: 1,
+              // lineHeight: 1,
               fontFamily: 'Poppins, sans-serif',
               textAlign: 'center',
               padding: '2px',
@@ -1086,7 +1088,7 @@ const fetchImageUrl = async (photoId) => {
 </div>
 
       {/* Carousel */}
-              <div className="container">
+              <div className="container mt-3">
                 <div className="mx-auto">
               <div
                 id="productCarousel"
@@ -1096,7 +1098,7 @@ const fetchImageUrl = async (photoId) => {
               >
                 {/* Indicators */}
                 <div className="carousel-indicators">
-                    <button
+                    {/* <button
                       type="button"
                       data-bs-target="#productCarousel"
                       data-bs-slide-to="0"
@@ -1109,7 +1111,7 @@ const fetchImageUrl = async (photoId) => {
                       data-bs-target="#productCarousel"
                       data-bs-slide-to="1"
                       aria-label="Slide 2"
-                    ></button>
+                    ></button> */}
                     {/* <button
                     type="button"
                     data-bs-target="#productCarousel"
@@ -1125,19 +1127,19 @@ const fetchImageUrl = async (photoId) => {
                 </div>
                 {/* Carousel items */}
                 <div className="carousel-inner">
-                  {/* <div className="carousel-item active">
+                  <div className="carousel-item active">
                   <video
                     className="d-block w-100 rounded"
                     style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
                     autoPlay
-                    muted
+                    mute
                     loop
                     playsInline
                   >
                     <source src={BannerVideo} type="video/mp4" />
                   </video>
-                </div> */}
-                  <div className="carousel-item active">
+                </div>
+                  {/* <div className="carousel-item active">
                   <img
                     src={Banner1}
                     className="d-block w-100 img-fluid rounded"
@@ -1152,7 +1154,7 @@ const fetchImageUrl = async (photoId) => {
                     style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
                     alt="Slide 2"
                   />
-                </div>
+                </div> */}
                 {/* <div className="carousel-item">
                   <img
                     src={Banner3}
@@ -1163,7 +1165,7 @@ const fetchImageUrl = async (photoId) => {
                 </div> */}
               </div>
                 {/* Controls */}
-                <button
+                {/* <button
                   className="carousel-control-prev"
                   type="button"
                   data-bs-target="#productCarousel"
@@ -1178,7 +1180,7 @@ const fetchImageUrl = async (photoId) => {
                   data-bs-slide="next">
                   <span className="carousel-control-next-icon custom-carousel-icon" aria-hidden="true"></span>
                   <span className="visually-hidden">Next</span>
-                </button>
+                </button> */}
               </div>
               </div>
               </div>
@@ -1282,9 +1284,9 @@ const fetchImageUrl = async (photoId) => {
             <div className=" small text-danger fw-bold">Discount: {selectedProduct.discount}%</div>
              <div className="blinking-text small fw-bold m-1 fs-6" style={{ color: '#7851a9', fontFamily: "Italianno, cursive" }}> <LocalShippingIcon style={{ color: '#f88379', fontSize: '1.25rem' }} /> Free Delivery and <BuildIcon style={{ color: '#f7bfbe', fontSize: '1.25rem' }} /> Free Installation</div>
             <div className="">
-            <span className="badge text-success">✔️ Genuine Product</span>
+            <span className="badge text-primary">✔️ Genuine Product</span>
             <span className="badge text-secondary">↩️ Easy Returns</span>
-            <span className="badge text-primary">💳 COD Available</span>
+            <span className="badge text-success">💳 COD Available</span>
           </div>
             <button
               className=" buy-now-btn mt-2"
@@ -1352,10 +1354,10 @@ const fetchImageUrl = async (photoId) => {
         </div>
         {/* Zoom Modal */}
         <Modal show={showZoomModal} onHide={() => setShowZoomModal(false)} centered>
+          <button className="close-button text-end mt-0" onClick={() => setShowZoomModal(false)}>
+              &times; </button>
                 <Modal.Body className="text-center position-relative">
                   <div className="zoom-container">
-                  <button className="close-button text-end" onClick={() => setShowZoomModal(false)}>
-              &times; </button>
                     <img src={zoomImage} alt="Zoomed Product" className="zoom-image" />
                   </div>
                 </Modal.Body>

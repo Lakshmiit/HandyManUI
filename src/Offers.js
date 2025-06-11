@@ -217,7 +217,7 @@ useEffect(() => {
                               loading="eager"
                               src={img}
                               className="card-img-top rounded-top zoomable-image"
-                              style={{ height: "250px", objectFit: "cover", cursor: "pointer" }}
+                              style={{ height: "250px", width: 'auto', objectFit: "cover", cursor: "pointer" }}
                               alt={`product-image-${index}`}
                               onClick={() => handleImageClick(img)}
                             />

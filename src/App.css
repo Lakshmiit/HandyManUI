@@ -2323,9 +2323,9 @@ max-width: none;
   transition: all 0.5s;
   cursor: pointer;
   /* text-align: start; */
-  padding: 8px;
+  /* padding: 8px; */
   /* background-color: #f1b61f30; */
- border-radius: 10px !important;
+ /* border-radius: 10px !important; */
 }
 
 .card-scroll-container {
@@ -3109,7 +3109,6 @@ h2 {
   z-index: 10;
 }
 
-
 .close-button:hover {
 background: darkred;
 }
@@ -3136,8 +3135,25 @@ background: darkred;
   display: flex;
   flex-wrap: nowrap;
   overflow-x: auto;
-  -webkit-overflow-scrolling: touch; 
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin; 
+  scrollbar-color: #85c1e9 transparent; 
 }
+
+.category-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+
+.category-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.category-scroll::-webkit-scrollbar-thumb {
+  background-color: #85c1e9;
+  border-radius: 4px;
+  border: 1px solid transparent;
+}
+
 
 .bottom-navbar {
   height: 60px;

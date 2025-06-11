@@ -43,10 +43,8 @@ const [error, setError] = useState('');
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-
     const handleCategoryClick = async (category) => {
         const { value } = category; 
-      
         try {
           setSelectedCategory(category);
           setProducts([]);
@@ -84,7 +82,7 @@ const [error, setError] = useState('');
     <div className="offer-banner text-center text-white py-3">
         🎉 <b>Special Inaugural Offers!</b> Enjoy Free Delivery and Installation on all Products. 🛒
       </div>
-    <div className="wrapper bg-light d-flex">
+    <div className=" bg-light d-flex">
         {!isMobile && (
             <div className="ml-0 p-0 sde_mnu">
                 <Sidebar userType={selectedUserType} />
@@ -108,32 +106,31 @@ const [error, setError] = useState('');
             </div>
         )}
 
-<div className={`container m-5 ${isMobile ? 'w-100' : 'w-75'}`}>
-  <div className="row justify-content-center">
+<div className={`container m-3 ${isMobile ? 'w-100' : 'w-75'}`}>
+  <div className="row row-cols-3 row-cols-md-5 g-4">
     {categories.map((cat) => (
-      <div
-        className="col-6 col-sm-1 mb-2"
-        key={cat.label}
-        onClick={() => handleCategoryClick(cat)} 
-      >
+      <div className="col" key={cat.label} onClick={() => handleCategoryClick(cat)}>
         <div
-          className="m-2 card text-center border-0 shadow-sm"
+          className="card border-0 shadow-sm"
           style={{
-            height: '120px',
-            width: '120px',
+            height: isMobile? '100px' : '120px',
+            width: isMobile? '100px' : '120px',
             backgroundColor: '#F1B61F30',
             cursor: 'pointer',
+            display: 'flex',
+            flexDirection: 'column',
+            // justifyContent: 'center',
+            // alignItems: 'center'
           }}
         >
-          <div style={{ color: '#1976d2' }}>
-            {cat.icon}
-          </div>
+          <div style={{ color: '#1976d2', fontSize: '24px' }}>{cat.icon}</div>
           <span style={{ fontSize: '12px', fontWeight: '500' }}>{cat.label}</span>
         </div>
       </div>
     ))}
     {error && <div className="text-danger">{error}</div>}
   </div>
+
 </div>
     </div>
     <Button

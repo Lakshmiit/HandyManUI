@@ -137,7 +137,6 @@ const ProductViewModal = ({ show, handleClose, productId }) => {
                 <div className="col-md-6">
                   <p><strong>Product Name:</strong> {productName}</p>
                   <p><strong>Category:</strong> {category}</p>
-                  <p><strong>Name:</strong> {productName}</p>
                   <p><strong>Catalogue:</strong> {catalogue}</p>
                   <p><strong>Size:</strong> {productSize}</p>
                   <p><strong>Color:</strong> {color}</p>
