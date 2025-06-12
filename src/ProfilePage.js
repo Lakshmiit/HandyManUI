@@ -41,6 +41,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import MapsHomeWorkIcon from '@mui/icons-material/MapsHomeWork';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import BuildIcon from '@mui/icons-material/Build';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 // import TimelapseIcon from '@mui/icons-material/Timelapse';
 
 const getMenuList = (userType, userId, category, district ,ZipCode,technicianFullName, isMobile) => {
@@ -147,6 +149,7 @@ const ProfilePage = () => {
     const menuRef = useRef(null);
     const productScrollRef = useRef(null); 
     const ticketScrollRef = useRef(null);  
+    const scrollRef = useRef(null);
     const [productData, setProductData] = useState([]);
     const [imageUrls, setImageUrls] = useState({});
     const [searchQuery, setSearchQuery] = useState('');
@@ -189,6 +192,17 @@ useEffect(() => {
 //     bottomRefs.current[product.id] = React.createRef();
 //   });
 // }, [productData]);
+
+   const scroll = (direction) => {
+    const { current } = scrollRef;
+    if (current) {
+      const scrollAmount = isMobile ? 100 : 160;
+      current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth',
+      });
+    }
+  };
 
  const handleCategoryClick = async (category) => {
         const { value } = category; 
@@ -797,7 +811,7 @@ const fetchImageUrl = async (photoId) => {
   <div
     className="mobile-top-icons position-fixed start-0 end-0 bg-white border-bottom shadow-sm"
     style={{
-      top: '80px', 
+      top: '80px',  
       zIndex: 1050,
       height: '70px',
       padding: '10px 12px',
@@ -827,7 +841,7 @@ const fetchImageUrl = async (photoId) => {
   </div>
 )}
         {/* Address with Location */}
-        <div className="col-md-8 m-1 p-1 bg-white">
+        <div className="col-md-9 bg-white">
         {profile && profile.fullName && profile.address && profile.zipCode && (
   <div className="w-100 bg-dark text-white d-flex" style={{ backgroundColor: '#2d3e50', padding: "5px", borderRadius: '8px'}}
         onClick={() => setShowLocationModal(true)}>
@@ -1037,58 +1051,61 @@ const fetchImageUrl = async (photoId) => {
       </div>
 
        {/* Category Cards */}
-     <div
-  className="category-scroll d-flex flex-nowrap overflow-auto"
-  style={{ WebkitOverflowScrolling: 'touch' }}>
-  {categories.map((cat) => (
-    <div
-      key={cat.label}
-      onClick={() => handleCategoryClick(cat)}
-      // style={{ flex: '0 0 auto' }}
-      >
+    <div className="position-relative w-100">
+  <div
+    ref={scrollRef}
+    className="category-scroll d-flex flex-nowrap overflow-auto"
+    style={{ WebkitOverflowScrolling: 'touch', scrollBehavior: 'smooth' }}
+  >
+    {categories.map((cat) => (
       <div
-        className="category-card"
+        key={cat.label}
+        onClick={() => handleCategoryClick(cat)}
+        className="d-flex flex-row align-items-center justify-content-center me-3"
         style={{
-          height: isMobile ? '80px' : '120px',
-          width: isMobile ? '105px' : '160px',
-          backgroundColor: '#ffffff',
+          width: isMobile ? '100px' : '130px',
           cursor: 'pointer',
-          display: 'flex',
-          padding: '2px',
-          flexDirection: 'column',
-          // alignItems: 'center',
-          // justifyContent: 'center'
-        }}>
+        }}
+      >
+        <div>{cat.icon}</div>
         <div
           style={{
-            display: 'flex',
-            flexDirection: 'row',
-            // padding: '2px',
-            // alignItems: 'center',
-            // justifyContent: 'center',
-            // gap: '8px', 
-          }}>
-          <span>{cat.icon}</span>
-          <span
-            style={{
-              fontSize: '10px',
-              fontWeight: '600',
-              // lineHeight: 1,
-              fontFamily: 'Poppins, sans-serif',
-              textAlign: 'center',
-              padding: '2px',
-            }}>
-            {cat.label.toUpperCase()}
-          </span>
+            fontSize: '10px',
+            fontWeight: '600',
+            fontFamily: 'Poppins, sans-serif',
+            textAlign: 'center',
+            marginTop: '4px',
+            color: '#000',
+          }}
+        >
+          {cat.label.toUpperCase()}
         </div>
       </div>
-    </div>
-  ))}
-  {error && <div className="text-danger">{error}</div>}
+    ))}
+    {error && <div className="text-danger">{error}</div>}
+  </div>
+  {/* Arrow Buttons */}
+  <div className="d-flex justify-content-between ">
+    <button
+      className="bg-transparent border-0"
+      style={{ color: '#000000' }}
+      onClick={() => scroll('left')}
+    >
+      <ArrowBackIcon fontSize="medium" />
+    </button>
+
+    <button
+      className="bg-transparent border-0 my-1 me-2"
+      style={{ color: '#000000' }}
+      onClick={() => scroll('right')}
+    >
+      <ArrowForwardIcon fontSize="medium"/>
+    </button>
+  </div>
 </div>
 
       {/* Carousel */}
-              <div className="container mt-3">
+              <div className="container">
                 <div className="mx-auto">
               <div
                 id="productCarousel"
@@ -1132,7 +1149,7 @@ const fetchImageUrl = async (photoId) => {
                     className="d-block w-100 rounded"
                     style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
                     autoPlay
-                    mute
+                    muted
                     loop
                     playsInline
                   >
