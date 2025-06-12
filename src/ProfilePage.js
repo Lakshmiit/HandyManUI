@@ -1149,7 +1149,7 @@ const fetchImageUrl = async (photoId) => {
                     className="d-block w-100 rounded"
                     style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
                     autoPlay
-                    muted
+                    mute
                     loop
                     playsInline
                   >
