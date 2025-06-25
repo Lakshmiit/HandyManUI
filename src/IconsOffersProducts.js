@@ -12,14 +12,22 @@ import axios from 'axios';
 import HardwareIcon from '@mui/icons-material/Hardware';
 // import HomeIcon from '@mui/icons-material/Home';
 import MapsHomeWorkIcon from '@mui/icons-material/MapsHomeWork';
+// import SpaIcon from '@mui/icons-material/Spa';
+// import FaceRetouchingNaturalIcon from '@mui/icons-material/FaceRetouchingNatural';
+// import ContentCutIcon from '@mui/icons-material/ContentCut';
+// import DryCleaningIcon from '@mui/icons-material/DryCleaning';
 
 
 const categories = [
-    { label: 'Home Decors',value:'Home Decors', icon: <MapsHomeWorkIcon sx={{ fontSize: 30, color: '#fe6f5e' }} /> },
-    { label: 'Electrical Items',value:'Electrical items', icon: <ElectricalServicesIcon sx={{ fontSize: 40, color: '#1976d2' }} /> },
-    { label: 'Electronics Appliances', value:'Electronics appliances',icon: <IronIcon sx={{ fontSize: 40, color: '#f57c00' }} /> },
-    { label: 'Plumbing And Sanitary',value: 'Sanitary items',  icon: <PlumbingIcon sx={{ fontSize: 40, color: '#388e3c' }} /> },
-    { label: 'Hardware Items',value:'Hardware items', icon: <HardwareIcon sx={{ fontSize: 40, color: '#512da8' }} /> },
+  { label: 'Home Decors', value: 'Home Decors', icon: <MapsHomeWorkIcon sx={{ fontSize: 30, color: '#fe6f5e' }} /> },          
+{ label: 'Electrical Items', value: 'Electrical items', icon: <ElectricalServicesIcon sx={{ fontSize: 40, color: '#00796b' }} /> }, 
+{ label: 'Electronics Appliances', value: 'Electronics appliances', icon: <IronIcon sx={{ fontSize: 40, color: '#f57c00' }} /> },   
+{ label: 'Plumbing & Sanitary', value: 'Sanitary items', icon: <PlumbingIcon sx={{ fontSize: 40, color: '#388e3c' }} /> },         
+{ label: 'Hardware Items', value: 'Hardware items', icon: <HardwareIcon sx={{ fontSize: 40, color: '#512da8' }} /> },             
+// { label: 'Blush & Beauty', value: 'Blush & Beauty', icon: <SpaIcon sx={{ fontSize: 40, color: '#d81b60' }} /> },                            
+// { label: 'Facial Natural', value: 'Facial items', icon: <FaceRetouchingNaturalIcon sx={{ fontSize: 40, color: '#00897b' }} /> },  
+// { label: 'Hair Cut', value: 'Hair Cut', icon: <ContentCutIcon sx={{ fontSize: 40, color: '#7e57c2' }} /> },                    
+ // { label: 'Dry Cut',value:'Dry Hair Cut', icon: <DryCleaningIcon sx={{ fontSize: 40, color: '#512da8' }} /> },
   ];
 
 export default function CategoryIcons() {
@@ -115,7 +123,7 @@ const [error, setError] = useState('');
           style={{
             height: isMobile? '100px' : '120px',
             width: isMobile? '100px' : '120px',
-            backgroundColor: '#F1B61F30',
+            // backgroundColor: '#F1B61F30',
             cursor: 'pointer',
             display: 'flex',
             flexDirection: 'column',
@@ -128,9 +136,12 @@ const [error, setError] = useState('');
         </div>
       </div>
     ))}
-    {error && <div className="text-danger">{error}</div>}
   </div>
-
+  {error && (
+  <div className="d-flex flex-row text-danger">
+    <span>{error}</span>
+  </div>
+)}
 </div>
     </div>
     <Button

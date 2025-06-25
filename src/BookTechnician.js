@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap'; // Import Bootstrap components for modal
 // import { v4 as uuidv4 } from 'uuid'; // To generate unique IDs for addresses
-import {
-  Dashboard as MoreVertIcon,
-} from '@mui/icons-material';
+import { Dashboard as MoreVertIcon, } from '@mui/icons-material';
 import axios from 'axios';
 // import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import Header from './Header.js';
 import Footer from './Footer.js';
 import Sidebar from './Sidebar';
 import { useParams, useNavigate} from 'react-router-dom';
+
 const AddressManager = () => {
  const Navigate = useNavigate(); 
 //  const {id} = useParams();
@@ -55,6 +54,8 @@ const [mobileNumber, setMobileNumber] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [editingAddressId, setEditingAddressId] = useState(null);
   const [shouldBlink,setShouldBlink] = useState(false);
+  const [requiredQuatity, setRequiredQuatity] = useState('');
+  const [quantityError, setQuantityError] = useState("");
 const [addressData, setAddressData] = useState({
 fullName  : '',
 mobileNumber: '',
@@ -64,7 +65,6 @@ district: '',
 zipCode: '',
 });
 // const [response, setResponse] = useState(null);
-
 
   useEffect(() => {
     console.log(ticketId, loading, fullName, mobileNumber, raiseTicketId, editingAddressId);
@@ -80,10 +80,8 @@ zipCode: '',
           throw new Error('Failed to fetch customer profile data');
         }
         const data = await response.json();
-    //  alert(JSON.stringify(data));
         console.log(data);
         const addresses = Array.isArray(data) ? data : [data];
-        
         // Format addresses if necessary
         const formattedAddresses = addresses.map((addr) => ({
           id: addr.addressId, // Use addressId
@@ -96,9 +94,7 @@ zipCode: '',
           mobileNumber: addr.mobileNumber,
           fullName: addr.fullName,
         }));
-
         setAddresses(formattedAddresses);
-        // alert(JSON.stringify(formattedAddresses));
         const customerName = Array.isArray(data) ? data[0]?.fullName || '' : data.fullName || '';
         setFullName(customerName);
       } catch (error) {
@@ -123,7 +119,6 @@ zipCode: '',
       });
   }, []);
   
-   
    useEffect(() => {
     if (stateId) {
       axios.get(`https://handymanapiv2.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
@@ -148,13 +143,27 @@ zipCode: '',
       moreInfoRef.current.style.height = `${moreInfoRef.current.scrollHeight}px`;
     }
   }, [selectedJobs]);
+
+  const handleQuantityChange = (e) => {
+    const value = e.target.value.trim();
+    if (value === "") {
+      setRequiredQuatity("");
+      setQuantityError("Quantity is required.");
+      return;
+    }
+    if (/^[1-9]\d*$/.test(value)) {
+      setRequiredQuatity(value);
+      setQuantityError(""); 
+    } else {
+      setQuantityError("Please enter a minimum one Number Of Quantity.");
+    }
+  };
   
 // Detect screen size for responsiveness
 useEffect(() => {
   const handleResize = () => setIsMobile(window.innerWidth <= 768);
   handleResize(); // Set initial state
   window.addEventListener('resize', handleResize);
-
   return () => window.removeEventListener('resize', handleResize);
 }, []);
 
@@ -231,14 +240,12 @@ useEffect(() => {
       }
       const data = await response.json();
       console.log("Fetched Jobs:", data);
-
       if (data.length === 0 || !data[0].selectedJobs || data[0].selectedJobs.length === 0) {
         setJobDescriptions([]);
         setSelectedJobs([]);
         setNoJobsError("No jobs found for this category. Please select another category.");
         return;
       }
-  
       const extractedJobs = data.flatMap((item) => item.selectedJobs);
       setJobDescriptions(extractedJobs);
       setDescriptionId(data[0].id);
@@ -254,10 +261,8 @@ useEffect(() => {
 
   const handleJobChange = (index, field, value) => {
     const updatedJobs = [...selectedJobs];
-  
     if (field === "jobDescription") {
       const selectedJob = jobDescriptions.find((job) => job.jobDescription === value);
-  
       if (selectedJob) {
         updatedJobs[index] = {
           ...selectedJob,
@@ -272,18 +277,21 @@ useEffect(() => {
     } else {
       updatedJobs[index][field] = value;
     }
-  
     setSelectedJobs(updatedJobs);
   };
   
   const handleCategoryChange = (e) => {
     const selectedCategory = e.target.value;
     setCategory(selectedCategory);
-
     if (selectedCategory) {
       setError("");
     }
   };
+
+  const validRate = Number(selectedJobs[0].rate) || 0;
+  const validDiscount = Number(selectedJobs[0].discount) || 0;
+  const afterDiscountPrice = parseFloat((validRate - (validRate * validDiscount) / 100).toFixed(0));
+  const totalAmount = parseFloat((requiredQuatity * afterDiscountPrice).toFixed(0));
 
   // const phoneNumber = '7989328864';  // Phone number
   // Generate ticket ID in the format BTWV0002
@@ -304,20 +312,21 @@ useEffect(() => {
 
 const handleUpdateJobDescription = async (e) => {
   e.preventDefault();
-
   const primaryAddress = addresses.find((addr) => addr.type === "primary");
     const state = primaryAddress?.state || "";
     const district = primaryAddress?.district || "";
     const pincode = primaryAddress?.zipCode || primaryAddress?.pincode || "";
     // const emailAddress = primaryAddress?.emailAddress || primaryAddress?.emailAddress || "";
-    const mobileNumber = primaryAddress?.mobileNumber || primaryAddress?.mobileNumber || "";
-
+    const mobileNumber = primaryAddress?.mobileNumber || primaryAddress?.mobileNumber || ""; 
   if (!category) {
     setError("Must select a category");
     return;     
 }
   setError(""); 
-
+   if (!requiredQuatity) {
+      setQuantityError("Please Enter Quantity Field!");
+      return;
+    }
   if (!isChecked) {
       alert("You must accept the terms and conditions before submitting.");
       return;
@@ -330,7 +339,7 @@ const handleUpdateJobDescription = async (e) => {
     customerName: addressData.fullName || fullName,
     address: addressData.address || primaryAddress?.address || "", 
     category: category,
-    status: "Draft",
+    status: "Draft", 
     assignedTo: "",
     customerId: userId,
     state: addressData.state || state,
@@ -344,6 +353,8 @@ const handleUpdateJobDescription = async (e) => {
     afterDiscount: selectedJobs[0].afterDiscount,
     jobDescription: selectedJobs[0].jobDescription,
     rate: selectedJobs[0].rate,
+    noOfQuantity: requiredQuatity,
+    totalAmount: totalAmount.toString(),
     paymentMode: "",
     approvedAmount: "",
     utrTransactionNumber: "",
@@ -359,7 +370,6 @@ const handleUpdateJobDescription = async (e) => {
     TechnicianName: [],
     TechnicianFullName: "",
   };
- 
   try {
     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/CreateBookTechnician`, {
       method: 'POST',
@@ -368,7 +378,6 @@ const handleUpdateJobDescription = async (e) => {
       },
       body: JSON.stringify(payload1),
     });
-
     if (!response.ok) {
       throw new Error('Failed to Book Technician.');
     }
@@ -392,7 +401,6 @@ const handleUpdateJobDescription = async (e) => {
       alert("Please Change Your Full Name.");
       return;
     }  
-  
     if (!/^\d{6}$/.test(zipCode)) {
       alert("Pincode must be exactly 6 digits.");
       return;
@@ -435,17 +443,14 @@ const handleUpdateJobDescription = async (e) => {
           },
           body: JSON.stringify(payload3),
         });
-    
         if (!response.ok) {
           const errorText = await response.text();
           console.error("Error Response:", errorText);
           throw new Error("Failed to edit address.");
         }
-    
         setAddresses(prev =>
           prev.map(addr => addr.id === guestCustomerId ? updatedAddress : addr)
         );
-    
         setAddressData(updatedAddress);
         await fetchCustomerData();
         alert("Address Updated Successfully!");
@@ -480,7 +485,6 @@ const handleUpdateJobDescription = async (e) => {
           <Sidebar userType={selectedUserType} />
         </div>
       )}
-
       {/* Floating menu for mobile */}
       {isMobile && (
         <div className="floating-menu">
@@ -509,7 +513,6 @@ const handleUpdateJobDescription = async (e) => {
                                 {/* <Button variant="success m-1 text-white" onClick={() => setShowModal(true)}>
                                   Add Address
                                 </Button> */}
-                
                       {/* Modal */}
                             <Modal show={showModal} onHide={() => setShowModal(false)}>
                         <Modal.Header closeButton>
@@ -536,7 +539,6 @@ const handleUpdateJobDescription = async (e) => {
                                 maxLength="10"
                                 value={mobileNumber}
                                 onChange={(e) => setMobileNumber(e.target.value)}
-                                
                               />
                               </Form.Group>
                             <Form.Group className="mb-3">
@@ -585,7 +587,6 @@ const handleUpdateJobDescription = async (e) => {
                                     ))}
                               </Form.Select>
                             </Form.Group>
-        
                             <Form.Group className="mb-3">
                               <Form.Label>District <span className="req_star">*</span></Form.Label>
                             <Form.Select
@@ -608,7 +609,6 @@ const handleUpdateJobDescription = async (e) => {
                                 ))}
                               </Form.Select>
                               </Form.Group>
-              
                             <Form.Group className="mb-3">
                               <Form.Label>Pincode <span className="req_star">*</span></Form.Label>
                               <Form.Control
@@ -630,8 +630,7 @@ const handleUpdateJobDescription = async (e) => {
                           </Form>
                         </Modal.Body>
                       </Modal>
-                              </div>
-                
+                      </div>
                 
                           <div className="p-3 border rounded bg-light">
                           {addresses
@@ -816,6 +815,35 @@ const handleUpdateJobDescription = async (e) => {
               readOnly
               />
             </div>
+              {/* Required Quantity */}
+            <div className="col-md-6">
+                <label>
+                  Required Quantity <span className="req_star">*</span>
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={requiredQuatity}
+                  onChange={handleQuantityChange}
+                  placeholder="Enter Required Quantity"
+                  disabled={isAddressInvalid}
+                  required
+                />
+                {quantityError && <p style={{ color: "red" }}>{quantityError}</p>}
+              </div>
+              {/* Total Amount */}
+              <div className="col-md-6">
+                <label>
+                  Total Amount<span className="req_star">*</span>
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={`Rs ${totalAmount} /-`}
+                  disabled={isAddressInvalid}
+                  readOnly
+                />
+              </div>
         {/* Detailed Job Description */}
          <Form.Group>
           <label>Detailed Job Description</label>
@@ -857,7 +885,6 @@ const handleUpdateJobDescription = async (e) => {
                 readOnly
               />
             </div>
-
             </div>
              ))}
              </div>
@@ -865,7 +892,6 @@ const handleUpdateJobDescription = async (e) => {
           <p>No jobs available for this category.</p>
         )}
         
-
         <div className="note m-1">
            <label className='fs-5'>
             <input 

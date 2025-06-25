@@ -43,7 +43,8 @@ const [moreInfo, setMoreInfo] = useState('');
 const [remarks, setRemarks] = useState('');
 const [error, setError] = useState("");
 const [emailAddress, setEmailAddress] = useState("");
-
+const [requiredQuatity, setRequiredQuantity] = useState('');
+const [totalAmount, setTotalAmount] = useState('');
   // const paymentDataTime = new Date().toLocaleString("en-IN", {
   //   timeZone: "Asia/Kolkata",
   //   day: "2-digit",
@@ -85,7 +86,8 @@ const [emailAddress, setEmailAddress] = useState("");
         setJobDescription(data.jobDescription);
         setRate(data.rate);
         setEmailAddress(data.customerEmail);
-        
+        setRequiredQuantity(data.noOfQuantity);
+        setTotalAmount(data.totalAmount);
         } catch (error) {
         console.error('Error fetching ticket data:', error);
       } finally {
@@ -143,6 +145,8 @@ const handleUpdateJobDescription = async (e) => {
     approvedAmount: afterDiscount,
     utrTransactionNumber: "",
     technicianConfirmationCode: "",
+    noOfQuantity: requiredQuatity,
+    totalAmount: totalAmount, 
     OrderId: "", 
     OrderDate: "",
     PaidAmount: "",
@@ -191,7 +195,6 @@ const handleUpdateJobDescription = async (e) => {
     });
 
     if (!response.ok) {
-      throw new Error('Failed to Update Technician.');
     }
     const data = await response.json();
 
@@ -266,8 +269,12 @@ if (loading) {
             <td>{jobDescription}</td>
           </tr>
           <tr>
+            <td><strong>Required Quantity</strong></td>
+            <td>{requiredQuatity}</td>
+          </tr>
+          <tr>
             <td><strong>Amount</strong></td>
-            <td>{afterDiscount}</td>
+            <td>{`Rs ${totalAmount} /-`}</td> 
           </tr>
         </tbody>
       </table>

@@ -47,6 +47,7 @@ const BookTechnicianActionView = () => {
   const [TransactionType, setTransactionType] = useState("");
   const [InvoiceId, setInvoiceId] = useState("");
   const [InvoiceURL, setInvoiceURL] = useState("");
+  const [requiredQuantity, setRequiredQuantity] = useState('');
 
   
   useEffect(() => {
@@ -91,6 +92,8 @@ const BookTechnicianActionView = () => {
         setTransactionType(data.transactionType);
         setInvoiceId(data.invoiceId);
         setInvoiceURL(data.invoiceURL);
+         setRequiredQuantity(data.noOfQuantity);
+        setTotalAmount(data.totalAmount);
       } catch (error) {
         console.error('Error fetching technician data:', error);
       } finally {
@@ -294,22 +297,40 @@ const BookTechnicianActionView = () => {
           </Col>
         </Row>
 
-        {/* Total Amount */}
-        <Row>
-          <Col md={12}>
-            <Form.Group>
-              <label>Total Amount</label>
-              <Form.Control
-                type="text"
-                name="totalAmount"
-                value={totalAmount}
-                onChange={handleChange}
-                placeholder="Total Amount"
-                readOnly
-              />
-            </Form.Group>
-          </Col>
-        </Row>
+       {/* Required Quantity */}
+               <Row>
+                 <Col md={12}>
+                   <Form.Group>
+                     <label>Required Quantity</label>
+                     <Form.Control
+                       type="text"
+                       name="requiredQuantity"
+                       value={requiredQuantity}
+                       // onChange={handleChange}
+                       placeholder="Required Quantity"
+                       readOnly
+                     />
+                   </Form.Group>
+                 </Col>
+               </Row>
+       
+       
+               {/* Total Amount */}
+               <Row>
+                 <Col md={12}>
+                   <Form.Group>
+                     <label>Total Amount</label>
+                     <Form.Control
+                       type="text"
+                       name="totalAmount"
+                       value={`Rs ${totalAmount} /-`}
+                       // onChange={handleChange}
+                       placeholder="Total Amount"
+                       readOnly
+                     />
+                   </Form.Group>
+                 </Col>
+               </Row>
 
 
 {/* Technician Confirmation Code */}

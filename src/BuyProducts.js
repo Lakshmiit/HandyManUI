@@ -1208,7 +1208,7 @@ useEffect(() => {
                 <input
                   type="text"
                   className="form-control"
-                  value={totalAmount}
+                  value={`Rs ${totalAmount} /-`}
                   disabled={isAddressInvalid}
                   readOnly
                 />

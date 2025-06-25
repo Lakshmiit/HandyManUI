@@ -362,18 +362,15 @@ if (loading) {
             <td><strong>Product Catalogue</strong></td>
             <td>{productCatalogue}</td>
           </tr>
-          <tr>
-            <td><strong>Quantity</strong></td>
-            <td>{requiredQuantity}</td>
-          </tr>
+         
           <tr>
             <td><strong>Color</strong></td>
             <td>{colors}</td>
           </tr>
-          <tr>
+          {/* <tr>
             <td><strong>Amount</strong></td>
             <td>{totalAmount}</td>
-          </tr>
+          </tr> */}
           <tr>
             <td><strong>Delivery Charges</strong></td>
             <td>{deliveryCharges}</td>
@@ -382,9 +379,13 @@ if (loading) {
             <td><strong>Installation Charges</strong></td>
             <td>{serviceCharges}</td>
           </tr>
+           <tr>
+            <td><strong>Quantity</strong></td>
+            <td>{requiredQuantity}</td>
+          </tr>
           <tr>
             <td><strong>Total Amount</strong></td>
-            <td>{totalPaymentAmount}</td>
+            <td>{`Rs ${totalAmount} /-`}</td>
           </tr>
         </tbody>
       </table>

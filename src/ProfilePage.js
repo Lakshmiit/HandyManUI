@@ -1254,6 +1254,9 @@ const fetchImageUrl = async (photoId) => {
   <div className="product-info">
     <h6 className="product-name">{product.productName.toUpperCase()}</h6>
     <div className="product-price">Rs {discountedPrice} /-</div>
+    <div className="text-start">
+    {/* <p className="text-danger no-break">Limited Offers</p> */}
+    </div>
   </div>
 </div>
           );
@@ -1355,10 +1358,10 @@ const fetchImageUrl = async (photoId) => {
                 </p>
                 <p><strong>Assigned To:</strong> {ticket.assignedTo}</p>
                 <p><strong>Date:</strong> {ticket.date ? new Date(ticket.date).toLocaleDateString('en-GB') : "N/A"}</p>
-                <p><strong>Transaction Status:</strong> {ticket.transactionStatus }</p>
+                <p><strong>Transaction Status:</strong> {ticket.transactionStatus}</p>
                 <p><strong>Paid Amount:</strong> {ticket.paidAmount}</p>
                 <p><strong>Paid Date: </strong> {ticket.orderDate}</p>
-              </div>
+              </div>  
             </div>
           ))
         ) : ( 

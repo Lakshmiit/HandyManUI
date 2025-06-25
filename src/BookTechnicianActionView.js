@@ -28,7 +28,6 @@ const BookTechnicianActionView = () => {
   const {raiseTicketId} = useParams();
  const [loading, setLoading] = useState(true);
  const [paymentMode, setPaymentMode] = useState('');
- const [totalAmount, setTotalAmount] = useState('');
  const [state, setState] = useState('');
  const [district, setDistrict] = useState('')
  const [customerId, setCustomerId] = useState(''); 
@@ -51,6 +50,8 @@ const BookTechnicianActionView = () => {
   const [technicians, setTechnicians]                  = useState([]);
   const [selectedTechnicians, setSelectedTechnicians]  = useState([]);
   const [selectAll, setSelectAll] = useState(false);
+  const [requiredQuantity, setRequiredQuantity] = useState('');
+  const [totalAmount, setTotalAmount] = useState('');
 
 
   useEffect(() => {
@@ -89,7 +90,8 @@ const BookTechnicianActionView = () => {
         setutrTransactionNumber(data.utrTransactionNumber);
         setAssignedTo(data.assignedTo);
         setEmailAddress(data.customerEmail);
-
+        setRequiredQuantity(data.noOfQuantity);
+        setTotalAmount(data.totalAmount);
       } catch (error) {
         console.error('Error fetching technician data:', error);
       } finally {
@@ -441,6 +443,24 @@ const handleUpdateJobDescription = async (e) => {
           </Col>
         </Row>
 
+{/* Required Quantity */}
+        <Row>
+          <Col md={12}>
+            <Form.Group>
+              <label>Required Quantity</label>
+              <Form.Control
+                type="text"
+                name="requiredQuantity"
+                value={requiredQuantity}
+                // onChange={handleChange}
+                placeholder="Required Quantity"
+                readOnly
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+
+
         {/* Total Amount */}
         <Row>
           <Col md={12}>
@@ -449,8 +469,8 @@ const handleUpdateJobDescription = async (e) => {
               <Form.Control
                 type="text"
                 name="totalAmount"
-                value={totalAmount}
-                onChange={handleChange}
+                value={`Rs ${totalAmount} /-`}
+                // onChange={handleChange}
                 placeholder="Total Amount"
                 readOnly
               />

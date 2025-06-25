@@ -629,11 +629,12 @@ footer.footer {
   font-size: 1rem;
 }
 
-.mnu_mn {
+/* .mnu_mn {
   width: 250px;
   height: 250px;
-  background-color: #f1b61f30;
+  /* background-color: #f1b61f30; 
   border-radius: 10px;
+  border: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -641,9 +642,9 @@ footer.footer {
   gap: 1rem;
   transition: all 0.5s;
   cursor: pointer;
-  text-align: center;
+  text-align: start;
   padding: 1rem;
-}
+} */
 
 .profl_dets_mn .h5 {
   margin: 8px 0 !important;
@@ -761,7 +762,9 @@ transition: all 0.5s;
 cursor: pointer;
 text-align: center;
 padding: 1rem;
-}
+border: 1px solid #ccc;
+/* box-shadow: #ccc; */
+};
 
 .search-icon {
   right: 12px;
@@ -3051,7 +3054,7 @@ h2 {
   
   .offer-banner {
     background: linear-gradient(90deg, #ff9800, #ff5722);
-    font-size: 30px;
+    font-size: 26px;
     font-weight: bold;
     animation: pulse 1.5s infinite alternate;
   }
@@ -3241,8 +3244,8 @@ background: darkred;
 
 .product-row {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(25%, 1fr)); 
-  gap: 0.5rem;
+ grid-template-columns: repeat(auto-fill, minmax(25%, 1fr));
+gap: 0.5rem;
 }
 
 /* Card styles */
@@ -3263,7 +3266,7 @@ background: darkred;
 .image-container {
   position: relative;
   width: 100%;
-  aspect-ratio: 1 / 1;
+  /* aspect-ratio: 1 / 1; */
   background: #f6f6f6;
   display: flex;
   align-items: center;
@@ -3272,23 +3275,23 @@ background: darkred;
 
 .product-image {
   width: 100%;
-  height: 100px;
+  height: 120px;
   object-fit: cover;
   border-radius: 6px;
   /* margin: 5px; */
 }
 
-.discount-badge-wrapper {
+/* .discount-badge-wrapper {
   margin-bottom: 1px;
-}
+} */
 
 .discount-badge {
    display: inline-block;
   background: linear-gradient(to right, #ff416c, #ff4b2b);
   color: white;
-  padding: 4px 8px;
+  padding:4px 8px;
   border-radius: 8px;
-  font-weight: bold;
+  font-weight: 600;
   font-size: 0.8rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
@@ -3331,6 +3334,7 @@ background: darkred;
   color: #888;
   font-size: 0.9rem;
 }
+
 
 /* .image-placeholder {
   width: 100%;

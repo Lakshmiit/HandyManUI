@@ -242,64 +242,64 @@ useEffect(() => {
   };
 
    // Fetch pincodes based on category
-  const fetchPincodesByCategory = async (category) => {
-    try {
-      setLoading(true);
-      const response = await fetch(
-        ``
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch pincodes");
-      }
-      // const data = await response.json();
-      // setPincodes(data || []);  
-    } catch (error) {
-      console.error("Error fetching pincodes:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const fetchPincodesByCategory = async (category) => {
+  //   try {
+  //     setLoading(true);
+  //     const response = await fetch(
+  //       ``
+  //     );
+  //     if (!response.ok) {
+  //       throw new Error("Failed to fetch pincodes");
+  //     }
+  //     // const data = await response.json();
+  //     // setPincodes(data || []);  
+  //   } catch (error) {
+  //     console.error("Error fetching pincodes:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   
   // Fetch technicians based on pincode
-  const fetchTechniciansByPincode = async (pincode) => {
-    try {
-      setLoading(true);
-      const response = await fetch(
-        ``
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch technicians");
-      }
-      // const data = await response.json();
-      // setTechnicians(data || []);
-    } catch (error) {
-      console.error("Error fetching technicians:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const fetchTechniciansByPincode = async (pincode) => {
+  //   try {
+  //     setLoading(true);
+  //     const response = await fetch(
+  //       ``
+  //     );
+  //     if (!response.ok) {
+  //       throw new Error("Failed to fetch technicians");
+  //     }
+  //     // const data = await response.json();
+  //     // setTechnicians(data || []);
+  //   } catch (error) {
+  //     console.error("Error fetching technicians:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   
   // Fetch pincodes when category changes
-  useEffect(() => {
-    if (category) {
-      fetchPincodesByCategory(category);
-    }
-  }, [category]);
+  // useEffect(() => {
+  //   if (category) {
+  //     fetchPincodesByCategory(category);
+  //   }
+  // }, [category]);
   
   // Fetch category when assignedTo is "Technician"
-  useEffect(() => {
-    if (category && assignedTo === "Technician") { 
-      fetchPincodesByCategory(category);
-    }
-  }, [category, assignedTo]);
+  // useEffect(() => {
+  //   if (category && assignedTo === "Technician") { 
+  //     fetchPincodesByCategory(category);
+  //   }
+  // }, [category, assignedTo]);
   
   // Fetch technicians when pincode changes
-  useEffect(() => {
-    if (selectPincode) {
-      fetchTechniciansByPincode(selectPincode);
-      setSelectTechnician(""); 
-    }
-  }, [selectPincode]);
+  // useEffect(() => {
+  //   if (selectPincode) {
+  //     fetchTechniciansByPincode(selectPincode);
+  //     setSelectTechnician(""); 
+  //   }
+  // }, [selectPincode]);
   
 
   // Handle pincode selection
@@ -859,13 +859,13 @@ useEffect(() => {
               <p><strong className="me-2"> Choose Color (Optional):</strong>{color}</p>
               <p><strong className="me-2"> Select Required Color:</strong>{selectedColors}</p>
               <p><strong className="me-2"> Required Quantity:</strong>{requiredQuantity}</p>
-              <p><strong className="me-2"> Total Amount:</strong>{totalAmount}</p>
+              <p><strong className="me-2"> Total Amount:</strong>{`Rs ${totalAmount} /-`}</p>
               </div>
 
               <div className="col-md-6">
               <p><strong className="me-2"> Delivery Charges:</strong>{deliveryCharges}</p>
               <p><strong className="me-2"> Service Charges:</strong>{serviceCharges}</p>
-              <p><strong className="me-2"> Total Payment Amount:</strong>{totalPaymentAmount}</p>
+              <p><strong> Total Payment Amount: </strong>{`Rs ${totalPaymentAmount} /-`}</p>
               </div>
               </div>
         <div className='payment m-2'>
