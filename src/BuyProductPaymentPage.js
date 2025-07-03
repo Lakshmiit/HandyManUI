@@ -90,7 +90,13 @@ const [emailAddress, setEmailAddress] = useState("");
         setMobileNumber(data.customerPhoneNumber);
         setColor(data.color);
        setCustomerName(data.customerName);
-       setDate(data.date);
+       // Convert to Date object and add 7 days
+const originalDate = new Date(data.date);
+originalDate.setDate(originalDate.getDate() + 7);
+
+// Store the adjusted date in ISO format (safe for backend)
+setDate(originalDate.toISOString());
+
         } catch (error) {
         console.error('Error fetching product data:', error);
       } finally {
@@ -140,6 +146,11 @@ const handleGetQuotation = async (e) => {
     return; 
   } 
 
+const rawDate = new Date(date); 
+const day = rawDate.getDate().toString().padStart(2, '0');
+const month = (rawDate.getMonth() + 1).toString().padStart(2, '0');
+const year = rawDate.getFullYear().toString().slice(-2);
+const formattedDate = `${day}/${month}/${year}`;
 
   const payload = {
     BuyProductId: buyProductTicketId,
@@ -172,7 +183,7 @@ const handleGetQuotation = async (e) => {
     PaymentMode: selectedPayment,
     UTRTransactionNumber:"",
     TechnicianConfirmationCode:"",
-    DeliveryDate:"",
+    DeliveryDate: formattedDate,
     TechnicianDetils:"",
     ProductView: "Open",
     InvoiceDetails:"",
@@ -367,10 +378,6 @@ if (loading) {
             <td><strong>Color</strong></td>
             <td>{colors}</td>
           </tr>
-          {/* <tr>
-            <td><strong>Amount</strong></td>
-            <td>{totalAmount}</td>
-          </tr> */}
           <tr>
             <td><strong>Delivery Charges</strong></td>
             <td>{deliveryCharges}</td>
@@ -378,6 +385,18 @@ if (loading) {
           <tr>
             <td><strong>Installation Charges</strong></td>
             <td>{serviceCharges}</td>
+          </tr>
+          <tr>
+            <td><strong>Delivery Date</strong></td>
+            <td>
+           {(() => {
+              const d = new Date(date);
+              const day = d.getDate().toString().padStart(2, '0');
+              const month = (d.getMonth() + 1).toString().padStart(2, '0');
+              const year = d.getFullYear().toString().slice(-2);
+              return `${day}/${month}/${year}`;
+            })()}
+          </td>
           </tr>
            <tr>
             <td><strong>Quantity</strong></td>

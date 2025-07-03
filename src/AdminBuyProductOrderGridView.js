@@ -574,7 +574,7 @@ useEffect(() => {
     <div className="form-group">
               <label>Delivery Date <span className="req_star">*</span></label>
               <input
-                type="date"
+                // type="date"
                 className="form-control "
                 value={deliveryDate}
                 onChange={(e) => setDeliveryDate(e.target.value)}

@@ -204,10 +204,10 @@ useEffect(() => {
   //   }));
   // };
 
-  const handleDeliveryDateChange = (e) => {
-    setDeliveryDate(e.target.value);
-    setError((prevErrors) => ({ ...prevErrors, deliveryDate: "" }));
-  };
+  // const handleDeliveryDateChange = (e) => {
+  //   setDeliveryDate(e.target.value);
+  //   setError((prevErrors) => ({ ...prevErrors, deliveryDate: "" }));
+  // };
   
   const handleTechnicianDetailsChange = (e) => {
     setTechnicianDetails(e.target.value);
@@ -865,7 +865,9 @@ useEffect(() => {
               <div className="col-md-6">
               <p><strong className="me-2"> Delivery Charges:</strong>{deliveryCharges}</p>
               <p><strong className="me-2"> Service Charges:</strong>{serviceCharges}</p>
+              <p><strong> Delivery Date: </strong>{deliveryDate}</p>
               <p><strong> Total Payment Amount: </strong>{`Rs ${totalPaymentAmount} /-`}</p>
+
               </div>
               </div>
         <div className='payment m-2'>
@@ -889,6 +891,18 @@ useEffect(() => {
             Pay On In Presence of Technician
           </label>
     </div>
+    {/* <div className="form-group">
+              <label> <span className="req_star">*</span></label>
+              <input
+                // type="date"
+                className="form-control "
+                value={deliveryDate}
+                // onChange={handleDeliveryDateChange}
+                placeholder="dd-mm-yyyy"
+                // required
+              />
+              {/* {error.deliveryDate && <p className="text-danger">{error.deliveryDate}</p>} 
+            </div>  */}
     <div className="form-group">
               <label>Payment Transaction Details </label>
               <input
@@ -900,18 +914,6 @@ useEffect(() => {
                 readOnly
               />
             </div>
-          <div className="form-group">
-              <label>Delivery Date <span className="req_star">*</span></label>
-              <input
-                type="date"
-                className="form-control "
-                value={deliveryDate}
-                onChange={handleDeliveryDateChange}
-                placeholder="dd-mm-yyyy"
-                required
-              />
-              {error.deliveryDate && <p className="text-danger">{error.deliveryDate}</p>}
-            </div> 
 
             <div className="form-group">
               <label>Technician Details <span className="req_star">*</span></label>

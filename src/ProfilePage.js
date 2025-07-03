@@ -21,7 +21,9 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 // import Banner1 from './img/Ads1.jpeg';
 // import BannerVideo from './img/TicketVideo.mp4';
-import BannerVideo from './img/TicketVideo.mp4';
+// import BannerVideo from './img/TicketVideo.mp4';
+// import VolumeOffIcon from '@mui/icons-material/VolumeOff';
+// import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 // import Banner3 from './img/banner-4.jpg';
 // import Banner2 from './img/Ads2.jpeg';
 import { useNavigate, useParams } from "react-router-dom";
@@ -40,10 +42,11 @@ import MenuIcon from '@mui/icons-material/Menu';
 // import HomeIcon from '@mui/icons-material/Home';
 import MapsHomeWorkIcon from '@mui/icons-material/MapsHomeWork';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import BuildIcon from '@mui/icons-material/Build';
+// import BuildIcon from '@mui/icons-material/Build';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 // import TimelapseIcon from '@mui/icons-material/Timelapse';
+// import FaceRetouchingNaturalIcon from '@mui/icons-material/FaceRetouchingNatural';
 
 const getMenuList = (userType, userId, category, district ,ZipCode,technicianFullName, isMobile) => {
   const iconSize = isMobile ? 20 : 40;
@@ -122,6 +125,7 @@ const getMenuList = (userType, userId, category, district ,ZipCode,technicianFul
 };
 
 const categories = [
+    // { label: 'Blush & Beauty', value: 'Blush & Beauty', icon: <FaceRetouchingNaturalIcon sx={{ fontSize: 30, color: '#d81b60' }} /> },                              
     { label: 'Home Decors',value:'Home Decors', icon: <MapsHomeWorkIcon sx={{ fontSize: 30, color: '#fe6f5e' }} /> },
     { label: 'Electrical Items',value:'Electrical items', icon: <ElectricalServicesIcon sx={{ fontSize: 30, color: '#1976d2' }} /> },
     { label: 'Electronic Appliances', value:'Electronics appliances',icon: <IronIcon sx={{ fontSize: 30, color: '#f57c00' }} /> },
@@ -182,9 +186,22 @@ const ProfilePage = () => {
     state: '',
     district: '',
     });
+//  const videoRef = useRef(null);
+// const [isMuted, setIsMuted] = useState(true);
+const [groupedProducts, setGroupedProducts] = useState({});
+const [expandedCategories, setExpandedCategories] = useState({});
+
+  // const toggleMute = () => {
+  //   const video = videoRef.current;
+  //   if (video) {
+  //     video.muted = !isMuted; 
+  //     setIsMuted(!isMuted);
+  //   }
+  // };
+
 useEffect(() => {
-  console.log(showMenu, products, selectedCategory, addresses, editingAddressId, addressData);
-}, [showMenu, products, selectedCategory, addresses, editingAddressId, addressData]);
+  console.log(showMenu, productData, products, selectedCategory, addresses, editingAddressId, addressData);
+}, [showMenu, productData, products, selectedCategory, addresses, editingAddressId, addressData]);
     // const bottomRefs = useRef({});
 // useEffect(() => {
 //   bottomRefs.current = {};
@@ -206,6 +223,10 @@ useEffect(() => {
 
  const handleCategoryClick = async (category) => {
         const { value } = category; 
+         if (value === 'Blush & Beauty') {
+          navigate(`/beautyIcons/${userType}/${userId}`);
+          return; 
+        }
         try {
           setSelectedCategory(category);
           setProducts([]);
@@ -415,6 +436,21 @@ useEffect(() => {
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/GetAllProductList`);
       const data = await response.json();
       setProductData(data);
+
+      const groupProductsByCategory = (products) => {
+        return products.reduce((acc, product) => {
+          const category = product.category || "Uncategorized";
+          if (!acc[category]) {
+            acc[category] = [];
+          }
+          acc[category].push(product);
+          return acc;
+        }, {});
+      };
+
+      const grouped = groupProductsByCategory(data);  
+      setGroupedProducts(grouped); 
+
       data.forEach((product) => {
         if (product.productPhotos?.length) {
           fetchImagesForProduct(product);
@@ -828,13 +864,18 @@ const fetchImageUrl = async (photoId) => {
         >
           {React.cloneElement(menu.MenuIcon, { sx: { fontSize: 28 } })}
           <small style={{
-            fontSize: "12px",
-            fontFamily: 'Poppins',
-            textAlign: 'center',
-            lineHeight: '16px'
-          }}>
-            {menu.MenuTitle}
-          </small>
+          fontSize: "12px",
+          fontFamily: 'Poppins',
+          textAlign: 'center',
+          lineHeight: '16px'
+        }}>
+          {menu.MenuTitle.split(" ").map((word, index) => (
+            <React.Fragment key={index}>
+              {word}
+              {index !== menu.MenuTitle.split(" ").length - 1 && <br />}
+            </React.Fragment>
+          ))}
+        </small>
         </a>
       ))}
     </div>
@@ -1144,18 +1185,36 @@ const fetchImageUrl = async (photoId) => {
                 </div>
                 {/* Carousel items */}
                 <div className="carousel-inner">
-                  <div className="carousel-item active">
-                  <video
-                    className="d-block w-100 rounded"
-                    style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
-                    autoPlay
-                    mute
-                    loop
-                    playsInline
-                  >
-                    <source src={BannerVideo} type="video/mp4" />
-                  </video>
-                </div>
+                  {/* <div className="carousel-item active">
+                    <video
+                      ref={videoRef}
+                      className="d-block w-100 rounded"
+                      style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
+                      autoPlay
+                      loop
+                      playsInline
+                      muted={isMuted}
+                    >
+                      <source src={BannerVideo} type="video/mp4" />
+                    </video>
+                    <button
+                      onClick={toggleMute}
+                      style={{
+                        position: 'absolute',
+                        bottom: '20px',
+                        right: '20px',
+                        background: 'rgba(0,0,0,0.5)',
+                        border: 'none',
+                        borderRadius: '50%',
+                        padding: '10px',
+                        color: 'white',
+                        cursor: 'pointer',
+                      }}
+                      aria-label="Toggle Mute"
+                    >
+                      {isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
+                    </button>
+                </div> */}
                   {/* <div className="carousel-item active">
                   <img
                     src={Banner1}
@@ -1207,7 +1266,93 @@ const fetchImageUrl = async (photoId) => {
    🎉 Top Deals For You! 🎉
 </h4>
 {/* Products Display */}
-      <div
+<div className="product-scroll-wrapper " ref={productScrollRef}>
+  {Object.entries(groupedProducts)
+    .sort(([a], [b]) => (a === "Home Decors" ? -1 : b === "Home Decors" ? 1 : 0)) 
+    .map(([categoryName, products]) => {
+      const isExpanded = expandedCategories[categoryName];
+      const filteredProducts = products.filter((product) => {
+        const productName = product.productName?.toLowerCase().trim();
+        const query = searchQuery.toLowerCase().trim();
+        const normalize = (str) => (str.endsWith('s') ? str.slice(0, -1) : str);
+        return (
+          productName.includes(query) ||
+          normalize(productName).includes(normalize(query))
+        );
+      });
+      const sortedProducts = [...filteredProducts].sort(
+        (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
+      );
+      const visibleProducts = isExpanded ? sortedProducts : sortedProducts.slice(0, 6);
+      if (filteredProducts.length === 0) return null;
+
+      return (
+        <div key={categoryName} className="mt-0">
+          <h5 className="mb-2 mt-3">{categoryName.toUpperCase()}</h5>
+          <div className="product-row">
+            {visibleProducts.map((product) => {
+              const discountedPrice =
+                product.rate && product.discount
+                  ? (product.rate - (product.rate * product.discount) / 100).toFixed(0)
+                  : product.rate;
+
+              return (
+                <div
+                  key={product.id}
+                  className="product-card me-2 mb-3"
+                  onClick={() => setSelectedProduct(product)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  {product.discount && (
+                    <div className="discount-badge-wrapper">
+                      <span className="discount-badge">{product.discount}% OFF</span>
+                    </div>
+                  )}
+                  <div className="image-container">
+                    {loadingStatus[product.id] ? (
+                      <div className="image-placeholder">Loading...</div>
+                    ) : imageUrls[product.id]?.length > 0 ? (
+                      <img
+                        src={`data:image/jpeg;base64,${imageUrls[product.id][0].imageData}`}
+                        className="product-image"
+                        alt="product"
+                      />
+                    ) : (
+                      <div className="image-placeholder">No Image</div>
+                    )}
+                  </div>
+                  <div className="product-info">
+                    <h6 className="product-name">{product.productName.toUpperCase()}</h6>
+                    <div className="product-price">Rs {discountedPrice} /-</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {filteredProducts.length > 6 && (
+  <div className="text-end">
+    <Button
+      variant="outline-primary"
+      size="sm"
+      onClick={() =>
+        setExpandedCategories((prev) => ({
+          ...prev,
+          [categoryName]: !prev[categoryName],
+        }))
+      }
+    >
+      {isExpanded ? 'Less' : 'More'}
+    </Button>
+  </div>
+)}
+        </div>
+      );
+    })}
+</div>
+
+
+      {/* <div
   className="product-scroll-wrapper"
   ref={productScrollRef}>
   <div className="product-row">
@@ -1233,7 +1378,6 @@ const fetchImageUrl = async (photoId) => {
   {product.discount ? (
     <div className="discount-badge-wrapper">
       <span className="discount-badge">{product.discount}% OFF</span>
-      {/* <span className="">Deals Ends Soon! <TimelapseIcon /></span> */}
     </div>
   ) : null}
 
@@ -1255,14 +1399,14 @@ const fetchImageUrl = async (photoId) => {
     <h6 className="product-name">{product.productName.toUpperCase()}</h6>
     <div className="product-price">Rs {discountedPrice} /-</div>
     <div className="text-start">
-    {/* <p className="text-danger no-break">Limited Offers</p> */}
     </div>
   </div>
 </div>
           );
         })}
   </div>
-</div>
+</div> */}
+
  {/* Selected Product Display */}
 {selectedProduct && (
   <div className="custom-modal-backdrop" onClick={() => setSelectedProduct(null)}>
@@ -1302,7 +1446,8 @@ const fetchImageUrl = async (photoId) => {
             <div className="small text-primary fw-bold">Rs {(selectedProduct.rate - (selectedProduct.rate * selectedProduct.discount) / 100).toFixed(0)} /-</div>
             <div className="small text-muted fw-bold" style={{ textDecoration: 'line-through' }}>MRP: Rs {selectedProduct.rate} /-</div>
             <div className=" small text-danger fw-bold">Discount: {selectedProduct.discount}%</div>
-             <div className="blinking-text small fw-bold m-1 fs-6" style={{ color: '#7851a9', fontFamily: "Italianno, cursive" }}> <LocalShippingIcon style={{ color: '#f88379', fontSize: '1.25rem' }} /> Free Delivery and <BuildIcon style={{ color: '#f7bfbe', fontSize: '1.25rem' }} /> Free Installation</div>
+             <div className="small fw-bold m-1 fs-6" style={{ color: '#7851a9', fontFamily: "Italianno, cursive" }}> <LocalShippingIcon style={{ color: '#f88379', fontSize: '1.25rem' }} /> Free Delivery and Free Installation</div>
+             {/* <BuildIcon style={{ color: '#f7bfbe', fontSize: '1.25rem' }} /> */}
             <div className="">
             <span className="badge text-primary">✔️ Genuine Product</span>
             <span className="badge text-secondary">↩️ Easy Returns</span>
