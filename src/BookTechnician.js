@@ -692,7 +692,7 @@ const handleUpdateJobDescription = async (e) => {
                               </div>
                              {fullName.trim().toLowerCase() === "guest" && (
                               <p className="text-danger">
-                                Note: Please enter your address to Raise A Ticket
+                                Note: Please enter your address to Book A Technician
                               </p>
                             )}
                       {serviceUnavailable && (
