@@ -49,7 +49,7 @@ input[type=password],
 textarea,
 select.form-control {
   outline: none;
-  padding: 10px 10px;
+  padding: 5px 5px;
   width: 100%;
   border-radius: 6px;
   background-color: #F6F6F6;
@@ -2462,11 +2462,11 @@ max-width: none;
   align-items: center;
 }
 
-.profile-img-wrapper {
+/* .profile-img-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
-}
+} */
 
 .profile-img {
   width: 60px;
@@ -2849,12 +2849,15 @@ h2 {
 /* Wrapper for the profile image */
 .profile-img-wrapper {
   position: relative;
-  width: 80px;  /* Adjust size for mobile-friendly view */
-  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;  /* Adjust size for mobile-friendly view */
+  height: 50px;
   border-radius: 50%;  /* Keep it circular */
   overflow: hidden;
-  border: 3px solid #ffffff;  /* Add a golden border */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow for elevation */
+  /* border: 3px solid #ffffff;  /* Add a golden border */
+  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); Soft shadow for elevation */ 
 }
 
 /* Profile Image */
@@ -2907,10 +2910,10 @@ h2 {
   .logout-btn{
     padding-bottom: 10px;
   }
-  .profile-img-wrapper {
-    width: 70px;  /* Slightly smaller on mobile */
+  /* .profile-img-wrapper {
+    width: 70px;  /* Slightly smaller on mobile 
     height: 70px;
-  }
+  } */
 
   .file-input {
     width: 20px;  /* Smaller file input button on mobile */
@@ -2925,7 +2928,7 @@ h2 {
     border: none;
     width: 48px;
     height: 48px;
-    margin-top: 14px;
+    /* margin-top: 14px; */
   }
 
   .profile-img:hover {

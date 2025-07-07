@@ -579,7 +579,7 @@ useEffect(() => {
         <div className="bg-white rounded-3 p-4 bx_sdw w-100">
           <form className="form" onSubmit={handleSubmit}>
                 <div className="text-center">
-                <strong className="m-2">Order Number:<span>{buyProductTicketId}</span></strong>
+                <strong className="mt-2">Order Number:<span>{buyProductTicketId}</span></strong>
                 </div>
 
                 <div className="form-group">
@@ -922,13 +922,14 @@ useEffect(() => {
               <p><strong className="me-2"> Choose Color (Optional):</strong>{color}</p>
               <p><strong className="me-2"> Select Required Color:</strong>{selectedColors}</p>
               <p><strong className="me-2"> Required Quantity:</strong>{requiredQuantity}</p>
-              <p><strong className="me-2"> Total Amount:</strong>{totalAmount}</p>
+              <p><strong className="me-2"> Total Amount:</strong>{`Rs ${totalAmount}/-`}</p>
               </div>
 
               <div className="col-md-6">
               <p><strong className="me-2"> Delivery Charges:</strong>{deliveryCharges}</p>
               <p><strong className="me-2"> Service Charges:</strong>{serviceCharges}</p>
-              <p><strong className="me-2"> Total Payment Amount:</strong>{totalPaymentAmount}</p>
+              <p><strong className="me-2"> Delivery Date:</strong>{deliveryDate}</p>
+              <p><strong className="me-2"> Total Payment Amount:</strong>{`Rs ${totalPaymentAmount}/-`}</p>
               </div>
               </div>
         <div className='payment m-2'>
@@ -963,17 +964,6 @@ useEffect(() => {
                 readOnly
               />
             </div>
-    <div className="form-group">
-              <label>Delivery Date <span className="req_star">*</span></label>
-              <input
-                type="date"
-                className="form-control "
-                value={deliveryDate}
-                onChange={(e) => setDeliveryDate(e.target.value)}
-                placeholder="dd-mm-yyyy"
-                readOnly
-              />
-            </div> 
 
             <div className="form-group">
               <label>Technician Details <span className="req_star">*</span></label>

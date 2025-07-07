@@ -1,14 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap'; // Import Bootstrap components for modal
 // import { v4 as uuidv4 } from 'uuid'; // To generate unique IDs for addresses
-import {
-  
-  Dashboard as MoreVertIcon,
-} from '@mui/icons-material';
+import { Dashboard as MoreVertIcon, } from '@mui/icons-material';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import Header from './Header.js';
 import Footer from './Footer.js';
-// import axios from 'axios';
+import axios from 'axios';
 // import RaiseTicketConfirmation from './RaiseTicketConfirmation.js';
 import Sidebar from './Sidebar';
 import {  useParams, useNavigate } from 'react-router-dom';
@@ -60,6 +57,15 @@ const [paymentId, setPaymentId] = useState('');
 const [paidAmount, setPaidAmount] = useState('');
 const [shouldBlink,setShouldBlink] = useState(false);
 const [apartmentMaintenanceId, setApartmentMaintenanceId] = useState('');
+const [serviceUnavailable, setServiceUnavailable] = useState(false);
+const [state, setState] = useState('');
+const [districtList, setDistrictList] = useState([]);  
+const [stateList, setStateList] = useState([]);
+const [district, setDistrict] = useState('');  
+const [districtId, setDistrictId] = useState('');    
+const [stateId, setStateId] = useState(null);  
+
+
   useEffect(() => {
     if (isSubscription === "No" && isRegisterDisabled) {
       setShouldBlink(true);
@@ -67,6 +73,34 @@ const [apartmentMaintenanceId, setApartmentMaintenanceId] = useState('');
       setShouldBlink(false);
     }
   }, [isSubscription, isRegisterDisabled]);
+
+    useEffect(() => {
+      axios.get('https://handymanapiv2.azurewebsites.net/api/MasterData/getStates')
+        .then(response => {
+          const data = response.data;
+          console.log("States API Response:", data); 
+          setStateList(data);
+          setStateId(''); 
+        })
+        .catch(error => {
+          console.error('Error fetching states:', error);
+        });
+    }, []);
+    
+     useEffect(() => {
+      if (stateId) {
+        axios.get(`https://handymanapiv2.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
+          .then(response => {
+            setDistrictList(response.data);
+          })
+          .catch(error => {
+            console.error('Error fetching districts:', error);
+          });
+      } else {
+        setDistrictList([]);
+      }
+    }, [stateId]);
+  
 
 //  useEffect(() => {
 //     if (subscriptionDate) {
@@ -179,11 +213,13 @@ useEffect(() => {
   console.log(selectedFiles, ticketId, response, editingAddressId, addressData, subscriptionDate);
 }, [selectedFiles, ticketId, response, editingAddressId, addressData, subscriptionDate]);
 
+
 const fetchApartmentData = useCallback(async () => {
   setLoading(true);
   try {
     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/ApartmentMaintenance/GetAddressMaintenanceDataByMobileNo?mobileNo=${mobileNumber}`);
     if (!response.ok) throw new Error('Failed to fetch Apartment data');
+    
     const data = await response.json();
     const addressArray = Array.isArray(data) ? data : [data];
     setAddresses(addressArray);
@@ -202,18 +238,67 @@ const fetchApartmentData = useCallback(async () => {
       setPaymentId(address.paymentId);
       setSubscriptionDate(address.subscriptionDate);
       setPaidAmount(address.paidAmount);
+      setState(address.state);
+      setDistrict(address.district);
       setApartmentMaintenanceId(address.apartmentMaintenanceId);
+
+      if (address.district?.toLowerCase() === "east godavari") {
+        setServiceUnavailable(true);
+      } else {
+        setServiceUnavailable(false);
+      }
+
       setIsRegisterDisabled(true);
     } else {
+      setServiceUnavailable(false);
       setIsRegisterDisabled(false);
     }
   } catch (error) {
     console.error('Error fetching Apartment data:', error);
     setIsRegisterDisabled(false);
+    setServiceUnavailable(false);
   } finally {
     setLoading(false);
   }
 }, [mobileNumber]);
+
+// const fetchApartmentData = useCallback(async () => {
+//   setLoading(true);
+//   try {
+//     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/ApartmentMaintenance/GetAddressMaintenanceDataByMobileNo?mobileNo=${mobileNumber}`);
+//     if (!response.ok) throw new Error('Failed to fetch Apartment data');
+//     const data = await response.json();
+//     const addressArray = Array.isArray(data) ? data : [data];
+//     setAddresses(addressArray);
+
+//     if (addressArray.length > 0) {
+//       const address = addressArray[0];
+//       setId(address.id);
+//       setApartmentName(address.apartmentName);
+//       setApartmentAddress(address.apartmentAddress);
+//       setPinCode(address.pinCode);
+//       setConsentPersonName(address.consentPersonName);
+//       setMobileNumber(address.mobileNumber);
+//       setNumberOfFlats(address.numberOfFlats);
+//       setTotalAmount(address.totalAmount);
+//       setIsSubscription(address.isSubscription);
+//       setPaymentId(address.paymentId);
+//       setSubscriptionDate(address.subscriptionDate);
+//       setPaidAmount(address.paidAmount);
+//       setState(address.state);
+//       setDistrict(address.district);
+//       setApartmentMaintenanceId(address.apartmentMaintenanceId);
+//       setIsRegisterDisabled(true);
+//     } else {
+//       setIsRegisterDisabled(false);
+//     }
+//   } catch (error) {
+//     console.error('Error fetching Apartment data:', error);
+//     setIsRegisterDisabled(false);
+//   } finally {
+//     setLoading(false);
+//   }
+// }, [mobileNumber]);
 
 useEffect(() => {
   fetchApartmentData();
@@ -355,8 +440,8 @@ useEffect(() => {
       details: formData.details,
       category: formData.category,
       assignedTo: assignedTo,
-      state:"Andhra Pradesh",
-      district:"Visakhapatnam",
+      state: state,
+      district:  district,
       apartmentName: apartmentName,
       phoneNumber: mobileNumber,
       numberOfFlats: numberOfFlats,
@@ -438,8 +523,8 @@ useEffect(() => {
       Status: "Open",
       apartmentName: apartmentName,
       apartmentAddress: apartmentAddress,
-      state: "Andhra Pradesh",
-      district: "Visakhapatnam",
+      state: state,
+      district:  district,
       pinCode: pinCode,
       consentPersonName: consentPersonName,
       mobileNumber: mobileNumber,
@@ -465,9 +550,10 @@ useEffect(() => {
         console.error("Error Response:", errorText);
         throw new Error("Failed to Register address.");
       }
-      alert("Apartment Registration Done Successfully!");
-      await fetchApartmentData();
-      setShowModal(false);
+      
+setShowModal(false);
+await fetchApartmentData();
+//  window.location.reload(); 
     } catch (error) {
       console.error("Error Register address:", error);
       alert("Failed to Register address. Please try again later.");
@@ -475,6 +561,10 @@ useEffect(() => {
   };
 
   const handleAddressEdit = async () => {  
+     if (!state || !district) {
+      alert("Please fill in all required fields.");
+      return; 
+    }
     if (!/^\d{6}$/.test(pinCode)) {
       alert("Pincode must be exactly 6 digits.");
       return;
@@ -486,6 +576,8 @@ useEffect(() => {
         apartmentName,
         consentPersonName,
         mobileNumber,
+        state,
+        district,
         pinCode,
         numberOfFlats,
       };
@@ -498,8 +590,8 @@ useEffect(() => {
         ApartmentMaintenanceId: apartmentMaintenanceId,
         apartmentName: apartmentName,
         apartmentAddress: apartmentAddress,
-        state: "Andhra Pradesh",
-        district: "Visakhapatnam",
+        state:  state,
+        district: district,
         pinCode: pinCode,
         consentPersonName: consentPersonName,
         mobileNumber: mobileNumber,
@@ -642,6 +734,56 @@ const isFormDisabled = isSubscription !== "Yes";
                     </Form.Group>
 
                     <Form.Group className="mb-3">
+                        <Form.Label>State <span className="req_star">*</span></Form.Label>
+                        <Form.Select
+                          value={stateId || ''}
+                          onChange={(e) => {
+                            const selectedId = e.target.value;
+                            setStateId(selectedId);
+                            const selectedState = stateList.find(
+                              (s) => s?.StateId?.toString() === selectedId
+                            );
+                            if (selectedState) {
+                              setState(selectedState.StateName);
+                            }
+                          }}
+                          required
+                        >
+                          <option value="">Select State</option>
+                          {Array.isArray(stateList) &&
+                            stateList
+                              .filter((s) => s && s.StateId && s.StateName)
+                              .map((s) => (
+                                <option key={s.StateId} value={s.StateId.toString()}>
+                                  {s.StateName}
+                                </option>
+                              ))}
+                        </Form.Select>
+                      </Form.Group>
+                      <Form.Group className="mb-3">
+                        <Form.Label>District <span className="req_star">*</span></Form.Label>
+                      <Form.Select
+                          value={districtId || ''}
+                          onChange={(e) => {
+                            const selectedId = e.target.value;
+                            setDistrictId(selectedId);
+                            const selectedDistrict = districtList.find(d => d.districtId.toString() === selectedId);
+                            if (selectedDistrict) {
+                              setDistrict(selectedDistrict.districtName);
+                            }
+                          }}
+                          required
+                        >
+                          <option value="">Select District</option>
+                          {districtList.map((d) => (
+                            <option key={d.districtId} value={d.districtId.toString()}>
+                              {d.districtName}
+                            </option>
+                          ))}
+                        </Form.Select>
+                        </Form.Group>
+
+                    <Form.Group className="mb-3">
                       <Form.Label>Pincode <span className="req_star">*</span></Form.Label>
                       <Form.Control
                         type="text"
@@ -718,6 +860,8 @@ const isFormDisabled = isSubscription !== "Yes";
                             <span className="ml-2">{address.apartmentAddress}</span><br />
                             <span className="ml-2">{address.pinCode}</span><br />
                             <span className="ml-2">{address.consentPersonName}</span><br />
+                            <span className="ml-2">{address.state}</span><br />
+                            <span className="ml-2">{address.district}</span><br />
                             <span className="ml-2">{address.mobileNumber}</span><br />
                           </div>
                           <div className="text-end">
@@ -729,6 +873,8 @@ const isFormDisabled = isSubscription !== "Yes";
                                 setApartmentAddress(address.apartmentAddress);
                                 setConsentPersonName(address.consentPersonName);
                                 setMobileNumber(address.mobileNumber);
+                                setState(address.state);
+                                setDistrict(address.district);
                                 setPinCode(address.pinCode);
                                 setNumberOfFlats(address.numberOfFlats);
                                 setTotalAmount(address.totalAmount);
@@ -740,7 +886,12 @@ const isFormDisabled = isSubscription !== "Yes";
                             </button>
                               </div> 
                                 </div>
-                              ))}       
+                              ))} 
+                              {serviceUnavailable && (
+                                <div className="alert alert-danger">
+                                  <strong>Note:</strong> Apartment Maintenance Common Area Services are not available in this district. However, you can still buy products.
+                                </div>
+                              )}       
                               </div>
 
         {/* Subject */}
@@ -755,7 +906,7 @@ const isFormDisabled = isSubscription !== "Yes";
                 onChange={handleChange}
                 placeholder="Enter subject"
                 required
-                disabled={isFormDisabled}
+                disabled={isFormDisabled || serviceUnavailable}
               />
             </Form.Group>
           </Col>
@@ -772,7 +923,7 @@ const isFormDisabled = isSubscription !== "Yes";
             rows="4"
             placeholder="Enter details"
             required
-            disabled={isFormDisabled}
+            disabled={isFormDisabled || serviceUnavailable}
           />
         </Form.Group>
 
@@ -787,7 +938,7 @@ const isFormDisabled = isSubscription !== "Yes";
                 value={formData.category}
                 onChange={handleChange}
                 required
-                disabled={isFormDisabled}
+                disabled={isFormDisabled || serviceUnavailable}
               >
                 <option value="">Select Category</option>
                 <option>Plumbing</option>
@@ -808,7 +959,7 @@ const isFormDisabled = isSubscription !== "Yes";
                 value={assignedTo}
                 onChange={(e) => setAssignedTo(e.target.value)}
                 required
-                disabled={isFormDisabled}
+                disabled={isFormDisabled || serviceUnavailable}
               >
                 <option value="">Select</option>
                 <option value="Customer Care">Customer Care</option>
@@ -819,14 +970,14 @@ const isFormDisabled = isSubscription !== "Yes";
 
         {/* File Upload */}
         <div className="form-group">
-          <label className="text-danger m-2">Upload your Query Photos<span className="req_star">*</span></label>
+          <label className="text-danger m-2">Upload your Query Photos </label>
           <input
                 type="file"
                 className="form-control"
                 multiple
                 onChange={handleFileChange}
                 required
-                disabled={isFormDisabled}
+                disabled={isFormDisabled || serviceUnavailable}
               />
               {showAlert && (
                 <div className="alert alert-danger  mt-2">
@@ -862,7 +1013,7 @@ const isFormDisabled = isSubscription !== "Yes";
         <div className="d-flex justify-content-between mt-3">
           <Button variant="success" type="submit" 
           onClick={handleApartmentTicket}
-          disabled = {isSubmitting}>
+          disabled = {isSubmitting || serviceUnavailable}>
           {isSubmitting ? 'Submitting...' : 'Get Quote'}          
           </Button>
           <Button

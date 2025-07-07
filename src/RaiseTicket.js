@@ -55,6 +55,7 @@ district: '',
 });
 // const [selectedFiles, setSelectedFiles] = useState([]);
 const [shouldBlink,setShouldBlink] = useState(false);
+const [serviceUnavailable, setServiceUnavailable] = useState(false);
 
   useEffect(() => {
     console.log(ticketId, response, editingAddressId);
@@ -92,6 +93,16 @@ const [shouldBlink,setShouldBlink] = useState(false);
       }
   }, [userId]);
   
+  useEffect(() => {
+  const primary = addresses.find(addr => addr.type === "primary");
+  if (primary?.district?.toLowerCase() === "east godavari") {
+    setServiceUnavailable(true);
+  } else {
+    setServiceUnavailable(false);
+  }
+}, [addresses]);
+
+
 useEffect(() => {
   fetchCustomerData();
 }, [fetchCustomerData]);
@@ -842,10 +853,13 @@ useEffect(() => {
                           ))}
                       </div> 
                         </div>
-                      ))}       
+                      ))}   
                       </div>
-                      {/* <p className='text-danger'>Note: Please Add Your Address if Address is not Present</p> */}
-
+                      {serviceUnavailable && (
+                        <div className="alert alert-danger">
+                          <strong>Note:</strong> Raise Ticket and Book Technician Services are not available in this district. However, you can still buy products.
+                        </div>
+                      )}    
         {/* Subject */}
         <Row>
           <Col md={12}>
@@ -857,7 +871,7 @@ useEffect(() => {
                 value={formData.subject}
                 onChange={handleChange}
                 placeholder="Enter subject"
-                disabled={isAddressInvalid}
+                disabled={isAddressInvalid || serviceUnavailable}
                 required
               />
             </Form.Group>
@@ -874,7 +888,7 @@ useEffect(() => {
             onChange={handleChange}
             rows="4"
             placeholder="Enter details"
-            disabled={isAddressInvalid}
+            disabled={isAddressInvalid || serviceUnavailable}
             required
           />
         </Form.Group>
@@ -889,7 +903,7 @@ useEffect(() => {
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
-                disabled={isAddressInvalid}
+                disabled={isAddressInvalid || serviceUnavailable}
                 required
               >
                 <option value="">Select Category</option>
@@ -928,13 +942,13 @@ useEffect(() => {
 
         {/* File Upload */}
         <div className="form-group">
-          <label className="text-danger m-2">Upload your Query Photos <span className="req_star">*</span></label>
+          <label className="text-danger m-2">Upload your Query Photos </label>
           <input
                 type="file"
                 className="form-control"
                 multiple
                 onChange={handleFileChange}
-                disabled={isAddressInvalid}
+                disabled={isAddressInvalid || serviceUnavailable}
                 required
               />
               {showAlert && (
@@ -963,7 +977,7 @@ useEffect(() => {
                 type="button"
                 className="btn btn-primary mt-2"
                 onClick={handleUploadFiles}
-                disabled={loading || ticketPhotos.length === 0 || isAddressInvalid}
+                disabled={loading || ticketPhotos.length === 0 || isAddressInvalid || serviceUnavailable}
               >
                 {loading ? 'Uploading...' : 'Upload Files'}
               </button>
@@ -978,7 +992,7 @@ useEffect(() => {
           value="With Material" 
           checked={requestType === "With Material"} 
           onChange={(e) => setRequestType(e.target.value)} 
-          disabled={isAddressInvalid}
+          disabled={isAddressInvalid || serviceUnavailable}
           required
         />
         With Material
@@ -993,7 +1007,7 @@ useEffect(() => {
           checked={requestType === "Without Material"} 
           onChange={(e) => setRequestType(e.target.value)} 
           required
-          disabled={isAddressInvalid}
+          disabled={isAddressInvalid || serviceUnavailable}
         />
         Without Material
       </label>
@@ -1004,7 +1018,7 @@ useEffect(() => {
           variant="success" 
           type="submit" 
           onClick={handleSaveTicket}
-          disabled={isSubmitting || isAddressInvalid}
+          disabled={isSubmitting || isAddressInvalid || serviceUnavailable}
         >
           {isSubmitting ? 'Submitting...' : 'Get Quote'}
         </Button>

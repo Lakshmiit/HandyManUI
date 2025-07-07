@@ -695,22 +695,39 @@ const fetchImageUrl = async (photoId) => {
         </div>
       )} */}
     </div>
-        <div className="hdr_icns d-flex align-items-center gap-2 m-2">
+        <div className="hdr_icns d-flex align-items-center ">
       <div id="dropdown-container" className="dropdown-container" style={{ position: "relative" }}>
        {isMobile && (
-        <div className="d-flex align-items-center gap-2">
+        <div className="d-flex align-items-center">
   {/* Profile Image */}
   <div className="profile-img-wrapper">
     <img
       src={profileImage}
       alt="Profile"
       className="profile-img"
-      style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "cover" }}
+      // style={{ width: "40px", height: "40px", borderRadius: "10%", objectFit: "cover" }}
     />
   </div>
   <div className="d-flex align-items-center" onClick={() => navigate(`/customerNotification/${userType}/${userId}`)} style={{ cursor: "pointer" }}>
   <NotificationBell fontSize="medium" />
 </div>
+<div
+  className="d-flex align-items-center"
+  style={{ cursor: "pointer" }}
+  onClick={() => navigate(`/customerOrders/${userType}/${userId}`)}
+>
+  <div style={{ position: "relative", display: "inline-block" }}>
+    <OrdersNotificationBell fontSize="medium" />
+    {/* <small style={{ fontSize: "13px", fontFamily: "Poppins", lineHeight: "28px" }}>
+    My Orders
+  </small> */}
+  </div>
+</div>
+
+{/* <div className="d-flex align-items-center" style={{ cursor: "pointer" }} onClick={() => navigate(`/customerOrders/${userType}/${userId}`)}>
+                      <OrdersNotificationBell sx={{ fontSize: 24, marginRight: '8px' }} />
+                      <small style={{ fontSize: "13px", fontFamily: "Poppins", lineHeight: "28px" }}>My Orders</small>
+                    </div> */}
 </div>
 )}
        {/* {showDropdown && (
@@ -811,11 +828,11 @@ const fetchImageUrl = async (photoId) => {
                   <div className="fw-bold">Address</div>
                   <p className="mb-2">{profile.address}</p>
                   <hr style={{ margin: '8px 0' }} />
-                  <div className="d-flex align-items-start" style={{ cursor: "pointer" }} onClick={() => navigate(`/customerOrders/${userType}/${userId}`)}>
+                  {/* <div className="d-flex align-items-start" style={{ cursor: "pointer" }} onClick={() => navigate(`/customerOrders/${userType}/${userId}`)}>
                       <OrdersNotificationBell sx={{ fontSize: 24, marginRight: '8px' }} />
                       <small style={{ fontSize: "13px", fontFamily: "Poppins", lineHeight: "28px" }}>My Orders</small>
-                    </div>
-                    <hr style={{ margin: '8px 0' }} />
+                    </div> */}
+                    {/* <hr style={{ margin: '8px 0' }} /> */}
                     <div className="d-flex align-items-start" style={{ cursor: "pointer" }} onClick={() => navigate(`/trackStatusNotifications/${userType}/${userId}`)}>
                       <TrackStatusNotificationBell sx={{ fontSize: 24, marginRight: '8px' }} />
                       <small style={{ fontSize: "13px", fontFamily: "Poppins", lineHeight: "28px" }}>Track Ticket</small>
@@ -1262,7 +1279,7 @@ const fetchImageUrl = async (photoId) => {
               </div>
 
 <h4 style={{ color: '#ff5722', fontFamily: 'Poppins, sans-serif', fontWeight: 700,fontSize: '22px', textTransform: 'uppercase',
-    letterSpacing: '1px', textAlign: 'center', marginTop: '2px', marginBottom: '2px'}}>
+    letterSpacing: '1px', textAlign: 'center', marginTop: '1px', marginBottom: '1px'}}>
    🎉 Top Deals For You! 🎉
 </h4>
 {/* Products Display */}
@@ -1503,9 +1520,24 @@ const fetchImageUrl = async (photoId) => {
                 </p>
                 <p><strong>Assigned To:</strong> {ticket.assignedTo}</p>
                 <p><strong>Date:</strong> {ticket.date ? new Date(ticket.date).toLocaleDateString('en-GB') : "N/A"}</p>
-                <p><strong>Transaction Status:</strong> {ticket.transactionStatus}</p>
+                {ticket.paidAmount ? (
+                    <>
+                      <p><strong>Paid Amount:</strong> {ticket.paidAmount}</p>
+                    </>
+                  ) : (
+                    <p><strong>Paid Amount:</strong> Not Paid</p>
+                  )}
+
+                  {ticket.paidAmount && (
+                    <>
+                      {/* Only show these if payment is done */}
+                      <p><strong>Transaction Status:</strong> {ticket.transactionStatus}</p>
+                      <p><strong>Paid Date:</strong> {ticket.orderDate}</p>
+                    </>
+                  )}
+                {/* <p><strong>Transaction Status:</strong> {ticket.transactionStatus}</p>
                 <p><strong>Paid Amount:</strong> {ticket.paidAmount}</p>
-                <p><strong>Paid Date: </strong> {ticket.orderDate}</p>
+                <p><strong>Paid Date: </strong> {ticket.orderDate}</p> */}
               </div>  
             </div>
           ))

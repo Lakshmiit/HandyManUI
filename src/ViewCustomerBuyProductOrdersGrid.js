@@ -842,13 +842,15 @@ useEffect(() => {
               <p><strong className="me-2"> Choose Color (Optional):</strong>{color}</p>
               <p><strong className="me-2"> Select Required Color:</strong>{selectedColors}</p>
               <p><strong className="me-2"> Required Quantity:</strong>{requiredQuantity}</p>
-              <p><strong className="me-2"> Total Amount:</strong>{totalAmount}</p>
+              <p><strong className="me-2"> Total Amount:</strong>{`Rs ${totalAmount} /-`}</p>
               </div>
 
               <div className="col-md-6">
               <p><strong className="me-2"> Delivery Charges:</strong>{deliveryCharges}</p>
               <p><strong className="me-2"> Service Charges:</strong>{serviceCharges}</p>
-              <p><strong className="me-2"> Total Payment Amount:</strong>{totalPaymentAmount}</p>
+              <p><strong className="me-2"> Delivery Date:</strong>{deliveryDate}</p>
+
+              <p><strong className="me-2"> Total Payment Amount:</strong>{`Rs ${totalPaymentAmount}/-`}</p>
               </div>
               </div>
         <div className='payment m-2'>
@@ -887,7 +889,7 @@ useEffect(() => {
             </div>
             </>
               )}
-    <div className="form-group">
+    {/* <div className="form-group">
               <label>Delivery Date <span className="req_star">*</span></label>
               <input
                 type="date"
@@ -897,7 +899,7 @@ useEffect(() => {
                 placeholder="dd-mm-yyyy"
                 readOnly
               />
-            </div> 
+            </div>  */}
 
             <div className="form-group">
               <label>Technician Details <span className="req_star">*</span></label>

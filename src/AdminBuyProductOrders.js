@@ -227,7 +227,7 @@ useEffect(() => {
   const validateForm = () => {
     let newErrors = {};
 
-    if (!deliveryDate) newErrors.deliveryDate = "Delivery Date is required.";
+    // if (!deliveryDate) newErrors.deliveryDate = "Delivery Date is required.";
     if (!technicianDetails) newErrors.technicianDetails = "Technician Details are required.";
     if (!invoiceDetails) newErrors.invoiceDetails = "Invoice Details are required.";
     if (!warrantyPeriod) newErrors.warrantyPeriod = "Warranty Period is required.";
@@ -859,14 +859,14 @@ useEffect(() => {
               <p><strong className="me-2"> Choose Color (Optional):</strong>{color}</p>
               <p><strong className="me-2"> Select Required Color:</strong>{selectedColors}</p>
               <p><strong className="me-2"> Required Quantity:</strong>{requiredQuantity}</p>
-              <p><strong className="me-2"> Total Amount:</strong>{`Rs ${totalAmount} /-`}</p>
+              <p><strong className="me-2"> Total Amount:</strong>{`Rs ${totalAmount}/-`}</p>
               </div>
 
               <div className="col-md-6">
               <p><strong className="me-2"> Delivery Charges:</strong>{deliveryCharges}</p>
               <p><strong className="me-2"> Service Charges:</strong>{serviceCharges}</p>
               <p><strong> Delivery Date: </strong>{deliveryDate}</p>
-              <p><strong> Total Payment Amount: </strong>{`Rs ${totalPaymentAmount} /-`}</p>
+              <p><strong> Total Payment Amount: </strong>{`Rs ${totalPaymentAmount}/-`}</p>
 
               </div>
               </div>
@@ -1019,7 +1019,7 @@ useEffect(() => {
                       <Form.Control as="select" value={assignedTo} onChange={handleAssignedToChange} required>
                         <option value="">Select Assigned</option>
                         <option value="Customer">Customer</option>
-                        <option value="Technician">Technician</option>
+                        {/* <option value="Technician">Technician</option> */}
                       </Form.Control>
                       {error.assignedTo && <p className="text-danger">{error.assignedTo}</p>}
                     </Form.Group>

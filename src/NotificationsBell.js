@@ -63,8 +63,8 @@ const NotificationBell = () => {
 
   return (
     <div className="relative">
-      <div className="relative p-2" onClick={() => setUnreadCount(0)}>
-        <NotificationsNoneIcon sx={{ color: "black" }} />
+      <div className="relative" onClick={() => setUnreadCount(0)}>
+        <NotificationsNoneIcon sx={{ fontSize: 35, color: "black" }} />
         {unreadCount > 0 && <span className="bell-count">{unreadCount}</span>}
       </div>
       {/* Uncomment if you want to show notifications */}

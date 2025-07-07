@@ -64,6 +64,7 @@ state: '',
 district: '',
 zipCode: '',
 });
+const [serviceUnavailable, setServiceUnavailable] = useState(false);
 // const [response, setResponse] = useState(null);
 
   useEffect(() => {
@@ -101,6 +102,15 @@ zipCode: '',
         console.error('Error fetching customer data:', error);
       }
   }, [userId]);
+
+  useEffect(() => {
+  const primary = addresses.find(addr => addr.type === "primary");
+  if (primary?.district?.toLowerCase() === "east godavari") {
+    setServiceUnavailable(true);
+  } else {
+    setServiceUnavailable(false);
+  }
+}, [addresses]);
 
   useEffect(() => {
     fetchCustomerData();
@@ -162,7 +172,7 @@ zipCode: '',
 // Detect screen size for responsiveness
 useEffect(() => {
   const handleResize = () => setIsMobile(window.innerWidth <= 768);
-  handleResize(); // Set initial state
+  handleResize(); 
   window.addEventListener('resize', handleResize);
   return () => window.removeEventListener('resize', handleResize);
 }, []);
@@ -678,8 +688,13 @@ const handleUpdateJobDescription = async (e) => {
                                   ))}
                               </div> 
                                 </div>
-                              ))}       
+                              ))}   
                               </div>
+                              {serviceUnavailable && (
+                                <div className="alert alert-danger">
+                                  <strong>Note:</strong> Raise Ticket and Book Technician Services are not available in this district. However, you can still buy products.
+                                </div>
+                              )}  
         {/* Subject */}
         {/* <Row>
           <Col md={12}>
@@ -721,7 +736,7 @@ const handleUpdateJobDescription = async (e) => {
                 name="category"
                 value={category}
                 onChange={handleCategoryChange}    
-                disabled={isAddressInvalid}
+                disabled={isAddressInvalid || serviceUnavailable}
                 required
               >
                 <option value="">Select Category</option>
@@ -757,7 +772,7 @@ const handleUpdateJobDescription = async (e) => {
             className="form-control"
             value={job.jobDescription}
             onChange={(e) => handleJobChange(index, "jobDescription", e.target.value)}
-            disabled={isAddressInvalid}
+            disabled={isAddressInvalid|| serviceUnavailable}
             required
           >
             <option value="Select Job">Select Job</option>
@@ -784,7 +799,7 @@ const handleUpdateJobDescription = async (e) => {
                 value={job.rate}
                 onChange={(e) => handleJobChange(index, "rate", e.target.value)}
                 placeholder="Rate"
-                disabled={isAddressInvalid}
+                disabled={isAddressInvalid || serviceUnavailable}
                 readOnly
               />
             </div>
@@ -798,7 +813,7 @@ const handleUpdateJobDescription = async (e) => {
                 value={job.discount}
                 onChange={(e) => handleJobChange(index, "discount", e.target.value)}
                 placeholder="Discount"
-                disabled={isAddressInvalid}
+                disabled={isAddressInvalid || serviceUnavailable}
                 readOnly
               />
             </div>
@@ -811,7 +826,7 @@ const handleUpdateJobDescription = async (e) => {
               value={job.afterDiscount}
               onChange={(e) => handleJobChange(index, "afterDiscount", e.target.value)}
               placeholder="After Discount" 
-              disabled={isAddressInvalid}
+              disabled={isAddressInvalid || serviceUnavailable}
               readOnly
               />
             </div>
@@ -826,7 +841,7 @@ const handleUpdateJobDescription = async (e) => {
                   value={requiredQuatity}
                   onChange={handleQuantityChange}
                   placeholder="Enter Required Quantity"
-                  disabled={isAddressInvalid}
+                  disabled={isAddressInvalid || serviceUnavailable}
                   required
                 />
                 {quantityError && <p style={{ color: "red" }}>{quantityError}</p>}
@@ -840,7 +855,7 @@ const handleUpdateJobDescription = async (e) => {
                   type="text"
                   className="form-control"
                   value={`Rs ${totalAmount} /-`}
-                  disabled={isAddressInvalid}
+                  disabled={isAddressInvalid || serviceUnavailable}
                   readOnly
                 />
               </div>
@@ -854,7 +869,7 @@ const handleUpdateJobDescription = async (e) => {
             value={job.remarks}            
             onChange={(e) => handleJobChange(index, "remarks", e.target.value)}
             placeholder="Detailed Job Description"
-            disabled={isAddressInvalid}
+            disabled={isAddressInvalid || serviceUnavailable}
             style={{
               resize: "none",
               overflow: "auto",
@@ -875,7 +890,7 @@ const handleUpdateJobDescription = async (e) => {
                 value={job.moreInfo}
                 onChange={(e) => handleJobChange(index, "moreInfo", e.target.value)}
                 placeholder="Additional Information"
-                disabled={isAddressInvalid}
+                disabled={isAddressInvalid || serviceUnavailable}
                 style={{
                   resize: "none",
                   overflow: "auto",
@@ -969,26 +984,25 @@ const handleUpdateJobDescription = async (e) => {
                         <ul>
                         <li>
                             Lakshmi Sai Service Provider reserves the right not to upload or distribute to, or otherwise publish through the Site any Communication which
-                        
-                            is obscene, indecent, pornographic, profane, sexually explicit, threatening, or abusive;
+                            is obscene, indecent, pornographic, profane, sexually explicit, threatening, or abusive.
                         </li>
                         <li>
-                            constitutes or contains false or misleading indications of origin or statements of fact;
+                            constitutes or contains false or misleading indications of origin or statements of fact.
                         </li>
                         <li>
-                            slanders, libels, defames, disparages, or otherwise violates the legal rights of any third party;
+                            slanders, libels, defames, disparages, or otherwise violates the legal rights of any third party.
                         </li>
                         <li>
-                            causes injury of any kind to any person or entity;
+                            causes injury of any kind to any person or entity.
                         </li>
                         <li>
-                            infringes or violates the intellectual property rights (including copyright, patent and trademark rights), contract rights, trade secrets, privacy or publicity rights or any other rights of any third party;
+                            infringes or violates the intellectual property rights (including copyright, patent and trademark rights), contract rights, trade secrets, privacy or publicity rights or any other rights of any third party.
                         </li>
                         <li>
-                            violates any applicable laws, rules, or regulations;
+                            violates any applicable laws, rules, or regulations.
                         </li>
                         <li>
-                            contains software viruses or any other malicious code designed to interrupt, destroy or limit the functionality of any computer software or hardware or telecommunications equipment;
+                            contains software viruses or any other malicious code designed to interrupt, destroy or limit the functionality of any computer software or hardware or telecommunications equipment.
                         </li>
                         <li>
                             impersonates another person or entity, or that collects or uses any information about Site visitors.
@@ -1038,7 +1052,6 @@ const handleUpdateJobDescription = async (e) => {
                         <p>
                             While every attempt has been made to ascertain the authenticity of the content in the Platform, Lakshmi Sai Service Provider is not liable for any kind of damages, losses or action arising directly or indirectly, due to access and/or use of the content in the Platform including but not limited to any decisions based on content in the Platform resulting in loss of revenue, profits, property etc.
                         </p>
-                        
                         </div>
                         <div className="mt-20">
                         <h4>IX. WARRANTY DISCLAIMER</h4>
@@ -1060,7 +1073,6 @@ const handleUpdateJobDescription = async (e) => {
                         <p>
                             LAKSHMI SAI SERVICE PROVIDER DISCLAIMS ANY AND ALL WARRANTIES TO THE FULLEST EXTENT OF THE LAW, INCLUDING ANY WARRANTIES FOR ANY INFORMATION, GOODS, OR SERVICES, OBTAINED THROUGH, ADVERTISED OR RECEIVED THROUGH ANY LINKS PROVIDED BY OR THROUGH THE PLATFORM SOME COUNTRIES OR OTHER JURISDICTIONS DO NOT ALLOW THE EXCLUSION OF IMPLIED WARRANTIES, SO THE ABOVE EXCLUSIONS MAY NOT APPLY TO YOU. YOU MAY ALSO HAVE OTHER RIGHTS THAT VARY FROM COUNTRY TO COUNTRY AND JURISDICTION TO JURISDICTION.
                         </p>
-                        
                         </div>
                         <div className="mt-20">
                         <h4>X. USING HANDYMANSERVICEPROVIDERS.COM LOCAL SERVICE NEED FULFILLMENT</h4>
@@ -1112,9 +1124,7 @@ const handleUpdateJobDescription = async (e) => {
                         <p>
                             You hereby approve and / or authorise Lakshmi Sai Service Provider to take such measures as are necessary for security purposes and / or improving the quality of services and / or to enhance and provide better Service Provider services to the satisfaction of the User. The User hereby disclaims his right to prevent and/ or proceed against Lakshmi Sai Service Provider in relation to the same.
                         </p>
-                        
                         </div>
-                        
                         <div className="mt-20">
                         <h4>XII. ADDITIONAL DISCLAIMER</h4>
                         <p>
@@ -1124,7 +1134,6 @@ const handleUpdateJobDescription = async (e) => {
                             All the Users are cautioned that all and any information of whatsoever nature provided or received from the Advertiser/s is taken in good faith, without least suspecting the bonafides of the Advertiser/s and Lakshmi Sai Service Provider does not confirm, does not acknowledge, or subscribe to the claims and representation made by the Advertiser/s listed with Lakshmi Sai Service Provider. Further, Lakshmi Sai Service Provider is not at all responsible for any act of Advertiser/s listed at Lakshmi Sai Service Provider.
                         </p>
                         </div>
-                        
                         <div className="mt-20">
                         <h4>XIII. LIMITATION OF LIABILITY</h4>
                         <p>
@@ -1133,9 +1142,7 @@ const handleUpdateJobDescription = async (e) => {
                         <p>
                             THE USER OF THE PLATFORM ASSUMES ALL RESPONSIBILITY AND RISK FOR THE USE OF THIS PLATFORM AND THE INTERNET GENERALLY. THE FOREGOING LIMITATIONS SHALL APPLY NOTWITHSTANDING ANY FAILURE OF THE ESSENTIAL PURPOSE OF ANY LIMITED REMEDY AND TO THE FULLEST EXTENT PERMITTED UNDER APPLICABLE LAW. SOME COUNTRIES DO NOT ALLOW THE EXCLUSION OR LIMITATION OF LIABILITY OF CONSEQUENTIAL OR INCIDENTAL DAMAGES, SO THE ABOVE EXCLUSIONS MAY NOT APPLY TO ALL USERS; IN SUCH COUNTRIES LIABILITY IS LIMITED TO THE FULLEST EXTENT PERMITTED BY LAW.
                         </p>
-                        
                         </div>
-                        
                         <div className="mt-20">
                         <h4>XIV. THIRD PARTY SITES</h4>
                         <p>
@@ -1147,16 +1154,13 @@ const handleUpdateJobDescription = async (e) => {
                         <p>
                             <b>DELETIONS FROM SERVICE:</b> Lakshmi Sai Service Provider will delete any materials at the request of the user who submitted the materials or at the request of an advertiser who has decided to "opt-out" of the addition of materials to its advertising, including, but not limited to ratings and reviews provided by third parties. Lakshmi Sai Service Provider reserves the right to delete (or to refuse to post to public forums) any materials it deems detrimental to the system or is, or in the opinion of Lakshmi Sai Service Provider, may be, defamatory, infringing or violate of applicable law. Lakshmi Sai Service Provider reserves the right to exclude Material from the Platform. Materials submitted to Lakshmi Sai Service Provider for publication on the Platform may be edited for length, clarity and/or consistency with Lakshmi Sai Service Provider editorial standards.
                         </p>
-                        
                         </div>
-                        
                         <div className="mt-20">
                         <h4>XV. INDEMNIFICATION</h4>
                         <p>
                             You agree to indemnify and hold us and (as applicable) our parent, subsidiaries, affiliates, officers, directors, agents, and employees, harmless from any claim or demand, including reasonable attorneys' fees, made by any third party due to or arising out of your breach of these Terms, your violation of any law, or your violation of the rights of a third party, including the infringement by you of any intellectual property or other right of any person or entity. These obligations will survive any termination of the Terms.
                         </p>
                         </div>
-                        
                         <div className="mt-20">
                         <h4>XVI. MISCELLANEOUS</h4>
                         <p>
@@ -1172,15 +1176,12 @@ const handleUpdateJobDescription = async (e) => {
                             Entire Agreement. These Terms constitutes the entire agreement between you and us with respect to the subject matter of these Terms and supersedes all prior written and all prior or contemporaneous oral communications regarding such subject matter. Accordingly, you should not rely on any representations or warranties that are not expressly set forth in these Terms. If any provision or provisions of these Terms shall be held to be invalid, illegal, unenforceable or in conflict with the law of any jurisdiction, the validity, legality and enforceability of the remaining provisions shall not in any way be affected or impaired. Except as provided in Section 1, these Terms may not be modified except by writing signed by you and us; provided, however, we may change these Terms from time to time, and such revised terms and conditions shall be effective with respect to any Advertising Products ordered after written notice of such revised terms to you or, if earlier, posting of such revised terms and conditions on our Website.
                         </p>
                         </div>
-                        
                         <div className="mt-20">
                         <h4>XVII. END OF TERMS OF SERVICE</h4>
                         <p>
                             If you have any questions or concerns regarding this Agreement, please contact us at <a href="mailto:handymanserviceproviders@gmail.com.">handymanserviceproviders@gmail.com.</a>
                         </p>
-                        
                         </div>
-                        
                 </div>
             </div>
             <div className = "text-center">
@@ -1193,7 +1194,7 @@ const handleUpdateJobDescription = async (e) => {
         {/*  Book a Technician */}
         <div className='d-flex justify-content-between m-1'>
         <Button variant="success" className="m-1" type="submit" onClick={handleUpdateJobDescription}
-        disabled={noJobsError || isAddressInvalid} >
+        disabled={noJobsError || isAddressInvalid || serviceUnavailable} >
             Book A Technician
         </Button>
         {/* <Button variant='success' className="m-1" onClick={handleWhatsAppClick}><WhatsAppIcon /> WhatsApp</Button> */}
