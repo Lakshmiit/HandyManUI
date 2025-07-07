@@ -690,11 +690,18 @@ const handleUpdateJobDescription = async (e) => {
                                 </div>
                               ))}   
                               </div>
-                              {serviceUnavailable && (
-                                <div className="alert alert-danger">
-                                  <strong>Note:</strong> Raise Ticket and Book Technician Services are not available in this district. However, you can still buy products.
-                                </div>
-                              )}  
+                             {fullName.trim().toLowerCase() === "guest" && (
+                              <p className="text-danger">
+                                Note: Please enter your address to Raise A Ticket
+                              </p>
+                            )}
+                      {serviceUnavailable && (
+                        <div className="alert alert-danger">
+                          <strong>Note:</strong> Currently, the options to raise a ticket or book technician services are unavailable in your district.
+                            You can still purchase products through the "Buy Product" section.
+                            For further assistance, please contact our customer support at 62811 98953.
+                        </div>
+                      )}   
         {/* Subject */}
         {/* <Row>
           <Col md={12}>

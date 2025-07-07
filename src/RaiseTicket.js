@@ -803,7 +803,7 @@ useEffect(() => {
                 </Modal.Body>
               </Modal>
                       </div>
-        
+
                   <div className="p-3 border rounded bg-light">
                   {addresses
                       .map((address) => (
@@ -855,11 +855,19 @@ useEffect(() => {
                         </div>
                       ))}   
                       </div>
+                      {fullName.trim().toLowerCase() === "guest" && (
+                <p className="text-danger">
+                  Note: Please enter your address to Raise A Ticket
+                </p>
+              )}
                       {serviceUnavailable && (
                         <div className="alert alert-danger">
-                          <strong>Note:</strong> Raise Ticket and Book Technician Services are not available in this district. However, you can still buy products.
+                          <strong>Note:</strong> Currently, the options to raise a ticket or book technician services are unavailable in your district.
+                            You can still purchase products through the "Buy Product" section.
+                            For further assistance, please contact our customer support at 62811 98953.
                         </div>
-                      )}    
+                      )} 
+                      {/* <p className='text-danger'>Note: Please enter your address to Raise A Ticket</p>    */}
         {/* Subject */}
         <Row>
           <Col md={12}>

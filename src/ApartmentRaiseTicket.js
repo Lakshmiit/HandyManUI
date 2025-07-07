@@ -887,12 +887,14 @@ const isFormDisabled = isSubscription !== "Yes";
                               </div> 
                                 </div>
                               ))} 
-                              {serviceUnavailable && (
-                                <div className="alert alert-danger">
-                                  <strong>Note:</strong> Apartment Maintenance Common Area Services are not available in this district. However, you can still buy products.
-                                </div>
-                              )}       
                               </div>
+                              {serviceUnavailable && (
+                        <div className="alert alert-danger">
+                          <strong>Note:</strong> Currently, the options to raise a ticket or book technician services are unavailable in your district.
+                            You can still purchase products through the "Buy Product" section.
+                            For further assistance, please contact our customer support at 62811 98953.
+                        </div>
+                      )}      
 
         {/* Subject */}
         <Row>
