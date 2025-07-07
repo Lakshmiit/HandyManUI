@@ -603,6 +603,11 @@ useEffect(() => {
                                </div>
                              ))}       
                              </div>
+                             {fullName.trim().toLowerCase() === "guest" && (
+                              <p className="text-danger">
+                                Note: Please enter your address to Buy A Product.
+                              </p>
+                            )}
   
             <div className="form-group">
               <label>
