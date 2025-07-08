@@ -21,10 +21,10 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 // import Banner1 from './img/Ads1.jpeg';
 // import BannerVideo from './img/TicketVideo.mp4';
-// import BannerVideo from './img/TicketVideo.mp4';
-// import VolumeOffIcon from '@mui/icons-material/VolumeOff';
-// import VolumeUpIcon from '@mui/icons-material/VolumeUp';
-// import Banner3 from './img/banner-4.jpg';
+import BannerVideo from './img/SimhadriVideo.mp4';
+import VolumeOffIcon from '@mui/icons-material/VolumeOff';
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+// import Banner3 from './img/banner-4.jpg'; 
 // import Banner2 from './img/Ads2.jpeg';
 import { useNavigate, useParams } from "react-router-dom";
 import Logo from "./img/Hm_Logo 1.png";
@@ -47,6 +47,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 // import TimelapseIcon from '@mui/icons-material/Timelapse';
 // import FaceRetouchingNaturalIcon from '@mui/icons-material/FaceRetouchingNatural';
+// import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 
 const getMenuList = (userType, userId, category, district ,ZipCode,technicianFullName, isMobile) => {
   const iconSize = isMobile ? 20 : 40;
@@ -186,18 +187,18 @@ const ProfilePage = () => {
     state: '',
     district: '',
     });
-//  const videoRef = useRef(null);
-// const [isMuted, setIsMuted] = useState(true);
+ const videoRef = useRef(null);
+const [isMuted, setIsMuted] = useState(true);
 const [groupedProducts, setGroupedProducts] = useState({});
 const [expandedCategories, setExpandedCategories] = useState({});
 
-  // const toggleMute = () => {
-  //   const video = videoRef.current;
-  //   if (video) {
-  //     video.muted = !isMuted; 
-  //     setIsMuted(!isMuted);
-  //   }
-  // };
+  const toggleMute = () => {
+    const video = videoRef.current;
+    if (video) {
+      video.muted = !isMuted; 
+      setIsMuted(!isMuted);
+    }
+  };
 
 useEffect(() => {
   console.log(showMenu, productData, products, selectedCategory, addresses, editingAddressId, addressData);
@@ -853,12 +854,27 @@ const fetchImageUrl = async (photoId) => {
          </div> 
     
           {isMobile && (
-            <div className="text-primary fw-bold cust-fullname fs-5 ">
-              Welcome <small className="text-dark" style={{ fontSize: "18px", fontFamily: 'Poppins, sans-serif' }}>
-                {profile.fullName}
-              </small>
+            <div
+              className="d-flex justify-content-between align-items-center px-2"
+              style={{ fontFamily: 'Poppins, sans-serif', fontSize: '18px' }}
+            >
+              <div className="text-primary fw-bold fs-5">
+                Welcome{' '}
+                <small className="text-dark">
+                  {profile.fullName}
+                </small>
+              </div>
+
+              {/* <a
+                href={`https://wa.me/?text=${encodeURIComponent("Check this service: https://handymanserviceproviders.com")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <WhatsAppIcon style={{ color: "#25D366", fontSize: 30, margin: '5px' }} />
+              </a> */}
             </div>
           )}
+
           {/* Mobile Dashboard Icons */}
           {isMobile && (
   <div
@@ -1202,7 +1218,7 @@ const fetchImageUrl = async (photoId) => {
                 </div>
                 {/* Carousel items */}
                 <div className="carousel-inner">
-                  {/* <div className="carousel-item active">
+                  <div className="carousel-item active">
                     <video
                       ref={videoRef}
                       className="d-block w-100 rounded"
@@ -1231,7 +1247,7 @@ const fetchImageUrl = async (photoId) => {
                     >
                       {isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
                     </button>
-                </div> */}
+                </div>
                   {/* <div className="carousel-item active">
                   <img
                     src={Banner1}
@@ -1354,7 +1370,7 @@ const fetchImageUrl = async (photoId) => {
       size="sm"
       onClick={() =>
         setExpandedCategories((prev) => ({
-          ...prev,
+          ...prev, 
           [categoryName]: !prev[categoryName],
         }))
       }

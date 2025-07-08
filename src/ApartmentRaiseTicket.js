@@ -65,14 +65,21 @@ const [district, setDistrict] = useState('');
 const [districtId, setDistrictId] = useState('');    
 const [stateId, setStateId] = useState(null);  
 
+useEffect(() => {
+  if (district?.toLowerCase().includes("east godavari")) {
+    setServiceUnavailable(true);
+  } else {
+    setServiceUnavailable(false);
+  }
+}, [district]);
 
-  useEffect(() => {
-    if (isSubscription === "No" && isRegisterDisabled) {
-      setShouldBlink(true);
-    } else {
-      setShouldBlink(false);
-    }
-  }, [isSubscription, isRegisterDisabled]);
+ useEffect(() => {
+  if (isSubscription === "No" && isRegisterDisabled) {
+    setShouldBlink(true);
+  } else {
+    setShouldBlink(false);
+  }
+}, [isSubscription, isRegisterDisabled]);
 
     useEffect(() => {
       axios.get('https://handymanapiv2.azurewebsites.net/api/MasterData/getStates')
@@ -241,22 +248,13 @@ const fetchApartmentData = useCallback(async () => {
       setState(address.state);
       setDistrict(address.district);
       setApartmentMaintenanceId(address.apartmentMaintenanceId);
-
-      if (address.district?.toLowerCase() === "east godavari") {
-        setServiceUnavailable(true);
-      } else {
-        setServiceUnavailable(false);
-      }
-
       setIsRegisterDisabled(true);
     } else {
-      setServiceUnavailable(false);
       setIsRegisterDisabled(false);
     }
   } catch (error) {
     console.error('Error fetching Apartment data:', error);
     setIsRegisterDisabled(false);
-    setServiceUnavailable(false);
   } finally {
     setLoading(false);
   }
@@ -505,60 +503,123 @@ useEffect(() => {
     setNumberOfFlats('');
     setTotalAmount('');
   };
-  
+
   const handleAddressRegister = async () => {
   if (!apartmentName || !apartmentAddress || !pinCode || !mobileNumber || !consentPersonName || !numberOfFlats) {
     alert("Please fill in all required fields.");
     return; 
   }
+
   if (!/^\d{6}$/.test(pinCode)) {
     alert("Pincode must be exactly 6 digits.");
     return;
   }
-    const payload3 = {
-      id: "string",
-      userId: userId,
-      apartmentMaintenanceId: "string",
-      date: new Date(),
-      Status: "Open",
-      apartmentName: apartmentName,
-      apartmentAddress: apartmentAddress,
-      state: state,
-      district:  district,
-      pinCode: pinCode,
-      consentPersonName: consentPersonName,
-      mobileNumber: mobileNumber,
-      numberOfFlats: numberOfFlats,
-      totalAmount: totalAmount.toString(),
-      paymentId: "",
-      IsSubscription: "No",
-      paidAmount: "",
-      SubscriptionDate: "",
-    };
-  
-    try {
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/ApartmentMaintenance/CreateApartmentMaintence`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload3),
-      });
-  
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Error Response:", errorText);
-        throw new Error("Failed to Register address.");
-      }
-      
-setShowModal(false);
-await fetchApartmentData();
-//  window.location.reload(); 
-    } catch (error) {
-      console.error("Error Register address:", error);
-      alert("Failed to Register address. Please try again later.");
-    }
+
+  const payload3 = {
+    id: "string",
+    userId: userId,
+    apartmentMaintenanceId: "string",
+    date: new Date(),
+    Status: "Open",
+    apartmentName: apartmentName,
+    apartmentAddress: apartmentAddress,
+    state: state,
+    district: district,
+    pinCode: pinCode,
+    consentPersonName: consentPersonName,
+    mobileNumber: mobileNumber,
+    numberOfFlats: numberOfFlats,
+    totalAmount: totalAmount.toString(),
+    paymentId: "",
+    IsSubscription: "No",
+    paidAmount: "",
+    SubscriptionDate: "",
   };
+
+  try {
+    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/ApartmentMaintenance/CreateApartmentMaintence`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload3),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Error Response:", errorText);
+      throw new Error("Failed to Register address.");
+    }
+
+    setShowModal(false);
+
+    // ✅ Fetch updated data
+    await fetchApartmentData();
+
+    if (isSubscription === "No" && isRegisterDisabled) {
+      setShouldBlink(true);
+    } else {
+      setShouldBlink(false);
+    }
+
+  } catch (error) {
+    console.error("Error Register address:", error);
+    alert("Failed to Register address. Please try again later.");
+  }
+};
+
+  
+//   const handleAddressRegister = async () => {
+//   if (!apartmentName || !apartmentAddress || !pinCode || !mobileNumber || !consentPersonName || !numberOfFlats) {
+//     alert("Please fill in all required fields.");
+//     return; 
+//   }
+//   if (!/^\d{6}$/.test(pinCode)) {
+//     alert("Pincode must be exactly 6 digits.");
+//     return;
+//   }
+//     const payload3 = {
+//       id: "string",
+//       userId: userId,
+//       apartmentMaintenanceId: "string",
+//       date: new Date(),
+//       Status: "Open",
+//       apartmentName: apartmentName,
+//       apartmentAddress: apartmentAddress,
+//       state: state,
+//       district:  district,
+//       pinCode: pinCode,
+//       consentPersonName: consentPersonName,
+//       mobileNumber: mobileNumber,
+//       numberOfFlats: numberOfFlats,
+//       totalAmount: totalAmount.toString(),
+//       paymentId: "",
+//       IsSubscription: "No",
+//       paidAmount: "",
+//       SubscriptionDate: "",
+//     };
+  
+//     try {
+//       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/ApartmentMaintenance/CreateApartmentMaintence`, {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify(payload3),
+//       });
+  
+//       if (!response.ok) {
+//         const errorText = await response.text();
+//         console.error("Error Response:", errorText);
+//         throw new Error("Failed to Register address.");
+//       }
+      
+// setShowModal(false);
+// await fetchApartmentData();
+// //  window.location.reload(); 
+//     } catch (error) {
+//       console.error("Error Register address:", error);
+//       alert("Failed to Register address. Please try again later.");
+//     }
+//   };
 
   const handleAddressEdit = async () => {  
      if (!state || !district) {
@@ -697,7 +758,7 @@ const isFormDisabled = isSubscription !== "Yes";
               </Button>
               <Button
                 variant={isSubscription === "No" && isRegisterDisabled ? "danger" : "primary"}
-                className={`m-1 text-white ${ shouldBlink ? "blinking-button" : ""}`}
+                className={`m-1 text-white ${shouldBlink ? "blinking-button" : ""}`}
                 onClick={() => window.location.href = `https://handymanserviceproviders.com/ApartmentSubscription/${id}`}
                 disabled={!isRegisterDisabled || isSubscription === "Yes"}
               >
@@ -765,13 +826,20 @@ const isFormDisabled = isSubscription !== "Yes";
                       <Form.Select
                           value={districtId || ''}
                           onChange={(e) => {
-                            const selectedId = e.target.value;
-                            setDistrictId(selectedId);
-                            const selectedDistrict = districtList.find(d => d.districtId.toString() === selectedId);
-                            if (selectedDistrict) {
-                              setDistrict(selectedDistrict.districtName);
+                          const selectedId = e.target.value;
+                          setDistrictId(selectedId);
+                          const selectedDistrict = districtList.find(d => d.districtId.toString() === selectedId);
+                          if (selectedDistrict) {
+                            setDistrict(selectedDistrict.districtName);
+
+                            // 👇 Check and update serviceUnavailable state
+                            if (selectedDistrict.districtName?.toLowerCase() === "east godavari") {
+                              setServiceUnavailable(true);
+                            } else {
+                              setServiceUnavailable(false);
                             }
-                          }}
+                          }
+                        }}
                           required
                         >
                           <option value="">Select District</option>
@@ -889,13 +957,12 @@ const isFormDisabled = isSubscription !== "Yes";
                               ))} 
                               </div>
                               {serviceUnavailable && (
-                        <div className="alert alert-danger">
-                          <strong>Note:</strong> Currently, the options to raise a ticket or book technician services are unavailable in your district.
-                            You can still purchase products through the "Buy Product" section.
-                            For further assistance, please contact our customer support at 62811 98953.
-                        </div>
-                      )}      
-
+                                <div className="alert alert-danger">
+                                  <strong>Note:</strong> Currently, the options for apartment maintenance common area services are unavailable in your district.
+                                  You can still purchase products through the <strong>"Buy Product"</strong> section. For further assistance, please contact our customer support at <strong>62811 98953</strong>.
+                                </div>
+                              )}
+                                  
         {/* Subject */}
         <Row>
           <Col md={12}>
