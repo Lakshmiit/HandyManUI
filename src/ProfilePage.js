@@ -21,12 +21,12 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 // import Banner1 from './img/Ads1.jpeg';
 // import BannerVideo from './img/TicketVideo.mp4';
-import BannerVideo from './img/SimhadriVideo.mp4';
+import BannerVideo from './img/AdsVideo.mp4';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 // import Banner3 from './img/banner-4.jpg'; 
 // import Banner2 from './img/Ads2.jpeg';
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom"; 
 import Logo from "./img/Hm_Logo 1.png";
 import SearchIcon from "@mui/icons-material/Search";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -100,6 +100,7 @@ const getMenuList = (userType, userId, category, district ,ZipCode,technicianFul
     { MenuIcon: <SupportAgentIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
     { MenuIcon: <RouteIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}` }
 ];
+
   const technician = [
       { MenuIcon: <PersonAddAltIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Add Technician"},
       { MenuIcon: <RequestQuoteIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise a Quote", TargetUrl: `/notificationTechnician/${userType}/${userId}/${category}/${district}` },
@@ -110,7 +111,7 @@ const getMenuList = (userType, userId, category, district ,ZipCode,technicianFul
       { MenuIcon: <StorefrontIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
       { MenuIcon: <SupportAgentIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
       { MenuIcon: <RouteIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Track Ticket Status" }
-  ];
+  ]; 
      switch (userType) {
       case "builder":
           return builder;
@@ -936,7 +937,6 @@ const fetchImageUrl = async (photoId) => {
       />
   </div>
 )}
-
       {/* Modal */}
           <Modal show={showModal} onHide={() => setShowModal(false)}>
           <Modal.Header closeButton>
@@ -1011,7 +1011,6 @@ const fetchImageUrl = async (photoId) => {
                       ))}
                 </Form.Select>
               </Form.Group>
-
               <Form.Group className="mb-3">
                 <Form.Label>District <span className="req_star">*</span></Form.Label>
               <Form.Select
@@ -1167,7 +1166,6 @@ const fetchImageUrl = async (photoId) => {
     >
       <ArrowBackIcon fontSize="medium" />
     </button>
-
     <button
       className="bg-transparent border-0 my-1 me-2"
       style={{ color: '#000000' }}
@@ -1177,7 +1175,6 @@ const fetchImageUrl = async (photoId) => {
     </button>
   </div>
 </div>
-
       {/* Carousel */}
               <div className="container">
                 <div className="mx-auto">
@@ -1383,8 +1380,6 @@ const fetchImageUrl = async (photoId) => {
       );
     })}
 </div>
-
-
       {/* <div
   className="product-scroll-wrapper"
   ref={productScrollRef}>
