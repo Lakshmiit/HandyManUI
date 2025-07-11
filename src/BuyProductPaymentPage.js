@@ -90,13 +90,9 @@ const [emailAddress, setEmailAddress] = useState("");
         setMobileNumber(data.customerPhoneNumber);
         setColor(data.color);
        setCustomerName(data.customerName);
-       // Convert to Date object and add 7 days
 const originalDate = new Date(data.date);
-originalDate.setDate(originalDate.getDate() + 7);
-
-// Store the adjusted date in ISO format (safe for backend)
+originalDate.setDate(originalDate.getDate() + 3);
 setDate(originalDate.toISOString());
-
         } catch (error) {
         console.error('Error fetching product data:', error);
       } finally {
@@ -387,7 +383,7 @@ if (loading) {
             <td>{serviceCharges}</td>
           </tr>
           <tr>
-            <td><strong>Delivery Date</strong></td>
+            <td><strong>Delivery Before Date</strong></td>
             <td>
            {(() => {
               const d = new Date(date);
@@ -541,7 +537,6 @@ if (loading) {
                         <ul>
                         <li>
                             Lakshmi Sai Service Provider reserves the right not to upload or distribute to, or otherwise publish through the Site any Communication which
-                        
                             is obscene, indecent, pornographic, profane, sexually explicit, threatening, or abusive;
                         </li>
                         <li>
@@ -609,8 +604,7 @@ if (loading) {
                         </p>
                         <p>
                             While every attempt has been made to ascertain the authenticity of the content in the Platform, Lakshmi Sai Service Provider is not liable for any kind of damages, losses or action arising directly or indirectly, due to access and/or use of the content in the Platform including but not limited to any decisions based on content in the Platform resulting in loss of revenue, profits, property etc.
-                        </p>
-                        
+                        </p>                        
                         </div>
                         <div className="mt-20">
                         <h4>IX. WARRANTY DISCLAIMER</h4>
@@ -632,7 +626,6 @@ if (loading) {
                         <p>
                             LAKSHMI SAI SERVICE PROVIDER DISCLAIMS ANY AND ALL WARRANTIES TO THE FULLEST EXTENT OF THE LAW, INCLUDING ANY WARRANTIES FOR ANY INFORMATION, GOODS, OR SERVICES, OBTAINED THROUGH, ADVERTISED OR RECEIVED THROUGH ANY LINKS PROVIDED BY OR THROUGH THE PLATFORM SOME COUNTRIES OR OTHER JURISDICTIONS DO NOT ALLOW THE EXCLUSION OF IMPLIED WARRANTIES, SO THE ABOVE EXCLUSIONS MAY NOT APPLY TO YOU. YOU MAY ALSO HAVE OTHER RIGHTS THAT VARY FROM COUNTRY TO COUNTRY AND JURISDICTION TO JURISDICTION.
                         </p>
-                        
                         </div>
                         <div className="mt-20">
                         <h4>X. USING HANDYMANSERVICEPROVIDERS.COM LOCAL SERVICE NEED FULFILLMENT</h4>
@@ -684,9 +677,7 @@ if (loading) {
                         <p>
                             You hereby approve and / or authorise Lakshmi Sai Service Provider to take such measures as are necessary for security purposes and / or improving the quality of services and / or to enhance and provide better Service Provider services to the satisfaction of the User. The User hereby disclaims his right to prevent and/ or proceed against Lakshmi Sai Service Provider in relation to the same.
                         </p>
-                        
                         </div>
-                        
                         <div className="mt-20">
                         <h4>XII. ADDITIONAL DISCLAIMER</h4>
                         <p>
@@ -696,7 +687,6 @@ if (loading) {
                             All the Users are cautioned that all and any information of whatsoever nature provided or received from the Advertiser/s is taken in good faith, without least suspecting the bonafides of the Advertiser/s and Lakshmi Sai Service Provider does not confirm, does not acknowledge, or subscribe to the claims and representation made by the Advertiser/s listed with Lakshmi Sai Service Provider. Further, Lakshmi Sai Service Provider is not at all responsible for any act of Advertiser/s listed at Lakshmi Sai Service Provider.
                         </p>
                         </div>
-                        
                         <div className="mt-20">
                         <h4>XIII. LIMITATION OF LIABILITY</h4>
                         <p>
@@ -705,9 +695,7 @@ if (loading) {
                         <p>
                             THE USER OF THE PLATFORM ASSUMES ALL RESPONSIBILITY AND RISK FOR THE USE OF THIS PLATFORM AND THE INTERNET GENERALLY. THE FOREGOING LIMITATIONS SHALL APPLY NOTWITHSTANDING ANY FAILURE OF THE ESSENTIAL PURPOSE OF ANY LIMITED REMEDY AND TO THE FULLEST EXTENT PERMITTED UNDER APPLICABLE LAW. SOME COUNTRIES DO NOT ALLOW THE EXCLUSION OR LIMITATION OF LIABILITY OF CONSEQUENTIAL OR INCIDENTAL DAMAGES, SO THE ABOVE EXCLUSIONS MAY NOT APPLY TO ALL USERS; IN SUCH COUNTRIES LIABILITY IS LIMITED TO THE FULLEST EXTENT PERMITTED BY LAW.
                         </p>
-                        
                         </div>
-                        
                         <div className="mt-20">
                         <h4>XIV. THIRD PARTY SITES</h4>
                         <p>
@@ -719,16 +707,13 @@ if (loading) {
                         <p>
                             <b>DELETIONS FROM SERVICE:</b> Lakshmi Sai Service Provider will delete any materials at the request of the user who submitted the materials or at the request of an advertiser who has decided to "opt-out" of the addition of materials to its advertising, including, but not limited to ratings and reviews provided by third parties. Lakshmi Sai Service Provider reserves the right to delete (or to refuse to post to public forums) any materials it deems detrimental to the system or is, or in the opinion of Lakshmi Sai Service Provider, may be, defamatory, infringing or violate of applicable law. Lakshmi Sai Service Provider reserves the right to exclude Material from the Platform. Materials submitted to Lakshmi Sai Service Provider for publication on the Platform may be edited for length, clarity and/or consistency with Lakshmi Sai Service Provider editorial standards.
                         </p>
-                        
                         </div>
-                        
                         <div className="mt-20">
                         <h4>XV. INDEMNIFICATION</h4>
                         <p>
                             You agree to indemnify and hold us and (as applicable) our parent, subsidiaries, affiliates, officers, directors, agents, and employees, harmless from any claim or demand, including reasonable attorneys' fees, made by any third party due to or arising out of your breach of these Terms, your violation of any law, or your violation of the rights of a third party, including the infringement by you of any intellectual property or other right of any person or entity. These obligations will survive any termination of the Terms.
                         </p>
                         </div>
-                        
                         <div className="mt-20">
                         <h4>XVI. MISCELLANEOUS</h4>
                         <p>
@@ -744,15 +729,12 @@ if (loading) {
                             Entire Agreement. These Terms constitutes the entire agreement between you and us with respect to the subject matter of these Terms and supersedes all prior written and all prior or contemporaneous oral communications regarding such subject matter. Accordingly, you should not rely on any representations or warranties that are not expressly set forth in these Terms. If any provision or provisions of these Terms shall be held to be invalid, illegal, unenforceable or in conflict with the law of any jurisdiction, the validity, legality and enforceability of the remaining provisions shall not in any way be affected or impaired. Except as provided in Section 1, these Terms may not be modified except by writing signed by you and us; provided, however, we may change these Terms from time to time, and such revised terms and conditions shall be effective with respect to any Advertising Products ordered after written notice of such revised terms to you or, if earlier, posting of such revised terms and conditions on our Website.
                         </p>
                         </div>
-                        
                         <div className="mt-20">
                         <h4>XVII. END OF TERMS OF SERVICE</h4>
                         <p>
                             If you have any questions or concerns regarding this Agreement, please contact us at <a href="mailto:handymanserviceproviders@gmail.com.">handymanserviceproviders@gmail.com.</a>
                         </p>
-                        
                         </div> 
-                        
                 </div>
             </div>
             <div align="center">
@@ -760,17 +742,13 @@ if (loading) {
             </div>
             <div class="text-justify">
                 <div class="mt-20">
-                   
                     <h4>1. Cancellation Policy</h4>
                     <p>
                         Customers can request a cancellation before the service begins for a full refund.
                         If the technician has already arrived or started the work, a partial refund may be issued based on the work completed.
                         Cancellations must be requested via phone, email, or the official website.
-                        
                     </p>
-                        
                     </div>
-                   
                     <div class="mt-20">
                         <h4>2. Refund Policy </h4>
                         <p>
@@ -788,7 +766,6 @@ if (loading) {
                         </p>
                     </div>
                   </div>
-
             <div className = "text-center">
             <button className="btn btn-danger w-20" title="close" onClick={() => setShowModal(false)}>Close</button>
             </div>
@@ -800,7 +777,6 @@ if (loading) {
     {/* <button className="btn-back m-2">Back</button> */}
     <button className="btn-continue m-2"  onClick={handleGetQuotation}
     >Proceed</button>
-  
 </div>
  
 {/* {showConfirmation && (
@@ -814,7 +790,6 @@ if (loading) {
         <button className='btn btn-primary m-2' onClick={handleSendSMSLowestBidder}>Send SMS</button>
     </div> )}
   */}
-
     </div>
     </div>
     </div>
