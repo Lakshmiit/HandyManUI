@@ -21,7 +21,7 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 // import Banner1 from './img/Ads1.jpeg';
 // import BannerVideo from './img/TicketVideo.mp4';
-import BannerVideo from './img/AdsVideo.mp4';
+import BannerVideo from './img/HandymanAd.mp4';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 // import Banner3 from './img/banner-4.jpg'; 
@@ -50,7 +50,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 // import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 
 const getMenuList = (userType, userId, category, district ,ZipCode,technicianFullName, isMobile) => {
-  const iconSize = isMobile ? 20 : 40;
+  const iconSize = isMobile ? 20  : 40;
   const customer = [
       { MenuIcon: <SupportAgentIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
       { MenuIcon: <PersonOutlineIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Book Technician", TargetUrl: `/bookTechnician/${userType}/${userId}` },
@@ -1327,6 +1327,7 @@ const fetchImageUrl = async (photoId) => {
                   : product.rate;
 
               return (
+                <>
                 <div
                   key={product.id}
                   className="product-card me-2 mb-3"
@@ -1353,9 +1354,11 @@ const fetchImageUrl = async (photoId) => {
                   </div>
                   <div className="product-info">
                     <h6 className="product-name">{product.productName.toUpperCase()}</h6>
-                    <div className="product-price">Rs {discountedPrice} /-</div>
-                  </div>
+                    <div className="product-price">Rs {discountedPrice} /-</div>                   
+                    </div>
+                     {/* <p className="text-danger">Limited deal</p> */}
                 </div>
+           </>
               );
             })}
           </div>
@@ -1438,60 +1441,136 @@ const fetchImageUrl = async (photoId) => {
  {/* Selected Product Display */}
 {selectedProduct && (
   <div className="custom-modal-backdrop" onClick={() => setSelectedProduct(null)}>
-    <div className="custom-modal-content" onClick={(e) => e.stopPropagation()}>
-      <button className="close-button" onClick={() => setSelectedProduct(null)}>&times;</button>
-      {/* <div className="custom-card"> */}
-        <div className="d-flex">
-          <div style={{ flex: '0 0 55%' }}>
-            {loadingStatus[selectedProduct.id] ? (
-              <div className="d-flex justify-content-center align-items-center" style={{ height: '250px', background: '#f8f9fa' }}>
-                <div className="spinner-border text-secondary" role="status">
-                  <span className="visually-hidden">Loading...</span>
-                </div>
-              </div>
-            ) : imageUrls[selectedProduct.id]?.length > 0 ? (
-              <Carousel>
-                {imageUrls[selectedProduct.id].map((img, index) => (
-                  <Carousel.Item key={index}>
-                    <img
-                      src={`data:image/jpeg;base64,${img.imageData}`}
-                     className="card-img-top object-fit-cover"
-                      style={{ height: '380px', objectFit: 'cover' }}
-                      alt={`product-image-${index}`}
-                      onClick={() => handleImageClick(`data:image/jpeg;base64,${img.imageData}`)}
-                    />
-                  </Carousel.Item>
-                ))}
-              </Carousel>
-            ) : (
-              <div className="d-flex justify-content-center align-items-center" style={{ height: '250px', background: '#f8f9fa' }}>
-                No Image
-              </div>
-            )}
-          </div>
-          <div>
-            <h6 className="mb-1 fw-bold" style={{ fontFamily: "Rubik" }}>{selectedProduct.productName.toUpperCase()}</h6>
-            <div className="small text-primary fw-bold">Rs {(selectedProduct.rate - (selectedProduct.rate * selectedProduct.discount) / 100).toFixed(0)} /-</div>
-            <div className="small text-muted fw-bold" style={{ textDecoration: 'line-through' }}>MRP: Rs {selectedProduct.rate} /-</div>
-            <div className=" small text-danger fw-bold">Discount: {selectedProduct.discount}%</div>
-             <div className="small fw-bold m-1 fs-6" style={{ color: '#7851a9', fontFamily: "Italianno, cursive" }}> <LocalShippingIcon style={{ color: '#f88379', fontSize: '1.25rem' }} /> Free Delivery and Free Installation</div>
-             {/* <BuildIcon style={{ color: '#f7bfbe', fontSize: '1.25rem' }} /> */}
-            <div className="">
-            <span className="badge text-primary">✔️ Genuine Product</span>
-            <span className="badge text-secondary">↩️ Easy Returns</span>
-            <span className="badge text-success">💳 COD Available</span>
-          </div>
-            <button
-              className=" buy-now-btn mt-2"
-              onClick={() => navigate(`/offersBuyProduct/${userType}/${userId}/${selectedProduct.id}`)}
-            >
-              Buy Now
-            </button>
-          </div>
+     <div className="custom-modal-content" onClick={(e) => e.stopPropagation()}>
+       <button className="close-button" onClick={() => setSelectedProduct(null)}>&times;</button>
+  <div className="d-flex flex-column align-items-center">
+  <div style={{ width: '100%', maxWidth: '300px' }}>
+    {loadingStatus[selectedProduct.id] ? (
+      <div className="d-flex justify-content-center align-items-center" style={{ height: '250px', background: '#f8f9fa' }}>
+        <div className="spinner-border text-secondary" role="status">
+          <span className="visually-hidden">Loading...</span>
         </div>
-      {/* </div> */}
-    </div>
+      </div>
+    ) : imageUrls[selectedProduct.id]?.length > 0 ? (
+      <Carousel>
+        {imageUrls[selectedProduct.id].map((img, index) => (
+          <Carousel.Item key={index}>
+            <img
+  src={`data:image/jpeg;base64,${img.imageData}`}
+  className="card-img-top"
+  style={{
+    height: '350px',
+    width: '100%',
+    objectFit: 'contain',
+  }}
+  alt={`product-image-${index}`}
+  onClick={() => handleImageClick(`data:image/jpeg;base64,${img.imageData}`)}
+/>
+          </Carousel.Item>
+        ))}
+      </Carousel>
+    ) : (
+      <div className="d-flex justify-content-center align-items-center" style={{ height: '250px', background: '#f8f9fa' }}>
+        No Image
+      </div>
+    )}
   </div>
+
+  <div className="text-center mt-3">
+    <h6 className="mb-1 fw-bold" style={{ fontFamily: "Rubik" }}>
+      {selectedProduct.productName.toUpperCase()}
+    </h6>
+    <div className="small text-primary fw-bold">
+      Rs {(selectedProduct.rate - (selectedProduct.rate * selectedProduct.discount) / 100).toFixed(0)} /-
+    </div>
+    <div className="small text-muted fw-bold" style={{ textDecoration: 'line-through' }}>
+      MRP: Rs {selectedProduct.rate} /-
+    </div>
+    <div className="small text-danger fw-bold">
+      Discount: {selectedProduct.discount}%
+    </div>
+   <div
+  className="small fw-bold m-1 fs-6 text-start d-flex align-items-center"
+  style={{
+    color: '#7851a9',
+    fontFamily: 'Italianno, cursive',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
+  }}
+>
+  <LocalShippingIcon style={{ color: '#f88379', fontSize: '1.25rem' }} />
+  <span className="ms-1">Free Delivery and Free Installation</span>
+</div>
+    <div>
+      <span className="badge text-primary">✔️ Genuine Product</span>
+      <span className="badge text-secondary">↩️ Easy Returns</span>
+      <span className="badge text-success">💳 COD Available</span>
+    </div>
+    <button
+      className="buy-now-btn mt-3"
+      onClick={() => navigate(`/offersBuyProduct/${userType}/${userId}/${selectedProduct.id}`)}
+    >
+      Buy Now
+    </button>
+  </div>
+</div>
+</div>
+</div>
+  // <div className="custom-modal-backdrop" onClick={() => setSelectedProduct(null)}>
+  //   <div className="custom-modal-content" onClick={(e) => e.stopPropagation()}>
+  //     <button className="close-button" onClick={() => setSelectedProduct(null)}>&times;</button>
+  //     {/* <div className="custom-card"> */}
+  //       <div className="d-flex">
+  //         <div style={{ flex: '0 0 55%' }}>
+  //           {loadingStatus[selectedProduct.id] ? (
+  //             <div className="d-flex justify-content-center align-items-center" style={{ height: '250px', background: '#f8f9fa' }}>
+  //               <div className="spinner-border text-secondary" role="status">
+  //                 <span className="visually-hidden">Loading...</span>
+  //               </div>
+  //             </div>
+  //           ) : imageUrls[selectedProduct.id]?.length > 0 ? (
+  //             <Carousel>
+  //               {imageUrls[selectedProduct.id].map((img, index) => (
+  //                 <Carousel.Item key={index}>
+  //                   <img
+  //                     src={`data:image/jpeg;base64,${img.imageData}`}
+  //                     className="card-img-top object-fit-cover"
+  //                     style={{ height: '350px', width: '300px', objectFit: 'cover' }}
+  //                     alt={`product-image-${index}`}
+  //                     onClick={() => handleImageClick(`data:image/jpeg;base64,${img.imageData}`)}
+  //                   />
+  //                 </Carousel.Item>
+  //               ))}
+  //             </Carousel>
+  //           ) : (
+  //             <div className="d-flex justify-content-center align-items-center" style={{ height: '250px', background: '#f8f9fa' }}>
+  //               No Image
+  //             </div>
+  //           )}
+  //         </div>
+  //         <div>
+  //           <h6 className="mb-1 fw-bold" style={{ fontFamily: "Rubik" }}>{selectedProduct.productName.toUpperCase()}</h6>
+  //           <div className="small text-primary fw-bold">Rs {(selectedProduct.rate - (selectedProduct.rate * selectedProduct.discount) / 100).toFixed(0)} /-</div>
+  //           <div className="small text-muted fw-bold" style={{ textDecoration: 'line-through' }}>MRP: Rs {selectedProduct.rate} /-</div>
+  //           <div className=" small text-danger fw-bold">Discount: {selectedProduct.discount}%</div>
+  //            <div className="small fw-bold m-1 fs-6" style={{ color: '#7851a9', fontFamily: "Italianno, cursive" }}> <LocalShippingIcon style={{ color: '#f88379', fontSize: '1.25rem' }} /> Free Delivery and Free Installation</div>
+  //           <div>
+  //           <span className="badge text-primary">✔️ Genuine Product</span>
+  //           <span className="badge text-secondary">↩️ Easy Returns</span>
+  //           <span className="badge text-success">💳 COD Available</span>
+  //         </div>
+  //           <button
+  //             className=" buy-now-btn mt-2"
+  //             onClick={() => navigate(`/offersBuyProduct/${userType}/${userId}/${selectedProduct.id}`)}
+  //           >
+  //             Buy Now
+  //           </button>
+  //         </div>
+  //       </div>
+  //     {/* </div> */}
+  //   </div>
+  // </div>
 )}
   {/* Dashboard Desktop */}
       {!isMobile ? (

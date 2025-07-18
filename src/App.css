@@ -3127,7 +3127,7 @@ background: darkred;
   }
 
  .blinking-button {
-  animation: blinker 2s linear infinite;
+  animation: blinker 1s linear infinite;
 }
 
 @keyframes blinker {
@@ -3408,8 +3408,8 @@ gap: 0.5rem;
   position: relative;
   animation: fadeInUp 0.4s ease-in-out;
   background: white;
-  padding: 2rem;
-  margin: 5px;
+  padding: 1rem;
+  margin: 3px;
   border-radius: 8px;
   max-width: 90%;
   max-height: 100vh;
@@ -3630,4 +3630,20 @@ word-break: break-word;
   max-width: 100%;
   text-align: center;
   animation: pulse 1.5s infinite alternate;
+}
+
+.table td,
+.table th {
+  vertical-align: middle;
+}
+
+.actions-cell {
+  white-space: nowrap;
+  width: 150px; 
+  text-align: center;
+}
+
+.product-name-cell {
+  word-break: break-word;
+  max-width: 300px; 
 }
