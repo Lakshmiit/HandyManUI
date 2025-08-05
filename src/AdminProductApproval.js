@@ -232,7 +232,7 @@ const ProductAdmin = () => {
                   <p>{deliveryInDays}</p>
                   <h5>Stock Left</h5>
                   <p>{numberOfStockAvailable}</p>
-                </div>
+                </div> 
               </div> 
                {/* Approval Section */}
                <div className="mt-4">

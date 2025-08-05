@@ -163,7 +163,7 @@ const AdminProductList = () => {
     Add New Product
   </button> 
 </div> 
-      </div>
+      </div> 
 
       {filteredData.length === 0 ? (
         <div className="text-center my-5">

@@ -1146,7 +1146,7 @@ useEffect(() => {
               >
                 Add to Cart
               </button> */} 
-              <Button
+              <Button 
                 type="button"
                 className="back-btn"
                 onClick={() => navigate(`/profilePage/${userType}/${userId}`)}

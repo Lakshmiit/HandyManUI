@@ -499,7 +499,7 @@ const handleLikeClick = async (message) => {
                 For full details, please refer to the respective news source.
               </Typography>
             )} 
-
+ 
             {userType === 'customer' && (tabType === 'buysell') && (
               <Typography sx={{ fontSize: '0.8rem', color: '#555', p: 2 }}>
                 📢 <strong>Disclaimer – Buy/Sell Section:</strong> The Buy/Sell section is a community feature to help users post and view items for sale or purchase. Handyman App does not verify the ownership, condition, authenticity, or legality of the items listed. All transactions are strictly between the buyer and the seller.
