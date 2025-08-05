@@ -14,7 +14,7 @@ const ProductViewModal = ({ show, handleClose, productId }) => {
 //  const [isMobile, setIsMobile] = useState(false); 
 //   const [otherThanProduct] = useState("");
 //     const [requiredQuality] = useState("");
-//     const [units] = useState("");
+//     const [units] = useState(""); 
  
   useEffect(() => {
     if (!productId) return;

@@ -230,7 +230,7 @@ useEffect(() => {
                       style={{ height: '250px', background: '#f8f9fa' }}
                     >
                       Loading
-                    </div>
+                    </div> 
                   )}  
                       <div className="card-body p-1 m-1">
                         <h5 className="card-title">{product.productName}</h5>

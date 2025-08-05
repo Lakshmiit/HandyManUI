@@ -103,7 +103,7 @@ useEffect(() => {
         const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsById/${buyProductId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch product data');
-        }  
+        }   
         const data = await response.json();
         setProductData(data);
       //  alert(JSON.stringify(data)); 
