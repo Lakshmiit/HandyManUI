@@ -225,7 +225,7 @@ useEffect(() => {
                         ))}
                       </Carousel>
                   ) : (
-                    <div
+                    <div 
                       className="d-flex justify-content-center align-items-center"
                       style={{ height: '250px', background: '#f8f9fa' }}
                     >

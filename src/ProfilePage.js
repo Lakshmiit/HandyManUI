@@ -1647,7 +1647,7 @@ const fetchImageUrl = async (photoId) => {
                 <p><strong>Category:</strong> {ticket.category}</p>
                 <p><strong>Status:</strong> 
                 <span className={ticket.status.toLowerCase()}> {ticket.status}</span>
-                </p>
+                </p> 
                 <p><strong>Assigned To:</strong> {ticket.assignedTo}</p>
                 <p><strong>Date:</strong> {ticket.date ? new Date(ticket.date).toLocaleDateString('en-GB') : "N/A"}</p>
                 {ticket.paidAmount ? ( 

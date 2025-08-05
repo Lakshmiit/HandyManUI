@@ -5,7 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 // import Sidebar from './Sidebar';
 // import Header from './Header.js';
 // import Footer from './Footer.js';
- 
+  
 const ProductViewModal = ({ show, handleClose, productId }) => {
   const [productData, setProductData] = useState(null);
   const [imageUrls, setImageUrls] = useState([]);

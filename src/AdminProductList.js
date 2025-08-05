@@ -162,7 +162,7 @@ const AdminProductList = () => {
   >
     Add New Product
   </button> 
-</div> 
+</div>  
       </div> 
 
       {filteredData.length === 0 ? (

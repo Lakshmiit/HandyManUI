@@ -153,7 +153,7 @@ const ProductViewModal = ({ show, handleClose, productId }) => {
                         {spec.label}: {spec.value}
                       </li>
                     ))} 
-                  </ul>
+                  </ul> 
                   <h5>Warranty</h5>
                   <p>{warranty}</p>
                   <h5>Additional Information</h5>

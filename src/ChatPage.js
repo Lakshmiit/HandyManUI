@@ -10,7 +10,7 @@ import './App.css';
 import axios from "axios";
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import { Dialog, } from '@mui/material';
-import ChatLogo from './img/ChatLogo.jpeg';
+import ChatLogo from './img/ChatLogo1.jpeg';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';             
@@ -491,7 +491,7 @@ const handleLikeClick = async (message) => {
                 </Box>
               ))}
               <Box ref={chatEndRef} /> 
-            </Box>
+            </Box> 
             {userType === 'admin'  && (tabType === 'news') && (
               <Typography sx={{ fontSize: '0.8rem', color: '#555', p: 2 }}>
                 📢 <strong>Disclaimer:</strong> News updates shown here are short summaries based on publicly available content from reputed sources.

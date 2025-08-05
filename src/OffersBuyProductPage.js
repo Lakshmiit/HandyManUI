@@ -1138,7 +1138,7 @@ useEffect(() => {
                 onClick={handleGetQuotation} disabled={isAddressInvalid}
               >
                 Buy Product
-              </button>
+              </button> 
               {/* <button
                 type="button"
                 className="text-white text-end btn btn-success"
