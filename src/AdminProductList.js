@@ -18,13 +18,12 @@ const AdminProductList = () => {
   const navigate = useNavigate();
   // const {userType} = useParams();
   // const {ProductOwnedBy} = useParams();
+  
   // Fetch product data, categories, and catalogues
   useEffect(() => {
     setLoading(true);
     const url = `https://handymanapiv2.azurewebsites.net/api/Product/GetAdminProductList?ProductOwnedBy=Admin`;
-  
-    axios
-      .get(url)
+    axios.get(url)
       .then((response) => {
         const products = response.data.map((product) => ({
           ...product,
@@ -186,10 +185,10 @@ const AdminProductList = () => {
             <tbody>
               {currentProducts.map((product, index) => (
                 <tr key={index}>
-                  <td>{product.productName}</td>
+                  <td className="product-name-cell">{product.productName}</td>
                   <td>₹{product.rate}</td>
                   <td>{product.discount ? `${product.discount}%` : "No discount"}</td>
-                  <td>₹{product.afterDiscountPrice || 'N/A'}</td>
+                  <td>₹{product.afterDiscountPrice.toFixed(0) || 'N/A'}</td>
                   <td>
                     {product.productOwnedBy ? (
                       <span
@@ -202,8 +201,8 @@ const AdminProductList = () => {
                       'N/A'
                     )}
                   </td>
-                  <td>
-                    <Link to={`/adminUpdateProduct/${product.id}/Admin`} className="btn btn-warning mx-2" title="Edit">
+                  <td className="actions-cell">
+                    <Link to={`/adminUpdateProduct/${product.id}/Admin`} className="btn btn-warning" title="Edit">
                       <FaEdit />
                     </Link>
                     <Link to={`/adminProductApproval/${product.id}/Admin`} className="btn btn-info mx-2" title="View">

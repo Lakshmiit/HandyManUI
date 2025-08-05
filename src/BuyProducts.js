@@ -82,6 +82,7 @@ zipCode: '',
 });
 const [showProductModal, setShowProductModal] = useState(false);
 const [shouldBlink,setShouldBlink] = useState(false);
+const [deliveryInDays, setDeliveryInDays] = useState('');
 
 
  // Check if there's state passed from ViewProduct page
@@ -283,7 +284,7 @@ useEffect(() => {
       PaymentMode:"",
       UTRTransactionNumber:"",
       TechnicianConfirmationCode:"",
-      DeliveryDate:"",
+      DeliveryDate: deliveryInDays,
       TechnicianDetils:"",
       ProductView: "Draft",
       InvoiceDetails:"",
@@ -311,11 +312,13 @@ useEffect(() => {
        throw new Error("Failed to submit quotation.");
       }
       const buyProductData = await response.json();
+       localStorage.setItem('id', id); 
       setBuyProductId(buyProductData.buyProductId);
        navigate(`/buyProductPaymentPage/${userType}/${userId}/${buyProductData.buyProductId}`);
     } catch (error) {
       console.error("Error submitting quotation:", error);
-      window.alert('Failed to submitting quotation. Please try again later.');    }
+      window.alert('Failed to submitting quotation. Please try again later.');    
+    }
   };
 
   
@@ -687,6 +690,7 @@ const fetchProductsByCategory = async (selectedCategory) => {
     setRate("");
     setDiscount("");
     setId("");
+    setDeliveryInDays("");
   } catch (error) {
     console.error("Error fetching products:", error);
     setNoProductNameError("No products found for the selected category. Please select another category.");
@@ -717,6 +721,7 @@ const handleProductChange = (e) => {
     setRate(selectedProduct.rate || "");
     setDiscount(selectedProduct.discount || "");
     setId(selectedProduct.id || "");
+    setDeliveryInDays(selectedProduct.deliveryInDays || "");
   }
 };
 
@@ -1032,13 +1037,14 @@ useEffect(() => {
                 required
               >
                 <option value="">Choose Category</option>
-                <option>Home Decors</option>
-                <option>Electrical items</option>
-                <option>Sanitary items</option>
-                <option>Electronics appliances</option>
-                <option>Paints</option>
-                <option>Hardware items</option>
                 <option>Civil & Waterproofing Materials</option>
+                <option>Electrical items</option>
+                <option>Electronics appliances</option>
+                <option>Hardware items</option>
+                {/* <option>Health Care</option> */}
+                <option>Home Decors</option>
+                <option>Paints</option>
+                <option>Sanitary items</option>
               </select>
               {noProductNameError && (
                 <div style={{ color: "red", margin: "10px 0" }}>
@@ -1562,6 +1568,14 @@ useEffect(() => {
               >
                 Buy Product
               </button>
+              {/* <button
+                type="button"
+                className="text-white btn btn-success w-30"
+                // onClick={handleGetQuotation}
+                disabled={noProductNameError || isAddressInvalid} 
+              >
+                Add to Cart
+              </button> */}
               <Button
                 type="button"
                 className="back-btn"

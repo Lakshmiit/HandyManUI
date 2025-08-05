@@ -14,6 +14,8 @@ import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import RouteIcon from "@mui/icons-material/Route";
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import StorefrontIcon from '@mui/icons-material/Storefront'; 
+// import AddToCartCount from "./AddToCartCount.js";
+// import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import PermIdentityIcon from '@mui/icons-material/PermIdentity';
 import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
@@ -29,6 +31,9 @@ import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import { useNavigate, useParams } from "react-router-dom"; 
 import Logo from "./img/Hm_Logo 1.png";
 import SearchIcon from "@mui/icons-material/Search";
+// import ChatIcon from '@mui/icons-material/Chat';
+// import ArticleIcon from '@mui/icons-material/Article';
+import GradeIcon from '@mui/icons-material/Grade';
 import LogoutIcon from "@mui/icons-material/Logout";
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
@@ -64,6 +69,7 @@ const getMenuList = (userType, userId, category, district ,ZipCode,technicianFul
     }] : []),
      ...(!isMobile ? [{MenuIcon: <OrdersNotificationBell sx={{ fontSize: iconSize }} />, MenuTitle: "Orders", TargetUrl: `/customerOrders/${userType}/${userId}`
     }] : []),
+    // { MenuIcon: <ChatIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Chat",  TargetUrl: `/chatPage/${userType}/${userId}`},
     ...(!isMobile ? [{MenuIcon: <PermIdentityIcon sx={{ fontSize: iconSize }} />, MenuTitle: "Accounts"
     }] : []),
       ];
@@ -192,6 +198,7 @@ const ProfilePage = () => {
 const [isMuted, setIsMuted] = useState(true);
 const [groupedProducts, setGroupedProducts] = useState({});
 const [expandedCategories, setExpandedCategories] = useState({});
+const [unreadCount, setUnreadCount] = useState(0);
 
   const toggleMute = () => {
     const video = videoRef.current;
@@ -223,12 +230,33 @@ useEffect(() => {
     }
   };
 
+  useEffect(() => {
+  const fetchUnreadCount = async () => {
+    try {
+      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/ChatBot/GetChatMessages`);
+      const data = await response.json();
+      const lastReadTime = localStorage.getItem('lastReadTime');
+      const unreadMessages = data.filter(msg => {
+        return !lastReadTime || new Date(msg.dateTime) > new Date(lastReadTime);
+      });
+      setUnreadCount(unreadMessages.length);
+    } catch (error) {
+      console.error("Failed to fetch unread message count:", error);
+    }
+  };
+  if (userId && userType) {
+    fetchUnreadCount();
+    const interval = setInterval(fetchUnreadCount, 30000);
+    return () => clearInterval(interval);
+  }
+}, [userId, userType]);
+
  const handleCategoryClick = async (category) => {
         const { value } = category; 
-         if (value === 'Blush & Beauty') {
-          navigate(`/beautyIcons/${userType}/${userId}`);
-          return; 
-        }
+        //  if (value === 'Blush & Beauty') {
+        //   navigate(`/beautyIcons/${userType}/${userId}`);
+        //   return; 
+        // }
         try {
           setSelectedCategory(category);
           setProducts([]);
@@ -710,9 +738,9 @@ const fetchImageUrl = async (photoId) => {
       // style={{ width: "40px", height: "40px", borderRadius: "10%", objectFit: "cover" }}
     />
   </div>
-  <div className="d-flex align-items-center" onClick={() => navigate(`/customerNotification/${userType}/${userId}`)} style={{ cursor: "pointer" }}>
+  {/* <div className="d-flex align-items-center" onClick={() => navigate(`/customerNotification/${userType}/${userId}`)} style={{ cursor: "pointer" }}>
   <NotificationBell fontSize="medium" />
-</div>
+</div> */}
 <div
   className="d-flex align-items-center"
   style={{ cursor: "pointer" }}
@@ -720,11 +748,22 @@ const fetchImageUrl = async (photoId) => {
 >
   <div style={{ position: "relative", display: "inline-block" }}>
     <OrdersNotificationBell fontSize="medium" />
-    {/* <small style={{ fontSize: "13px", fontFamily: "Poppins", lineHeight: "28px" }}>
-    My Orders
-  </small> */}
   </div>
 </div>
+{/* <div
+  style={{backgroundColor: 'transparent',  display: 'inline-flex', 
+    alignItems: 'center', justifyContent: 'center',
+  }}
+>
+  <AddToCartCount style={{ fontSize: 40, color: 'black', }} />
+</div> */}
+{/* <div
+  className="d-flex align-items-center"
+  style={{ cursor: "pointer" }}
+  // onClick={() => navigate(`/customerOrders/${userType}/${userId}`)}
+>
+</div> */}
+
 
 {/* <div className="d-flex align-items-center" style={{ cursor: "pointer" }} onClick={() => navigate(`/customerOrders/${userType}/${userId}`)}>
                       <OrdersNotificationBell sx={{ fontSize: 24, marginRight: '8px' }} />
@@ -1459,7 +1498,7 @@ const fetchImageUrl = async (photoId) => {
   src={`data:image/jpeg;base64,${img.imageData}`}
   className="card-img-top"
   style={{
-    height: '350px',
+    height: '230px',
     width: '100%',
     objectFit: 'contain',
   }}
@@ -1470,14 +1509,14 @@ const fetchImageUrl = async (photoId) => {
         ))}
       </Carousel>
     ) : (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: '250px', background: '#f8f9fa' }}>
+      <div className="d-flex justify-content-center align-items-center" style={{ height: '150px', background: '#f8f9fa' }}>
         No Image
       </div>
     )}
   </div>
 
   <div className="text-center mt-3">
-    <h6 className="mb-1 fw-bold" style={{ fontFamily: "Rubik" }}>
+    <h6 className=" fw-bold" style={{ fontFamily: "Rubik" }}>
       {selectedProduct.productName.toUpperCase()}
     </h6>
     <div className="small text-primary fw-bold">
@@ -1490,7 +1529,7 @@ const fetchImageUrl = async (photoId) => {
       Discount: {selectedProduct.discount}%
     </div>
    <div
-  className="small fw-bold m-1 fs-6 text-start d-flex align-items-center"
+  className="small fw-bold fs-6 text-start d-flex align-items-center"
   style={{
     color: '#7851a9',
     fontFamily: 'Italianno, cursive',
@@ -1499,16 +1538,17 @@ const fetchImageUrl = async (photoId) => {
     textOverflow: 'ellipsis'
   }}
 >
-  <LocalShippingIcon style={{ color: '#f88379', fontSize: '1.25rem' }} />
+  <LocalShippingIcon style={{ color: '#f88379', fontSize: '1rem' }} />
   <span className="ms-1">Free Delivery and Free Installation</span>
 </div>
-    <div>
+    <div className="fs-5">
       <span className="badge text-primary">✔️ Genuine Product</span>
       <span className="badge text-secondary">↩️ Easy Returns</span>
       <span className="badge text-success">💳 COD Available</span>
+      <span className="badge text-danger">📦 Stock Left : {selectedProduct.numberOfStockAvailable} </span>
     </div>
     <button
-      className="buy-now-btn mt-3"
+      className="buy-now-btn"
       onClick={() => navigate(`/offersBuyProduct/${userType}/${userId}/${selectedProduct.id}`)}
     >
       Buy Now
@@ -1636,6 +1676,57 @@ const fetchImageUrl = async (photoId) => {
         )}
       </div>
     </div>    
+
+    {/* Fixed Chat Icon at bottom right */}
+<div
+  className="blinking-icon"
+  style={{
+    position: 'fixed',
+    bottom: '20px',
+    left: '20px',
+    zIndex: 999,
+    backgroundColor: '#03c03cb3',
+    borderRadius: '50%',
+    padding: '8px',
+    cursor: 'pointer',
+    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.3)',
+  }}
+  onClick={() => navigate(`/chatPage/${userType}/${userId}`)}
+>
+  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <GradeIcon style={{ color: 'white', fontSize: '28px' }} />
+    <span
+      style={{
+        color: 'red',
+        fontSize: '14px',
+        fontWeight: 'bold',
+        marginTop: '2px',
+        textAlign: 'center',
+        lineHeight: '1.2',
+        whiteSpace: 'pre-line', 
+      }}
+    >
+      Free{'\n'}Services
+    </span>
+  </div>
+  {unreadCount > 0 && (
+    <span
+      style={{
+        position: 'absolute',
+        top: '-6px',
+        right: '-6px',
+        background: 'red',
+        color: 'white',
+        borderRadius: '50%',
+        padding: '2px 6px',
+        fontSize: '12px',
+        fontWeight: 'bold',
+      }}
+    >
+      {unreadCount}
+    </span>
+  )}
+</div>
         </div>
         </div> 
         </div>

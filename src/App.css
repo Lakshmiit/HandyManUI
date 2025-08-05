@@ -3408,11 +3408,11 @@ gap: 0.5rem;
   position: relative;
   animation: fadeInUp 0.4s ease-in-out;
   background: white;
-  padding: 1rem;
+  padding: 0.5rem;
   margin: 3px;
-  border-radius: 8px;
+  border-radius: 5px;
   max-width: 90%;
-  max-height: 100vh;
+  max-height: 90vh;
   white-space: normal;
   text-align: center;
   word-break: break-word;
@@ -3646,4 +3646,101 @@ word-break: break-word;
 .product-name-cell {
   word-break: break-word;
   max-width: 300px; 
+}
+
+.chat-container {
+  max-height: 380px;
+  overflow-y: auto;
+  /* background-color: #e5ddd5; */
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-message {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 10px;
+  margin: 4px 0;
+  max-width: 70%;
+  position: relative;
+  word-wrap: break-word;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.chat-message.user {
+  align-self: flex-end;
+  background-color: #dcf8c6;
+  text-align: left;
+  border-bottom-right-radius: 0;
+}
+
+.chat-message.other {
+  align-self: flex-start;
+  background-color: #ffffff;
+  text-align: left;
+  border-bottom-left-radius: 0;
+}
+
+.timestamp {
+  display: block;
+  font-size: 10px !important;
+  color: gray;
+  margin-top: 4px;
+  text-align: right;
+}
+
+.chat-input-container {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  background-color: #f0f0f0;
+  border-top: 1px solid #ddd;
+  gap: 8px;
+  position: relative;
+}
+
+.emoji-picker-react {
+  z-index: 1000;
+}
+
+.chat-container::-webkit-scrollbar {
+  width: 4px;
+}
+
+.chat-container::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 8px;
+}
+
+
+.chat-img-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px; 
+}
+
+.chat-img {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.HMchat-logo-img {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 5px;
+}
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+
+.blinking-icon {
+  animation: blink 1.5s infinite;
 }

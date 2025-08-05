@@ -7,10 +7,12 @@ import { Dashboard as MoreVertIcon } from '@mui/icons-material';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import './App.css';
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 
 const BuyProductPaymentPage = () => {
   // const Navigate = useNavigate();
+ const location = useLocation();
+     const id = location.state?.id || localStorage.getItem('id');    
   const {userType} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -26,25 +28,17 @@ const [district, setDistrict] = useState('')
 const [zipCode, setZipcode] = useState('');
 const [address, setAddress] = useState('');
 const [userId, setCustomerId] = useState(''); 
-const [category, setCategory] = useState(''); 
 const [customerName, setCustomerName] = useState('');
 const [technicianConfirmationCode, setTechnicianConfirmationCode] = useState('');
 // const [showConfirmation, setShowConfirmation] = useState(false);
 // const [selectedJob, setSelectedJob] = useState([{remarks: "", discount: "", moreInfo: "", afterDiscount: "", jobDescription: ""}]);
 const [selectedPayment, setSelectedPayment] = useState(null);
-const [error, setError] = useState("");
 const [showModal, setShowModal] = useState(false);
 const [buyProductTicketId, setBuyProductTicketId] = useState('');
 // const [buyProductId, setBuyProductId] = useState('');
 const [mobileNumber, setMobileNumber] = useState('');
-const [rate, setRate] = useState(''); 
-const [discount, setDiscount] = useState('');
 // const [afterDiscount, setAfterDiscount] = useState('');
-const [productName, setproductName] = useState('');
-const [productCatalogue, setProductCatalogue] = useState('');
-const [productSize, setProductSize] = useState('');
 const [afterDiscountPrice, setAfterDiscountPrice] = useState('');
-const [color, setColor] = useState('');
 const [colors, setColors] = useState('');
 const [requiredQuantity, setRequiredQuantity] = useState('');
 const [totalAmount, setTotalAmount] = useState(0);
@@ -53,11 +47,56 @@ const [serviceCharges, setServiceCharges] = useState(0);
 const [totalPaymentAmount, setTotalPaymentAmount] = useState(0);
 const [addressType, setAddressType] = useState('');
 const [emailAddress, setEmailAddress] = useState("");
+const [formattedDate, setFormattedDate] = useState('');
+const [productName, setProductName] = useState("");
+  const [category, setCategory] = useState("");
+  const [productCatalogue, setProductCatalogue] = useState("");
+  const [productSize, setProductSize] = useState("");
+  const [units, setUnits] = useState("");
+  // const [productPhotos, setProductPhotos] = useState([]); 
+  const [rate, setRate] = useState("");
+  const [discount, setDiscount] = useState("");
+  const [specifications, setSpecifications] = useState([{ label: "", value: "" }]); 
+  const [warranty, setWarranty] = useState("");
+  const [moreInfo, setMoreInfo] = useState("");
+  const [error, setError] = useState(null);
+  const [product, setProduct] = useState(null);
+  const [uploadedFiles] = useState([]); 
+  const [color, setColor] = useState("");
+  const [specificationDesc, setSpecificationDesc] = useState("");
+  const [deliveryInDays,setDeliveryInDays] =useState("");
+  const [productId, setProductID] = useState('');
+  const [uniqueId, setUniqueId] = useState('');
+  const [productStatus, setProductStatus] = useState('');
+const [existingFiles, setExistingFiles] = useState([]);
+const [stockLeft, setStockLeft] = useState('');
+useEffect(() => {
+  if (date && deliveryInDays) {
+    try {
+      const parsedDate = new Date(date);
+      const days = parseInt(deliveryInDays);
+      if (!isNaN(parsedDate) && !isNaN(days)) {
+        parsedDate.setDate(parsedDate.getDate() + days);
+        const yyyy = parsedDate.getFullYear();
+        const mm = String(parsedDate.getMonth() + 1).padStart(2, '0');
+        const dd = String(parsedDate.getDate()).padStart(2, '0');
+        setFormattedDate(`${dd}-${mm}-${yyyy}`);
+      } else {
+        console.error("Invalid date or days");
+        setFormattedDate('');
+      }
+    } catch (err) {
+      console.error("Error formatting delivery date:", err);
+      setFormattedDate('');
+    }
+  }
+}, [date, deliveryInDays]);
 
   useEffect(() => {
-      console.log( productData, technicianConfirmationCode);
-    }, [productData, technicianConfirmationCode]);
-  
+      console.log( productData,product, technicianConfirmationCode);
+    }, [productData, product, technicianConfirmationCode]);
+
+
   useEffect(() => {
     const fetchProductData = async () => {
       try {
@@ -72,7 +111,7 @@ const [emailAddress, setEmailAddress] = useState("");
         setBuyProductTicketId(data.buyProductId);
         setAddress(data.address);
         setCategory(data.category);
-        setproductName(data.productName);
+        setProductName(data.productName);
         setProductCatalogue(data.productCatalogue);
         setProductSize(data.productSize);
         setRate(data.rate);
@@ -89,10 +128,8 @@ const [emailAddress, setEmailAddress] = useState("");
         setEmailAddress(data.customerEmail);
         setMobileNumber(data.customerPhoneNumber);
         setColor(data.color);
-       setCustomerName(data.customerName);
-const originalDate = new Date(data.date);
-originalDate.setDate(originalDate.getDate() + 3);
-setDate(originalDate.toISOString());
+        setCustomerName(data.customerName);
+        setDate(data.date);
         } catch (error) {
         console.error('Error fetching product data:', error);
       } finally {
@@ -101,6 +138,47 @@ setDate(originalDate.toISOString());
     };
     fetchProductData();
   }, [buyProductId]);
+
+   useEffect(() => {
+            const fetchProductData = async () => {
+                try {
+                    setLoading(true);
+                    const productResponse = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/${id}`);
+                    if (!productResponse.ok) {
+                        throw new Error('Product not found');
+                    }
+                    const productData = await productResponse.json();
+                    console.log("productData:", productData);
+                    // alert(JSON.stringify(productData));
+                    setProduct(productData);
+                    setUniqueId(productData.id);
+                    setProductName(productData.productName);
+                   setProductID(productData.productId);
+                   setProductStatus(productData.productStatus);
+                    setCategory(productData.category);
+                    setProductCatalogue(productData.catalogue);
+                    setColor(productData.color);
+                    setProductSize(productData.productSize);
+                    setUnits(productData.units);
+                    setRate(productData.rate);
+                    setDiscount(productData.discount);
+                    setSpecifications(productData.specifications || [{ label: "", value: "" }]);
+                    setSpecificationDesc(productData.specificationDesc);
+                    setWarranty(productData.warranty);
+                    setMoreInfo(productData.additionalInformation);
+                    setDeliveryInDays(productData.deliveryInDays);
+                    setExistingFiles(productData.productPhotos || []);
+                    setStockLeft(productData.numberOfStockAvailable);
+                  } catch (error) {
+                    setError(error.message);
+                } finally {
+                    setLoading(false);
+                }
+            };
+            if (id) {
+                fetchProductData();
+            }
+        }, [id]);
 
   // const deliveryCharges = parseFloat(((totalAmount * 5) / 100).toFixed(2));
   // const serviceCharges = parseFloat(((totalAmount * 5) / 100).toFixed(2));
@@ -141,12 +219,6 @@ const handleGetQuotation = async (e) => {
     alert("You must accept the terms and conditions.");
     return; 
   } 
-
-const rawDate = new Date(date); 
-const day = rawDate.getDate().toString().padStart(2, '0');
-const month = (rawDate.getMonth() + 1).toString().padStart(2, '0');
-const year = rawDate.getFullYear().toString().slice(-2);
-const formattedDate = `${day}/${month}/${year}`;
 
   const payload = {
     BuyProductId: buyProductTicketId,
@@ -244,6 +316,65 @@ const formattedDate = `${day}/${month}/${year}`;
   }
 };
 
+const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const allProductPhotos = [
+    ...existingFiles, 
+    ...uploadedFiles.map(file => file.src), 
+  ];
+
+    const payload = {
+      id: uniqueId,
+      ProductId:  productId,
+      deliveryInDays: deliveryInDays,
+      category: category,
+      ProductStatus: productStatus,
+      productName,
+      productPhotos: allProductPhotos,
+      catalogue: productCatalogue,
+      productSize: productSize,
+      color: color,
+      units: units,
+      rate: parseFloat(rate),
+      discount: parseFloat(discount),
+      afterDiscountPrice: parseFloat(rate) - parseFloat(discount),
+      specifications: specifications.map(spec => ({
+        label: spec.label,
+        value: spec.value,
+      })),
+      specificationDesc: specificationDesc,
+      warranty: warranty,
+      AdditionalInformation: moreInfo,
+      ProductOwnedBy:"Admin",
+      numberOfStockAvailable: (stockLeft-requiredQuantity).toString(),
+    };
+
+    try {
+      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/${uniqueId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      }); 
+
+      if (response.ok) {
+        // alert("Product updated successfully!");
+      } else {
+        alert("Failed to update product.");
+      }
+    } catch (error) {
+      alert("An error occurred while updating the product.");
+    }
+  };
+
+ const handleBothActions = (e) => {
+  e.preventDefault();
+  handleGetQuotation(e);
+  handleSubmit(e);
+};
+
 // const handleUpdateJobDescription = async (e) => {
 //   e.preventDefault();
 //   if (!isChecked) {
@@ -301,15 +432,7 @@ const formattedDate = `${day}/${month}/${year}`;
 //   }
 // };
 
-// const handleBothActions = (e) => {
-//   e.preventDefault();
-//   // handleBookTechnicianPayment(e);
-//   handleUpdateJobDescription(e);
-// //   window.alert(`Payment has been completed successfully! Your reference number is ${bookTechnicianIds}. Technician will contact you shortly.`);
-//   // Redirect to CustomerProfilePage
-//   window.location.href = `https://handymanapiv2.azurewebsites.net/CustomerProfilePage?ReactToken=${customerId}$${userType}`;
-  
-// };
+
 
   
 if (loading) {
@@ -383,16 +506,8 @@ if (loading) {
             <td>{serviceCharges}</td>
           </tr>
           <tr>
-            <td><strong>Delivery Before Date</strong></td>
-            <td>
-           {(() => {
-              const d = new Date(date);
-              const day = d.getDate().toString().padStart(2, '0');
-              const month = (d.getMonth() + 1).toString().padStart(2, '0');
-              const year = d.getFullYear().toString().slice(-2);
-              return `${day}/${month}/${year}`;
-            })()}
-          </td>
+         <td><strong>Delivery Before Date</strong></td>
+          <td>{formattedDate || 'Delivery Soon'}</td>
           </tr>
            <tr>
             <td><strong>Quantity</strong></td>
@@ -775,7 +890,7 @@ if (loading) {
 
 <div className="button">
     {/* <button className="btn-back m-2">Back</button> */}
-    <button className="btn-continue m-2"  onClick={handleGetQuotation}
+    <button className="btn-continue m-2"  onClick={handleBothActions}
     >Proceed</button>
 </div>
  

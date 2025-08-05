@@ -86,22 +86,36 @@ import GuestOffersBuyProduct from './GuestOffersBuyProduct.js';
 import GuestProductPaymentPage from './GuestProductPaymentPage.js';
 import OffersBuyProductPage from './OffersBuyProductPage.js';
 import ViewOffersBuyProductPage from './ViewOffersBuyProductPage.js';
- import TechnicianViewBookTechnician from './TechnicianViewBookTechnician.js';
- import BookTechnicianDetailsNotifications from './BookTechnicianDetailsNotifications.js';
- import BookTechnicianDetailsGrid from './BookTechnicianDetailsGrid.js';
- import RaiseTicketConfirmation from './RaiseTicketConfirmation.js';
- import HandyManLogo from './HandyManLogo.js';
- import LoginPage from './LoginPage.js';
- import CustomerRaiseTicketGridView from './CustomerRaiseTicketGridView.js';
-  import OTPVerificationPage from './OTPVerificationPage.js';
-  import ApartmentRaiseTicket from './ApartmentRaiseTicket.js';
-  import ApartmentRaiseActionView from './ApartmentRaiseActionView.js';
-  import ApartmentNotificationGrid from './ApartmentNotificationGrid.js';
-  import AboutApartmentRaiseTicket from './AboutApartmentRaiseTicket.js';
-  // import ApartmentSubscription from './ApartmentSubscription.js';
+import TechnicianViewBookTechnician from './TechnicianViewBookTechnician.js';
+import BookTechnicianDetailsNotifications from './BookTechnicianDetailsNotifications.js';
+import BookTechnicianDetailsGrid from './BookTechnicianDetailsGrid.js';
+import RaiseTicketConfirmation from './RaiseTicketConfirmation.js';
+import HandyManLogo from './HandyManLogo.js';
+import LoginPage from './LoginPage.js';
+import CustomerRaiseTicketGridView from './CustomerRaiseTicketGridView.js';
+import OTPVerificationPage from './OTPVerificationPage.js';
+import ApartmentRaiseTicket from './ApartmentRaiseTicket.js';
+import ApartmentRaiseActionView from './ApartmentRaiseActionView.js';
+import ApartmentNotificationGrid from './ApartmentNotificationGrid.js';
+import AboutApartmentRaiseTicket from './AboutApartmentRaiseTicket.js';
+// import RatingsAndReviews from './RatingsAndReviews.js';
+// import BeautyIcons from './BeautyIcons.js';
+// import AdminRegistrationNumbers from './AdminRegisterationNumbers.js';
+// import AddToCartCount from './AddToCartCount.js';
+import ChatPage from './ChatPage.js';
+// import BuyProductAddToCart
+// import NumberGuessing from './NumberGuessing.js';
+// import TicTacToe from './TicTacToe.js';
+// import MemoryGame from './MemoryGame.js';
+// import ColorMatchGame from './ColorMatch.js';
+// import CatchGame from './CatchGame.js';
+// import ColorPop from './ColorPop.js';
+// import QuickMathDuel from './QuickMath.js';
+// import Puzzle from './Puzzle.js';
+// import ApartmentSubscription from './ApartmentSubscription.js';
 // import TrackStatusGrid from './TrackStatusGrid.js';
 // import BuyProductCartView from './BuyProductCartView.js';
- //  import CustomerRegistration from './CustomerRegistration.js';
+//  import CustomerRegistration from './CustomerRegistration.js';
 //  import TechnicianRegistration from './TechnicianRegistration.js';
 // import GuestUserLogin from './GuestUserLogin.js';
 // import GuestMobileNumberLogin from './GuestMobileNumberLogin.js';
@@ -124,7 +138,6 @@ const PreventBackNavigation = () => {
       window.removeEventListener("popstate", handlePopState);
     };
   }, [navigate]);
-
   return null;
 };
 
@@ -141,6 +154,7 @@ function App() {
         >
           <Routes>
             <Route path="/device" element={<Device />} />
+            <Route path="/chatPage/:userType/:userId" element={<ChatPage />} />
             {/* <Route path="/customerRegistration" element={<CustomerRegistration />} /> */}
             {/* <Route path="/technicianRegistration" element={<TechnicianRegistration />} /> */}
             <Route path="/profilePage/:userType/:userId" element={<ProfilePage />} />
@@ -159,6 +173,7 @@ function App() {
             <Route path="/buyProducts/:userType/:userId" element={<BuyProducts />} />
             <Route path="/sidebar/:userType" element={<Sidebar />} />
             <Route path="/buyproduct-view/:userType/:userId/:id" element={<BuyProductView />} />
+            {/* <Route path="/adminRegistrations/Admin" element={<AdminRegistrationNumbers />} /> */}
             <Route path="/adminUploadForm/Admin" element={<AdminUploadForm />} />
             <Route path="/adminProductApproval/:id/Admin" element={<AdminProductApproval />} />
             <Route path="/adminProductList/Admin" element={<AdminProductList />} />
@@ -248,9 +263,19 @@ function App() {
             <Route path="/apartmentRaiseTicketActionView/:apartmentRaiseTicketId" element={<ApartmentRaiseActionView />} />
             <Route path="/apartmentNotificationGrid" element={<ApartmentNotificationGrid />} />
             <Route path="/aboutApartmentRaiseTicket/:userType/:userId" element={<AboutApartmentRaiseTicket />} />
+            {/* <Route path="/addCartCount/:userId" element={<AddToCartCount />} /> */}
+            {/* <Route path="/productAddCart/:userId" element={<BuyProductAddToCart />} /> */}
             
+            {/* <Route path="/beautyIcons/:userType/:userId" element={<BeautyIcons />} /> */}
+            {/* <Route path="/ratingsandReviews" element={<RatingsAndReviews />} /> */}
+            {/* <Route path="/tictactoe" element={<TicTacToe />} />
+            <Route path="/numberGuessing" element={<NumberGuessing />} />
+            <Route path="/memoryGame" element={<MemoryGame />} />
+             <Route path="/colorMatchGame" element={<ColorMatchGame />} />
+             <Route path="/catchGame" element={<CatchGame />} />
+            <Route path="/colorPop" element={<ColorPop />} />
+            <Route path="/quickMath" element={<QuickMathDuel />} /> */}
             {/* <Route path="/apartmentSubscription/:id" element={<ApartmentSubscription />} /> */}
-            
             {/* <Route path="/raiseQuoteNotificationsBell/:userId" element={<RaiseQuoteNotificationBell />} /> */}
             </Routes>
         </main>

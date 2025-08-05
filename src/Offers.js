@@ -31,7 +31,7 @@ const [searchQuery, setSearchQuery] = useState('');
 useEffect(() => {
   const fetchProductsAndAllImages = async () => {
     try {
-      const start = performance.now();
+      // const start = performance.now();
 
       const productRes = await fetch('https://handymanapiv2.azurewebsites.net/api/Product/GetAllProductList');
       const productList = await productRes.json();
@@ -71,8 +71,8 @@ useEffect(() => {
       setImageUrls(imageMap);
       setImageLoading(false);
 
-      const duration = performance.now() - start;
-      console.log(`All images loaded in ${duration.toFixed(2)} ms`);
+      // const duration = performance.now() - start;
+      // console.log(`All images loaded in ${duration.toFixed(1)} ms`);
     } catch (error) {
       console.error("Error loading all images fast:", error);
     }
@@ -229,7 +229,7 @@ useEffect(() => {
                       className="d-flex justify-content-center align-items-center"
                       style={{ height: '250px', background: '#f8f9fa' }}
                     >
-                      No Image
+                      Loading
                     </div>
                   )}
                       <div className="card-body p-1 m-1">

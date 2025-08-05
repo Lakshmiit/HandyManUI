@@ -24,7 +24,6 @@ const ProductAdmin = () => {
         const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/${id}`);
         const data = await response.json();
         setProductData(data);
-
         const imageRequests =
           data.productPhotos?.map((photo) =>
             fetch(
@@ -50,7 +49,6 @@ const ProductAdmin = () => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     handleResize(); // Set initial state
     window.addEventListener('resize', handleResize);
-
     return () => window.removeEventListener('resize', handleResize);
   }, []); 
 
@@ -59,13 +57,13 @@ const ProductAdmin = () => {
       console.error("No product data to submit.");
       return;
     }
-
     const payload = {
       ...productData,
       productStatus: productType,
       comments,
+      deliveryInDays,
+      numberOfStockAvailable,
     };
-
     try {
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/${id}`, {
         method: "PUT",
@@ -74,9 +72,9 @@ const ProductAdmin = () => {
         },
         body: JSON.stringify(payload),
       });
-
       if (response.ok) {
         alert("Product status updated successfully.");
+        navigate(`/adminProductList/Admin`);
       } else {
         const errorData = await response.json();
         console.error("Error updating product:", errorData);
@@ -87,7 +85,6 @@ const ProductAdmin = () => {
       alert("An error occurred. Please try again later.");
     }
   };
-
 
   if (!productData) {
     return (
@@ -112,12 +109,13 @@ const ProductAdmin = () => {
     specificationDesc,
     warranty,
     additionalInformation,
+    deliveryInDays,
+    numberOfStockAvailable,
   } = productData;
 
   const afterDiscountPrice = rate - (rate * discount) / 100;
 
   return (
-    <div className="wrapper bg-light">
         <div className="d-flex flex-row justify-content-start align-items-start">
           {/* Sidebar */}
           {!isMobile && (
@@ -125,7 +123,6 @@ const ProductAdmin = () => {
           <AdminSidebar userType={selectedUserType}/>
          </div>
           )}
-          
           {/* Floating menu for mobile */}
       {isMobile && (
         <div className="floating-menu">
@@ -136,7 +133,6 @@ const ProductAdmin = () => {
           >
             <MoreVertIcon />
           </Button>
-
           {showMenu && (
               <div className="sidebar-container">
                 <AdminSidebar userType={selectedUserType} />
@@ -144,13 +140,11 @@ const ProductAdmin = () => {
           )}
         </div>
       )}
-
           {/* Main Content */}
-          <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
-          <div className=" col-md-9">
+          <div className={`container m-3 ${isMobile ? 'w-100' : 'w-75'}`}>
+          <div className=" col-md-11">
             <div className="bg-white p-4 rounded shadow-sm">
               <h3 className="mb-4 text-primary">Product Details</h3>
-
               {/* Carousel */}
               <div
                 id="productCarousel"
@@ -171,7 +165,6 @@ const ProductAdmin = () => {
                     ></button>
                   ))}
                 </div>
-
                 {/* Carousel items */}
                 <div className="carousel-inner">
                   {imageUrls.map((img, index) => (
@@ -188,7 +181,6 @@ const ProductAdmin = () => {
                     </div>
                   ))}
                 </div>
-
                 {/* Controls */}
                 <button
                   className="carousel-control-prev"
@@ -209,7 +201,6 @@ const ProductAdmin = () => {
                   <span className="visually-hidden">Next</span>
                 </button>
               </div>
-
               {/* Product Details */}
               <div className="row">
                 <div className="col-md-6">
@@ -219,9 +210,9 @@ const ProductAdmin = () => {
                   <p><strong>Size:</strong> {productSize}</p>
                   <p><strong>Color:</strong> {color}</p>
                   <p><strong>Units:</strong> {units}</p>
-                  <p><strong>Rate:</strong> ${rate}</p>
+                  <p><strong>Rate:</strong> Rs {rate}</p>
                   <p><strong>Discount:</strong> {discount}%</p>
-                  <p><strong>Price After Discount:</strong> ${afterDiscountPrice.toFixed(2)}</p>
+                  <p><strong>Price After Discount:</strong> Rs {afterDiscountPrice.toFixed(0)}</p>
                 </div>
                 <div className="col-md-6">
                   <h5>Specifications</h5>
@@ -234,9 +225,13 @@ const ProductAdmin = () => {
                     <li>{specificationDesc}</li>
                   </ul>
                   <h5>Warranty</h5>
-                  <p>{warranty} months</p>
+                  <p>{warranty}</p>
                   <h5>Additional Information</h5>
                   <p>{additionalInformation}</p>
+                  <h5>Delivery In Days</h5>
+                  <p>{deliveryInDays}</p>
+                  <h5>Stock Left</h5>
+                  <p>{numberOfStockAvailable}</p>
                 </div>
               </div>
                {/* Approval Section */}
@@ -273,25 +268,20 @@ const ProductAdmin = () => {
                     onChange={(e) => setComments(e.target.value)}
                   />
                 </div>
-  
                 {/* Submit Button */}
                 <div className="mt-3">
                   <button className="btn btn-primary" onClick={handleSubmit}>
                     Submit
                   </button>
                 </div>
-
-           
               {/* Submit Button */}
               <div className="mt-3">
                 {/* View Single Product Button */}
       <button
         type="button"
         className='btn btn-warning text-white'
-       
           onClick={() => navigate(`/adminProductList/Admin`)}
       >
-      
         <span>Back</span>
       </button>
               </div>
@@ -299,28 +289,6 @@ const ProductAdmin = () => {
           </div>
         </div>
       </div>
-    {/* Styles for floating menu */}
-<style jsx>{`
-        .floating-menu {
-          position: fixed;
-          top: 80px; /* Increased from 20px to avoid overlapping with the logo */
-          left: 20px; /* Adjusted for placement on the left side */
-          z-index: 1000;
-        }
-        .menu-popup {
-          position: absolute;
-          top: 50px; /* Keeps the popup aligned below the floating menu */
-          left: 0; /* Aligns the popup to the left */
-          background: white;
-          border: 1px solid #ddd;
-          border-radius: 5px;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-          width: 200px;
-        }
-      `}</style>
-
-
-  </div>
   );
 };
 

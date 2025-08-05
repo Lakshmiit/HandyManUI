@@ -143,7 +143,7 @@ const ProductViewModal = ({ show, handleClose, productId }) => {
                   <p><strong>Color:</strong> {color}</p>
                   <p><strong>Rate:</strong> Rs {rate}</p>
                   <p><strong>Discount:</strong> {discount}%</p>
-                  <p><strong>Price After Discount:</strong> Rs {afterDiscountPrice.toFixed(2)}</p>
+                  <p><strong>Price After Discount:</strong> Rs {afterDiscountPrice.toFixed(0)}</p>
                 </div>
                 <div className="col-md-6">
                   <h5>Specifications</h5>

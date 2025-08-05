@@ -60,7 +60,7 @@ const OffersBuyProduct = () => {
   zipCode: '',
   });
   const [shouldBlink,setShouldBlink] = useState(false);
-  
+  const [deliveryInDays, setDeliveryInDays] = useState('');
   useEffect(() => {
     console.log(loading, productOptions, editingAddressId, buyProductId);
   }, [loading, productOptions, editingAddressId, buyProductId]);
@@ -130,8 +130,8 @@ const OffersBuyProduct = () => {
 
   const validRate = Number(rate) || 0;
   const validDiscount = Number(discount) || 0;
-  const afterDiscountPrice = parseFloat((validRate - (validRate * validDiscount) / 100).toFixed(2));
-  const totalAmount = parseFloat((requiredQuality * afterDiscountPrice).toFixed(2));
+  const afterDiscountPrice = parseFloat((validRate - (validRate * validDiscount) / 100).toFixed(0));
+  const totalAmount = parseFloat((requiredQuality * afterDiscountPrice).toFixed(0));
 
   const handleGetQuotation = async (e) => {
     e.preventDefault();
@@ -190,7 +190,7 @@ const OffersBuyProduct = () => {
       PaymentMode:"",
       UTRTransactionNumber:"",
       TechnicianConfirmationCode:"",
-      DeliveryDate:"",
+      DeliveryDate: deliveryInDays,
       TechnicianDetils:"",
       ProductView: "Draft",
       InvoiceDetails:"",
@@ -219,6 +219,7 @@ const OffersBuyProduct = () => {
       }
       const buyProductData = await response.json();
       setBuyProductId(buyProductData.buyProductId);
+      localStorage.setItem('id', id); 
      navigate(`/buyProductPaymentPage/${userType}/${userId}/${buyProductData.buyProductId}`);
     } catch (error) {
       console.error("Error submitting quotation:", error);
@@ -365,6 +366,7 @@ const fetchProducts = async () => {
     console.log("Fetched Products:", data);
       setProductOptions(data);
       setProductName(data.productName);
+      setDeliveryInDays(data.deliveryInDays);
       setProductCatalogue(data.catalogue);
       setProductSize(data.productSize);
       setChooseColor(data.color);
@@ -1137,6 +1139,13 @@ useEffect(() => {
               >
                 Buy Product
               </button>
+              {/* <button
+                type="button"
+                className="text-white text-end btn btn-success"
+                onClick={handleGetQuotation} disabled={isAddressInvalid}
+              >
+                Add to Cart
+              </button> */}
               <Button
                 type="button"
                 className="back-btn"

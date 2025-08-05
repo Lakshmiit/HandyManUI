@@ -13,14 +13,14 @@ import { Button, Form, Row, Col } from 'react-bootstrap';
 
 const AdminBuyProductOrders = () => {
   const navigate = useNavigate(); 
-  // const {userType} = useParams();
+  // const {productId} = useParams();
   const {buyProductId} = useParams();
   const [buyProductTicketId, setBuyProductTicketId] = useState('');
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   // const { selectedUserType } = useParams();
   const [productData, setProductData] = useState("");
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState("");  
   const [productSize, setProductSize] = useState("");
   const [productCatalogue, setProductCatalogue] = useState("");
   const [color, setColor] = useState("");
@@ -70,11 +70,12 @@ const [error, setError] = useState('');
 const [emailAddress, setEmailAddress] = useState("");
 const [selectPincode, setSelectPincode] = useState("");
   const [selectTechnician, setSelectTechnician] = useState("");
+  // const [stockLeft, setStockLeft] = useState('');
+  // const [product, setProduct] = useState(null);
   // const [pincodes, setPincodes] = useState([]);
   // const [technicians, setTechnicians] = useState([]);
   // const [selectedTechnicians, setSelectedTechnicians] = useState([]);
   // const [selectAll, setSelectAll] = useState(false);
-
 
   const location = useLocation();
  // Check if there's state passed from ViewProduct page
@@ -142,6 +143,47 @@ useEffect(() => {
   //   }
   // }, [userId]);
 
+  // useEffect(() => {
+  //             const fetchProductData = async () => {
+  //                 try {
+  //                     setLoading(true);
+  //                     const productResponse = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/${productId}`);
+  //                     if (!productResponse.ok) {
+  //                         throw new Error('Product not found');
+  //                     }
+  //                     const productData = await productResponse.json();
+  //                     console.log("productData:", productData);
+  //                     // alert(JSON.stringify(productData));
+  //                     setProduct(productData);
+  //                     // setUniqueId(productData.id);
+  //                   //   setProductName(productData.productName);
+  //                   //  setProductID(productData.productId);
+  //                   //  setProductStatus(productData.productStatus);
+  //                   //   setCategory(productData.category);
+  //                   //   setProductCatalogue(productData.catalogue);
+  //                   //   setColor(productData.color);
+  //                   //   setProductSize(productData.productSize);
+  //                   //   setUnits(productData.units);
+  //                   //   setRate(productData.rate);
+  //                   //   setDiscount(productData.discount);
+  //                   //   setSpecifications(productData.specifications || [{ label: "", value: "" }]);
+  //                   //   setSpecificationDesc(productData.specificationDesc);
+  //                   //   setWarranty(productData.warranty);
+  //                   //   setMoreInfo(productData.additionalInformation);
+  //                   //   setDeliveryInDays(productData.deliveryInDays);
+  //                   //   setExistingFiles(productData.productPhotos || []);
+  //                     setStockLeft(productData.numberOfStockAvailable);
+  //                   } catch (error) {
+  //                     setError(error.message);
+  //                 } finally {
+  //                     setLoading(false);
+  //                 }
+  //             };
+  //             if (productId) {
+  //                 fetchProductData();
+  //             }
+  //         }, [productId]);
+
 useEffect(() => {
     const fetchProductData = async () => {
       try {
@@ -153,7 +195,6 @@ useEffect(() => {
         setProductData(data);
     //  alert(JSON.stringify(data));
         setDate(data.date);
-
          setId(data.id);
         setBuyProductTicketId(data.buyProductId);
         // alert(buyProductTicketId);
@@ -343,19 +384,15 @@ const handleAssignedToChange = (e) => {
   }
 };
 
-
 // const validateFields = () => {
 //   let newErrors = {};
-
 //   if (assignedTo === "Technician") {
 //     if (!selectPincode) newErrors.selectPincode = "Pincode is required.";
 //     if (!selectTechnician) newErrors.selectTechnician = "Technician is required.";
 //   }
-
 //   setError(newErrors);
 //   return Object.keys(newErrors).length === 0; 
 // };
-
 
   const handleGetQuotation = async (e) => {
     e.preventDefault();
@@ -440,10 +477,8 @@ useEffect(() => {
   const handleResize = () => setIsMobile(window.innerWidth <= 768);
   handleResize(); // Set initial state
   window.addEventListener('resize', handleResize);
-
   return () => window.removeEventListener('resize', handleResize);
 }, []);
-
 
   // const handleAddToCart = () => {
   //   alert("Item added to cart!");
@@ -452,7 +487,6 @@ useEffect(() => {
    const handleSubmit = (e) => {
      e.preventDefault();
    };
-
 
   // // Handle adding a new address
   // const handleAddAddress = () => {
@@ -593,7 +627,6 @@ useEffect(() => {
   
     // Handle file upload
     const handleFileChange = (e) => {
-      
       const files = Array.from(e.target.files);
       if (files.length + productInvoice.length > 1) {
         alert("You can upload up to 1 file.");
@@ -607,7 +640,6 @@ useEffect(() => {
     const handleUploadFiles = async () => {
       setLoading(true);
       setShowAlert(false);
-      
       const uploadedFilesList=[];
       for (let i = 0; i < productInvoice.length; i++) {
         const file = productInvoice[i];
@@ -645,7 +677,6 @@ useEffect(() => {
           const formData = new FormData();
           formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
           formData.append('fileName', fileName);
-    
           const response = await fetch('https://handymanapiv2.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
             method: 'POST',
             headers: {
@@ -653,7 +684,6 @@ useEffect(() => {
             },
             body: formData,
           });
-    
           const responseData = await response.text();
           return responseData || ''; 
         } catch (error) {
@@ -667,7 +697,6 @@ useEffect(() => {
           uploadedFiles.forEach((file) => URL.revokeObjectURL(file));
         };
       }, [uploadedFiles]);
-
 
   return (
   <>
@@ -688,7 +717,6 @@ useEffect(() => {
           >
             <MoreVertIcon />
           </Button>
-
           {showMenu && (
             <div className="sidebar-container">
               <AdminSidebar />
@@ -705,7 +733,6 @@ useEffect(() => {
                 <div className="text-center">
                 <strong className="m-2 fs-5">Order Number:<span>{buyProductTicketId}</span></strong>
                 </div>
-
                 <div className="form-group">
               <label>
                 Customer Name <span className="req_star">*</span>
@@ -719,7 +746,6 @@ useEffect(() => {
                 readOnly
               />
             </div>
-
               <div className="form-group">
                 <label>Customer Address <span className="req_star">*</span></label>
                 <input
@@ -732,7 +758,6 @@ useEffect(() => {
                 readOnly
               />
               </div>
-
             <div className="form-group">
               <label>Category <span className="req_star">*</span></label>
               <input
@@ -744,7 +769,6 @@ useEffect(() => {
                 readOnly
               />
             </div>
-
             <div className="form-group">
               <label>Product Name <span className="req_star">*</span></label>
               <input
@@ -769,7 +793,6 @@ useEffect(() => {
                 </ul>
               )} */}
             </div>
-
             <div className="form-group">
               <label>
                 Product Catalogue <span className="req_star">*</span>
@@ -783,7 +806,6 @@ useEffect(() => {
                 readOnly
               />
             </div>
-
             <div className="row">
             <div className="col-md-6">
               <label>Product Size <span className="req_star">*</span></label>
@@ -796,7 +818,6 @@ useEffect(() => {
                 readOnly
               />
             </div>
-
             <div className="col-md-6">
                 <label>Rate <span className="req_star">*</span></label>
                 <input
@@ -831,7 +852,6 @@ useEffect(() => {
                 />
               </div>
               </div>
-
             {/* <button
               type="button"
               className="btn btn-warning text-white w-50 mt-2"
@@ -852,7 +872,6 @@ useEffect(() => {
             >
               View Product
             </button> */}
-
             <div className="row">
               <div className="row ticket-info" >
               <div className="col-md-6">
@@ -861,13 +880,12 @@ useEffect(() => {
               <p><strong className="me-2"> Required Quantity:</strong>{requiredQuantity}</p>
               <p><strong className="me-2"> Total Amount:</strong>{`Rs ${totalAmount}/-`}</p>
               </div>
-
               <div className="col-md-6">
               <p><strong className="me-2"> Delivery Charges:</strong>{deliveryCharges}</p>
               <p><strong className="me-2"> Service Charges:</strong>{serviceCharges}</p>
               <p><strong> Delivery Date: </strong>{deliveryDate}</p>
+              {/* <p><strong> Stock Left: </strong>{stockLeft}</p> */}
               <p><strong> Total Payment Amount: </strong>{`Rs ${totalPaymentAmount}/-`}</p>
-
               </div>
               </div>
         <div className='payment m-2'>
@@ -914,7 +932,6 @@ useEffect(() => {
                 readOnly
               />
             </div>
-
             <div className="form-group">
               <label>Technician Details <span className="req_star">*</span></label>
               <input
@@ -925,8 +942,8 @@ useEffect(() => {
                 placeholder="Enter Technician Details"
                 required
               />
-            {error.technicianDetails && <p className="text-danger">{error.technicianDetails}</p>}            </div>
-
+            {error.technicianDetails && <p className="text-danger">{error.technicianDetails}</p>}            
+            </div>
             <div className="form-group">
               <label>Invoice Details <span className="req_star">*</span></label>
               <input
@@ -984,7 +1001,6 @@ useEffect(() => {
               >Save</button> */}
           </div>
           </div> 
-
             <div className="col-md-6">
               <label>Order Confirmation Code <span className="req_star">*</span></label>
               <input
@@ -1024,7 +1040,6 @@ useEffect(() => {
                       {error.assignedTo && <p className="text-danger">{error.assignedTo}</p>}
                     </Form.Group>
                   </Col>
-            
                   {/* Show these fields only if "Technician" is selected */}
                   {/* {assignedTo === "Technician" && (
                     <>
@@ -1100,10 +1115,7 @@ useEffect(() => {
                 <Button type="submit" className="btn btn-warning text-white mx-2" onClick={handleGetQuotation} title="Forward">
                 <ForwardIcon />
                 </Button>
-    
             </div>
-            
-              
               {/* <div className="col-md-6">
                 <label>
                   Required Quantity <span className="req_star">*</span>

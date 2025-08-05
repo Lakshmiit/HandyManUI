@@ -32,7 +32,12 @@ const AdminUpdate = () => {
   const [uploadedFiles, setUploadedFiles] = useState([]); // To store the uploaded files (URLs or file names)
   const [color, setColor] = useState("");
   const [specificationDesc, setSpecificationDesc] = useState("");
-
+  const [deliveryInDays,setDeliveryInDays] =useState("");
+  const [productId, setProductID] = useState('');
+  const [uniqueId, setUniqueId] = useState('');
+  const [productStatus, setProductStatus] = useState('');
+const [existingFiles, setExistingFiles] = useState([]);
+const [stockLeft, setStockLeft] = useState('');
   useEffect(() => {
           const fetchProductData = async () => {
               try {
@@ -43,9 +48,12 @@ const AdminUpdate = () => {
                   }
                   const productData = await productResponse.json();
                   console.log("productData:", productData);
+                  // alert(JSON.stringify(productData));
                   setProduct(productData);
+                  setUniqueId(productData.id);
                   setProductName(productData.productName);
-                    // setProductID(productData.productId);
+                 setProductID(productData.productId);
+                 setProductStatus(productData.productStatus);
                   setCategory(productData.category);
                   setCatalogue(productData.catalogue);
                   setColor(productData.color);
@@ -57,8 +65,25 @@ const AdminUpdate = () => {
                   setSpecificationDesc(productData.specificationDesc);
                   setWarranty(productData.warranty);
                   setMoreInfo(productData.additionalInformation);
-                  setUploadedFiles(productData.productPhotos?.filter(photo => photo && photo.src) || []);
-              } catch (error) {
+                  setDeliveryInDays(productData.deliveryInDays);
+                  setExistingFiles(productData.productPhotos || []);
+                  setStockLeft(productData.numberOfStockAvailable);
+                  // setUploadedFiles(productData.productPhotos?.filter(photo => !!photo));
+        //           const imageRequests =
+        //   productData.uploadedFiles?.map((photo) => fetch(
+        //       `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+        //     )
+        //     .then((res) => res.json())
+        //       .then((productData) => ({
+              
+        //         src: photo,
+        //         imageData: productData.imageData,
+        //       }))
+        //   ) || [];
+        // const images = await Promise.all(imageRequests);
+        // setUploadedFiles(images);
+                  // alert(uploadedFiles);
+                } catch (error) {
                   setError(error.message);
               } finally {
                   setLoading(false);
@@ -70,6 +95,11 @@ const AdminUpdate = () => {
           }
       }, [id]);
 
+const handleRemoveExistingFile = (index) => {
+  const updated = [...existingFiles];
+  updated.splice(index, 1);
+  setExistingFiles(updated);
+};
 
   // Handle file input change (multiple files)
   const handleFileChange = (event) => {
@@ -170,13 +200,19 @@ const handleRemoveFile = (index) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    const allProductPhotos = [
+    ...existingFiles, 
+    ...uploadedFiles.map(file => file.src), 
+  ];
+
     const payload = {
-      id: "unique-id",
-      ProductId: "string",
+      id: uniqueId,
+      ProductId:  productId,
+      deliveryInDays: deliveryInDays,
       category: category,
-      ProductStatus: "Pending Approval",
+      ProductStatus: productStatus,
       productName,
-      productPhotos: uploadedFiles.map(file => file.src),
+      productPhotos: allProductPhotos,
       catalogue: catalogue,
       productSize: productSize,
       color: color,
@@ -192,19 +228,21 @@ const handleRemoveFile = (index) => {
       warranty: warranty,
       AdditionalInformation: moreInfo,
       ProductOwnedBy:"Admin",
+      numberOfStockAvailable: stockLeft,
     };
 
     try {
-      const response = await fetch("https://handymanapiv2.azurewebsites.net/api/Product/productupload", {
-        method: "POST",
+      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/${uniqueId}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify(payload)
-      });
+      }); 
 
       if (response.ok) {
         alert("Product updated successfully!");
+        navigate(`/adminProductList/Admin`);
         // Reset the form or perform other actions as needed
       } else {
         alert("Failed to update product.");
@@ -251,13 +289,13 @@ if (!product) {
   return (
     <div className="d-flex flex-row justify-content-start align-items-start">
       {/* Sidebar */}
-      {!isMobile && (
+     {!isMobile && (
           <div className="ml-0 m-4 p-0 adm_mnu">
           <AdminSidebar userType={selectedUserType}/>
          </div>
-      )}
+          )}
           
-      {/* Floating menu for mobile */}
+          {/* Floating menu for mobile */}
       {isMobile && (
         <div className="floating-menu">
           <Button
@@ -351,7 +389,57 @@ if (!product) {
             </div>
 
             {/* Product Images */}
-                        <div className="form-group">
+            <div className="form-group">
+  <label>
+    Product Photos <span className="req_star">*</span>
+  </label>
+  <input
+    type="file"
+    className="form-control"
+    multiple
+    onChange={handleFileChange}
+  />
+
+  {/* Render existing filenames from server */}
+  {existingFiles.length > 0 && (
+    <div className="mt-2">
+      <strong>Existing Photos:</strong>
+      {existingFiles.map((file, index) => (
+        <div key={index} className="d-flex align-items-center gap-2 mb-2">
+          <p>{file}</p>
+          <button
+            type="button"
+            onClick={() => handleRemoveExistingFile(index)}
+            className="btn btn-danger btn-sm px-2 py-1"
+          >
+            Remove
+          </button>
+        </div>
+      ))}
+    </div>
+  )}
+
+  {/* Render newly added files */}
+  {productPhotos.length > 0 && (
+    <div className="mt-2">
+      <strong>New Uploads:</strong>
+      {productPhotos.map((file, index) => (
+        <div key={index} className="d-flex align-items-center gap-2 mb-2">
+          <p>{file.name}</p>
+          <button
+            type="button"
+            onClick={() => handleRemoveFile(index)}
+            className="btn btn-danger btn-sm px-2 py-1"
+          >
+            X
+          </button>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
+
+                        {/* <div className="form-group">
                             <label>Product Photos <span className="req_star">*</span></label>
                             <input
                                 type="file"
@@ -362,7 +450,7 @@ if (!product) {
                             <div className="mt-2">
                                     {productPhotos.map((file, index) => (
                                         <div key={index} className="d-flex align-items-center gap-2 mb-2">
-                                            <p>{file.name}</p>
+                                            <p>{file}</p>
                                             <button
                                                 type="button"
                                                 onClick={() => handleRemoveFile(index)}
@@ -373,10 +461,10 @@ if (!product) {
                                         </div>
                                     ))}
                             </div>
-                        </div>
+                        </div> */}
                                 {/* Other inputs */}
                                 <div>
-                                    {uploadedFiles.map((file, index) => (
+                                    {/* {uploadedFiles.map((file, index) => (
                                         <div key={index} className="d-flex align-items-center gap-2 mb-2">
                                             <img src={file.src} alt={file.alt} width="100" />
                                             <button
@@ -387,7 +475,7 @@ if (!product) {
                                                 X
                                             </button>
                                         </div>
-                                    ))}
+                                    ))} */}
                                     {/* Alert for uploading files */}
                                     {showAlert && (
                                         <div className="alert alert-danger  mt-2">
@@ -492,6 +580,28 @@ if (!product) {
               />
             </div>
 
+             <div className="form-group">
+              <label>Delivery In Days <span className="req_star">*</span></label>
+              <input
+                type="text"
+                className="form-control"
+                value={deliveryInDays}
+                onChange={(e) => setDeliveryInDays(e.target.value)}
+                placeholder="Delivery In Days"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Stock Left <span className="req_star">*</span></label>
+              <input
+                type="text"
+                className="form-control"
+                value={stockLeft}
+                onChange={(e) => setStockLeft(e.target.value)}
+                placeholder="Stock Left"
+              /> 
+            </div>
+
             {/* Submit Button */}
             <div className="d-flex justify-content-between gap-3 mt-3">
       {/* Update Product Button */}
@@ -518,17 +628,17 @@ if (!product) {
         </div>
       </div>
       {/* Styles for floating menu */}
-<style jsx>{`
+{/* <style jsx>{`
         .floating-menu {
           position: fixed;
-          top: 80px; /* Increased from 20px to avoid overlapping with the logo */
-          left: 20px; /* Adjusted for placement on the left side */
+          top: 80px; 
+          left: 20px; 
           z-index: 1000;
         }
         .menu-popup {
           position: absolute;
-          top: 50px; /* Keeps the popup aligned below the floating menu */
-          left: 0; /* Aligns the popup to the left */
+          top: 50px; 
+          left: 0; 
           background: white;
           border: 1px solid #ddd;
           border-radius: 5px;
@@ -545,7 +655,7 @@ if (!product) {
         .menu-item:last-child {
           border-bottom: none;
         }
-      `}</style> 
+      `}</style>  */}
     </div>
   );
 };

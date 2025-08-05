@@ -24,6 +24,7 @@ const AdminProductUpload = () => {
   const [specifications, setSpecifications] = useState([{ label: "", value: "" }]); // Initial specification with empty fields
   const [warranty, setWarranty] = useState("");
   const [moreInfo, setMoreInfo] = useState("");
+  const [deliveryInDays,setDeliveryInDays] =useState("");
   const [loading, setLoading] = useState(false); // Loading state for file upload
   const [uploadedFiles, setUploadedFiles] = useState([]); // To store the uploaded files (URLs or file names)
   const [color, setColor] = useState("");
@@ -32,6 +33,7 @@ const AdminProductUpload = () => {
   // const [alertMessage, setAlertMessage] = useState("");
   const navigate = useNavigate(); // Hook to programmatically navigate
   const { selectedUserType} = useParams();
+  const [stockLeft, setStockLeft] = useState('');
   //const { productstatus } = useState("Pending Approval");
   // Handle file input change (multiple files)
 
@@ -130,6 +132,8 @@ useEffect(() => {
     const payload = {
       id: "unique-id", 
       productId: "string",
+      numberOfStockAvailable: stockLeft,
+      deliveryInDays: deliveryInDays,
       productName: productName,
       ProductPhotos: uploadedFiles.map(file => file.src),
       Catalogue: catalogue,
@@ -149,6 +153,7 @@ useEffect(() => {
       ProductStatus: "Pending Approval",
       AdditionalInformation:moreInfo,
       ProductOwnedBy:"Admin",
+
     };
 
     try {
@@ -162,8 +167,7 @@ useEffect(() => {
 
       if (response.ok) {
         alert("Product uploaded successfully!");
-
-        
+        navigate(`/adminProductList/Admin`);
       } else {
         alert("Please fill in all mandatory fields.");
         alert("Failed to upload product.");
@@ -247,14 +251,14 @@ useEffect(() => {
                 onChange={(e) => setCategory(e.target.value)}
               >
                 <option>Choose Category</option>
-                <option>Home Decors</option>
-                <option>Electrical items</option>
-                <option>Plumbing Materials</option>
-                <option>Sanitary items</option>
-                <option>Electronics appliances</option>
-                <option>Paints</option>
-                <option>Hardware items</option>
                 <option>Civil & Waterproofing Materials</option>
+                <option>Electrical items</option>
+                <option>Electronics appliances</option>
+                <option>Hardware items</option>
+                {/* <option>Health Care</option> */}
+                <option>Home Decors</option>
+                <option>Paints</option>
+                <option>Sanitary items</option>
               </select>
             </div>
 
@@ -410,7 +414,7 @@ useEffect(() => {
                 placeholder="Enter Warranty Period"
               />
             </div>
-
+            {/* Additional Info */}
             <div className="form-group">
               <label>More Info</label>
               <input
@@ -419,6 +423,30 @@ useEffect(() => {
                 value={moreInfo}
                 onChange={(e) => setMoreInfo(e.target.value)}
                 placeholder="Additional Information"
+              />
+            </div>
+
+            {/* Delivery In Days */}
+            <div className="form-group">
+              <label>Delivery In Days <span className="req_star">*</span></label>
+              <input
+                type="text"
+                className="form-control"
+                value={deliveryInDays}
+                onChange={(e) => setDeliveryInDays(e.target.value)}
+                placeholder="Delivery In Days"
+              />
+            </div>
+
+             {/* Stock Left */}
+            <div className="form-group">
+              <label>Stock Left <span className="req_star">*</span></label>
+              <input
+                type="text"
+                className="form-control"
+                value={stockLeft}
+                onChange={(e) => setStockLeft(e.target.value)}
+                placeholder="Stock Left"
               />
             </div>
 
