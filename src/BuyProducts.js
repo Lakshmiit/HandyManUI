@@ -442,7 +442,7 @@ const handleColorChange = (e) => {
   //     console.error("Error submitting quotation:", error);
   //     window.alert('Failed to submitting quotation. Please try again later.');    }
   // };   
-    
+     
   // Detect screen size for responsiveness
 useEffect(() => {
   const handleResize = () => setIsMobile(window.innerWidth <= 768);

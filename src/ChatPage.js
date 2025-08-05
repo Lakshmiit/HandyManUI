@@ -2,15 +2,15 @@ import React, { useState, useEffect,useRef  } from 'react';
 import { ArrowBack, Send } from '@mui/icons-material';
 import { Box, Typography, TextField, IconButton, Divider, Tabs, Tab, Button } from '@mui/material';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
-import InsertEmoticonIcon from '@mui/icons-material/InsertEmoticon';
-import Picker from 'emoji-picker-react'; 
+// import InsertEmoticonIcon from '@mui/icons-material/InsertEmoticon';
+// import Picker from 'emoji-picker-react'; 
 import { useParams, useNavigate } from 'react-router-dom';
 import Header from './Header';
 import './App.css'; 
 import axios from "axios";
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import { Dialog, } from '@mui/material';
-import ChatLogo from './img/ChatLogo12.jpeg';
+import ChatLogo from './img/ChatLogo_123.jpeg';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';             
@@ -21,7 +21,7 @@ const ChatPage = () => {
   const [messageInput, setMessageInput] = useState('');
 const [selectedFile, setSelectedFile] = useState([]);
   const [messages, setMessages] = useState([]);
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  // const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [loading, setLoading] = useState(true);
   const [fullName, setFullName] = useState('');
   const [profile, setProfile] = useState({});
@@ -377,10 +377,10 @@ const handleLikeClick = async (message) => {
   }
 };
 
-  const handleEmojiClick = (emojiObject) => {
-    setMessageInput((prev) => prev + emojiObject.emoji);
-    setShowEmojiPicker(false);
-  };
+  // const handleEmojiClick = (emojiObject) => {
+  //   setMessageInput((prev) => prev + emojiObject.emoji);
+  //   setShowEmojiPicker(false);
+  // };
 
   return (
     <>
@@ -520,7 +520,7 @@ const handleLikeClick = async (message) => {
               <>
                 <Divider sx={{ my: 2 }} />
                 <Box className="chat-input-container">
-                  <IconButton onClick={() => setShowEmojiPicker((prev) => !prev)}><InsertEmoticonIcon /></IconButton>
+                  {/* <IconButton onClick={() => setShowEmojiPicker((prev) => !prev)}><InsertEmoticonIcon /></IconButton> */}
                   <TextField placeholder="Type your message..." variant="outlined" size="small" fullWidth value={messageInput} onChange={(e) => setMessageInput(e.target.value)} />
                   <>
                     <input type="file" ref={fileInputRef} style={{ display: 'none' }} multiple onChange={handleFileChange} />
@@ -530,11 +530,11 @@ const handleLikeClick = async (message) => {
                   <IconButton color="primary" onClick={handleSend}><Send /></IconButton>
                 </Box>
 
-                {showEmojiPicker && (
+                {/* {showEmojiPicker && (
                   <Box sx={{ position: 'absolute', bottom: '60px', right: '20px' }}>
                     <Picker onEmojiClick={handleEmojiClick} />
                   </Box>
-                )}
+                )} */}
                  <Dialog open={cameraOpen} onClose={() => setCameraOpen(false)} fullWidth maxWidth="sm">
       <Box p={2}>
         <Typography variant="h6" mb={2}>Take a Photo</Typography>

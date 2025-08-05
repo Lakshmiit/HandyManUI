@@ -1654,7 +1654,7 @@ const fetchImageUrl = async (photoId) => {
                     <>  
                       <p><strong>Paid Amount:</strong> {ticket.paidAmount}</p>
                     </>
-                  ) : (
+                  ) : ( 
                     <p><strong>Paid Amount:</strong> Not Paid</p>
                   )}
 

@@ -38,7 +38,7 @@ const AdminUpdate = () => {
   const [productStatus, setProductStatus] = useState('');
 const [existingFiles, setExistingFiles] = useState([]);
 const [stockLeft, setStockLeft] = useState('');
-  useEffect(() => {    
+  useEffect(() => {     
           const fetchProductData = async () => {
               try {
                   setLoading(true);

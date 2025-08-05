@@ -123,7 +123,7 @@ const ProductViewModal = ({ show, handleClose, productId }) => {
                 >
                   <span className="carousel-control-prev-icon" aria-hidden="true"></span>
                   <span className="visually-hidden">Previous</span>
-                </button>
+                </button> 
                 <button
                   className="carousel-control-next"
                   type="button"
