@@ -147,7 +147,7 @@ const ProductViewModal = ({ show, handleClose, productId }) => {
                 </div>
                 <div className="col-md-6">
                   <h5>Specifications</h5>
-                  <ul>
+                  <ul> 
                     {specifications?.map((spec, index) => (
                       <li key={index}>
                         {spec.label}: {spec.value}

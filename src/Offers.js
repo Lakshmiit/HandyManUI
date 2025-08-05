@@ -231,7 +231,7 @@ useEffect(() => {
                     >
                       Loading
                     </div>
-                  )}
+                  )} 
                       <div className="card-body p-1 m-1">
                         <h5 className="card-title">{product.productName}</h5>
                         <div className="card-text fw-bold text-primary fs-5 no-break"> After Discount Price: Rs {discountedPrice}</div>

@@ -19,7 +19,7 @@ const AdminBuyProductOrders = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   // const { selectedUserType } = useParams();
-  const [productData, setProductData] = useState("");
+  const [productData, setProductData] = useState(""); 
   const [category, setCategory] = useState("");  
   const [productSize, setProductSize] = useState("");
   const [productCatalogue, setProductCatalogue] = useState("");

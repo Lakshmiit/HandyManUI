@@ -161,8 +161,8 @@ const AdminProductList = () => {
     onClick={() => navigate(`/adminUploadForm/Admin`)}
   >
     Add New Product
-  </button>
-</div>
+  </button> 
+</div> 
       </div>
 
       {filteredData.length === 0 ? (

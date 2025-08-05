@@ -492,13 +492,30 @@ const handleLikeClick = async (message) => {
               ))}
               <Box ref={chatEndRef} /> 
             </Box>
-            {userType === 'admin' && (
+            {userType === 'admin'  && (tabType === 'news') && (
               <Typography sx={{ fontSize: '0.8rem', color: '#555', p: 2 }}>
                 📢 <strong>Disclaimer:</strong> News updates shown here are short summaries based on publicly available content from reputed sources.
                 All rights and credits belong to the original publishers. No copyrighted content is reproduced.
                 For full details, please refer to the respective news source.
               </Typography>
+            )} 
+
+            {userType === 'customer' && (tabType === 'buysell') && (
+              <Typography sx={{ fontSize: '0.8rem', color: '#555', p: 2 }}>
+                📢 <strong>Disclaimer – Buy/Sell Section:</strong> The Buy/Sell section is a community feature to help users post and view items for sale or purchase. Handyman App does not verify the ownership, condition, authenticity, or legality of the items listed. All transactions are strictly between the buyer and the seller.
+                <br /><br />
+                Users are advised to exercise caution and verify details before making any payments or exchanges. Handyman App is not responsible for any disputes, losses, or damages arising from such transactions.
+              </Typography>
             )}
+
+            {userType === 'customer' && (tabType === 'tolet') && (
+              <Typography sx={{ fontSize: '0.8rem', color: '#555', p: 2 }}>
+                📢 <strong>Disclaimer – To-Let Section:</strong> The To-Let section is intended only as a listing platform for property owners and tenants. Handyman App does not verify the accuracy, legality, availability, or authenticity of rental listings posted by users. We do not act as a broker or agent.
+                <br /><br />
+                All rental inquiries, agreements, and transactions are solely between the property owner and the interested party. Users are advised to verify property details independently before proceeding. Handyman App is not responsible for any disputes, financial losses, or legal issues arising from such interactions.
+              </Typography>
+            )}
+
             {(tabType !== 'news' || isAdmin) ? (
               <>
                 <Divider sx={{ my: 2 }} />

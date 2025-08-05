@@ -106,7 +106,7 @@ useEffect(() => {
         }
         const data = await response.json();
         setProductData(data);
-      //  alert(JSON.stringify(data));
+      //  alert(JSON.stringify(data)); 
         // setBuyProductId(data.id);
         setBuyProductTicketId(data.buyProductId);
         setAddress(data.address);

@@ -130,7 +130,7 @@ useEffect(() => {
     event.preventDefault();
 
     const payload = {
-      id: "unique-id", 
+      id: "unique-id",  
       productId: "string",
       numberOfStockAvailable: stockLeft,
       deliveryInDays: deliveryInDays,
