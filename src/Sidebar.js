@@ -37,8 +37,22 @@ const menuConfig = {
       { MenuIcon: <LocalOfferIcon />, MenuTitle: "Buy Product Offers", TargetUrl: `/offersIcons/${userType}/${userId}` },
       { MenuIcon: <AccountCircleIcon />, MenuTitle: "Accounts" },
       { MenuIcon: <ApartmentIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Apartment Common Area Maintenance", TargetUrl: `/aboutApartmentRaiseTicket/${userType}/${userId}`}, 
-      
     ],
+
+    admin: [
+      { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", 
+        TargetUrl: `/profilePage/${userType}/${userId}`},
+      { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
+      { MenuIcon: <PersonAddIcon />, MenuTitle: "Book A Technician", TargetUrl: `/bookTechnician/${userType}/${userId}` },
+      { MenuIcon: <RouteIcon />, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}` },
+    { MenuIcon: <NotificationsActiveIcon />, MenuTitle: "Notifications", TargetUrl: `/customerNotification/${userType}/${userId}` }, 
+      { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
+      { MenuIcon: <InventoryIcon />, MenuTitle: "Orders", TargetUrl: `/customerOrders/${userType}/${userId}` },
+      { MenuIcon: <LocalOfferIcon />, MenuTitle: "Buy Product Offers", TargetUrl: `/offersIcons/${userType}/${userId}` },
+      { MenuIcon: <AccountCircleIcon />, MenuTitle: "Accounts" },
+      { MenuIcon: <ApartmentIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Apartment Common Area Maintenance", TargetUrl: `/aboutApartmentRaiseTicket/${userType}/${userId}`}, 
+    ],
+
     builder: [
       { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", TargetUrl: `/profilePage/${userType}/${userId}` },
       { MenuIcon: <PersonAddIcon />, MenuTitle: "Book A Technician", TargetUrl: `/bookTechnician/${userType}/${userId}` },

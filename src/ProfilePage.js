@@ -33,7 +33,7 @@ import Logo from "./img/Hm_Logo 1.png";
 import SearchIcon from "@mui/icons-material/Search";
 // import ChatIcon from '@mui/icons-material/Chat';
 // import ArticleIcon from '@mui/icons-material/Article';
-import GradeIcon from '@mui/icons-material/Grade';
+import AnnouncementIcon from '@mui/icons-material/Announcement';
 import LogoutIcon from "@mui/icons-material/Logout";
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
@@ -57,6 +57,25 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 const getMenuList = (userType, userId, category, district ,ZipCode,technicianFullName, isMobile) => {
   const iconSize = isMobile ? 20  : 40;
   const customer = [
+      { MenuIcon: <SupportAgentIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
+      { MenuIcon: <PersonOutlineIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Book Technician", TargetUrl: `/bookTechnician/${userType}/${userId}` },
+      { MenuIcon: <StorefrontIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
+      ...(!isMobile ? [{MenuIcon: <LocalOfferIcon sx={{ fontSize: iconSize }} />, MenuTitle: "Buy Product Offers", TargetUrl: `/offersIcons/${userType}/${userId}`
+    }] : []),
+      { MenuIcon: <ApartmentIcon sx={{ fontSize: 40 }} />,  MenuTitle: isMobile ? "Apartment AMC" : "Apartment Common Area Maintenance", TargetUrl: `/aboutApartmentRaiseTicket/${userType}/${userId}` },
+      ...(!isMobile ? [{MenuIcon: <TrackStatusNotificationBell sx={{ fontSize: iconSize }} />, MenuTitle: isMobile ? "Track Ticket" : "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}`
+    }] : []),
+      ...(!isMobile ? [{MenuIcon: <NotificationBell sx={{ fontSize: 40 }} />, MenuTitle: "Notifications", TargetUrl: `/customerNotification/${userType}/${userId}`
+    }] : []),
+     ...(!isMobile ? [{MenuIcon: <OrdersNotificationBell sx={{ fontSize: iconSize }} />, MenuTitle: "Orders", TargetUrl: `/customerOrders/${userType}/${userId}`
+    }] : []),
+    // { MenuIcon: <ChatIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Chat",  TargetUrl: `/chatPage/${userType}/${userId}`},
+    ...(!isMobile ? [{MenuIcon: <PermIdentityIcon sx={{ fontSize: iconSize }} />, MenuTitle: "Accounts"
+    }] : []),
+      ];
+
+
+      const admin = [
       { MenuIcon: <SupportAgentIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
       { MenuIcon: <PersonOutlineIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Book Technician", TargetUrl: `/bookTechnician/${userType}/${userId}` },
       { MenuIcon: <StorefrontIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
@@ -127,8 +146,12 @@ const getMenuList = (userType, userId, category, district ,ZipCode,technicianFul
           return trader;
       case "technician":
           return technician;
+      case "customer":
+       return customer; 
+      case "admin":
+          return admin; 
       default:
-          return customer; 
+          return []; 
   }
 };
 
@@ -198,7 +221,18 @@ const ProfilePage = () => {
 const [isMuted, setIsMuted] = useState(true);
 const [groupedProducts, setGroupedProducts] = useState({});
 const [expandedCategories, setExpandedCategories] = useState({});
-const [unreadCount, setUnreadCount] = useState(0);
+ const [unreadCount, setUnreadCount] = useState(0);
+
+// useEffect(() => {
+//   const selectedTabType = localStorage.getItem('selectedTabType');
+//   const selectedTabCount = localStorage.getItem('selectedTabCount');
+
+//   if (selectedTabType && selectedTabCount) {
+//     console.log('Tab Type:', selectedTabType); // e.g. 'news'
+//     console.log('Message Count:', selectedTabCount); // e.g. '5'
+//   }
+// }, []);
+
 
   const toggleMute = () => {
     const video = videoRef.current;
@@ -229,6 +263,27 @@ useEffect(() => {
       });
     }
   };
+// useEffect(() => {
+//   const calculateUnread = async () => {
+//     const storedType = localStorage.getItem('selectedTabType');
+//     const storedCount = Number(localStorage.getItem('selectedTabCount')) || 0;
+
+//     if (!storedType) return;
+
+//     try {
+//       const res = await fetch(`https://handymanapiv2.azurewebsites.net/api/ChatBot/GetChatMessages`);
+//       if (!res.ok) throw new Error('Failed to fetch total messages');
+//       const data = await res.json();
+//       const totalCount = data.length;
+
+//       const diff = totalCount - storedCount;
+//       setUnreadCount(diff > 0 ? diff : 0);
+//     } catch (error) {
+//       console.error('Error calculating unread count:', error);
+//     }
+//   };
+//   calculateUnread();
+// }, []);
 
   useEffect(() => {
   const fetchUnreadCount = async () => {
@@ -544,8 +599,13 @@ useEffect(() => {
           try {
             let apiUrl = "";
             if (userType === "customer") {
+            
               apiUrl = `https://handymanapiv2.azurewebsites.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`;
-            } else if (userType === "technician") {
+            }
+              else if (userType === "admin") {
+              apiUrl = `https://handymanapiv2.azurewebsites.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`;
+              }
+                           else if (userType === "technician") {
               apiUrl = `https://handymanapiv2.azurewebsites.net/api/technician/technicianProfileData?profileType=${userType}&UserId=${userId}`;
             } else if (userType === "dealer") {
               apiUrl = `https://handymanapiv2.azurewebsites.net/api/dealer/dealerProfileData?profileType=${userType}&UserId=${userId}`;
@@ -590,116 +650,7 @@ const fetchImageUrl = async (photoId) => {
     console.error("Error fetching image:", error);
   }
 };
-  // const fetchUserDetails = async () => {
-  //   const userId = sessionStorage.getItem("UserId");
-  //   const userType = sessionStorage.getItem("UserProfileType");
-  //   if (!userId || !userType) {
-  //   //   window.location.href = "/logout";
-  //     return;
-  //   }
-  //   try {
-  //     const response = await axios.get(
-  //       `https://handymanapiv2.azurewebsites.net/api/${userType}/${userType}ProfileData?profileType=${userType}&UserId=${userId}`
-  //     );
-  //     if (response.status === 200) {
-  //       setProfile(response.data);
-  //       // alert(JSON.stringify(response.data));        
-  //       fetchImageUrl(response.data.PhotoAttachmentId);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching user details:", error)
-  //   }
-  // }; 
-  // const handleEditClick = () => setIsEditing(true);
-  //  const handleProfileClick = () => {
-  //   fileInputRef.current.click(); 
-  // };
-  // const handleCancel = () => {
-  //   setIsEditing(false);
-  //   setName(profile.fullName);
-  // };
-  // const handleSave = async () => {
-  //   setProfile((prev) => ({ ...prev, fullName: name }));
-  //   setIsEditing(false);
-  // };
-  // const uploadFile = async () => {
-  //   if (!profile.photoUrl) return;
-  //   const formData = new FormData();
-  //   formData.append("file", profile.photoUrl);
-  //   try {
-  //     const response = await axios.post(
-  //       "https://handymanapiv2.azurewebsites.net/api/FileUpload/upload",
-  //       formData,
-  //       { headers: { "Content-Type": "multipart/form-data" } }
-  //     );
-  //     return response.data;
-  //   } catch (error) {
-  //     console.error("Error uploading file:", error);
-  //   }
-  // };
-  // const handleFileChange = async (event) => {
-  //   const file = event.target.files[0];
-  //   if (!file) return;
-  //   const reader = new FileReader();
-  //   reader.onloadend = () => {
-  //     setProfileImage(reader.result);
-  //   };
-  //   reader.readAsDataURL(file);
-  //   const uploadedFile = await uploadFile(file);
-  //   if (uploadedFile?.fileId) {
-  //     await updateProfileImage(uploadedFile.fileId);
-  //   }  
-  // };
-  // const uploadFile = async (file) => {
-  //   const formData = new FormData();
-  //   formData.append("file", file);
-  //   try {
-  //     const response = await axios.post(
-  //       "https://handymanapiv2.azurewebsites.net/api/FileUpload/upload",
-  //       formData,
-  //       { headers: { "Content-Type": "multipart/form-data" } }
-  //     );
-  //     if (response.data.fileId) {
-  //       await updateProfileImage(response.data.fileId);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error uploading file:", error);
-  //   }
-  // };
-  // const updateProfileImage = async (fileId) => {
-  //   try {
-  //     await axios.post(
-  //       `https://handymanapiv2.azurewebsites.net/api/${profile.UserProfileType}/Edit`,
-  //       {
-  //         UserId: profile.UserId,
-  //         FullName: profile.fullName,
-  //         PhotoDocumentId: fileId,
-  //       }
-  //     );
-  //     alert("Profile photo updated successfully!");
-  //   } catch (error) {
-  //     console.error("Error updating profile image:", error);
-  //   }
-  // };
-  // const handleSubmit = async () => {
-  //   if (!profile) return;
-  //   const fileId = profile.photoUrl ? await uploadFile() : profile.PhotoAttachmentId;
-  //   try {
-  //     const response = await axios.post(
-  //       `https://handymanapiv2.azurewebsites.net/api/${profile.UserProfileType}/Edit`,
-  //       {
-  //         UserId: profile.UserId,
-  //         FullName: profile.fullName,
-  //         PhotoDocumentId: fileId,
-  //       }
-  //     );
-  //     alert(response.data.message || "Profile updated successfully!");
-  //     fetchUserDetails();
-  //   } catch (error) {
-  //     console.error("Error updating profile:", error);
-  //     alert("Error updating profile: " + (error.response?.data?.message || error.message));
-  //   }
-  // };
+  
   
   if (loading) {
     return 
@@ -707,7 +658,8 @@ const fetchImageUrl = async (photoId) => {
 
   return (
     <>
-    <header className="header d-flex align-items-center justify-content-between p-2 bg-white shadow-sm">
+    <header className="header d-flex align-items-center justify-content-between p-2 bg-white shadow-sm" 
+      style={{ position: 'fixed', top: 0, left: 0, right: 0, width: '100%', zIndex: 1000 }}>
        {isMobile ? (
           <div onClick={handleMoreIconClick} style={{ cursor: "pointer" }}>
           <MenuIcon className="floating-menuIcon" fontSize="medium" />
@@ -729,6 +681,54 @@ const fetchImageUrl = async (photoId) => {
       <div id="dropdown-container" className="dropdown-container" style={{ position: "relative" }}>
        {isMobile && (
         <div className="d-flex align-items-center">
+          {/* Fixed Chat Icon at bottom right */}
+    <div
+      className="blinking-icon"
+      style={{
+        backgroundColor: '#03c03cb3',
+        borderRadius: '50%',
+        padding: '8px',
+        cursor: 'pointer',
+        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.3)',
+        position: 'relative', 
+      }}
+      onClick={() => navigate(`/chatPage/${userType}/${userId}`)}
+    >
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <AnnouncementIcon style={{ color: 'white', fontSize: '28px' }} />
+        {/* <span
+          style={{
+            color: 'red',
+            fontSize: '14px',
+            fontWeight: 'bold',
+            marginTop: '2px',
+            textAlign: 'center',
+            lineHeight: '1.2',
+            whiteSpace: 'pre-line',
+          }}
+        >
+          Free{'\n'}Services
+        </span> */}
+      </div>
+
+      {unreadCount > 0 && (
+        <span
+          style={{
+            position: 'absolute',
+            top: '-6px',
+            right: '-6px',
+            background: 'red',
+            color: 'white',
+            borderRadius: '50%',
+            padding: '2px 6px',
+            fontSize: '12px',
+            fontWeight: 'bold',
+          }}
+        >
+          {unreadCount}
+        </span>
+      )}
+    </div>
   {/* Profile Image */}
   <div className="profile-img-wrapper">
     <img
@@ -738,10 +738,15 @@ const fetchImageUrl = async (photoId) => {
       // style={{ width: "40px", height: "40px", borderRadius: "10%", objectFit: "cover" }}
     />
   </div>
+</div>
+)}
+</div>
+    </div>
+    </header>
   {/* <div className="d-flex align-items-center" onClick={() => navigate(`/customerNotification/${userType}/${userId}`)} style={{ cursor: "pointer" }}>
   <NotificationBell fontSize="medium" />
 </div> */}
-<div
+{/* <div
   className="d-flex align-items-center"
   style={{ cursor: "pointer" }}
   onClick={() => navigate(`/customerOrders/${userType}/${userId}`)}
@@ -749,7 +754,7 @@ const fetchImageUrl = async (photoId) => {
   <div style={{ position: "relative", display: "inline-block" }}>
     <OrdersNotificationBell fontSize="medium" />
   </div>
-</div>
+</div> */}
 {/* <div
   style={{backgroundColor: 'transparent',  display: 'inline-flex', 
     alignItems: 'center', justifyContent: 'center',
@@ -769,8 +774,7 @@ const fetchImageUrl = async (photoId) => {
                       <OrdersNotificationBell sx={{ fontSize: 24, marginRight: '8px' }} />
                       <small style={{ fontSize: "13px", fontFamily: "Poppins", lineHeight: "28px" }}>My Orders</small>
                     </div> */}
-</div>
-)}
+
        {/* {showDropdown && (
         <div className="dropdown-menu">                   
           <div className="dropdown-content">
@@ -785,9 +789,7 @@ const fetchImageUrl = async (photoId) => {
           </div>
         </div>
        )} */}
-      </div>
-    </div>
-    </header>
+      <div className="pt-1"> 
     <div
       className={`container m-1`}
       style={{
@@ -1676,59 +1678,9 @@ const fetchImageUrl = async (photoId) => {
         )}
       </div>
     </div>    
-
-    {/* Fixed Chat Icon at bottom right */}
-<div
-  className="blinking-icon"
-  style={{
-    position: 'fixed',
-    bottom: '20px',
-    left: '20px',
-    zIndex: 999,
-    backgroundColor: '#03c03cb3',
-    borderRadius: '50%',
-    padding: '8px',
-    cursor: 'pointer',
-    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.3)',
-  }}
-  onClick={() => navigate(`/chatPage/${userType}/${userId}`)}
->
-  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-    <GradeIcon style={{ color: 'white', fontSize: '28px' }} />
-    <span
-      style={{
-        color: 'red',
-        fontSize: '14px',
-        fontWeight: 'bold',
-        marginTop: '2px',
-        textAlign: 'center',
-        lineHeight: '1.2',
-        whiteSpace: 'pre-line', 
-      }}
-    >
-      Free{'\n'}Services
-    </span>
-  </div>
-  {unreadCount > 0 && (
-    <span
-      style={{
-        position: 'absolute',
-        top: '-6px',
-        right: '-6px',
-        background: 'red',
-        color: 'white',
-        borderRadius: '50%',
-        padding: '2px 6px',
-        fontSize: '12px',
-        fontWeight: 'bold',
-      }}
-    >
-      {unreadCount}
-    </span>
-  )}
-</div>
         </div>
         </div> 
+        </div>
         </div>
         {/* Zoom Modal */}
         <Modal show={showZoomModal} onHide={() => setShowZoomModal(false)} centered>

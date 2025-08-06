@@ -1,6 +1,6 @@
 import React, { useState, useEffect,useRef  } from 'react';
 import { ArrowBack, Send } from '@mui/icons-material';
-import { Box, Typography, TextField, IconButton, Divider, Tabs, Tab, Button } from '@mui/material';
+import { Box, Modal,Typography, DialogContent, DialogTitle, TextField, IconButton, Divider, Tabs, Tab, Button } from '@mui/material';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 // import InsertEmoticonIcon from '@mui/icons-material/InsertEmoticon';
 // import Picker from 'emoji-picker-react'; 
@@ -15,6 +15,11 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';             
 // import ShareIcon from '@mui/icons-material/Share';
+import CloseIcon from '@mui/icons-material/Close'; 
+import SupportAgentIcon from '@mui/icons-material/SupportAgent';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import StorefrontIcon from '@mui/icons-material/Storefront';
+import ApartmentIcon from '@mui/icons-material/Apartment';
 
 const ChatPage = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -26,6 +31,15 @@ const [selectedFile, setSelectedFile] = useState([]);
   const [fullName, setFullName] = useState('');
   const [profile, setProfile] = useState({});
   const { userId, userType } = useParams();
+const [open, setOpen] = useState(false);
+const [selectedImage, setSelectedImage] = useState('');
+
+const menuList = [
+  { MenuIcon: <SupportAgentIcon />, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
+  { MenuIcon: <PersonOutlineIcon />, MenuTitle: "Book Technician", TargetUrl: `/bookTechnician/${userType}/${userId}` },
+  { MenuIcon: <StorefrontIcon />, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
+  { MenuIcon: <ApartmentIcon />, MenuTitle: "Apartment AMC", TargetUrl: `/aboutApartmentRaiseTicket/${userType}/${userId}` },
+];
   const navigate = useNavigate();
   const [profileImage, setProfileImage] = useState(null);
   const fileInputRef = useRef(null);
@@ -38,14 +52,33 @@ const seenMessages = useRef(new Set());
 const isAdmin = userType === 'admin';
 const [showMessageInfo, setShowMessageInfo] = useState(false);
 const [selectedMessage, setSelectedMessage] = useState(null);
-const [messageCounts, setMessageCounts] = useState({});
+const [messageCounts, setMessageCounts] = useState({
+  news: 0,
+  buysell: 0,
+  tolet: 0,
+});
 const [likedMessages, setLikedMessages] = useState(new Set());
 const skipScrollRef = useRef(false);
-
+const [openDisclaimer, setOpenDisclaimer] = useState(false);
 const handleShowMessageInfo = (msg) => {
   setSelectedMessage(msg);
   setShowMessageInfo(true);
 };
+
+const handleClickOpen = (imgData) => {
+  setSelectedImage(imgData);
+  setOpen(true);
+};
+
+const handleClose = () => {
+  setOpen(false);
+};
+useEffect(() => {
+  const storedLikes = localStorage.getItem(`likedMessages_${userId}`);
+  if (storedLikes) {
+    setLikedMessages(new Set(JSON.parse(storedLikes)));
+  }
+}, [userId]);
 
 const toggleLike = (messageId) => {
   setLikedMessages((prev) => {
@@ -55,9 +88,19 @@ const toggleLike = (messageId) => {
     } else {
       updated.add(messageId);
     }
+    localStorage.setItem(`likedMessages_${userId}`, JSON.stringify([...updated]));
     return updated;
   });
 };
+
+useEffect(() => {
+  if (
+    (tabType === 'buysell' && userType === 'customer') ||
+    (tabType === 'tolet' && userType === 'customer')
+  ) {
+    setOpenDisclaimer(true);
+  }
+}, [tabType, userType]);
 
 const handleIconClick = () => {
   fileInputRef.current.click(); 
@@ -175,6 +218,25 @@ useEffect(() => {
   };
   fetchProfileData();
 }, [userType, userId]);
+
+useEffect(() => {
+  const fetchCounts = async () => {
+    try {
+      const types = ['news', 'buysell', 'tolet'];
+      const counts = {};
+      for (const type of types) {
+        const res = await fetch(`https://handymanapiv2.azurewebsites.net/api/ChatBot/GetChatMessagesByType?type=${type}`);
+        if (!res.ok) throw new Error(`Failed to fetch ${type} messages`);
+        const data = await res.json();
+        counts[type] = data.length;
+      }
+      setMessageCounts(counts);
+    } catch (err) {
+      console.error('Error fetching message counts:', err);
+    }
+  };
+  fetchCounts();
+}, []);
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -384,16 +446,58 @@ const handleLikeClick = async (message) => {
 
   return (
     <>
-      <Header />
+     <Header style={{ position: 'fixed', top: 0, width: '100%', zIndex: 1000 }} />
       <div className="d-flex flex-row justify-content-start align-items-start">
-        <div className={`container m-3 ${isMobile ? 'w-100' : 'w-100'}`}>
-          <Box sx={{ maxWidth: 600, margin: 'auto', boxShadow: 3, borderRadius: 2, overflow: 'hidden' }}>
+        <div className={`container ${isMobile ? 'w-100' : 'w-100'}`} style={{ paddingTop: '140px' }}>
+          {isMobile && (
+            <div
+              className="mobile-top-icons position-fixed start-0 end-0 bg-white border-bottom shadow-sm"
+              style={{
+                top: '80px',
+                zIndex: 1050,
+                height: '70px',
+                padding: '6px 8px',
+                overflowY: 'hidden',
+              }}
+            >
+              <div className="d-flex flex-wrap justify-content-around align-items-center">
+                {menuList.map((menu, index) => (
+                  <a
+                    key={index}
+                    href={menu.TargetUrl}
+                    className="d-flex flex-column align-items-center justify-content-center text-decoration-none text-dark ms-1"
+                    style={{ minWidth: '10px', flex: '0 0 auto' }}
+                  >
+                    {React.cloneElement(menu.MenuIcon, { sx: { fontSize: 28 } })}
+                    <small style={{
+                      fontSize: "12px",
+                      fontFamily: 'Poppins',
+                      textAlign: 'center',
+                      lineHeight: '16px'
+                    }}>
+                      {menu.MenuTitle.split(" ").map((word, index) => (
+                        <React.Fragment key={index}>
+                          {word}
+                          {index !== menu.MenuTitle.split(" ").length - 1 && <br />}
+                        </React.Fragment>
+                      ))}
+                    </small>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+          <Box sx={{ maxWidth: 500,  boxShadow: 3, borderRadius: 2, overflow: 'hidden' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', bgcolor: '#2196f3', color: 'white', px: 2, py: 1 }}>
-              <div onClick={() => navigate(`/profilePage/${userType}/${userId}`)} style={{ cursor: 'pointer'}}>
+              <div onClick={() => {
+            localStorage.setItem('selectedTabType', tabType); 
+            localStorage.setItem('selectedTabCount', messageCounts[tabType]); 
+            navigate(`/profilePage/${userType}/${userId}`);
+          }} style={{ cursor: 'pointer'}}>
                 <ArrowBack fontSize='large'/>
               </div>
              <img src={ChatLogo} alt="" className='HMchat-logo-img' />
-              <Typography variant="h6" sx={{ ml: 2 }}>Free Services</Typography>
+              <Typography variant="h6" sx={{ ml: 2 }}>Announcements</Typography>
             </Box>
             
            <Tabs
@@ -402,9 +506,9 @@ const handleLikeClick = async (message) => {
               variant="fullWidth"
               sx={{ bgcolor: '#f5f5f5' }}
             >
-              <Tab value="news" label="News Articles" />
-              <Tab value="buysell" label="Buy/Sell" />
-              <Tab value="tolet" label="Tolets" />
+              <Tab value="news" label={`News Articles (${messageCounts.news})`} />
+              <Tab value="buysell" label={`Buy/Sell (${messageCounts.buysell})`} />
+              <Tab value="tolet" label={`Tolets (${messageCounts.tolet})`} />
             </Tabs>
 
             {tabType === 'news' && <Box p={2}></Box>}
@@ -430,29 +534,67 @@ const handleLikeClick = async (message) => {
                     )}
                   </Box>
 
-                  {msg.uploadedImages?.length > 0 && (
+                 {msg.uploadedImages?.length > 0 && (
                     <Box sx={{ mt: 2, display: 'flex', gap: 2, flexWrap: 'wrap' }}>
                       {msg.uploadedImages.map((img, i) => (
-                        <Box key={i} sx={{ position: 'relative', width: '140px', height: '140px' }}>
+                        <Box key={i} sx={{ position: 'relative', width: '950px', height: '220px', cursor: 'pointer' }}>
                           <img
                             src={`data:image/jpeg;base64,${img.imageData}`}
                             alt={`uploaded-${i}`}
+                            onClick={() => handleClickOpen(`data:image/jpeg;base64,${img.imageData}`)}
                             style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px', border: '1px solid #ddd' }}
                           />
-                          <a
+                          {/* <a
                             href={`data:image/jpeg;base64,${img.imageData}`}
                             download={img.src}
-                            style={{ position: 'absolute', bottom: '8px', right: '8px', backgroundColor: 'rgba(16, 200, 191, 0.8)', borderRadius: '50%', padding: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }}
+                            style={{
+                              position: 'absolute',
+                              bottom: '8px',
+                              right: '8px',
+                              backgroundColor: 'rgba(16, 200, 191, 0.8)',
+                              borderRadius: '50%',
+                              padding: '6px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              textDecoration: 'none'
+                            }}
                           >
                             <svg xmlns="http://www.w3.org/2000/svg" height="25" viewBox="0 0 24 24" width="25" fill="black">
                               <path d="M0 0h24v24H0V0z" fill="none" />
                               <path d="M5 20h14v-2H5v2zM13 4h-2v8H8l4 4 4-4h-3z" />
                             </svg>
-                          </a>
+                          </a> */}
                         </Box>
                       ))}
                     </Box>
                   )}
+
+                  {/* Dialog for image zoom */}
+                  <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
+                    <DialogTitle sx={{ m: 0, p: 0 }}>
+                      <IconButton
+                        aria-label="close"
+                        onClick={handleClose}
+                        sx={{
+                          position: 'absolute',
+                          right: 8,
+                          top: 8,
+                          color: (theme) => theme.palette.grey[500],
+                        }}
+                      >
+                        <CloseIcon sx={{color: 'red'}}/>
+                      </IconButton>
+                    </DialogTitle>
+
+                    <DialogContent sx={{ p: 0 }}>
+                      <img
+                        src={selectedImage}
+                        alt="Zoomed"
+                        style={{ width: '100%', height: 'auto', display: 'block' }}
+                      />
+                    </DialogContent>
+                  </Dialog>
 
                   {msg.message && <Typography variant="body2">{msg.message}</Typography>}
                   {msg.dateTime && !isNaN(Date.parse(msg.dateTime)) && (
@@ -492,33 +634,112 @@ const handleLikeClick = async (message) => {
               ))}
               <Box ref={chatEndRef} /> 
             </Box> 
-            {userType === 'admin'  && (tabType === 'news') && (
-              <Typography sx={{ fontSize: '0.8rem', color: '#555', p: 2 }}>
-                📢 <strong>Disclaimer:</strong> News updates shown here are short summaries based on publicly available content from reputed sources.
+        
+            {userType === 'admin' && tabType === 'news' && (
+              <>
+              <Button variant="text" onClick={() => setOpenDisclaimer(true)} sx={{ fontSize: '0.75rem' }}>
+              View Disclaimer
+            </Button>
+            <Modal open={openDisclaimer} onClose={() => setOpenDisclaimer(false)}>
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 320,
+                    bgcolor: 'background.paper',
+                    borderRadius: 2,
+                    boxShadow: 24,
+                    p: 1,
+                  }}
+                >
+                  <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <IconButton onClick={() => setOpenDisclaimer(false)} size="small">
+                      <CloseIcon sx={{ color: 'red' }}/>
+                    </IconButton>
+                  </Box>
+                  <Typography sx={{ fontSize: '0.8rem', color: '#555' }}>
+                    📢 <strong>Disclaimer – News Section:</strong> News updates shown here are short summaries based on publicly available content from reputed sources.
                 All rights and credits belong to the original publishers. No copyrighted content is reproduced.
                 For full details, please refer to the respective news source.
-              </Typography>
-            )} 
- 
-            {userType === 'customer' && (tabType === 'buysell') && (
-              <Typography sx={{ fontSize: '0.8rem', color: '#555', p: 2 }}>
-                📢 <strong>Disclaimer – Buy/Sell Section:</strong> The Buy/Sell section is a community feature to help users post and view items for sale or purchase. Handyman App does not verify the ownership, condition, authenticity, or legality of the items listed. All transactions are strictly between the buyer and the seller.
-                <br /><br />
-                Users are advised to exercise caution and verify details before making any payments or exchanges. Handyman App is not responsible for any disputes, losses, or damages arising from such transactions.
-              </Typography>
+                  </Typography>
+                </Box>
+              </Modal>
+              </>
+            )}
+            
+            {userType === 'customer' && tabType === 'buysell' && (
+              <>
+              <Button variant="text" onClick={() => setOpenDisclaimer(true)} sx={{ fontSize: '0.75rem' }}>
+              View Disclaimer
+            </Button>
+            <Modal open={openDisclaimer} onClose={() => setOpenDisclaimer(false)}>
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 320,
+                    bgcolor: 'background.paper',
+                    borderRadius: 2,
+                    boxShadow: 24,
+                    p: 1,
+                  }}
+                >
+                  <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <IconButton onClick={() => setOpenDisclaimer(false)} size="small">
+                      <CloseIcon sx={{ color: 'red' }}/>
+                    </IconButton>
+                  </Box>
+                  <Typography sx={{ fontSize: '0.8rem', color: '#555' }}>
+                    📢 <strong>Disclaimer – Buy/Sell Section:</strong> The Buy/Sell section is a community feature to help users post and view items for sale or purchase. Handyman App does not verify the ownership, condition, authenticity, or legality of the items listed. All transactions are strictly between the buyer and the seller.
+                    <br />
+                    Users are advised to exercise caution and verify details before making any payments or exchanges. Handyman App is not responsible for any disputes, losses, or damages arising from such transactions.
+                  </Typography>
+                </Box>
+              </Modal>
+              </>
             )}
 
-            {userType === 'customer' && (tabType === 'tolet') && (
-              <Typography sx={{ fontSize: '0.8rem', color: '#555', p: 2 }}>
-                📢 <strong>Disclaimer – To-Let Section:</strong> The To-Let section is intended only as a listing platform for property owners and tenants. Handyman App does not verify the accuracy, legality, availability, or authenticity of rental listings posted by users. We do not act as a broker or agent.
-                <br /><br />
-                All rental inquiries, agreements, and transactions are solely between the property owner and the interested party. Users are advised to verify property details independently before proceeding. Handyman App is not responsible for any disputes, financial losses, or legal issues arising from such interactions.
-              </Typography>
+            {userType === 'customer' && tabType === 'tolet' && (
+              <>
+              <Button variant="text" onClick={() => setOpenDisclaimer(true)} sx={{ fontSize: '0.75rem' }}>
+              View Disclaimer
+            </Button>
+            <Modal open={openDisclaimer} onClose={() => setOpenDisclaimer(false)}>
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 320,
+                    bgcolor: 'background.paper',
+                    borderRadius: 2,
+                    boxShadow: 24,
+                    p: 1,
+                  }}
+                >
+                  <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <IconButton onClick={() => setOpenDisclaimer(false)} size="small">
+                      <CloseIcon sx={{ color: 'red' }}/>
+                    </IconButton>
+                  </Box>
+                  <Typography sx={{ fontSize: '0.8rem', color: '#555' }}>
+                    📢 <strong>Disclaimer – To-Let Section:</strong> The To-Let section is intended only as a listing platform for property owners and tenants. Handyman App does not verify the accuracy, legality, availability, or authenticity of rental listings posted by users. We do not act as a broker or agent.
+                    <br />
+                      All rental inquiries, agreements, and transactions are solely between the property owner and the interested party. Users are advised to verify property details independently before proceeding. Handyman App is not responsible for any disputes, financial losses, or legal issues arising from such interactions.
+                  </Typography>
+                </Box>
+              </Modal>
+              </>
             )}
 
             {(tabType !== 'news' || isAdmin) ? (
               <>
-                <Divider sx={{ my: 2 }} />
+                <Divider />
                 <Box className="chat-input-container">
                   {/* <IconButton onClick={() => setShowEmojiPicker((prev) => !prev)}><InsertEmoticonIcon /></IconButton> */}
                   <TextField placeholder="Type your message..." variant="outlined" size="small" fullWidth value={messageInput} onChange={(e) => setMessageInput(e.target.value)} />
@@ -598,6 +819,30 @@ const handleLikeClick = async (message) => {
 </Dialog>
       </>
           </Box>
+         <div 
+          style={{ 
+            display: 'flex', 
+            justifyContent: 'flex-end',  
+            alignItems: 'center', 
+            cursor: 'pointer', 
+            margin: '5px' 
+          }} 
+          onClick={() => {
+            localStorage.setItem('selectedTabType', tabType); 
+            localStorage.setItem('selectedTabCount', messageCounts[tabType]); 
+            navigate(`/profilePage/${userType}/${userId}`);
+          }}
+        >
+          <div style={{ 
+            fontSize: '20px', 
+            fontWeight: 'bold', 
+            textAlign: 'right', 
+            color: 'blue', 
+            textDecoration: 'underline' 
+          }}>
+            Back
+          </div>
+        </div>
         </div>
       </div>
     </>

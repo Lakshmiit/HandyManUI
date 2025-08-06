@@ -3649,7 +3649,7 @@ word-break: break-word;
 }
 
 .chat-container {
-  max-height: 380px;
+  max-height: 350px;
   overflow-y: auto;
   /* background-color: #e5ddd5; */
   padding: 16px;
