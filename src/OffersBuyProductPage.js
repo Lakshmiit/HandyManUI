@@ -61,6 +61,8 @@ const OffersBuyProduct = () => {
   });
   const [shouldBlink,setShouldBlink] = useState(false);
   const [deliveryInDays, setDeliveryInDays] = useState('');
+  const [numberOfStockAvailable, setNumberOfStockAvailable] = useState('');
+
   useEffect(() => {
     console.log(loading, productOptions, editingAddressId, buyProductId);
   }, [loading, productOptions, editingAddressId, buyProductId]);
@@ -135,6 +137,11 @@ const OffersBuyProduct = () => {
 
   const handleGetQuotation = async (e) => {
     e.preventDefault();
+
+     if (numberOfStockAvailable === 0) {
+    setQuantityError("No stock available.");
+    return;
+  }
 
     if (!chooseColor) {
         setColorError("Please Enter Select Color Field!");
@@ -238,20 +245,32 @@ const OffersBuyProduct = () => {
 
   const handleQuantityChange = (e) => {
     const value = e.target.value.trim();
+  if (Number(numberOfStockAvailable) === 0) {
+    setRequiredQuality("");
+    setQuantityError("No stock available.");
+    return;
+  }
 
-    if (value === "") {
-      setRequiredQuality("");
-      setQuantityError("Quantity is required.");
-      return;
-    }
+  if (value === "") {
+    setRequiredQuality("");
+    setQuantityError("Quantity is required.");
+    return;
+  }
 
-    if (/^[1-9]\d*$/.test(value)) {
-      setRequiredQuality(value);
-      setQuantityError(""); 
+  if (/^[1-9]\d*$/.test(value)) {
+    const qty = Number(value);
+
+    if (qty > Number(numberOfStockAvailable)) {
+      setQuantityError(`Only ${numberOfStockAvailable} left in stock.`);
     } else {
-      setQuantityError("Please enter a minimum one Number Of Quantity.");
+      setQuantityError("");
     }
-  };
+
+    setRequiredQuality(qty);
+  } else {
+    setQuantityError("Please enter a valid quantity.");
+  }
+};
 
   // Detect screen size for responsiveness
 useEffect(() => {
@@ -373,6 +392,7 @@ const fetchProducts = async () => {
       setRate(data.rate);
       setDiscount(data.discount);
       setCategory(data.category);
+      setNumberOfStockAvailable(data.numberOfStockAvailable);
       // setPriceAfterDiscount(data.priceAfterDiscount);
 
   } catch (error) {
@@ -757,7 +777,16 @@ useEffect(() => {
                   onChange={handleQuantityChange}
                   placeholder="Enter Required Quantity"
                   required
+                  disabled={numberOfStockAvailable === 0}
                 />
+                {/* <input
+                  type="text"
+                  className="form-control"
+                  value={requiredQuality}
+                  onChange={handleQuantityChange}
+                  placeholder="Enter Required Quantity"
+                  required
+                /> */}
                 {quantityError && <p style={{ color: "red" }}>{quantityError}</p>}
               </div>
 

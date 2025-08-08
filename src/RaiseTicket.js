@@ -95,12 +95,15 @@ const [serviceUnavailable, setServiceUnavailable] = useState(false);
   
   useEffect(() => {
   const primary = addresses.find(addr => addr.type === "primary");
-  if (primary?.district?.toLowerCase() === "east godavari") {
-    setServiceUnavailable(true);
+  const district = primary?.district?.toLowerCase();
+
+  if (district && district !== "visakhapatnam") {
+    setServiceUnavailable(true);  
   } else {
     setServiceUnavailable(false);
   }
 }, [addresses]);
+
 
 
 useEffect(() => {

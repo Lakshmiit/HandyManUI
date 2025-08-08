@@ -83,6 +83,7 @@ zipCode: '',
 const [showProductModal, setShowProductModal] = useState(false);
 const [shouldBlink,setShouldBlink] = useState(false);
 const [deliveryInDays, setDeliveryInDays] = useState('');
+const [numberOfStockAvailable, setNumberOfStockAvailable] = useState('');
 
 
  // Check if there's state passed from ViewProduct page
@@ -355,23 +356,35 @@ const handleColorChange = (e) => {
     setColorError("Please choose a color from the given options!");
   }
 };
-  
-  const handleQuantityChange = (e) => {
+
+   const handleQuantityChange = (e) => {
     const value = e.target.value.trim();
+  if (Number(numberOfStockAvailable) === 0) {
+    setRequiredQuality("");
+    setQuantityError("No stock available.");
+    return;
+  }
 
-    if (value === "") {
-      setRequiredQuality("");
-      setQuantityError("Quantity is required.");
-      return;
-    }
+  if (value === "") {
+    setRequiredQuality("");
+    setQuantityError("Quantity is required.");
+    return;
+  }
 
-    if (/^[1-9]\d*$/.test(value)) {
-      setRequiredQuality(value);
-      setQuantityError(""); 
+  if (/^[1-9]\d*$/.test(value)) {
+    const qty = Number(value);
+
+    if (qty > Number(numberOfStockAvailable)) {
+      setQuantityError(`Only ${numberOfStockAvailable} left in stock.`);
     } else {
-      setQuantityError("Please enter a minimum one Number Of Quantity.");
+      setQuantityError("");
     }
-  };
+
+    setRequiredQuality(qty);
+  } else {
+    setQuantityError("Please enter a valid quantity.");
+  }
+};
 
 
   // const handleAddToCart = async (e) => {
@@ -691,6 +704,7 @@ const fetchProductsByCategory = async (selectedCategory) => {
     setDiscount("");
     setId("");
     setDeliveryInDays("");
+    setNumberOfStockAvailable("");
   } catch (error) {
     console.error("Error fetching products:", error);
     setNoProductNameError("No products found for the selected category. Please select another category.");
@@ -722,6 +736,8 @@ const handleProductChange = (e) => {
     setDiscount(selectedProduct.discount || "");
     setId(selectedProduct.id || "");
     setDeliveryInDays(selectedProduct.deliveryInDays || "");
+    setNumberOfStockAvailable(selectedProduct.numberOfStockAvailable || "");
+
   }
 };
 
@@ -1211,6 +1227,27 @@ useEffect(() => {
                 />
                 {quantityError && <p style={{ color: "red" }}>{quantityError}</p>}
               </div>
+
+              {/* <div className="col-md-6">
+              <label>
+                Required Quantity <span className="req_star">*</span>
+              </label>
+              <select
+                className="form-control"
+                value={requiredQuality}
+                onChange={handleQuantityChange}
+                disabled={isAddressInvalid}
+                required
+              >
+                <option value="">Select Quantity</option>
+                {[1, 2, 3, 4, 5].map((qty) => (
+                  <option key={qty} value={qty}>
+                    {qty}
+                  </option>
+                ))}
+              </select>
+              {quantityError && <p style={{ color: "red" }}>{quantityError}</p>}
+            </div> */}
 
               <div className="col-md-6">
                 <label>
