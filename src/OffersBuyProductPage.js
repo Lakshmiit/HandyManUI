@@ -62,7 +62,7 @@ const OffersBuyProduct = () => {
   const [shouldBlink,setShouldBlink] = useState(false);
   const [deliveryInDays, setDeliveryInDays] = useState('');
   const [numberOfStockAvailable, setNumberOfStockAvailable] = useState('');
-
+  const [disableBuy, setDisableBuy] = useState(false);
   useEffect(() => {
     console.log(loading, productOptions, editingAddressId, buyProductId);
   }, [loading, productOptions, editingAddressId, buyProductId]);
@@ -248,12 +248,14 @@ const OffersBuyProduct = () => {
   if (Number(numberOfStockAvailable) === 0) {
     setRequiredQuality("");
     setQuantityError("No stock available.");
+    setDisableBuy(true);
     return;
   }
 
   if (value === "") {
     setRequiredQuality("");
     setQuantityError("Quantity is required.");
+    setDisableBuy(true);
     return;
   }
 
@@ -262,13 +264,16 @@ const OffersBuyProduct = () => {
 
     if (qty > Number(numberOfStockAvailable)) {
       setQuantityError(`Only ${numberOfStockAvailable} left in stock.`);
+      setDisableBuy(true);
     } else {
       setQuantityError("");
+      setDisableBuy(false);
     }
 
     setRequiredQuality(qty);
   } else {
     setQuantityError("Please enter a valid quantity.");
+    setDisableBuy(true);
   }
 };
 
@@ -766,7 +771,7 @@ useEffect(() => {
   {colorError && <p style={{ color: "red" }}>{colorError}</p>}
 </div>
 
-              <div className="col-md-6">
+              {/* <div className="col-md-6">
                 <label>
                   Required Quantity <span className="req_star">*</span>
                 </label>
@@ -786,9 +791,30 @@ useEffect(() => {
                   onChange={handleQuantityChange}
                   placeholder="Enter Required Quantity"
                   required
-                /> */}
+                /> 
                 {quantityError && <p style={{ color: "red" }}>{quantityError}</p>}
-              </div>
+              </div> */}
+
+              <div className="col-md-6">
+              <label>
+                Required Quantity <span className="req_star">*</span>
+              </label>
+              <select
+                className="form-control"
+                value={requiredQuality}
+                onChange={handleQuantityChange}
+                disabled={isAddressInvalid}
+                required
+              >
+                <option value="">Select Quantity</option>
+                {[1, 2, 3, 4, 5].map((qty) => (
+                  <option key={qty} value={qty}>
+                    {qty}
+                  </option>
+                ))}
+              </select>
+              {quantityError && <p style={{ color: "red" }}>{quantityError}</p>}
+            </div>
 
               <div className="col-md-6">
                 <label>
@@ -1164,7 +1190,7 @@ useEffect(() => {
             <button
                 type="button"
                 className="text-white text-end btn btn-warning"
-                onClick={handleGetQuotation} disabled={isAddressInvalid}
+                onClick={handleGetQuotation} disabled={isAddressInvalid || disableBuy}
               >
                 Buy Product
               </button> 

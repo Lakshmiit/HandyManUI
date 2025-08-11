@@ -100,8 +100,8 @@ const AdminProductList = () => {
   }
 
   return (
-    <div className="container my-5">
-      <h2 className="text-center mb-4">All Products</h2>
+    <div className="container my-2">
+      <h2 className="text-center mb-2">All Products</h2>
       <div className="d-flex align-items-center justify-content-between">
         {/* Category */}
         <div className="form-group text-start col-md-2 ml-2 m-5 mb-2">
@@ -179,6 +179,7 @@ const AdminProductList = () => {
                 <th>Discount</th>
                 <th>After Discount Price</th>
                 <th>Requested By</th>
+                <th>Stock Left</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -201,13 +202,14 @@ const AdminProductList = () => {
                       'N/A'
                     )}
                   </td>
+                  <td>{product.numberOfStockAvailable <= 0 ? 'No Stock' : product.numberOfStockAvailable}</td>
                   <td className="actions-cell">
                     <Link to={`/adminUpdateProduct/${product.id}/Admin`} className="btn btn-warning" title="Edit">
                       <FaEdit />
                     </Link>
                     <Link to={`/adminProductApproval/${product.id}/Admin`} className="btn btn-info mx-2" title="View">
                       <FaEye />
-                    </Link>
+                    </Link>       
                     <button
                       onClick={() => handleDelete(product.id)}
                       className="btn btn-danger" title="Delete"
