@@ -23,7 +23,7 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 // import Banner1 from './img/Ads1.jpeg';
 // import BannerVideo from './img/TicketVideo.mp4';
-import BannerVideo from './img/VARALAKSHMI.mp4';
+import BannerVideo from './img/Independence Day.mp4';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 // import Banner3 from './img/banner-4.jpg'; 
@@ -222,17 +222,25 @@ const [isMuted, setIsMuted] = useState(true);
 const [groupedProducts, setGroupedProducts] = useState({});
 const [expandedCategories, setExpandedCategories] = useState({});
  const [unreadCount, setUnreadCount] = useState(0);
+const [messageCounts, setMessageCounts] = useState({
+  news:     0,
+  buysell:  0,
+  tolet:    0
+});
 
-// useEffect(() => {
-//   const selectedTabType = localStorage.getItem('selectedTabType');
-//   const selectedTabCount = localStorage.getItem('selectedTabCount');
+useEffect(() => {
+  const storedCounts = localStorage.getItem("chatCounts");
+  if (storedCounts) {
+    try {
+      const parsedCounts = JSON.parse(storedCounts);
+      setMessageCounts(parsedCounts); 
+    } catch (err) {
+      console.error("Error parsing stored counts:", err);
+    }
+  }
+}, []);
 
-//   if (selectedTabType && selectedTabCount) {
-//     console.log('Tab Type:', selectedTabType); // e.g. 'news'
-//     console.log('Message Count:', selectedTabCount); // e.g. '5'
-//   }
-// }, []);
-
+const totalUnreadMessages = messageCounts.news + messageCounts.buysell + messageCounts.tolet;
 
   const toggleMute = () => {
     const video = videoRef.current;
@@ -243,8 +251,8 @@ const [expandedCategories, setExpandedCategories] = useState({});
   };
 
 useEffect(() => {
-  console.log(showMenu, productData, products, selectedCategory, addresses, editingAddressId, addressData);
-}, [showMenu, productData, products, selectedCategory, addresses, editingAddressId, addressData]);
+  console.log(unreadCount, showMenu, productData, products, selectedCategory, addresses, editingAddressId, addressData);
+}, [unreadCount, showMenu, productData, products, selectedCategory, addresses, editingAddressId, addressData]);
     // const bottomRefs = useRef({});
 // useEffect(() => {
 //   bottomRefs.current = {};
@@ -263,27 +271,6 @@ useEffect(() => {
       });
     }
   };
-// useEffect(() => {
-//   const calculateUnread = async () => {
-//     const storedType = localStorage.getItem('selectedTabType');
-//     const storedCount = Number(localStorage.getItem('selectedTabCount')) || 0;
-
-//     if (!storedType) return;
-
-//     try {
-//       const res = await fetch(`https://handymanapiv2.azurewebsites.net/api/ChatBot/GetChatMessages`);
-//       if (!res.ok) throw new Error('Failed to fetch total messages');
-//       const data = await res.json();
-//       const totalCount = data.length;
-
-//       const diff = totalCount - storedCount;
-//       setUnreadCount(diff > 0 ? diff : 0);
-//     } catch (error) {
-//       console.error('Error calculating unread count:', error);
-//     }
-//   };
-//   calculateUnread();
-// }, []);
 
   useEffect(() => {
   const fetchUnreadCount = async () => {
@@ -682,53 +669,41 @@ const fetchImageUrl = async (photoId) => {
        {isMobile && (
         <div className="d-flex align-items-center">
           {/* Fixed Chat Icon at bottom right */}
-    <div
-      className="blinking-icon"
-      style={{
-        backgroundColor: '#03c03cb3',
-        borderRadius: '50%',
-        padding: '8px',
-        cursor: 'pointer',
-        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.3)',
-        position: 'relative', 
-      }}
-      onClick={() => navigate(`/chatPage/${userType}/${userId}`)}
-    >
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <AnnouncementIcon style={{ color: 'white', fontSize: '28px' }} />
-        {/* <span
+            <div
+          className="blinking-icon"
           style={{
-            color: 'red',
-            fontSize: '14px',
-            fontWeight: 'bold',
-            marginTop: '2px',
-            textAlign: 'center',
-            lineHeight: '1.2',
-            whiteSpace: 'pre-line',
-          }}
-        >
-          Free{'\n'}Services
-        </span> */}
-      </div>
-
-      {unreadCount > 0 && (
-        <span
-          style={{
-            position: 'absolute',
-            top: '-6px',
-            right: '-6px',
-            background: 'red',
-            color: 'white',
+            backgroundColor: '#03c03cb3',
             borderRadius: '50%',
-            padding: '2px 6px',
-            fontSize: '12px',
-            fontWeight: 'bold',
+            padding: '8px',
+            cursor: 'pointer',
+            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.3)',
+            position: 'relative', 
           }}
+          onClick={() => navigate(`/chatPage/${userType}/${userId}`)}
         >
-          {unreadCount}
-        </span>
-      )}
-    </div>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <AnnouncementIcon style={{ color: 'white', fontSize: '28px' }} />  
+          </div>
+
+          {totalUnreadMessages > 0 && (
+            <span
+              style={{
+                position: 'absolute',
+                top: '-6px',
+                right: '-6px',
+                background: 'red',
+                color: 'white',
+                borderRadius: '50%',
+                padding: '2px 6px',
+                fontSize: '12px',
+                fontWeight: 'bold',
+              }}
+            >
+              {totalUnreadMessages}
+            </span>
+          )}
+        </div>
+
   {/* Profile Image */}
   <div className="profile-img-wrapper">
     <img
