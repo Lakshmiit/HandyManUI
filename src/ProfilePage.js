@@ -23,7 +23,7 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 // import Banner1 from './img/Ads1.jpeg';
 // import BannerVideo from './img/TicketVideo.mp4';
-import BannerVideo from './img/Independence Day.mp4';
+import BannerVideo from './img/AdsVideo.mp4';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 // import Banner3 from './img/banner-4.jpg'; 
@@ -226,8 +226,8 @@ const [messageCounts, setMessageCounts] = useState({
   news:     0,
   buysell:  0,
   tolet:    0
-});
-
+});   
+   
 useEffect(() => {
   const storedCounts = localStorage.getItem("chatCounts");
   if (storedCounts) {
