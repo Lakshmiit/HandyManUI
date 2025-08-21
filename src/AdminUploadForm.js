@@ -142,7 +142,7 @@ useEffect(() => {
       Units: units,
       rate: parseFloat(rate),
       discount: parseFloat(discount),
-      afterDiscountPrice: parseFloat(rate) - parseFloat(discount),
+      afterDiscount: (parseFloat(rate) - (parseFloat(rate) * parseFloat(discount) / 100)).toString(),
       specifications: specifications.map(spec => ({
         label: spec.label,
         value: spec.value,
@@ -262,7 +262,6 @@ useEffect(() => {
               </select>
             </div>
 
-
             {/* Catalogue */}
             <div className="form-group">
               <label>Catalogue<span className="req_star">*</span></label>
@@ -361,6 +360,17 @@ useEffect(() => {
                 placeholder="If any Discount Enter Percentage"
               />
             </div>
+
+            {/* After Discount Price */}
+            <div className="form-group">
+              <label>After Discount Price</label>
+              <input
+                type="text"
+                className="form-control"
+                value={Math.round(Number(rate || 0) - (Number(rate || 0) * Number((discount || "0").toString().replace("%", "")) / 100))}
+                placeholder="If any Discount Enter Percentage"
+              />
+            </div>   
 
             {/* Product Specifications */}
             <div className="form-group">

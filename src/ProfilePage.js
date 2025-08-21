@@ -23,9 +23,9 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 // import Banner1 from './img/Ads1.jpeg';
 // import BannerVideo from './img/TicketVideo.mp4';
-import BannerVideo from './img/AdsVideo.mp4';
-import VolumeOffIcon from '@mui/icons-material/VolumeOff';
-import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+// import BannerVideo from './img/AdsVideo.mp4';
+// import VolumeOffIcon from '@mui/icons-material/VolumeOff';
+// import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 // import Banner3 from './img/banner-4.jpg'; 
 // import Banner2 from './img/Ads2.jpeg';
 import { useNavigate, useParams } from "react-router-dom"; 
@@ -50,6 +50,7 @@ import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 // import BuildIcon from '@mui/icons-material/Build';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+// import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 // import TimelapseIcon from '@mui/icons-material/Timelapse';
 // import FaceRetouchingNaturalIcon from '@mui/icons-material/FaceRetouchingNatural';
 // import WhatsAppIcon from '@mui/icons-material/WhatsApp';
@@ -57,6 +58,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 const getMenuList = (userType, userId, category, district ,ZipCode,technicianFullName, isMobile) => {
   const iconSize = isMobile ? 20  : 40;
   const customer = [
+      // { MenuIcon: <ShoppingCartIcon sx={{ fontSize: 40, color: "white" }}/>, MenuTitle: isMobile ? "Lakshmi Grocery" :  "Lakshmi Home Grocery", TargetUrl: `/grocery/${userType}/${userId}`},
       { MenuIcon: <SupportAgentIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
       { MenuIcon: <PersonOutlineIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Book Technician", TargetUrl: `/bookTechnician/${userType}/${userId}` },
       { MenuIcon: <StorefrontIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
@@ -74,8 +76,8 @@ const getMenuList = (userType, userId, category, district ,ZipCode,technicianFul
     }] : []),
       ];
 
-
       const admin = [
+      // { MenuIcon: <ShoppingCartIcon sx={{ fontSize: 40 }}/>, MenuTitle: isMobile ? "Lakshmi Grocery" :  "Lakshmi Home Grocery", TargetUrl: `/grocery/${userType}/${userId}`},
       { MenuIcon: <SupportAgentIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
       { MenuIcon: <PersonOutlineIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Book Technician", TargetUrl: `/bookTechnician/${userType}/${userId}` },
       { MenuIcon: <StorefrontIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
@@ -217,8 +219,8 @@ const ProfilePage = () => {
     state: '',
     district: '',
     });
- const videoRef = useRef(null);
-const [isMuted, setIsMuted] = useState(true);
+//  const videoRef = useRef(null);
+// const [isMuted, setIsMuted] = useState(true);
 const [groupedProducts, setGroupedProducts] = useState({});
 const [expandedCategories, setExpandedCategories] = useState({});
  const [unreadCount, setUnreadCount] = useState(0);
@@ -242,13 +244,13 @@ useEffect(() => {
 
 const totalUnreadMessages = messageCounts.news + messageCounts.buysell + messageCounts.tolet;
 
-  const toggleMute = () => {
-    const video = videoRef.current;
-    if (video) {
-      video.muted = !isMuted; 
-      setIsMuted(!isMuted);
-    }
-  };
+  // const toggleMute = () => {
+  //   const video = videoRef.current;
+  //   if (video) {
+  //     video.muted = !isMuted; 
+  //     setIsMuted(!isMuted);
+  //   }
+  // };
 
 useEffect(() => {
   console.log(unreadCount, showMenu, productData, products, selectedCategory, addresses, editingAddressId, addressData);
@@ -293,37 +295,67 @@ useEffect(() => {
   }
 }, [userId, userType]);
 
- const handleCategoryClick = async (category) => {
-        const { value } = category; 
-        //  if (value === 'Blush & Beauty') {
-        //   navigate(`/beautyIcons/${userType}/${userId}`);
-        //   return; 
-        // }
-        try {
-          setSelectedCategory(category);
-          setProducts([]);
-          setError("");
-          const encodedCategory = encodeURIComponent(value);
-          const url = `https://handymanapiv2.azurewebsites.net/api/Product/GetProductsByCategory?Category=${encodedCategory}`;
-          const response = await axios.get(url);
-          const productsData = response.data;
-          if (productsData.length === 0) {
-            setError("Oops! No products found for this category.");
-            console.log("No products found.");
-          } else {
-            setProducts(productsData);
-          }
-          localStorage.setItem('encodedCategory', encodedCategory);
-          navigate(`/offers/${userType}/${userId}`, {
-            state: encodedCategory,
-          });
-          console.log('encodedCategory:', encodedCategory);
-        } catch (error) {
-          console.error('Error fetching products:', error);
-          setProducts([]);
-          setError(`Oops! No products found for ${value} category.`);
-        }
-      };
+//  const handleCategoryClick = async (category) => {
+//         const { value } = category; 
+//         //  if (value === 'Blush & Beauty') {
+//         //   navigate(`/beautyIcons/${userType}/${userId}`);
+//         //   return; 
+//         // }
+//         try {
+//           setSelectedCategory(category);
+//           setProducts([]);
+//           setError("");
+//           const encodedCategory = encodeURIComponent(value);
+//           const url = `https://handymanapiv2.azurewebsites.net/api/Product/GetProductsByCategory?Category=${encodedCategory}`;
+//           const response = await axios.get(url);
+//           const productsData = response.data;
+//           if (productsData.length === 0) {
+//             setError("Oops! No products found for this category.");
+//             console.log("No products found.");
+//           } else {
+//             setProducts(productsData);
+//           }
+//           localStorage.setItem('encodedCategory', encodedCategory);
+//           navigate(`/offers/${userType}/${userId}`, {
+//             state: encodedCategory,
+//           });
+//           console.log('encodedCategory:', encodedCategory);
+//         } catch (error) {
+//           console.error('Error fetching products:', error);
+//           setProducts([]);
+//           setError(`Oops! No products found for ${value} category.`);
+//         }
+//       };
+
+const handleCategoryClick = async (category) => {
+  const { value } = category; 
+  try {
+    setSelectedCategory(category);
+    setProducts([]);
+    setError("");
+
+    const encodedCategory = encodeURIComponent(value);
+    const url = `https://handymanapiv2.azurewebsites.net/api/Product/GetProductsByCategory?Category=${encodedCategory}`;
+    const response = await axios.get(url);
+
+    const productsData = response.data;
+    if (!productsData || productsData.length === 0) {
+      setError("Oops! No products found for this category.");
+    } else {
+      setProducts(productsData);
+    }
+
+    localStorage.setItem('encodedCategory', encodedCategory);
+    navigate(`/offers/${userType}/${userId}`, {
+      state: { category: encodedCategory }, 
+    });
+
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    setProducts([]);
+    setError(`Oops! No products found for ${value} category.`);
+  }
+};
 
         useEffect(() => {
           const fetchAllTickets = async () => {
@@ -666,7 +698,7 @@ const fetchImageUrl = async (photoId) => {
     </div>
         <div className="hdr_icns d-flex align-items-center ">
       <div id="dropdown-container" className="dropdown-container" style={{ position: "relative" }}>
-       {isMobile && (
+       {/* {isMobile && ( */}
         <div className="d-flex align-items-center">
           {/* Fixed Chat Icon at bottom right */}
             <div
@@ -714,7 +746,7 @@ const fetchImageUrl = async (photoId) => {
     />
   </div>
 </div>
-)}
+{/* )} */}
 </div>
     </div>
     </header>
@@ -897,10 +929,10 @@ const fetchImageUrl = async (photoId) => {
   <div
     className="mobile-top-icons position-fixed start-0 end-0 bg-white border-bottom shadow-sm"
     style={{
-      top: '80px',  
+      top: '80px',
       zIndex: 1050,
-      height: '70px',
-      padding: '10px 12px',
+      height: '90px',
+      padding: '8px 10px',
       overflowY: 'hidden',
     }}
   >
@@ -910,27 +942,48 @@ const fetchImageUrl = async (photoId) => {
           key={index}
           href={menu.TargetUrl}
           className="d-flex flex-column align-items-center justify-content-center text-decoration-none text-dark ms-1"
-          style={{ minWidth: '10px', flex: '0 0 auto' }}  
+          style={{ minWidth: '10px', flex: '0 0 auto' }}
         >
-          {React.cloneElement(menu.MenuIcon, { sx: { fontSize: 28 } })}
-          <small style={{
-          fontSize: "12px",
-          fontFamily: 'Poppins',
-          textAlign: 'center',
-          lineHeight: '16px'
-        }}>
-          {menu.MenuTitle.split(" ").map((word, index) => (
-            <React.Fragment key={index}>
-              {word}
-              {index !== menu.MenuTitle.split(" ").length - 1 && <br />}
-            </React.Fragment>
-          ))}
-        </small>
+          <div
+            style={{
+              backgroundColor: '#ffc107', 
+              borderRadius: '50%',        
+              padding: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '40px',
+              height: '40px',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+            }}
+          >
+            {React.cloneElement(menu.MenuIcon, { sx: { fontSize: 22, color: '#000' } })}
+          </div>
+          <small
+            style={{
+              fontSize: '12px',
+              fontFamily: "'Baloo 2', cursive", 
+              fontWeight: 'bold',
+              textAlign: 'center',
+              lineHeight: '14px',
+              marginTop: '4px',
+              color: '#333',
+              letterSpacing: '0.5px',
+            }}
+          >
+            {menu.MenuTitle.split(' ').map((word, idx) => (
+              <React.Fragment key={idx}>
+                {word}
+                {idx !== menu.MenuTitle.split(' ').length - 1 && <br />}
+              </React.Fragment>
+            ))}
+          </small>
         </a>
       ))}
     </div>
   </div>
 )}
+
         {/* Address with Location */}
         <div className="col-md-9 bg-white">
         {profile && profile.fullName && profile.address && profile.zipCode && (
@@ -1154,6 +1207,7 @@ const fetchImageUrl = async (photoId) => {
         style={{
           width: isMobile ? '100px' : '130px',
           cursor: 'pointer',
+          userSelect: 'none',
         }}
       >
         <div>{cat.icon}</div>
@@ -1171,10 +1225,12 @@ const fetchImageUrl = async (photoId) => {
         </div>
       </div>
     ))}
-    {error && <div className="text-danger">{error}</div>}
   </div>
+
+  {error && <div className="text-danger mt-2">{error}</div>}
+
   {/* Arrow Buttons */}
-  <div className="d-flex justify-content-between ">
+  <div className="d-flex justify-content-between">
     <button
       className="bg-transparent border-0"
       style={{ color: '#000000' }}
@@ -1187,12 +1243,13 @@ const fetchImageUrl = async (photoId) => {
       style={{ color: '#000000' }}
       onClick={() => scroll('right')}
     >
-      <ArrowForwardIcon fontSize="medium"/>
+      <ArrowForwardIcon fontSize="medium" />
     </button>
   </div>
 </div>
+
       {/* Carousel */}
-              <div className="container">
+              {/* <div className="container">
                 <div className="mx-auto">
               <div
                 id="productCarousel"
@@ -1200,9 +1257,9 @@ const fetchImageUrl = async (photoId) => {
                 data-bs-ride="carousel"
                 data-bs-interval="6000"
               >
-                {/* Indicators */}
+                {/* Indicators 
                 <div className="carousel-indicators">
-                    {/* <button
+                    <button
                       type="button"
                       data-bs-target="#productCarousel"
                       data-bs-slide-to="0"
@@ -1215,21 +1272,21 @@ const fetchImageUrl = async (photoId) => {
                       data-bs-target="#productCarousel"
                       data-bs-slide-to="1"
                       aria-label="Slide 2"
-                    ></button> */}
-                    {/* <button
+                    ></button>
+                    <button
                     type="button"
                     data-bs-target="#productCarousel"
                     data-bs-slide-to="2"
                     aria-label="Slide 3" 
-                  ></button> */}
-                   {/* <button
+                  ></button>
+                   <button
                     type="button"
                     data-bs-target="#productCarousel"
                     data-bs-slide-to="3"
                     aria-label="Slide 4" 
-                  ></button> */}
+                  ></button>
                 </div>
-                {/* Carousel items */}
+                {/* Carousel items 
                 <div className="carousel-inner">
                   <div className="carousel-item active">
                     <video
@@ -1261,7 +1318,7 @@ const fetchImageUrl = async (photoId) => {
                       {isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
                     </button>
                 </div>
-                  {/* <div className="carousel-item active">
+                  <div className="carousel-item active">
                   <img
                     src={Banner1}
                     className="d-block w-100 img-fluid rounded"
@@ -1276,18 +1333,18 @@ const fetchImageUrl = async (photoId) => {
                     style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
                     alt="Slide 2"
                   />
-                </div> */}
-                {/* <div className="carousel-item">
+                </div>
+                <div className="carousel-item">
                   <img
                     src={Banner3}
                     className="d-block w-100 img-fluid rounded"
                     style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
                     alt="Slide 3"
                   />
-                </div> */}
+                </div>
               </div>
-                {/* Controls */}
-                {/* <button
+                {/* Controls 
+                <button
                   className="carousel-control-prev"
                   type="button"
                   data-bs-target="#productCarousel"
@@ -1302,13 +1359,13 @@ const fetchImageUrl = async (photoId) => {
                   data-bs-slide="next">
                   <span className="carousel-control-next-icon custom-carousel-icon" aria-hidden="true"></span>
                   <span className="visually-hidden">Next</span>
-                </button> */}
+                </button>
               </div>
               </div>
-              </div>
+              </div> */}
 
 <h4 style={{ color: '#ff5722', fontFamily: 'Poppins, sans-serif', fontWeight: 700,fontSize: '22px', textTransform: 'uppercase',
-    letterSpacing: '1px', textAlign: 'center', marginTop: '1px', marginBottom: '1px'}}>
+    letterSpacing: '1px', textAlign: 'center', marginBottom: '1px'}}>
    🎉 Top Deals For You! 🎉
 </h4>
 {/* Products Display */}
@@ -1399,60 +1456,6 @@ const fetchImageUrl = async (photoId) => {
       );
     })}
 </div>
-      {/* <div
-  className="product-scroll-wrapper"
-  ref={productScrollRef}>
-  <div className="product-row">
-    {productData &&
-      productData
-        .filter((product) => {
-          const productName = product.productName?.toLowerCase().trim();
-          const query = searchQuery.toLowerCase().trim();
-          const normalize = (str) => (str.endsWith('s') ? str.slice(0, -1) : str);
-          return productName.includes(query) || normalize(productName).includes(normalize(query));
-        })
-        .map((product) => {
-          const discountedPrice =
-            product.rate && product.discount
-              ? (product.rate - (product.rate * product.discount) / 100).toFixed(0)
-              : product.rate;
-          return (
-            <div
-  className="product-card"
-  onClick={() => setSelectedProduct(product)}
-  style={{ cursor: 'pointer' }}
->
-  {product.discount ? (
-    <div className="discount-badge-wrapper">
-      <span className="discount-badge">{product.discount}% OFF</span>
-    </div>
-  ) : null}
-
-  <div className="image-container">
-    {loadingStatus[product.id] ? (
-      <div className="image-placeholder">Loading...</div>
-    ) : imageUrls[product.id]?.length > 0 ? (
-      <img
-        src={`data:image/jpeg;base64,${imageUrls[product.id][0].imageData}`}
-        className="product-image"
-        alt="product"
-      />
-    ) : (
-      <div className="image-placeholder">No Image</div>
-    )}
-  </div>
-
-  <div className="product-info">
-    <h6 className="product-name">{product.productName.toUpperCase()}</h6>
-    <div className="product-price">Rs {discountedPrice} /-</div>
-    <div className="text-start">
-    </div>
-  </div>
-</div>
-          );
-        })}
-  </div>
-</div> */}
 
  {/* Selected Product Display */}
 {selectedProduct && (
@@ -1534,60 +1537,6 @@ const fetchImageUrl = async (photoId) => {
 </div>
 </div>
 </div>
-  // <div className="custom-modal-backdrop" onClick={() => setSelectedProduct(null)}>
-  //   <div className="custom-modal-content" onClick={(e) => e.stopPropagation()}>
-  //     <button className="close-button" onClick={() => setSelectedProduct(null)}>&times;</button>
-  //     {/* <div className="custom-card"> */}
-  //       <div className="d-flex">
-  //         <div style={{ flex: '0 0 55%' }}>
-  //           {loadingStatus[selectedProduct.id] ? (
-  //             <div className="d-flex justify-content-center align-items-center" style={{ height: '250px', background: '#f8f9fa' }}>
-  //               <div className="spinner-border text-secondary" role="status">
-  //                 <span className="visually-hidden">Loading...</span>
-  //               </div>
-  //             </div>
-  //           ) : imageUrls[selectedProduct.id]?.length > 0 ? (
-  //             <Carousel>
-  //               {imageUrls[selectedProduct.id].map((img, index) => (
-  //                 <Carousel.Item key={index}>
-  //                   <img
-  //                     src={`data:image/jpeg;base64,${img.imageData}`}
-  //                     className="card-img-top object-fit-cover"
-  //                     style={{ height: '350px', width: '300px', objectFit: 'cover' }}
-  //                     alt={`product-image-${index}`}
-  //                     onClick={() => handleImageClick(`data:image/jpeg;base64,${img.imageData}`)}
-  //                   />
-  //                 </Carousel.Item>
-  //               ))}
-  //             </Carousel>
-  //           ) : (
-  //             <div className="d-flex justify-content-center align-items-center" style={{ height: '250px', background: '#f8f9fa' }}>
-  //               No Image
-  //             </div>
-  //           )}
-  //         </div>
-  //         <div>
-  //           <h6 className="mb-1 fw-bold" style={{ fontFamily: "Rubik" }}>{selectedProduct.productName.toUpperCase()}</h6>
-  //           <div className="small text-primary fw-bold">Rs {(selectedProduct.rate - (selectedProduct.rate * selectedProduct.discount) / 100).toFixed(0)} /-</div>
-  //           <div className="small text-muted fw-bold" style={{ textDecoration: 'line-through' }}>MRP: Rs {selectedProduct.rate} /-</div>
-  //           <div className=" small text-danger fw-bold">Discount: {selectedProduct.discount}%</div>
-  //            <div className="small fw-bold m-1 fs-6" style={{ color: '#7851a9', fontFamily: "Italianno, cursive" }}> <LocalShippingIcon style={{ color: '#f88379', fontSize: '1.25rem' }} /> Free Delivery and Free Installation</div>
-  //           <div>
-  //           <span className="badge text-primary">✔️ Genuine Product</span>
-  //           <span className="badge text-secondary">↩️ Easy Returns</span>
-  //           <span className="badge text-success">💳 COD Available</span>
-  //         </div>
-  //           <button
-  //             className=" buy-now-btn mt-2"
-  //             onClick={() => navigate(`/offersBuyProduct/${userType}/${userId}/${selectedProduct.id}`)}
-  //           >
-  //             Buy Now
-  //           </button>
-  //         </div>
-  //       </div>
-  //     {/* </div> */}
-  //   </div>
-  // </div>
 )}
   {/* Dashboard Desktop */}
       {!isMobile ? (

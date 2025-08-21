@@ -14,6 +14,7 @@ const AdminProductList = () => {
   const [catalogue, setCatalogue] = useState("");
   const [loading, setLoading] = useState(true); // Loading state
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
   const rowsPerPage = 15;
   const navigate = useNavigate();
   // const {userType} = useParams();
@@ -31,6 +32,7 @@ const AdminProductList = () => {
             ? product.rate - (product.rate * product.discount) / 100
             : product.rate,
         }));
+        products.sort((a, b) => a.productName.localeCompare(b.productName));
         setProductData(products);
         setFilteredData(products);
   
@@ -67,23 +69,30 @@ const AdminProductList = () => {
 
   // Filter data based on selected category and catalogue
   useEffect(() => {
-    let filtered = productData;
+  let filtered = productData;
 
-    if (category) {
-      filtered = filtered.filter(product => product.category === category);
-    }
+  if (category) {
+    filtered = filtered.filter(product => product.category === category);
+  }
 
-    if (catalogue) {
-      filtered = filtered.filter(product => product.catalogue === catalogue);
-    }
+  if (catalogue) {
+    filtered = filtered.filter(product => product.catalogue === catalogue);
+  }
 
-    if (productstatus) {
-      filtered = filtered.filter(product => product.productStatus === productstatus);
-    }
+  if (productstatus) {
+    filtered = filtered.filter(product => product.productStatus === productstatus);
+  }
 
-    setFilteredData(filtered);
-    setCurrentPage(1); // Reset to first page when filter changes
-  }, [category, catalogue, productstatus, productData]);
+  if (searchTerm) {
+    filtered = filtered.filter(product =>
+      product.productName.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }
+
+  setFilteredData(filtered);
+  setCurrentPage(1); // Reset to first page when filter/search changes
+}, [category, catalogue, productstatus, searchTerm, productData]);
+
 
   // Handle page change
   const handlePageChange = (pageNumber) => {
@@ -96,15 +105,26 @@ const AdminProductList = () => {
   const currentProducts = filteredData.slice(indexOfFirstProduct, indexOfLastProduct);
 
   if (loading) {
-    return <div>Loading...</div>; // Show loading message while data is fetching
+    return <div>Loading...</div>; 
   }
 
   return (
-    <div className="container my-2">
-      <h2 className="text-center mb-2">All Products</h2>
+    <div className="container">
+      <h2 className="text-center">All Products</h2>
+       {/* Search Bar */}
+        <div className="form-group col-md-3">
+        <label>Search Products Here</label>
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Search by product name..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
       <div className="d-flex align-items-center justify-content-between">
         {/* Category */}
-        <div className="form-group text-start col-md-2 ml-2 m-5 mb-2">
+        <div className="form-group text-start col-md-2 m-2 ml-2 mb-3">
           <label>Category</label>
           <select
             className="form-control"
@@ -121,7 +141,7 @@ const AdminProductList = () => {
         </div>
 
         {/* Catalogue */}
-        <div className="form-group col-md-2 m-5 mb-2">
+        <div className="form-group col-md-2 m-2 mb-3">
           <label>Catalogues</label>
           <select
             className="form-control"
@@ -138,7 +158,7 @@ const AdminProductList = () => {
         </div>
 
         {/* Status */}
-        <div className="form-group col-md-2 m-5 mb-2">
+        <div className="form-group col-md-2 m-2 mb-3">
           <label>Product Status</label>
           <select
             className="form-control"
@@ -155,14 +175,15 @@ const AdminProductList = () => {
         </div>
 
         {/* Add New Product Button */}
-        <div className="text-end col-md-3 mb-1">
+        <div className="d-flex justify-content-end col-md-6 mb-1 gap-2">
   <button
     className="btn btn-success"
     onClick={() => navigate(`/adminUploadForm/Admin`)}
   >
     Add New Product
   </button> 
-</div>    
+</div>
+
       </div> 
 
       {filteredData.length === 0 ? (

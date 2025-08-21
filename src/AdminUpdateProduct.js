@@ -68,22 +68,7 @@ const [stockLeft, setStockLeft] = useState('');
                   setDeliveryInDays(productData.deliveryInDays);
                   setExistingFiles(productData.productPhotos || []);
                   setStockLeft(productData.numberOfStockAvailable);
-                  // setUploadedFiles(productData.productPhotos?.filter(photo => !!photo));
-        //           const imageRequests =
-        //   productData.uploadedFiles?.map((photo) => fetch(
-        //       `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
-        //     )
-        //     .then((res) => res.json())
-        //       .then((productData) => ({
-              
-        //         src: photo,
-        //         imageData: productData.imageData,
-        //       }))
-        //   ) || [];
-        // const images = await Promise.all(imageRequests);
-        // setUploadedFiles(images);
-                  // alert(uploadedFiles);
-                } catch (error) {
+                  } catch (error) {
                   setError(error.message);
               } finally {
                   setLoading(false);
@@ -219,7 +204,7 @@ const handleRemoveFile = (index) => {
       units: units,
       rate: parseFloat(rate),
       discount: parseFloat(discount),
-      afterDiscountPrice: parseFloat(rate) - parseFloat(discount),
+      afterDiscount: (parseFloat(rate) - (parseFloat(rate) * parseFloat(discount) / 100)).toString(),
       specifications: specifications.map(spec => ({
         label: spec.label,
         value: spec.value,
@@ -497,7 +482,7 @@ if (!product) {
               <input
                 type="text"
                 className="form-control"
-                value={rate}
+                value={`${rate} /-`}
                 onChange={(e) => setRate(e.target.value)}
                 placeholder="Enter Product Rate"
               />
@@ -509,8 +494,19 @@ if (!product) {
               <input
                 type="text"
                 className="form-control"
-                value={discount}
+                value={`${discount} %`}
                 onChange={(e) => setDiscount(e.target.value)}
+                placeholder="If any Discount Enter Percentage"
+              />
+            </div>
+
+            {/* After Discount Price */}
+            <div className="form-group">
+              <label>After Discount Price</label>
+              <input
+                type="text"
+                className="form-control"
+                value={`${Math.round(Number(rate || 0) - (Number(rate || 0) * Number((discount || "0").toString().replace("%", "")) / 100))} /-`}
                 placeholder="If any Discount Enter Percentage"
               />
             </div>
@@ -537,7 +533,7 @@ if (!product) {
                   />
                   <button
                     type="button"
-                    className="btn btn-danger"
+                    className="btn btn-danger mb-1"
                     onClick={() => handleRemoveSpecification(index)}
                   >
                     Remove
