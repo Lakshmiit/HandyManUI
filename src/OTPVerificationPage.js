@@ -81,7 +81,6 @@ useEffect(() => {
     //   }
     // };
   
-  
   //   const handleSubmit = (e) => {
   //     e.preventDefault();
   //     const enteredOtp = otp.join('');
@@ -107,7 +106,7 @@ useEffect(() => {
         setTimeLeft(90);
         setCanResend(false);
   
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Auth/sendotp`,{
+      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Auth/bhashsmssendotp`,{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -117,98 +116,19 @@ useEffect(() => {
       if (!response.ok) {
        throw new Error("Failed to resend otp.");
       }
-      alert('OTP Resend successfully.');
+      // alert('OTP Resend successfully.');
     } catch (error) {
       console.error("Error resend otp:", error);
       window.alert('Failed to resend otp. Please try again later.');    }
   };
   
-    const handleOTPVerification = async (e) => {
-      e.preventDefault();
-  
-      const enteredOtp = otp.join('');
-      if (enteredOtp.length < 6) {
-        setError('OTP is Required.');
-        return;
-      }
-      setError('');
-      console.log('Submitted OTP:', enteredOtp);
-      const payload = {
-        senderValue: mobile,
-        otp: enteredOtp,
-      };
-      try {
-   
-        const otpResponse = await fetch(`https://handymanapiv2.azurewebsites.net/api/Auth/validateotp`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-        });
-    
-        if (!otpResponse.ok) {
-          throw new Error("Failed to validate OTP.");
-        }
-
-       alert("OTP Valid Successfully!");
-        const verifyUserRes = await fetch(`https://handymanapiv2.azurewebsites.net/api/UserOnBoarding/GuestUserVerificationByMobileNo?mobileNo=${mobile}`);
-        
-        if (verifyUserRes.status === 200) {
-          const userData = await verifyUserRes.json();
-          console.log("User Data:", userData);
-      
-          if (userData?.profileType && userData?.userId) {
-            Navigate(`/profilePage/customer/${userData.userId}`, {
-              state: { profileType: userData.profileType, userData },
-            });
-          } else {
-            console.error("200 OK but missing fields in userData:", userData);
-          }
-      
-        } else if (verifyUserRes.status === 404) {
-          const errorText = await verifyUserRes.text();
-          console.warn(" User not found (404):", errorText);
-      
-          await handleGuestAddress(e);
-
-        } else {
-          const errorText = await verifyUserRes.text();
-          console.error(` Unhandled error (status ${verifyUserRes.status}):`, errorText);
-        }
-      
-        // if (!verifyUserRes.ok) {
-        //   throw new Error("Failed to verify user profile.");
-        // }
-    
-        // const userData = await verifyUserRes.json();
-    
-        // localStorage.setItem('mobile', mobile);
-        // localStorage.setItem('enteredOtp', enteredOtp);
-    
-        // const { profileType, userId } = userData; 
-
-        // if (profileType && userId) {
-        //   Navigate(`/profilePage/${profileType.toLowerCase()}/${userId}`, {
-        //     state: { mobile, userData },
-        //   });
-        // } else {
-        //   Navigate(`/customerRegistration`, {
-        //     state: { mobile, enteredOtp },
-        //   });
-        // }    
-      } catch (error) {
-        console.error("Error validate otp:", error);
-        // window.alert('Failed to validate otp. Please try again later.');
-      }
-    };
-
-    const handleGuestAddress = async (e) => {
+  const handleGuestAddress = async (e) => {
       e.preventDefault();
    
      const payload1 = {
        UserId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
        id: "string",
+       date: "string",
        UserName : "",
        UserPassword : "",     
        MobileNo : mobile,
@@ -237,6 +157,7 @@ useEffect(() => {
  const payload2 = {
        CustomerId : "string",
        id: "string",
+       date: "string",
        FirstName: "Guest",
        LastName  : "",
        MobileNumber : mobile,
@@ -247,10 +168,10 @@ useEffect(() => {
        GSTNumber: "",
        Address: "",
        Landmark: "",
-       State: "Andhra Pradesh",
-       StateId: "1",
-       District: "Visakhapatnam",
-       DistrictId: "110",
+       State: "",
+       StateId: "",
+       District: "",
+       DistrictId: "",
        ZipCode: "",
        CustomerPhotoId: "",
        UserId: newUserId,
@@ -269,13 +190,95 @@ useEffect(() => {
        if (!response2.ok) {
          throw new Error('Failed to Upload User Data.');
        }
-      //  alert('Customer registered successfully!');
        Navigate(`/profilePage/customer/${newUserId}`);
      } catch (error) {
        console.error('Registration Error:', error);
        window.alert('Failed to Registration. Please try again later.');
      }
    };
+
+
+    const handleOTPVerification = async (e) => {
+      e.preventDefault();
+  
+      const enteredOtp = otp.join('');
+      if (enteredOtp.length < 6) {
+        setError('OTP is Required.');
+        return;
+      }
+      setError('');
+      console.log('Submitted OTP:', enteredOtp);
+      const payload = {
+        senderValue: mobile,
+        otp: enteredOtp,
+      };
+      try {
+   
+        const otpResponse = await fetch(`https://handymanapiv2.azurewebsites.net/api/Auth/validateotp`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+    
+        if (!otpResponse.ok) {
+          throw new Error("Failed to validate OTP.");
+        }
+
+      //  window.alert("OTP Valid Successfully!");
+        const verifyUserRes = await fetch(`https://handymanapiv2.azurewebsites.net/api/UserOnBoarding/GuestUserVerificationByMobileNo?mobileNo=${mobile}`);
+        
+        if (verifyUserRes.status === 200) {
+          const userData = await verifyUserRes.json();
+          console.log("User Data:", userData);
+      
+          if (userData?.profileType && userData?.userId) {
+            Navigate(`/profilePage/${userData.profileType}/${userData.userId}`, {
+              state: { profileType: userData.profileType, userData },
+            });
+          } else {
+            console.error("200 OK but missing fields in userData:", userData);
+          }
+      
+        } else if (verifyUserRes.status === 404) {
+          const errorText = await verifyUserRes.text();
+          console.warn(" User not found (404):", errorText);
+      
+          await handleGuestAddress(e);                                 
+
+        } else {
+          const errorText = await verifyUserRes.text();
+          console.error(` Unhandled error (status ${verifyUserRes.status}):`, errorText);
+        }
+      
+        // if (!verifyUserRes.ok) {
+        //   throw new Error("Failed to verify user profile.");
+        // }
+    
+        // const userData = await verifyUserRes.json();
+    
+        // localStorage.setItem('mobile', mobile);
+        // localStorage.setItem('enteredOtp', enteredOtp);
+    
+        // const { profileType, userId } = userData; 
+
+        // if (profileType && userId) {
+        //   Navigate(`/profilePage/${profileType.toLowerCase()}/${userId}`, {
+        //     state: { mobile, userData },
+        //   });
+        // } else {
+        //   Navigate(`/customerRegistration`, {
+        //     state: { mobile, enteredOtp },
+        //   });
+        // }    
+      } catch (error) {
+        console.error("Error validate otp:", error);
+        window.alert('Failed to Validate OTP!. Please try again later.');
+      }
+    };
+
+    
 
    
   //  const handleVerificationAndAddress = async (e) => {
