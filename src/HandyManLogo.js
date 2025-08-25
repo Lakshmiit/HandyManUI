@@ -19,40 +19,52 @@ const LandingPage = () => {
 
     const totalDuration = wordRefs.current.length * 1500;
     const redirectTimeout = setTimeout(() => {
-      navigate('/loginnew');
+       navigate('/loginnew');
     }, totalDuration);
 
     return () => clearTimeout(redirectTimeout);
   }, [navigate]);
 
   return (
-    <div className="landing_page h-100 d-flex align-items-center py-2 flex-column">
-      <div className="spacer"></div>
-      <div className="w-auto p-4 text-center">
-        <div className="container">
-          <div className="row">
-            <div className="col">
-              <img src={HandyManCharacter} alt="Character" />
-            </div>
-          </div>
-          <div className="row">
-            <div className="col">
-              <img src={HandyManLogo} alt="Logo" />
-            </div>
-          </div>
-          <div className="row">
-            <div className="col">
-              <div id="ldr_txt" className="gry_fnt py-2">
-                <div ref={el => wordRefs.current[0] = el} className="word">• Your Home</div>
-                <div ref={el => wordRefs.current[1] = el} className="word">• Your Needs</div>
-                <div ref={el => wordRefs.current[2] = el} className="word">• Our Solutions •</div>
-              </div>
-            </div>
+   <div className="landing_page h-90 d-flex align-items-center py-2 flex-column mt-2">
+  <div className="spacer"></div>
+  <div className="w-auto p-4 text-center">
+    <div className="container">
+      <div className="row">
+        <div className="col">
+          <img 
+            src={HandyManCharacter} 
+            alt="Character" 
+            width="200" 
+            height="200" 
+            className="img-fluid"
+          />
+        </div>
+      </div>
+      <div className="row">
+        <div className="col">
+          <img 
+            src={HandyManLogo} 
+            alt="Logo" 
+            width="190" 
+            height="90" 
+            className="img-fluid"
+          />
+        </div>
+      </div>
+      <div className="row">
+        <div className="col">
+          <div id="ldr_txt" className="gry_fnt py-2">
+            <div ref={el => wordRefs.current[0] = el} className="word">• Your Home</div>
+            <div ref={el => wordRefs.current[1] = el} className="word">• Your Needs</div>
+            <div ref={el => wordRefs.current[2] = el} className="word">• Our Solutions </div>
           </div>
         </div>
       </div>
-      <div className="spacer"></div>
     </div>
+  </div>
+  <div className="spacer"></div>
+</div>
   );
 };
 

@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import './App.css';
-import { Modal, Button, Form, Carousel } from 'react-bootstrap';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { Modal, Button, Carousel } from 'react-bootstrap';
+// import LocationOnIcon from '@mui/icons-material/LocationOn';
+// import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import NotificationBell from "./NotificationsBell";
 import OrdersNotificationBell from "./OrdersBellNotifications";
 import TrackStatusNotificationBell from "./TrackStatusBellNotifications";
-import axios from "axios";
+import axios from "axios";    
 import Footer from './Footer.js';
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
@@ -30,8 +30,7 @@ import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStati
 // import Banner2 from './img/Ads2.jpeg';
 import { useNavigate, useParams } from "react-router-dom"; 
 import Logo from "./img/Hm_Logo 1.png";
-import SearchIcon from "@mui/icons-material/Search";
-// import ChatIcon from '@mui/icons-material/Chat';
+// import SearchIcon from "@mui/icons-material/Search";
 // import ArticleIcon from '@mui/icons-material/Article';
 import AnnouncementIcon from '@mui/icons-material/Announcement';
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -58,7 +57,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 const getMenuList = (userType, userId, category, district ,ZipCode,technicianFullName, isMobile) => {
   const iconSize = isMobile ? 20  : 40;
   const customer = [
-      // { MenuIcon: <ShoppingCartIcon sx={{ fontSize: 40, color: "white" }}/>, MenuTitle: isMobile ? "Lakshmi Grocery" :  "Lakshmi Home Grocery", TargetUrl: `/grocery/${userType}/${userId}`},
+      // { MenuIcon: <ShoppingCartIcon sx={{ fontSize: 40, color: "white" }}/>, MenuTitle: "Lakshmi Mart", TargetUrl: `/groceryIcons/${userType}/${userId}`},
       { MenuIcon: <SupportAgentIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
       { MenuIcon: <PersonOutlineIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Book Technician", TargetUrl: `/bookTechnician/${userType}/${userId}` },
       { MenuIcon: <StorefrontIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
@@ -71,13 +70,12 @@ const getMenuList = (userType, userId, category, district ,ZipCode,technicianFul
     }] : []),
      ...(!isMobile ? [{MenuIcon: <OrdersNotificationBell sx={{ fontSize: iconSize }} />, MenuTitle: "Orders", TargetUrl: `/customerOrders/${userType}/${userId}`
     }] : []),
-    // { MenuIcon: <ChatIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Chat",  TargetUrl: `/chatPage/${userType}/${userId}`},
     ...(!isMobile ? [{MenuIcon: <PermIdentityIcon sx={{ fontSize: iconSize }} />, MenuTitle: "Accounts"
     }] : []),
       ];
 
       const admin = [
-      // { MenuIcon: <ShoppingCartIcon sx={{ fontSize: 40 }}/>, MenuTitle: isMobile ? "Lakshmi Grocery" :  "Lakshmi Home Grocery", TargetUrl: `/grocery/${userType}/${userId}`},
+      // { MenuIcon: <ShoppingCartIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Lakshmi Mart", TargetUrl: `/groceryIcons/${userType}/${userId}`},
       { MenuIcon: <SupportAgentIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
       { MenuIcon: <PersonOutlineIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Book Technician", TargetUrl: `/bookTechnician/${userType}/${userId}` },
       { MenuIcon: <StorefrontIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
@@ -189,29 +187,39 @@ const ProfilePage = () => {
     const scrollRef = useRef(null);
     const [productData, setProductData] = useState([]);
     const [imageUrls, setImageUrls] = useState({});
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchQuery] = useState('');
+    // searchQuery
     const [showZoomModal, setShowZoomModal] = useState(false);
     const [zoomImage, setZoomImage] = useState("");
     const [loadingStatus, setLoadingStatus] = useState({}); 
     const [error, setError] = useState('');
     const [products, setProducts] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
-    const [selectedProduct, setSelectedProduct] = useState(null);
-    const [showLocationModal, setShowLocationModal] = useState(false);
-    const [showModal, setShowModal] = useState(false);
-    const [isEditing, setIsEditing] = useState(false);
-    const [newAddress, setNewAddress] = useState('');
-    const [mobileNumber, setMobileNumber] = useState('');
-    const [guestCustomerId, setGuestCustomerId] = useState('');
+     const [selectedProduct, setSelectedProduct] = useState(null);
+    // const [showLocationModal, setShowLocationModal] = useState(false);
+    //  const [showModal, setShowModal] = useState(false);
+    // const [isEditing, setIsEditing] = useState(false);
+    // const [newAddress, setNewAddress] = useState('');
+    // const [mobileNumber, setMobileNumber] = useState('');
+    // const [guestCustomerId, setGuestCustomerId] = useState('');
     const [addresses, setAddresses] = useState([]);
-    const [editingAddressId, setEditingAddressId] = useState(null);
-    const [state, setState] = useState('');
+    // const [editingAddressId, setEditingAddressId] = useState(null);
+    const [editingAddressId] = useState(null);
+    // const [state, setState] = useState('');
     const [districtList, setDistrictList] = useState([]);  
     const [stateList, setStateList] = useState([]);
     const [district, setDistrict] = useState('');  
-    const [districtId, setDistrictId] = useState('');    
+    // const [districtId, setDistrictId] = useState('');    
     const [stateId, setStateId] = useState(null);   
-    const [addressData, setAddressData] = useState({
+    // const [addressData, setAddressData] = useState({
+    // fullName  : '',
+    // mobileNumber: '',
+    // address: '',
+    // zipCode: '',
+    // state: '',
+    // district: '',
+    // });
+     const [addressData] = useState({
     fullName  : '',
     mobileNumber: '',
     address: '',
@@ -228,8 +236,12 @@ const [messageCounts, setMessageCounts] = useState({
   news:     0,
   buysell:  0,
   tolet:    0
-});   
+});    
    
+useEffect(() => {
+  console.log( districtList, stateList, unreadCount, showMenu, productData, products, selectedCategory, addresses, editingAddressId, addressData);
+}, [ districtList, stateList,unreadCount, showMenu, productData, products, selectedCategory, addresses, editingAddressId, addressData]);
+ 
 useEffect(() => {
   const storedCounts = localStorage.getItem("chatCounts");
   if (storedCounts) {
@@ -456,83 +468,83 @@ const handleCategoryClick = async (category) => {
     }
   }, [stateId]);
   
-   const resetAddressForm = () => {
-    setFullName('');
-    setMobileNumber('');
-    setNewAddress(''); 
-    setState('');
-    setDistrict('');
-    setZipCode('');
-  };
+  //  const resetAddressForm = () => {
+  //   setFullName('');
+  //   setMobileNumber('');
+  //   setNewAddress(''); 
+  //   setState('');
+  //   setDistrict('');
+  //   setZipCode('');
+  // };
   
-   const handleAddressEdit = async () => {
-  if (!newAddress || !zipCode || !mobileNumber || !state || !district) {
-    alert("Please fill in all required fields.");
-    return; 
-  }
-  if (fullName.trim().toLowerCase() === 'guest') {
-    alert("Please Change Your Full Name.");
-    return;
-  }  
-  if (!/^\d{6}$/.test(zipCode)) {
-    alert("Pincode must be exactly 6 digits.");
-    return;
-  }
-    const updatedAddress = {
-      id: guestCustomerId,
-      fullName,
-      mobileNumber,
-      address: newAddress,
-      state,
-      district,
-      zipCode,
-    };
-    const payload3 = {
-      id: guestCustomerId,
-      profileType: "profileType",
-      addressId: guestCustomerId,
-      isPrimaryAddress: true,
-      address: newAddress,
-      state: state,
-      district: district,
-      StateId: "1",
-      DistrictId: districtId,
-      zipCode: zipCode,
-      mobileNumber: mobileNumber,
-      emailAddress: "emailAddress",
-      userId: userId,
-      firstName: fullName,
-      lastName: "lastName",
-      fullName: fullName,
-    };
-    try {
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Customer/CustomerAddressEdit`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload3),
-      });
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Error Response:", errorText);
-        throw new Error("Failed to edit address.");
-      }
-      setAddresses(prev =>
-        prev.map(addr => addr.id === guestCustomerId ? updatedAddress : addr)
-      );
-      setAddressData(updatedAddress);
-      await fetchCustomerData();
-      alert("Address Updated Successfully!");
-      setShowModal(false);
-      resetAddressForm();
-      setIsEditing(false);
-      setEditingAddressId(null);
-    } catch (error) {
-      console.error("Error editing address:", error);
-      alert("Failed to edit address. Please try again later.");
-    }
-  };
+  //  const handleAddressEdit = async () => {
+  // if (!newAddress || !zipCode || !mobileNumber || !state || !district) {
+  //   alert("Please fill in all required fields.");
+  //   return; 
+  // }
+  // if (fullName.trim().toLowerCase() === 'guest') {
+  //   alert("Please Change Your Full Name.");
+  //   return;
+  // }  
+  // if (!/^\d{6}$/.test(zipCode)) {
+  //   alert("Pincode must be exactly 6 digits.");
+  //   return;
+  // }
+  //   const updatedAddress = {
+  //     id: guestCustomerId,
+  //     fullName,
+  //     mobileNumber,
+  //     address: newAddress,
+  //     state,
+  //     district,
+  //     zipCode,
+  //   };
+  //   const payload3 = {
+  //     id: guestCustomerId,
+  //     profileType: "profileType",
+  //     addressId: guestCustomerId,
+  //     isPrimaryAddress: true,
+  //     address: newAddress,
+  //     state: state,
+  //     district: district,
+  //     StateId: "1",
+  //     DistrictId: districtId,
+  //     zipCode: zipCode,
+  //     mobileNumber: mobileNumber,
+  //     emailAddress: "emailAddress",
+  //     userId: userId,
+  //     firstName: fullName,
+  //     lastName: "lastName",
+  //     fullName: fullName,
+  //   };
+  //   try {
+  //     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Customer/CustomerAddressEdit`, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(payload3),
+  //     });
+  //     if (!response.ok) {
+  //       const errorText = await response.text();
+  //       console.error("Error Response:", errorText);
+  //       throw new Error("Failed to edit address.");
+  //     }
+  //     setAddresses(prev =>
+  //       prev.map(addr => addr.id === guestCustomerId ? updatedAddress : addr)
+  //     );
+  //     setAddressData(updatedAddress);
+  //     await fetchCustomerData();
+  //     alert("Address Updated Successfully!");
+  //     setShowModal(false);
+  //     resetAddressForm();
+  //     setIsEditing(false);
+  //     setEditingAddressId(null);
+  //   } catch (error) {
+  //     console.error("Error editing address:", error);
+  //     alert("Failed to edit address. Please try again later.");
+  //   }
+  // };
 
 useEffect(() => {
   const fetchProductsAndImages = async () => {
@@ -737,14 +749,24 @@ const fetchImageUrl = async (photoId) => {
         </div>
 
   {/* Profile Image */}
-  <div className="profile-img-wrapper">
+  {/* <div className="profile-img-wrapper">
     <img
       src={profileImage}
       alt="Profile"
       className="profile-img"
       // style={{ width: "40px", height: "40px", borderRadius: "10%", objectFit: "cover" }}
     />
-  </div>
+  </div> */}
+  <div className="profile-img-wrapper">
+  {/* <a href="tel:+916281198953">    */}
+    <img
+      src={profileImage}
+      alt="Profile"
+      className="profile-img"
+      style={{ width: "40px", height: "40px", borderRadius: "20%", objectFit: "cover", cursor: "pointer" }}
+    />
+  {/* </a> */}
+</div>
 </div>
 {/* )} */}
 </div>
@@ -796,7 +818,7 @@ const fetchImageUrl = async (photoId) => {
           </div>
         </div>
        )} */}
-      <div className="pt-1"> 
+      <div className="pt-1 mt-mob-100"> 
     <div
       className={`container m-1`}
       style={{
@@ -907,7 +929,7 @@ const fetchImageUrl = async (photoId) => {
               className="d-flex justify-content-between align-items-center px-2"
               style={{ fontFamily: 'Poppins, sans-serif', fontSize: '18px' }}
             >
-              <div className="text-primary fw-bold fs-5">
+              <div className="text-primary fw-bold fs-5 ">
                 Welcome{' '}
                 <small className="text-dark">
                   {profile.fullName}
@@ -962,7 +984,7 @@ const fetchImageUrl = async (photoId) => {
           <small
             style={{
               fontSize: '12px',
-              fontFamily: "'Baloo 2', cursive", 
+              fontFamily: "Roboto", 
               fontWeight: 'bold',
               textAlign: 'center',
               lineHeight: '14px',
@@ -986,7 +1008,7 @@ const fetchImageUrl = async (photoId) => {
 
         {/* Address with Location */}
         <div className="col-md-9 bg-white">
-        {profile && profile.fullName && profile.address && profile.zipCode && (
+        {/* {profile && profile.fullName && profile.address && profile.zipCode && (
   <div className="w-100 bg-dark text-white d-flex" style={{ backgroundColor: '#2d3e50', padding: "5px", borderRadius: '8px'}}
         onClick={() => setShowLocationModal(true)}>
     <LocationOnIcon
@@ -1005,9 +1027,9 @@ const fetchImageUrl = async (photoId) => {
         style={{ cursor: 'pointer' }}
       />
   </div>
-)}
+)} */}
       {/* Modal */}
-          <Modal show={showModal} onHide={() => setShowModal(false)}>
+          {/* <Modal show={showModal} onHide={() => setShowModal(false)}>
           <Modal.Header closeButton>
               <Modal.Title>{isEditing ? 'Edit Address' : 'Add Address'}</Modal.Title>
             </Modal.Header>
@@ -1122,9 +1144,9 @@ const fetchImageUrl = async (photoId) => {
               </Button>
             </Form>
           </Modal.Body>
-        </Modal>
+        </Modal> */}
 {/* Location Arrow OnClick */}
-{showLocationModal && (
+{/* {showLocationModal && (
   <div className="modal-overlay" onClick={() => setShowLocationModal(false)}>
     <div
       className="location-modal bg-white"
@@ -1175,10 +1197,10 @@ const fetchImageUrl = async (photoId) => {
       </div>
     </div>
   </div>
-)}
+)} */}
 
       {/* Search Icon */}
-          <div className="position-relative flex-grow-1">
+          {/* <div className="position-relative flex-grow-1">
         <input
           type="text"
           className="form-control w-100 m-2 ps-5"
@@ -1190,7 +1212,7 @@ const fetchImageUrl = async (photoId) => {
           className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"
           style={{ pointerEvents: 'none' }}
         />
-      </div>
+      </div> */}
 
        {/* Category Cards */}
     <div className="position-relative w-100">
@@ -1407,24 +1429,33 @@ const fetchImageUrl = async (photoId) => {
                   onClick={() => setSelectedProduct(product)}
                   style={{ cursor: 'pointer' }}
                 >
+                  {/* {product.discount && (
+                    <div className="discount-badge-wrapper">
+                      <span className="discount-badge">
+                        {Math.round(product.discount)}%
+                      </span>
+                    </div>
+                  )} */}
+
+                 <div className="image-container">
                   {product.discount && (
                     <div className="discount-badge-wrapper">
-                      <span className="discount-badge">{product.discount}% OFF</span>
+                      <span className="discount-badge">{Math.round(product.discount)}%</span>
                     </div>
                   )}
-                  <div className="image-container">
-                    {loadingStatus[product.id] ? (
-                      <div className="image-placeholder">Loading...</div>
-                    ) : imageUrls[product.id]?.length > 0 ? (
-                      <img
-                        src={`data:image/jpeg;base64,${imageUrls[product.id][0].imageData}`}
-                        className="product-image"
-                        alt="product"
-                      />
-                    ) : (
-                      <div className="image-placeholder">No Image</div>
-                    )}
-                  </div>
+                  {loadingStatus[product.id] ? (
+                    <div className="image-placeholder m-1">Loading...</div>
+                  ) : imageUrls[product.id]?.length > 0 ? (
+                    <img
+                      src={`data:image/jpeg;base64,${imageUrls[product.id][0].imageData}`}
+                      className="product-image"
+                      alt="product"
+                    />
+                  ) : (
+                    <div className="image-placeholder">No Image</div>
+                  )}
+                </div>
+
                   <div className="product-info">
                     <h6 className="product-name">{product.productName.toUpperCase()}</h6>
                     <div className="product-price">Rs {discountedPrice} /-</div>                   

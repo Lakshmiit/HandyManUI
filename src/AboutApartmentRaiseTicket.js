@@ -22,28 +22,25 @@ const AboutApartmentRaiseTicket = () => {
       const handleResize = () => setIsMobile(window.innerWidth <= 768);
       handleResize(); 
       window.addEventListener('resize', handleResize);
-    
       return () => window.removeEventListener('resize', handleResize);
     }, []);
 
   return (
     <>
     <Header />
-    <div className="mt-2 offer-banner text-center text-white py-2">
-         <b>Apartment Common Area Monthly Maintenance Plan</b>
+    <div className="mt-mob-50 offer-banner text-center text-white py-2">
+         <b className='mx-5'>Apartment Common Area Monthly Maintenance Plan</b>
       </div>
        <p className="mb-0 text-center fw-bold">
         Say Goodbye to Delays and Hassles! Our Monthly Maintenance Package Ensures Your Community Stays Clean, Functional, and Pest-Free – All in one Plan!
       </p>
-
       <div className="d-flex flex-row justify-content-start align-items-start">
        {/* Sidebar for larger screens */}
        {!isMobile && (
-        <div className=" ml-0 m-4 p-0 sde_mnu">
+        <div className="ml-0 m-4 p-0 sde_mnu">
           <Sidebar userType={selectedUserType} />
         </div>
       )}
-
       {/* Floating menu for mobile */}
       {isMobile && (
         <div className="floating-menu">
@@ -54,7 +51,6 @@ const AboutApartmentRaiseTicket = () => {
           >
             <MoreVertIcon />
           </Button>
-
           {showMenu && (
               <div className="sidebar-container">
                 <Sidebar userType={selectedUserType} />
@@ -62,7 +58,6 @@ const AboutApartmentRaiseTicket = () => {
           )}
         </div>
       )} 
-
       {/* Main Content */}
       <div className={`apartment container ${isMobile ? 'w-100' : 'w-75'}`}>
       <div>
@@ -73,7 +68,6 @@ const AboutApartmentRaiseTicket = () => {
             <li>Corridor & staircase lights, meter panel inspections</li>
             <li>Bulb/switch replacement</li>
           </ul>
-
             <h5><PlumbingIcon className="w-5 h-5 mt-0 mr-2" /> Plumbing Maintenance</h5>
           <ul className="list-disc mt-0 text-gray-700">
             <li>Leak repairs in tanks & pipes</li>
@@ -99,12 +93,10 @@ const AboutApartmentRaiseTicket = () => {
             <li>Overhead & Sump tanks scrubbed and disinfected</li>
           </ul>
       </div>
-
       <div className="">💡 Materials charged extra if required</div>
         <div className="">💰 Just ₹200 per flat per month</div>
         <div className="">📥 Collected via Association</div>
         <div className="">🧑‍🔧 Includes Technician Visits & Labor</div>
-
      <div className="d-flex justify-content-between mt-2">  
   <button
     className="btn btn-success text-white btn-sm w-23 fs-6"
@@ -126,5 +118,4 @@ const AboutApartmentRaiseTicket = () => {
 </>
   )
 };
-
 export default AboutApartmentRaiseTicket

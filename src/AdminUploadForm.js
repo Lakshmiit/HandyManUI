@@ -200,7 +200,7 @@ useEffect(() => {
   };
 
   return (
-      <div className="d-flex flex-row justify-content-start align-items-start">
+      <div className="d-flex flex-row justify-content-start align-items-start mt-mob-50">
           {/* Sidebar */}
           {!isMobile && (
           <div className="ml-0 m-4 p-0 adm_mnu">
@@ -393,7 +393,7 @@ useEffect(() => {
                   />
                   <button
                     type="button"
-                    className="btn btn-danger"
+                    className="btn btn-danger mb-1"
                     onClick={() => handleRemoveSpecification(index)}
                   >
                     Remove

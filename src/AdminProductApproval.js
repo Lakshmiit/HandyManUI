@@ -116,7 +116,7 @@ const ProductAdmin = () => {
   const afterDiscountPrice = rate - (rate * discount) / 100;
 
   return (
-        <div className="d-flex flex-row justify-content-start align-items-start">
+        <div className="d-flex flex-row justify-content-start align-items-start mt-mob-50">
           {/* Sidebar */}
           {!isMobile && (
           <div className="ml-0 m-4 p-0 adm_mnu">
@@ -174,8 +174,8 @@ const ProductAdmin = () => {
                     >
                       <img
                         src={`data:image/jpeg;base64,${img.imageData}`}
-                        className="d-block w-100 rounded"
-                        style={{ maxHeight: '400px', objectFit: 'cover' }}
+                        className="d-block mx-auto rounded"
+                        style={{ maxHeight: '500px', width: '50%', objectFit: 'cover' }}
                         alt={`Slide ${index + 1}`}
                       />
                     </div>
@@ -183,23 +183,33 @@ const ProductAdmin = () => {
                 </div>
                 {/* Controls */}
                 <button
-                  className="carousel-control-prev"
-                  type="button"
-                  data-bs-target="#productCarousel"
-                  data-bs-slide="prev"
-                >
-                  <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                  <span className="visually-hidden">Previous</span>
-                </button>
-                <button
-                  className="carousel-control-next"
-                  type="button"
-                  data-bs-target="#productCarousel"
-                  data-bs-slide="next"
-                >
-                  <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                  <span className="visually-hidden">Next</span>
-                </button>
+                className="carousel-control-prev"
+                type="button"
+                data-bs-target="#productCarousel"
+                data-bs-slide="prev"
+              >
+                <span
+                  className="carousel-control-prev-icon"
+                  aria-hidden="true"
+                  style={{ filter: "invert(27%) sepia(98%) saturate(2000%) hue-rotate(200deg) brightness(95%) contrast(90%)" }}
+                ></span>
+                <span className="visually-hidden">Previous</span>
+              </button>
+
+              <button
+                className="carousel-control-next"
+                type="button"
+                data-bs-target="#productCarousel"
+                data-bs-slide="next"
+              >
+                <span
+                  className="carousel-control-next-icon"
+                  aria-hidden="true"
+                  style={{ filter: "invert(27%) sepia(98%) saturate(2000%) hue-rotate(200deg) brightness(95%) contrast(90%)" }}
+                ></span>
+                <span className="visually-hidden">Next</span>
+              </button>
+
               </div>
               {/* Product Details */}
               <div className="row">
@@ -213,7 +223,10 @@ const ProductAdmin = () => {
                   <p><strong>Rate:</strong> Rs {rate}</p>
                   <p><strong>Discount:</strong> {discount}%</p>
                   <p><strong>Price After Discount:</strong> Rs {afterDiscountPrice.toFixed(0)}</p>
-                </div>
+                 <p><strong>Warranty:</strong> {warranty}</p>
+                  <p><strong>Additional Information:</strong> {additionalInformation}</p>
+                  <p><strong>Delivery In Days:</strong> {deliveryInDays}</p>
+                  <p><strong>Stock Left:</strong> {numberOfStockAvailable}</p></div>
                 <div className="col-md-6">
                   <h5>Specifications</h5>
                   <ul>
@@ -224,18 +237,11 @@ const ProductAdmin = () => {
                     ))}
                     <li>{specificationDesc}</li>
                   </ul>
-                  <h5>Warranty</h5>
-                  <p>{warranty}</p>
-                  <h5>Additional Information</h5>
-                  <p>{additionalInformation}</p>
-                  <h5>Delivery In Days</h5>
-                  <p>{deliveryInDays}</p>
-                  <h5>Stock Left</h5>
-                  <p>{numberOfStockAvailable}</p>
+                 
                 </div> 
               </div>    
                {/* Approval Section */}
-               <div className="mt-4">
+               <div className="">
                   <h5>Approval</h5>
                   <div className="form-check">
                     <input
@@ -262,29 +268,25 @@ const ProductAdmin = () => {
                     <label className="form-check-label" htmlFor="reject">Reject</label>
                   </div>
                   <textarea
-                    className="form-control mt-3"
+                    className="form-control"
                     placeholder="Comments"
                     value={comments}
                     onChange={(e) => setComments(e.target.value)}
                   />
                 </div>
                 {/* Submit Button */}
-                <div className="mt-3">
-                  <button className="btn btn-primary" onClick={handleSubmit}>
+                <div>
+                  <button className="btn btn-primary m-1" onClick={handleSubmit}>
                     Submit
                   </button>
-                </div>
-              {/* Submit Button */}
-              <div className="mt-3">
-                {/* View Single Product Button */}
-      <button
+                  <button
         type="button"
         className='btn btn-warning text-white'
           onClick={() => navigate(`/adminProductList/Admin`)}
       >
         <span>Back</span>
       </button>
-              </div>
+                </div>
             </div>
           </div>
         </div>

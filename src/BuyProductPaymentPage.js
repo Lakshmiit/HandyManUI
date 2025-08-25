@@ -17,7 +17,7 @@ const BuyProductPaymentPage = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const {buyProductId} = useParams();
-  const [isChecked, setIsChecked] = useState('');
+  const [isChecked, setIsChecked] = useState(false);
   // const [id, setId] = useState('');
 const [productData, setProductData] = useState('');
 // const [bookTechnicianIds, setBookTechnicianId] = useState('');
@@ -70,6 +70,7 @@ const [productName, setProductName] = useState("");
   const [productStatus, setProductStatus] = useState('');
 const [existingFiles, setExistingFiles] = useState([]);
 const [stockLeft, setStockLeft] = useState('');
+const [paymenterror, setPaymentError] = useState(null);
 useEffect(() => {
   if (date && deliveryInDays) {
     try {
@@ -209,6 +210,10 @@ useEffect(() => {
 
 const handleGetQuotation = async (e) => {
   e.preventDefault();
+  if (selectedPayment === "online") {
+    setPaymentError("⚠️ Online payment is not available at the moment. Only Cash On Delivery Available.");
+    return;
+  }
 
   if (!selectedPayment) {
     setError("Please select at least one payment mode.");
@@ -439,10 +444,17 @@ if (loading) {
   return <div>Loading...</div>;
 }
 
-  const handleCheckboxChange = (value) => {
-    setSelectedPayment(selectedPayment === value ? null : value);
-    setError("");
-  };
+ const handleCheckboxChange = (value) => {
+  const newValue = selectedPayment === value ? null : value;
+  setSelectedPayment(newValue);
+  setError("");
+
+  if (newValue) {
+    setIsChecked(true);
+  } else {
+    setIsChecked(false);
+  }
+};
 
   return (
     <div>
@@ -473,8 +485,8 @@ if (loading) {
         </div>
       )}
 
-<div className={`container m-1 ${isMobile ? "w-100" : "w-75"}`}>
-<h2 className="title">BUY PRODUCT PAYMENT CONFIRMATION</h2>
+<div className={`container ${isMobile ? "w-100" : "w-75"}`}>
+<h2 className="title mt-mob-100">BUY PRODUCT PAYMENT CONFIRMATION</h2>
     <div className="booking-confirmation">
       <p className='text-center fs-4'><strong className='name'>{customerName}</strong> Thank you for Choosing the HandyMan Services</p>
 
@@ -527,29 +539,30 @@ if (loading) {
         <div className='d-flex flex-column'>
         <label className='fs-5'>
             <input 
-            type="checkbox" 
+            type="radio" 
             className="form-check-input border-dark m-1"
             checked={selectedPayment === 'online'}
             onChange={() => handleCheckboxChange('online')}
             required/>
             Pay Through Online
           </label>
+          {paymenterror && <p className="text-danger" style={{fontSize: "14px"}}>{paymenterror}</p>}
           <label className='fs-5'>
             <input 
-            type="checkbox" 
+            type="radio" 
             className="form-check-input border-dark m-1"
             checked={selectedPayment === 'technician'}
             onChange={() => handleCheckboxChange('technician')}
             required/>
-            Pay On In Presence of Technician
+            Cash On Delivery 
           </label>
-          {error && <p className="text-danger">{error}</p>}
+          {error && <p className="text-danger" >{error}</p>}
           </div>
         ) : (
           <div className="desktop-view d-flex flex-column">
       <label className="me-4">
         <input 
-          type="checkbox" 
+          type="radio" 
           className="form-check-input border-dark me-2"
           checked={selectedPayment === 'online'}
           onChange={() => handleCheckboxChange('online')}
@@ -557,15 +570,16 @@ if (loading) {
         />
         Pay Through Online
       </label>
+          {paymenterror && <p className="text-danger" style={{fontSize: "14px"}}>{paymenterror}</p>}
       <label>
         <input 
-          type="checkbox" 
+          type="radio" 
           className="form-check-input border-dark me-2"
           checked={selectedPayment === 'technician'}
           onChange={() => handleCheckboxChange('technician')}
           required
         />
-        Pay On In Presence of Technician
+       Cash On Delivery (COD)
       </label>
       {error && <p className="text-danger">{error}</p>}
     </div>

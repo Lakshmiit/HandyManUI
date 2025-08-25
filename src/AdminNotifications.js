@@ -13,68 +13,51 @@ import "./App.css";
 
 const NotificationsList = ({ notifications, highlightedItem }) => {
   const navigate = useNavigate();
- 
   const raiseTicketNotifications = notifications.filter(
     (item) => item.internalStatus === "Open" && item.assignedTo === "Customer Care" 
   );
- 
   const getQuoteNotifications = notifications.filter(
     (item) =>  item.internalStatus === "Pending" && item.assignedTo === "Technical Agency"  
   );
-    
   const dealerQuoteNotifications = notifications.filter(
     (item) => item.internalStatus === "Pending" && item.assignedTo === "Dealer/Trader"
   );
-
-  
  const orderTicketNotifications = notifications.filter(
   (item) => (item.internalStatus === "Customer Approved" || item.internalStatus === "PaymentDone" || item.internalStatus === "Closed")
 );
-
 const bookTechnicianNotifications = notifications.filter(
   (item) => item.status === "Open" && item.assignedTo !== "Customer Care"  && item.bookTechnicianId != null
 );
-
 const buyProductNotifications = notifications.filter(
   (item) => item.status === "Open" && item.assignedTo === "Customer Care" && item.buyProductId != null
 );
-
 const productClosedNotifications = notifications.filter(
   (item) => (item.assignedTo !== "Customer Care" && item.status === "Closed" && item.assignedTo === "Admin" && item.buyProductId != null) || (item.assignedTo === "Admin" && item.transactionStatus === "Success" && item.buyProductId != null)
 );
-  
 const apartmentMaintenanceNotifications = notifications.filter(
   (item) => item.status === "Open" && item.apartmentRaiseTicketId != null
 );
-
   const handleTicketClick = (ticketId) => {
     navigate(`/raiseTicketActionView/${ticketId}`, { state: { ticketId } });
   };
-
   const handleQuoteClick = (ticketId) => {
     navigate(`/raiseTicketQuotation/${ticketId}`, { state: { ticketId } });
   };
-
   const handleDealerClick = (raiseTicketId) => {
     navigate(`/bidderTicketQuotation/${raiseTicketId}`, { state: { raiseTicketId } });
   };
-
   const handleOrderClick = (raiseTicketId) => {
     navigate(`/customerCareConfirmation/${raiseTicketId}`, { state: { raiseTicketId}});
-  }
-
+  };
   const handleTechnicianClick = (bookTechnicianId) => {
     navigate(`/bookTechnicianActionView/${bookTechnicianId}`, { state: { bookTechnicianId}});
-  }
-
+  };
   const handleBuyProductClick = (buyProductId) => {
     navigate(`/adminBuyProductOrders/${buyProductId}`, { state: { buyProductId}});
-  }
-
+  };
   const handleClosedClick = (buyProductId) => {
     navigate(`/adminClosedBuyProductOrders/${buyProductId}`, { state: { buyProductId}});
-  }
-
+  };
    const handleApartmentClick = (apartmentRaiseTicketId) => {
     navigate(`/apartmentRaiseTicketActionView/${apartmentRaiseTicketId}`, { state: { apartmentRaiseTicketId } });
   };
@@ -113,7 +96,6 @@ const apartmentMaintenanceNotifications = notifications.filter(
           </div>
         ))}
       </div>
-
       <div className="notification-list">
         {getQuoteNotifications.map((notification) => (
           <div
@@ -147,7 +129,6 @@ const apartmentMaintenanceNotifications = notifications.filter(
           </div>
         ))}
       </div>
-
       <div className="notification-list">
         {dealerQuoteNotifications.map((notification) => (
           <div
@@ -214,7 +195,6 @@ const apartmentMaintenanceNotifications = notifications.filter(
           </div>
         ))}
       </div>
-
       <div className="notification-list">
         {bookTechnicianNotifications.map((notification) => (
           <div
@@ -248,7 +228,6 @@ const apartmentMaintenanceNotifications = notifications.filter(
           </div>
         ))}
       </div>
-
       <div className="notification-list">
         {buyProductNotifications.map((notification) => (
           <div
@@ -282,7 +261,6 @@ const apartmentMaintenanceNotifications = notifications.filter(
           </div>
         ))}
       </div>
-
       <div className="notification-list">
         {productClosedNotifications.map((notification) => (
           <div
@@ -316,7 +294,6 @@ const apartmentMaintenanceNotifications = notifications.filter(
           </div>
         ))}
       </div>
-
       <div className="notification-list">
         {apartmentMaintenanceNotifications.map((notification) => (
           <div
@@ -350,7 +327,6 @@ const apartmentMaintenanceNotifications = notifications.filter(
           </div>
         ))}
       </div>
-
     </div>
   );
 };
@@ -400,7 +376,6 @@ const Notification = () => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     handleResize();
     window.addEventListener("resize", handleResize);
-
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
@@ -422,45 +397,36 @@ const Notification = () => {
         fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForAdminList`),
         fetch(`https://handymanapiv2.azurewebsites.net/api/ApartmentRaiseTicket/GetGetApartmentMaintenanceForAdminList`),
       ]);
-
       const raiseTicketData = await raiseTicketResponse.json();
       const raiseTicketFiltered = raiseTicketData.filter(
         (item) => item.internalStatus === "Open" && item.assignedTo === "Customer Care")
         .sort((a, b) => new Date(b.date) - new Date(a.date));
       const raiseTicketCount = raiseTicketFiltered.length;
-
       setTicketNotifications(raiseTicketFiltered);
       setNewTicketCount(raiseTicketCount);
       setGlowTicket(raiseTicketCount > 0);
-
       if (raiseTicketCount > 0) {
         setHighlightedTicket(raiseTicketFiltered[0].raiseTicketId);
       }
-
       const getQuoteData = await getQuoteResponse.json();
       const quoteTicketFiltered = getQuoteData.filter(
         (item) => item.assignedTo === "Technical Agency" && item.status === "Assigned" && item.assignedTo !== "Dealer/Trader")
         .sort((a, b) => new Date(b.date) - new Date(a.date));
       const getQuoteCount = quoteTicketFiltered.length;
-
       setQuoteNotifications(quoteTicketFiltered);
       setNewQuoteCount(getQuoteCount);
       setGlowQuote(getQuoteCount > 0);
-
       if (getQuoteCount > 0) {
         setHighlightedQuote(quoteTicketFiltered[0].raiseAQuoteId);
       }
-
       const getDealerData = await getDealerResponse.json();
       const dealerTicketFiltered = getDealerData.filter(
         (item) => item.internalStatus === "Pending" && item.assignedTo === "Dealer/Trader")
         .sort((a, b) => new Date(b.date) - new Date(a.date));
       const getDealerCount = dealerTicketFiltered.length;
-
       setDealerNotifications(dealerTicketFiltered);
       setNewDealerCount(getDealerCount);
       setGlowDealer(getDealerCount > 0);
-
       if (getDealerCount > 0) {
         setHighlightedQuote(dealerTicketFiltered[0].raiseTicketId);
       }
@@ -471,11 +437,9 @@ const Notification = () => {
      setOrderNotifications(orderFiltered);
      setNewOrderCount(getOrderCount);
      setGlowOrder(getOrderCount > 0);
-
      if (getOrderCount > 0) {
       setHighlightedOrder(orderFiltered[0].raiseTicketId);
      }
-
      const bookTechnicianData = await BookTechnicianResponse.json();
    const bookTechnicianFiltered = bookTechnicianData.filter((item) => item.status === "Open" && item.assignedTo !== "Customer Care" && item.bookTechnicianId != null)
    .sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -483,11 +447,9 @@ const Notification = () => {
      setTechnicianNotifications(bookTechnicianFiltered);
      setNewTechnicianCount(bookTechnicianCount);
      setGlowTechnician(bookTechnicianCount > 0);
-
      if (bookTechnicianCount > 0) {
       setHighlightedTechnician(bookTechnicianFiltered[0].bookTechnicianId);
      }
-
      const buyProductData = await buyProductResponse.json();
    const buyProductFiltered = buyProductData.filter((item) => 
     item.status === "Open" && item.assignedTo === "Customer Care" && item.buyProductId != null)
@@ -496,11 +458,9 @@ const Notification = () => {
      setProductNotifications(buyProductFiltered);
      setNewProductCount(buyProductCount);
      setGlowProduct(buyProductCount > 0);
-
      if (buyProductCount > 0) {
       setHighlightedProduct(buyProductFiltered[0].buyProductId);
      }
-
      const productClosedData = await productClosedResponse.json();
      const productClosedFiltered = productClosedData.filter( 
       (item) => (item.assignedTo !== "Customer Care" && item.status === "Closed"  && item.assignedTo === "Admin" && item.buyProductId != null) || (item.transactionStatus === "Success" && item.buyProductId != null));
@@ -509,25 +469,20 @@ const Notification = () => {
      setClosedProductNotifications(productClosedFiltered);
      setNewClosedCount(productClosedCount);
      setGlowClosed(productClosedCount > 0);
-
      if (productClosedCount > 0) {
       setHighlightedProduct(productClosedFiltered[0].buyProductId);
      }
-
      const apartmentMaintenanceTicketData = await apartmentRaiseTicketResponse.json();
       const apartmentRaiseTicketFiltered = apartmentMaintenanceTicketData.filter(
         (item) => item.status === "Open"  && item.apartmentRaiseTicketId != null)
         .sort((a, b) => new Date(b.date) - new Date(a.date));
       const apartmentTicketCount = apartmentRaiseTicketFiltered.length;
-
       setApartmentTicketNotifications(apartmentRaiseTicketFiltered);
       setNewApartmentCount(apartmentTicketCount);
       setGlowApartment(apartmentTicketCount > 0);
-
       if (apartmentTicketCount > 0) {
         setHighlightedApartment(apartmentRaiseTicketFiltered[0].apartmentRaiseTicketId);
       }
-
       const totalNotifications = raiseTicketCount + getQuoteCount + getDealerCount + getOrderCount + bookTechnicianCount + buyProductCount + productClosedCount + apartmentTicketCount;
       setNewNotificationCount(totalNotifications);
       setGlow(totalNotifications > 0);
@@ -535,71 +490,60 @@ const Notification = () => {
       console.error("Failed to fetch notifications:", error);
     }
   };
-
   useEffect(() => {
     fetchNotifications();
     const interval = setInterval(fetchNotifications, 60000); 
     return () => clearInterval(interval);
   }, []);
-
   const handleClearTicketNotifications = () => {
     setNewTicketCount(0);
     setGlowTicket(false);
     setHighlightedTicket(null);
   };
-
   const handleClearQuoteNotifications = () => {
     setNewQuoteCount(0);
     setGlowQuote(false);
     setHighlightedQuote(null);
   };
-
   const handleClearDealerNotifications = () => {
     setNewDealerCount(0);
     setGlowDealer(false);
     setHighlightedDealer(null);
   };
-
   const handleClearOrderNotifications = () => {
     setNewOrderCount(0);
     setGlowOrder(false);
     setHighlightedOrder(null);
   };
-
   const handleClearTechnicianNotifications = () => {
     setNewTechnicianCount(0);
     setGlowTechnician(false);
     setHighlightedTechnician(null);
   };
-
   const handleClearProductNotifications = () => {
     setNewProductCount(0);
     setGlowProduct(false);
     setHighlightedProduct(null);
   };
-
   const handleClearClosedNotifications = () => {
     setNewClosedCount(0);
     setGlowClosed(false);
     setHighlightedClosed(null);
   };
-
   const handleClearApartmentNotifications = () => {
     setNewApartmentCount(0);
     setGlowApartment(false);
     setHighlightedApartment(null);
   };
   const handleTabClick = (tab) => setActiveTab(tab);
-
   return ( 
     <>
-    <div className="d-flex flex-row justify-content-start align-items-start">
+    <div className="d-flex flex-row justify-content-start align-items-start mt-mob-50">
       {!isMobile && (
         <div className="ml-0 p-0 adm_mnu">
           <AdminSidebar />
         </div>
       )}
-
       {isMobile && (
         <div className="floating-menu">
           <Button
@@ -609,7 +553,6 @@ const Notification = () => {
           >
             <MoreVertIcon />
           </Button>
-
           {showMenu && (
             <div className="sidebar-container">
               <AdminSidebar />
@@ -617,21 +560,18 @@ const Notification = () => {
           )}
         </div>
       )}
-
       <div className={`container m-1  ${isMobile ? "w-100" : "w-75"}`}>
-        <h2 className="text-start mb-2 fs-20">
+        <h2 className="text-start mb-1 fs-20">
           <ArrowBackIcon fontSize="large" />{" "}
           <NotificationsNoneIcon
             fontSize="large"
             className={glow ? "glow" : ""}
-
           />{" "}
           Notifications{" "}
           {newNotificationCount > 0 && (
             <span className="badge bg-danger">{newNotificationCount}</span>
           )}
         </h2>
-
 <div className="notifications-container1 d-flex bg-white">
 {isMobile ? (
   <div className="tabs-mobile d-flex flex-column">
@@ -648,7 +588,6 @@ const Notification = () => {
           ${tab === "Buy Product Orders" && glowProduct ? "glow" : ""}
           ${tab === "Buy Product Closed Orders" && glowClosed ? "glow" : ""}
           ${tab === "Apartment Raise Ticket" && glowApartment ? "glow" : ""}
-
           `}
         onClick={() => handleTabClick(tab)}
         style={{ cursor: "pointer" }}
@@ -743,7 +682,6 @@ const Notification = () => {
                   handleClearTicketNotifications();
                 }}
                 style={{ cursor: "pointer" }}
-
               > 
                 View All Notifications
               </div>
@@ -810,7 +748,6 @@ const Notification = () => {
             </>
           )}
           </div>
-
           <div>
 {activeTab === "Book Technician" && (
             <>
@@ -831,7 +768,6 @@ const Notification = () => {
             </>
           )}
           </div>
-
           <div>
           {activeTab === "Buy Product Orders" && (
             <>
@@ -852,7 +788,6 @@ const Notification = () => {
             </>
           )}
           </div>
-
           <div>
           {activeTab === "Buy Product Closed Orders" && (
             <>
@@ -887,7 +822,6 @@ const Notification = () => {
                   handleClearApartmentNotifications();
                 }}
                 style={{ cursor: "pointer" }}
-
               > 
                 View All Notifications
               </div>

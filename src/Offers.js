@@ -123,7 +123,7 @@ useEffect(() => {
   return (
     <>
       <Header />
-      <div className="wrapper bg-light d-flex">
+      <div className="wrapper d-flex">
         {!isMobile && (
           <div className="ml-0 m-4 p-0 sde_mnu">
             <Sidebar userType={selectedUserType} />
@@ -149,11 +149,11 @@ useEffect(() => {
         )}
 
         <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
-          <div className='d-flex justify-content-center mt-3'>
+          <div className='d-flex justify-content-center mt-mob-100'>
         <div className="position-relative flex-grow-1 ms-4">
           <input
             type="text"
-            className="form-control w-60 m-2 ps-5"
+            className="form-control w-60 m-2 ps-5 "
             placeholder="Search Products"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value.trimStart())}
@@ -232,14 +232,15 @@ useEffect(() => {
                       Loading 
                     </div> 
                   )}  
-                      <div className="card-body p-1 m-1">
+                      <div className="card-body p-1">
                         <h5 className="card-title">{product.productName}</h5>
+                        <h5 className="card-title text-primary">{product.catalogue}</h5>
                         <div className="card-text fw-bold text-primary fs-5 no-break"> After Discount Price: Rs {discountedPrice}</div>
                             <div className="card-text fw-bold text-muted fs-6" style={{ textDecoration: 'line-through' }}>MRP: Rs {product.rate}</div>
                             <div className="card-text fw-bold text-danger fs-6">Discount: {product.discount}%</div>
                             <div className="card-text fw-bold text-success fs-5">Free Delivery and Installation</div>
                       <Button
-                        className="btn btn-warning w-50 fw-bold mt-2"
+                        className="btn btn-warning w-50 fw-bold mt-1"
                         onClick={() => {
                           if (userId === "guest") {
                             window.location.href = "https://handymanserviceproviders.com/";

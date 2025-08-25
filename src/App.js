@@ -98,11 +98,18 @@ import ApartmentRaiseTicket from './ApartmentRaiseTicket.js';
 import ApartmentRaiseActionView from './ApartmentRaiseActionView.js';
 import ApartmentNotificationGrid from './ApartmentNotificationGrid.js';
 import AboutApartmentRaiseTicket from './AboutApartmentRaiseTicket.js';
+import ChatPage from './ChatPage.js';
+// import GroceryItems from './GroceryItems.js';
+// import AdminUploadGrocery from './AdminUploadGrocery.js';
+// import AdminUpdateGrocery from './AdminUpdateGrocery.js';
+// import AdminGroceryList from './AdminGroceryList.js';
+// import AdminGroceryApproval from './AdminGroceryApproval.js';
+// import GroceryCategoryIcons from './GroceryCategoryIcons.js';
+
 // import RatingsAndReviews from './RatingsAndReviews.js';
 // import BeautyIcons from './BeautyIcons.js';
 // import AdminRegistrationNumbers from './AdminRegisterationNumbers.js';
 // import AddToCartCount from './AddToCartCount.js';
-import ChatPage from './ChatPage.js';
 // import BuyProductAddToCart
 // import NumberGuessing from './NumberGuessing.js';
 // import TicTacToe from './TicTacToe.js';
@@ -149,12 +156,13 @@ function App() {
         {/* Header Component */}
         {/* <Header /> */}
         {/* Main content */}
-        <main 
-        className=" mt-mob-50"
-        >
+        <main>
+        {/* className="mt-mob-50"> */}
           <Routes>
             <Route path="/device" element={<Device />} />
             <Route path="/chatPage/:userType/:userId" element={<ChatPage />} />
+            {/* <Route path="/grocery/:userType/:userId" element={<GroceryItems />} /> */}
+            {/* <Route path="/groceryIcons/:userType/:userId" element={<GroceryCategoryIcons />} /> */}
             {/* <Route path="/customerRegistration" element={<CustomerRegistration />} /> */}
             {/* <Route path="/technicianRegistration" element={<TechnicianRegistration />} /> */}
             <Route path="/profilePage/:userType/:userId" element={<ProfilePage />} />
@@ -163,8 +171,7 @@ function App() {
             <Route path="/otpVerification" element={<OTPVerificationPage />} />
             {/* <Route path="/UserIdLogin" element={<UserIdLogin />} /> */}
             {/* <Route path="/webProfilePage/:userType/:userId" element={<WebProfilePage />} /> */}
-            <Route path="/product/:ProductOwnedBy" element={<UploadForm />} />
-            {/* Dynamic product ID route for ProductView */}                
+            <Route path="/product/:ProductOwnedBy" element={<UploadForm />} />               
             <Route path="/product-view/:id/:ProductOwnedBy" element={<ProductView />} /> 
             <Route path="/product-list/:ProductOwnedBy" element={<ProductList />} />
             <Route path="/product-edit/:id/:ProductOwnedBy" element={<EditUploadForm />} />           
@@ -174,9 +181,14 @@ function App() {
             <Route path="/sidebar/:userType" element={<Sidebar />} />
             <Route path="/buyproduct-view/:userType/:userId/:id" element={<BuyProductView />} />
             {/* <Route path="/adminRegistrations/Admin" element={<AdminRegistrationNumbers />} /> */}
+            {/* <Route path="/adminUploadGrocery/Admin" element={<AdminUploadGrocery />} />
+            <Route path="/adminUpdateGrocery/:id/Admin" element={<AdminUpdateGrocery />} /> */}
+            {/* /adminUpdateGrocery/:id/Admin  */}
             <Route path="/adminUploadForm/Admin" element={<AdminUploadForm />} />
             <Route path="/adminProductApproval/:id/Admin" element={<AdminProductApproval />} />
-            <Route path="/adminProductList/Admin" element={<AdminProductList />} />
+            {/* <Route path="/adminGroceryApproval/:id/Admin" element={<AdminGroceryApproval />} /> */}
+            {/* <Route path="/adminGroceryList/Admin" element={<AdminGroceryList />} /> */}
+            <Route path="/adminProductList/Admin" element={<AdminProductList />} /> 
             <Route path="/adminUpdateProduct/:id/Admin" element={<AdminUpdateProduct />} /> 
             <Route path="/adminSidebar" element={<AdminSidebar />} />
             <Route path="/adminNotifications" element={<AdminNotifications />} />
@@ -265,16 +277,8 @@ function App() {
             <Route path="/aboutApartmentRaiseTicket/:userType/:userId" element={<AboutApartmentRaiseTicket />} />
             {/* <Route path="/addCartCount/:userId" element={<AddToCartCount />} /> */}
             {/* <Route path="/productAddCart/:userId" element={<BuyProductAddToCart />} /> */}
-            
             {/* <Route path="/beautyIcons/:userType/:userId" element={<BeautyIcons />} /> */}
             {/* <Route path="/ratingsandReviews" element={<RatingsAndReviews />} /> */}
-            {/* <Route path="/tictactoe" element={<TicTacToe />} />
-            <Route path="/numberGuessing" element={<NumberGuessing />} />
-            <Route path="/memoryGame" element={<MemoryGame />} />
-             <Route path="/colorMatchGame" element={<ColorMatchGame />} />
-             <Route path="/catchGame" element={<CatchGame />} />
-            <Route path="/colorPop" element={<ColorPop />} />
-            <Route path="/quickMath" element={<QuickMathDuel />} /> */}
             {/* <Route path="/apartmentSubscription/:id" element={<ApartmentSubscription />} /> */}
             {/* <Route path="/raiseQuoteNotificationsBell/:userId" element={<RaiseQuoteNotificationBell />} /> */}
             </Routes>

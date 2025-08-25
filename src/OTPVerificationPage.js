@@ -318,16 +318,28 @@ const handleBothMethods = (e) => {
 };
     
     return (
-        <div className="h-100 d-flex align-items-center py-2 flex-column">
-        <div className="login_section bg-light">
-            <div className="d-flex align-items-center">
-                <img src={HandyManCharacter} alt="Handy Man Character" />
-            </div>
-            <div className="rgt_cnt" id="MobileVerify">
-                {/* <form id="myForm" class="d-flex gap-3 flex-column" method="post" enctype="multipart/form-data"> */}
+        <div className="h-90  mt-2 d-flex align-items-center py-2 flex-column">
+        <div className="login_section">
+            <div className="d-flex flex-column align-items-center justify-content-center">
+  <img 
+    src={HandyManCharacter} 
+    alt="Character" 
+    width="200" 
+    height="200" 
+    className="img-fluid mb-3"
+  />
 
-                    <img src={HandyManLogo} alt="Handy Man Logo" />
-                    <h4 className='m-1'>Enter Verification Code</h4>
+  <div className="rgt_cnt" id="MobileVerify">
+    <img  
+      src={HandyManLogo}  
+      alt="Logo"  
+      width="190"  
+      height="90"  
+      className="img-fluid"
+    />  
+  </div>
+
+                    <h4 className=' fs-5'>Enter Verification Code</h4>
                     <div id="test" className="test"></div>
                     <div className="otp_input" id="otp_input">
                         {otp.map((digit, i) => (
@@ -371,7 +383,7 @@ const handleBothMethods = (e) => {
                     </div> */}
 
                     <div id="liveAlertPlaceholder"></div>
-                    <div>
+                    <div style={{fontSize: '14px'}}>
                     Didn't receive OTP?{" "}
                     <button
                         id="resendBtn"
@@ -385,21 +397,20 @@ const handleBothMethods = (e) => {
                         textDecoration: "underline",
                         cursor: canResend ? "pointer" : "not-allowed",
                         padding: 0,
-                        fontSize: "inherit"
+                        fontSize: "14px"
                         }}
                     >
                         Resend
                     </button>
                     </div>
 
-                    <div>
+                    <div style={{fontSize: '14px'}}>
                         Incorrect Mobile Number? <a class="link" asp-area="" href="/">Change</a>
                     </div>
                    
-                    <button className="btn btn-dark text-center" onClick={handleBothMethods} type="submit">Submit  </button>
+                    <button className="btn btn-dark text-center" style={{fontSize: '14px'}} onClick={handleBothMethods} type="submit">Submit  </button>
                     
-                    
-                    <div className="timer" style={{ color: "red", fontWeight: "bold", marginTop: "15px" }}>
+                    <div className="timer" style={{ color: "red", fontWeight: "bold", marginTop: "5px" }}>
                         {timeLeft > 0 ? `Time Left: ${timeLeft} seconds` : 'You can resend the OTP now.'}
                     </div>
             </div>

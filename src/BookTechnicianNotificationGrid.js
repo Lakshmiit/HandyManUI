@@ -121,7 +121,7 @@ const BookTechnicianNotification = () => {
 
   return (
     <>
-    <div className="d-flex flex-row justify-content-start align-items-start">
+    <div className="d-flex flex-row justify-content-start align-items-start mt-mob-50">
       {!isMobile && (
         <div className="ml-0 m-4 p-0 adm_mnu">
           <AdminSidebar />
@@ -148,7 +148,7 @@ const BookTechnicianNotification = () => {
       )}
 
       <div className={`container m-1 ${isMobile ? "w-100" : "w-75"}`}>
-        <h2 className="text-center mb-4">Book A Technician Notifications</h2>
+        <h2 className="text-center mb-2">Book A Technician Notifications</h2>
         <div className={`d-flex ${isMobile ? "flex-column" : "flex-wrap"} align-items-center justify-content-between`}>
           <div className={`form-group ${isMobile ? "col-12" : "col-12 col-md-2"} m-2`}>
             <label>State</label>

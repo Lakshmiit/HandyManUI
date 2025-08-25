@@ -272,7 +272,7 @@ if (!product) {
 }
 
   return (
-    <div className="d-flex flex-row justify-content-start align-items-start">
+    <div className="d-flex flex-row justify-content-start align-items-start mt-mob-50">
       {/* Sidebar */}
      {!isMobile && (
           <div className="ml-0 m-4 p-0 adm_mnu">
@@ -482,7 +482,7 @@ if (!product) {
               <input
                 type="text"
                 className="form-control"
-                value={`${rate} /-`}
+                value={rate}
                 onChange={(e) => setRate(e.target.value)}
                 placeholder="Enter Product Rate"
               />
@@ -494,7 +494,7 @@ if (!product) {
               <input
                 type="text"
                 className="form-control"
-                value={`${discount} %`}
+                value={discount}
                 onChange={(e) => setDiscount(e.target.value)}
                 placeholder="If any Discount Enter Percentage"
               />

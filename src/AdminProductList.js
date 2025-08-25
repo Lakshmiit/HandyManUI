@@ -32,7 +32,7 @@ const AdminProductList = () => {
             ? product.rate - (product.rate * product.discount) / 100
             : product.rate,
         }));
-        products.sort((a, b) => a.productName.localeCompare(b.productName));
+        // products.sort((a, b) => a.productName.localeCompare(b.productName));
         setProductData(products);
         setFilteredData(products);
   
@@ -109,7 +109,7 @@ const AdminProductList = () => {
   }
 
   return (
-    <div className="container">
+    <div className="container mt-mob-50">
       <h2 className="text-center">All Products</h2>
        {/* Search Bar */}
         <div className="form-group col-md-3">
@@ -209,7 +209,7 @@ const AdminProductList = () => {
                 <tr key={index}>
                   <td className="product-name-cell">{product.productName}</td>
                   <td>₹{product.rate}</td>
-                  <td>{product.discount ? `${product.discount}%` : "No discount"}</td>
+                  <td>{product.discount ? `${Math.round(product.discount)}%` : "No discount"}</td>
                   <td>₹{product.afterDiscountPrice.toFixed(0) || 'N/A'}</td>
                   <td>
                     {product.productOwnedBy ? (

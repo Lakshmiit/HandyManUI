@@ -121,7 +121,7 @@ const handleOTP = async (e) => {
   };
 
   try {
-    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Auth/sendotp`, {
+    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Auth/bhashsmssendotp`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -145,18 +145,35 @@ const handleOTP = async (e) => {
 };
 
  return (
-  <div className="h-100 d-flex align-items-center py-2 flex-column">
-  <div className="login_section bg-light rounded-3 p-4">
+  <div className="h-100 mt-2 d-flex align-items-center py-2 flex-column">
+  <div className="login_section rounded-5 p-3">
     <div className="d-flex align-items-center justify-content-center mb-3">
-      <img src={HandyManCharacter} alt="Handy Man Character" />
+  <img 
+    src={HandyManCharacter} 
+    alt="Character"  
+    width="200"  
+    height="200" 
+    className="img-fluid"
+  />
+</div>
+
+<form className="d-flex gap-3 flex-column" onSubmit={handleOTP} autoComplete="off">
+  <div className="row">
+    <div className="col d-flex justify-content-center">
+      <img 
+        src={HandyManLogo} 
+        alt="Logo" 
+        width="190" 
+        height="90" 
+        className="img-fluid"
+      />
     </div>
-        <form className="d-flex gap-3 flex-column" onSubmit={handleOTP} autoComplete="off">
-  <img src={HandyManLogo} alt="Handy Man Logo" />
-  <h4>Sign into your account</h4>
-  <div>
-    <label htmlFor="mobileInput">
-      Mobile Number <span className="req_star">*</span>
-    </label>
+  </div>
+
+  {/* <img src={HandyManLogo} alt="Logo" width="190" height="90" className="img-fluid"/> */}
+  <h4 style={{fontSize: "16px", marginBottom: '0px'}}>Sign into your account</h4>
+  {/* <div> */}
+    <label>Mobile Number <span className="req_star mt-0">*</span></label>
     <div style={{ display: 'flex', gap: '0.5rem' }}>
     {/* <select
       value={countryCode}
@@ -174,37 +191,44 @@ const handleOTP = async (e) => {
     type="text"
     inputMode="numeric"
     pattern="[0-9]*"
-    className="form-control"
+    className="form-control mt-0"
     placeholder="Enter Mobile Number"
     value={mobile}
     onChange={handleMobileChange}
     autoComplete="off"
     required
-    style={{ width: '70%' }}
+    style={{ width: '65%' }}
   />
   </div>
     {error && <div className="text-danger mt-1">{error}</div>}
-  </div>
+  {/* </div> */}
           {/* <a className="link" href="/UserIdLogin">Login With User ID</a> */}
-          <div>
-          <label className='fs-5'>
-            <input 
-            type="checkbox" 
-            className="form-check-input border-dark"
-            checked={isChecked}
-            required
-            onChange={(e) => setIsChecked(e.target.checked)}/>
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                setShowModal(true);
-              }}
-              className="text-dark ms-1"
-              style={{ background: "none", border: "none", padding: 0, textDecoration: "underline", cursor: "pointer" }}
-              > 
-                Terms and conditions & Privacy Policy ..
-              </button>
-          </label>
+          <div className="d-flex align-items-center flex-wrap">
+  <input 
+    type="checkbox" 
+    className="form-check-input border-dark me-2"
+    checked={isChecked}
+    required
+    onChange={(e) => setIsChecked(e.target.checked)}
+  />
+  <button
+    onClick={(e) => {
+      e.preventDefault();
+      setShowModal(true);
+    }}
+    className="text-dark p-0"
+    style={{ 
+      background: "none", 
+      border: "none", 
+      textDecoration: "underline", 
+      cursor: "pointer",
+      whiteSpace: "nowrap",
+      fontSize: "14px"
+    }}
+  >
+    Terms and conditions & Privacy Policy
+  </button>
+</div>   
       {/* Modal for Terms and Conditions */}
       {showModal && (
         <div className="modal-overlay">
@@ -214,7 +238,7 @@ const handleOTP = async (e) => {
                     <div className="mt-20">
                         <h4>I. YOUR ACCEPTANCE OF THIS AGREEMENT</h4>
                         <p>
-                            This is an agreement between you ("you" or "your") and Lakshmi Sai Service Providers, a Proprietorship firm incorporated under the Registration of Establishment – Sec 2(b) and Sec 4(2) The Andhra Pradesh (Insurance of integrated Registration and Furnishing of Combined returns under various labour  Laws by certain Establishments) Act, 2015  with its registered office at Dr.No.44-40-12, Nandhagirinagar, Akkayyapalem, Visakhapatnam - 530016 ("Lakshmi Sai Service Provider" "we," or "our") that governs your use of the search services offered by Lakshmi Sai Service Providers through its website https://handymanapiv2.azurewebsites.net ("Website"), using which Lakshmi Sai Service Providers may provide the search services ("Platform"). When you access or use Platform you agree to be bound by these Terms and Conditions ("Terms").
+                            This is an agreement between you ("you" or "your") and Lakshmi Sai Service Providers, a Proprietorship firm incorporated under the Registration of Establishment – Sec 2(b) and Sec 4(2) The Andhra Pradesh (Insurance of integrated Registration and Furnishing of Combined returns under various labour  Laws by certain Establishments) Act, 2015  with its registered office at Dr.No.44-40-12, Nandhagirinagar, Akkayyapalem, Visakhapatnam - 530016 ("Lakshmi Sai Service Provider" "we," or "our") that governs your use of the search services offered by Lakshmi Sai Service Providers through its website http://handymanserviceproviders.com ("Website"), using which Lakshmi Sai Service Providers may provide the search services ("Platform"). When you access or use Platform you agree to be bound by these Terms and Conditions ("Terms").
                         </p>
                     </div>
                     <div className="mt-20">
@@ -473,9 +497,7 @@ const handleOTP = async (e) => {
                         <p>
                             If you have any questions or concerns regarding this Agreement, please contact us at <a href="mailto:handymanserviceproviders@gmail.com.">handymanserviceproviders@gmail.com.</a>
                         </p>
-                        
                         </div>
-                        
                 </div>
             </div>
             <div className = "text-center">
@@ -485,16 +507,11 @@ const handleOTP = async (e) => {
         </div>
       )} 
 
-          </div>
-
-          {error && <span className="text-danger">{error}</span>}
-
           <div style={{ width: '100%', textAlign: 'start', padding: '1rem' }}>
           <button
     type="submit"
     className={`responsive-login-btn ${submitted ? 'disabled' : ''}`}
-    disabled={submitted}
-  >
+    disabled={submitted}>
     {submitted ? 'Loading...' : 'Login'}
   </button>
     </div>
@@ -540,7 +557,6 @@ const handleOTP = async (e) => {
           align-items: center;
           z-index: 1000;
         }
-
         .modal-content {
           background: white;
           padding: 20px;

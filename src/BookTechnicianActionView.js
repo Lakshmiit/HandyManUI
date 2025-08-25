@@ -342,7 +342,7 @@ const handleUpdateJobDescription = async (e) => {
 
 
   return (
-    <div className="d-flex flex-row justify-content-start align-items-start">
+    <div className="d-flex flex-row justify-content-start align-items-start mt-mob-50">
       {!isMobile && (
         <div className=" ml-0 p-0 adm_mnu h-90">
           <AdminSidebar />
@@ -368,7 +368,7 @@ const handleUpdateJobDescription = async (e) => {
       )}
 
       <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
-        <h1 className="text-center mb-2">Book a Technician Action View</h1>
+        <h1 className="text-center mb-1 mx-5">Book a Technician Action View</h1>
         <Form>
         <Row>
             <Col md={6}>

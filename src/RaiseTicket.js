@@ -675,12 +675,12 @@ useEffect(() => {
 
       {/* Main Content */}
       <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
-      <h1 className="text-center mb-2">Raise a Ticket</h1>
+      <h1 className="text-center mb-1 mt-mob-100">Raise a Ticket</h1>
       {/* Ticket Form */}
       {/* <Form > */}
         {/* Display primary address with "Change Address" link */}
          <div className="d-flex justify-content-between align-items-center">
-                        <label>Address <span className="req_star">*</span></label>
+                        <label className='mt-2'>Address <span className="req_star">*</span></label>
                         {/* <Button variant="success m-1 text-white" onClick={() => setShowModal(true)}>
                           Add Address
                         </Button> */}

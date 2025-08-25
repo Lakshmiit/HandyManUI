@@ -161,13 +161,16 @@ const [serviceUnavailable, setServiceUnavailable] = useState(false);
     if (value === "") {
       setRequiredQuatity("");
       setQuantityError("Quantity is required.");
+      setIsChecked(false);
       return;
     }
     if (/^[1-9]\d*$/.test(value)) {
       setRequiredQuatity(value);
       setQuantityError(""); 
+      setIsChecked(true);
     } else {
       setQuantityError("Please enter a minimum one Number Of Quantity.");
+      setIsChecked(false);
     }
   };
   
@@ -518,10 +521,10 @@ const handleUpdateJobDescription = async (e) => {
 
       {/* Main Content */}
       <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
-      <h1 className="text-center mb-2">Book A Technician</h1>
+      <h1 className="text-center mb-1 mt-mob-100">Book A Technician</h1>
         {/* Display primary address with "Change Address" link */}
          <div className="d-flex justify-content-between align-items-center">
-                                <label>Address <span className="req_star">*</span></label>
+                                <label className='mt-2'>Address <span className="req_star">*</span></label>
                                 {/* <Button variant="success m-1 text-white" onClick={() => setShowModal(true)}>
                                   Add Address
                                 </Button> */}
