@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import './App.css';
@@ -23,7 +24,7 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 // import Banner1 from './img/Ads1.jpeg';
 // import BannerVideo from './img/TicketVideo.mp4';
-import BannerVideo from './img/GaneshVideo.mp4';
+import BannerVideo from './img/GaneshVideo1.mp4';
 import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 // import Banner3 from './img/banner-4.jpg'; 
@@ -300,7 +301,7 @@ useEffect(() => {
       console.error("Failed to fetch unread message count:", error);
     }
   };
-  if (userId && userType) {
+  if (userId && userType) { 
     fetchUnreadCount();
     const interval = setInterval(fetchUnreadCount, 30000);
     return () => clearInterval(interval);
@@ -1038,7 +1039,7 @@ const fetchImageUrl = async (photoId) => {
               <Form.Group className="mb-3">
                 <Form.Label>Full Name <span className="req_star">*</span></Form.Label>
                 <Form.Control
-                  type="text"
+                  type="text"    
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="Enter Full name"
@@ -1079,7 +1080,7 @@ const fetchImageUrl = async (photoId) => {
                 <Form.Label>State <span className="req_star">*</span></Form.Label>
                 <Form.Select
                   value={stateId || ''}
-                  onChange={(e) => {
+                  onChange={(e) => {    
                     const selectedId = e.target.value;
                     setStateId(selectedId);
                     const selectedState = stateList.find(
