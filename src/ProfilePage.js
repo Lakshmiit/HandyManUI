@@ -296,7 +296,7 @@ useEffect(() => {
         return !lastReadTime || new Date(msg.dateTime) > new Date(lastReadTime);
       });
       setUnreadCount(unreadMessages.length);         
-    } catch (error) {
+    } catch (error) {     
       console.error("Failed to fetch unread message count:", error);
     }
   };
