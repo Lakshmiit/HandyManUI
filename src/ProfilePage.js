@@ -23,9 +23,9 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 // import Banner1 from './img/Ads1.jpeg';
 // import BannerVideo from './img/TicketVideo.mp4';
-// import BannerVideo from './img/AdsVideo.mp4';
-// import VolumeOffIcon from '@mui/icons-material/VolumeOff';
-// import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import BannerVideo from './img/GaneshVideo.mp4';
+import VolumeOffIcon from '@mui/icons-material/VolumeOff';
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 // import Banner3 from './img/banner-4.jpg'; 
 // import Banner2 from './img/Ads2.jpeg';
 import { useNavigate, useParams } from "react-router-dom"; 
@@ -227,8 +227,8 @@ const ProfilePage = () => {
     state: '',
     district: '',
     });
-//  const videoRef = useRef(null);
-// const [isMuted, setIsMuted] = useState(true);
+ const videoRef = useRef(null);
+const [isMuted, setIsMuted] = useState(true);
 const [groupedProducts, setGroupedProducts] = useState({});
 const [expandedCategories, setExpandedCategories] = useState({});
  const [unreadCount, setUnreadCount] = useState(0);
@@ -256,14 +256,14 @@ useEffect(() => {
 
 const totalUnreadMessages = messageCounts.news + messageCounts.buysell + messageCounts.tolet;
 
-  // const toggleMute = () => {
-  //   const video = videoRef.current;
-  //   if (video) {
-  //     video.muted = !isMuted; 
-  //     setIsMuted(!isMuted);
-  //   }
-  // };
-
+  const toggleMute = () => {
+    const video = videoRef.current;
+    if (video) {
+      video.muted = !isMuted; 
+      setIsMuted(!isMuted);
+    }
+  };
+ 
 useEffect(() => {
   console.log(unreadCount, showMenu, productData, products, selectedCategory, addresses, editingAddressId, addressData);
 }, [unreadCount, showMenu, productData, products, selectedCategory, addresses, editingAddressId, addressData]);
@@ -1308,7 +1308,7 @@ const fetchImageUrl = async (photoId) => {
                     aria-label="Slide 4" 
                   ></button>
                 </div>
-                {/* Carousel items 
+                {/* Carousel items */}
                 <div className="carousel-inner">
                   <div className="carousel-item active">
                     <video
@@ -1340,30 +1340,30 @@ const fetchImageUrl = async (photoId) => {
                       {isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
                     </button>
                 </div>
-                  <div className="carousel-item active">
+                  {/* <div className="carousel-item active">
                   <img
                     src={Banner1}
                     className="d-block w-100 img-fluid rounded"
                     style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
                     alt="Slide 1"
                   />
-                </div>
-                <div className="carousel-item">
+                </div> */}
+                {/* <div className="carousel-item">
                   <img
                     src={Banner2}
                     className="d-block w-100 img-fluid rounded"
                     style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
                     alt="Slide 2"
                   />
-                </div>
-                <div className="carousel-item">
+                </div> */}
+                {/* <div className="carousel-item">
                   <img
                     src={Banner3}
                     className="d-block w-100 img-fluid rounded"
                     style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
                     alt="Slide 3"
                   />
-                </div>
+                </div> */}
               </div>
                 {/* Controls 
                 <button
