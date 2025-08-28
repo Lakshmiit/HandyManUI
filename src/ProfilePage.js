@@ -917,7 +917,7 @@ const fetchImageUrl = async (photoId) => {
                     <hr style={{ margin: '8px 0' }} />
                   <div className="d-flex align-items-center logout-btn" style={{ cursor: 'pointer' }} onClick={() => window.location.href = "/loginnew"}>
                     <LogoutIcon className="me-2" />
-                    <span>Logout</span>
+                    <span>Logout</span>        
                   </div>
                 </div>
               </div>         

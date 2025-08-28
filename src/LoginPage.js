@@ -127,12 +127,12 @@ const handleOTP = async (e) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(payload),
-    });
+    });      
 
     if (!response.ok) {
       throw new Error("Failed to send sms.");
     }
-
+  
     localStorage.setItem('mobile', mobile);
     Navigate('/otpVerification', { state: { mobile } });
 
