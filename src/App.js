@@ -92,6 +92,7 @@ import BookTechnicianDetailsGrid from './BookTechnicianDetailsGrid.js';
 import RaiseTicketConfirmation from './RaiseTicketConfirmation.js';
 import HandyManLogo from './HandyManLogo.js';
 import LoginPage from './LoginPage.js';
+import UserIdLogin from './UserIdLogin.js';
 import CustomerRaiseTicketGridView from './CustomerRaiseTicketGridView.js';
 import OTPVerificationPage from './OTPVerificationPage.js';
 import ApartmentRaiseTicket from './ApartmentRaiseTicket.js';
@@ -99,12 +100,12 @@ import ApartmentRaiseActionView from './ApartmentRaiseActionView.js';
 import ApartmentNotificationGrid from './ApartmentNotificationGrid.js';
 import AboutApartmentRaiseTicket from './AboutApartmentRaiseTicket.js';
 import ChatPage from './ChatPage.js';
-// import GroceryItems from './GroceryItems.js';
-// import AdminUploadGrocery from './AdminUploadGrocery.js';
-// import AdminUpdateGrocery from './AdminUpdateGrocery.js';
-// import AdminGroceryList from './AdminGroceryList.js';
-// import AdminGroceryApproval from './AdminGroceryApproval.js';
-// import GroceryCategoryIcons from './GroceryCategoryIcons.js';
+ import GroceryItems from './GroceryItems.js';
+import AdminUploadGrocery from './AdminUploadGrocery.js';
+import AdminUpdateGrocery from './AdminUpdateGrocery.js';
+import AdminGroceryList from './AdminGroceryList.js';
+import AdminGroceryApproval from './AdminGroceryApproval.js';
+ import GroceryCategoryIcons from './GroceryCategoryIcons.js';
 
 // import RatingsAndReviews from './RatingsAndReviews.js';
 // import BeautyIcons from './BeautyIcons.js';
@@ -161,15 +162,15 @@ function App() {
           <Routes>
             <Route path="/device" element={<Device />} />
             <Route path="/chatPage/:userType/:userId" element={<ChatPage />} />
-            {/* <Route path="/grocery/:userType/:userId" element={<GroceryItems />} /> */}
-            {/* <Route path="/groceryIcons/:userType/:userId" element={<GroceryCategoryIcons />} /> */}
+            <Route path="/grocery/:userType/:userId" element={<GroceryItems />} />
+            <Route path="/groceryIcons/:userType/:userId" element={<GroceryCategoryIcons />} />
             {/* <Route path="/customerRegistration" element={<CustomerRegistration />} /> */}
             {/* <Route path="/technicianRegistration" element={<TechnicianRegistration />} /> */}
             <Route path="/profilePage/:userType/:userId" element={<ProfilePage />} />
             <Route path="/" element={<HandyManLogo />} />
             <Route path="/loginnew" element={<LoginPage />} />
             <Route path="/otpVerification" element={<OTPVerificationPage />} />
-            {/* <Route path="/UserIdLogin" element={<UserIdLogin />} /> */}
+            <Route path="/userIdLogin" element={<UserIdLogin />} />
             {/* <Route path="/webProfilePage/:userType/:userId" element={<WebProfilePage />} /> */}
             <Route path="/product/:ProductOwnedBy" element={<UploadForm />} />               
             <Route path="/product-view/:id/:ProductOwnedBy" element={<ProductView />} /> 
@@ -181,13 +182,12 @@ function App() {
             <Route path="/sidebar/:userType" element={<Sidebar />} />
             <Route path="/buyproduct-view/:userType/:userId/:id" element={<BuyProductView />} />
             {/* <Route path="/adminRegistrations/Admin" element={<AdminRegistrationNumbers />} /> */}
-            {/* <Route path="/adminUploadGrocery/Admin" element={<AdminUploadGrocery />} />
-            <Route path="/adminUpdateGrocery/:id/Admin" element={<AdminUpdateGrocery />} /> */}
-            {/* /adminUpdateGrocery/:id/Admin  */}
+            <Route path="/adminUploadGrocery/Admin" element={<AdminUploadGrocery />} />
+            <Route path="/adminUpdateGrocery/:id/Admin" element={<AdminUpdateGrocery />} />
             <Route path="/adminUploadForm/Admin" element={<AdminUploadForm />} />
             <Route path="/adminProductApproval/:id/Admin" element={<AdminProductApproval />} />
-            {/* <Route path="/adminGroceryApproval/:id/Admin" element={<AdminGroceryApproval />} /> */}
-            {/* <Route path="/adminGroceryList/Admin" element={<AdminGroceryList />} /> */}
+            <Route path="/adminGroceryApproval/:id/Admin" element={<AdminGroceryApproval />} /> */}
+            <Route path="/adminGroceryList/Admin" element={<AdminGroceryList />} />
             <Route path="/adminProductList/Admin" element={<AdminProductList />} /> 
             <Route path="/adminUpdateProduct/:id/Admin" element={<AdminUpdateProduct />} /> 
             <Route path="/adminSidebar" element={<AdminSidebar />} />

@@ -145,7 +145,7 @@ const handleOTP = async (e) => {
 };
 
  return (
-  <div className="h-100 mt-2 d-flex align-items-center py-2 flex-column">
+  <div className="h-100 mt-3 d-flex align-items-center py-2 flex-column">
   <div className="login_section rounded-5 p-3">
     <div className="d-flex align-items-center justify-content-center mb-3">
   <img 
@@ -170,8 +170,7 @@ const handleOTP = async (e) => {
     </div>
   </div>
 
-  {/* <img src={HandyManLogo} alt="Logo" width="190" height="90" className="img-fluid"/> */}
-  <h4 style={{fontSize: "16px", marginBottom: '0px'}}>Sign into your account</h4>
+  <h4 style={{fontSize: "15px", marginBottom: '0px'}}>Sign into your account</h4>
   {/* <div> */}
     <label>Mobile Number <span className="req_star mt-0">*</span></label>
     <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -197,12 +196,12 @@ const handleOTP = async (e) => {
     onChange={handleMobileChange}
     autoComplete="off"
     required
-    style={{ width: '65%' }}
+    style={{ width: '80%' }}
   />
   </div>
     {error && <div className="text-danger mt-1">{error}</div>}
   {/* </div> */}
-          {/* <a className="link" href="/UserIdLogin">Login With User ID</a> */}
+          <a className="link" href="/userIdLogin" style={{fontSize: "14px"}}>Login With User ID</a>
           <div className="d-flex align-items-center flex-wrap">
   <input 
     type="checkbox" 
@@ -223,7 +222,7 @@ const handleOTP = async (e) => {
       textDecoration: "underline", 
       cursor: "pointer",
       whiteSpace: "nowrap",
-      fontSize: "14px"
+      fontSize: "14px",
     }}
   >
     Terms and conditions & Privacy Policy

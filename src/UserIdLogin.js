@@ -4,19 +4,22 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { useNavigate } from 'react-router-dom';
 import HandyManCharacter from "./img/hm_char.png";
 import HandyManLogo from "./img/Hm_Logo 1.png";
-
+// import VisibilityIcon from '@mui/icons-material/Visibility';
+// import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+// import TermsandConditions from './TermsandConditions';
 const UserIdLogin = () => {
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
-    username: '',
-    password: '',
+    userName: '',
+    userPassword: '',   
     consent: false,
   });
   const [isChecked, setIsChecked] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState('');
   const [submitted, setSubmitted] = useState(false);
-
+// const [showPassword, setShowPassword] = useState(false);
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -24,60 +27,106 @@ const UserIdLogin = () => {
       [name]: type === 'checkbox' ? checked : value,
     }));
   };
-  
-  const handleSubmit = (e) => {
-    e.preventDefault();
-  
-    const { username, password } = formData;
-  
-    if (!username || !password ) {
-      setError('Please fill all fields and accept terms.');
-      setSubmitted(false);
-      return;
-    } 
-  
-    if (username === 'KrvSatya' && password === 'Ramesh@123') {
-      setError('');
-      setSubmitted(true);
-      console.log('Form submitted:', formData);
-      navigate(`/profilePage/customer/74991775-cfb7-47e0-b963-5d32e02a570a`);
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const { userName, userPassword } = formData;
+if (!userName || !userPassword) {
+  setError("Please fill all fields.");
+  return;
+}
+
+  try {
+    setError('');
+    setSubmitted(true);
+
+    // Call your API with username & password
+    const response = await fetch(
+      `https://handymanapiv2.azurewebsites.net/api/UserOnBoarding/VerifyUserLogin?username=${userName}&password=${userPassword}`,
+      {
+        method: "GET",
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Invalid response from server");
+    }
+
+    const data = await response.json();
+
+    console.log("API Response:", data);
+
+    if (data && data.userId && data.profileType)
+    {
+      navigate(`/profilePage/${data.profileType}/${data.userId}`);
     } else {
-      setError('Invalid credentials');
+      setError("Invalid username or password.");
       setSubmitted(false);
     }
-  };
+  } catch (error) {
+    console.error("Login error:", error);
+    setError("Something went wrong. Please try again.");
+    setSubmitted(false);
+  }
+};
+
 
   return (
     <div className="h-100 d-flex align-items-center py-2 flex-column">
-      <div className="login_section bg-light rounded-3 p-4">
+      <div className="login_section rounded-3 p-4">
         <div className="d-flex align-items-center justify-content-center mb-3">
-          <img src={HandyManCharacter} alt="Handy Man Character" />
+         <img 
+             src={HandyManCharacter} 
+             alt="Character"  
+             width="200"  
+             height="200" 
+             className="img-fluid"
+           />
         </div>
 
         <form className="d-flex gap-3 flex-column" onSubmit={handleSubmit} autoComplete="off">
-          <img src={HandyManLogo} alt="Handy Man Logo" />
-          <h4>Sign into your account</h4>
+         <div className="row">
+    <div className="col d-flex justify-content-center">
+      <img 
+        src={HandyManLogo} 
+        alt="Logo" 
+        width="190" 
+        height="90" 
+        className="img-fluid"
+      />
+    </div>
+  </div>
+  <div>
+<label className=''>User ID</label>
+<input
+  type="text"
+  name="userName"
+  value={formData.userName}
+  className='bg-white'
+  onChange={handleChange}
+/>
+</div>
 
-          <input
-            type="text"
-            name="username"
-            className="form-control"
-            placeholder="User ID"
-            value={formData.username}
-            onChange={handleChange}
-          />
-
-          <input
-            type="password"
-            name="password"
-            className="form-control"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-          />
+<div>
+<label className=''>Password</label>
+<input
+  type="password"
+  name="userPassword"
+  value={formData.userPassword}
+  onChange={handleChange}
+  className='bg-white'
+  style={{width: "100%", paddingRight: "40px"}}
+/>
+{/* <span onClick={() => setShowPassword(!showPassword)}
+    style={{position: "absolute", right:"10px",
+        top: "50%", cursor: "pointer"
+    }}>{showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}</span> */}
+</div>        
 
           <div>
-            <a href="/">Login With Mobile</a>
+          {/* <a className="link" href="/userIdLogin">Login With User ID</a> */}
+            <a className="link" href="/loginnew" style={{fontSize: "14px"}}>Login With Mobile</a>
           </div>
 
           <div className="form-check d-flex gap-2 align-items-start">
@@ -88,9 +137,9 @@ const UserIdLogin = () => {
               checked={formData.consent}
               onChange={handleChange}
               id="consentCheckbox"
-            /> */}
-            <label className='fs-5'>
-            <input 
+            /> 
+            <label> <TermsandConditions /> </label> */}
+             <input 
             type="checkbox" 
             className="form-check-input border-dark"
             checked={isChecked}
@@ -101,13 +150,20 @@ const UserIdLogin = () => {
                 setShowModal(true);
               }}
               className="text-dark ms-1"
-              style={{ background: "none", border: "none", padding: 0, textDecoration: "underline", cursor: "pointer" }}
+              style={{ 
+                background: "none", 
+                border: "none", 
+                textDecoration: "underline", 
+                cursor: "pointer",
+                whiteSpace: "nowrap",
+                fontSize: "12px",
+                }}
               >
-                Terms and conditions & Privacy Policy ..
-              </button>
-          </label>
+                 {' '}I’ve read Service Terms and conditions & Privacy Policy ..
+              </button> 
+        
       {/* Modal for Terms and Conditions */}
-      {showModal && (
+       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content">
             <h2>Terms and Conditions</h2>
@@ -402,43 +458,7 @@ const UserIdLogin = () => {
         </form>
       </div>
 
-      {/* Terms Modal */}
-      <div className="modal fade" id="termsModal" tabIndex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
-        <div className="modal-dialog modal-lg">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="termsModalLabel">Terms and Conditions</h5>
-              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
-            </div>
-            <div className="modal-body">
-              <iframe src="/TermsAndConditions" width="100%" height="400px" title="Terms" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Privacy Modal */}
-      <div className="modal fade" id="privacyModal" tabIndex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
-        <div className="modal-dialog modal-lg">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="privacyModalLabel">Privacy Policy</h5>
-              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
-            </div>
-            <div className="modal-body">
-              <iframe src="/PrivacyPolicy" width="100%" height="400px" title="Privacy Policy" />
-            </div>
-          </div>
-        </div>
-      </div>
-{/* Styles for floating menu */}
 <style jsx>{`
-        .floating-menu {
-          position: fixed;
-          top: 80px; /* Increased from 20px to avoid overlapping with the logo */
-          left: 20px; /* Adjusted for placement on the left side */
-          z-index: 1000;
-        }
         .modal-overlay {
           position: fixed;
           top: 0;

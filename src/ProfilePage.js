@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import './App.css';
@@ -24,9 +23,9 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 // import Banner1 from './img/Ads1.jpeg';
 // import BannerVideo from './img/TicketVideo.mp4';
-import BannerVideo from './img/GaneshVideo1.mp4';
-import VolumeOffIcon from '@mui/icons-material/VolumeOff';
-import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+// import BannerVideo from './img/AdsVideo.mp4';
+// import VolumeOffIcon from '@mui/icons-material/VolumeOff';
+// import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 // import Banner3 from './img/banner-4.jpg'; 
 // import Banner2 from './img/Ads2.jpeg';
 import { useNavigate, useParams } from "react-router-dom"; 
@@ -228,8 +227,8 @@ const ProfilePage = () => {
     state: '',
     district: '',
     });
- const videoRef = useRef(null);
-const [isMuted, setIsMuted] = useState(true);
+//  const videoRef = useRef(null);
+// const [isMuted, setIsMuted] = useState(true);
 const [groupedProducts, setGroupedProducts] = useState({});
 const [expandedCategories, setExpandedCategories] = useState({});
  const [unreadCount, setUnreadCount] = useState(0);
@@ -257,14 +256,14 @@ useEffect(() => {
 
 const totalUnreadMessages = messageCounts.news + messageCounts.buysell + messageCounts.tolet;
 
-  const toggleMute = () => {
-    const video = videoRef.current;
-    if (video) {
-      video.muted = !isMuted; 
-      setIsMuted(!isMuted);
-    }
-  };
- 
+  // const toggleMute = () => {
+  //   const video = videoRef.current;
+  //   if (video) {
+  //     video.muted = !isMuted; 
+  //     setIsMuted(!isMuted);
+  //   }
+  // };
+
 useEffect(() => {
   console.log(unreadCount, showMenu, productData, products, selectedCategory, addresses, editingAddressId, addressData);
 }, [unreadCount, showMenu, productData, products, selectedCategory, addresses, editingAddressId, addressData]);
@@ -297,11 +296,11 @@ useEffect(() => {
         return !lastReadTime || new Date(msg.dateTime) > new Date(lastReadTime);
       });
       setUnreadCount(unreadMessages.length);         
-    } catch (error) {     
+    } catch (error) {
       console.error("Failed to fetch unread message count:", error);
     }
   };
-  if (userId && userType) { 
+  if (userId && userType) {
     fetchUnreadCount();
     const interval = setInterval(fetchUnreadCount, 30000);
     return () => clearInterval(interval);
@@ -864,7 +863,7 @@ const fetchImageUrl = async (photoId) => {
                  <div className="label fw-bold mt-0 fs-5">Address</div>
                  <p className="value">{profile.address}</p>
                <hr />
-               <p className="logout-btn m-1" onClick={() => window.location.href = "https://handymanserviceproviders.com/Logout"}>
+               <p className="logout-btn m-1" onClick={() => window.location.href = "/loginnew"}>
                  <LogoutIcon />
                  <span className="fs-5">Logout</span>
                </p>
@@ -916,12 +915,12 @@ const fetchImageUrl = async (photoId) => {
                       <small style={{ fontSize: "13px", fontFamily: "Poppins", lineHeight: "28px" }}>My Tickets</small>
                     </div>
                     <hr style={{ margin: '8px 0' }} />
-                  <div className="d-flex align-items-center logout-btn" style={{ cursor: 'pointer' }} onClick={() => window.location.href = "https://handymanserviceproviders.com/Logout"}>
+                  <div className="d-flex align-items-center logout-btn" style={{ cursor: 'pointer' }} onClick={() => window.location.href = "/loginnew"}>
                     <LogoutIcon className="me-2" />
                     <span>Logout</span>
                   </div>
                 </div>
-              </div>
+              </div>         
             )}
          </div> 
     
@@ -1039,7 +1038,7 @@ const fetchImageUrl = async (photoId) => {
               <Form.Group className="mb-3">
                 <Form.Label>Full Name <span className="req_star">*</span></Form.Label>
                 <Form.Control
-                  type="text"    
+                  type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="Enter Full name"
@@ -1080,7 +1079,7 @@ const fetchImageUrl = async (photoId) => {
                 <Form.Label>State <span className="req_star">*</span></Form.Label>
                 <Form.Select
                   value={stateId || ''}
-                  onChange={(e) => {    
+                  onChange={(e) => {
                     const selectedId = e.target.value;
                     setStateId(selectedId);
                     const selectedState = stateList.find(
@@ -1309,7 +1308,7 @@ const fetchImageUrl = async (photoId) => {
                     aria-label="Slide 4" 
                   ></button>
                 </div>
-                {/* Carousel items */}
+                {/* Carousel items 
                 <div className="carousel-inner">
                   <div className="carousel-item active">
                     <video
@@ -1341,30 +1340,30 @@ const fetchImageUrl = async (photoId) => {
                       {isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
                     </button>
                 </div>
-                  {/* <div className="carousel-item active">
+                  <div className="carousel-item active">
                   <img
                     src={Banner1}
                     className="d-block w-100 img-fluid rounded"
                     style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
                     alt="Slide 1"
                   />
-                </div> */}
-                {/* <div className="carousel-item">
+                </div>
+                <div className="carousel-item">
                   <img
                     src={Banner2}
                     className="d-block w-100 img-fluid rounded"
                     style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
                     alt="Slide 2"
                   />
-                </div> */}
-                {/* <div className="carousel-item">
+                </div>
+                <div className="carousel-item">
                   <img
                     src={Banner3}
                     className="d-block w-100 img-fluid rounded"
                     style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
                     alt="Slide 3"
                   />
-                </div> */}
+                </div>
               </div>
                 {/* Controls 
                 <button
