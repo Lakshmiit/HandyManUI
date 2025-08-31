@@ -100,6 +100,7 @@ import ApartmentRaiseActionView from './ApartmentRaiseActionView.js';
 import ApartmentNotificationGrid from './ApartmentNotificationGrid.js';
 import AboutApartmentRaiseTicket from './AboutApartmentRaiseTicket.js';
 import ChatPage from './ChatPage.js';
+import TextPage from './TextPage.js';
 //  import GroceryItems from './GroceryItems.js';
 // import AdminUploadGrocery from './AdminUploadGrocery.js';
 // import AdminUpdateGrocery from './AdminUpdateGrocery.js';
@@ -157,7 +158,8 @@ function App() {
         {/* Header Component */}
         {/* <Header /> */}
         {/* Main content */}
-        <main className="mt-100">
+        <main>
+          {/* className="mt-100" */}
           <Routes>
             <Route path="/device" element={<Device />} />
             <Route path="/chatPage/:userType/:userId" element={<ChatPage />} />
@@ -166,14 +168,16 @@ function App() {
             <Route path="/groceryIcons/:userType/:userId" element={<GroceryCategoryIcons />} />
             <Route path="/adminUploadGrocery/Admin" element={<AdminUploadGrocery />} />
             <Route path="/adminUpdateGrocery/:id/Admin" element={<AdminUpdateGrocery />} />
+            <Route path="/adminGroceryApproval/:id/Admin" element={<AdminGroceryApproval />} /> 
             <Route path="/adminGroceryList/Admin" element={<AdminGroceryList />} /> */}
             
             {/* <Route path="/customerRegistration" element={<CustomerRegistration />} /> */}
             {/* <Route path="/technicianRegistration" element={<TechnicianRegistration />} /> */}
             <Route path="/profilePage/:userType/:userId" element={<ProfilePage />} />
-            {/* <Route path="/" element={<HandyManLogo />} /> */}
-            {/* <Route path="/loginnew" element={<LoginPage />} /> */}
-            <Route path="/" element={<LoginPage />} />
+            <Route path="/" element={<TextPage />} /> 
+            {/* <Route path="/" element={<HandyManLogo />} />  */}
+            <Route path="/loginnew" element={<LoginPage />} />
+            {/* <Route path="/" element={<LoginPage />} /> */}
             <Route path="/otpVerification" element={<OTPVerificationPage />} />
             <Route path="/userIdLogin" element={<UserIdLogin />} />
             {/* <Route path="/webProfilePage/:userType/:userId" element={<WebProfilePage />} /> */}
