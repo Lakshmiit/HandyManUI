@@ -4,9 +4,8 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { useNavigate } from 'react-router-dom';
 import HandyManCharacter from "./img/hm_char.png";
 import HandyManLogo from "./img/Hm_Logo 1.png";
-// import VisibilityIcon from '@mui/icons-material/Visibility';
-// import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-// import TermsandConditions from './TermsandConditions';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 const UserIdLogin = () => {
   const navigate = useNavigate();
 
@@ -19,7 +18,7 @@ const UserIdLogin = () => {
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState('');
   const [submitted, setSubmitted] = useState(false);
-// const [showPassword, setShowPassword] = useState(false);
+const [showPassword, setShowPassword] = useState(false);
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -61,12 +60,12 @@ if (!userName || !userPassword) {
     {
       navigate(`/profilePage/${data.profileType}/${data.userId}`);
     } else {
-      setError("Invalid username or password.");
+    //   setError("Invalid username or password.");
       setSubmitted(false);
     }
   } catch (error) {
     console.error("Login error:", error);
-    setError("Something went wrong. Please try again.");
+    setError("Invalid username or password.");
     setSubmitted(false);
   }
 };
@@ -103,42 +102,39 @@ if (!userName || !userPassword) {
   type="text"
   name="userName"
   value={formData.userName}
-  className='bg-white'
   onChange={handleChange}
 />
 </div>
+
+<div style={{ position: "relative" }}>
+  <label>Password</label>
+  <input
+    type={showPassword ? "text" : "password"}  
+    name="userPassword"
+    value={formData.userPassword}
+    onChange={handleChange}
+    style={{ width: "100%", paddingRight: "40px" }}
+  />
+  <span
+    onClick={() => setShowPassword(!showPassword)}
+    style={{
+      position: "absolute",
+      right: "10px",
+      top: "65%",
+      transform: "translateY(-50%)", 
+      cursor: "pointer"
+    }}
+  >
+    {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+  </span>
+</div>
        
-<div>
-<label className=''>Password</label>  
-<input
-  type="password"
-  name="userPassword"
-  value={formData.userPassword}
-  onChange={handleChange}
-  className='bg-white'
-  style={{width: "100%", paddingRight: "40px"}}
-/>
-{/* <span onClick={() => setShowPassword(!showPassword)}
-    style={{position: "absolute", right:"10px",
-        top: "50%", cursor: "pointer"
-    }}>{showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}</span> */}
-</div>        
 
           <div>
-          {/* <a className="link" href="/userIdLogin">Login With User ID</a> */}
             <a className="link" href="/loginnew" style={{fontSize: "14px"}}>Login With Mobile</a>
           </div>
 
           <div className="form-check d-flex gap-2 align-items-start">
-            {/* <input
-              type="checkbox"
-              name="consent"
-              className="form-check-input mt-1"
-              checked={formData.consent}
-              onChange={handleChange}
-              id="consentCheckbox"
-            /> 
-            <label> <TermsandConditions /> </label> */}
              <input 
             type="checkbox" 
             className="form-check-input border-dark"
@@ -166,7 +162,23 @@ if (!userName || !userPassword) {
        {showModal && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h2>Terms and Conditions</h2>
+             <button
+      onClick={() => setShowModal(false)}
+      style={{
+        color: "red",
+        position: "absolute",
+        top: "10px",
+        right: "15px",
+        background: "none",
+        border: "none",
+        fontSize: "20px",
+        fontWeight: "bold",
+        cursor: "pointer"
+      }}
+    >
+      ✕
+    </button>
+            <h2 className='text-center'>Terms and Conditions</h2>
             <div className="text-justify">
                     <div className="mt-20">
                         <h4>I. YOUR ACCEPTANCE OF THIS AGREEMENT</h4>
@@ -463,7 +475,7 @@ if (!userName || !userPassword) {
           position: fixed;
           top: 0;
           left: 0;
-          width: 110%;
+          width: 100%;
           height: 110%;
           background: rgba(0, 0, 0, 0.5);
           display: flex;
@@ -473,15 +485,16 @@ if (!userName || !userPassword) {
         }
 
         .modal-content {
-          background: white;
-          padding: 20px;
-          border-radius: 20px;
-          width: 100%;
-          max-width: 600px;
-          max-height: 80vh;
-          overflow-y: auto;
-          text-align: left;
-        }
+  position: relative; 
+  background: white;
+  padding: 20px;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  text-align: left;
+}
       `}</style>
     </div>
   );
