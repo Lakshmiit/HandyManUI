@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import './App.css';
-import { BrowserRouter as Router, Route, Routes, useNavigate} from 'react-router-dom'; 
+import { BrowserRouter as Router, Route, Routes} from 'react-router-dom'; 
 import UploadForm from './uploadform';
 import ProductView from './ProductView'; 
 import EditUploadForm from './EditUploadForm'; 
@@ -135,18 +135,35 @@ import ChatPage from './ChatPage.js';
 // import FirebaseMainConfig from './FirebaseMainConfig.js';
 
 const PreventBackNavigation = () => {
-  const navigate = useNavigate(); 
-  useEffect(() => { 
+//   const navigate = useNavigate(); 
+//   useEffect(() => { 
+//     const handlePopState = (event) => {
+//       event.preventDefault();
+//       navigate(1); 
+//     };
+//     window.history.pushState(null, null, window.location.href);
+//     window.addEventListener("popstate", handlePopState);
+//     return () => {
+//       window.removeEventListener("popstate", handlePopState);
+//     };
+//   }, [navigate]);
+//   return null;
+// };
+
+useEffect(() => {
     const handlePopState = (event) => {
       event.preventDefault();
-      navigate(1); 
+      window.location.reload(); 
     };
+
     window.history.pushState(null, null, window.location.href);
     window.addEventListener("popstate", handlePopState);
+
     return () => {
       window.removeEventListener("popstate", handlePopState);
     };
-  }, [navigate]);
+  }, []);
+
   return null;
 };
 
