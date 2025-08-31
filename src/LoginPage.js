@@ -232,6 +232,22 @@ const handleOTP = async (e) => {
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content">
+            <button
+      onClick={() => setShowModal(false)}
+      style={{
+        color: "red",
+        position: "absolute",
+        top: "10px",
+        right: "15px",
+        background: "none",
+        border: "none",
+        fontSize: "20px",
+        fontWeight: "bold",
+        cursor: "pointer"
+      }}
+    >
+      ✕
+    </button>
             <h2>Terms and Conditions</h2>
             <div className="text-justify">
                     <div className="mt-20">
@@ -489,8 +505,7 @@ const handleOTP = async (e) => {
                         <p>
                             Entire Agreement. These Terms constitutes the entire agreement between you and us with respect to the subject matter of these Terms and supersedes all prior written and all prior or contemporaneous oral communications regarding such subject matter. Accordingly, you should not rely on any representations or warranties that are not expressly set forth in these Terms. If any provision or provisions of these Terms shall be held to be invalid, illegal, unenforceable or in conflict with the law of any jurisdiction, the validity, legality and enforceability of the remaining provisions shall not in any way be affected or impaired. Except as provided in Section 1, these Terms may not be modified except by writing signed by you and us; provided, however, we may change these Terms from time to time, and such revised terms and conditions shall be effective with respect to any Advertising Products ordered after written notice of such revised terms to you or, if earlier, posting of such revised terms and conditions on our Website.
                         </p>
-                        </div>
-                        
+                        </div> 
                         <div className="mt-20">
                         <h4>XVII. END OF TERMS OF SERVICE</h4>
                         <p>
@@ -544,18 +559,18 @@ const handleOTP = async (e) => {
           left: 20px; /* Adjusted for placement on the left side */
           z-index: 1000;
         }
-        .modal-overlay {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 110%;
-          height: 110%;
-          background: rgba(0, 0, 0, 0.5);
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          z-index: 1000;
-        }
+        // .modal-overlay {
+        //   position: fixed;
+        //   top: 0;
+        //   left: 0;
+        //   width: 110%;
+        //   height: 110%;
+        //   background: rgba(0, 0, 0, 0.5);
+        //   display: flex;
+        //   justify-content: center;
+        //   align-items: center;
+        //   z-index: 1000;
+        // }
         .modal-content {
           background: white;
           padding: 20px;
