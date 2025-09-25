@@ -1,0 +1,591 @@
+import React, { useState, useEffect} from "react";
+import * as XLSX from "xlsx";
+import "./App.css";
+import AdminSidebar from './AdminSidebar';
+import Footer from './Footer.js';
+import "bootstrap/dist/css/bootstrap.min.css";
+import { useNavigate, useParams } from "react-router-dom";
+import { ArrowBack, Dashboard as MoreVertIcon} from '@mui/icons-material';
+import ForwardIcon from '@mui/icons-material/Forward';
+import { Button, Form, Row, Col } from 'react-bootstrap';
+import axios from "axios";
+const AdminGroceryOrderPage = () => {
+  const navigate = useNavigate(); 
+  const {groceryItemId} = useParams();
+  const [martId, setMartId] = useState('');
+  const [isMobile, setIsMobile] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+//   const [category, setCategory] = useState("");  
+//   const [totalAmount, setTotalAmount] = useState('');
+//   const [requiredQuantity, setRequiredQuantity] = useState("");
+//   const [rate, setRate] = useState("");
+//   const [discount, setDiscount] = useState("");
+//  const [afterDiscount, setAfterDiscount] = useState("");
+//   const [productName, setProductName] = useState("");
+// const [addressType, setAddressType] = useState('');
+  const [state, setState] = useState('');
+  const [district, setDistrict] = useState('');
+  const [pincode, setPincode] = useState('');
+  const [address, setAddress] = useState(''); 
+  const [id, setId] = useState("");  
+//   const [technicianDetails, setTechnicianDetails] = useState('');
+// const [invoiceDetails, setInvoiceDetails] = useState('');
+// const [technicianConfirmationCode, setTechnicianConfirmationCode] = useState('');
+const [assignedTo, setAssignedTo] = useState('');
+const [loading, setLoading] = useState(true);
+// const [productInvoice, setProdctInvoice] = useState([]);
+// const [uploadedFiles, setUploadedFiles] = useState([]);
+// const [showAlert, setShowAlert] = useState(false);
+const [paymentMode, setPaymentMode] = useState('');
+const [transactionDetails, setTransactionDetails] = useState('');
+const [customerId, setCustomerId] = useState('');
+const [mobileNumber, setMobileNumber] = useState('');
+const [customerName, setCustomerName] = useState('');
+// const [date, setDate] = useState('');
+const [error, setError] = useState('');
+// const [emailAddress, setEmailAddress] = useState("");
+// const [selectPincode, setSelectPincode] = useState("");
+// const [selectTechnician, setSelectTechnician] = useState("");
+const [items, setItems] = useState([]);
+const [deliveryPartners, setDeliveryPartners] = useState([]);
+const [selectedPartner, setSelectedPartner] = useState(""); 
+const [longitude, setLongitude] = useState(""); 
+const [latitude, setLatitude] = useState(""); 
+const [grandTotal, setGrandTotal] = useState(""); 
+const [paidAmount, setPaidAmount] = useState(""); 
+const [transactionNumber, setTransactionNumber] = useState(""); 
+const [transactionStatus, setTransactionStatus] = useState(""); 
+// const [transactionType, setTransactionType] = useState(""); 
+ const [totalItemsSelected, setTotalItemsSelected] = useState(""); 
+const [cartData, setCartData] = useState(null);
+ 
+useEffect(() => {
+  console.log(id, customerId, loading);
+}, [id,customerId, loading]);
+
+useEffect(() => {
+  const fetchDeliveryPartners = async () => {
+    try {
+      const response = await axios.get(`https://handymanapiv2.azurewebsites.net/api/DeliveryPartner/GetAllDeliveryPartners`);
+      const partners = response.data.filter(partner => partner.status === "open");
+      setDeliveryPartners(partners);
+    } catch (error) {
+      console.error("Error fetching delivery partners:", error);
+    }
+  };
+  fetchDeliveryPartners();
+}, []);
+
+useEffect(() => {
+  const fetchGroceryData = async () => {
+    try {
+      const response = await fetch(
+        `https://handymanapiv2.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch grocery product data");
+      }
+      const data = await response.json();
+      console.log("Fetched Grocery Data:", data);
+      setCartData(data);
+      setCustomerId(data.userId);
+      setId(data.id);
+      setMartId(data.martId);
+      // setDate(data.date);
+      setCustomerName(data.customerName);
+      setMobileNumber(data.customerPhoneNumber);
+      setAddress(data.address);
+      setState(data.state);
+      setDistrict(data.district);
+      setPincode(data.zipCode);
+      setPaymentMode(data.paymentMode);
+      setTransactionDetails(data.utrTransactionNumber);
+      setLongitude(data.longitude);
+      setLatitude(data.latitude);
+      setGrandTotal(data.grandTotal);
+      setPaymentMode(data.paymentMode);
+      setTotalItemsSelected(data.totalItemsSelected);
+      setTransactionStatus(data.transactionStatus);
+      // setTransactionType(data.transactionType);
+      setPaidAmount(data.paidAmount);
+      setTransactionNumber(data.transactionNumber);
+
+      if (data.categories && Array.isArray(data.categories)) {
+        let allProducts = [];
+        data.categories.forEach((cat) => {
+          cat.products.forEach((p, idx) => {
+            allProducts.push({
+              serial: allProducts.length + 1,
+              name: p.productName,
+              category: cat.categoryName,
+              mrp: p.mrp,
+              discount: p.discount,
+              afterDiscountPrice: p.afterDiscountPrice,
+              quantity: p.noOfQuantity,
+              total: p.afterDiscountPrice * p.noOfQuantity,
+            });
+          });
+        });
+        setItems(allProducts);
+      }
+    } catch (error) {
+      console.error("Error fetching grocery product data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  if (groceryItemId) {
+    fetchGroceryData();
+  }
+}, [groceryItemId]);
+   
+const handleAssignedToChange = (e) => {
+  const selectedAssignedTo = e.target.value;
+  setAssignedTo(selectedAssignedTo);
+  setError({});
+};
+  const handleUpdatePaymentMethod = async () => {
+    try {   
+      const partner = deliveryPartners.find(p => p.deliveryPartnerId === selectedPartner);
+  const payload = {
+    ...cartData,
+    customerName: customerName,
+    address: address, 
+    state: state,
+    district: district,
+    zipCode: pincode,
+    customerPhoneNumber: mobileNumber,
+    id: groceryItemId,
+    userId: customerId, 
+    martId: martId,
+    date: new Date(),
+    grandTotal: grandTotal,
+    totalItemsSelected: totalItemsSelected,
+    status: "closed", 
+    paymentMode: paymentMode,
+    utrTransactionNumber: transactionDetails,
+    transactionNumber: transactionNumber,
+    transactionStatus: transactionStatus,
+    paidAmount: paidAmount,
+    AssignedTo: partner? partner.deliveryPartnerName: "",
+    DeliveryPartnerUserId: partner? partner.userId: "",
+    latitude: latitude,
+    longitude: longitude,
+  };
+
+    let response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to Update Delivery Partner.');
+    }
+    alert(`Ticket has been assigned to ${partner ? partner.deliveryPartnerName : ""}`);
+    navigate(`/adminNotifications`);
+  } catch (error) {
+    console.error('Error:', error);
+    window.alert('Failed to Update Delivery Partner. Please try again later.');
+  }
+};
+
+  // Detect screen size for responsiveness
+useEffect(() => {
+  const handleResize = () => setIsMobile(window.innerWidth <= 768);
+  handleResize(); 
+  window.addEventListener('resize', handleResize);
+  return () => window.removeEventListener('resize', handleResize);
+}, []);
+
+   const handleSubmit = (e) => {
+     e.preventDefault();
+   };
+    // Handle file upload
+    // const handleFileChange = (e) => {
+    //   const files = Array.from(e.target.files);
+    //   if (files.length + productInvoice.length > 1) {
+    //     alert("You can upload up to 1 file.");
+    //     return;
+    //   }
+    //   setProdctInvoice([...productInvoice, ...files]);
+    //   setShowAlert(true);
+    //   setError((prev) => ({ ...prev, productInvoice: "" }));
+    // };
+  
+    // const handleUploadFiles = async () => {
+    //   setLoading(true);
+    //   setShowAlert(false);
+    //   const uploadedFilesList=[];
+    //   for (let i = 0; i < productInvoice.length; i++) {
+    //     const file = productInvoice[i];
+    //     const fileName = file.name;
+    //     const mimetype = file.type;
+    //     const byteArray = await getFileByteArray(file);
+    //     const response = await uploadFile(byteArray, fileName, mimetype, file);
+    //     if (response) {
+    //       uploadedFilesList.push({
+    //         src: response,
+    //         alt: fileName
+    //       });
+    //     } else {
+    //       alert("Failed Upload Invoice");
+    //     }
+    //   }
+    //   setUploadedFiles(uploadedFilesList);
+    //   setLoading(false);
+    // };
+  
+    // // Convert the file to a byte array
+    //   const getFileByteArray = (file) => {
+    //     return new Promise((resolve) => {
+    //       const reader = new FileReader();
+    //       reader.onloadend = () => {
+    //         const byteArray = new Uint8Array(reader.result);
+    //         resolve(byteArray);
+    //       };
+    //       reader.readAsArrayBuffer(file);
+    //     });
+    //   };
+    
+    //   const uploadFile = async (byteArray, fileName, mimeType, file) => {
+    //     try {
+    //       const formData = new FormData();
+    //       formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
+    //       formData.append('fileName', fileName);
+    //       const response = await fetch('https://handymanapiv2.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
+    //         method: 'POST',
+    //         headers: {
+    //           'Accept': 'text/plain',
+    //         },
+    //         body: formData,
+    //       });
+    //       const responseData = await response.text();
+    //       return responseData || ''; 
+    //     } catch (error) {
+    //       console.error('Error uploading file:', error);
+    //       return '';
+    //     }
+    //   };
+    
+    //   useEffect(() => {
+    //     return () => {
+    //       uploadedFiles.forEach((file) => URL.revokeObjectURL(file));
+    //     };
+    //   }, [uploadedFiles]);
+
+    const handleDownloadExcel = () => {
+  const worksheetData = items.map((item, idx) => ({
+    "Sl. No": idx + 1,
+    "Item Name": item.name,
+    "Category": item.category,
+    "MRP": item.mrp,
+    "Discount (%)": item.discount,
+    "After Discount Price": item.afterDiscountPrice,
+    "Required Quantity": item.quantity,
+    "Total": item.total,
+  }));
+
+  worksheetData.push({
+    "Sl. No": "",
+    "Item Name": "",
+    "Category": "",
+    "MRP": "",
+    "Discount (%)": "",
+    "After Discount Price": "",
+    "Required Quantity": "Grand Total",
+    "Total": items.reduce((sum, item) => sum + item.total, 0),
+  });
+
+  const worksheet = XLSX.utils.json_to_sheet(worksheetData);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Grocery Items");
+  XLSX.writeFile(workbook, `Grocery_Order_${martId}.xlsx`);
+};
+
+
+  return (
+  <>
+<div className="d-flex flex-row justify-content-start align-items-start" style={{marginTop: "10px"}}>
+      {/* Sidebar menu for Larger Screens */}
+      {!isMobile && (
+        <div className=" ml-0 p-0 adm_mnu h-90">
+          <AdminSidebar />
+        </div>
+      )}
+
+      {isMobile && (
+        <div className="floating-menu">
+          <Button
+            variant="primary"
+            className="rounded-circle shadow"
+            onClick={() => setShowMenu(!showMenu)}
+          >
+            <MoreVertIcon />
+          </Button>
+          {showMenu && (
+            <div className="sidebar-container">
+              <AdminSidebar />
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Main Content */}
+      <div className={`container ${isMobile ? 'w-100' : 'w-75'}`}>
+      <h3 className="text-center">Grocery Items Orders</h3>
+        <div className="rounded-3bx_sdw w-100">
+          <form className="form" onSubmit={handleSubmit}>
+                <div className="text-center">
+                <strong className="fs-5">Order Number:<span>{martId}</span></strong>
+                </div>
+                <div className="form-group">
+              <label>
+                Customer Name <span className="req_star">*</span>
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                value={customerName}
+                placeholder="Customer Name"
+                readOnly
+              />
+            </div>
+              <div className="form-group">
+                <label>Customer Address <span className="req_star">*</span></label>
+                <input
+                as="textarea"
+                type="text"
+                className="form-control"
+                 value={[address, district, state, pincode, mobileNumber]
+                  .filter(Boolean) 
+                  .join(", ")}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="Customer Address"
+                readOnly
+              />
+              </div>
+      <h4 className="m-0">Grocery Items</h4>
+<table className="table table-bordered table-striped">
+  <thead>
+    <tr>
+      <th style={{ background: "green", color: "white" }}>Sl. No</th>
+      <th style={{ background: "green", color: "white" }}>Item Name</th>
+      <th style={{ background: "green", color: "white" }}>Category</th>
+      <th style={{ background: "green", color: "white" }}>MRP</th>
+      <th style={{ background: "green", color: "white" }}>Discount (%)</th>
+      <th style={{ background: "green", color: "white" }}>
+        After Discount <br /> Price
+      </th>
+      <th style={{ background: "green", color: "white" }}>
+        Required <br /> Quantity
+      </th>
+      <th style={{ background: "green", color: "white" }}>Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    {items.map((item, idx) => (
+      <tr key={idx}>
+        <td>{item.serial}</td>
+        <td>{item.name}</td>
+        <td>{item.category}</td>
+        <td>₹{item.mrp}</td>
+        <td>{item.discount}%</td>
+        <td>₹{item.afterDiscountPrice.toFixed(0)}</td>
+        <td>{item.quantity}</td>
+        <td>₹{item.total.toFixed(0)}</td>
+      </tr>
+    ))}
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colSpan="7" className="text-end fw-bold">
+        Grand Total:
+      </td>
+      <td className="fw-bold">     
+        ₹{items.reduce((sum, item) => sum + item.total, 0).toFixed(0)}
+      </td>
+    </tr>
+  </tfoot>
+</table>
+<div className="text-end mt-2">
+  <button style={{ background: "green", color: "white" }} onClick={handleDownloadExcel}>
+    Download Excel
+  </button>
+</div>
+
+        <div className='payment'>
+        <label className='fw-bold fs-5 w-100 p-2' style={{ background: "green", color: "white", borderRadius: "15px", width: "25px" }}>Payment Mode</label>
+        <label className='fs-5 '>
+            <input 
+            type="radio" 
+            className="form-check-input border-secondary m-2 border-dark"
+            checked={paymentMode === 'online'}
+            readOnly
+             />
+            Pay Through Online
+          </label>
+          <label className='fs-5'>
+            <input 
+            type="radio" 
+            className="form-check-input border-secondary border-dark m-2"
+            checked={paymentMode === 'cash'}
+            readOnly
+            />
+            Cash On Delivery
+          </label>
+    </div>
+
+    <div className="form-group mt-0">
+              <label>Payment Transaction Details </label>
+              <input
+                type="text"
+                className="form-control "
+                value={transactionDetails}
+                onChange={(e) => setTransactionDetails(e.target.value)}
+                placeholder="Payment Transaction Details"
+                readOnly
+              />
+            </div>
+            <Row>
+                  {/* Assigned To */}
+                  <Col md={12}>
+                    <Form.Group>
+                      <label>Assigned To</label>
+                      <Form.Control as="select" value={assignedTo} onChange={handleAssignedToChange} required>
+                        <option value="">Select Assigned</option>
+                        <option value="Delivery Partner">Delivery Partner</option>
+                        {/* {deliveryPartners.map((partner) => (
+                        <option key={partner.id} value={partner.deliveryPartnerId}>{partner.deliveryPartnerName}</option>
+                        ))} */}
+                      </Form.Control>
+                      {error.assignedTo && <p className="text-danger">{error.assignedTo}</p>}
+                    </Form.Group>
+                  </Col>
+
+                   {/* New Delivery Partner Names Dropdown */}
+                  <Col md={12}>
+                    <Form.Group>
+                      <label>Delivery Partner Names</label>
+                      <Form.Control
+                        as="select"
+                        value={selectedPartner}
+                        onChange={(e) => setSelectedPartner(e.target.value)}
+                        required
+                      >
+                        <option value="">Select Delivery Partner</option>
+                        {deliveryPartners.map((partner) => (
+                          <option key={partner.id} value={partner.deliveryPartnerId}>
+                            {partner.deliveryPartnerName}
+                          </option>
+                        ))}
+                      </Form.Control>
+                    </Form.Group>
+                  </Col>
+                  {/* Show these fields only if "Technician" is selected */}
+                  {/* {assignedTo === "Technician" && (
+                    <>
+                      {/* Select Category 
+                      <Col md={12}>
+                        <Form.Group>
+                          <label>Category</label>
+                          <Form.Control
+                            type="text"
+                            name="category"
+                            value={category}
+                            onChange={handleChange}
+                            placeholder="Category"
+                            readOnly
+                          >
+                          </Form.Control>
+                        </Form.Group>
+                      </Col>
+             */}
+            
+                      {/* Select Pincodes */}
+                      {/* <Col md={12}>
+                        <Form.Group>n
+                          <label>Select Pincode</label>
+                          <Form.Control as="select" value={selectPincode} onChange={handlePincodeChange} required>
+                            <option value="">Select Pincode</option>
+                            {pincodes.map((pincode, i) => (
+                              <option key={i} value={pincode.zipCode}>{pincode.zipCode}</option>
+                            ))}
+                          </Form.Control>
+                          {error.selectPincode && <div style={{ color: "red", marginTop: "5px" }}>{error.selectPincode}</div>}
+                        </Form.Group>
+                      </Col>
+             */}
+                      {/* Select Technician */}
+            
+                      {/* <Col md={12}>
+                  <Form.Group>
+                    <label>Select Technician</label>
+                    <div>
+                      <Form.Check
+                        type="checkbox"
+                        className="custom-checkbox"
+                        label="Select All"
+                        checked={selectAll}
+                        onChange={handleSelectAllChange}
+                      />
+                      {technicians.map((technician, i) => (
+                        <div key={i}>
+                          <Form.Check
+                            type="checkbox"
+                            className="custom-checkbox"
+                            label={technician.technicianFullName}
+                            value={technician.technicianFullName}
+                            checked={selectedTechnicians.includes(technician.technicianFullName)}
+                            onChange={handleTechnicianChange}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                    {error.selectTechnician && (
+                      <div style={{ color: "red", marginTop: "5px" }}>{error.selectTechnician}</div>
+                    )}
+                  </Form.Group>
+                </Col>
+                    </>
+                  )} */}
+                </Row> 
+            <div className="mt-2 d-flex justify-content-between">
+            <Button type="submit" className=" text-white mx-2" style={{background: 'green'}} onClick={() => navigate(`/adminNotifications`)} title="Forward">
+                <ArrowBack />
+                </Button>
+                <Button type="submit" className="text-white mx-2" style={{background: 'green'}} title="Forward" onClick={handleUpdatePaymentMethod}> 
+                {/* onClick={handleUpdatePaymentMethod}  */}
+                <ForwardIcon />
+                </Button>
+            </div>
+          </form>
+        </div>
+      </div>
+      {/* Styles for floating menu */}
+<style jsx>{`
+        .floating-menu {
+          position: fixed;
+          top: 80px; /* Increased from 20px to avoid overlapping with the logo */
+          left: 20px; /* Adjusted for placement on the left side */
+          z-index: 1000;
+        }
+        .menu-popup {
+          position: absolute;
+          top: 50px; /* Keeps the popup aligned below the floating menu */
+          left: 0; /* Aligns the popup to the left */
+          background: white;
+          border: 1px solid #ddd;
+          border-radius: 5px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          width: 200px;
+        }
+      `}</style>    
+    </div>
+    <Footer /> 
+    </>
+  );
+};
+
+export default AdminGroceryOrderPage;

@@ -100,14 +100,38 @@ import ApartmentRaiseActionView from './ApartmentRaiseActionView.js';
 import ApartmentNotificationGrid from './ApartmentNotificationGrid.js';
 import AboutApartmentRaiseTicket from './AboutApartmentRaiseTicket.js';
 import ChatPage from './ChatPage.js';
+import BuyProductOnlinePaymentPage from './BuyProductOnlinePaymentPage.js';
+import BuyProductPaymentSuccess from './BuyProductPaymentSuccess.js';
+import BookTechnicianOnlinePayment from './BookTechnicianOnlinePayment.js'
+import BookTechnicianPaymentSuccess from './BookTechnicianPaymentSuccess.js';
 // import TextPage from './TextPage.js';
-//  import GroceryItems from './GroceryItems.js';
-// import AdminUploadGrocery from './AdminUploadGrocery.js';
-// import AdminUpdateGrocery from './AdminUpdateGrocery.js';
-// import AdminGroceryList from './AdminGroceryList.js';
-// import AdminGroceryApproval from './AdminGroceryApproval.js';
-//  import GroceryCategoryIcons from './GroceryCategoryIcons.js';
-
+// New Pages  
+import GroceryItems from './GroceryItems.js';
+import AdminUploadGrocery from './AdminUploadGrocery.js';
+import AdminUpdateGrocery from './AdminUpdateGrocery.js';
+import AdminGroceryList from './AdminGroceryList.js';
+import AdminGroceryApproval from './AdminGroceryApproval.js';
+// import GroceryCategoryIcons from './GroceryCategoryIcons.js';
+import GroceryCartPage from './GroceryCartPage.js';
+// import LakshmiCollections from './LakshmiCollections.js';
+// import AdminLakshmiCollectionsUpload from './AdminLakshmiCollectionsUpload.js';
+import AdminGroceryOrderPage from './AdminGroceryOrderPage.js';
+// import AdminGroceryItemNotificationGrid from './AdminGroceryItemNotificationGrid.js';
+import GroceryPaymentmethod from './GroceryPaymentMethod.js';
+import GroceryOnlinePayment from './GroceryOnlinePayment.js';
+import GroceryPaymentSuccess from './GroceryPaymentSuccess.js';
+// import AdminCollectionsList from './AdminCollectionsList.js';
+// import AdminLakshmiCollectionsUpdate from './AdminLakshmiCollectionsUpdate.js';
+// import AdminLakshmiCollectionsApproval from './AdminLakshmiCollectionsApproval.js';
+// import LakshmiCollectionDesigns from './LakshmiCollectionDesigns.js';
+// import LakshmiCollectionCartPage from './LakshmiCollectionCartPage.js';
+// import LakshmiCollectionPaymentmethod from './LakshmiCollectionPaymentMethod.js';
+// import LakshmiCollectionOnlinePayment from './LakshmiCollectionOnlinePayment.js';
+// import LakshmiCollectionPaymentSuccess from './LakshmiCollectionPaymentSuccess.js';
+// import AdminLakshmiCollectionsPage from './AdminLakshmiCollectionsPage.js';
+import DeliveryTracking from './DeliveryTracking.js';
+import DeliveryPartner from './DeliveryPartner.js';
+// import DeliveryPartnerDirectory from './DeliveryPartnerDirectory.js';
 // import RatingsAndReviews from './RatingsAndReviews.js';
 // import BeautyIcons from './BeautyIcons.js';
 // import AdminRegistrationNumbers from './AdminRegisterationNumbers.js';
@@ -180,14 +204,40 @@ function App() {
           <Routes>
             <Route path="/device" element={<Device />} />
             <Route path="/chatPage/:userType/:userId" element={<ChatPage />} />
-            
-            {/* <Route path="/grocery/:userType/:userId" element={<GroceryItems />} />
-            <Route path="/groceryIcons/:userType/:userId" element={<GroceryCategoryIcons />} />
+            {/* New Pages */}
+            <Route path="/deliveryPartner/:userType/:userId" element={<DeliveryPartner />} />
+            <Route path="/deliveryTracking/:id" element={<DeliveryTracking />} />
+            {/* <Route path="/deliveryPartnerDirectory" element={<DeliveryPartnerDirectory />} /> */}
+            <Route path="/grocery/:userType/:userId" element={<GroceryItems />} />
+            <Route path="/groceryCart/:userType/:userId" element={<GroceryCartPage />} />
+            {/* <Route path="/groceryIcons/:userType/:userId" element={<GroceryCategoryIcons />} /> */}
             <Route path="/adminUploadGrocery/Admin" element={<AdminUploadGrocery />} />
             <Route path="/adminUpdateGrocery/:id/Admin" element={<AdminUpdateGrocery />} />
             <Route path="/adminGroceryApproval/:id/Admin" element={<AdminGroceryApproval />} /> 
-            <Route path="/adminGroceryList/Admin" element={<AdminGroceryList />} /> */}
-            
+            <Route path="/adminGroceryList/Admin" element={<AdminGroceryList />} />
+            {/* <Route path='/groceryItemsNotificationGrid' element={<AdminGroceryItemNotificationGrid />} /> */}
+            <Route path='/adminGroceryOrderPage/:groceryItemId' element={<AdminGroceryOrderPage />} />
+            c<Route path='/groceryPaymentMethod/:userType/:userId/:groceryItemId' element={<GroceryPaymentmethod />} />
+            <Route path="/buyProductOnlinePaymentPage/:id" element={<BuyProductOnlinePaymentPage />} />
+            <Route path="/BuyProductPaymentSuccess" element={<BuyProductPaymentSuccess />} />
+            <Route path="/bookTechnicianOnlinePayment/:id" element={<BookTechnicianOnlinePayment />} />
+            <Route path="/BookTechnicianPaymentSuccess" element={<BookTechnicianPaymentSuccess />} />
+            <Route path="/groceryOnlinePayment/:groceryItemId" element={<GroceryOnlinePayment />} />
+            <Route path="/groceryPaymentSuccess" element={<GroceryPaymentSuccess />} />
+            {/* <Route path="/adminCollectionsList/Admin" element={<AdminCollectionsList />} />
+            <Route path="/adminCollectionsUpload/Admin" element={< AdminLakshmiCollectionsUpload />} />
+            <Route path="/adminCollectionsUpdate/:id/Admin" element={<AdminLakshmiCollectionsUpdate />} />
+            <Route path="/adminCollectionsApproval/:id/Admin" element={<AdminLakshmiCollectionsApproval />} />
+            <Route path="/lakshmiCollections/:userType/:userId" element={< LakshmiCollections />} />
+            <Route path="/lakshmiCollectionDesigns/:userType/:userId/:id" element={< LakshmiCollectionDesigns />} />
+            <Route path="/lakshmiCollectionCart/:userType/:userId" element={<LakshmiCollectionCartPage />} />
+            <Route path='/lakshmiCollectionPaymentMethod/:userType/:userId/:collectionId' element={<LakshmiCollectionPaymentmethod />} />
+            <Route path="/lakshmiCollectionsOnlinePayment/:collectionId" element={<LakshmiCollectionOnlinePayment />} />
+            <Route path="/lakshmiCollectionPaymentSuccess" element={<LakshmiCollectionPaymentSuccess />} />
+            <Route path='/adminLakshmiCollectionsOrders/:collectionId' element={<AdminLakshmiCollectionsPage />} /> */}
+
+
+
             {/* <Route path="/customerRegistration" element={<CustomerRegistration />} /> */}
             {/* <Route path="/technicianRegistration" element={<TechnicianRegistration />} /> */}
             <Route path="/profilePage/:userType/:userId" element={<ProfilePage />} />
@@ -297,6 +347,8 @@ function App() {
             <Route path="/apartmentRaiseTicketActionView/:apartmentRaiseTicketId" element={<ApartmentRaiseActionView />} />
             <Route path="/apartmentNotificationGrid" element={<ApartmentNotificationGrid />} />
             <Route path="/aboutApartmentRaiseTicket/:userType/:userId" element={<AboutApartmentRaiseTicket />} />
+            
+            {/* /BuyProductPaymentSuccess?paymentId=${response.razorpay_payment_id}&amount=${orderBooking.totalPaymentAmount}&id=${orderBooking.id}&address=${orderBooking.address}&buyProductId=${orderBooking.buyProductId}&productName=${orderBooking.productName} */}
             {/* <Route path="/addCartCount/:userId" element={<AddToCartCount />} /> */}
             {/* <Route path="/productAddCart/:userId" element={<BuyProductAddToCart />} /> */}
             {/* <Route path="/beautyIcons/:userType/:userId" element={<BeautyIcons />} /> */}
