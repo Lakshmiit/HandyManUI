@@ -100,15 +100,15 @@ import ApartmentRaiseActionView from './ApartmentRaiseActionView.js';
 import ApartmentNotificationGrid from './ApartmentNotificationGrid.js';
 import AboutApartmentRaiseTicket from './AboutApartmentRaiseTicket.js';
 import ChatPage from './ChatPage.js';
-import BuyProductOnlinePaymentPage from './BuyProductOnlinePaymentPage.js';
-import BuyProductPaymentSuccess from './BuyProductPaymentSuccess.js';
-import BookTechnicianOnlinePayment from './BookTechnicianOnlinePayment.js'
-import BookTechnicianPaymentSuccess from './BookTechnicianPaymentSuccess.js';
+// import BuyProductOnlinePaymentPage from './BuyProductOnlinePaymentPage.js';
+// import BuyProductPaymentSuccess from './BuyProductPaymentSuccess.js';
+// import BookTechnicianOnlinePayment from './BookTechnicianOnlinePayment.js'
+// import BookTechnicianPaymentSuccess from './BookTechnicianPaymentSuccess.js';
 // import TextPage from './TextPage.js';
 // New Pages  
 import GroceryItems from './GroceryItems.js';
 import AdminUploadGrocery from './AdminUploadGrocery.js';
-import AdminUpdateGrocery from './AdminUpdateGrocery.js';
+import AdminUpdateGrocery from './AdminUpdateGrocery.js';      
 import AdminGroceryList from './AdminGroceryList.js';
 import AdminGroceryApproval from './AdminGroceryApproval.js';
 // import GroceryCategoryIcons from './GroceryCategoryIcons.js';
@@ -217,11 +217,11 @@ function App() {
             <Route path="/adminGroceryList/Admin" element={<AdminGroceryList />} />
             {/* <Route path='/groceryItemsNotificationGrid' element={<AdminGroceryItemNotificationGrid />} /> */}
             <Route path='/adminGroceryOrderPage/:groceryItemId' element={<AdminGroceryOrderPage />} />
-            c<Route path='/groceryPaymentMethod/:userType/:userId/:groceryItemId' element={<GroceryPaymentmethod />} />
-            <Route path="/buyProductOnlinePaymentPage/:id" element={<BuyProductOnlinePaymentPage />} />
+            <Route path='/groceryPaymentMethod/:userType/:userId/:groceryItemId' element={<GroceryPaymentmethod />} />
+            {/* <Route path="/buyProductOnlinePaymentPage/:id" element={<BuyProductOnlinePaymentPage />} />
             <Route path="/BuyProductPaymentSuccess" element={<BuyProductPaymentSuccess />} />
             <Route path="/bookTechnicianOnlinePayment/:id" element={<BookTechnicianOnlinePayment />} />
-            <Route path="/BookTechnicianPaymentSuccess" element={<BookTechnicianPaymentSuccess />} />
+            <Route path="/BookTechnicianPaymentSuccess" element={<BookTechnicianPaymentSuccess />} /> */}
             <Route path="/groceryOnlinePayment/:groceryItemId" element={<GroceryOnlinePayment />} />
             <Route path="/groceryPaymentSuccess" element={<GroceryPaymentSuccess />} />
             {/* <Route path="/adminCollectionsList/Admin" element={<AdminCollectionsList />} />
