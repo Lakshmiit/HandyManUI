@@ -1,5 +1,5 @@
 import React, { useState, useEffect} from "react";
-import * as XLSX from "xlsx";
+// import * as XLSX from "xlsx";
 import "./App.css";
 import AdminSidebar from './AdminSidebar';
 import Footer from './Footer.js';
@@ -275,34 +275,34 @@ useEffect(() => {
     //     };
     //   }, [uploadedFiles]);
 
-    const handleDownloadExcel = () => {
-  const worksheetData = items.map((item, idx) => ({
-    "Sl. No": idx + 1,
-    "Item Name": item.name,
-    "Category": item.category,
-    "MRP": item.mrp,
-    "Discount (%)": item.discount,
-    "After Discount Price": item.afterDiscountPrice,
-    "Required Quantity": item.quantity,
-    "Total": item.total,
-  }));
+//     const handleDownloadExcel = () => {
+//   const worksheetData = items.map((item, idx) => ({
+//     "Sl. No": idx + 1,
+//     "Item Name": item.name,
+//     "Category": item.category,
+//     "MRP": item.mrp,
+//     "Discount (%)": item.discount,
+//     "After Discount Price": item.afterDiscountPrice,
+//     "Required Quantity": item.quantity,
+//     "Total": item.total,
+//   }));
 
-  worksheetData.push({
-    "Sl. No": "",
-    "Item Name": "",
-    "Category": "",
-    "MRP": "",
-    "Discount (%)": "",
-    "After Discount Price": "",
-    "Required Quantity": "Grand Total",
-    "Total": items.reduce((sum, item) => sum + item.total, 0),
-  });
+//   worksheetData.push({
+//     "Sl. No": "",
+//     "Item Name": "",
+//     "Category": "",
+//     "MRP": "",
+//     "Discount (%)": "",
+//     "After Discount Price": "",
+//     "Required Quantity": "Grand Total",
+//     "Total": items.reduce((sum, item) => sum + item.total, 0),
+//   });
 
-  const worksheet = XLSX.utils.json_to_sheet(worksheetData);
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Grocery Items");
-  XLSX.writeFile(workbook, `Grocery_Order_${martId}.xlsx`);
-};
+//   const worksheet = XLSX.utils.json_to_sheet(worksheetData);
+//   const workbook = XLSX.utils.book_new();
+//   XLSX.utils.book_append_sheet(workbook, worksheet, "Grocery Items");
+//   XLSX.writeFile(workbook, `Grocery_Order_${martId}.xlsx`);
+// };
 
 
   return (
@@ -409,11 +409,11 @@ useEffect(() => {
     </tr>
   </tfoot>
 </table>
-<div className="text-end mt-2">
+{/* <div className="text-end mt-2">
   <button style={{ background: "green", color: "white" }} onClick={handleDownloadExcel}>
     Download Excel
   </button>
-</div>
+</div> */}
 
         <div className='payment'>
         <label className='fw-bold fs-5 w-100 p-2' style={{ background: "green", color: "white", borderRadius: "15px", width: "25px" }}>Payment Mode</label>
@@ -435,7 +435,7 @@ useEffect(() => {
             />
             Cash On Delivery
           </label>
-    </div>
+    </div> 
 
     <div className="form-group mt-0">
               <label>Payment Transaction Details </label>
