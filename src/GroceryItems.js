@@ -237,7 +237,7 @@ useEffect(() => {
           </h1>
         </div>
 
-        <div className="wrapper d-flex" style={{ marginTop: "65px" }}>
+        <div className="wrapper d-flex" style={{ marginTop: isMobile ? "65px" : "170px" }}>
           {/* Sidebar */}
           {!isMobile ? (
             <div className="ml-0 p-0 sde_mnu">
@@ -245,7 +245,7 @@ useEffect(() => {
             </div>
           ) : (
             <div className="groceryfloating-menu">
-              <Button
+              <Button 
                 variant="primary"
                 className="rounded-circle shadow"
                 onClick={() => setShowMenu(!showMenu)}

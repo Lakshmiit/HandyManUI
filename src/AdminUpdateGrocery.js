@@ -229,7 +229,7 @@ if (error) {
 // }
 
   return (
-    <div className="d-flex flex-row justify-content-start align-items-start">
+    <div className="d-flex flex-row justify-content-start align-items-start mt-mob-50">
       {/* Sidebar */}
      {!isMobile && (
           <div className="ml-0 m-4 p-0 adm_mnu">
@@ -295,7 +295,7 @@ if (error) {
     multiple
     onChange={handleFileChange}
   />
-
+ 
   {/* Render existing filenames from server */}
   {existingFiles.length > 0 && (
     <div className="mt-2">

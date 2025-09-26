@@ -23,7 +23,7 @@ import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 // import Banner1 from './img/Ads1.jpeg';
-// import BannerVideo from './img/Dushera.mp4';
+import BannerVideo from './img/Dusshera.mp4';
 // import BannerVideo from './img/AdsVideo.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
 // import VolumeUpIcon from '@mui/icons-material/VolumeUp';
@@ -165,12 +165,12 @@ const categories = [
 ];
 
 const groceryCategories = [
-  { label: 'Family Pack', value: 'Beverages', image: FamilyPackImg },
+  { label: 'Family Pack', value: 'Family Pack', image: FamilyPackImg },
   { label: 'Staples & Grains', value: 'Staples & Grains', image: StaplesImg },
   { label: 'Snacks & Foods', value: 'Snacks & Branded Foods', image: SnacksImg },
   { label: 'Home Needs', value: 'Home Needs', image: HouseHoldImg },
   { label: 'Personal Care', value: 'Personal Care', image: PersonalCareImg },
-  { label: 'Baby & Kids', value: 'Baby & Kids', image: BabyKidsImg },
+  { label: 'Baby Products', value: 'Baby Products', image: BabyKidsImg },
 ];
 
 const collectionsCategories = [
@@ -198,13 +198,14 @@ const ProfilePage = () => {
    const [error, setError] = useState('');
     const [products, setProducts] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
-//      const videoRef = useRef(null);
+     const videoRef = useRef(null);
+const [isMuted] = useState(true);
 // const [isMuted, setIsMuted] = useState(true);
 const [unreadCount, setUnreadCount] = useState(0);
 const [messageCounts, setMessageCounts] = useState({
   news:     0,
   buysell:  0,
-  tolet:    0
+  tolet:    0  
 });    
 const [grocery, setGrocery] = useState([]);
 const [cartSummary, setCartSummary] = useState({
@@ -557,6 +558,11 @@ const handleCategoryClick = async (category) => {
 
 const handleGroceryCategoryClick = async (category) => {
   const { value } = category;
+   if (value === "Family Pack") {
+    console.log("Family Pack clicked - navigation blocked");
+    setSelectedCategory(category); 
+    return;
+  }
   try {
     setSelectedCategory(category);
     setGrocery([]);
@@ -1216,7 +1222,7 @@ const fetchImageUrl = async (photoId) => {
                 {/* Carousel items */}
                 <div className="carousel-inner">
                   <div className="carousel-item active">
-                    {/* <video
+                    <video
                       ref={videoRef}
                       className="d-block w-100 rounded"
                       style={{ width: '90%', height: 'auto', objectFit: 'cover' }}
@@ -1226,7 +1232,7 @@ const fetchImageUrl = async (photoId) => {
                       muted={isMuted}
                     >
                       <source src={BannerVideo} type="video/mp4" />
-                    </video> */}
+                    </video>
                     {/* <button
                       onClick={toggleMute}
                       style={{
@@ -1295,7 +1301,7 @@ const fetchImageUrl = async (photoId) => {
   {/* Handyman Products Section */}
   <div className="shadow-lg p-3 mb-1 rounded-5 bg-transparent border-0">
     <h5 className="text-center fw-bold mb-3" style={{color: "#ff5722", fontSize: "18px"}}>Handyman Products</h5>
-    <div className="row row-cols-3 row-cols-md-5 g-2">
+    <div className="row row-cols-3 row-cols-md-5 g-2 align-items-stretch">
       {categories.map((cat) => (
         <div
           className="col"
@@ -1305,10 +1311,11 @@ const fetchImageUrl = async (photoId) => {
           <div
             className="card border-0 shadow-sm text-center"
             style={{
-              height: isMobile ? "100px" : "120px",
+              height: isMobile ? "120px" : "140px",
               width: isMobile ? "90px" : "120px",
               cursor: "pointer",
               padding: "10px",
+              // backgroundColor: "#fafad2",
               marginTop: "5px",
             }}
           >
@@ -1324,9 +1331,18 @@ const fetchImageUrl = async (photoId) => {
             />
             <span
               style={{
+                // fontSize: "11px",
+                // fontWeight: "500",
+                // marginTop: "0px",
                 fontSize: "11px",
                 fontWeight: "500",
-                marginTop: "0px",
+                marginTop: "5px",
+                minHeight: "24px", 
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                textAlign: "center",
+                lineHeight: "1.2",
               }}
             >
               {cat.label}
@@ -1340,9 +1356,64 @@ const fetchImageUrl = async (photoId) => {
   {/* Grocery Categories Section */}
   <div className="shadow-lg p-3 rounded-5 mb-1 text-center bg-transparent border-0">
     <h5 className="fw-bold mb-3" style={{color: "#ff5722", fontSize: "15px"}}>
-      Lakshmi Mart Orders Starts from 27th 9:00 AM  <br /> Delivery starts 29th 9:00 AM
+      Lakshmi Mart Orders Starts from 28th 9:00 AM  <br /> Delivery starts from 29th 9:00 AM
     </h5>
     <div className="row row-cols-3 row-cols-md-5 g-1">
+  {groceryCategories.map((cat) => {
+    const isFamilyPack = cat.value === "Family Pack";
+    return (
+      <div
+        className="col"
+        key={cat.label}
+        onClick={() => !isFamilyPack && handleGroceryCategoryClick(cat)}
+        style={{ cursor: isFamilyPack ? "not-allowed" : "pointer" }}     
+      >
+        <div
+          className="groceryIcon-card border-0 shadow-sm text-center d-flex flex-column align-items-center justify-content-between"
+          style={{
+            height: isMobile ? "120px" : "140px",
+            width: isMobile ? "90px" : "120px",
+            cursor: isFamilyPack ? "not-allowed" : "pointer",
+            padding: "10px",
+            margin: "5px",
+            // backgroundColor: "#fafad2",
+            opacity: isFamilyPack ? 0.5 : 1, 
+            pointerEvents: isFamilyPack ? "auto" : "auto", 
+          }}
+        >
+          <img
+            src={cat.image}
+            alt={cat.label}
+            style={{
+              height: "80px",
+              width: "80px",
+              borderRadius: "8px",
+              marginTop: "2px",
+              objectFit: "cover",
+            }}
+          />
+          <span
+            style={{
+              fontSize: "11px",
+              fontWeight: "500",
+              marginTop: "5px",
+              minHeight: "24px", 
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              lineHeight: "1.2",
+            }}
+          >
+            {cat.label}
+          </span>
+        </div>
+      </div>
+    );
+  })}
+</div>
+
+    {/* <div className="row row-cols-3 row-cols-md-5 g-1">
       {groceryCategories.map((cat) => (
         <div className="col" key={cat.label} onClick={() => handleGroceryCategoryClick(cat)}>
           <div
@@ -1378,7 +1449,7 @@ const fetchImageUrl = async (photoId) => {
           </div>
         </div>
       ))}
-    </div>
+    </div> */}
   </div>
 
 {cartSummary.items > 0 && (
@@ -1449,13 +1520,14 @@ const fetchImageUrl = async (photoId) => {
         //  onClick={() => navigate(`/lakshmiCollections/${userType}/${userId}`)}
         >
           <div
-            className="groceryIcon-card border-0 shadow-sm mt-2"
+            className="groceryIcon-card border-0 shadow-sm text-center d-flex flex-column align-items-center justify-content-between"
             style={{
-              height: isMobile ? "100px" : "120px",
+              height: isMobile ? "120px" : "140px",
               width: isMobile ? "90px" : "120px",
               cursor: "pointer",
               padding: "10px",
-              marginTop: "5px",
+              margin: "5px",
+              // backgroundColor: "#fafad2",
             }}
           >
             <img
@@ -1474,6 +1546,13 @@ const fetchImageUrl = async (photoId) => {
                 fontSize: "11px",
                 fontWeight: "500",
                 marginBottom: "3px",
+                marginTop: "5px",
+                minHeight: "24px", 
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                textAlign: "center",
+                lineHeight: "1.2",
               }}
             >
               {cat.label}

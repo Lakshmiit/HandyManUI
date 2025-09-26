@@ -115,7 +115,7 @@ useEffect(() => {
       grocery.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }
-
+ 
   setFilteredData(filtered);
   setCurrentPage(1);
 }, [grocerystatus, category, searchTerm, groceryData]);
@@ -135,8 +135,8 @@ useEffect(() => {
   }
 
   return (
-    <div className="container my-2 mt-3">
-      <h2 className="text-center mb-2">All Grocery</h2>
+    <div className="container my-2 ">
+      <h2 className="text-center mb-2 mt-mob-50">All Grocery</h2>
       {/* Search Bar */}
         <div className="form-group col-md-3">
         <label>Search Products Here</label>

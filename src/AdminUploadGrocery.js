@@ -143,7 +143,7 @@ useEffect(() => {
   };
 
   return (
-      <div className="d-flex flex-row justify-content-start align-items-start">
+      <div className="d-flex flex-row justify-content-start align-items-start mt-mob-50">
           {/* Sidebar */}
           {!isMobile && (
           <div className="ml-0 m-4 p-0 adm_mnu">
@@ -192,7 +192,7 @@ useEffect(() => {
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}>
                 <option>Choose Category</option>
-                <option>Baby & Kids</option>
+                <option>Baby Products</option>
                 <option>Beverages </option>
                 <option>Home Needs</option>
                 <option>Masalas & Cooking Essentials</option>
@@ -201,7 +201,7 @@ useEffect(() => {
                 <option>Snacks & Branded Foods</option>
                 <option>Staples & Grains</option>
               </select>
-            </div>
+            </div> 
 
             {/* Product Photos */}
             <div className="form-group">
