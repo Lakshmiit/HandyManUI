@@ -110,12 +110,11 @@ const toggleLike = (productId) => {
   setZoomProduct(product);       
   setShowZoomModal(true);
 };
-
   
 const handleAddClick = (id) => {
     handleAdd(id);
     setChecked(true);
-  };
+  };        
 
 useEffect(() => {
   const fetchGroceryProducts = async () => {
@@ -367,7 +366,7 @@ useEffect(() => {
       <div
         key={product.id}
         className="w-[200px] flex flex-col p-2 bg-white rounded shadow-sm border position-relative"
-        style={{ minHeight: "225px", opacity: isOutOfStock ? 0.6 : 1 }}
+        style={{ minHeight: "235px", opacity: isOutOfStock ? 0.6 : 1 }}
       >
         {/* Discount & Checkbox */}
         <div className="d-flex flex-row justify-content-between absolute top-0 left-0 w-full">
@@ -454,8 +453,8 @@ useEffect(() => {
 
         {/* Product Info */}
         <h6 className="text-start fw-bold m-0" style={{ fontSize: "12px" }}>
-          {product.name?.split(" ").slice(0, 7).join(" ")}
-          {product.name?.split(" ").length > 7 ? "..." : ""}
+          {product.name?.split(" ").slice(0, 5).join(" ")}
+          {product.name?.split(" ").length > 5 ? "..." : ""}
         </h6>
 
         <div className="text-start m-0" style={{ fontSize: "12px" }}>
