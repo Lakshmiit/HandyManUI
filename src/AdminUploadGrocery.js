@@ -24,7 +24,8 @@ const AdminUploadGrocery = () => {
   const navigate = useNavigate(); 
   const { selectedUserType} = useParams();
   const [stockLeft, setStockLeft] = useState('');
-  // const [gst, setGST] = useState('');
+  const [code, setCode] = useState('');
+  const [units, setUnits] = useState('');
   const handleFileChange = (event) => {
     const selectedFiles = Array.from(event.target.files);
     if (selectedFiles.length + groceryPhotos.length > 1) {
@@ -119,6 +120,8 @@ useEffect(() => {
       deliveryIn: deliveryInDays,
       status: "Pending Approval",
       requestedBy: "Admin",
+      Code: code,
+      Units: units,
     };
 
     try {
@@ -193,15 +196,37 @@ useEffect(() => {
                 onChange={(e) => setCategory(e.target.value)}>
                 <option>Choose Category</option>
                 <option>Baby Products</option>
-                <option>Beverages </option>
+                <option>Family Pack </option>
                 <option>Home Needs</option>
-                <option>Masalas & Cooking Essentials</option>
-                <option>Packaged & Gourmet</option>
                 <option>Personal Care</option>
                 <option>Snacks & Branded Foods</option>
                 <option>Staples & Grains</option>
               </select>
             </div> 
+
+            {/* Units */}
+            <div className="form-group">
+              <label>Units</label>
+              <input
+                type="text"
+                className="form-control"
+                value={units}
+                onChange={(e) => setUnits(e.target.value)}
+                placeholder="Enter Units"
+              />
+            </div>
+
+            {/* Code */}
+            <div className="form-group">
+              <label>Code</label>
+              <input
+                type="text"
+                className="form-control"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                placeholder="Enter Code"
+              />
+            </div>
 
             {/* Product Photos */}
             <div className="form-group">
@@ -274,7 +299,7 @@ useEffect(() => {
               <input
                 type="text"
                 className="form-control"
-                value={`${Math.round(Number(rate || 0) - (Number(rate || 0) * Number((discount || "0").toString().replace("%", "")) / 100))} /-`}
+                value={`${Math.round(Number(rate || 0) * (1 - (Number((discount || "0").toString().replace("%", "")) / 100)))} /-`}
                 />
             </div>
 

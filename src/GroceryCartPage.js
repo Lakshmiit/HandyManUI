@@ -82,6 +82,8 @@ useEffect(() => {
         discount: Number(p.discount || 0),
         price: Number(p.afterDiscountPrice || p.price || 0),
         stockLeft: Number(p.stockLeft || 0),
+        code: p.code,
+        units: p.units,
         imageFilename,
         imageUrl,
       };
@@ -114,6 +116,8 @@ useEffect(() => {
         discount: Number(p.discount || 0),
         price: Number(p.afterDiscountPrice || p.price || 0),
         stockLeft: Number(p.stockLeft || 0),
+        code: p.code,
+        units: p.units,
         imageFilename,       
         imageUrl,         
       };
@@ -185,6 +189,8 @@ const writeBackToStorage = (items) => {
       discount: it.discount,
       afterDiscountPrice: it.price,
       stockLeft: it.stockLeft,
+      code: it.code,
+      units: it.units,
       image: it.imageFilename || getFilenameFromValue(it.imageUrl) || it.imageUrl || null,
     });
     return acc;
@@ -255,6 +261,8 @@ const handleGroceryProceed = async (event) => {
       discount: String(p.discount || 0),
       afterDiscountPrice: String(p.afterDiscountPrice || p.price || 0),
       stockLeft: String(p.stockLeft - p.qty),
+      code: String(p.code),
+      units: String(p.units),
     };
   });
   return {
@@ -379,24 +387,25 @@ const roundedGrandTotal = Math.round(grandTotal);
                 item.imageUrl ||
                 "/placeholder.png"
               )}
-              style={{ height: 50, width: 50, cursor: "pointer", borderRadius: 6 }}
+              style={{ height: 50, width: 45, cursor: "pointer", borderRadius: 6 }}
               onError={(e) => { e.currentTarget.src = "/placeholder.png"; }}
             />
 
           {/* Product Details */}
           <div style={{ flex: 1, marginLeft: "8px" }}>
-            <div style={{ fontWeight: "500", fontSize: "12px" }}>{item.name}</div>
-            <div style={{ fontSize: '10px', color: '#888' }}>{item.category}</div>
+            <div style={{ fontWeight: "500", fontSize: "12px", marginRight: "5px"}}>{item.name}</div>
+            {/* <div style={{ fontSize: '10px', color: '#888' }}>{item.category}</div> */}
             <div style={{ fontSize: "12px", color: "#666" }}>
-              MRP: <s>₹{item.mrp}</s> &nbsp;
-              <span style={{ color: "red" }}>{item.discount}% off</span>
+              MRP: <s>₹{Math.round(item.mrp)}</s> &nbsp;
+              <span style={{ color: "red" }}>{Math.round(item.discount)}% off</span>
+              <span style={{ color: "dark", marginLeft: "5px" }}>{item.units}</span>
             </div>
-            <div style={{ fontWeight: "600", fontSize: "12px" }}>₹{item.price}</div>
+            <div style={{ fontWeight: "600", fontSize: "12px" }}>₹{Math.round(item.price)}</div>
           </div>
 
           {/* Quantity Box */}
           {item.removing ? (
-            <button
+            <button 
               onClick={() => handleRestore(item.id)}
               style={{
                 backgroundColor: "white",

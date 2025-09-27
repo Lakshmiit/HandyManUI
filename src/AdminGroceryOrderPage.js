@@ -58,7 +58,9 @@ const [transactionStatus, setTransactionStatus] = useState("");
 // const [transactionType, setTransactionType] = useState(""); 
  const [totalItemsSelected, setTotalItemsSelected] = useState(""); 
 const [cartData, setCartData] = useState(null);
- 
+const [code, setCode] = useState("");
+const [units, setUnits] = useState("");
+
 useEffect(() => {
   console.log(id, customerId, loading);
 }, [id,customerId, loading]);
@@ -123,10 +125,16 @@ useEffect(() => {
               afterDiscountPrice: p.afterDiscountPrice,
               quantity: p.noOfQuantity,
               total: p.afterDiscountPrice * p.noOfQuantity,
+              code: p.code,
+              units: p.units,
             });
           });
         });
         setItems(allProducts);
+        if (allProducts.length > 0) {
+        setCode(allProducts[0].code || "");
+        setUnits(allProducts[0].units || "");
+        }
       }
     } catch (error) {
       console.error("Error fetching grocery product data:", error);
@@ -202,78 +210,6 @@ useEffect(() => {
    const handleSubmit = (e) => {
      e.preventDefault();
    };
-    // Handle file upload
-    // const handleFileChange = (e) => {
-    //   const files = Array.from(e.target.files);
-    //   if (files.length + productInvoice.length > 1) {
-    //     alert("You can upload up to 1 file.");
-    //     return;
-    //   }
-    //   setProdctInvoice([...productInvoice, ...files]);
-    //   setShowAlert(true);
-    //   setError((prev) => ({ ...prev, productInvoice: "" }));
-    // };
-  
-    // const handleUploadFiles = async () => {
-    //   setLoading(true);
-    //   setShowAlert(false);
-    //   const uploadedFilesList=[];
-    //   for (let i = 0; i < productInvoice.length; i++) {
-    //     const file = productInvoice[i];
-    //     const fileName = file.name;
-    //     const mimetype = file.type;
-    //     const byteArray = await getFileByteArray(file);
-    //     const response = await uploadFile(byteArray, fileName, mimetype, file);
-    //     if (response) {
-    //       uploadedFilesList.push({
-    //         src: response,
-    //         alt: fileName
-    //       });
-    //     } else {
-    //       alert("Failed Upload Invoice");
-    //     }
-    //   }
-    //   setUploadedFiles(uploadedFilesList);
-    //   setLoading(false);
-    // };
-  
-    // // Convert the file to a byte array
-    //   const getFileByteArray = (file) => {
-    //     return new Promise((resolve) => {
-    //       const reader = new FileReader();
-    //       reader.onloadend = () => {
-    //         const byteArray = new Uint8Array(reader.result);
-    //         resolve(byteArray);
-    //       };
-    //       reader.readAsArrayBuffer(file);
-    //     });
-    //   };
-    
-    //   const uploadFile = async (byteArray, fileName, mimeType, file) => {
-    //     try {
-    //       const formData = new FormData();
-    //       formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
-    //       formData.append('fileName', fileName);
-    //       const response = await fetch('https://handymanapiv2.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
-    //         method: 'POST',
-    //         headers: {
-    //           'Accept': 'text/plain',
-    //         },
-    //         body: formData,
-    //       });
-    //       const responseData = await response.text();
-    //       return responseData || ''; 
-    //     } catch (error) {
-    //       console.error('Error uploading file:', error);
-    //       return '';
-    //     }
-    //   };
-    
-    //   useEffect(() => {
-    //     return () => {
-    //       uploadedFiles.forEach((file) => URL.revokeObjectURL(file));
-    //     };
-    //   }, [uploadedFiles]);
 
     const handleDownloadExcel = () => {
   const worksheetData = items.map((item, idx) => ({
@@ -307,7 +243,7 @@ useEffect(() => {
 
   return (
   <>
-<div className="d-flex flex-row justify-content-start align-items-start" style={{marginTop: "10px"}}>
+<div className="d-flex flex-row justify-content-start align-items-start" style={{marginTop: "160px"}}>
       {/* Sidebar menu for Larger Screens */}
       {!isMobile && (
         <div className=" ml-0 p-0 adm_mnu h-90">
@@ -366,6 +302,35 @@ useEffect(() => {
                 readOnly
               />
               </div>
+
+              <div className="row">
+          <div className="form-group col-md-6">
+            <label>
+              Code <span className="req_star">*</span>
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              value={code}
+              placeholder="Product Code"
+              readOnly
+            />
+          </div>
+
+          <div className="form-group col-md-6">
+            <label>
+              Units <span className="req_star">*</span>
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              value={units}
+              placeholder="Units"
+              readOnly
+            />
+          </div>
+        </div>
+
       <h4 className="m-0">Grocery Items</h4>
 <table className="table table-bordered table-striped">
   <thead>

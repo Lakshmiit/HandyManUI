@@ -487,15 +487,15 @@ localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
 //   );
 // };
   
-  // const BothHandlePaymentandLocation = async (e) => {
-  //     e.preventDefault();
-  //     try {
-  //       // await handleLocationMethod();
-  //       await handleUpdatePaymentMethod();
-  //     } catch (error) {
-  //       console.log("error:", error);
-  //     }
-  //   };
+//   const BothHandlePaymentandLocation = async (e) => {
+//       e.preventDefault();
+//       try {
+//         // await handleLocationMethod();
+//         await handleUpdatePaymentMethod();
+//       } catch (error) {
+//         console.log("error:", error);
+//       }
+//     };
 
 const handleCheckboxChange = (value) => {
   const newValue = selectedPayment === value ? null : value;
@@ -512,30 +512,6 @@ const handleCheckboxChange = (value) => {
   return (
     <div>
     <div className="d-flex mt-80">
-        {/* {!isMobile && (
-        <div className="ml-0 p-0 sde_mnu">
-          <Sidebar />
-        </div>
-      )}  */}
-
-      {/* Floating menu for mobile */}
-      {/* {isMobile && (
-        <div className="groceryfloating-menu">
-          <Button
-            variant="primary"
-            className="rounded-circle shadow"
-            onClick={() => setShowMenu(!showMenu)}
-          >
-            <MoreVertIcon />
-          </Button>
-
-          {showMenu && (
-              <div className="sidebar-container">
-                <Sidebar />
-              </div>
-          )}
-        </div>
-      )} */}
 <div>
           <h1
             style={{
@@ -732,8 +708,8 @@ const handleCheckboxChange = (value) => {
                                             color: "white"
                                         }}
                                         className={`text-white mx-1 ${
-                            shouldBlink ? "blinking-button" : ""
-                          }`}
+                                          shouldBlink ? "blinking-button" : ""
+                                        }`}
                                         onClick={() => {
                                           setGuestCustomerId(address.id);
                                           setFullName(address.fullName);
@@ -760,9 +736,9 @@ const handleCheckboxChange = (value) => {
                             )}
                       {serviceUnavailable && (
                         <div className="alert alert-danger">
-                          <strong>Note:</strong> Currently, the options to raise a ticket or book technician services are unavailable in your district.
+                          <strong>Note:</strong> Currently, the options to raise a ticket, book technician or lakshmi mart services are unavailable in your district.
                             You can still purchase products through the "Buy Product" section.
-                            For further assistance, please contact our customer support at 62811 98953.
+                            For further assistance, please contact our customer support at 6281198953.
                         </div>
                       )}   
     

@@ -235,9 +235,9 @@ useEffect(() => {
   {currentGrocery.map((grocery, index) => (
     <tr key={index}>
       <td className="product-name-cell">{grocery.name}</td>
-      <td>₹{grocery.mrp}</td>
-      <td>{grocery.discount ? `${grocery.discount}%` : "No discount"}</td>
-      <td>₹{grocery.afterDiscount}</td>
+      <td>₹{Math.round(grocery.mrp)}</td>
+      <td>{grocery.discount ? `${Math.round(grocery.discount)}%` : "No discount"}</td>
+      <td>₹{Math.round(grocery.afterDiscount)}</td>
       <td>
         {grocery.requestedBy ? (
           <span

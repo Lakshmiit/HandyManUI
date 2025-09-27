@@ -31,6 +31,8 @@ const AdminUpdateGrocery = () => {
 const [existingFiles, setExistingFiles] = useState([]);
 const [stockLeft, setStockLeft] = useState('');
 const [date, setDate] = useState('');
+const [code, setCode] = useState('');
+const [units, setUnits] = useState('');
 // const [gst, setGST] = useState('');
 useEffect(() => {
     console.log(grocery);
@@ -59,6 +61,8 @@ useEffect(() => {
                   setExistingFiles(groceryData.images || []);
                   setStockLeft(groceryData.stockLeft);
                   setDate(groceryData.date);
+                  setCode(groceryData.code);
+                  setUnits(groceryData.units);
                 } catch (error) {
                   setError(error.message);
               } finally {
@@ -166,22 +170,7 @@ const handleRemoveFile = (index) => {
     ...uploadedFiles.map(file => file.src), 
   ];
 
-    const payload = {
-      // id: uniqueId,
-      // Date: date,
-      // GroceryItemId:  groceryId,
-      // DeliveryIn: deliveryInDays,
-      // category: category,
-      // Status: groceryStatus,
-      // Name: groceryName,
-      // Images: allGroceryPhotos,
-      // MRP: parseFloat(rate).toString(),
-      // discount: parseFloat(discount).toString(),
-      // afterDiscount: (parseFloat(rate) - (parseFloat(rate) * parseFloat(discount) / 100)).toString(),
-      // requestedBy: "Admin",  
-      // StockLeft: stockLeft,  
-      
-            
+    const payload = {      
        id: uniqueId,
         Date: date,
         GroceryItemId: groceryId,     
@@ -194,6 +183,8 @@ const handleRemoveFile = (index) => {
         StockLeft: stockLeft,
         DeliveryIn: deliveryInDays,
         Status: groceryStatus,
+        // code: code,
+        // units: units,
         RequestedBy: "Admin"
     };
     try {
@@ -280,7 +271,30 @@ if (error) {
                 className="form-control"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                placeholder="Enter Catalogue"
+                placeholder="Enter Category"
+              />
+            </div>
+            {/* Units */}
+            <div className="form-group">
+              <label>Units</label>
+              <input
+                type="text"
+                className="form-control"
+                value={units}
+                onChange={(e) => setUnits(e.target.value)}
+                placeholder="Enter Units"
+              />
+            </div>
+
+             {/* Code */}
+            <div className="form-group">
+              <label>Code</label>
+              <input
+                type="text"
+                className="form-control"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                placeholder="Enter Code"
               />
             </div>
 
@@ -392,7 +406,7 @@ if (error) {
               <input
                 type="text"
                 className="form-control"
-                value={Math.round(Number(rate || 0) - (Number(rate || 0) * Number((discount || "0").toString().replace("%", "")) / 100))}
+                value={`${Math.round(Number(rate || 0) * (1 - (Number((discount || "0").toString().replace("%", "")) / 100)))} /-`}
                 onChange={(e) => setDiscount(e.target.value)}
                 placeholder="If any Discount Enter Percentage"
               />

@@ -32,6 +32,7 @@ const [selectedCategory, setSelectedCategory] = useState(null);
  const [checked, setChecked] = useState(false);
 const [searchQuery, setSearchQuery] = useState('');
 const [likedProducts, setLikedProducts] = useState({}); 
+const [zoomProduct, setZoomProduct] = useState(null);
 // const [totalItemsCount, setTotalItemsCount] = useState(0);
 const [grandSummary, setGrandSummary] = useState({ items: 0, total: 0 });
 // const [cartSummary, setCartSummary] = useState({
@@ -70,7 +71,9 @@ useEffect(() => {
     discount: Number(product?.discount || 0),
     afterDiscountPrice: Number(product?.afterDiscount || 0),
     stockLeft: Number(product?.stockLeft || 0),
-    image: product?.images?.[0] || "", // filename only
+    image: product?.images?.[0] || "",
+    code: product?.code || "",
+    units: product?.units || "",
   };
 });
 
@@ -102,10 +105,12 @@ const toggleLike = (productId) => {
   }));
 };
 
-    const handleImageClick = (imageSrc) => {
-    setZoomImage(imageSrc); 
-    setShowZoomModal(true);
-  };
+   const handleImageClick = (imageSrc, product) => {
+  setZoomImage(imageSrc);
+  setZoomProduct(product);       
+  setShowZoomModal(true);
+};
+
   
 const handleAddClick = (id) => {
     handleAdd(id);
@@ -362,7 +367,7 @@ useEffect(() => {
       <div
         key={product.id}
         className="w-[200px] flex flex-col p-2 bg-white rounded shadow-sm border position-relative"
-        style={{ minHeight: "200px", opacity: isOutOfStock ? 0.6 : 1 }}
+        style={{ minHeight: "225px", opacity: isOutOfStock ? 0.6 : 1 }}
       >
         {/* Discount & Checkbox */}
         <div className="d-flex flex-row justify-content-between absolute top-0 left-0 w-full">
@@ -394,21 +399,22 @@ useEffect(() => {
         {/* Product Image */}
           <div
             className="d-flex justify-content-center align-items-center position-relative"
-            style={{ height: "80px" }}
+            style={{ height: "90px" }}
           >
             {imageUrls[product.id]?.[0] ? (
               <img
                 src={imageUrls[product.id][0]}
                 alt={product.name}
                 style={{
-                  maxHeight: "80px",
+                  maxHeight: "90px",
                   maxWidth: "100%",
                   objectFit: "contain",
                   cursor: isOutOfStock ? "not-allowed" : "pointer",
                   borderRadius: "6px",
                 }}
                 onClick={() =>
-                  !isOutOfStock && handleImageClick(imageUrls[product.id][0])
+                  !isOutOfStock &&
+                  handleImageClick(imageUrls[product.id][0], product) 
                 }
               />
             ) : (
@@ -436,8 +442,8 @@ useEffect(() => {
                     color: "white", 
                     fontSize: "10px",
                     borderRadius: "6px",
-                    margin: "2px",
-                    padding: "3px",
+                    margin: "1px",
+                    padding: "2px",
                   }}
                 >
                   Out of Stock
@@ -448,13 +454,14 @@ useEffect(() => {
 
         {/* Product Info */}
         <h6 className="text-start fw-bold m-0" style={{ fontSize: "12px" }}>
-          {product.name?.split(" ").slice(0, 2).join(" ")}
-          {product.name?.split(" ").length > 2 ? "..." : ""}
+          {product.name?.split(" ").slice(0, 7).join(" ")}
+          {product.name?.split(" ").length > 7 ? "..." : ""}
         </h6>
 
         <div className="text-start m-0" style={{ fontSize: "12px" }}>
-          <b className="text-success me-2">₹{product.afterDiscount}</b>
+          <b className="text-success me-2">₹{Math.round(product.afterDiscount)}</b>
           <s className="text-muted">₹{product.mrp}</s>
+          <b className="text-success" style={{ marginLeft: "5px" }}>{product.units}</b>
         </div>
 
         {/* Checkbox */}
@@ -596,15 +603,33 @@ useEffect(() => {
 </div>
     </div>           
       </div>
-       <Modal show={showZoomModal} onHide={() => setShowZoomModal(false)} centered>
-                <button className="close-button text-end mt-0" onClick={() => setShowZoomModal(false)}>
-                    &times; </button>
-                      <Modal.Body className="text-center">
-                        <div className="zoom-container">
-                          <img src={zoomImage} alt="Zoomed Product" className="zoom-image" />
-                        </div>
-                      </Modal.Body>
-                    </Modal>
+      <Modal show={showZoomModal} onHide={() => { setShowZoomModal(false); setZoomProduct(null); }} centered>
+  <button
+    className="close-button text-end mt-0"
+    onClick={() => { setShowZoomModal(false); setZoomProduct(null); }}
+  >
+    &times;
+  </button>
+
+  <Modal.Body className="text-center">
+    <div className="zoom-container">
+      <img src={zoomImage} alt={zoomProduct?.name || "Zoomed Product"} className="zoom-image" />
+    </div>
+    <h6 className="text-start fw-bold m-0" style={{ fontSize: "12px" }}>
+      {zoomProduct?.name || ""}
+    </h6>
+    {/* <p className="text-start text-muted m-0" style={{ fontSize: "12px" }}>
+      MRP: ₹{zoomProduct?.mrp ?? ""}
+    </p> */}
+    {zoomProduct?.afterDiscount != null && (
+      <p className="text-start m-0" style={{ fontSize: "12px" }}>
+        <b className="text-success me-2">₹{Math.round(Number(zoomProduct.afterDiscount))}</b>
+        {zoomProduct?.mrp ? <s className="text-muted">₹{zoomProduct.mrp}</s> : null}
+      </p>
+    )}
+  </Modal.Body>
+</Modal>
+
     </>
   );
 };
@@ -636,8 +661,8 @@ useEffect(() => {
       background: darkred;
     }
          .zoom-image {
-        max-width: 80%;
-        height: auto;
+        max-width: 70%;
+        height: 50%;
         border-radius: 5px;
         }
       `}</style>

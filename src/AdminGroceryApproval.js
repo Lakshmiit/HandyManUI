@@ -89,7 +89,7 @@ const AdminGroceryApproval = () => {
     );
   }
 
-  const { name, category, mrp, discount, stockLeft, deliveryIn, requestedBy, afterDiscount } = groceryData;
+  const { name, category, mrp, discount, stockLeft, deliveryIn, requestedBy, afterDiscount, code, units } = groceryData;
 
   return (
     <div className="d-flex flex-row mt-100">
@@ -150,13 +150,15 @@ const AdminGroceryApproval = () => {
       <div className="col-sm-6">
         <p><strong>Name:</strong> {name}</p>
         <p><strong>Category:</strong> {category}</p>
-        <p><strong>Delivery In:</strong> {deliveryIn} days</p>
+        <p><strong>Delivery In:</strong> {deliveryIn}</p>
         <p><strong>Stock Left:</strong> {stockLeft}</p>
+        <p><strong>Requested By:</strong> {requestedBy}</p>
       </div>
       <div className="col-sm-6">
         <p><strong>Rate:</strong> Rs {mrp} /-</p>
         <p><strong>Discount:</strong> {discount}%</p>
-        <p><strong>Requested By:</strong> {requestedBy}</p>
+        <p><strong>Units:</strong> {units}</p>
+        <p><strong>Code:</strong> {code}</p>
         <p className="text-success fw-bold">
           <strong>Final Price:</strong> Rs {Number(afterDiscount).toFixed(0)} /-
         </p>
