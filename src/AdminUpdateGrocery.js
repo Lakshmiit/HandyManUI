@@ -183,8 +183,8 @@ const handleRemoveFile = (index) => {
         StockLeft: stockLeft,
         DeliveryIn: deliveryInDays,
         Status: groceryStatus,
-        // code: code,
-        // units: units,
+        code: code,
+        units: units,
         RequestedBy: "Admin"
     };
     try {

@@ -165,12 +165,12 @@ const categories = [
 ];
 
 const groceryCategories = [
-  { label: 'Family Pack', value: 'Family Pack', image: FamilyPackImg },
   { label: 'Staples & Grains', value: 'Staples & Grains', image: StaplesImg },
   { label: 'Snacks & Foods', value: 'Snacks & Branded Foods', image: SnacksImg },
   { label: 'Home Needs', value: 'Home Needs', image: HouseHoldImg },
   { label: 'Personal Care', value: 'Personal Care', image: PersonalCareImg },
   { label: 'Baby Products', value: 'Baby Products', image: BabyKidsImg },
+  { label: 'Family Pack', value: 'Family Pack', image: FamilyPackImg },
 ];
 
 const collectionsCategories = [

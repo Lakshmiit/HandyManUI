@@ -53,14 +53,16 @@ const AdminGroceryApproval = () => {
   const handleSubmit = async () => {
     if (!groceryData) return;
 
-    const payload = {
+    const payload = {  
       ...groceryData,
       status,
       comments,
       RequestedBy: "Admin",
+      Code: code,
+      Units: units,
     };
 
-    try {
+    try {   
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
