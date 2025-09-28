@@ -492,10 +492,22 @@ const roundedGrandTotal = Math.round(grandTotal);
         <span style={{ fontSize: "12px" }}>{grandSummary.items} items</span>
         <div style={{ fontWeight: "500", fontSize: "15px" }}>₹{roundedGrandTotal}</div>
       </div>
-  
-      <div style={{ fontWeight: "500", fontSize: "15px" }} onClick={handleGroceryProceed}>
-        {roundedGrandTotal < 1 ? "Add More Items" : "Proceed →"}
-      </div>
+      
+      <div
+  style={{
+    fontWeight: "500",
+    fontSize: "15px",
+    cursor: roundedGrandTotal < 200 ? "not-allowed" : "pointer",
+    opacity: roundedGrandTotal < 200 ? 0.6 : 1
+  }}
+  onClick={roundedGrandTotal >= 200 ? handleGroceryProceed : undefined}
+>
+  {roundedGrandTotal < 200 ? "Add More Items" : "Proceed →"}
+</div>
+
+      {/* <div style={{ fontWeight: "500", fontSize: "15px" }} onClick={handleGroceryProceed}>
+        {roundedGrandTotal < 200 ? "Add More Items" : "Proceed →"}
+      </div> */}
     </div>
     <div className="text-start">
         <button

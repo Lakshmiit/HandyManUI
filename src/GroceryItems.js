@@ -366,7 +366,7 @@ useEffect(() => {
       <div
         key={product.id}
         className="w-[200px] flex flex-col p-2 bg-white rounded shadow-sm border position-relative"
-        style={{ minHeight: "235px", opacity: isOutOfStock ? 0.6 : 1 }}
+        style={{ minHeight: "240px", opacity: isOutOfStock ? 0.6 : 1 }}
       >
         {/* Discount & Checkbox */}
         <div className="d-flex flex-row justify-content-between absolute top-0 left-0 w-full">

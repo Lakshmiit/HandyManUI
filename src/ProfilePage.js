@@ -1356,7 +1356,7 @@ const fetchImageUrl = async (photoId) => {
   {/* Grocery Categories Section */}
   <div className="shadow-lg p-3 rounded-5 mb-1 text-center bg-transparent border-0">
     <h5 className="fw-bold mb-3" style={{color: "#ff5722", fontSize: "15px"}}>
-      Lakshmi Mart Orders Starts from 28th 9:00 AM  <br /> Delivery starts from 29th 9:00 AM
+      Lakshmi Mart Celebrate Dusshera with Fresh Groceries & Free Delivery! 
     </h5>
     <div className="row row-cols-3 row-cols-md-5 g-1">
   {groceryCategories.map((cat) => {
