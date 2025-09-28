@@ -3,6 +3,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import HandyManCharacter from './img/hm_char.png';
 import HandyManLogo from './img/Hm_Logo 1.png';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { setLoginData } from "./utils/auth";
+
 const OTPVerificationPage = () => {
      const Navigate = useNavigate();
     const location = useLocation();
@@ -154,6 +156,9 @@ useEffect(() => {
        const newUserId = userData.userId;
        setUserId(newUserId);
    
+        // Save login
+      setLoginData(newUserId);
+
  const payload2 = {
        CustomerId : "string",
        id: "string",
@@ -234,6 +239,9 @@ useEffect(() => {
           console.log("User Data:", userData);
       
           if (userData?.profileType && userData?.userId) {
+            setUserId(userData.userId);
+             // ✅ Save userId in localStorage (7 days expiry handled in setLoginData)
+          setLoginData(userData.userId);
             Navigate(`/profilePage/${userData.profileType}/${userData.userId}`, {
               state: { profileType: userData.profileType, userData },
             });
@@ -313,8 +321,6 @@ useEffect(() => {
 const handleBothMethods = (e) => {
   e.preventDefault();
   handleOTPVerification(e);
-  // handleVerificationAndAddress(e);
-  // handleGuestAddress(e);
 };
     
     return (

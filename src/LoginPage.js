@@ -6,7 +6,7 @@ import {useNavigate } from "react-router-dom";
 import HandyManCharacter from "./img/hm_char.png";
 import HandyManLogo from "./img/Hm_Logo 1.png";
 // import WhatsAppIcon from '@mui/icons-material/WhatsApp';
-
+// import { getLoginData } from "./utils/auth";
 
 const LoginPage = () => {
     const Navigate = useNavigate();
