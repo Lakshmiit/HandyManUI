@@ -50,41 +50,37 @@ const [mobileNumber, setMobileNumber] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [editingAddressId, setEditingAddressId] = useState(null);
   const [shouldBlink,setShouldBlink] = useState(false);
- const [location, setLocation] = useState({latitude: '', longitude: ''});
-  const [locationError, setLocationError] = useState(null);
+//  const [location, setLocation] = useState({latitude: '', longitude: ''});
+//   const [locationError, setLocationError] = useState(null);
 
 useEffect(() => {
-  console.log( isChecked, editingAddressId, location );
-}, [isChecked, editingAddressId, location]);
+  console.log( isChecked, editingAddressId );
+}, [isChecked, editingAddressId]);
 
-  // ✅ Improved geolocation with better logging & longer timeout
-  const getLocation = () => {
-    return new Promise((resolve) => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const coords = {
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-            };
-            console.log("📍 Location fetched:", coords);
-            setLocation(coords);
-            resolve(coords);
-          },
-          (err) => {
-            console.error("❌ Location error:", err.code, err.message);
-            setLocationError(err.message);
-            resolve({ latitude: null, longitude: null });
-          },
-          { enableHighAccuracy: true, timeout: 30000, maximumAge: 0 }
-        );
-      } else {
-        console.error("❌ Geolocation not supported in this environment.");
-        setLocationError("Geolocation not supported.");
-        resolve({ latitude: null, longitude: null });
-      }
-    });
-  };
+// const getLocation = () => {
+//     return new Promise((resolve) => {
+//       if (navigator.geolocation) {
+//         navigator.geolocation.getCurrentPosition(
+//           (position) => {
+//             const coords = {
+//               latitude: position.coords.latitude,
+//               longitude: position.coords.longitude,
+//             };
+//             setLocation(coords);
+//             resolve(coords);
+//           },
+//           (err) => {
+//             setLocationError(err.message);
+//             resolve({ latitude: null, longitude: null });
+//           },
+//           { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+//         );
+//       } else {
+//         setLocationError("Geolocation not supported in this browser.");
+//         resolve({ latitude: null, longitude: null });
+//       }
+//     });
+//   };
 
   useEffect(() => {
   const fetchCart = async () => {
@@ -338,6 +334,8 @@ useEffect(() => {
         }
       }, [isAddressInvalid]);
     
+
+
   // Detect screen size for responsiveness
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -346,6 +344,7 @@ useEffect(() => {
   
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
 
 const handleUpdatePaymentMethod = async () => {
   // e.preventDefault();
@@ -359,14 +358,13 @@ const handleUpdatePaymentMethod = async () => {
     }  
 
     try {
-     const {latitude, longitude} = await getLocation();
+      // const {latitude, longitude} = await getLocation();
       const primaryAddress = addresses.find((addr) => addr.type === "primary");
     const state = primaryAddress?.state;
     const district = primaryAddress?.district || "";
     const pincode = primaryAddress?.zipCode || primaryAddress?.pincode;
     const mobileNumber = primaryAddress?.mobileNumber || primaryAddress?.mobileNumber; 
-     console.log("Final location before sending payload:", latitude, longitude);
-
+    
   const payload = {
     ...cartData,
     customerName: addressData.fullName || fullName,
@@ -381,8 +379,8 @@ const handleUpdatePaymentMethod = async () => {
     date: new Date(),
     grandTotal: grandTotal,
     totalItemsSelected: totalItemsSelected,
-    // status: "Open",
-    status: selectedPayment === "online" ? "Draft" : "Open",
+    status: "Open",
+    // status: selectedPayment === "online" ? "Draft" : "Open",
     paymentMode: selectedPayment,
     utrTransactionNumber: "",
     transactionNumber: "",
@@ -390,10 +388,10 @@ const handleUpdatePaymentMethod = async () => {
     paidAmount: "",
     AssignedTo: "",
     DeliveryPartnerUserId: "",
-    // latitude: 0,
-    // longitude: 0,
-    latitude: latitude !== null ? Number(latitude) : null,
-    longitude: longitude !== null ? Number(longitude) : null,
+    latitude: 0,
+    longitude: 0,
+    // latitude: latitude !== null ? Number(latitude) : null,
+    // longitude: longitude !== null ? Number(longitude) : null,
     isPickUp: false,
     isDelivered: false,
   };
@@ -436,7 +434,7 @@ localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
   localStorage.removeItem("activeOrderId");
   localStorage.removeItem("allCategories");
   localStorage.removeItem(`cartMeta_${groceryItemId}`);
-    // window.alert(`Thank You for choosing the Lakshmi Mart Services! Your reference order number is ${martId}. Delivery in 45 minutes`);
+    window.alert(`Thank You for choosing the Lakshmi Mart Services! Your reference order number is ${martId}. Delivery in 45 minutes`);
    window.location.href = `/profilePage/${userType}/${userId}`;
    }
   } catch (error) {
@@ -928,10 +926,6 @@ const handleCheckboxChange = (value) => {
         </div>
       )}
     </div>
-
-{/* Error Display */}
-      {/* {error && <p style={{ color: "red" }}>{error}</p>} */}
-      {locationError && <p style={{ color: "red" }}>Location Error: {locationError}</p>}
 
 <div className="button">
   {/* <button onClick={getLocation}>Get Location</button>
