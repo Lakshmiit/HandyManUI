@@ -179,6 +179,8 @@ const handleAssignedToChange = (e) => {
     DeliveryPartnerUserId: partner? partner.userId: "",
     latitude: latitude,
     longitude: longitude,
+    code: code,
+    units: units,
   };
 
     let response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`, {
@@ -243,7 +245,7 @@ useEffect(() => {
 
   return (
   <>
-<div className="d-flex flex-row justify-content-start align-items-start" style={{marginTop: "160px"}}>
+<div className="d-flex flex-row justify-content-start align-items-start" style={{marginTop: "150px"}}>
       {/* Sidebar menu for Larger Screens */}
       {!isMobile && (
         <div className=" ml-0 p-0 adm_mnu h-90">
@@ -303,7 +305,7 @@ useEffect(() => {
               />
               </div>
 
-              <div className="row">
+              {/* <div className="row">
           <div className="form-group col-md-6">
             <label>
               Code <span className="req_star">*</span>
@@ -329,7 +331,7 @@ useEffect(() => {
               readOnly
             />
           </div>
-        </div>
+        </div> */}
 
       <h4 className="m-0">Grocery Items</h4>
 <table className="table table-bordered table-striped">
