@@ -23,7 +23,7 @@ import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 // import Banner1 from './img/Ads1.jpeg';
-import BannerVideo from './img/Dusshera.mp4';
+// import BannerVideo from './img/Dusshera.mp4';
 // import BannerVideo from './img/AdsVideo.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
 // import VolumeUpIcon from '@mui/icons-material/VolumeUp';
@@ -201,8 +201,8 @@ const ProfilePage = () => {
    const [error, setError] = useState('');
     const [products, setProducts] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
-     const videoRef = useRef(null);
-const [isMuted] = useState(true);
+//      const videoRef = useRef(null);
+// const [isMuted] = useState(true);
 // const [isMuted, setIsMuted] = useState(true);
 const [unreadCount, setUnreadCount] = useState(0);
 const [messageCounts, setMessageCounts] = useState({
@@ -561,8 +561,8 @@ const handleCategoryClick = async (category) => {
 
 const handleGroceryCategoryClick = async (category) => {
   const { value } = category;
-   if (value === "Family Pack") {
-    console.log("Family Pack clicked - navigation blocked");
+   if (value === "Family Pack" || value === "Baby Products") {
+    console.log(`${value} clicked - navigation blocked`);
     setSelectedCategory(category); 
     return;
   }
@@ -1228,7 +1228,7 @@ const fetchImageUrl = async (photoId) => {
                   ></button>
                 </div>
                 {/* Carousel items */}
-                <div className="carousel-inner">
+                {/* <div className="carousel-inner">
                   <div className="carousel-item active">
                     <video
                       ref={videoRef}
@@ -1240,7 +1240,7 @@ const fetchImageUrl = async (photoId) => {
                       muted={isMuted}
                     >
                       <source src={BannerVideo} type="video/mp4" />
-                    </video>
+                    </video> */}
                     {/* <button
                       onClick={toggleMute}
                       style={{
@@ -1258,7 +1258,7 @@ const fetchImageUrl = async (photoId) => {
                     >
                       {isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
                     </button> */}
-                </div>
+                {/* </div> */}
                   {/* <div className="carousel-item active">
                   <img
                     src={Banner1}
@@ -1283,7 +1283,7 @@ const fetchImageUrl = async (photoId) => {
                     alt="Slide 3"
                   />
                 </div> */}
-              </div>
+              {/* </div> */}
                 {/* Controls 
                 <button
                   className="carousel-control-prev"
@@ -1368,25 +1368,25 @@ const fetchImageUrl = async (photoId) => {
     </h5>
     <div className="row row-cols-3 row-cols-md-5 g-1">
   {groceryCategories.map((cat) => {
-    const isFamilyPack = cat.value === "Family Pack";
+    const isBlockedCategory  = cat.value === "Family Pack" || cat.value === "Baby Products";
     return (
       <div
         className="col"
         key={cat.label}
-        onClick={() => !isFamilyPack && handleGroceryCategoryClick(cat)}
-        style={{ cursor: isFamilyPack ? "not-allowed" : "pointer" }}     
+        onClick={() => !isBlockedCategory  && handleGroceryCategoryClick(cat)}
+        style={{ cursor: isBlockedCategory  ? "not-allowed" : "pointer" }}     
       >
         <div
           className="groceryIcon-card border-0 shadow-sm text-center d-flex flex-column align-items-center justify-content-between"
           style={{
             height: isMobile ? "120px" : "140px",
             width: isMobile ? "90px" : "120px",
-            cursor: isFamilyPack ? "not-allowed" : "pointer",
+            cursor: isBlockedCategory  ? "not-allowed" : "pointer",
             padding: "10px",
             margin: "5px",
             // backgroundColor: "#fafad2",
-            opacity: isFamilyPack ? 0.5 : 1, 
-            pointerEvents: isFamilyPack ? "auto" : "auto", 
+            opacity: isBlockedCategory  ? 0.5 : 1, 
+            pointerEvents: "auto", 
           }}
         >
           <img
@@ -1420,44 +1420,6 @@ const fetchImageUrl = async (photoId) => {
     );
   })}
 </div>
-
-    {/* <div className="row row-cols-3 row-cols-md-5 g-1">
-      {groceryCategories.map((cat) => (
-        <div className="col" key={cat.label} onClick={() => handleGroceryCategoryClick(cat)}>
-          <div
-            className="groceryIcon-card border-0 shadow-sm mt-2"
-            style={{
-              height: isMobile ? "100px" : "120px",
-              width: isMobile ? "90px" : "120px",
-              cursor: "pointer",
-              padding: "10px",
-              marginTop: "5px",
-            }}
-          >
-            <img
-              src={cat.image}
-              alt={cat.label}
-              style={{
-                height: "80px",
-                width: "80px",
-                borderRadius: "8px",
-                marginTop: "2px",
-                objectFit: "cover",
-              }}
-            />
-            <span
-              style={{
-                fontSize: "11px",
-                fontWeight: "500",
-                marginBottom: "3px",
-              }}
-            >
-              {cat.label}
-            </span>
-          </div>
-        </div>
-      ))}
-    </div> */}
   </div>
 
 {cartSummary.items > 0 && (
