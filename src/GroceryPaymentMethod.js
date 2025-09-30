@@ -729,11 +729,13 @@ const handleCheckboxChange = (value) => {
                                   </div>
                                 ))}   
                                 </div>
+
                             {fullName.trim().toLowerCase() === "guest" && (
                               <p className="text-danger">
-                                Note: Please enter your address to Book A Technician
+                                Note: Please enter your address to Order Grocery
                               </p>
-                            )}
+                            )}      
+
                       {serviceUnavailable && (
                         <div className="alert alert-danger">
                           <strong>Note:</strong> Currently, the options to raise a ticket, book technician or lakshmi mart services are unavailable in your district.

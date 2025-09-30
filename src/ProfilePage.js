@@ -187,6 +187,9 @@ const ProfilePage = () => {
     const [menuList, setMenuList] = useState([]);
     const [profile, setProfile] = useState({});
     const [loading, setLoading] = useState(true); 
+    const [selectedTicket, setSelectedTicket] = useState(null);
+    const [showModal, setShowModal] = useState(false);
+
     const [profileImage, setProfileImage] = useState(null);
     const fileInputRef = useRef(null);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -603,8 +606,8 @@ const handleGroceryCategoryClick = async (category) => {
                 fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=raiseTicket`),
                 fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=buyProduct`),
                 fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=bookTechnician`),
-                fetch(``),
-              ]);
+                fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=mart`),
+              ]);    
               if (!ticketResponse.ok || !productResponse.ok || !technicianResponse || !groceriesResponse) {
                 throw new Error("Failed to fetch ticket, product and technician data");
               }
@@ -621,6 +624,11 @@ const handleGroceryCategoryClick = async (category) => {
           };
           fetchAllTickets();
         }, [userId]);
+
+        const handleViewDetails = (ticket) => {
+          setSelectedTicket(ticket);
+          setShowModal(true);
+        };
       
         useEffect(() => {
           if (profile?.mobileNumber) {
@@ -1238,7 +1246,7 @@ const fetchImageUrl = async (photoId) => {
                       style={{
                         position: 'absolute',
                         bottom: '20px',
-                        right: '20px',
+                        right: '20px' ,
                         background: 'rgba(0,0,0,0.5)',
                         border: 'none',
                         borderRadius: '50%',
@@ -1564,181 +1572,6 @@ const fetchImageUrl = async (photoId) => {
   </div>
 </div>
 
-{/* <h4 style={{ color: '#ff5722', fontFamily: 'Poppins, sans-serif', fontWeight: 700,fontSize: '22px', textTransform: 'uppercase',
-    letterSpacing: '1px', textAlign: 'center', marginBottom: '1px'}}>
-   🎉 Top Deals For You! 🎉
-</h4> */}
-{/* Products Display */}
-{/* <div className="product-scroll-wrapper " ref={productScrollRef}>
-  {Object.entries(groupedProducts)
-    .sort(([a], [b]) => (a === "Home Decors" ? -1 : b === "Home Decors" ? 1 : 0)) 
-    .map(([categoryName, products]) => {
-      const isExpanded = expandedCategories[categoryName];
-      const filteredProducts = products.filter((product) => {
-        const productName = product.productName?.toLowerCase().trim();
-        const query = searchQuery.toLowerCase().trim();
-        const normalize = (str) => (str.endsWith('s') ? str.slice(0, -1) : str);
-        return (
-          productName.includes(query) ||
-          normalize(productName).includes(normalize(query))
-        );
-      });
-      const sortedProducts = [...filteredProducts].sort(
-        (a, b) => new Date(b.createdDate) - new Date(a.createdDate)
-      );
-      const visibleProducts = isExpanded ? sortedProducts : sortedProducts.slice(0, 6);
-      if (filteredProducts.length === 0) return null;
-
-      return (
-        <div key={categoryName} className="mt-0">
-          <h5 className="mb-2 mt-3">{categoryName.toUpperCase()}</h5>
-          <div className="product-row">
-            {visibleProducts.map((product) => {
-              const discountedPrice =
-                product.rate && product.discount
-                  ? (product.rate - (product.rate * product.discount) / 100).toFixed(0)
-                  : product.rate;
-
-              return (
-                <>
-                <div
-                  key={product.id}
-                  className="product-card me-2 mb-3"
-                  onClick={() => setSelectedProduct(product)}
-                  style={{ cursor: 'pointer' }}
-                >
-                 <div className="image-container">
-                  {product.discount && (
-                    <div className="discount-badge-wrapper">
-                      <span className="discount-badge">{Math.round(product.discount)}%</span>
-                    </div>
-                  )}
-                  {loadingStatus[product.id] ? (
-                    <div className="image-placeholder m-1">Loading...</div>
-                  ) : imageUrls[product.id]?.length > 0 ? (
-                    <img
-                      src={`data:image/jpeg;base64,${imageUrls[product.id][0].imageData}`}
-                      className="product-image"
-                      alt="product"
-                    />
-                  ) : (
-                    <div className="image-placeholder">No Image</div>
-                  )}
-                </div>
-
-                  <div className="product-info">
-                    <h6 className="product-name">{product.productName.toUpperCase()}</h6>
-                    <div className="product-price">Rs {discountedPrice} /-</div>                   
-                    </div>
-                </div>
-           </>
-              );
-            })}
-          </div>
-
-          {filteredProducts.length > 6 && (
-  <div className="text-end">
-    <Button                          
-      variant="outline-primary"
-      size="sm"
-      onClick={() =>
-        setExpandedCategories((prev) => ({
-          ...prev, 
-          [categoryName]: !prev[categoryName],
-        }))
-      }
-    >
-      {isExpanded ? 'Less' : 'More'}
-    </Button>
-  </div>
-)}
-        </div>
-      );
-    })}
-</div> */}
-
- {/* Selected Product Display */} 
-{/* {selectedProduct && (
-  <div className="custom-modal-backdrop" onClick={() => setSelectedProduct(null)}>
-     <div className="custom-modal-content" onClick={(e) => e.stopPropagation()}>
-       <button className="close-button" onClick={() => setSelectedProduct(null)}>&times;</button>
-  <div className="d-flex flex-column align-items-center">
-  <div style={{ width: '100%', maxWidth: '300px' }}>
-    {loadingStatus[selectedProduct.id] ? (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: '250px', background: '#f8f9fa' }}>
-        <div className="spinner-border text-secondary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
-      </div>
-    ) : imageUrls[selectedProduct.id]?.length > 0 ? (
-      <Carousel>
-        {imageUrls[selectedProduct.id].map((img, index) => (
-          <Carousel.Item key={index}>
-            <img
-  src={`data:image/jpeg;base64,${img.imageData}`}
-  className="card-img-top"
-  style={{
-    height: '230px',
-    width: '100%',
-    objectFit: 'contain',
-  }}
-  alt={`product-image-${index}`}
-  onClick={() => handleImageClick(`data:image/jpeg;base64,${img.imageData}`)}
-/>
-          </Carousel.Item>
-        ))}
-      </Carousel>
-    ) : (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: '150px', background: '#f8f9fa' }}>
-        No Image
-      </div>
-    )}
-  </div>
-
-  <div className="text-center mt-3">
-    <h6 className=" fw-bold" style={{ fontFamily: "Rubik" }}>
-      {selectedProduct.productName.toUpperCase()}
-    </h6>
-    <div className="small text-primary fw-bold">
-      Rs {(selectedProduct.rate - (selectedProduct.rate * selectedProduct.discount) / 100).toFixed(0)} /-
-    </div>
-    <div className="small text-muted fw-bold" style={{ textDecoration: 'line-through' }}>
-      MRP: Rs {selectedProduct.rate} /-
-    </div>
-    <div className="small text-danger fw-bold">
-      Discount: {selectedProduct.discount}%
-    </div>
-   <div
-  className="small fw-bold fs-6 text-start d-flex align-items-center"
-  style={{
-    color: '#7851a9',
-    fontFamily: 'Italianno, cursive',
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis'
-  }}
->
-  <LocalShippingIcon style={{ color: '#f88379', fontSize: '1rem' }} />
-  <span className="ms-1">Free Delivery and Free Installation</span>
-</div>
-    <div className="fs-5">
-      <span className="badge text-primary">✔️ Genuine Product</span>
-      <span className="badge text-secondary">↩️ Easy Returns</span>
-      <span className="badge text-success">💳 COD Available</span>
-      <span className="badge text-danger">📦 Stock Left : {selectedProduct.numberOfStockAvailable} </span>
-    </div>
-    <button
-      className="buy-now-btn"
-      onClick={() => navigate(`/offersBuyProduct/${userType}/${userId}/${selectedProduct.id}`)}
-    >
-      Buy Now
-    </button>
-  </div>
-</div>
-</div>
-</div>
-)} */}
-
   {/* Dashboard Desktop */}
      {!isMobile ? (
   <>
@@ -1787,23 +1620,48 @@ const fetchImageUrl = async (photoId) => {
       <div className="ticket-scroll" ref={ticketScrollRef}>
       {!loading && allTickets.length > 0 ? (
           allTickets.map((ticket, index) => (
-            <div key={index} className={`ticket-card1 ${ticket.raiseTicketId ? "raise-ticket-bg" : ticket.buyProductId ? "buy-product-bg" : "book-technician-bg"}`}>
+              <div key={index} className={`ticket-card1 ${ticket.raiseTicketId ? "raise-ticket-bg" :ticket.martId ? "mart-ticket-bg" : ticket.buyProductId ? "buy-product-bg" : "book-technician-bg"}`}>
               <div className="ticket-content">
-                <p><strong>{ticket.raiseTicketId ? "Raise TicketId": ticket.buyProductId? "Buy ProductId" : "Book TechnicianId"}:</strong> {ticket.raiseTicketId || ticket.buyProductId || ticket.bookTechnicianId}</p>
-                <p><strong>{ticket.subject ? "Subject" : ticket.productName ? "Product Name" : "Job Description"}:</strong> {ticket.subject || ticket.productName || ticket.jobDescription}</p>
-                <p><strong>Category:</strong> {ticket.category}</p>
+                <p><strong>{ticket.raiseTicketId ? "Raise TicketId": ticket.martId ? "Order Id" : ticket.buyProductId? "Buy ProductId" : "Book TechnicianId"}:</strong> {ticket.raiseTicketId|| ticket.martId || ticket.buyProductId || ticket.bookTechnicianId}</p>
+                <p><strong>{ticket.subject ? "Subject:" : ticket.productName ? "Product Name" : ticket.productName ? "Job Description" : ""}</strong> {ticket.subject || ticket.productName || ticket.jobDescription}</p>
+                <p><strong>{ticket.category ? "Category:" : "Delivery in 45 minutes"} </strong> {ticket.category || ticket.category || ticket.category}</p>
+                {/* <p><strong>Category:</strong>{ticket.category ? ticket.category : "Delivery in 45 minutes"}</p> */}
                 <p><strong>Status:</strong> 
                 <span className={ticket.status.toLowerCase()}> {ticket.status}</span>
                 </p> 
-                <p><strong>Assigned To:</strong> {ticket.assignedTo}</p>
+                <p><strong>{ticket.assignedTo ? "Assigned To" : "Payment Mode"}: </strong> {ticket.assignedTo || ticket.assignedTo || ticket.assignedTo || ticket.paymentMode}</p>
+                {/* <p><strong>Assigned To:</strong> {ticket.assignedTo}</p> */}
                 <p><strong>Date:</strong> {ticket.date ? new Date(ticket.date).toLocaleDateString('en-GB') : "N/A"}</p>
+              
                 {ticket.paidAmount ? ( 
-                    <>  
+                    <> 
                       <p><strong>Paid Amount:</strong> {ticket.paidAmount}</p>
                     </>
                   ) : ( 
-                    <p><strong>Paid Amount:</strong> Not Paid</p>
+                    <>
+                     <p><strong>Paid Amount:</strong> Not Paid</p>
+                    </> 
                   )}
+
+                {/* View Details Button */}
+                {ticket.martId && ticket.paymentMode?.toLowerCase() === "cash" && (
+                  <p className="ticket-content">Pay Now:  
+                  <button
+                    type="button"
+                    onClick={() => handleViewDetails(ticket)}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      padding: 0,
+                      color: "blue",
+                      textDecoration: "underline",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Amount to Pay
+                  </button>
+                  </p>
+                )}
 
                   {ticket.paidAmount && (
                     <>
@@ -1827,16 +1685,76 @@ const fetchImageUrl = async (photoId) => {
         </div> 
         </div>
         </div>
-        {/* Zoom Modal */}
-        {/* <Modal show={showZoomModal} onHide={() => setShowZoomModal(false)} centered>
-          <button className="close-button text-end mt-0" onClick={() => setShowZoomModal(false)}>
-              &times; </button>
-                <Modal.Body className="text-center position-relative">
-                  <div className="zoom-container">
-                    <img src={zoomImage} alt="Zoomed Product" className="zoom-image" />
-                  </div>
-                </Modal.Body>
-              </Modal> */}
+        {/* Modal for Mart Ticket Details */}
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered size="lg">
+        <Modal.Header
+          closeButton
+          style={{ backgroundColor: "green", color: "white" }}
+        >
+          <Modal.Title style={{ color: "white" }}>Order Details</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body style={{ padding: 0 }}>
+          {selectedTicket && (
+            <div>
+              {/* Table Header */}
+              <table className="table table-bordered table-striped mb-0">
+                <thead className="table-success" style={{ position: "sticky", top: 0, zIndex: 2 }}>
+                  <tr>
+                    <th style={{ width: "10%" }}>S.No</th>
+                    <th style={{ width: "40%" }}>Product Name</th>
+                    <th style={{ width: "20%" }}>Quantity</th>
+                    <th style={{ width: "30%" }}>Price (₹)</th>
+                  </tr>
+                </thead>
+              </table>
+
+              {/* Scrollable Table Body */}
+              <div style={{ maxHeight: "300px", overflowY: "auto" }}>
+                <table className="table table-bordered table-striped mb-0">
+                  <tbody>
+                    {selectedTicket.categories
+                      ?.flatMap((cat) => cat.products)
+                      .map((p, idx) => (
+                        <tr key={idx}>
+                          <td style={{ width: "10%" }}>{idx + 1}</td>
+                          <td style={{ width: "40%" }}>{p.productName}</td>
+                          <td style={{ width: "20%" }}>{p.noOfQuantity}</td>
+                          <td style={{ width: "30%" }}>{Math.round(p.afterDiscountPrice)}</td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </Modal.Body>
+
+        {/* Fixed Footer */}
+        <Modal.Footer
+          style={{
+            position: "sticky",
+            bottom: 0,
+            background: "white",
+            zIndex: 2,
+            display: "flex",
+            justifyContent: "space-between",
+            width: "100%",
+          }}
+        >
+          <h5 className="mb-0">Grand Total: ₹{selectedTicket?.grandTotal}</h5>
+          <Button
+            variant="success"
+            onClick={() => {
+              if (selectedTicket?.id) {
+                window.location.href = `/groceryOnlinePayment/${selectedTicket.id}`;
+              }
+            }}
+          >
+            Pay Now
+          </Button>
+        </Modal.Footer>
+      </Modal>
          <Footer />
         </>
   );

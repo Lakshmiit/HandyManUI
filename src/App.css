@@ -2701,9 +2701,12 @@ h2 {
 }
 
 .book-technician-bg {
-  background-color: #DFF5E1;
+  background-color: #FFF8D5;
 }
 
+.mart-ticket-bg {
+  background-color: #b3e9b8;
+}
 
 .ticket-title {
   font-size: 16px;
@@ -2718,7 +2721,7 @@ h2 {
 }
 
 .open {
-  color: green;
+  color: rgb(0, 102, 128);
   font-weight: bold;
 }
 
@@ -4255,4 +4258,15 @@ border-radius: 20px;
 .collection-table td {
   padding: 8px;
   border: 1px solid #ec3b83 ;
+}
+.equal-table {
+  table-layout: fixed;
+  width: 100%;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.equal-table th,
+.equal-table td {
+  word-wrap: break-word;
 }

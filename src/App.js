@@ -105,7 +105,7 @@ import GroceryCartPage from './GroceryCartPage.js';
 // import LakshmiCollections from './LakshmiCollections.js';
 // import AdminLakshmiCollectionsUpload from './AdminLakshmiCollectionsUpload.js';
 import AdminGroceryOrderPage from './AdminGroceryOrderPage.js';
-// import AdminGroceryItemNotificationGrid from './AdminGroceryItemNotificationGrid.js';
+ import AdminGroceryItemNotificationGrid from './AdminGroceryItemNotificationGrid.js';
 import GroceryPaymentmethod from './GroceryPaymentMethod.js';
 import GroceryOnlinePayment from './GroceryOnlinePayment.js';
 import GroceryPaymentSuccess from './GroceryPaymentSuccess.js';
@@ -177,7 +177,7 @@ function App() {
             <Route path="/adminUpdateGrocery/:id/Admin" element={<AdminUpdateGrocery />} />
             <Route path="/adminGroceryApproval/:id/Admin" element={<AdminGroceryApproval />} /> 
             <Route path="/adminGroceryList/Admin" element={<AdminGroceryList />} />
-            {/* <Route path='/groceryItemsNotificationGrid' element={<AdminGroceryItemNotificationGrid />} /> */}
+            <Route path='/groceryItemsNotificationGrid' element={<AdminGroceryItemNotificationGrid />} />
             <Route path='/adminGroceryOrderPage/:groceryItemId' element={<AdminGroceryOrderPage />} />
             <Route path='/groceryPaymentMethod/:userType/:userId/:groceryItemId' element={<GroceryPaymentmethod />} />
             {/* <Route path="/buyProductOnlinePaymentPage/:id" element={<BuyProductOnlinePaymentPage />} />
