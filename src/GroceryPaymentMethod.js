@@ -54,8 +54,8 @@ const [mobileNumber, setMobileNumber] = useState('');
 //   const [locationError, setLocationError] = useState(null);
 
 useEffect(() => {
-  console.log( isChecked, editingAddressId );
-}, [isChecked, editingAddressId]);
+  console.log( isChecked, editingAddressId, customerName);
+}, [isChecked, editingAddressId, customerName]);
 
 // const getLocation = () => {
 //     return new Promise((resolve) => {
@@ -443,6 +443,46 @@ localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
   }
 };     
 
+const sendLmartsms = async () => {
+  try {
+    const primaryAddress = addresses.find((addr) => addr.type === "primary");
+    const mobileNumber = primaryAddress?.mobileNumber || primaryAddress?.mobileNumber; 
+    const response = await fetch("https://handymanapiv2.azurewebsites.net/api/Auth/sendLmartsms", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: addressData.fullName || fullName,
+        ticketId: martId,
+        phoneNumber: addressData.mobileNumber || mobileNumber,
+        address: addressData.address || primaryAddress?.address,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json(); 
+    console.log("SMS API success:", data);
+  } catch (error) {
+    console.error("Error sending SMS:", error);
+  }
+};
+
+const handlePaymentAndSms = async () => {
+  try {
+    await handleUpdatePaymentMethod();   
+    await sendLmartsms();                
+    console.log("Payment updated & SMS sent ✅");
+  } catch (error) {
+    console.error("Error in payment+sms flow:", error);
+  }
+};
+
+
+
 // const handleLocationMethod = async () => {
 //   if (!navigator.geolocation) {
 //     setLocationError("Geolocation not supported in this browser.");
@@ -735,18 +775,18 @@ const handleCheckboxChange = (value) => {
                                 Note: Please enter your address to Order Grocery
                               </p>
                             )}      
-
+                    <div className='m-2'>
                       {serviceUnavailable && (
                         <div className="alert alert-danger">
-                          <strong>Note:</strong> Currently, the options to raise a ticket, book technician or lakshmi mart services are unavailable in your district.
+                          <strong>Note:</strong> Currently, the options to Raise a Ticket, Book Technician or Lakshmi Mart services are unavailable in your district.
                             You can still purchase products through the "Buy Product" section.
                             For further assistance, please contact our customer support at 6281198953.
                         </div>
                       )}   
-    
+                    </div>
     <div className="grocery-confirmation">
-   <p className='text-center fs-6'>{customerName}<strong className='name'></strong> Thank you for Choosing the Lakshmi Mart</p> 
-      <table className="grocery-table m-3">
+    <p className='text-center' style={{ fontSize: "13px" }}><span className='name'>{fullName}</span> Thank you for Choosing the Lakshmi Mart</p>
+      <table className="grocery-table m-2">
           <tbody>
             <tr>
               <td style={{ width: "40%", fontSize: "14px" }}>Order Id</td>
@@ -768,7 +808,7 @@ const handleCheckboxChange = (value) => {
         <div className='d-flex flex-column m-1'>
         {isMobile ? (
         <div className='d-flex flex-column'>
-        <label className='fs-6'>
+        <label style={{fontSize: "13px"}}>
             <input 
             type="radio" 
             className="form-check-input border-dark m-1"
@@ -776,7 +816,7 @@ const handleCheckboxChange = (value) => {
             onChange={() => handleCheckboxChange('online')}/>
             Pay Through Online
           </label>
-          <label className='fs-6'>
+          <label style={{fontSize: "13px"}}>
             <input 
             type="radio" 
             className="form-check-input border-dark m-1"
@@ -788,7 +828,7 @@ const handleCheckboxChange = (value) => {
           </div>
         ) : (
           <div className="desktop-view d-flex flex-column ">
-      <label className="me-4">
+      <label className="me-4" style={{fontSize: "12px"}}>
         <input 
         type="radio" 
         className="form-check-input border-dark me-2"
@@ -797,7 +837,7 @@ const handleCheckboxChange = (value) => {
         />
         Pay Through Online
       </label>
-      <label>
+      <label style={{fontSize: "12px"}}>
         <input 
           type="radio" 
           className="form-check-input border-dark me-2"
@@ -813,12 +853,14 @@ const handleCheckboxChange = (value) => {
 </div>
 
        <div className="note m-1">
-           <input 
+          <div className="d-flex align-items-center">
+  <input 
     type="checkbox" 
     className="form-check-input border-dark me-2"
     checked={isChecked}
     required
     onChange={(e) => setIsChecked(e.target.checked)}
+    style={{ width: "13px", height: "13px" }} 
   />
   <button
     onClick={(e) => {
@@ -832,12 +874,13 @@ const handleCheckboxChange = (value) => {
       textDecoration: "underline", 
       cursor: "pointer",
       whiteSpace: "nowrap",
-      fontSize: "13px",
+      fontSize: "13px",   
       color: "#0000FF",
     }}
   >
     Terms & Conditions & Cancellation Policy
   </button>
+</div>
 
       {/* Modal for Terms and Conditions */}
       {showModals && (
@@ -938,8 +981,14 @@ const handleCheckboxChange = (value) => {
       )}
       {locationError && <p style={{ color: "red" }}>{locationError}</p>} */}
     {/* <button className="btn-back m-2">Back</button> */}
-    <button className="btn-grocery" onClick={handleUpdatePaymentMethod} >Order Now</button> 
-    {/* onClick={handleUpdateJobDescription} */}
+      <button
+        className="btn-grocery"
+        disabled={isAddressInvalid || serviceUnavailable}
+        onClick={handlePaymentAndSms}
+        title={isAddressInvalid ? "Please add a valid address" : (serviceUnavailable ? "Service unavailable in your area" : "")}
+      >
+        Order Now
+      </button>    {/* onClick={handleUpdateJobDescription} */}
 </div>
     </div>
     </div>
@@ -965,6 +1014,7 @@ const handleCheckboxChange = (value) => {
           padding: 20px;
           border-radius: 20px;
           width: 100%;
+          font-size: 13px;
           max-width: 600px;
           max-height: 80vh;
           overflow-y: auto;
@@ -976,3 +1026,4 @@ const handleCheckboxChange = (value) => {
 };
 
 export default GroceryPaymentmethod;
+

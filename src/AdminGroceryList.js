@@ -14,8 +14,13 @@ const AdminGroceryList = () => {
   const [categories, setCategories] = useState([]); 
   const rowsPerPage = 15;
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");
-  
+  const [searchTerm, setSearchTerm] = useState("");    
+ const [stockFetched, setStockFetched] = useState(false);
+const [stockLoading, setStockLoading] = useState(false);
+   
+useEffect(() => {
+  console.log(stockLoading);
+}, [stockLoading])
 //   useEffect(() => {
 //   setLoading(true);
 //   const url = `https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${category}`;
@@ -61,6 +66,7 @@ useEffect(() => {
         discount: parseFloat(grocery.discount) || 0,
         afterDiscount: parseFloat(grocery.afterDiscount) || 0,
         stockLeft: parseInt(grocery.stockLeft) || 0,
+         name: (grocery.name || "").trim(),
       }));
 
       groceries.sort((a, b) => a.name.localeCompare(b.name));
@@ -82,6 +88,79 @@ useEffect(() => {
       setLoading(false);
     });
 }, []);
+
+useEffect(() => {
+  if (!groceryData.length || stockFetched) return;
+
+  let cancelled = false;
+  setStockLoading(true);
+
+  const fetchStockForName = async (name) => {
+    if (!name || name.toLowerCase() === "string") return { name, total: 0 };
+
+    try {
+      const url = `https://handymanapiv2.azurewebsites.net/api/Mart/GetMartItemsByProductName?productName=${encodeURIComponent(name)}`;
+      const res = await axios.get(url, { validateStatus: () => true });
+
+      if (res.status === 200 && Array.isArray(res.data) && res.data.length > 0) {
+        // ✅ Some APIs wrap product details inside "p"
+        const totalStock = res.data.reduce((sum, item) => {
+          const stock =
+            item.p && item.p.stockLeft !== undefined
+              ? parseInt(item.p.stockLeft, 10)
+              : parseInt(item.stockLeft, 10);
+          return sum + (stock || 0);
+        }, 0);
+        return { name, total: totalStock };
+      }
+
+      return { name, total: 0 };
+    } catch (e) {
+      console.warn("Stock fetch failed for:", name, e?.message || e);
+      return { name, total: 0 };
+    }
+  };
+
+  (async () => {
+    try {
+      // ✅ Fetch all stocks in parallel
+      const results = await Promise.allSettled(
+        groceryData.map((p) => fetchStockForName(p.name))
+      );
+
+      if (cancelled) return;
+
+      const stockMap = {};
+      for (const r of results) {
+        if (r.status === "fulfilled") {
+          stockMap[r.value.name] = r.value.total;
+        }
+      }
+
+      // ✅ Merge data — if Mart API has stock > 0, use it; else fallback to original
+      const merged = groceryData.map((item) => {
+        const newStock = stockMap[item.name];
+        return {
+          ...item,
+          stockLeft:
+            newStock && newStock > 0
+              ? newStock
+              : parseInt(item.stockLeft) || 0,
+        };
+      });
+
+      setGroceryData(merged);
+      setFilteredData(merged);
+      setStockFetched(true);
+    } finally {
+      if (!cancelled) setStockLoading(false);
+    }
+  })();
+
+  return () => {
+    cancelled = true;
+  };
+}, [groceryData, stockFetched]);
 
 
   // Handle delete functionality
@@ -250,25 +329,25 @@ useEffect(() => {
           'N/A'
         )}
       </td>
-      <td>{grocery.stockLeft <= 0 ? 'No Stock' : grocery.stockLeft}</td>
+      <td>{(Number(grocery.stockLeft) || 0) <= 0 ? "No Stock"  : Number(grocery.stockLeft)}</td>
       <td className="d-flex">
   <Link 
     to={`/adminUpdateGrocery/${grocery.id}/Admin`} 
-    className="btn btn-warning mx-1"
+    className="btn btn-warning m-1"
   >
     <FaEdit />
   </Link>
   
   <Link 
     to={`/adminGroceryApproval/${grocery.id}/Admin`} 
-    className="btn btn-info mx-1"
+    className="btn btn-info m-1"
   >
     <FaEye />
   </Link>
   
   <button
     onClick={() => handleDelete(grocery.id)}
-    className="btn btn-danger mx-1"
+    className="btn btn-danger m-1"
   >
     <FaTrash />
   </button>

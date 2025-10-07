@@ -196,11 +196,19 @@ useEffect(() => {
                 onChange={(e) => setCategory(e.target.value)}>
                 <option>Choose Category</option>
                 <option>Baby Products</option>
-                <option>Family Pack </option>
+                <option>Bakery, Dry Fruits & Biscuits</option>
+                <option>Dairy, Bread & Eggs</option>
+                <option>Ghee, Oils & Dals</option>
                 <option>Home Needs</option>
+                <option>Instant Food, Chips & Namkeen</option>
+                <option>Masala, Spices, Sugar & Salt</option>
                 <option>Personal Care</option>
+                <option>Rice, Ravva & Flours</option>
                 <option>Snacks & Branded Foods</option>
-                <option>Staples & Grains</option>
+                <option>Tea, Coffee & Sweets</option>
+                <option>Vegetables & Fruits</option>
+                {/* <option>Family Pack </option> */}
+                {/* <option>Staples & Grains</option> */}
               </select>
             </div> 
 

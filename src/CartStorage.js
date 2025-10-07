@@ -25,13 +25,24 @@ export const CartStorage = {
   },
 
   upsertCategory(categoryName, productList) {
-    const all = this.getAll();
-    const idx = all.findIndex(c => c.categoryName === categoryName);
-    const cleaned = (productList || []).filter(p => Number(p.qty) > 0);
-    if (idx >= 0) all[idx] = { categoryName, products: cleaned };
-    else all.push({ categoryName, products: cleaned });
-    this.save(all);
-  },
+  let all = this.getAll() || [];
+  if (!Array.isArray(all)) {
+    all = [all]; // normalize to array
+  }
+
+  const idx = all.findIndex(c => c.categoryName === categoryName);
+
+  // filter only products with qty > 0
+  const cleaned = (productList || []).filter(p => Number(p.qty) > 0);
+
+  if (idx >= 0) {
+    all[idx] = { categoryName, products: cleaned };
+  } else {
+    all.push({ categoryName, products: cleaned });
+  }
+
+  this.save(all);
+},
 
   flatItems() {
     return this.getAll().flatMap(cat =>
@@ -74,15 +85,20 @@ export const CartStorage = {
     this.save(all);
   },
 
-  grandSummary() {
-    const all = this.getAll();
-    let items = 0, total = 0;
-    all.forEach(cat =>
-      (cat.products || []).forEach(p => {
-        items += Number(p.qty || 0);
-        total += Number(p.afterDiscountPrice || 0) * Number(p.qty || 0);
-      })
-    );
-    return { items, total: Math.round(total) };
-  },
+ grandSummary() {
+  const all = this.getAll() || [];   // fallback to empty array
+  let items = 0, total = 0;
+
+  // Ensure it's always an array
+  const list = Array.isArray(all) ? all : [all];
+
+  list.forEach(cat =>
+    (cat.products || []).forEach(p => {
+      items += Number(p.qty || 0);
+      total += Number(p.afterDiscountPrice || 0) * Number(p.qty || 0);
+    })
+  );
+
+  return { items, total: Math.round(total) };
+}
 };

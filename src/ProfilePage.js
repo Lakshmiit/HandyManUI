@@ -46,10 +46,18 @@ import Plumbing from './img/Plumbing.jpeg';
 import Hardware from './img/Hardware.jpeg';
 import HomeDecor from './img/HomeDecor.jpeg';
 import BabyKidsImg from './img/BabyKids.jpeg';
-import FamilyPackImg from './img/FamilyPack.jpeg';
+import PoojaImg from './img/Pooja.jpeg';
+// import FamilyPackImg from './img/FamilyPack.jpeg';
 import PersonalCareImg from './img/PersonalCare.jpeg';
-import SnacksImg from './img/Snacks.jpeg';
-import StaplesImg from './img/Staples.jpeg';
+// import SnacksImg from './img/Snacks.jpeg';
+import RavvaImg from './img/Rice&Ravva.jpeg';
+import OilsImg from './img/oils,ghee.jpeg';
+import MasalaImg from './img/salt,sugar.jpeg';
+import BreadsImg from './img/dairy,bread.jpeg';
+import VegetablesImg from './img/vegetables,fruits.jpeg';
+import DryfruitsImg from './img/dryfruits.jpeg';
+import TeaImg from './img/teacoffee.jpeg';
+import NamkeenImg from './img/sweets.jpeg';
 import HouseHoldImg from './img/HouseHold.jpeg';
 import setkurti from './img/3pcsset.jpeg';
 import kurti from './img/2pcsset.jpeg';
@@ -165,12 +173,20 @@ const categories = [
 ];
 
 const groceryCategories = [
-  { label: 'Staples & Grains', value: 'Staples & Grains', image: StaplesImg },
-  { label: 'Snacks & Foods', value: 'Snacks & Branded Foods', image: SnacksImg },
+  { label: 'Rice, Ravva & Flours', value: 'Rice, Ravva & Flours', image: RavvaImg },
+  { label: 'Oils, Ghee & Dals', value: 'Oils, Ghee & Dals', image: OilsImg },
+  { label: 'Masala, Spices, Sugar & Salt', value: 'Masala, Spices, Sugar & Salt', image: MasalaImg },
+  { label: 'Dairy, Bread & Eggs', value: 'Dairy, Bread & Eggs', image: BreadsImg },
+  { label: 'Bakery, Dry Fruits & Biscuits', value: 'Bakery, Dry Fruits & Biscuits', image: DryfruitsImg },
+  { label: 'Instant Food, Chips & Namkeen', value: 'Instant Food, Chips & Namkeen', image: NamkeenImg },
+  { label: 'Tea, Coffee & Sweets', value: 'Tea, Coffee & Sweets', image: TeaImg },   
+  // { label: 'Snacks & Foods', value: 'Snacks & Branded Foods', image: SnacksImg },
   { label: 'Home Needs', value: 'Home Needs', image: HouseHoldImg },
+  { label: 'Puja Essentials', value: 'Puja Essentials', image: PoojaImg },
   { label: 'Personal Care', value: 'Personal Care', image: PersonalCareImg },
   { label: 'Baby Products', value: 'Baby Products', image: BabyKidsImg },
-  { label: 'Family Pack', value: 'Family Pack', image: FamilyPackImg },
+  { label: 'Vegetables & Fruits', value: 'Vegetables & Fruits', image: VegetablesImg },
+  // { label: 'Family Pack', value: 'Family Pack', image: FamilyPackImg },
 ];
 
 const collectionsCategories = [
@@ -216,7 +232,7 @@ const [cartSummary, setCartSummary] = useState({
   total: 0,
   products: [],
 }); 
-const [dress] = useState([]);
+ const [dress] = useState([]);
 // const [dress, setDress] = useState([]);
   const [deliveryProfile, setDeliveryProfile] = useState(null);
 const [showInterestModal, setShowInterestModal] = useState(false);
@@ -417,11 +433,23 @@ useEffect(() => {
 
 useEffect(() => {
   const updateCartSummary = () => {
-    const savedCategories = JSON.parse(localStorage.getItem("allCategories")) || [];
+    let savedCategories = [];
+
+    try {
+      const raw = localStorage.getItem("allCategories");
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        // if it's array use directly, else wrap into array
+        savedCategories = Array.isArray(parsed) ? parsed : [parsed];
+      }
+    } catch (e) {
+      console.error("Invalid JSON in localStorage:", e);
+    }
+
     let items = 0, total = 0, products = [];
 
     savedCategories.forEach((cat) => {
-      cat.products.forEach((p) => {
+      (cat.products || []).forEach((p) => {
         if (Number(p.qty) > 0) {
           items += Number(p.qty);
           const afterDiscountPrice = Number(
@@ -430,9 +458,9 @@ useEffect(() => {
           total += afterDiscountPrice * Number(p.qty);
 
           products.push({
-            id: p.productId || p.id, 
-            productName: p.productName || p.name || "", 
-            image: p.image || p.img || "", 
+            id: p.productId || p.id,
+            productName: p.productName || p.name || "",
+            image: p.image || p.img || "",
             mrp: Number(p.mrp) || Number(p.mrpPrice) || 0,
             discount: Number(p.discount) || Number(p.discountPercent) || 0,
             afterDiscountPrice,
@@ -442,9 +470,11 @@ useEffect(() => {
         }
       });
     });
+
     setCartSummary({ items, total, products });
     console.log("cartSummary:", { items, total, products });
   };
+
   updateCartSummary();
   window.addEventListener("storage", updateCartSummary);
   return () => window.removeEventListener("storage", updateCartSummary);
@@ -561,8 +591,8 @@ const handleCategoryClick = async (category) => {
 
 const handleGroceryCategoryClick = async (category) => {
   const { value } = category;
-   if (value === "Family Pack" || value === "Baby Products") {
-    console.log(`${value} clicked - navigation blocked`);
+   if (value === "Vegetables & Fruits") {
+    console.log(`Vegetables & Fruits clicked - navigation blocked`);
     setSelectedCategory(category); 
     return;
   }
@@ -1306,6 +1336,66 @@ const fetchImageUrl = async (photoId) => {
               </div> */}
     
 <div className="container my-3">
+  {/* Grocery Categories Section */}
+  <div className="shadow-lg p-3 rounded-5 mb-1 text-center bg-transparent border-0">
+    <h5 className="fw-bold mb-3" style={{color: "#ff5722", fontSize: "15px"}}>
+      Lakshmi Mart  
+    </h5>
+    <div className="row row-cols-3 row-cols-md-5 g-1">
+  {groceryCategories.map((cat) => {
+    const isBlockedCategory  = cat.value === "Vegetables & Fruits";
+    return (
+      <div
+        className="col"
+        key={cat.label}
+        onClick={() => !isBlockedCategory  && handleGroceryCategoryClick(cat)}
+        style={{ cursor: isBlockedCategory  ? "not-allowed" : "pointer" }}     
+      >
+        <div
+          className="groceryIcon-card border-0 shadow-sm text-center d-flex flex-column align-items-center justify-content-between"
+          style={{
+            height: isMobile ? "120px" : "140px",
+            width: isMobile ? "90px" : "120px",
+            cursor: isBlockedCategory  ? "not-allowed" : "pointer",
+            padding: "10px",
+            margin: "5px",
+            // backgroundColor: "#fafad2",
+            opacity: isBlockedCategory  ? 0.5 : 1, 
+            pointerEvents: "auto", 
+          }}
+        >
+          <img
+            src={cat.image}
+            alt={cat.label}
+            style={{
+              height: "80px",
+              width: "80px",
+              borderRadius: "8px",
+              marginTop: "2px",
+              objectFit: "cover",
+            }}
+          />
+          <span
+            style={{
+              fontSize: "11px",
+              fontWeight: "500",
+              marginTop: "5px",
+              minHeight: "24px", 
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              lineHeight: "1.2",
+            }}
+          >
+            {cat.label}
+          </span>
+        </div>
+      </div>
+    );
+  })}
+</div>
+  </div>
   {/* Handyman Products Section */}
   <div className="shadow-lg p-3 mb-1 rounded-5 bg-transparent border-0">
     <h5 className="text-center fw-bold mb-3" style={{color: "#ff5722", fontSize: "18px"}}>Handyman Products</h5>
@@ -1359,67 +1449,6 @@ const fetchImageUrl = async (photoId) => {
         </div>
       ))}
     </div>
-  </div>
-
-  {/* Grocery Categories Section */}
-  <div className="shadow-lg p-3 rounded-5 mb-1 text-center bg-transparent border-0">
-    <h5 className="fw-bold mb-3" style={{color: "#ff5722", fontSize: "15px"}}>
-      Lakshmi Mart  
-    </h5>
-    <div className="row row-cols-3 row-cols-md-5 g-1">
-  {groceryCategories.map((cat) => {
-    const isBlockedCategory  = cat.value === "Family Pack" || cat.value === "Baby Products";
-    return (
-      <div
-        className="col"
-        key={cat.label}
-        onClick={() => !isBlockedCategory  && handleGroceryCategoryClick(cat)}
-        style={{ cursor: isBlockedCategory  ? "not-allowed" : "pointer" }}     
-      >
-        <div
-          className="groceryIcon-card border-0 shadow-sm text-center d-flex flex-column align-items-center justify-content-between"
-          style={{
-            height: isMobile ? "120px" : "140px",
-            width: isMobile ? "90px" : "120px",
-            cursor: isBlockedCategory  ? "not-allowed" : "pointer",
-            padding: "10px",
-            margin: "5px",
-            // backgroundColor: "#fafad2",
-            opacity: isBlockedCategory  ? 0.5 : 1, 
-            pointerEvents: "auto", 
-          }}
-        >
-          <img
-            src={cat.image}
-            alt={cat.label}
-            style={{
-              height: "80px",
-              width: "80px",
-              borderRadius: "8px",
-              marginTop: "2px",
-              objectFit: "cover",
-            }}
-          />
-          <span
-            style={{
-              fontSize: "11px",
-              fontWeight: "500",
-              marginTop: "5px",
-              minHeight: "24px", 
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              textAlign: "center",
-              lineHeight: "1.2",
-            }}
-          >
-            {cat.label}
-          </span>
-        </div>
-      </div>
-    );
-  })}
-</div>
   </div>
 
 {cartSummary.items > 0 && (
@@ -1485,7 +1514,7 @@ const fetchImageUrl = async (photoId) => {
 </span>
     <div className="row row-cols-3 row-cols-md-5 g-2">
       {collectionsCategories.map((cat) => (
-        <div className="col" key={cat.label} 
+        <div className="col" key={cat.label}  
         // onClick={() => handleDressCategoryClick(cat)}
         //  onClick={() => navigate(`/lakshmiCollections/${userType}/${userId}`)}
         >

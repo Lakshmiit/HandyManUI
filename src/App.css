@@ -1843,7 +1843,7 @@ max-width: none;
 }
 
 .name {
-  font-size: 25px;
+  font-size: 15px;
   font-weight: bold;
   color: #000;
   text-align: center;
@@ -3446,10 +3446,14 @@ border-radius: 20px;
 
 .product-name {
   font-size: 0.95rem;
-  font-weight: 600;
+  font-weight: 500;
   color: #333;
   height: 2.4em; 
+  display: -webkit-box;
+  -webkit-line-clamp: 2;   
+  -webkit-box-orient: vertical;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .product-price {
@@ -4077,6 +4081,15 @@ border-radius: 20px;
   font-size: 15px;
 }
 
+.btn-grocery:disabled {
+  background: #c9c9c9;       
+  color: #6b6b6b;
+  cursor: not-allowed;
+  opacity: 0.85;              
+  pointer-events: none;       
+  box-shadow: none;           
+}
+
 .btn-grocery:hover {
   background-color: green;
   cursor: pointer;
@@ -4085,9 +4098,9 @@ border-radius: 20px;
 
 .grocery-confirmation {
   font-family: Arial, sans-serif;
-  max-width: 700px;
-  margin: 10px;
-  padding: 10px;
+  max-width: 600px;
+  margin: 8px;
+  padding: 8px;
   border: 2px solid green;
   border-radius: 30px;
 }
@@ -4096,7 +4109,7 @@ border-radius: 20px;
   width: 90%;
   border-collapse: collapse; 
   border-spacing: 0;         
-  font-size: 16px;
+  font-size: 15px;
 }
 
 .grocery-table td {
@@ -4241,9 +4254,9 @@ border-radius: 20px;
 
 .collection-confirmation {
   font-family: Arial, sans-serif;
-  max-width: 700px;
-  margin: 10px;
-  padding: 10px;
+  max-width: 600px;
+  margin: 8px;
+  padding: 8px;
   border: 2px solid #ec3b83 ;
   border-radius: 30px;
 }
@@ -4252,7 +4265,7 @@ border-radius: 20px;
   width: 90%;
   border-collapse: collapse; 
   border-spacing: 0;         
-  font-size: 16px;
+  font-size: 15px;
 }
 
 .collection-table td {
@@ -4264,9 +4277,58 @@ border-radius: 20px;
   width: 100%;
   text-align: center;
   vertical-align: middle;
+  background: none;
 }
 
 .equal-table th,
 .equal-table td {
   word-wrap: break-word;
+}
+
+.grocery-img {
+  width: 120px;  
+  height: 120px;  
+  object-fit: contain; 
+}
+
+.text-muted {
+  color: #6c757d !important;
+}
+
+.disabled-btn {
+  background-color: #cccccc !important;
+  border-color: #cccccc !important;
+  color: #666666 !important;
+  cursor: not-allowed !important;
+  opacity: 0.7;
+}
+
+.product-title {
+  font-size: 11px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;   
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+
+.btn-collection {
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  transition: 0.3s ease;
+}
+
+.btn-valid {
+  background-color: #ec3b83;
+  color: #fff;
+  cursor: pointer;
+}
+
+.btn-invalid {
+  background-color: #ccc; 
+  color: #666;
+  cursor: not-allowed;
 }

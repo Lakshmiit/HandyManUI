@@ -254,7 +254,9 @@ const handleGroceryProceed = async (event) => {
     const filename = getFilenameFromValue(persisted);
     const safeImage = filename || (typeof persisted === "string" ? persisted : "");
     return {
-      productName: p.productName || p.name || "",
+      //productName: p.productName.Totrim() || p.name.Totrim() || "",
+
+      productName: (p.productName?.trim() || p.name?.trim() || ""),
       noOfQuantity: String(p.qty),
       productImage: safeImage, 
       mrp: String(p.mrp || 0),
@@ -387,7 +389,7 @@ const roundedGrandTotal = Math.round(grandTotal);
                 item.imageUrl ||
                 "/placeholder.png"
               )}
-              style={{ height: 50, width: 45, cursor: "pointer", borderRadius: 6 }}
+              style={{ height: 50, width: 30, cursor: "pointer", borderRadius: 6 }}
               onError={(e) => { e.currentTarget.src = "/placeholder.png"; }}
             />
 
@@ -478,6 +480,13 @@ const roundedGrandTotal = Math.round(grandTotal);
       </div>
     </div>
     <Divider />
+
+      {roundedGrandTotal < 200 && (
+        <p style={{ color: "red", fontSize: "13px", marginTop: "0px" }}>
+          Minimum order is ₹200 and above
+        </p>
+      )}
+
     {/* Footer */}
     <div
       className="cart-footer d-flex justify-content-between align-items-center mt-2 px-3 py-2"
@@ -494,16 +503,16 @@ const roundedGrandTotal = Math.round(grandTotal);
       </div>
       
       <div
-  style={{
-    fontWeight: "500",
-    fontSize: "15px",
-    cursor: roundedGrandTotal < 200 ? "not-allowed" : "pointer",
-    opacity: roundedGrandTotal < 200 ? 0.6 : 1
-  }}
-  onClick={roundedGrandTotal >= 200 ? handleGroceryProceed : undefined}
->
-  {roundedGrandTotal < 200 ? "Add More Items" : "Proceed →"}
-</div>
+        style={{
+          fontWeight: "500",
+          fontSize: "15px",
+          cursor: roundedGrandTotal < 200 ? "not-allowed" : "pointer",
+          opacity: roundedGrandTotal < 200 ? 0.6 : 1
+        }}
+        onClick={roundedGrandTotal >= 200 ? handleGroceryProceed : undefined}
+      >
+        {roundedGrandTotal < 200 ? "Add More Items" : "Proceed →"}
+      </div>
 
       {/* <div style={{ fontWeight: "500", fontSize: "15px" }} onClick={handleGroceryProceed}>
         {roundedGrandTotal < 200 ? "Add More Items" : "Proceed →"}

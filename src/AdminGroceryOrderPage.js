@@ -6,7 +6,7 @@ import Footer from './Footer.js';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowBack, Dashboard as MoreVertIcon} from '@mui/icons-material';
-import ForwardIcon from '@mui/icons-material/Forward';
+// import ForwardIcon from '@mui/icons-material/Forward';
 import { Button, Form, Row, Col } from 'react-bootstrap';
 import axios from "axios";
 const AdminGroceryOrderPage = () => {
@@ -62,8 +62,8 @@ const [code, setCode] = useState("");
 const [units, setUnits] = useState("");
 
 useEffect(() => {
-  console.log(id, customerId, loading);
-}, [id,customerId, loading]);
+  console.log(id, customerId, loading, longitude, latitude, grandTotal, paidAmount, transactionNumber, transactionStatus, totalItemsSelected, cartData, code, units);
+}, [id,customerId, loading, longitude, latitude, grandTotal, paidAmount, transactionNumber, transactionStatus, totalItemsSelected, cartData, code, units]);
 
 useEffect(() => {
   const fetchDeliveryPartners = async () => {
@@ -152,54 +152,54 @@ const handleAssignedToChange = (e) => {
   setAssignedTo(selectedAssignedTo);
   setError({});
 };
-  const handleUpdatePaymentMethod = async () => {
-    try {   
-      const partner = deliveryPartners.find(p => p.deliveryPartnerId === selectedPartner);
-  const payload = {
-    ...cartData,
-    customerName: customerName,
-    address: address, 
-    state: state,
-    district: district,
-    zipCode: pincode,
-    customerPhoneNumber: mobileNumber,
-    id: groceryItemId,
-    userId: customerId, 
-    martId: martId,
-    date: new Date(),
-    grandTotal: grandTotal,
-    totalItemsSelected: totalItemsSelected,
-    status: "closed", 
-    paymentMode: paymentMode,
-    utrTransactionNumber: transactionDetails,
-    transactionNumber: transactionNumber,
-    transactionStatus: transactionStatus,
-    paidAmount: paidAmount,
-    AssignedTo: partner? partner.deliveryPartnerName: "",
-    DeliveryPartnerUserId: partner? partner.userId: "",
-    latitude: latitude,
-    longitude: longitude,
-    code: code,
-    units: units,
-  };
+//   const handleUpdatePaymentMethod = async () => {
+//     try {   
+//       const partner = deliveryPartners.find(p => p.deliveryPartnerId === selectedPartner);
+//   const payload = {
+//     ...cartData,
+//     customerName: customerName,
+//     address: address, 
+//     state: state,
+//     district: district,
+//     zipCode: pincode,
+//     customerPhoneNumber: mobileNumber,
+//     id: groceryItemId,
+//     userId: customerId, 
+//     martId: martId,
+//     date: new Date(),
+//     grandTotal: grandTotal,
+//     totalItemsSelected: totalItemsSelected,
+//     status: "closed", 
+//     paymentMode: paymentMode,
+//     utrTransactionNumber: transactionDetails,
+//     transactionNumber: transactionNumber,
+//     transactionStatus: transactionStatus,
+//     paidAmount: paidAmount,
+//     AssignedTo: partner? partner.deliveryPartnerName: "",
+//     DeliveryPartnerUserId: partner? partner.userId: "",
+//     latitude: latitude,
+//     longitude: longitude,
+//     code: code,
+//     units: units,
+//   };
 
-    let response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
-    if (!response.ok) {
-      throw new Error('Failed to Update Delivery Partner.');
-    }
-    alert(`Ticket has been assigned to ${partner ? partner.deliveryPartnerName : ""}`);
-    navigate(`/adminNotifications`);
-  } catch (error) {
-    console.error('Error:', error);
-    window.alert('Failed to Update Delivery Partner. Please try again later.');
-  }
-};
+//     let response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`, {
+//       method: 'PUT',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify(payload),
+//     });
+//     if (!response.ok) {
+//       throw new Error('Failed to Update Delivery Partner.');
+//     }
+//     alert(`Ticket has been assigned to ${partner ? partner.deliveryPartnerName : ""}`);
+//     navigate(`/adminNotifications`);
+//   } catch (error) {
+//     console.error('Error:', error);
+//     window.alert('Failed to Update Delivery Partner. Please try again later.');
+//   }
+// };
 
   // Detect screen size for responsiveness
 useEffect(() => {
@@ -245,7 +245,7 @@ useEffect(() => {
 
   return (
   <>
-<div className="d-flex flex-row justify-content-start align-items-start" style={{marginTop: "150px"}}>
+<div className="d-flex flex-row justify-content-start align-items-start" style={{marginTop: "130px"}}>
       {/* Sidebar menu for Larger Screens */}
       {!isMobile && (
         <div className=" ml-0 p-0 adm_mnu h-90">
@@ -522,10 +522,9 @@ useEffect(() => {
             <Button type="submit" className=" text-white mx-2" style={{background: 'green'}} onClick={() => navigate(`/adminNotifications`)} title="Forward">
                 <ArrowBack />
                 </Button>
-                <Button type="submit" className="text-white mx-2" style={{background: 'green'}} title="Forward" onClick={handleUpdatePaymentMethod}> 
-                {/* onClick={handleUpdatePaymentMethod}  */}
+                {/* <Button type="submit" className="text-white mx-2" style={{background: 'green'}} title="Forward" onClick={handleUpdatePaymentMethod}> 
                 <ForwardIcon />
-                </Button>
+                </Button> */}
             </div>
           </form>
         </div>
