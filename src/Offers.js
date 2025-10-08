@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useLayoutEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import './App.css';
@@ -6,102 +6,61 @@ import Sidebar from './Sidebar.js';
 import Footer from './Footer.js';
 import Header from './Header.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
+import { Dashboard as MoreVertIcon } from '@mui/icons-material';
 import { Button, Carousel, Modal } from 'react-bootstrap';
 import SearchIcon from '@mui/icons-material/Search';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ImageCache from './utils/ImageCache';
 
-const OffersProductCard = () => {
+function createLimiter(max = 8) {    
+  let active = 0;
+  const queue = [];
+  const next = () => {
+    if (active >= max || queue.length === 0) return;
+    active++;
+    const fn = queue.shift();
+    fn().finally(() => {
+      active--;
+      next();
+    });
+  };
+  return (task) =>
+    new Promise((resolve, reject) => {
+      queue.push(() => task().then(resolve, reject));
+      next();
+    });
+}
+
+const OffersProductCard = () => { 
   const navigate = useNavigate();
-   const location = useLocation();
-   const encodedCategory = location.state?.encodedCategory || localStorage.getItem('encodedCategory');
-   const {userType} = useParams();
-  const {userId} = useParams(); 
+  const location = useLocation();
+  const encodedCategory = location.state?.encodedCategory || localStorage.getItem('encodedCategory');
+  const { userType, userId, selectedUserType } = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const { selectedUserType } = useParams();
   const [productData, setProductData] = useState(null);
-  const [imageUrls, setImageUrls] = useState([]);
- const [showZoomModal, setShowZoomModal] = useState(false);
-  const [zoomImage, setZoomImage] = useState("");
   const [products, setProducts] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null); 
+  const [imageUrls, setImageUrls] = useState({});
   const [imageLoading, setImageLoading] = useState(true);
-const [searchQuery, setSearchQuery] = useState('');
-
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showGallery, setShowGallery] = useState(false);
+  const [galleryProduct, setGalleryProduct] = useState(null);
+  const observerRef = useRef(null);
+  const observedMapRef = useRef(new Map()); 
+  const visibleSetRef = useRef(new Set());  
+  const limiterRef = useRef(createLimiter(8)); 
+  const imageUrlsRef = useRef({});
 useEffect(() => {
-  const fetchProductsAndAllImages = async () => {
-    try {
-      // const start = performance.now();
-
-      const productRes = await fetch('https://handymanapiv2.azurewebsites.net/api/Product/GetAllProductList');
-      const productList = await productRes.json();
-      setProductData(productList);
-
-      const allImagePromises = productList.flatMap(product => 
-        product.productPhotos?.map(photo => 
-          fetch(`https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`)
-            .then(res => res.json())
-            .then(data => {
-              const byteCharacters = atob(data.imageData);
-              const byteNumbers = new Array(byteCharacters.length);
-              for (let i = 0; i < byteCharacters.length; i++) {
-                byteNumbers[i] = byteCharacters.charCodeAt(i);
-              }
-              const byteArray = new Uint8Array(byteNumbers);
-              const blob = new Blob([byteArray], { type: 'image/jpeg' });
-              const imageUrl = URL.createObjectURL(blob);
-              return { productId: product.id, imageUrl };
-            })
-            .catch(() => null)
-        ) || []
-      );
-
-      const imageResults = await Promise.allSettled(allImagePromises);
-      const imageMap = {};
-      imageResults.forEach(result => {
-        if (result.status === 'fulfilled' && result.value) {
-          const { productId, imageUrl } = result.value;
-          if (!imageMap[productId]) {
-            imageMap[productId] = [];
-          }
-          imageMap[productId].push(imageUrl);
-        }
-      });
-
-      setImageUrls(imageMap);
-      setImageLoading(false);
-
-      // const duration = performance.now() - start;
-      // console.log(`All images loaded in ${duration.toFixed(1)} ms`);
-    } catch (error) {
-      console.error("Error loading all images fast:", error);
-    }
-  };
-
-  fetchProductsAndAllImages();
-}, []);
-
-  
-  const handleImageClick = (imageSrc) => {
-    setZoomImage(imageSrc);
-    setShowZoomModal(true);
-  };
-  
-useEffect(() => {
-  const handleCategoryClick = async () => {
-    try {
-      setSelectedCategory(encodedCategory);
-      setProducts([]); 
-      const url = `https://handymanapiv2.azurewebsites.net/api/Product/GetProductsByCategory?Category=${encodedCategory}`;
-      const response = await axios.get(url);
-      setProducts(response.data);
-    } catch (error) {
-      console.error('Error fetching products:', error);
-      setProducts([]); 
-    }
-  };
-  handleCategoryClick();
-}, [encodedCategory]);
+  imageUrlsRef.current = imageUrls;
+}, [imageUrls]);
+  useEffect(() => {
+    const link = document.createElement('link');
+    link.rel = 'preconnect';
+    link.crossOrigin = '';
+    document.head.appendChild(link);
+    return () => document.head.removeChild(link);
+  }, []);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -110,20 +69,251 @@ useEffect(() => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  if (!productData) {
-    return (
-      <div className="d-flex justify-content-center align-items-center vh-100">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
-      </div>
-    );
+useLayoutEffect(() => {
+  if ('scrollRestoration' in window.history) {
+    window.history.scrollRestoration = 'manual';
   }
-  
+  window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+
+  return () => {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'auto';
+    }
+  };
+}, []);
+
+  useEffect(() => {
+    let canceled = false;
+    (async () => {
+      try {
+        const res = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/GetAllProductList`);
+        const list = await res.json();
+        if (canceled) return;
+        setProductData(Array.isArray(list) ? list : []);
+      } catch (e) {
+        console.error('Load products failed', e);
+        if (!canceled) setProductData([]);
+      } finally {
+        if (!canceled) setImageLoading(false);
+      }
+    })();
+    return () => { canceled = true; };
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      if (!encodedCategory) {
+        setSelectedCategory(null);
+        setProducts([]);
+        return;
+      }
+      try {
+        const decoded = decodeURIComponent(encodedCategory);
+        setSelectedCategory(decoded);
+        setProducts([]);
+        const { data } = await axios.get(
+          `https://handymanapiv2.azurewebsites.net/api/Product/GetProductsByCategory?Category=${encodeURIComponent(decoded)}`
+        );
+        setProducts(Array.isArray(data) ? data : []);
+      } catch {
+        setProducts([]);
+      }
+    })();
+  }, [encodedCategory]);
+
+  const list = useMemo(
+    () => (selectedCategory ? products : productData) || [],
+    [selectedCategory, products, productData]
+  );
+
+  const filtered = useMemo(() => {
+    const q = (searchQuery || '').toLowerCase().trim();
+    const normalize = (s) =>
+      (s?.toLowerCase().trim().endsWith('s')
+        ? s.toLowerCase().trim().slice(0, -1)
+        : s?.toLowerCase().trim());
+    return list
+      .filter((p) => {
+        const nm = p.productName?.toLowerCase().trim() || '';
+        return nm.includes(q) || normalize(nm)?.includes(normalize(q));
+      })
+      .slice()
+      .reverse();
+  }, [list, searchQuery]);
+
+  const observeCard = (el, productId) => {
+    if (!el) return;
+    observedMapRef.current.set(String(productId), el);
+    observerRef.current?.observe(el);
+  };
+
+  const maybeFetchFirstImages = useCallback(() => {
+  const list = Array.isArray(filtered) ? filtered : [];
+  const visibleIds = Array.from(visibleSetRef.current);
+  const firstTwelveIds = list.slice(0, 12).map((p) => String(p.id));
+  const targetIds = Array.from(new Set([...firstTwelveIds, ...visibleIds]));
+
+  for (const pid of targetIds) {
+    // use the ref to avoid depending on imageUrls
+    if (imageUrlsRef.current[pid]?.length) continue;
+
+    const product = list.find((p) => String(p.id) === pid);
+    const first = (product?.productPhotos || [])[0];
+
+    if (!first) {
+      setImageUrls((prev) => ({ ...prev, [pid]: [] }));
+      continue;
+    }
+
+    const cached = ImageCache.getBase64(first);
+    if (cached) {
+      const url = `data:image/jpeg;base64,${cached}`;
+      setImageUrls((prev) => ({
+        ...prev,
+        [pid]: prev[pid]?.length ? prev[pid] : [url],
+      }));
+      continue;
+    }
+
+    limiterRef.current(async () => {
+      try {
+        const res = await fetch(
+          `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(first)}`
+        );
+        const data = await res.json();
+        const b64 = data?.imageData || '';
+        if (!b64) return;
+
+        ImageCache.setBase64(first, b64);
+        const url = `data:image/jpeg;base64,${b64}`;
+
+        setImageUrls((prev) => ({
+          ...prev,
+          [pid]: prev[pid]?.length ? prev[pid] : [url],
+        }));
+      } catch {
+      }
+    });
+  }
+}, [filtered]);
+
+    useEffect(() => {
+  if (observerRef.current) {
+    observerRef.current.disconnect();
+  }
+  observerRef.current = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          const pid = e.target.getAttribute('data-pid');
+          if (!pid) continue;
+          if (e.isIntersecting) {
+            visibleSetRef.current.add(pid);
+          } else {
+          }
+        }
+        maybeFetchFirstImages();
+      },
+      {
+        root: null,
+        rootMargin: '400px 0px', 
+        threshold: 0.01,
+      }
+    );
+  for (const [pid, el] of observedMapRef.current.entries()) {
+    if (el) observerRef.current.observe(el);
+    console.log(pid);
+  }  
+  return () => observerRef.current?.disconnect();
+}, [filtered, maybeFetchFirstImages]);
+
+  useEffect(() => {
+    if ((filtered?.length || 0) <= 12) {
+      filtered.forEach((p) => visibleSetRef.current.add(String(p.id)));
+      maybeFetchFirstImages();
+    }
+  }, [filtered, maybeFetchFirstImages]);
+
+  const openGallery = async (product) => {
+    setGalleryProduct(product);
+    setShowGallery(true);
+
+    const photos = product?.productPhotos || [];
+    if (!photos.length) {
+      setImageUrls((prev) => ({ ...prev, [product.id]: prev[product.id] || [] }));
+      return;
+    }
+
+    const first = photos[0];
+    let firstUrl = imageUrls[product.id]?.[0] || null;
+    if (!firstUrl) {
+      const cached = ImageCache.getBase64(first);
+      if (cached) {
+        firstUrl = `data:image/jpeg;base64,${cached}`;
+      } else {
+        try {
+          const res = await fetch(
+            `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(first)}`
+          );
+          const data = await res.json();
+          if (data?.imageData) {
+            ImageCache.setBase64(first, data.imageData);
+            firstUrl = `data:image/jpeg;base64,${data.imageData}`;
+          }
+        } catch {}
+      }
+    }
+
+    setImageUrls((prev) => ({
+      ...prev,
+      [product.id]: firstUrl ? (prev[product.id]?.length ? prev[product.id] : [firstUrl]) : (prev[product.id] || []),
+    }));
+
+    await Promise.allSettled(
+      (photos.slice(1) || []).map((photo) =>
+        limiterRef.current(async () => {
+          try {
+            const c = ImageCache.getBase64(photo);
+            let url = null;
+            if (c) {
+              url = `data:image/jpeg;base64,${c}`;
+            } else {
+              const res = await fetch(
+                `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`
+              );
+              const data = await res.json();
+              if (!data?.imageData) return;
+              ImageCache.setBase64(photo, data.imageData);
+              url = `data:image/jpeg;base64,${data.imageData}`;
+            }
+            if (url) {
+              setImageUrls((prev) => {
+                const arr = prev[product.id] || (firstUrl ? [firstUrl] : []);
+                if (arr.includes(url)) return prev;
+                return { ...prev, [product.id]: [...arr, url] };
+              });
+            }
+          } catch {}
+        })
+      )
+    );
+  };
+
+  const closeGallery = () => {
+    setShowGallery(false);
+    setGalleryProduct(null);
+  };
+
+  const getDiscounted = (p) => {
+    if (p?.rate == null) return null;
+    if (p?.discount == null) return Math.round(Number(p.rate));
+    const price = Number(p.rate) - (Number(p.rate) * Number(p.discount)) / 100;
+    return Math.round(price);
+  };
+
   return (
     <>
       <Header />
-      <div className="wrapper d-flex">
+      <div className="wrapper d-flex mt-100">
         {!isMobile && (
           <div className="ml-0 m-4 p-0 sde_mnu">
             <Sidebar userType={selectedUserType} />
@@ -132,14 +322,9 @@ useEffect(() => {
 
         {isMobile && (
           <div className="floating-menu">
-            <Button
-              variant="primary"
-              className="rounded-circle shadow"
-              onClick={() => setShowMenu(!showMenu)}
-            >
+            <Button variant="primary" className="rounded-circle shadow" onClick={() => setShowMenu(!showMenu)}>
               <MoreVertIcon />
             </Button>
-
             {showMenu && (
               <div className="sidebar-container">
                 <Sidebar userType={selectedUserType} />
@@ -149,260 +334,231 @@ useEffect(() => {
         )}
 
         <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
-          <div className='d-flex justify-content-center mt-mob-100'>
-        <div className="position-relative flex-grow-1 ms-4">
-          <input
-            type="text"
-            className="form-control w-60 m-2 ps-5 "
-            placeholder="Search Products"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value.trimStart())}
-            />
-            <SearchIcon
-              className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"
-              style={{ pointerEvents: 'none' }}
-            />
+          <div className="d-flex justify-content-center">
+            <div className="position-relative flex-grow-1 ms-4">
+              <input
+                type="text"
+                className="form-control w-60 m-2 ps-5"
+                placeholder="Search Products"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value.trimStart())}
+              />
+              <SearchIcon
+                className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"
+                style={{ pointerEvents: 'none' }}
+              />
+            </div>
+
+            {selectedCategory && (
+              <div className="d-flex align-items-center position-relative" style={{ gap: '5px' }}>
+                <Button
+                  style={{ background: 'linear-gradient(45deg, #ff9800, #ff5722)' }}
+                  size="sm"
+                  className="ms-2"
+                  onClick={() => setSelectedCategory(null)}
+                >
+                  Show All Products
+                </Button>
+              </div>
+            )}
           </div>
-        {selectedCategory && (
-          <div className="m-1 d-flex align-items-center position-relative" style={{ gap: '10px' }}>
-          
-          <Button
-            variant="warning"
-            size="sm"
-            className="ms-2"
-            onClick={() => setSelectedCategory(null)}
-          >
-            Show All Products
-          </Button>
-        </div>
-        )}
-</div>
-            <div className="row g-4">
-            {(selectedCategory ? products : productData)
-  ?.filter(product => {
-    const productName = product.productName?.toLowerCase().trim();
-    const query = searchQuery.toLowerCase().trim();
 
-    const normalize = str => str.endsWith('s') ? str.slice(0, -1) : str;
+          {selectedCategory && (
+            <div className="d-flex align-items-center">
+              <ArrowBackIcon
+                className="me-2"
+                style={{ color: '#ff9800', cursor: 'pointer' }}
+                onClick={() => navigate(`/profilePage/${userType}/${userId}`)}
+              />
+              <h5 className="fw-bold mb-0">{selectedCategory}</h5>
+            </div>
+          )}
 
-    return (
-      productName.includes(query) ||
-      normalize(productName).includes(normalize(query))
-    );
-  })
-  .slice()
-  .reverse()
-  .map((product) => {
-              const discountedPrice = product.rate && product.discount 
-                ? ((product.rate - (product.rate * product.discount) / 100).toFixed(0)) 
-                : product.rate;
+          <div className="row row-cols-3 g-3">
+            {filtered.map((product, idx) => {
+              const imgs = imageUrls[product.id] || [];
+              const firstImg = imgs[0];
+              const discounted = getDiscounted(product);
+              const discountPct = Math.round(Number(product.discount) || 0);
+
               return (
-                <div key={product.id} className="col-md-4">
-                  {!isMobile ? (
-                  <div className="card w-100 border-light rounded-4">
-                  {imageLoading ? (
+                <div key={product.id} className="col-6 col-md-3">
+                  <div
+                    className="w-100 d-flex flex-column p-2 rounded shadow-sm border position-relative"
+                    style={{ minHeight: 200 }}
+                    ref={(el) => observeCard(el, product.id)}
+                    data-pid={String(product.id)}
+                  >
                     <div
-                      className="d-flex justify-content-center align-items-center"
-                      style={{ height: '250px', background: '#f8f9fa' }}
+                      className="d-flex justify-content-center align-items-center bg-white position-relative"
+                      style={{ height: 90 }}
                     >
-                      <div className="spinner-border text-secondary" role="status">
-                        <span className="visually-hidden">Loading...</span>
-                      </div>
+                      {discountPct > 0 && (
+                        <div className="discount-badge-offers" aria-label={`${discountPct}% off`}>
+                          <div className="discount-badge-offers__value">{discountPct}%</div>
+                        </div>
+                      )}
+
+                      {imageLoading ? (
+                        <span className="text-muted small">Loading Image</span>
+                      ) : firstImg ? (
+                        <img
+                          src={firstImg}
+                          alt={product.productName}
+                          decoding="async"
+                          loading={idx < 12 ? 'eager' : 'lazy'}
+                          fetchpriority={idx < 12 ? 'high' : 'low'}
+                          style={{
+                            maxHeight: 80,
+                            maxWidth: '100%',
+                            objectFit: 'contain',
+                            cursor: 'pointer',
+                            borderRadius: 6,
+                          }}
+                          onClick={() => openGallery(product)}
+                        />
+                      ) : (
+                        <span className="text-muted small">No Image</span>
+                      )}
                     </div>
-                  ) : imageUrls[product.id]?.length > 0 ? (
-                        <Carousel>
-                        {imageUrls[product.id]?.map((img, index) => (
-                          <Carousel.Item key={index}>
-                            <img
-                              loading="eager"
-                              src={img}
-                              className="card-img-top rounded-top zoomable-image"
-                              style={{ height: "250px", width: 'auto', objectFit: "cover", cursor: "pointer" }}
-                              alt={`product-image-${index}`}
-                              onClick={() => handleImageClick(img)}
-                            />
-                          </Carousel.Item>
-                        ))}
-                      </Carousel>
-                  ) : (
-                    <div 
-                      className="d-flex justify-content-center align-items-center"
-                      style={{ height: '250px', background: '#f8f9fa' }}
-                    >
-                      Loading 
-                    </div> 
-                  )}  
-                      <div className="card-body p-1">
-                        <h5 className="card-title">{product.productName}</h5>
-                        <h5 className="card-title text-primary">{product.catalogue}</h5>
-                        <div className="card-text fw-bold text-primary fs-5 no-break"> After Discount Price: Rs {discountedPrice}</div>
-                            <div className="card-text fw-bold text-muted fs-6" style={{ textDecoration: 'line-through' }}>MRP: Rs {product.rate}</div>
-                            <div className="card-text fw-bold text-danger fs-6">Discount: {product.discount}%</div>
-                            <div className="card-text fw-bold text-success fs-5">Free Delivery and Installation</div>
-                      <Button
-                        className="btn btn-warning w-50 fw-bold mt-1"
+
+
+                    <h6 className="text-start fw-bold m-0" style={{fontSize: '11px',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      lineHeight: '1.2em',
+                      maxHeight: '2.4em',}}>
+                      {product.productName}
+                    </h6>
+
+                    <div className="text-start m-0" style={{ fontSize: '11px' }}>
+                      {discounted != null && <b className="text-success me-2">₹{discounted}</b>}
+                      {product.rate != null && <s className="text-muted">₹{product.rate}</s>}
+                    </div>
+
+                    <div style={{ position: 'absolute', bottom: 8, right: 8 }}>
+                      <button
+                        className="btn fw-bold"
+                        style={{
+                          border: 'none',
+                          color: 'black',
+                          background: 'linear-gradient(45deg, #ff9800, #ff5722)',
+                          borderRadius: 8,
+                          padding: '2px 12px',
+                          fontSize: 13,
+                        }}
                         onClick={() => {
-                          if (userId === "guest") {
-                            window.location.href = "https://handymanserviceproviders.com/";
+                          if (userId === 'guest') {
+                            window.location.href = 'https://handymanserviceproviders.com/';
                           } else {
                             navigate(`/offersBuyProduct/${userType}/${userId}/${product.id}`);
                           }
                         }}
                       >
                         Buy Now
-                      </Button>
-                      </div>
+                      </button>
                     </div>
-                    ) : (
-                      <div className="card w-100 border-light rounded-4 d-md-none">
-                      <div className="d-flex">
-                        <div style={{ flex: '0 0 55%' }}>
-                        {imageLoading ? (
-                        <div
-                          className="d-flex justify-content-center align-items-center"
-                          style={{ height: '250px', background: '#f8f9fa' }}
-                        >
-                          <div className="spinner-border text-secondary" role="status">
-                            <span className="visually-hidden">Loading...</span>
-                          </div>
-                        </div>
-                      ) : imageUrls[product.id]?.length > 0 ? (
-                        <Carousel>
-                          {imageUrls[product.id].map((img, index) => (
-                            <Carousel.Item key={index}>
-                              <img
-                                loading="eager"
-                                src={img}
-                                className="card-img-top rounded-top zoomable-image"
-                                style={{ height: "250px", objectFit: "cover", cursor: "pointer" }}
-                                alt={`product-image-${index}`}
-                                onClick={() => handleImageClick(img)}/>
-                            </Carousel.Item>
-                          ))}
-                        </Carousel>
-                      ) : (
-                        <div
-                          className="d-flex justify-content-center align-items-center"
-                          style={{ height: '250px', background: '#f8f9fa' }}
-                        >
-                          No Image
-                        </div>
-                      )}
-                        </div>
-                        <div >
-                          <h6 className="mb-1">{product.productName}</h6>
-                          <div className="small text-primary fw-bold">Rs {discountedPrice}</div>
-                          <div className="small text-muted fw-bold" style={{ textDecoration: 'line-through' }}>MRP: Rs {product.rate}</div>
-                          <div className="small text-danger fw-bold">Discount: {product.discount}%</div>
-                          <div className="small text-success fw-bold">Free Delivery and Installation</div>
-                          <button
-                            className="btn btn-warning btn-sm fw-bold mt-1"
-                            onClick={() => {
-                              navigate(`/offersBuyProduct/${userType}/${userId}/${product.id}`);
-                            }}
-                          >
-                            Buy Now
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                     )}
-      </div>
-    );
-  })}
-</div>
-</div>
-</div>
-
-{/* Zoom Modal */}
-<Modal show={showZoomModal} onHide={() => setShowZoomModal(false)} centered>
-        <Modal.Body className="text-center position-relative">
-          <div className="zoom-container">
-             {/* Close Button (X) */}    
-    <button
-      className="close-button text-end"
-      onClick={() => setShowZoomModal(false)}
-    >
-      &times;
-    </button>
-            <img src={zoomImage} alt="Zoomed Product" className="zoom-image" />
+                  </div>
+                </div>
+              );
+            })}
           </div>
-        </Modal.Body>
-      </Modal>
 
-      <div className="text-start">
-  <button 
-    className="btn btn-warning m-2" 
-    onClick={() => navigate(`/offersIcons/${userType}/${userId}`)}
-  >
-    Back
-  </button>
-</div>
+          <Modal show={showGallery} onHide={closeGallery} centered>
+            <button className="close-button text-end mt-0" onClick={closeGallery}>
+              &times;
+            </button>
+            <Modal.Body className="text-center">
+              {galleryProduct && (
+                <>
+                  <div className="zoom-container">
+                    <Carousel>
+                      {(imageUrls[galleryProduct.id] || []).map((img, idx) => (
+                        <Carousel.Item key={idx}>
+                          <img
+                            src={img}
+                            alt={`img-${idx}`}
+                            className="zoom-image"
+                            style={{ maxWidth: '100%', height: 'auto', borderRadius: 5 }}
+                          />
+                        </Carousel.Item>
+                      ))}
+                    </Carousel>
+                  </div>
+
+                  <h6 className="text-start fw-bold mt-3 mb-1" style={{ fontSize: 12 }}>
+                    {galleryProduct.productName}
+                  </h6>
+                  <p className="text-start m-0" style={{ fontSize: 12 }}>
+                    {galleryProduct.rate != null && (
+                      <span className="text-muted me-2">
+                        MRP: <s>₹{galleryProduct.rate}</s>
+                      </span>
+                    )}
+                    {getDiscounted(galleryProduct) != null && (
+                      <span className="text-success fw-bold me-2">After Discount: ₹{getDiscounted(galleryProduct)}</span>
+                    )}
+                    
+                    {galleryProduct.discount != null && (
+                      <span className="text-danger me-2">Discount: {galleryProduct.discount}%</span>
+                    )}
+                  </p>
+
+                  <div className="text-start">
+                    <Button
+                      className="btn fw-bold mt-2" style={{background:'linear-gradient(45deg, #ff9800, #ff5722)', }}
+                      onClick={() => {
+                        closeGallery();
+                          navigate(`/offersBuyProduct/${userType}/${userId}/${galleryProduct.id}`);
+                      }}
+                    >
+                      Buy Now
+                    </Button>
+                  </div>
+                </>
+              )}
+            </Modal.Body>
+          </Modal>
+        </div>
+      </div>
+
       <style jsx>{`
-       .zoomable-image {
+        .zoomable-image {
           transition: transform 0.3s ease-in-out;
         }
         .zoomable-image:hover {
-          transform: scale(1.1);
+          transform: scale(1.05);
         }
         .zoom-container {
           position: relative;
           display: inline-block;
+          width: 100%;
         }
-    .close-button {
-      position: absolute;
-      top: 8px;  
-      right: 10px;  
-      background: red;
-      border: none;
-      font-size: 24px;
-      color: white;
-      padding: 5px 10px;
-      border-radius: 50%;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    .close-button:hover {
-      background: darkred;
-    }
-         .zoom-image {
-        max-width: 100%;
-        height: auto;
-        border-radius: 5px;
-        }
-        .offer-banner {
-          background: linear-gradient(90deg, #ff9800, #ff5722);
-          font-size: 1.3rem;
-          font-weight: bold;
-          animation: pulse 1.5s infinite alternate;
-        }
-        @keyframes pulse {
-          0% { transform: scale(1); }
-          100% { transform: scale(1.05); }
-        }
-        .card:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-          transition: all 0.3s ease-in-out;
-        }
-        .carousel-control-prev-icon,
-        .carousel-control-next-icon {
-          background-color: rgba(0, 0, 0, 0.5);
-          border-radius: 50%;
-        }
-        .btn-warning {
-          background: linear-gradient(45deg, #ff9800, #ff5722);
+        .close-button {
+          position: absolute;
+          top: 8px;
+          right: 10px;
+          background: red;
           border: none;
-          transition: all 0.3s ease-in-out;
+          font-size: 24px;
+          color: white;
+          padding: 5px 10px;
+          border-radius: 50%;
+          cursor: pointer;
+          transition: 0.3s;
+          z-index: 2;
         }
-        .btn-warning:hover {
-          background: linear-gradient(45deg, #ff5722, #ff9800);
-          transform: scale(1.05);
+        .close-button:hover {
+          background: darkred;
         }
       `}</style>
+
       <Footer />
     </>
   );
-};
-
+}
+      
 export default OffersProductCard;

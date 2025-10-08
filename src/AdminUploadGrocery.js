@@ -203,6 +203,7 @@ useEffect(() => {
                 <option>Instant Food, Chips & Namkeen</option>
                 <option>Masala, Spices, Sugar & Salt</option>
                 <option>Personal Care</option>
+                <option>Puja Essentials</option>
                 <option>Rice, Ravva & Flours</option>
                 <option>Snacks & Branded Foods</option>
                 <option>Tea, Coffee & Sweets</option>

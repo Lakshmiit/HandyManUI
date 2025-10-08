@@ -339,6 +339,7 @@ useEffect(() => {
     <tr>
       <th style={{ background: "green", color: "white" }}>Sl. No</th>
       <th style={{ background: "green", color: "white" }}>Item Name</th>
+      <th style={{ background: "green", color: "white" }}>Code</th>
       <th style={{ background: "green", color: "white" }}>Category</th>
       <th style={{ background: "green", color: "white" }}>MRP</th>
       <th style={{ background: "green", color: "white" }}>Discount (%)</th>
@@ -356,6 +357,7 @@ useEffect(() => {
       <tr key={idx}>
         <td>{item.serial}</td>
         <td>{item.name}</td>
+        <td>{item.code}</td>
         <td>{item.category}</td>
         <td>₹{item.mrp}</td>
         <td>{item.discount}%</td>
