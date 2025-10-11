@@ -198,7 +198,7 @@ useEffect(() => {
                 <option>Baby Products</option>
                 <option>Bakery, Dry Fruits & Biscuits</option>
                 <option>Dairy, Bread & Eggs</option>
-                <option>Ghee, Oils & Dals</option>
+                <option>Oils, Ghee & Dals</option>
                 <option>Home Needs</option>
                 <option>Instant Food, Chips & Namkeen</option>
                 <option>Masala, Spices, Sugar & Salt</option>
@@ -314,13 +314,13 @@ useEffect(() => {
 
             {/* Delivery In Days */}
             <div className="form-group">
-              <label>Delivery In Days <span className="req_star">*</span></label>
+              <label>Delivery In Minutes <span className="req_star">*</span></label>
               <input
                 type="text"
                 className="form-control"
                 value={deliveryInDays}
                 onChange={(e) => setDeliveryInDays(e.target.value)}
-                placeholder="Delivery In Days"
+                placeholder="Delivery In Minutes"
               />
             </div>
 

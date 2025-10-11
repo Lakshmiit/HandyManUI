@@ -481,9 +481,9 @@ const roundedGrandTotal = Math.round(grandTotal);
     </div>
     <Divider />
 
-      {roundedGrandTotal < 200 && (
+      {roundedGrandTotal < 100 && (
         <p style={{ color: "red", fontSize: "13px", marginTop: "0px" }}>
-          Minimum order is ₹200 and above
+          Minimum order is ₹100 and above
         </p>
       )}
 
@@ -506,19 +506,19 @@ const roundedGrandTotal = Math.round(grandTotal);
         style={{
           fontWeight: "500",
           fontSize: "15px",
-          cursor: roundedGrandTotal < 200 ? "not-allowed" : "pointer",
-          opacity: roundedGrandTotal < 200 ? 0.6 : 1
+          cursor: roundedGrandTotal < 100 ? "not-allowed" : "pointer",
+          opacity: roundedGrandTotal < 100 ? 0.6 : 1
         }}
-        onClick={roundedGrandTotal >= 200 ? handleGroceryProceed : undefined}
+        onClick={roundedGrandTotal >= 100 ? handleGroceryProceed : undefined}
       >
-        {roundedGrandTotal < 200 ? "Add More Items" : "Proceed →"}
+        {roundedGrandTotal < 100 ? "Add More Items" : "Proceed →"}
       </div>
 
       {/* <div style={{ fontWeight: "500", fontSize: "15px" }} onClick={handleGroceryProceed}>
         {roundedGrandTotal < 200 ? "Add More Items" : "Proceed →"}
       </div> */}
     </div>
-    <div className="text-start">
+    <div className="text-start"> 
         <button
           className="btn btn-warning mt-1 mb-5"
           onClick={() => navigate(`/profilePage/${userType}/${userId}`)}
