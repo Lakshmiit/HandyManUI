@@ -808,15 +808,15 @@ const handleCheckboxChange = (value) => {
         <div className='d-flex flex-column m-1'>
         {isMobile ? (
         <div className='d-flex flex-column'>
-        <label style={{fontSize: "13px"}}>
+        {/* <label style={{fontSize: "13px"}}>
             <input 
             type="radio" 
             className="form-check-input border-dark m-1"
             checked={selectedPayment === 'online'}
             onChange={() => handleCheckboxChange('online')}/>
             Pay Through Online
-          </label>
-          <label style={{fontSize: "13px"}}>
+          </label> */}
+          <label style={{fontSize: "18px"}}>
             <input 
             type="radio" 
             className="form-check-input border-dark m-1"
@@ -828,7 +828,7 @@ const handleCheckboxChange = (value) => {
           </div>
         ) : (
           <div className="desktop-view d-flex flex-column ">
-      <label className="me-4" style={{fontSize: "12px"}}>
+      {/* <label className="me-4" style={{fontSize: "12px"}}>
         <input 
         type="radio" 
         className="form-check-input border-dark me-2"
@@ -836,8 +836,8 @@ const handleCheckboxChange = (value) => {
         onChange={() => handleCheckboxChange('online')}
         />
         Pay Through Online
-      </label>
-      <label style={{fontSize: "12px"}}>
+      </label> */}
+      <label style={{fontSize: "20px"}}>
         <input 
           type="radio" 
           className="form-check-input border-dark me-2"

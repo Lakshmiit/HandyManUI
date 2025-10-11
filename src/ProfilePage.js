@@ -1733,8 +1733,8 @@ const fetchImageUrl = async (photoId) => {
             width: "100%",
           }}
         >
-          <h5 className="mb-0">Grand Total: ₹{selectedTicket?.grandTotal}</h5>
-          <Button
+          <h5 className="mb-0">Grand Total: ₹{selectedTicket?.grandTotal}/-</h5>
+          {/* <Button
             variant="success"
             onClick={() => {
               if (selectedTicket?.id) {
@@ -1743,7 +1743,7 @@ const fetchImageUrl = async (photoId) => {
             }}
           >
             Pay Now
-          </Button>
+          </Button> */}
         </Modal.Footer>
       </Modal>
          <Footer />
