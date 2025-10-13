@@ -50,12 +50,14 @@ const [mobileNumber, setMobileNumber] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [editingAddressId, setEditingAddressId] = useState(null);
   const [shouldBlink,setShouldBlink] = useState(false);
+   const[groceryId,setgroceryId] =useState();
+  const [groceryData,setgroceryData]=useState();
 //  const [location, setLocation] = useState({latitude: '', longitude: ''});
 //   const [locationError, setLocationError] = useState(null);
 
 useEffect(() => {
-  console.log( isChecked, editingAddressId, customerName);
-}, [isChecked, editingAddressId, customerName]);
+  console.log( isChecked, editingAddressId, customerName, groceryId);
+}, [isChecked, editingAddressId, customerName, groceryId]);
 
 // const getLocation = () => {
 //     return new Promise((resolve) => {
@@ -82,62 +84,74 @@ useEffect(() => {
 //     });
 //   };
 
-  useEffect(() => {
+useEffect(() => {
   const fetchCart = async () => {
+    if (!groceryItemId) return;
+
+    const ctrl = new AbortController();
     try {
-      if (!groceryItemId) return;
-      const existingSnap = localStorage.getItem(`cartSnapshot_${groceryItemId}`);
-      if (existingSnap) {
-        if (!localStorage.getItem("allCategories")) {
-          localStorage.setItem("allCategories", existingSnap);
-        }
-      }
-      const response = await fetch(
-        `https://handymanapiv2.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`
+      const res1 = await fetch(
+        `https://handymanapiv2.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`,
+        { signal: ctrl.signal }
       );
-      if (!response.ok) throw new Error("Failed to fetch product details");
-      const data = await response.json();
+      if (!res1.ok) throw new Error("Failed to fetch product details");
+      const data = await res1.json();
       setCartData(data);
       setMartId(data.martId);
       setGrandTotal(data.grandTotal);
       setTotalItemsSelected(data.totalItemsSelected);
       setCustomerName(data.customerName);
-      if (!existingSnap && Array.isArray(data.categories)) {
-        const allCategories = data.categories.map(cat => ({
-          categoryName: cat.categoryName,
-          products: (cat.products || []).map(p => ({
-            productId: p.productId || p.id,
-            productName: p.productName || p.name || "",
-            qty: Number(p.noOfQuantity || p.qty || 0),
-            mrp: Number(p.mrp || 0),
-            discount: Number(p.discount || 0),
-            afterDiscountPrice: Number(p.afterDiscountPrice || p.price || 0),
-            stockLeft: Number(p.stockLeft || 0),
-            image: p.productImage || p.image || p.productImageFilename || "",
-          })),
-        }));
-
-        const json = JSON.stringify(allCategories);
-        localStorage.setItem(`cartSnapshot_${groceryItemId}`, json);
-        if (!localStorage.getItem("allCategories")) {
-          localStorage.setItem("allCategories", json);
-        }
-        localStorage.setItem("activeOrderId", groceryItemId);
-        localStorage.setItem(
-          `cartMeta_${groceryItemId}`,
-          JSON.stringify({
-            items: data.totalItemsSelected,
-            total: data.grandTotal
-          })
-        );
+      const products = (data?.categories ?? []).flatMap(c => c?.products ?? []);
+      const selected = products.filter(
+        p => p?.isSelected || p?.selected || (p?.qty ?? p?.quantity ?? 0) > 0
+      );
+      const baseList = selected.length ? selected : products;
+      const productNames = Array.from(
+        new Set( 
+          baseList
+            .map(p => p?.productName?.trim())
+            .filter(Boolean)
+        )
+      );
+      if (productNames.length === 0) {
+        console.warn("⚠️ No product names found in the first API response");
+        setgroceryData([]);
+        setgroceryId(null);
+        return;
       }
-    } catch (error) {
-      console.error("Error fetching cart:", error);
+      const requests = productNames.map(async (name) => {
+        const url = `https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
+          name
+        )}`;
+        const res = await fetch(url, { signal: ctrl.signal });
+        if (!res.ok) throw new Error(`UploadGrocery failed for "${name}" (HTTP ${res.status})`);
+        const items = await res.json();            
+        const arr = Array.isArray(items) ? items : (items ? [items] : []);
+        return arr.map(it => ({ ...it, _matchedProductName: name }));
+      });
+      const settled = await Promise.allSettled(requests);
+      const allItems = [];
+      settled.forEach((r, idx) => {
+        const n = productNames[idx];
+        if (r.status === "fulfilled") {
+          allItems.push(...r.value);
+        } else {
+          console.warn(`UploadGrocery lookup failed for "${n}":`, r.reason);
+        }
+      });
+      setgroceryData(allItems);
+      const firstId = allItems?.[0]?.id ?? null;
+      setgroceryId(firstId);
+      console.log("✅ Combined UploadGrocery items:", allItems);
+      console.log("✅ First grocery id:", firstId);
+    } catch (err) {
+      if (err?.name === "AbortError") return; 
+      setError(err.message || String(err));
+      console.error("Error fetching cart data:", err);
     }
+    return () => ctrl.abort();
   };
-
   fetchCart();
-  // getLocation();
 }, [groceryItemId]);
 
 //  useEffect(() => {
@@ -333,21 +347,18 @@ useEffect(() => {
           setShouldBlink(false);
         }
       }, [isAddressInvalid]);
-    
-
 
   // Detect screen size for responsiveness
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     handleResize(); // Set initial state
     window.addEventListener('resize', handleResize);
-  
+
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
 
 const handleUpdatePaymentMethod = async () => {
-  // e.preventDefault();
   if (!selectedPayment) {
     setError("Please select at least one payment method.");
     return;
@@ -434,14 +445,94 @@ localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
   localStorage.removeItem("activeOrderId");
   localStorage.removeItem("allCategories");
   localStorage.removeItem(`cartMeta_${groceryItemId}`);
-    window.alert(`Thank You for choosing the Lakshmi Mart Services! Your reference order number is ${martId}. Delivery in 45 minutes`);
-   window.location.href = `/profilePage/${userType}/${userId}`;
+  window.alert(`Thank You for choosing the Lakshmi Mart Services! Your reference order number is ${martId}. Delivery in 45 minutes`);
+  window.location.href = `/profilePage/${userType}/${userId}`;
    }
   } catch (error) {
     console.error('Error:', error);
     window.alert('Failed to Update Technician. Please try again later.');
   }
 };     
+
+const handleUpdateStockLeft = async () => {
+  try {
+    if (!Array.isArray(groceryData) || groceryData.length === 0) {
+      throw new Error("No grocery data to update.");
+    }
+    if (!cartData) {
+      throw new Error("Cart data unavailable.");
+    }
+    const productsFromCart = (cartData?.categories ?? [])
+      .flatMap(c => c?.products ?? []);
+    const qtyMap = new Map(
+      productsFromCart
+        .map(p => {
+          const name = p?.productName?.trim();
+          const qty = Number(
+            p?.noOfQuantity ?? p?.noofQuantity ?? p?.qty ?? p?.quantity ?? 0
+          );
+          return name ? [name, isNaN(qty) ? 0 : qty] : null;
+        })
+        .filter(Boolean)
+    );
+    const toNum = (v, fallback = 0) => {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : fallback;
+    };
+    const requests = groceryData.map(async (item) => {
+      const nameKey = item?.name?.trim() || item?._matchedProductName?.trim();
+      const purchasedQty = toNum(qtyMap.get(nameKey) ?? 0, 0);
+      const prevStock = toNum(item?.stockLeft, 0);
+      const newStock = Math.max(0, prevStock - purchasedQty);
+      const payload = {
+        id: item.id,
+        date: item.date, 
+        GroceryItemId: item.groceryItemId,
+        Name: item.name,
+        Category: item.category,
+        Images: Array.isArray(item.images) ? item.images : [],
+        MRP: item.mrp,                    
+        Discount: item.discount,
+        AfterDiscount: item.afterDiscount,
+        StockLeft: String(newStock),      
+        DeliveryIn: item.deliveryIn,
+        RequestedBy: "Admin",
+        Status: item.status,
+        Code: item.code,
+        Units: item.units,
+      };
+
+      const res = await fetch(
+        `https://handymanapiv2.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${encodeURIComponent(item.id)}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      if (!res.ok) {
+        const msg = await res.text().catch(() => "");
+        throw new Error(`Failed for ${item.id} (HTTP ${res.status}). ${msg}`);
+      }
+
+      return { id: item.id, name: nameKey, prevStock, purchasedQty, newStock };
+    });
+
+    const results = await Promise.allSettled(requests);
+    const ok = results.filter(r => r.status === "fulfilled").map(r => r.value);
+    const fail = results.filter(r => r.status === "rejected").map(r => r.reason);
+
+    console.log("✅ Updated:", ok);
+    if (fail.length) {
+      console.warn("⚠️ Failed updates:", fail);
+      window.alert(`Some items failed to update (${fail.length}). Check console.`);
+    }       
+  } catch (error) {
+    console.error("Error:", error);
+    window.alert("Failed to Update Grocery. Please try again later.");
+  }
+};
 
 const sendLmartsms = async () => {
   try {
@@ -474,6 +565,7 @@ const sendLmartsms = async () => {
 const handlePaymentAndSms = async () => {
   try {
     await handleUpdatePaymentMethod();   
+    await handleUpdateStockLeft();
     await sendLmartsms();                
     console.log("Payment updated & SMS sent ✅");
   } catch (error) {
@@ -874,7 +966,7 @@ const handleCheckboxChange = (value) => {
       textDecoration: "underline", 
       cursor: "pointer",
       whiteSpace: "nowrap",
-      fontSize: "13px",   
+      fontSize: "13px",      
       color: "#0000FF",
     }}
   >
