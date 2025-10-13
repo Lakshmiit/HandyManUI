@@ -526,7 +526,7 @@ const handleUpdateStockLeft = async () => {
     console.log("✅ Updated:", ok);
     if (fail.length) {
       console.warn("⚠️ Failed updates:", fail);
-      window.alert(`Some items failed to update (${fail.length}). Check console.`);
+      // window.alert(`Some items failed to update (${fail.length}). Check console.`);
     }       
   } catch (error) {
     console.error("Error:", error);
