@@ -37,15 +37,6 @@ const [likedProducts, setLikedProducts] = useState({});
 const [zoomProduct, setZoomProduct] = useState(null);
 // const [totalItemsCount, setTotalItemsCount] = useState(0);
 const [grandSummary, setGrandSummary] = useState({ items: 0, total: 0 });
-const getProduct = (id) => products.find((p) => String(p.id) === String(id));
-const getStock = (id) => Number(getProduct(id)?.stockLeft ?? 0);
-const [toastMsg, setToastMsg] = useState("");
-const [showToast, setShowToast] = useState(false);
-const notify = (msg) => {
-  setToastMsg(msg);
-  setShowToast(true);
-  setTimeout(() => setShowToast(false), 2000);
-};
 // const [cartSummary, setCartSummary] = useState({
 //   items: 0,
 //   total: 0,
@@ -54,12 +45,13 @@ const notify = (msg) => {
 
 // const [groceryName, setGroceryName] = useState('');
  useEffect(() => {
-console.log(checked, imageLoading, grandSummary, toastMsg, showToast);
-}, [checked, imageLoading, grandSummary, toastMsg, showToast]);
+console.log(checked, imageLoading, grandSummary);
+}, [checked, imageLoading, grandSummary]);
 
 useEffect(() => {
   const saved = CartStorage.getAll() || [];
-  const categories = Array.isArray(saved) ? saved : [saved]; 
+  const categories = Array.isArray(saved) ? saved : [saved]; // ensure array
+
   const exist = categories.find(c => c.categoryName === selectedCategory);
   if (exist) {
     const restored = {};
@@ -72,6 +64,8 @@ useEffect(() => {
 
 useEffect(() => {
   if (!selectedCategory) return;
+
+  // Convert cart state → product list
   const current = Object.entries(cart).map(([productId, qty]) => {
   const product = products.find(p => String(p.id) === String(productId));
   return {
@@ -93,26 +87,9 @@ useEffect(() => {
   setGrandSummary(CartStorage.grandSummary());
 }, [cart, selectedCategory, products]);
 
-const handleAdd = (productId) => {
-  const stock = getStock(productId);
-  if (stock < 1) {
-    notify("Out of stock");
-    return;
-  }
-  setCart((prev) => ({ ...prev, [productId]: 1 }));
-  setChecked(true);
-};
-const handleIncrement = (productId) => {
-  const stock = getStock(productId);
-  setCart((prev) => {
-    const next = (prev[productId] || 0) + 1;
-    if (next > stock) {
-      notify(`Only ${stock} in stock`);
-      return prev; 
-    }
-    return { ...prev, [productId]: next };
-  });
-};
+const handleAdd = (productId) => setCart(prev => ({ ...prev, [productId]: 1 }));
+const handleIncrement = (productId) =>
+  setCart(prev => ({ ...prev, [productId]: (prev[productId] || 0) + 1 }));
 const handleDecrementClick = (productId) =>
   setCart(prev => {
     const next = (prev[productId] || 0) - 1;
@@ -644,16 +621,6 @@ useEffect(() => {
     </div>
   )}
 
-{!isOutOfStock && (
-  <div className="text-start mb-4 fw-bold" style={{ fontSize: "11px" }}>
-    {Number(product.stockLeft || 0) <= 5 ? (
-      <span className="text-danger">Only {Number(product.stockLeft || 0)} left</span>
-    ) : (
-      <span className="text-danger">In stock: {Number(product.stockLeft || 0)}</span>
-    )}
-  </div>
-)}
-
   {/* Checkbox */}
   {!isOutOfStock && (
     <div style={{ position: "absolute", bottom: "8px", left: "8px" }}>
@@ -688,16 +655,10 @@ useEffect(() => {
             –
           </button>
           <span className="fw-bold">{cart[product.id]}</span>
-         <button
+          <button
             className="btn btn-sm p-0 text-white"
             style={{ fontWeight: "bold", width: "24px", height: "24px" }}
             onClick={() => handleIncrement(product.id)}
-            disabled={ (cart[product.id] || 0) >= Number(product.stockLeft || 0) }
-            title={
-              (cart[product.id] || 0) >= Number(product.stockLeft || 0)
-                ? "Reached available stock"
-                : "Increase"
-            }
           >
             +
           </button>
