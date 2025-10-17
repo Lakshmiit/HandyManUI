@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo, useCallback} from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import './App.css';
 import { Modal, Button} from 'react-bootstrap';
+import Confetti from "react-confetti";
 // import LocationOnIcon from '@mui/icons-material/LocationOn';
 // import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 // import NotificationBell from "./NotificationsBell";
@@ -24,7 +25,6 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 // import Banner1 from './img/Ads1.jpeg';
 // import BannerVideo from './img/Dusshera.mp4';
-// import BannerVideo from './img/AdsVideo.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
 // import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 // import Banner3 from './img/banner-4.jpg'; 
@@ -49,7 +49,6 @@ import BabyKidsImg from './img/BabyKids.jpeg';
 import PoojaImg from './img/Pooja.jpeg';
 // import FamilyPackImg from './img/FamilyPack.jpeg';
 import PersonalCareImg from './img/PersonalCare.jpeg';
-// import SnacksImg from './img/Snacks.jpeg';
 import RavvaImg from './img/Rice&Ravva.jpeg';
 import OilsImg from './img/oils,ghee.jpeg';
 import MasalaImg from './img/salt,sugar.jpeg';
@@ -62,6 +61,655 @@ import HouseHoldImg from './img/HouseHold.jpeg';
 import setkurti from './img/3pcsset.jpeg';
 import kurti from './img/2pcsset.jpeg';
 import { CartStorage } from "./CartStorage";
+//import ReedemCode from "./ReedemCode";     
+import RedeemIcon from "@mui/icons-material/Redeem";
+
+function ReedemCode({
+  initialOpen = true,
+  userPoints = 0,          
+  onPointsChange,          
+  onSendRef,               
+  onRedeem,                
+  referrerId = "",
+  customerName,
+  showTrigger = false,     
+  badgeClassName = "redeem-badge",
+  openOverride,
+  onClose,
+  closeOnInvite = true,    
+  initialConsumed = false,
+}) {
+  const [open, setOpen] = useState(initialOpen);
+  const [refs, setRefs] = useState(["", "", ""]);
+  const [status, setStatus] = useState(["", "", ""]);     
+  const [errors, setErrors] = useState(["", "", ""]);
+  const [submitting, setSubmitting] = useState(false);
+  const [consumed] = useState(initialConsumed);
+  const [polling, setPolling] = useState(false);
+  const mountedRef = useRef(false);
+
+  // Poll every 1s (as requested)
+  const POLL_MS = 1000;
+  // localStorage key for *awarded* points (per referrer)
+  const AWARDED_POINTS_KEY = useMemo(
+    () => `hm_referral_awarded_points_${referrerId || "guest"}`,
+    [referrerId]
+  );
+   // ----- external visibility control -----
+  useEffect(() => {
+    if (typeof openOverride === "boolean") setOpen(openOverride);
+  }, [openOverride]);
+
+  useEffect(() => {
+    if (initialOpen) setOpen(true);
+  }, [initialOpen]);
+
+  const closeDialog = useCallback(() => {
+    setOpen(false);
+    if (typeof onClose === "function") onClose();
+  }, [onClose]);
+
+  // ---------- helpers ----------
+  const onlyDigits10 = useCallback((v) => (v || "").replace(/\D/g, "").slice(0, 10), []);
+  const isTen = useCallback((v) => /^\d{10}$/.test(v || ""), []);
+  const isDuplicate = useCallback(
+    (val, idx, arr) => val && arr.some((v, i) => i !== idx && v === val),
+    []
+  );
+  const splitCsvNumbers = useCallback(
+    (csv = "") =>
+      (csv || "")
+        .split(",")
+        .map((s) => s.trim())
+        .filter(isTen)
+        .filter((v, i, arr) => arr.indexOf(v) === i),
+    [isTen]
+  );
+  const fixed3 = useCallback(
+    (arr) => [arr[0] || "", arr[1] || "", arr[2] || ""].join(","),
+    []
+  );
+
+  // ----- server calls -----
+  const checkNewOrExisting = useCallback(async (num) => {
+    try {
+      const res = await fetch(
+        `https://handymanapiv2.azurewebsites.net/api/UserOnBoarding/GuestUserVerificationByMobileNo?mobileNo=${encodeURIComponent(
+          num
+        )}`
+      );
+      const text = await res.text();
+      let data = null;
+      try { data = text ? JSON.parse(text) : null; } catch { data = null; }
+      // API contract: null => not existing
+      if (data === null) return "eligible"; 
+      return "exists";                      
+    } catch {
+      return "invalid";
+    }
+  }, []);
+
+  const isNowRegistered = useCallback(
+    async (num) => (await checkNewOrExisting(num)) === "exists",
+    [checkNewOrExisting]
+  );
+
+  const getReferralRecord = async (userId) => {
+  if (!userId) return null;
+  const url = `https://handymanapiv2.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(
+    userId
+  )}`;
+  const res = await fetch(url);
+  const text = await res.text();
+  let data = [];
+  try { data = text ? JSON.parse(text) : []; } catch { data = []; }
+  if (Array.isArray(data) && data.length > 0) {
+    data.sort((a, b) => new Date(b.date) - new Date(a.date));
+    const record = data[0];
+    return record;
+  }
+  return null;
+};
+
+const hydrateFromServer = useCallback(async () => {
+  // If we already awarded earlier in this browser, respect that.
+  const lsAward = Number(localStorage.getItem(AWARDED_POINTS_KEY) || "0");
+  if (!Number.isFinite(lsAward)) {
+    try { localStorage.setItem(AWARDED_POINTS_KEY, "0"); } catch {}
+  }
+  // If no referrerId, treat as new/guest and show the modal if asked to.
+  if (!referrerId) {
+    if (initialOpen) setOpen(true);
+    return;
+  }
+  try {
+    const record = await getReferralRecord(referrerId);
+    // Brand-new user: no record yet → open popup if initialOpen
+    if (!record) {
+      if (initialOpen) setOpen(true);
+      // ensure awarded stays 0
+      try { localStorage.setItem(AWARDED_POINTS_KEY, "0"); } catch {}
+      return;
+    }
+    // Bind any server numbers
+    const serverNums = splitCsvNumbers(record.referralNumbers);
+    const nextRefs = [serverNums[0] || "", serverNums[1] || "", serverNums[2] || ""];
+    setRefs(nextRefs);
+    // Check which are registered now
+    const checks = await Promise.all(
+      nextRefs.map((n) => (isTen(n) ? isNowRegistered(n) : false))
+    );
+    const nextStatus = nextRefs.map((n, i) => {
+      if (!isTen(n)) return "";
+      return checks[i] ? "registered" : "not-registered-yet";
+    });
+    setStatus(nextStatus);
+    setErrors(["", "", ""]);
+    const regCount = nextStatus.filter((s) => s === "registered").length;
+    const allRegistered = regCount === 3;
+    if (allRegistered) {
+      // Award and close if fully registered already
+      try { localStorage.setItem(AWARDED_POINTS_KEY, "100"); } catch {}
+      if (typeof onPointsChange === "function") onPointsChange(100);
+      setOpen(false);
+      return;
+    }
+    // - If there are no numbers at all, or some pending, and we have not awarded yet → show modal
+    const hasAnyNumber = nextRefs.some((n) => isTen(n));
+    const alreadyAwarded = Number(localStorage.getItem(AWARDED_POINTS_KEY) || "0") === 100;
+    if (!alreadyAwarded && initialOpen && (!hasAnyNumber || regCount < 3)) {
+      setOpen(true);
+    }
+  } catch (e) {
+    console.error("Failed to fetch referral record:", e);
+    // If server fails and user wanted initial open, still open to let them enter numbers
+    if (initialOpen) setOpen(true);
+  }
+}, [referrerId, initialOpen, AWARDED_POINTS_KEY, splitCsvNumbers, isNowRegistered, isTen, onPointsChange]);
+
+useEffect(() => {
+  if (mountedRef.current) return;
+  mountedRef.current = true;
+  hydrateFromServer();
+}, [hydrateFromServer]);
+
+useEffect(() => {
+  hydrateFromServer();
+}, [hydrateFromServer, referrerId]);
+
+  // Keep dialog open while waiting; close only when fully done.
+useEffect(() => {
+  if (!open) return;
+  const allRegistered = status.every((s) => s === "registered") && status.some((s) => s);
+  if (allRegistered) closeDialog();
+}, [status, open, closeDialog]);
+
+  // ---------- input change ----------
+  const handlePhoneChange = async (index, raw) => {
+    const value = onlyDigits10(raw);
+    // Lock fields that are already registered
+    if (status[index] === "registered") return;
+    const nextRefs = [...refs];
+    nextRefs[index] = value;
+    setRefs(nextRefs);
+    const nextStatus = [...status];
+    const nextErrors = [...errors];
+    if (!value) {
+      nextStatus[index] = "";
+      nextErrors[index] = "";
+      setStatus(nextStatus);
+      setErrors(nextErrors);
+      return;
+    }
+    if (!isTen(value)) {
+      nextStatus[index] = "invalid";
+      nextErrors[index] = "Enter 10-digit mobile number.";
+      setStatus(nextStatus);
+      setErrors(nextErrors);
+      return;
+    }
+    if (isDuplicate(value, index, nextRefs)) {
+      nextStatus[index] = "invalid";
+      nextErrors[index] = "Duplicate number — enter a different one.";
+      setStatus(nextStatus);
+      setErrors(nextErrors);
+      return;
+    }
+    // Check with GuestUserVerification
+    nextStatus[index] = "checking";
+    nextErrors[index] = "";
+    setStatus([...nextStatus]);
+    setErrors([...nextErrors]);
+    const kind = await checkNewOrExisting(value);
+    if (kind === "eligible") {
+      // NEW number (good)
+      nextStatus[index] = "eligible";
+      nextErrors[index] = "";
+    } else if (kind === "exists") {
+      // Existing user (invalid per requirement)
+      nextStatus[index] = "invalid";
+      nextErrors[index] = "Already an existing user. Enter a NEW number.";
+    } else {
+      nextStatus[index] = "invalid";
+      nextErrors[index] = "Unable to verify number. Try again.";
+    }
+    setStatus([...nextStatus]);
+    setErrors([...nextErrors]);
+  };
+
+  // ---------- Invite is enabled only when all three NEW (eligible) ----------
+  const canInvite = useMemo(() => {
+    const ok = [0, 1, 2].every((i) => isTen(refs[i]) && status[i] === "eligible");
+    return ok;
+  }, [refs, status, isTen]);
+
+  // ---------- Server upsert (store numbers only) ----------
+  const upsertReferral = async ({ record, numbersCsv }) => {
+    const payload = {
+      id: record?.id || "string",
+      date: record?.date || new Date().toISOString(),
+      referralNumbers: numbersCsv,
+      referreId: referrerId,
+      isReferralUsed :false,
+      referralPoints: String(
+        record?.referralPoints ??
+        record?.referralpoints ??
+        record?.ReferralPoints ??
+        0
+      ),
+    };
+
+    if (record?.id) {
+      const putUrl = `https://handymanapiv2.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(
+        record.id
+      )}`;
+      const r = await fetch(putUrl, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json; charset=utf-8" },
+        body: JSON.stringify(payload),
+      });
+      const t = await r.text();
+      let d = null;
+      try { d = t ? JSON.parse(t) : null; } catch {}
+      if (!r.ok) throw new Error(d?.message || `PUT failed: ${r.status}`);
+      return d || { ok: true };
+    } else {
+      const postUrl = `https://handymanapiv2.azurewebsites.net/api/ReferralPoints/UploadReferralPoints`;
+      const r = await fetch(postUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json; charset=utf-8" },
+        body: JSON.stringify(payload),
+      });
+      const t = await r.text();
+      let d = null;
+      try { d = t ? JSON.parse(t) : null; } catch {}
+      if (!r.ok) throw new Error(d?.message || `POST failed: ${r.status}`);
+      return d || { ok: true };
+    }
+  };
+
+  // Always save (registered first, then eligible) in 3 slots
+  const buildNumbersCsvForSave = (currentRefs, currentStatus) => {
+    const locked = [];
+    const fill = [];
+    for (let i = 0; i < 3; i++)
+      if (currentStatus[i] === "registered") locked.push(currentRefs[i]);
+    for (let i = 0; i < 3; i++)
+      if (currentStatus[i] === "eligible") fill.push(currentRefs[i]);
+    const merged = [...locked, ...fill].filter(isTen).slice(0, 3);
+    return fixed3(merged);
+  };
+
+  // ---------- INVITE ----------
+  const handleRedeem = async () => {
+    try {
+      setSubmitting(true);
+      if (!canInvite) {
+        alert("Please enter three NEW (eligible) 10-digit numbers.");
+        return;
+      }
+      // 1) Save numbers to ReferralPoints (create or update)
+      const record = await getReferralRecord(referrerId);
+      const numbersCsv = buildNumbersCsvForSave(refs, status);
+      const numbersArr = splitCsvNumbers(numbersCsv);
+      await upsertReferral({ record, numbersCsv: fixed3(numbersArr), userId: referrerId });
+      // 2) Send promo SMS to all 3 new numbers
+      const smsRes = await fetch(`https://handymanapiv2.azurewebsites.net/api/Auth/sendpromosms`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mobile: numbersArr.join(","), name: customerName }),
+      });
+      if (!smsRes.ok) throw new Error(`Promo SMS failed: ${smsRes.status}`);
+      // 3) Mark all three as "not-registered-yet" and start polling
+      const nextStatus = [0, 1, 2].map(() => "not-registered-yet");
+      setStatus(nextStatus);
+      setErrors(["", "", ""]);
+      setPolling(true);
+    } catch (err) {
+      console.error("Invite failed:", err);
+      alert(err.message || "Something went wrong");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // ---------- Poll until all three become registered ----------
+  const recheckRegistration = useCallback(async () => {
+    const next = await Promise.all(
+      refs.map(async (n, i) => {
+        if (!isTen(n)) return "";
+        const was = status[i];
+        if (was === "registered") return "registered"; // keep
+        if (was === "" || was === "invalid") return was;
+        const reg = await isNowRegistered(n);
+        return reg ? "registered" : "not-registered-yet";
+      })
+    );
+    setStatus(next);
+    const regCount = next.filter((s) => s === "registered").length;
+    // Award coins only when 3/3 registered; persist to localStorage
+    if (regCount === 3) {
+      try { localStorage.setItem(AWARDED_POINTS_KEY, "100"); } catch {}
+      if (typeof onPointsChange === "function") onPointsChange(100);
+      setPolling(false);
+      if (closeOnInvite) closeDialog();
+    }
+  }, [refs, status, isTen, isNowRegistered, AWARDED_POINTS_KEY, onPointsChange, closeOnInvite, closeDialog]);
+
+  useEffect(() => {
+    if (!polling) return;
+    const hasPending = status.some((s) => s === "not-registered-yet");
+    if (!hasPending) {
+      setPolling(false);
+      return;
+    }
+    const id = setInterval(() => { recheckRegistration(); }, POLL_MS);
+    return () => clearInterval(id);
+  }, [polling, status, recheckRegistration]);
+
+  // ---------- UI helpers ----------
+  const inputDisabledGlobal = consumed; 
+  const renderIcon = (s) => {
+    if (s === "checking")
+      return <span style={{ fontSize: 12, position: "absolute", right: 8 }}>…</span>;
+    if (s === "eligible")
+      return (
+        <span title="New number (eligible)"
+          style={{ color: "#0ea5e9", fontSize: 16, position: "absolute", right: 8 }}>
+          ✔
+        </span>
+      );
+    if (s === "registered")
+      return (
+        <span title="User registered (locked)"
+          style={{ color: "green", fontSize: 16, position: "absolute", right: 8 }}>
+          ✔
+        </span>
+      );
+    if (s === "not-registered-yet" || s === "exists" || s === "invalid")
+      return (
+        <span
+          title={s === "not-registered-yet" ? "Not registered yet" : "Invalid or existing user"}
+          style={{ color: "red", fontSize: 16, position: "absolute", right: 8 }}>
+          ✖
+        </span>
+      );
+    return null;
+  };
+
+  return (
+    <div>
+      {/* Optional badge trigger — hidden by default on profile */}
+      {showTrigger && (
+        <button
+          type="button"
+          className={badgeClassName}
+          title="Redeem Coins"
+          aria-label="Redeem Coins"
+          onClick={() => setOpen(true)}
+          style={{ marginTop: 0, border: "none", background: "transparent", padding: 0 }}
+        >
+          <span style={{ display: "inline-flex" }}>{0}</span>
+        </button>
+      )}
+
+      {/* Modal */}
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="redeem-title"
+        style={{
+          position: "fixed",
+          inset: 0,
+          display: open ? "flex" : "none",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 1055,
+          background: "rgba(0,0,0,0.3)"
+        }}
+      >
+        <div
+          role="document"
+          style={{
+            background: "#fff",
+            width: "100%",
+            maxWidth: 520,
+            borderRadius: 12,
+            overflow: "hidden",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              padding: "12px 14px",
+              borderBottom: "1px solid #f3f4f6",
+            }}
+          >
+            <RedeemIcon fontSize="small" />
+            <h2 id="redeem-title" style={{ fontSize: 16, margin: 0, fontWeight: 600 }}>
+              Referral Amount
+            </h2>
+            {/* We allow closing manually, but will re-open on hydrate if needed */}
+            <button
+              type="button"
+              aria-label="Close"
+              onClick={closeDialog}
+              style={{ marginLeft: "auto", color: "red", border: "none", fontSize: 14, cursor: "pointer" }}
+            >
+              ✕
+            </button>
+          </div>
+
+          <div style={{ padding: 10 }}>
+            {/* <p
+              style={{
+                color: "#333",
+                fontSize: "13px",
+                fontWeight: 500,
+                marginBottom: "8px",
+                whiteSpace: "nowrap",
+              }}
+            >
+              🪔 Invite <b>3 new friends</b> — get <b>₹100</b> after they register🪔
+            </p> */}
+            <div className="offer-line">
+              <div className="diya-container">
+                <span className="diya-icon flip-diya">🪔</span>
+              </div>
+              <span className="offer-text">
+                Invite <b>3 new friends</b> — get <b>₹100</b> after they register
+              </span>
+              <div className="diya-container">
+                <span className="diya-icon">🪔</span>
+              </div>
+            </div>
+            {[0, 1, 2].map((i) => {
+              const v = refs[i];
+              const s = status[i];
+              const isLockedField = s === "registered" || inputDisabledGlobal;
+              const isInvalid = s === "invalid" || s === "exists";
+              const border =
+                s === "registered"
+                  ? "1px solid green"
+                  : s === "eligible"
+                  ? "1px solid #16a34a"
+                  : isInvalid || s === "not-registered-yet"
+                  ? "1px solid red"
+                  : s === "checking"
+                  ? "1px dashed #9ca3af"
+                  : "1px solid #e5e7eb";
+
+              return (
+                <div
+                  key={i}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 4,
+                    marginBottom: errors[i] ? 18 : 8,
+                    position: "relative",
+                    width: "100%",
+                    maxWidth: 320,
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", position: "relative" }}>
+                    <input
+                      id={`ref-${i}`}
+                      type="text"
+                      inputMode="numeric"
+                      placeholder={`Enter Your Friend or Relative Phone Number ${i + 1}`}
+                      value={v}
+                      onChange={(e) => handlePhoneChange(i, e.target.value)}
+                      maxLength={10}
+                      readOnly={isLockedField}
+                      style={{
+                        flex: 1,
+                        padding: "8px",
+                        background: isLockedField ? "#f8fafc" : "white",
+                        cursor: isLockedField ? "not-allowed" : "text",
+                        border,
+                        borderRadius: 6,
+                        fontSize: 13,
+                      }}
+                    />
+                    {renderIcon(s)}
+                  </div>
+
+                  {errors[i] && <p style={{ color: "red", fontSize: 12 }}>{errors[i]}</p>}
+                  {s === "registered" && !inputDisabledGlobal && (
+                    <p style={{ color: "#16a34a", fontSize: 12 }}>
+                      Registered ✅ (locked)
+                    </p>
+                  )}
+                  {s === "not-registered-yet" && !inputDisabledGlobal && (
+                    <p style={{ color: "#dc2626", fontSize: 12 }}>
+                      Not registered yet — we’ll keep checking.
+                    </p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: 8,
+              padding: "12px",
+              borderTop: "1px solid #f3f4f6",
+            }}
+          >
+            <div>
+              <div className="text-danger blinking-text" style={{ margin: 0, fontSize: 14, fontWeight: "bold", textAlign: "center"}}>
+               🎉 Limited Time Only — Offer Ends 25th Oct! Don’t miss it 🎁
+              </div>
+              <button
+                type="button"
+                className="btn btn-outline-secondary"
+                onClick={() => {
+                  if (inputDisabledGlobal) return;
+                  const nextRefs = [...refs];
+                  const nextStatus = [...status];
+                  const nextErrs = [...errors];
+                  [0, 1, 2].forEach((i) => {
+                    if (nextStatus[i] !== "registered") {
+                      nextRefs[i] = "";
+                      nextStatus[i] = "";
+                      nextErrs[i] = "";
+                    }
+                  });
+                  setRefs(nextRefs);
+                  setStatus(nextStatus);
+                  setErrors(nextErrs);
+                }}
+                disabled={inputDisabledGlobal}
+              >
+                Clear
+              </button>
+            </div>
+            <button
+              type="button"
+              className="btn btn-success"
+              onClick={handleRedeem}
+              disabled={!canInvite || submitting}
+              aria-disabled={!canInvite || submitting}
+            >
+              Invite
+            </button>
+          </div>
+        </div>
+      </div>
+      <style>{`
+        .redeem-badge {
+          position: relative;
+          background: #d4af37;
+          color: #000;
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 12px;
+          font-weight: 600;
+          overflow: hidden;
+          box-shadow: 0 0 10px #ffd700;
+          animation: glowPulse 1.5s infinite ease-in-out;
+        }
+        .redeem-badge::before {
+          content: "";
+          position: absolute;
+          top: -50%;
+          left: -50%;
+          width: 200%;
+          height: 200%;
+          background: linear-gradient(
+            120deg,
+            rgba(255,255,255,0) 0%,
+            rgba(255,255,255,0.4) 50%,
+            rgba(255,255,255,0) 100%
+          );
+          transform: rotate(45deg) translateX(-120%);
+          animation: sparkleSweep 2.5s infinite;
+        }
+        @keyframes sparkleSweep {
+          0%   { transform: rotate(45deg) translateX(-120%); }
+          100% { transform: rotate(45deg) translateX(120%);  }
+        }
+        @keyframes glowPulse {
+          0%   { box-shadow: 0 0 5px #d4af37, 0 0 10px #d4af37, 0 0 20px #d4af37; transform: scale(1); }
+          50%  { box-shadow: 0 0 15px #ffd700, 0 0 30px #ffd700, 0 0 50px #ffd700; transform: scale(1.07); }
+          100% { box-shadow: 0 0 5px #d4af37, 0 0 10px #d4af37, 0 0 20px #d4af37; transform: scale(1); }
+        }
+      `}</style>
+    </div>
+  );
+};
+
 const getMenuList = (userType, userId, category, district ,ZipCode,technicianFullName, isMobile) => {
   const iconSize = isMobile ? 20  : 40;
   const customer = [
@@ -91,12 +739,6 @@ const getMenuList = (userType, userId, category, district ,ZipCode,technicianFul
       ...(!isMobile ? [{MenuIcon: <LocalOfferIcon sx={{ fontSize: iconSize }} />, MenuTitle: "Buy Product Offers", TargetUrl: `/offersIcons/${userType}/${userId}`
     }] : []),
       { MenuIcon: <ApartmentIcon sx={{ fontSize: 40 }} />,  MenuTitle: isMobile ? "Apartment AMC" : "Apartment Common Area Maintenance", TargetUrl: `/aboutApartmentRaiseTicket/${userType}/${userId}` },
-    //   ...(!isMobile ? [{MenuIcon: <TrackStatusNotificationBell sx={{ fontSize: iconSize }} />, MenuTitle: isMobile ? "Track Ticket" : "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}`
-    // }] : []),
-    //   ...(!isMobile ? [{MenuIcon: <NotificationBell sx={{ fontSize: 40 }} />, MenuTitle: "Notifications", TargetUrl: `/customerNotification/${userType}/${userId}`
-    // }] : []),
-    //  ...(!isMobile ? [{MenuIcon: <OrdersNotificationBell sx={{ fontSize: iconSize }} />, MenuTitle: "Orders", TargetUrl: `/customerOrders/${userType}/${userId}`
-    // }] : []),
     ...(!isMobile ? [{MenuIcon: <PermIdentityIcon sx={{ fontSize: iconSize }} />, MenuTitle: "Accounts"
     }] : []),
     ...(!isMobile ? [{MenuIcon: <DeliveryDiningIcon sx={{ fontSize: iconSize }} />, MenuTitle: "Delivery Partner", TargetUrl: `/deliveryPartner/${userType}/${userId}`
@@ -180,8 +822,7 @@ const groceryCategories = [
   { label: 'Bakery, Dry Fruits & Biscuits', value: 'Bakery, Dry Fruits & Biscuits', image: DryfruitsImg },
   { label: 'Instant Food, Chips & Namkeen', value: 'Instant Food, Chips & Namkeen', image: NamkeenImg },
   { label: 'Tea, Coffee & Sweets', value: 'Tea, Coffee & Sweets', image: TeaImg },   
-  // { label: 'Snacks & Foods', value: 'Snacks & Branded Foods', image: SnacksImg },
-  { label: 'Home Needs', value: 'Home Needs', image: HouseHoldImg },
+    { label: 'Home Needs', value: 'Home Needs', image: HouseHoldImg },
   { label: 'Puja Essentials', value: 'Puja Essentials', image: PoojaImg },
   { label: 'Personal Care', value: 'Personal Care', image: PersonalCareImg },
   { label: 'Baby Products', value: 'Baby Products', image: BabyKidsImg },
@@ -205,7 +846,6 @@ const ProfilePage = () => {
     const [loading, setLoading] = useState(true); 
     const [selectedTicket, setSelectedTicket] = useState(null);
     const [showModal, setShowModal] = useState(false);
-
     const [profileImage, setProfileImage] = useState(null);
     const fileInputRef = useRef(null);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -232,8 +872,8 @@ const [cartSummary, setCartSummary] = useState({
   total: 0,
   products: [],
 }); 
- const [dress] = useState([]);
-// const [dress, setDress] = useState([]);
+  const [dress] = useState([]);
+//  const [dress, setDress] = useState([]);
   const [deliveryProfile, setDeliveryProfile] = useState(null);
 const [showInterestModal, setShowInterestModal] = useState(false);
 const [showNotificationModal, setShowNotificationModal] = useState(false);
@@ -270,14 +910,353 @@ const [deliveryPartnerUserId, setDeliveryPartnerUserId] = useState('');
 const [totalItemsSelected, setTotalItemsSelected] = useState('');
 const [transactionNumber, setTransactionNumber] = useState('');
 const [city, setCity] = useState('');
+const [showRedeem, setShowRedeem] = useState(false);
+const [refRecord, setRefRecord] = useState(null);
+const [refLoading, setRefLoading] = useState(true);
+const [shouldShowGetCoins, setShouldShowGetCoins] = useState(false);
+const [referralPoints, setReferralPoints] = useState('');
+const [awardedPoints, setAwardedPoints] = useState(0);
+const [awardLoading, setAwardLoading] = useState(true);
+const [userPoints, setUserPoints] = useState(0);        
+const [pointsLoading, setPointsLoading] = useState(true);
+const [claimAvailable, setClaimAvailable] = useState(false); 
+const AWARDED_POINTS_KEY = `hm_referral_awarded_points_${userId || "guest"}`; 
+const [isReferralUsed, setIsReferralUsed] = useState(false);
+ const [showConfetti, setShowConfetti] = useState(false);
+  const [showMessage, setShowMessage] = useState(false);
+const [windowSize, setWindowSize] = useState({
+  width: typeof window !== "undefined" ? window.innerWidth : 0,
+  height: typeof window !== "undefined" ? window.innerHeight : 0,
+});
 
 useEffect(() => {
-  console.log( items, grocery,error, unreadCount, showMenu, products, selectedCategory, dress);
-}, [ items, grocery, error,unreadCount, showMenu, products, selectedCategory, dress]);
+  const onResize = () => {
+    setWindowSize({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
+  };
+  window.addEventListener("resize", onResize);
+  return () => window.removeEventListener("resize", onResize);
+}, []);
+
+useEffect(() => {
+  const checkNewUser = async () => {
+    try {
+      const rec = await getReferralRecord(userId);
+      if (!rec || readServerPoints(rec) === 0) {
+        setShowRedeem(true);   
+      } else {
+        setShowRedeem(false);
+      }
+    } catch (err) {
+      setShowRedeem(true);
+    }
+  };
+  if (userId) checkNewUser();
+}, [userId]);
+
+useEffect(() => {
+  let cancelled = false;
+  (async () => {
+    try {
+      // 1) Server points (authoritative UI value)
+      const rec = await getReferralRecord(userId);
+      const serverPts = rec ? readServerPoints(rec) : 0;
+      // 2) Local award (pending 100 from Redeem flow)
+      let localAward = 0;
+      try { localAward = Number(localStorage.getItem(AWARDED_POINTS_KEY) || "0"); } catch {}
+      if (!cancelled) {
+        setUserPoints(serverPts);
+        // Enable "Get Coins" ONLY when server is still 0 AND local says 100 is ready
+        setClaimAvailable(serverPts === 0 && localAward === 100);
+      }
+    } catch {
+      if (!cancelled) {
+        setUserPoints(0);
+        setClaimAvailable(false);
+      }
+    } finally {
+      if (!cancelled) setPointsLoading(false);
+    }
+  })();
+  return () => { cancelled = true; };
+}, [userId, AWARDED_POINTS_KEY]);
+
+useEffect(() => {
+  const fetchReferral = async () => {
+    try {
+      const rec = await getReferralRecord(userId);
+      if (rec) {
+        const raw =
+          rec?.referralPoints ??
+          rec?.referralpoints ??
+          rec?.ReferralPoints ??
+          0;
+        const pointsValue = Number(raw) || 0;
+        setReferralPoints(pointsValue);
+        setShouldShowGetCoins(pointsValue === 0); 
+      } else {
+        setReferralPoints(0);
+        setShouldShowGetCoins(true); 
+      }
+    } catch (e) {
+      console.error("Failed to load referral points:", e);
+      setShouldShowGetCoins(false);
+    }
+  };
+  fetchReferral();
+}, [userId]);
+
+useEffect(() => {
+  console.log( awardLoading, awardedPoints, referralPoints, items, grocery,error, unreadCount, showMenu, products, selectedCategory, dress, showRedeem);
+}, [ awardLoading, awardedPoints, referralPoints, items, grocery, error,unreadCount, showMenu, products, selectedCategory, dress, showRedeem]);
  
-// useEffect(() => {
-//   console.log(address, state, district, mobileNumber, pinCode, martId, paymentMode, status)
-// })
+// load once
+useEffect(() => {
+  let cancelled = false;
+  (async () => {
+    try {
+      const rec = await getReferralRecord(userId);
+      if (!cancelled) setRefRecord(rec);
+    } finally {
+      if (!cancelled) setRefLoading(false);
+    }
+  })();
+  return () => { cancelled = true; };
+}, [userId]);
+
+// formatter (optional): clean, unique, spaced
+const displayNumbers = (refRecord?.referralNumbers || "")
+  .split(",")
+  .map(s => s.trim())
+  .filter(Boolean)
+  .filter((v, i, a) => a.indexOf(v) === i)
+  .join(", ");
+
+// ---- load once for this user ----
+useEffect(() => {
+  let cancelled = false;
+  (async () => {
+    try {
+      const rec = await getReferralRecord(userId);
+      const pts = rec ? readServerPoints(rec) : 0;
+      if (!cancelled) setUserPoints(pts);
+    } catch {
+      if (!cancelled) setUserPoints(0);
+    } finally {
+      if (!cancelled) setPointsLoading(false);
+    }
+  })();
+  return () => { cancelled = true; };
+}, [userId]);
+
+// KEY used by ReedemCode
+const awardKeyFor = (uid) => `hm_referral_awarded_points_${uid || "guest"}`;
+
+// Read localStorage award (100 only if all 3 registered) — doesn't change UI points
+useEffect(() => {
+  const KEY = awardKeyFor(userId);
+  const readAward = () => {
+    try {
+      const raw = localStorage.getItem(KEY);
+      const n = Number(raw);
+      setAwardedPoints(Number.isFinite(n) ? n : 0);
+    } catch {
+      setAwardedPoints(0);
+    } finally {
+      setAwardLoading(false);
+    }
+  };
+  readAward();
+  const onStorage = (e) => { if (e.key === KEY) readAward(); };
+  window.addEventListener("storage", onStorage);
+  return () => window.removeEventListener("storage", onStorage);
+}, [userId]);
+
+// When clicked, PUT 100 on server, update UI, clear local award
+useEffect(() => {
+  const KEY = awardKeyFor(userId);
+  const readAward = () => {
+    try {
+      const raw = localStorage.getItem(KEY);
+      const n = Number(raw);
+      setAwardedPoints(Number.isFinite(n) ? n : 0);
+    } catch {
+      setAwardedPoints(0);
+    } finally {
+      setAwardLoading(false);
+    }
+  };
+  readAward(); 
+  // keep in sync if another tab updates
+  const onStorage = (e) => {
+    if (e.key === KEY) readAward();
+  };
+  window.addEventListener("storage", onStorage);
+  return () => window.removeEventListener("storage", onStorage);
+}, [userId]);
+
+// ---- helpers (keep near your other helpers) ----
+ const getReferralRecord = async (userId) => {
+  if (!userId) return null;
+  const url = `https://handymanapiv2.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(
+    userId
+  )}`;
+  const res = await fetch(url);
+  const text = await res.text();
+  let data = [];
+  try { data = text ? JSON.parse(text) : []; } catch { data = []; }
+  if (Array.isArray(data) && data.length > 0) {
+    data.sort((a, b) => new Date(b.date) - new Date(a.date));
+    const record = data[0];
+    setReferralPoints(Number(record.referralpoints));  
+    setIsReferralUsed(record.isReferralUsed);
+    return record;
+  }
+  setReferralPoints(0);
+  setIsReferralUsed(false);
+  return null;
+};
+
+const readServerPoints = (record) => {
+  const raw =
+    record?.referralPoints ??
+    record?.referralpoints ??
+    record?.ReferralPoints ??
+    0;
+  const n = Number(raw);
+  return Number.isFinite(n) ? n : 0;
+};
+
+const handleGetCoins = async () => {
+  if (!claimAvailable || pointsLoading) return;
+  try {
+    setPointsLoading(true);
+    // Your existing logic here (e.g., API call, point update, etc.)
+    setShowConfetti(true);
+    setShowMessage(true);
+
+    // Stop confetti after 3 seconds
+    setTimeout(() => {
+      setShowConfetti(false);
+    }, 3000);
+
+    // Hide message after 4 seconds
+    setTimeout(() => {
+      setShowMessage(false);
+    }, 4000);
+    // Re-check pending award
+    const localAward = Number(localStorage.getItem(AWARDED_POINTS_KEY) || "0");
+    if (localAward !== 100) {
+      setClaimAvailable(false);
+      return;
+    }
+    // Get latest referral record
+    const rec = await getReferralRecord(userId);
+    if (!rec?.id) {
+      alert("No referral record found to credit coins.");
+      return;
+    }
+    // PUT: set referralPoints to "100"
+    const payload = {
+      id: rec.id,
+      date: rec.date,
+      referralNumbers: rec.referralNumbers ?? "",
+      referreId: rec.referreId ?? userId ?? "",
+      isReferralUsed :false,
+      referralPoints: "100", 
+    };
+    const putUrl = `https://handymanapiv2.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(rec.id)}`;
+    const r = await fetch(putUrl, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json; charset=utf-8" },
+      body: JSON.stringify(payload),
+    });
+    if (!r.ok) {
+      const t = await r.text().catch(() => "");
+      throw new Error(`Failed to credit coins (${r.status}). ${t}`);
+    }
+    // Success → reflect in UI + clear local pending
+    setUserPoints(100);
+    setClaimAvailable(false);
+    try { localStorage.setItem(AWARDED_POINTS_KEY, "0"); } catch {}
+  } catch (err) {
+    console.error("Get Coins failed:", err);
+    alert(err.message || "Something went wrong while applying coins.");
+  } finally {
+    setPointsLoading(false);
+  }
+};
+
+// Read silent award from localStorage and listen for changes
+useEffect(() => {
+  const key = awardKeyFor(userId);
+  const readNow = () => {
+    try {
+      const raw = localStorage.getItem(key);
+      const n = Number(raw);
+      setAwardedPoints(Number.isFinite(n) ? n : 0);
+    } catch {
+      setAwardedPoints(0);
+    } finally {
+      setAwardLoading(false);
+    }
+  };
+  readNow();
+  const onStorage = (e) => {
+    if (e.key === key) readNow();
+  };
+  window.addEventListener("storage", onStorage);
+  return () => window.removeEventListener("storage", onStorage);
+}, [userId]);
+
+useEffect(() => {
+  let cancelled = false;
+  const bootstrapReferrals = async () => {
+    if (!userId) return;
+    const rec = await getReferralRecord(userId);
+    if (!rec) {
+      // brand-new user: open popup and start with 0 points
+      if (!cancelled) {
+        setShowRedeem(true);
+        setUserPoints(0);
+      }
+      return;
+    }
+    // existing record: load points into UI
+    const serverPts = Math.min(readServerPoints(rec), 150);
+    if (!cancelled) {
+      setUserPoints(serverPts);
+      // if they have no numbers and 0 points -> treat as new-ish, open it
+      const hasNumbers = Boolean((rec.referralNumbers || "").trim());
+      if (!hasNumbers && serverPts === 0) {
+        setShowRedeem(true);
+      } else {
+        setShowRedeem(false);
+      }
+    }
+  };
+  bootstrapReferrals();
+  return () => { cancelled = true; };
+}, [userId]);
+
+  const handleSendRef = async (index, referralValue) => {
+    console.log("sendRef", { index, referralValue });
+  };
+
+  const handleRedeemCoins = async (refsPayload) => {
+  const earned = 50; 
+  setUserPoints((prev) => {
+    const next = (Number(prev) || 0) + earned;
+    try {
+    } catch (e) {
+      console.error("Unable to write userPoints to localStorage on redeem:", e);
+    }
+    return next;
+  });
+  window.alert(`Coins added: ${earned}`);
+};
 
 useEffect(() => {
   const fetchDeliveryData = async () => {
@@ -291,16 +1270,13 @@ useEffect(() => {
       const data = await response.json();
       console.log("Fetched Grocery Data:", data);
       setCartData(data);
-      // setCustomerId(data.userId);
       setId(data.id);
       setMartId(data.martId);
       setDate(data.date);
-      // setCustomerName(data.customerName);
       setMobileNumber(data.customerPhoneNumber);
       setAddress(data.address);
       setState(data.state);
       setCity(data.district);
-      // console.log(district);
       setPinCode(data.zipCode);
       setPaymentMode(data.paymentMode);
       setTransactionDetails(data.utrTransactionNumber);
@@ -310,7 +1286,6 @@ useEffect(() => {
       setPaymentMode(data.paymentMode);
       setTotalItemsSelected(data.totalItemsSelected);
       setTransactionStatus(data.transactionStatus);
-      // setTransactionType(data.transactionType);
       setPaidAmount(data.paidAmount);
       setTransactionNumber(data.transactionNumber);
       setLatitude(data.latitude);
@@ -318,7 +1293,6 @@ useEffect(() => {
       setTotalItemsSelected(data.totalItemsSelected);
       setDeliveryPartnerUserId(data.deliveryPartnerUserId);
       setAssignedTo(data.assignedTo);
-
       if (data.categories && Array.isArray(data.categories)) {
         let allProducts = [];
         data.categories.forEach((cat) => {
@@ -353,8 +1327,7 @@ useEffect(() => {
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Mart/GetMartTicketsByUserId?userId=${userId}`);
       if (!response.ok) throw new Error('Failed to fetch ticket data');
       const data = await response.json();
-      const tickets = Array.isArray(data) ? data
-                    : (data && typeof data === "object" ? [data] : []);
+      const tickets = Array.isArray(data) ? data : (data && typeof data === "object" ? [data] : []);
       setGroceryData(tickets);
       const first = tickets[0] || {};
       setMartId(first.martId || "");
@@ -374,14 +1347,12 @@ useEffect(() => {
       setLoading(false);
     }
   };
-
   fetchGroceryData();
 }, [userId]);
 
   useEffect(() => {            
     console.log(deliveryProfile);
   }, [deliveryProfile]);
-
 
 const handleDeliveryPartnerClick = async () => {
   if (clickLock.current) return;
@@ -391,21 +1362,16 @@ const handleDeliveryPartnerClick = async () => {
       `https://handymanapiv2.azurewebsites.net/api/DeliveryPartner/GetDeliveryPartnerDetailsByUserId?userId=${userId}`
     );
     const raw = res?.data ?? null;
-
     const profile = Array.isArray(raw)
       ? (raw.length > 0 ? raw[0] : null)
       : (raw && typeof raw === "object" && Object.keys(raw).length > 0 ? raw : null);
-
     setDeliveryProfile(profile);
-
     const reg = profile?.isRegistered === true;
     const st = (profile?.status || "").toLowerCase();
-
     setIsRegistered(reg);
     setPartnerStatus(st);
-
     if (reg) {
-      setShowNotificationModal(true); // modal opens
+      setShowNotificationModal(true); 
     } else {
       setShowInterestModal(true);
     }
@@ -434,20 +1400,16 @@ useEffect(() => {
 useEffect(() => {
   const updateCartSummary = () => {
     let savedCategories = [];
-
     try {
       const raw = localStorage.getItem("allCategories");
       if (raw) {
         const parsed = JSON.parse(raw);
-        // if it's array use directly, else wrap into array
         savedCategories = Array.isArray(parsed) ? parsed : [parsed];
       }
     } catch (e) {
       console.error("Invalid JSON in localStorage:", e);
     }
-
     let items = 0, total = 0, products = [];
-
     savedCategories.forEach((cat) => {
       (cat.products || []).forEach((p) => {
         if (Number(p.qty) > 0) {
@@ -456,7 +1418,6 @@ useEffect(() => {
             p.afterDiscountPrice || p.price || p.finalPrice || 0
           );
           total += afterDiscountPrice * Number(p.qty);
-
           products.push({
             id: p.productId || p.id,
             productName: p.productName || p.name || "",
@@ -470,11 +1431,9 @@ useEffect(() => {
         }
       });
     });
-
     setCartSummary({ items, total, products });
     console.log("cartSummary:", { items, total, products });
   };
-
   updateCartSummary();
   window.addEventListener("storage", updateCartSummary);
   return () => window.removeEventListener("storage", updateCartSummary);
@@ -603,7 +1562,7 @@ const handleGroceryCategoryClick = async (category) => {
     const encodedCategory = encodeURIComponent(value);
     localStorage.setItem("encodedCategory", encodedCategory);
     navigate(`/grocery/${userType}/${userId}`, {
-      state: { encodedCategory },  
+      state: { encodedCategory, userPoints },  
     });
   } catch (error) {
     console.error("Error fetching products:", error);
@@ -645,7 +1604,10 @@ const handleGroceryCategoryClick = async (category) => {
               const productData = await productResponse.json();
               const technicianData = await technicianResponse.json(); 
               const groceryData = await groceriesResponse.json(); 
-              setAllTickets([...ticketData, ...productData, ...technicianData, ...groceryData]);
+              const groceryOpenTickets = Array.isArray(groceryData)
+              ? groceryData.filter(item => String(item?.status).toLowerCase() === "open")
+              : [];
+              setAllTickets([...ticketData, ...productData, ...technicianData, ...groceryOpenTickets]);
             } catch (error) {
               console.error("Error fetching ticket, product and technician data:", error);
             } finally {
@@ -679,7 +1641,6 @@ const handleGroceryCategoryClick = async (category) => {
       useEffect(() => {
         const handleClickOutside = (event) => {
           if (!document.getElementById("dropdown-container")?.contains(event.target)) {
-            // setShowDropdown(false);
           }
         };
         document.addEventListener("click", handleClickOutside);
@@ -820,24 +1781,24 @@ const fetchImageUrl = async (photoId) => {
         </div>
 
   {/* Profile Image */}
-  {/* <div className="profile-img-wrapper">
+  <div className="profile-img-wrapper">
     <img
       src={profileImage}
       alt="Profile"
       className="profile-img"
       // style={{ width: "40px", height: "40px", borderRadius: "10%", objectFit: "cover" }}
     />
-  </div> */}
-  <div className="profile-img-wrapper">
+  </div>
+  {/* <div className="profile-img-wrapper"> */}
   {/* <a href="tel:+916281198953">    */}
-    <img
+    {/* <img
       src={profileImage}
       alt="Profile"
       className="profile-img"
       style={{ width: "40px", height: "40px", borderRadius: "20%", objectFit: "cover", cursor: "pointer" }}
-    />
+    /> */}
   {/* </a> */}
-</div>
+{/* </div> */}
 </div>
 {/* )} */}
 </div>
@@ -868,8 +1829,6 @@ const fetchImageUrl = async (photoId) => {
   // onClick={() => navigate(`/customerOrders/${userType}/${userId}`)}
 >
 </div> */}
-
-
 {/* <div className="d-flex align-items-center" style={{ cursor: "pointer" }} onClick={() => navigate(`/customerOrders/${userType}/${userId}`)}>
                       <OrdersNotificationBell sx={{ fontSize: 24, marginRight: '8px' }} />
                       <small style={{ fontSize: "13px", fontFamily: "Poppins", lineHeight: "28px" }}>My Orders</small>
@@ -964,13 +1923,13 @@ const fetchImageUrl = async (photoId) => {
                 <div className="profile-info">
                   <div className="fw-bold">Name</div>
                   <p className="mb-2">{profile.fullName}</p>
-                  <hr style={{ margin: '8px 0' }} />
+                  <hr style={{ margin: '4px 0' }} />
                   <div className="fw-bold">Mobile</div>
                   <p className="mb-2">{profile.mobileNumber}</p>
-                  <hr style={{ margin: '8px 0' }} />
+                  <hr style={{ margin: '4px 0' }} />
                   <div className="fw-bold">Address</div>
                   <p className="mb-2">{profile.address}</p>
-                  <hr style={{ margin: '8px 0' }} />
+                  <hr style={{ margin: '4px 0' }} />
                      <div
                       className="d-flex align-items-start"
                       style={{ cursor: "pointer" }}
@@ -987,12 +1946,76 @@ const fetchImageUrl = async (photoId) => {
                         Delivery Partner
                       </small>
                     </div>
-                    <hr style={{ margin: '8px 0' }} />
+                    <hr style={{ margin: '4px 0' }} />
+                   {/* Reedem Coins */}
+                   <div className="d-flex align-items-center" style={{ gap: 10, minHeight: 46 }}>
+  {/* Coin */}
+  <div className="coin-wrap">
+    <span className="coin-value">{pointsLoading ? "0" : userPoints}</span>
+  </div>
+
+  {/* Label */}
+  <small style={{ fontSize: 12, lineHeight: 1, cursor: "pointer", color: "#2a50a1" }}>
+    Referral Offer
+  </small>
+
+  {/* Button (only when available and referral not used) */}
+  {shouldShowGetCoins && !isReferralUsed && (
+    <button
+       onClick={handleGetCoins}
+      disabled={!claimAvailable || pointsLoading || userPoints > 0 || isReferralUsed ===true}
+      className="bg-primary"
+      style={{
+        fontSize: 12,
+        borderRadius: 6,
+        color: "white",
+        padding: "6px 10px",
+        border: "none",
+        marginLeft: 6,
+      }}
+    >
+      {pointsLoading ? "Checking..." : "Get Coins"}
+    </button>
+  )}
+</div>
+
+{/* Confetti overlay */}
+{showConfetti && (
+  <Confetti width={windowSize.width} height={windowSize.height} />
+)}
+
+{/* Toast-like “Congrats” message */}
+{showMessage && (
+  <div
+    style={{
+      position: "fixed",
+      top: "40%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      backgroundColor: "#fff",
+      color: "#000",
+      padding: "20px 40px",
+      borderRadius: "12px",
+      boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
+      fontSize: 18,
+      fontWeight: "bold",
+      zIndex: 9999,
+      animation: "fadeInUp 0.5s ease",
+    }}
+  >
+    🎉 Congrats! You got <span style={{ color: "#007bff" }}>100</span> points!
+  </div>
+)}
+
+                    <div style={{fontSize: "9px"}}>
+                      {refLoading ? "Loading..." : (displayNumbers)}
+                    </div>
+                    <hr style={{ margin: '4px 0' }} />
                     <div className="d-flex align-items-start" style={{ cursor: "pointer" }} onClick={() => document.getElementById('myTicketsSection')?.scrollIntoView({ behavior: 'smooth' })}>
                       <ConfirmationNumberIcon sx={{ fontSize: 24, marginRight: '8px' }} />
                       <small style={{ fontSize: "12px", fontFamily: "Poppins", lineHeight: "28px" }}>My Tickets</small>
                     </div>
-                    <hr style={{ margin: '8px 0' }} />
+                    <hr style={{ margin: '4px 0' }} />
                   <div className="d-flex align-items-center logout-btn" style={{ cursor: 'pointer' }} onClick={() => window.location.href = "/loginnew"}>
                     <LogoutIcon className="me-2" />
                     <span>Logout</span>
@@ -1048,12 +2071,10 @@ const fetchImageUrl = async (photoId) => {
 <Modal
   show={showNotificationModal}
   onHide={() => setShowNotificationModal(false)}
-  centered
->
+  centered>
   <Modal.Header closeButton>
     <Modal.Title>Notification</Modal.Title>
   </Modal.Header>
-
   <Modal.Body>
     {isRegistered && partnerStatus === "open" ? (
       loading ? (
@@ -1134,10 +2155,23 @@ const fetchImageUrl = async (photoId) => {
   </Modal.Body>
 </Modal>
 
+        {/* ReedemCode Component */}
+        {showRedeem && (
+            <ReedemCode
+              openOverride={true}     
+              showTrigger={false} 
+              initialOpen={true}
+              userPoints={userPoints}
+              onSendRef={handleSendRef}
+              onRedeem={handleRedeemCoins}
+              referrerId={userId}
+              customerName={profile.fullName}
+            />
+        )}
           {isMobile && (
             <div
               className="d-flex justify-content-between align-items-center px-2"
-              style={{ fontFamily: 'Poppins, sans-serif', fontSize: '18px' }}
+              style={{ fontFamily: 'Poppins, sans-serif', marginTop: '0', fontSize: '18px' }}
             >
               <div className="text-primary fw-bold fs-5 ">
                 Welcome{' '}
@@ -1145,7 +2179,6 @@ const fetchImageUrl = async (photoId) => {
                   {profile.fullName}
                 </small>
               </div>
-
               {/* <a
                 href={`https://wa.me/?text=${encodeURIComponent("Check this service: https://handymanserviceproviders.com")}`}
                 target="_blank"
@@ -1359,7 +2392,6 @@ const fetchImageUrl = async (photoId) => {
             cursor: isBlockedCategory  ? "not-allowed" : "pointer",
             padding: "10px",
             margin: "5px",
-            // backgroundColor: "#fafad2",
             opacity: isBlockedCategory  ? 0.5 : 1, 
             pointerEvents: "auto", 
           }}
@@ -1413,7 +2445,6 @@ const fetchImageUrl = async (photoId) => {
               width: isMobile ? "90px" : "120px",
               cursor: "pointer",
               padding: "10px",
-              // backgroundColor: "#fafad2",
               marginTop: "5px",
             }}
           >
@@ -1429,9 +2460,6 @@ const fetchImageUrl = async (photoId) => {
             />
             <span
               style={{
-                // fontSize: "11px",
-                // fontWeight: "500",
-                // marginTop: "0px",
                 fontSize: "11px",
                 fontWeight: "500",
                 marginTop: "5px",
@@ -1489,16 +2517,14 @@ const fetchImageUrl = async (photoId) => {
       onClick={() => navigate(`/groceryCart/${userType}/${userId}`)}
     >
   View Cart →
-  {/* ({cartSummary.items}) – ₹{Math.round(cartSummary.total)} */}
-</button>
+  </button>
   </div> 
 )}
 
    {/* Collections Section */}
   <div className="shadow-lg p-3 rounded-5 text-center bg-transparent border-0">
    <span
-  // className="blinking-text"
-  style={{
+   style={{
     background: "linear-gradient(45deg, #ff4081, #ff9800, #ff5722)",
     backgroundClip: "text",             
     WebkitBackgroundClip: "text",       
@@ -1515,7 +2541,7 @@ const fetchImageUrl = async (photoId) => {
     <div className="row row-cols-3 row-cols-md-5 g-2">
       {collectionsCategories.map((cat) => (
         <div className="col" key={cat.label}  
-        // onClick={() => handleDressCategoryClick(cat)}
+        //  onClick={() => handleDressCategoryClick(cat)}
         //  onClick={() => navigate(`/lakshmiCollections/${userType}/${userId}`)}
         >
           <div
@@ -1526,7 +2552,6 @@ const fetchImageUrl = async (photoId) => {
               cursor: "pointer",
               padding: "10px",
               margin: "5px",
-              // backgroundColor: "#fafad2",
             }}
           >
             <img
@@ -1733,7 +2758,7 @@ const fetchImageUrl = async (photoId) => {
             width: "100%",
           }}
         >
-          <h5 className="mb-0">Grand Total: ₹{selectedTicket?.grandTotal}/-</h5>
+          <h5 className="mb-0">Grand Total: ₹{selectedTicket?.grandTotal}</h5>
           {/* <Button
             variant="success"
             onClick={() => {
@@ -1747,7 +2772,7 @@ const fetchImageUrl = async (photoId) => {
         </Modal.Footer>
       </Modal>
          <Footer />
-        </>
+        </>    
   );
 };
 export default ProfilePage;

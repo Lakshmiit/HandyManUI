@@ -4,13 +4,12 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import './App.css';
 import { useParams, useNavigate } from "react-router-dom";
-// import { Dashboard as MoreVertIcon } from "@mui/icons-material";
-// import Sidebar from './Sidebar';
 import axios from 'axios';
 import { Modal, Button, Form} from 'react-bootstrap';
 
 const GroceryPaymentmethod = () => {
   const navigate = useNavigate();
+  // const location = useLocation();
  const {userType} = useParams();
   const {userId} = useParams();
   const {groceryItemId} = useParams();
@@ -54,6 +53,84 @@ const [mobileNumber, setMobileNumber] = useState('');
   const [groceryData,setgroceryData]=useState();
 //  const [location, setLocation] = useState({latitude: '', longitude: ''});
 //   const [locationError, setLocationError] = useState(null);
+// ADD these (you already have some; keep only one copy)
+const [referralRec, setReferralRec] = useState(null);
+const [referralPoints, setReferralPoints] = useState(0);   
+const [referralAmount, setReferralAmount] = useState(0);  
+const [netPayable, setNetPayable] = useState(0);          
+const readServerPoints = (record) => {
+  const raw =
+    record?.referralPoints ??
+    record?.referralpoints ??
+    record?.ReferralPoints ??
+    0;
+  const n = Number(raw);
+  return Number.isFinite(n) ? n : 0;
+};
+
+const getReferralRecord = async (userId) => {
+  if (!userId) return null;
+  const url = `https://handymanapiv2.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
+  const res = await fetch(url);
+  const text = await res.text();
+  let data = []; 
+  try { data = text ? JSON.parse(text) : []; } catch { data = []; }
+  if (Array.isArray(data) && data.length > 0) {
+    data.sort((a, b) => new Date(b.date) - new Date(a.date));
+    return data[0];
+  }
+  return null;
+};
+
+useEffect(() => {
+  let cancelled = false;
+  (async () => {
+    try {
+      const rec = await getReferralRecord(userId);
+      if (cancelled) return;
+      setReferralRec(rec);
+      setReferralPoints(readServerPoints(rec));
+    } catch (e) {
+      console.error("Failed to load referral points:", e);
+      if (!cancelled) {
+        setReferralRec(null);
+        setReferralPoints(0);
+      }
+    }
+  })();
+  return () => { cancelled = true; };
+}, [userId]);
+
+useEffect(() => {
+  const gt = Number(grandTotal) || 0;
+  const pts = Number(referralPoints) || 0;
+  const applied = Math.min(pts, gt);   // cap by grand total
+  setReferralAmount(applied);
+  setNetPayable(Math.max(0, gt - applied));
+}, [grandTotal, referralPoints]);
+
+
+// const putReferralPoints = async (record, userId, pointsToSave) => {
+//   if (!record?.id) throw new Error("No referral record id");
+//   const payload = {
+//     id: record.id,
+//     date: record.date ?? new Date().toISOString(),
+//     referralNumbers: record.referralNumbers ?? "",
+//     referreId: record.referreId ?? userId ?? "",
+//     referralPoints: String(pointsToSave), // server expects string
+//   };
+//   const putUrl = `https://handymanapiv2.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(record.id)}`;
+//   const r = await fetch(putUrl, {
+//     method: "PUT",
+//     headers: { "Content-Type": "application/json; charset=utf-8" },
+//     body: JSON.stringify(payload),
+//   });
+//   const t = await r.text();
+//   let d = null;
+//   try { d = t ? JSON.parse(t) : null; } catch {}
+//   if (!r.ok) throw new Error(d?.message || `PUT failed: ${r.status}`);
+//   return d || { ok: true };
+// };
 
 useEffect(() => {
   console.log( isChecked, editingAddressId, customerName, groceryId);
@@ -357,58 +434,118 @@ useEffect(() => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-
-const handleUpdatePaymentMethod = async () => {
+  const handleUpdatePaymentMethod = async () => {
   if (!selectedPayment) {
     setError("Please select at least one payment method.");
     return;
   }
   if (!isChecked) {
-      alert("You must accept the terms and conditions.");
-      return; 
-    }  
+    alert("You must accept the terms and conditions.");
+    return;
+  }
 
-    try {
-      // const {latitude, longitude} = await getLocation();
-      const primaryAddress = addresses.find((addr) => addr.type === "primary");
+  try {
+    const primaryAddress = addresses.find((addr) => addr.type === "primary");
     const state = primaryAddress?.state;
     const district = primaryAddress?.district || "";
     const pincode = primaryAddress?.zipCode || primaryAddress?.pincode;
-    const mobileNumber = primaryAddress?.mobileNumber || primaryAddress?.mobileNumber; 
-    
-  const payload = {
-    ...cartData,
-    customerName: addressData.fullName || fullName,
-    address: addressData.address || primaryAddress?.address, 
-    state: addressData.state || state,
-    district: addressData.district || district,
-    zipCode: addressData.zipCode || pincode,
-    customerPhoneNumber: addressData.mobileNumber || mobileNumber,
-    id: groceryItemId,
-    userId: userId, 
-    martId: martId,
-    date: new Date(),
-    grandTotal: grandTotal,
-    totalItemsSelected: totalItemsSelected,
-    status: "Open",
-    // status: selectedPayment === "online" ? "Draft" : "Open",
-    paymentMode: selectedPayment,
-    utrTransactionNumber: "",
-    transactionNumber: "",
-    transactionStatus: "",
-    paidAmount: "",
-    AssignedTo: "",
-    DeliveryPartnerUserId: "",
-    latitude: 0,
-    longitude: 0,
-    // latitude: latitude !== null ? Number(latitude) : null,
-    // longitude: longitude !== null ? Number(longitude) : null,
-    isPickUp: false,
-    isDelivered: false,
-  };
+    const mobileNumber = primaryAddress?.mobileNumber || primaryAddress?.mobileNumber;
 
-    let response;
-    if (selectedPayment === 'online') {
+    // IMPORTANT: send netPayable to backend
+    const payload = {
+      ...cartData,
+      customerName: addressData.fullName || fullName,
+      address: addressData.address || primaryAddress?.address,
+      state: addressData.state || state,
+      district: addressData.district || district,
+      zipCode: addressData.zipCode || pincode,
+      customerPhoneNumber: addressData.mobileNumber || mobileNumber,
+      id: groceryItemId,
+      userId: userId,
+      martId: martId,
+      date: new Date(),
+      grandTotal: String(netPayable), 
+      totalItemsSelected: totalItemsSelected,
+      status: "Open",
+      paymentMode: selectedPayment,
+      utrTransactionNumber: "",
+      transactionNumber: "",
+      transactionStatus: "",
+      paidAmount: "",
+      AssignedTo: "",
+      DeliveryPartnerUserId: "",
+      latitude: 0,
+      longitude: 0,
+      isPickUp: false,
+      isDelivered: false,
+    };
+
+    let response = await fetch(
+      `https://handymanapiv2.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to update order.");
+    }
+
+    // If update succeeds, RESET referral points to 0 on the referral record
+    if (referralAmount > 0 && referralRec?.id) {
+      try {
+        const id = String(referralRec.id).trim();
+        const payloadPut = {
+          id,
+          date: referralRec.date ?? new Date().toISOString(),
+          referralNumbers: referralRec.referralNumbers ?? "",
+          referreId: referralRec.referreId ?? userId ?? "",
+          IsReferralUsed: true,
+          referralPoints: "0",
+        };
+
+        // Try ?id= first; fallback to /{id}
+        let resp = await fetch(
+          `https://handymanapiv2.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(id)}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json; charset=utf-8" },
+            body: JSON.stringify(payloadPut),
+          }
+        );
+
+        if (!resp.ok) {
+          resp = await fetch(
+            `https://handymanapiv2.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints/${encodeURIComponent(id)}`,
+            {
+              method: "PUT",
+              headers: { "Content-Type": "application/json; charset=utf-8" },
+              body: JSON.stringify(payloadPut),
+            }
+          );
+        }
+
+        if (!resp.ok) {
+          const t = await resp.text().catch(() => "");
+          console.error("Referral PUT failed:", resp.status, t);
+        } else {
+          // success: also reflect locally
+          setReferralPoints(0);
+        }
+      } catch (e) {
+        console.error("Referral PUT error:", e);
+      }
+    }
+
+    // clear cart caches and route
+    localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
+    localStorage.removeItem("activeOrderId");
+    localStorage.removeItem("allCategories");
+    localStorage.removeItem(`cartMeta_${groceryItemId}`);
+
+   if (selectedPayment === 'online') {
      response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`, {
       method: 'PUT',
       headers: {
@@ -425,7 +562,6 @@ localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
   localStorage.removeItem("activeOrderId");
   localStorage.removeItem("allCategories");
   localStorage.removeItem(`cartMeta_${groceryItemId}`);
-
     // Store confirmation code in state
     window.alert(`We are Redirecting to the Payment Page! Your reference number is ${martId}.`);
     window.location.href = `/groceryOnlinePayment/${groceryItemId}`;
@@ -453,6 +589,101 @@ localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
     window.alert('Failed to Update Technician. Please try again later.');
   }
 };     
+
+// const handleUpdatePaymentMethod = async () => {
+//   if (!selectedPayment) {
+//     setError("Please select at least one payment method.");
+//     return;
+//   }
+//   if (!isChecked) {
+//       alert("You must accept the terms and conditions.");
+//       return; 
+//     }  
+
+//     try {
+//       // const {latitude, longitude} = await getLocation();
+//       const primaryAddress = addresses.find((addr) => addr.type === "primary");
+//     const state = primaryAddress?.state;
+//     const district = primaryAddress?.district || "";
+//     const pincode = primaryAddress?.zipCode || primaryAddress?.pincode;
+//     const mobileNumber = primaryAddress?.mobileNumber || primaryAddress?.mobileNumber; 
+    
+//   const payload = {
+//     ...cartData,
+//     customerName: addressData.fullName || fullName,
+//     address: addressData.address || primaryAddress?.address, 
+//     state: addressData.state || state,
+//     district: addressData.district || district,
+//     zipCode: addressData.zipCode || pincode,
+//     customerPhoneNumber: addressData.mobileNumber || mobileNumber,
+//     id: groceryItemId,
+//     userId: userId, 
+//     martId: martId,
+//     date: new Date(),
+//     grandTotal: grandTotal,
+//     totalItemsSelected: totalItemsSelected,
+//     status: "Open",
+//     // status: selectedPayment === "online" ? "Draft" : "Open",
+//     paymentMode: selectedPayment,
+//     utrTransactionNumber: "",
+//     transactionNumber: "",
+//     transactionStatus: "",
+//     paidAmount: "",
+//     AssignedTo: "",
+//     DeliveryPartnerUserId: "",
+//     latitude: 0,
+//     longitude: 0,
+//     // latitude: latitude !== null ? Number(latitude) : null,
+//     // longitude: longitude !== null ? Number(longitude) : null,
+//     isPickUp: false,
+//     isDelivered: false,
+//   };
+
+//     let response;
+//     if (selectedPayment === 'online') {
+//      response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`, {
+//       method: 'PUT',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify(payload),
+//     });
+
+//     if (!response.ok) {
+//       throw new Error('Failed to Update Technician.');
+//     }
+//     // const data = await response.json();
+// localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
+//   localStorage.removeItem("activeOrderId");
+//   localStorage.removeItem("allCategories");
+//   localStorage.removeItem(`cartMeta_${groceryItemId}`);
+//     // Store confirmation code in state
+//     window.alert(`We are Redirecting to the Payment Page! Your reference number is ${martId}.`);
+//     window.location.href = `/groceryOnlinePayment/${groceryItemId}`;
+//   } else if (selectedPayment === 'cash') {
+//     response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`, {
+//       method: 'PUT',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify(payload),
+//     });
+
+//     if (!response.ok) {
+//     }
+//     // const data = await response.json();
+//     localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
+//   localStorage.removeItem("activeOrderId");
+//   localStorage.removeItem("allCategories");
+//   localStorage.removeItem(`cartMeta_${groceryItemId}`);
+//   window.alert(`Thank You for choosing the Lakshmi Mart Services! Your reference order number is ${martId}. Delivery in 45 minutes`);
+//   window.location.href = `/profilePage/${userType}/${userId}`;
+//    }
+//   } catch (error) {
+//     console.error('Error:', error);
+//     window.alert('Failed to Update Technician. Please try again later.');
+//   }
+// };     
 
 const handleUpdateStockLeft = async () => {
   try {
@@ -892,6 +1123,16 @@ const handleCheckboxChange = (value) => {
               <td style={{ width: "40%", fontSize: "14px" }}>Grand Total</td>
               <td style={{ width: "40%" }}>Rs {grandTotal} /-</td>
             </tr>
+            {Number(referralAmount) > 0 && (
+              <tr>
+                <td style={{ width: "40%", fontSize: "14px" }}>Referral Earn Amount</td>
+                <td style={{ width: "40%", color: "red" }}>- Rs {referralAmount} /-</td>
+              </tr>
+            )}
+             <tr>
+                <td style={{ width: "40%", fontSize: "14px", fontWeight: 600 }}>Total Payable</td>
+                <td style={{ width: "40%", fontWeight: 700 }}>Rs {netPayable} /-</td>
+              </tr>
           </tbody>
         </table>
 
