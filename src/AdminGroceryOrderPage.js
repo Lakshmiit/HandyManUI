@@ -373,9 +373,9 @@ useEffect(() => {
         Grand Total:
       </td>
       <td className="fw-bold">     
-        ₹{items.reduce((sum, item) => sum + item.total, 0).toFixed(0)}
+        ₹{grandTotal}
       </td>
-    </tr>
+    </tr>   
   </tfoot>  
 </table>
 <div className="text-end mt-1">
