@@ -87,7 +87,6 @@ function ReedemCode({
   const [consumed] = useState(initialConsumed);
   const [polling, setPolling] = useState(false);
   const mountedRef = useRef(false);
-
   // Poll every 1s (as requested)
   const POLL_MS = 1000;
   // localStorage key for *awarded* points (per referrer)
@@ -359,7 +358,6 @@ useEffect(() => {
     const merged = [...locked, ...fill].filter(isTen).slice(0, 3);
     return fixed3(merged);
   };
-
   // ---------- INVITE ----------
   const handleRedeem = async () => {
     try {
@@ -379,8 +377,10 @@ useEffect(() => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ mobile: numbersArr.join(","), name: customerName }),
       });
+      alert(`🎉 Thank you for referring your friend! ₹100 referral amount has been added to your wallet after your friend or neighbour registered. 🙏
+      Keep referring and keep earning more 💰✨`);
+      closeDialog();
       if (!smsRes.ok) throw new Error(`Promo SMS failed: ${smsRes.status}`);
-      // 3) Mark all three as "not-registered-yet" and start polling
       const nextStatus = [0, 1, 2].map(() => "not-registered-yet");
       setStatus(nextStatus);
       setErrors(["", "", ""]);
@@ -539,7 +539,7 @@ useEffect(() => {
                 <span className="diya-icon flip-diya">🪔</span>
               </div>
               <span className="offer-text">
-                Invite <b>3 new friends</b> — get <b>₹100</b> after they register
+                Invite <b>3 New Friends</b> - Get <b>₹100</b> after they Register
               </span>
               <div className="diya-container">
                 <span className="diya-icon">🪔</span>
@@ -603,16 +603,15 @@ useEffect(() => {
                       Registered ✅ (locked)
                     </p>
                   )}
-                  {s === "not-registered-yet" && !inputDisabledGlobal && (
+                  {/* {s === "not-registered-yet" && !inputDisabledGlobal && (
                     <p style={{ color: "#dc2626", fontSize: 12 }}>
                       Not registered yet — we’ll keep checking.
                     </p>
-                  )}
+                  )} */}
                 </div>
               );
             })}
           </div>
-
           <div
             style={{
               display: "flex",
@@ -872,9 +871,9 @@ const [cartSummary, setCartSummary] = useState({
   total: 0,
   products: [],
 }); 
-  const [dress] = useState([]);
-//  const [dress, setDress] = useState([]);
-  const [deliveryProfile, setDeliveryProfile] = useState(null);
+const [dress] = useState([]);
+// const [dress, setDress] = useState([]);
+const [deliveryProfile, setDeliveryProfile] = useState(null);
 const [showInterestModal, setShowInterestModal] = useState(false);
 const [showNotificationModal, setShowNotificationModal] = useState(false);
 const [selectedOption, setSelectedOption] = useState("");
@@ -928,6 +927,53 @@ const [windowSize, setWindowSize] = useState({
   width: typeof window !== "undefined" ? window.innerWidth : 0,
   height: typeof window !== "undefined" ? window.innerHeight : 0,
 });
+const [displayNumbers, setDisplayNumbers] = useState("");
+
+const checkNewOrExisting = useCallback(async (num) => {
+  try {
+    const res = await fetch(
+      `https://handymanapiv2.azurewebsites.net/api/UserOnBoarding/GuestUserVerificationByMobileNo?mobileNo=${encodeURIComponent(
+        num
+      )}`
+    );
+    const text = await res.text();
+    let data = null;
+    try { data = text ? JSON.parse(text) : null; } catch { data = null; }
+    if (data === null) return "not registered";
+    return "registered";
+  } catch {
+    return "invalid";
+  }
+}, []);
+
+useEffect(() => {
+  const numbers = (refRecord?.referralNumbers || "")
+    .split(",")
+    .map(s => s.trim())
+    .filter(Boolean)
+    .filter((v, i, a) => a.indexOf(v) === i);
+
+  if (numbers.length === 0) {
+    setDisplayNumbers("");
+    return;
+  }
+
+  const checkAllNumbers = async () => {
+    setRefLoading(true);
+    const results = await Promise.all(
+      numbers.map(async (num) => {
+        const status = await checkNewOrExisting(num);
+        if (status === "registered") return `${num} ✅ Registered`;
+        if (status === "not registered") return `${num} ❌ Not Registered`;
+        return `${num} ⚠️ Invalid`;
+      })
+    );
+    setDisplayNumbers(results.join(", "));
+    setRefLoading(false);
+  };
+
+  checkAllNumbers();
+}, [refRecord, checkNewOrExisting]);
 
 useEffect(() => {
   const onResize = () => {
@@ -1027,12 +1073,12 @@ useEffect(() => {
 }, [userId]);
 
 // formatter (optional): clean, unique, spaced
-const displayNumbers = (refRecord?.referralNumbers || "")
-  .split(",")
-  .map(s => s.trim())
-  .filter(Boolean)
-  .filter((v, i, a) => a.indexOf(v) === i)
-  .join(", ");
+// const displayNumbers = (refRecord?.referralNumbers || "")
+//   .split(",")
+//   .map(s => s.trim())
+//   .filter(Boolean)
+//   .filter((v, i, a) => a.indexOf(v) === i)
+//   .join(", ");
 
 // ---- load once for this user ----
 useEffect(() => {
@@ -1949,66 +1995,62 @@ const fetchImageUrl = async (photoId) => {
                     <hr style={{ margin: '4px 0' }} />
                    {/* Reedem Coins */}
                    <div className="d-flex align-items-center" style={{ gap: 10, minHeight: 46 }}>
-  {/* Coin */}
-  <div className="coin-wrap">
-    <span className="coin-value">{pointsLoading ? "0" : userPoints}</span>
-  </div>
+                      {/* Coin */}
+                      <div className="coin-wrap">
+                        <span className="coin-value">{pointsLoading ? "0" : userPoints}</span>
+                      </div>
+                      {/* Label */}
+                      <small style={{ fontSize: 12, lineHeight: 1, cursor: "pointer", color: "#2a50a1", fontWeight: "bold" }}>
+                        Referral Offer
+                      </small>
+                      {/* Button (only when available and referral not used) */}
+                      {shouldShowGetCoins && !isReferralUsed && (
+                        <button
+                          onClick={handleGetCoins}
+                          disabled={!claimAvailable || pointsLoading || userPoints > 0 || isReferralUsed ===true}
+                          className="bg-primary"
+                          style={{
+                            fontSize: 12,
+                            borderRadius: 6,
+                            color: "white",
+                            padding: "6px 10px",
+                            border: "none",
+                            marginLeft: 6,
+                          }}
+                        >
+                          {pointsLoading ? "Checking..." : "Get Coins"}
+                        </button>
+                      )}
+                    </div>
+                    {/* Confetti overlay */}
+                    {showConfetti && (
+                      <Confetti width={windowSize.width} height={windowSize.height} />
+                    )}
+                    {/* Toast-like “Congrats” message */}
+                    {showMessage && (
+                      <div
+                        style={{
+                          position: "fixed",
+                          top: "40%",
+                          left: "50%",
+                          transform: "translate(-50%, -50%)",
+                          backgroundColor: "#fff",
+                          color: "#000",
+                          padding: "20px 40px",
+                          borderRadius: "12px",
+                          boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
+                          fontSize: 18,
+                          fontWeight: "bold",
+                          zIndex: 9999,
+                          animation: "fadeInUp 0.5s ease",
+                        }}
+                      >
+                        🎉 Congrats! You got <span style={{ color: "#007bff" }}>100</span> points!
+                      </div>
+                    )}
 
-  {/* Label */}
-  <small style={{ fontSize: 12, lineHeight: 1, cursor: "pointer", color: "#2a50a1" }}>
-    Referral Offer
-  </small>
-
-  {/* Button (only when available and referral not used) */}
-  {shouldShowGetCoins && !isReferralUsed && (
-    <button
-       onClick={handleGetCoins}
-      disabled={!claimAvailable || pointsLoading || userPoints > 0 || isReferralUsed ===true}
-      className="bg-primary"
-      style={{
-        fontSize: 12,
-        borderRadius: 6,
-        color: "white",
-        padding: "6px 10px",
-        border: "none",
-        marginLeft: 6,
-      }}
-    >
-      {pointsLoading ? "Checking..." : "Get Coins"}
-    </button>
-  )}
-</div>
-
-{/* Confetti overlay */}
-{showConfetti && (
-  <Confetti width={windowSize.width} height={windowSize.height} />
-)}
-
-{/* Toast-like “Congrats” message */}
-{showMessage && (
-  <div
-    style={{
-      position: "fixed",
-      top: "40%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      backgroundColor: "#fff",
-      color: "#000",
-      padding: "20px 40px",
-      borderRadius: "12px",
-      boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
-      fontSize: 18,
-      fontWeight: "bold",
-      zIndex: 9999,
-      animation: "fadeInUp 0.5s ease",
-    }}
-  >
-    🎉 Congrats! You got <span style={{ color: "#007bff" }}>100</span> points!
-  </div>
-)}
-
-                    <div style={{fontSize: "9px"}}>
-                      {refLoading ? "Loading..." : (displayNumbers)}
+                    <div style={{ fontSize: "11px", whiteSpace: "pre-wrap" }}>
+                        {refLoading ? "Loading..." : displayNumbers}
                     </div>
                     <hr style={{ margin: '4px 0' }} />
                     <div className="d-flex align-items-start" style={{ cursor: "pointer" }} onClick={() => document.getElementById('myTicketsSection')?.scrollIntoView({ behavior: 'smooth' })}>
@@ -2541,7 +2583,7 @@ const fetchImageUrl = async (photoId) => {
     <div className="row row-cols-3 row-cols-md-5 g-2">
       {collectionsCategories.map((cat) => (
         <div className="col" key={cat.label}  
-        //  onClick={() => handleDressCategoryClick(cat)}
+        // onClick={() => handleDressCategoryClick(cat)}
         //  onClick={() => navigate(`/lakshmiCollections/${userType}/${userId}`)}
         >
           <div
