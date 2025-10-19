@@ -23,7 +23,7 @@ import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-// import Banner1 from './img/Ads1.jpeg';
+import Banner1 from './img/DiwaliAd.jpeg';
 // import BannerVideo from './img/Dusshera.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
 // import VolumeUpIcon from '@mui/icons-material/VolumeUp';
@@ -413,6 +413,9 @@ useEffect(() => {
       if (typeof onPointsChange === "function") onPointsChange(100);
       setPolling(false);
       if (closeOnInvite) closeDialog();
+      setTimeout(() => {
+      window.location.reload();
+    }, 800);
     }
   }, [refs, status, isTen, isNowRegistered, AWARDED_POINTS_KEY, onPointsChange, closeOnInvite, closeDialog]);
 
@@ -503,7 +506,7 @@ useEffect(() => {
               display: "flex",
               alignItems: "center",
               gap: 8,
-              padding: "12px 14px",
+              padding: "12px",
               borderBottom: "1px solid #f3f4f6",
             }}
           >
@@ -516,10 +519,24 @@ useEffect(() => {
               type="button"
               aria-label="Close"
               onClick={closeDialog}
-              style={{ marginLeft: "auto", color: "red", border: "none", fontSize: 14, cursor: "pointer" }}
+              style={{
+                marginLeft: "auto",
+                backgroundColor: "red",
+                color: "white",
+                border: "none",
+                fontSize: 18,
+                cursor: "pointer",
+                borderRadius: "50%",
+                width: "30px",
+                height: "30px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center"
+              }}
             >
               ✕
             </button>
+
           </div>
 
           <div style={{ padding: 10 }}>
@@ -2294,17 +2311,17 @@ const fetchImageUrl = async (photoId) => {
         {/* Address with Location */}
         <div className="col-md-9">
 
-      {/* Carousel */}
-              {/* <div className="container">
-                <div className="mx-auto">
+      {/* Carousel className="mx-auto"*/}
+               <div className="container">
+                <div>
               <div
                 id="productCarousel"
                 className="carousel slide mb-4 rounded "
                 data-bs-ride="carousel"
                 data-bs-interval="6000"
               >
-                {/* Indicators 
-                <div className="carousel-indicators">
+                {/* Indicators */}
+                {/* <div className="carousel-indicators">
                     <button
                       type="button"
                       data-bs-target="#productCarousel"
@@ -2331,7 +2348,7 @@ const fetchImageUrl = async (photoId) => {
                     data-bs-slide-to="3"
                     aria-label="Slide 4" 
                   ></button>
-                </div>
+                </div> */}
                 {/* Carousel items */}
                 {/* <div className="carousel-inner">
                   <div className="carousel-item active">
@@ -2364,7 +2381,7 @@ const fetchImageUrl = async (photoId) => {
                       {isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
                     </button> */}
                 {/* </div> */}
-                  {/* <div className="carousel-item active">
+                  <div className="carousel-item active">
                   <img
                     src={Banner1}
                     className="d-block w-100 img-fluid rounded"
@@ -2372,7 +2389,7 @@ const fetchImageUrl = async (photoId) => {
                     alt="Slide 1"
                   />
                 </div>
-                <div className="carousel-item">
+                {/* <div className="carousel-item">
                   <img
                     src={Banner2}
                     className="d-block w-100 img-fluid rounded"
@@ -2389,8 +2406,8 @@ const fetchImageUrl = async (photoId) => {
                   />
                 </div> */}
               {/* </div> */}
-                {/* Controls 
-                <button
+                {/* Controls */}
+                {/* <button
                   className="carousel-control-prev"
                   type="button"
                   data-bs-target="#productCarousel"
@@ -2405,24 +2422,26 @@ const fetchImageUrl = async (photoId) => {
                   data-bs-slide="next">
                   <span className="carousel-control-next-icon custom-carousel-icon" aria-hidden="true"></span>
                   <span className="visually-hidden">Next</span>
-                </button>
+                </button> */}
               </div>
               </div>
-              </div> */}
+              </div> 
     
-<div className="container my-3">
-  {/* Grocery Categories Section */}
+<div className="container" style={{marginTop: "210px"}}>
+  {/* Grocery Categories Section className="container my-3"*/}
   <div className="shadow-lg p-3 rounded-5 mb-1 text-center bg-transparent border-0">
     <h5 className="fw-bold mb-3" style={{color: "#ff5722", fontSize: "15px"}}>
       Lakshmi Mart  
     </h5>
     <div className="row row-cols-3 row-cols-md-5 g-1">
   {groceryCategories.map((cat) => {
-    const isBlockedCategory  = cat.value === "Vegetables & Fruits";
+     const isBlockedCategory  = cat.value === "Vegetables & Fruits";
     return (
       <div
         className="col"
         key={cat.label}
+        // onClick={() => handleGroceryCategoryClick(cat)}
+        // style={{ cursor: "pointer" }}     
         onClick={() => !isBlockedCategory  && handleGroceryCategoryClick(cat)}
         style={{ cursor: isBlockedCategory  ? "not-allowed" : "pointer" }}     
       >
@@ -2583,7 +2602,7 @@ const fetchImageUrl = async (photoId) => {
     <div className="row row-cols-3 row-cols-md-5 g-2">
       {collectionsCategories.map((cat) => (
         <div className="col" key={cat.label}  
-        // onClick={() => handleDressCategoryClick(cat)}
+        //  onClick={() => handleDressCategoryClick(cat)}
         //  onClick={() => navigate(`/lakshmiCollections/${userType}/${userId}`)}
         >
           <div
