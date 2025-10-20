@@ -445,6 +445,7 @@ useEffect(() => {
                     </div>
 
           {selectedCategory && (
+            <>
             <div className="d-flex align-items-center">
               <ArrowBackIcon
                 className="me-2"
@@ -453,6 +454,22 @@ useEffect(() => {
               />
               <h4 className="fw-bold mb-0">{selectedCategory}</h4>
             </div>
+             {selectedCategory === "Vegetables & Fruits" && (
+              <div
+                className="mt-2 rounded-3 "
+                style={{
+                  backgroundColor: "#fff3e0",
+                  color: "red",
+                  fontSize: "13px",
+                  fontWeight: "600",
+                  // display: "inline-block",
+                  border: "1px solid #ffd180",
+                }}
+              >
+                📝 Yendada and Madhurawada Locations are Delivered.
+              </div>
+            )}
+            </>
           )}
         </div>
 
@@ -476,7 +493,7 @@ useEffect(() => {
         onClick={() => navigate(`/profilePage/${userType}/${userId}`)}/>      
         <h4 className="font-bold ">{selectedCategory}</h4>
       </div> */}
-  <div className="d-flex justify-content-end" style={{marginTop: "90px"}}>
+  <div className="d-flex justify-content-end" style={{marginTop: "120px"}}>
   <span className="text-success text-xs">
     Selected Qty:{" "}
     <span className="text-danger fw-bold">

@@ -1613,11 +1613,11 @@ const handleCategoryClick = async (category) => {
 
 const handleGroceryCategoryClick = async (category) => {
   const { value } = category;
-   if (value === "Vegetables & Fruits") {
-    console.log(`Vegetables & Fruits clicked - navigation blocked`);
-    setSelectedCategory(category); 
-    return;
-  }
+  //  if (value === "Vegetables & Fruits") {
+  //   console.log(`Vegetables & Fruits clicked - navigation blocked`);
+  //   setSelectedCategory(category); 
+  //   return;
+  // }
   try {
     setSelectedCategory(category);
     setGrocery([]);
@@ -2435,25 +2435,25 @@ const fetchImageUrl = async (photoId) => {
     </h5>
     <div className="row row-cols-3 row-cols-md-5 g-1">
   {groceryCategories.map((cat) => {
-     const isBlockedCategory  = cat.value === "Vegetables & Fruits";
+    //  const isBlockedCategory  = cat.value === "Vegetables & Fruits";
     return (
       <div
         className="col"
         key={cat.label}
-        // onClick={() => handleGroceryCategoryClick(cat)}
-        // style={{ cursor: "pointer" }}     
-        onClick={() => !isBlockedCategory  && handleGroceryCategoryClick(cat)}
-        style={{ cursor: isBlockedCategory  ? "not-allowed" : "pointer" }}     
+        onClick={() => handleGroceryCategoryClick(cat)}
+        style={{ cursor: "pointer" }}     
+        // onClick={() => !isBlockedCategory  && handleGroceryCategoryClick(cat)}
+        // style={{ cursor: isBlockedCategory  ? "not-allowed" : "pointer" }}     
       >
         <div
           className="groceryIcon-card border-0 shadow-sm text-center d-flex flex-column align-items-center justify-content-between"
           style={{
             height: isMobile ? "120px" : "140px",
             width: isMobile ? "90px" : "120px",
-            cursor: isBlockedCategory  ? "not-allowed" : "pointer",
+            cursor: "pointer",
             padding: "10px",
             margin: "5px",
-            opacity: isBlockedCategory  ? 0.5 : 1, 
+            opacity: 1, 
             pointerEvents: "auto", 
           }}
         >
