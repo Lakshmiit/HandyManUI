@@ -23,7 +23,7 @@ import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-import Banner1 from './img/DiwaliAd.jpeg';
+// import Banner1 from './img/DiwaliAd.jpeg';
 // import BannerVideo from './img/Dusshera.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
 // import VolumeUpIcon from '@mui/icons-material/VolumeUp';
@@ -2381,14 +2381,14 @@ const fetchImageUrl = async (photoId) => {
                       {isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
                     </button> */}
                 {/* </div> */}
-                  <div className="carousel-item active">
+                  {/* <div className="carousel-item active">
                   <img
                     src={Banner1}
                     className="d-block w-100 img-fluid rounded"
                     style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
                     alt="Slide 1"
                   />
-                </div>
+                </div> */}
                 {/* <div className="carousel-item">
                   <img
                     src={Banner2}
@@ -2427,7 +2427,7 @@ const fetchImageUrl = async (photoId) => {
               </div>
               </div> 
     
-<div className="container" style={{marginTop: "210px"}}>
+<div className="container my-1">
   {/* Grocery Categories Section className="container my-3"*/}
   <div className="shadow-lg p-3 rounded-5 mb-1 text-center bg-transparent border-0">
     <h5 className="fw-bold mb-3" style={{color: "#ff5722", fontSize: "15px"}}>
