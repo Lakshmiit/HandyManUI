@@ -1656,7 +1656,7 @@ const handleGroceryCategoryClick = async (category) => {
         useEffect(() => {
           const fetchAllTickets = async () => {
             try { 
-              const [ticketResponse, productResponse, technicianResponse, groceriesResponse, lakshmiResponse] = await Promise.all([
+              const [ticketResponse, productResponse, technicianResponse, groceriesResponse] = await Promise.all([
                 fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=raiseTicket`),
                 fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=buyProduct`),
                 fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=bookTechnician`),
@@ -1666,12 +1666,12 @@ const handleGroceryCategoryClick = async (category) => {
               // if (!ticketResponse.ok || !productResponse.ok || !technicianResponse || !groceriesResponse || !lakshmiResponse) {
               if (!ticketResponse.ok || !productResponse.ok || !technicianResponse || !groceriesResponse) {  
               throw new Error("Failed to fetch ticket, product and technician data");
-              }
+              } 
               const ticketData = await ticketResponse.json();
               const productData = await productResponse.json();
               const technicianData = await technicianResponse.json(); 
               const groceryData = await groceriesResponse.json(); 
-              const collectionsData = await lakshmiResponse.json(); 
+              // const collectionsData = await lakshmiResponse.json(); 
               const groceryOpenTickets = Array.isArray(groceryData)
               ? groceryData.filter(item => String(item?.status).toLowerCase() === "open")
               : [];
