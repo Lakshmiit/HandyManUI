@@ -940,6 +940,8 @@ const AWARDED_POINTS_KEY = `hm_referral_awarded_points_${userId || "guest"}`;
 const [isReferralUsed, setIsReferralUsed] = useState(false);
  const [showConfetti, setShowConfetti] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
+  const [redeemOpen, setRedeemOpen] = useState(false);
+  const shouldMountRedeem = redeemOpen;
 const [windowSize, setWindowSize] = useState({
   width: typeof window !== "undefined" ? window.innerWidth : 0,
   height: typeof window !== "undefined" ? window.innerHeight : 0,
@@ -1654,25 +1656,32 @@ const handleGroceryCategoryClick = async (category) => {
         useEffect(() => {
           const fetchAllTickets = async () => {
             try { 
-              const [ticketResponse, productResponse, technicianResponse, groceriesResponse] = await Promise.all([
+              const [ticketResponse, productResponse, technicianResponse, groceriesResponse, lakshmiResponse] = await Promise.all([
                 fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=raiseTicket`),
                 fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=buyProduct`),
                 fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=bookTechnician`),
                 fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=mart`),
-              ]);    
-              if (!ticketResponse.ok || !productResponse.ok || !technicianResponse || !groceriesResponse) {
-                throw new Error("Failed to fetch ticket, product and technician data");
+                // fetch(`https://localhost:7091/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=collections`),
+              ]);      
+              // if (!ticketResponse.ok || !productResponse.ok || !technicianResponse || !groceriesResponse || !lakshmiResponse) {
+              if (!ticketResponse.ok || !productResponse.ok || !technicianResponse || !groceriesResponse) {  
+              throw new Error("Failed to fetch ticket, product and technician data");
               }
               const ticketData = await ticketResponse.json();
               const productData = await productResponse.json();
               const technicianData = await technicianResponse.json(); 
               const groceryData = await groceriesResponse.json(); 
+              const collectionsData = await lakshmiResponse.json(); 
               const groceryOpenTickets = Array.isArray(groceryData)
               ? groceryData.filter(item => String(item?.status).toLowerCase() === "open")
               : [];
               setAllTickets([...ticketData, ...productData, ...technicianData, ...groceryOpenTickets]);
+              // const collectionOpenTickets = Array.isArray(collectionsData)
+              // ? collectionsData.filter(item => String(item?.status).toLowerCase() === "open")
+              // : [];
+              // setAllTickets([...ticketData, ...productData, ...technicianData, ...groceryOpenTickets, ...collectionOpenTickets]);
             } catch (error) {
-              console.error("Error fetching ticket, product and technician data:", error);
+              console.error("Error fetching ticket, product data:", error);
             } finally {
               setLoading(false);
             }
@@ -2215,7 +2224,23 @@ const fetchImageUrl = async (photoId) => {
 </Modal>
 
         {/* ReedemCode Component */}
-        {showRedeem && (
+        {shouldMountRedeem && (
+          <ReedemCode
+            openOverride={redeemOpen || showRedeem}
+            onClose={() => {
+              setRedeemOpen(false);
+              setShowRedeem(false);
+            }}
+            showTrigger={false}
+            initialOpen={false}
+            userPoints={userPoints}
+            onSendRef={handleSendRef}
+            onRedeem={handleRedeemCoins}
+            referrerId={userId}
+            customerName={profile.fullName}
+          />
+        )}
+        {/* {showRedeem && (
             <ReedemCode
               openOverride={true}     
               showTrigger={false} 
@@ -2226,7 +2251,7 @@ const fetchImageUrl = async (photoId) => {
               referrerId={userId}
               customerName={profile.fullName}
             />
-        )}
+        )} */}
           {isMobile && (
             <div
               className="d-flex justify-content-between align-items-center px-2"
@@ -2310,7 +2335,6 @@ const fetchImageUrl = async (photoId) => {
 
         {/* Address with Location */}
         <div className="col-md-9">
-
       {/* Carousel className="mx-auto"*/}
                <div className="container">
                 <div>
@@ -2427,7 +2451,19 @@ const fetchImageUrl = async (photoId) => {
               </div>
               </div> 
     
-<div className="container my-1">
+<div className="container">
+   {/* <div className="d-flex align-items-center justify-content-center "> */}
+  {/* Ribbon / Pill trigger */}
+  <button
+  type="button"
+  onClick={() => setRedeemOpen(true)}
+  className="redeem-ribbon-btn mt-0"
+  aria-label="Open Redeem Offer"
+>
+  🎁 Refer & Earn ₹100
+</button>
+
+{/* </div> */}
   {/* Grocery Categories Section className="container my-3"*/}
   <div className="shadow-lg p-3 rounded-5 mb-1 text-center bg-transparent border-0">
     <h5 className="fw-bold mb-3" style={{color: "#ff5722", fontSize: "15px"}}>
@@ -2602,7 +2638,7 @@ const fetchImageUrl = async (photoId) => {
     <div className="row row-cols-3 row-cols-md-5 g-2">
       {collectionsCategories.map((cat) => (
         <div className="col" key={cat.label}  
-        //  onClick={() => handleDressCategoryClick(cat)}
+        // onClick={() => handleDressCategoryClick(cat)}
         //  onClick={() => navigate(`/lakshmiCollections/${userType}/${userId}`)}
         >
           <div
