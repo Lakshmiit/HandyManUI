@@ -27,7 +27,7 @@ const GroceryCartPage = () => {
   const [grandSummary, setGrandSummary] = useState({ items: 0, total: 0 });
 const [imageBlobMap, setImageBlobMap] = useState({}); 
 
-//  useEffect(() => {
+//  useEffect(() => {  
 //     console.log();
 //   }, []);
      
@@ -71,7 +71,6 @@ useEffect(() => {
       const imageUrl = imageFilename
         ? fileToUrl(imageFilename)
         : (typeof persisted === "string" ? persisted : "");
-
       return {
         id: `${cat.categoryName}-${p.productId ?? p.id ?? idx}`,
         productId: p.productId ?? p.id ?? idx,
@@ -202,11 +201,30 @@ const writeBackToStorage = (items) => {
   localStorage.setItem("allCategories", JSON.stringify(allCategories));
 };
 
+// const handleQtyChange = (rowId, delta) => {
+//   setCartItems(prev => {
+//     const next = prev
+//       .map(it => it.id === rowId ? { ...it, qty: Math.max(0, (it.qty || 0) + delta) } : it)
+//       .filter(it => it.qty > 0);
+//     writeBackToStorage(next);
+//     setGrandSummary(computeTotals(next));
+//     return next;
+//   });
+// };
+
 const handleQtyChange = (rowId, delta) => {
   setCartItems(prev => {
     const next = prev
-      .map(it => it.id === rowId ? { ...it, qty: Math.max(0, (it.qty || 0) + delta) } : it)
+      .map(it => {
+        if (it.id !== rowId) return it;
+        const max = Number.isFinite(it.stockLeft) ? it.stockLeft : Infinity;
+        const current = Number(it.qty || 0);
+        const proposed = current + delta;
+        const clamped = Math.max(0, Math.min(proposed, max));
+        return { ...it, qty: clamped };
+      })
       .filter(it => it.qty > 0);
+
     writeBackToStorage(next);
     setGrandSummary(computeTotals(next));
     return next;
@@ -442,7 +460,9 @@ const roundedGrandTotal = Math.round(grandTotal);
               <IconButton
                 size="small"
                 onClick={() => handleQtyChange(item.id, 1)}
-                style={{ color: "white", padding: "2px" }}
+                style={{ color: "white", padding: "2px", opacity: item.qty >= item.stockLeft ? 0.5 : 1 }}
+                disabled={Number.isFinite(item.stockLeft) && item.qty >= item.stockLeft}
+                title={Number.isFinite(item.stockLeft) && item.qty >= item.stockLeft ? "No more stock" : "Add one"}
               >
                 <AddIcon fontSize="small" />
               </IconButton>
@@ -481,9 +501,9 @@ const roundedGrandTotal = Math.round(grandTotal);
     </div>
     <Divider />
 
-      {roundedGrandTotal < 100 && (
+      {roundedGrandTotal < 10 && (
         <p style={{ color: "red", fontSize: "13px", marginTop: "0px" }}>
-          Minimum order is ₹100 and above
+          Minimum order is ₹10 and above
         </p>
       )}
 
@@ -506,12 +526,12 @@ const roundedGrandTotal = Math.round(grandTotal);
         style={{
           fontWeight: "500",
           fontSize: "15px",
-          cursor: roundedGrandTotal < 100 ? "not-allowed" : "pointer",
-          opacity: roundedGrandTotal < 100 ? 0.6 : 1
+          cursor: roundedGrandTotal < 10 ? "not-allowed" : "pointer",
+          opacity: roundedGrandTotal < 10 ? 0.6 : 1
         }}
-        onClick={roundedGrandTotal >= 100 ? handleGroceryProceed : undefined}
+        onClick={roundedGrandTotal >= 10 ? handleGroceryProceed : undefined}
       >
-        {roundedGrandTotal < 100 ? "Add More Items" : "Proceed →"}
+        {roundedGrandTotal < 10 ? "Add More Items" : "Proceed →"}
       </div>
 
       {/* <div style={{ fontWeight: "500", fontSize: "15px" }} onClick={handleGroceryProceed}>

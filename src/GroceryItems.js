@@ -88,8 +88,17 @@ useEffect(() => {
 }, [cart, selectedCategory, products]);
 
 const handleAdd = (productId) => setCart(prev => ({ ...prev, [productId]: 1 }));
+// const handleIncrement = (productId) =>
+//   setCart(prev => ({ ...prev, [productId]: (prev[productId] || 0) + 1 }));
 const handleIncrement = (productId) =>
-  setCart(prev => ({ ...prev, [productId]: (prev[productId] || 0) + 1 }));
+  setCart(prev => {
+    const product = products.find(p => String(p.id) === String(productId));
+    const stock = Number(product?.stockLeft || 0);
+    const cur = Number(prev[productId] || 0);
+    if (cur >= stock) return prev;
+    return { ...prev, [productId]: cur + 1 };
+  });
+
 const handleDecrementClick = (productId) =>
   setCart(prev => {
     const next = (prev[productId] || 0) - 1;
@@ -116,139 +125,47 @@ const toggleLike = (productId) => {
   setShowZoomModal(true);
 };
   
+// const handleAddClick = (id) => {
+//     handleAdd(id);
+//     setChecked(true);
+//   };        
+
+const getQty = (id) => Number(cart?.[id] || 0);
+
+const canAddMore = (id) => {
+  const product = products.find(p => String(p.id) === String(id));
+  const stock = Number(product?.stockLeft || 0);
+  return getQty(id) < stock;
+};
+
 const handleAddClick = (id) => {
-    handleAdd(id);
-    setChecked(true);
-  };        
+  const product = products.find(p => String(p.id) === String(id));
+  const stock = Number(product?.stockLeft || 0);
+  if (stock <= 0) return; 
+  handleAdd(id);
+  setChecked(true);
+};
 
-// useEffect(() => {
-//   const fetchGroceryProducts = async () => {
-//     try {
-//       setSelectedCategory(encodedCategory);
-//       setImageLoading(true);
+function getItemTime(p) {
+  if (p?.date) {
+    const t = Date.parse(p.date); 
+    if (!Number.isNaN(t)) return t;
+  }
 
-//       // ✅ API call with properly encoded category
-//       const url = `https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodedCategory}`;
-//       const response = await axios.get(url);
-//       setProducts(response.data);
-//       const allImagePromises = response.data.flatMap((product) =>
-//         product.images?.map((photo) =>
-//           fetch(
-//             `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
-//           )
-//             .then((res) => res.json())
-//             .then((data) => {
-//               const byteCharacters = atob(data.imageData);
-//               const byteNumbers = new Array(byteCharacters.length);
-//               for (let i = 0; i < byteCharacters.length; i++) {
-//                 byteNumbers[i] = byteCharacters.charCodeAt(i);
-//               }
-//               const byteArray = new Uint8Array(byteNumbers);
-//               const blob = new Blob([byteArray], { type: "image/jpeg" });
-//               const imageUrl = URL.createObjectURL(blob);
-//               return { productId: product.id, imageUrl };
-//             })
-//             .catch(() => null)
-//         ) || []
-//       );
+  const candidates = [
+    p.createdAt, p.created_on, p.createdDate, p.createDate,
+    p.updatedAt, p.updated_on, p.modifiedAt, p.modified_on,
+    p.addedDate, p.added_at, p.timestamp, p.timeStamp,
+  ];
+  for (const c of candidates) {
+    const t = Date.parse(c);
+    if (!Number.isNaN(t)) return t;
+  }
 
-//       const imageResults = await Promise.allSettled(allImagePromises);
-
-//       const imageMap = {};
-//       imageResults.forEach((result) => {
-//         if (result.status === "fulfilled" && result.value) {
-//           const { productId, imageUrl } = result.value;
-//           if (!imageMap[productId]) {
-//             imageMap[productId] = [];
-//           }
-//           imageMap[productId].push(imageUrl);
-//         }
-//       });
-
-//       setImageUrls(imageMap);
-//       setImageLoading(false);
-//     } catch (error) {
-//       console.error("Error fetching grocery products:", error);
-//       setProducts([]);
-//       setImageLoading(false);
-//     }
-//   };
-
-//   if (encodedCategory) {
-//     fetchGroceryProducts();
-//   }
-// }, [encodedCategory]);
-
-// useEffect(() => {
-//   if (!encodedCategory) return;
-//   const decodedCat = decodeURIComponent(encodedCategory);
-//   setSelectedCategory(decodedCat);
-//   const controller = new AbortController();
-//   async function fetchProductsAndFirstImages() {
-//     try {
-//       setImageLoading(true);
-//       const url = `https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
-//       const { data: items } = await axios.get(url, { signal: controller.signal });
-//       setProducts(Array.isArray(items) ? items : []);
-//       const firstImages = items
-//         .map(p => ({ productId: p.id, photo: (p.images && p.images[0]) || null }))
-//         .filter(x => !!x.photo);
-//       const fetchAndDecode = async (photo) => {
-//         const cachedB64 = ImageCache.getBase64(photo);
-//         if (cachedB64) {
-//           const byteChars = atob(cachedB64);
-//           const byteNumbers = new Array(byteChars.length);
-//           for (let i = 0; i < byteChars.length; i++) byteNumbers[i] = byteChars.charCodeAt(i);
-//           const blob = new Blob([new Uint8Array(byteNumbers)], { type: "image/jpeg" });
-//           return URL.createObjectURL(blob);
-//         }
-//         const res = await fetch(
-//           `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
-//           { signal: controller.signal }
-//         );
-//         const json = await res.json();
-//         if (json?.imageData) ImageCache.setBase64(photo, json.imageData);
-//         const byteChars = atob(json.imageData);
-//         const byteNumbers = new Array(byteChars.length);
-//         for (let i = 0; i < byteChars.length; i++) byteNumbers[i] = byteChars.charCodeAt(i);
-//         const blob = new Blob([new Uint8Array(byteNumbers)], { type: "image/jpeg" });
-//         return URL.createObjectURL(blob);
-//       };
-//       const results = await Promise.allSettled(
-//         firstImages.map(async ({ productId, photo }) => {
-//           try {
-//             const url = await fetchAndDecode(photo);
-//             return { productId, imageUrl: url };
-//           } catch {
-//             return null;
-//           }
-//         })
-//       );
-//       const map = {};
-//       for (const r of results) {
-//         if (r.status === "fulfilled" && r.value) {
-//           const { productId, imageUrl } = r.value;
-//           map[productId] = [imageUrl];
-//         }
-//       }
-//       setImageUrls(map);
-//     } catch (err) {
-//       if (err?.name !== "CanceledError" && err?.name !== "AbortError") {
-//         console.error("Error fetching grocery products:", err);
-//         setProducts([]);
-//       }
-//     } finally {
-//       setImageLoading(false);
-//     }
-//   }
-//   fetchProductsAndFirstImages();
-//   return () => {
-//     controller.abort();
-//     Object.values(imageUrls).flat().forEach(url => {
-//       try { URL.revokeObjectURL(url); } catch {}
-//     });
-//   };
-// }, [encodedCategory, imageUrls]);
+  if (typeof p.id === "number") return p.id;
+  const idNum = Number(String(p.id || "").replace(/\D/g, "")) || 0;
+  return idNum;
+}
 
 useEffect(() => {
   if (!encodedCategory) return;
@@ -263,6 +180,12 @@ useEffect(() => {
       const { data: items } = await axios.get(url, { signal: controller.signal });
       const safeItems = Array.isArray(items) ? items : [];
       if (cancelled) return;
+      const sorted = [...safeItems].sort((a, b) => {
+        const tb = getItemTime(b);
+        const ta = getItemTime(a);
+        if (tb !== ta) return tb - ta;   
+        return String(b.id).localeCompare(String(a.id));
+      });
       const firstImages = safeItems
         .map(p => ({ productId: p.id, photo: Array.isArray(p.images) ? p.images[0] : null }))
         .filter(x => !!x.photo);
@@ -276,7 +199,7 @@ useEffect(() => {
           misses.push({ productId, photo });
         }
       }
-      setProducts(safeItems);
+      setProducts(sorted);
       if (Object.keys(cachedMap).length) setImageUrls(prev => ({ ...prev, ...cachedMap }));
       if (cancelled) return;
       const fetchOne = async ({ productId, photo }) => {
@@ -332,7 +255,6 @@ useEffect(() => {
     const raw = localStorage.getItem("allCategories");
     if (raw) {
       const parsed = JSON.parse(raw);
-      // Always normalize to array
       savedCategories = Array.isArray(parsed) ? parsed : [parsed];
     }
   } catch (e) {
@@ -364,7 +286,7 @@ useEffect(() => {
               color: "white", 
               fontFamily: "'Baloo 2'",
               fontSize: "25px",
-              padding: "10px",
+              padding: "2px",
               fontWeight: "bold",
               textAlign: "center",
               width: "100%",
@@ -374,7 +296,7 @@ useEffect(() => {
               position: "fixed",
               top: 0,
               left: 0,
-              zIndex: 1000,
+              zIndex: 1000,  
             }}
           >
             Lakshmi Mart
@@ -390,6 +312,18 @@ useEffect(() => {
               }}
             >
               FSSAI LIC Number - 20125051001066
+            </span>
+             <span
+              style={{
+                fontSize: "12px",
+                fontWeight: "bold",
+                display: "block",
+                marginTop: "2px",
+                textAlign: "center",
+                fontFamily: "Roboto",
+              }}
+            >
+                Delivery Timings : 08:00 AM -09:00 PM
             </span>
           </h1>
         </div>
@@ -493,7 +427,7 @@ useEffect(() => {
         onClick={() => navigate(`/profilePage/${userType}/${userId}`)}/>      
         <h4 className="font-bold ">{selectedCategory}</h4>
       </div> */}
-  <div className="d-flex justify-content-end" style={{marginTop: "120px"}}>
+  <div className="d-flex justify-content-end" style={{marginTop: "90px"}}>
   <span className="text-success text-xs">
     Selected Qty:{" "}
     <span className="text-danger fw-bold">
@@ -660,13 +594,14 @@ useEffect(() => {
             backgroundColor: "green",
             color: "white",
             borderRadius: "8px",
-            padding: "2px 8px",
-            minWidth: "70px",
+            padding: "2px",
+            minWidth: "60px",
+            // position: "relative",
           }}
         >
           <button
             className="btn btn-sm p-0 text-white"
-            style={{ fontWeight: "bold", width: "24px", height: "24px" }}
+            style={{ fontWeight: "bold", width: "25px", height: "25px" }}
             onClick={() => handleDecrementClick(product.id)}
           >
             –
@@ -674,9 +609,12 @@ useEffect(() => {
           <span className="fw-bold">{cart[product.id]}</span>
           <button
             className="btn btn-sm p-0 text-white"
-            style={{ fontWeight: "bold", width: "24px", height: "24px" }}
-            onClick={() => handleIncrement(product.id)}
-          >
+            style={{ fontWeight: "bold", width: "25px", height: "25px",  opacity: canAddMore(product.id) ? 1 : 0.5,
+            cursor: canAddMore(product.id) ? "pointer" : "not-allowed" }}
+            onClick={() => canAddMore(product.id) && handleIncrement(product.id)}
+            disabled={!canAddMore(product.id)} 
+            title={!canAddMore(product.id) ? "No more stock" : "Add one"}
+                >
             +
           </button>
         </div>
@@ -692,7 +630,7 @@ useEffect(() => {
             fontSize: "13px",
           }}
           onClick={() => handleAddClick(product.id)}
-        >
+          >
           ADD
         </button>
       )}

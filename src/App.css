@@ -4548,3 +4548,7 @@ cursor: not-allowed;
 .redeem-ribbon-btn:hover::after {
   opacity: 1;
 }
+
+.lakshmi-collection-bg {
+  background-color: #f3d2e2; 
+}

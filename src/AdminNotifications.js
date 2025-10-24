@@ -40,9 +40,9 @@ const buyProductNotifications = notifications.filter(
 const groceryItemNotifications = notifications.filter(
   (item) => item.status === "Open" && item.martId != null
 );
-// const lakshmiCollectionsNotifications = notifications.filter(
-//   (item) => item.status === "Open" && item.collectionsItemId != null
-// );
+const lakshmiCollectionsNotifications = notifications.filter(
+  (item) => item.status === "Open" && item.lakshmiCollectionId != null
+);
   const handleTicketClick = (ticketId) => {
     navigate(`/raiseTicketActionView/${ticketId}`, { state: { ticketId } });
   };
@@ -71,9 +71,9 @@ const groceryItemNotifications = notifications.filter(
    const handleGroceryClick = (martId) => {
     navigate(`/adminGroceryOrderPage/${martId}`, { state: { martId } });
   };
-  // const handleCollectionsClick = (collectionsItemId) => {
-  //   navigate(`/adminLakshmiCollectionsPage/${collectionsItemId}`, { state: { collectionsItemId } });
-  // };
+  const handleCollectionsClick = (lakshmiCollectionId) => {
+    navigate(`/adminLakshmiCollectionsOrders/${lakshmiCollectionId}`, { state: { lakshmiCollectionId } });
+  };
   return (
     <div>
       <div className="notification-list">
@@ -381,13 +381,13 @@ const groceryItemNotifications = notifications.filter(
           </div>
         ))}
       </div>
-{/* 
+
       <div className="notification-list">
         {lakshmiCollectionsNotifications.map((notification) => (
           <div
-            key={notification.collectionsItemId}
+            key={notification.lakshmiCollectionId}
             className={`notification-item ${
-              notification.collectionsItemId === highlightedItem ? "highlight" : ""
+              notification.lakshmiCollectionId === highlightedItem ? "highlight" : ""
             }`}
           >
             <div className="notification-header">
@@ -400,21 +400,21 @@ const groceryItemNotifications = notifications.filter(
                   textDecoration: "underline",
                 }}
               >
-                {notification.collectionsItemId}
+                {notification.lakshmiCollectionId}
               </span>
             </div>
             <div>
-              <strong>Collection Name:</strong> {notification.subject}
-            </div>
+              <strong>Collection Name:</strong> {notification.categoriess?.[0]?.productName}
+            </div> 
             <div>
-              <strong>Category:</strong> {notification.category}
+              <strong>Category:</strong> {notification.categoriess?.[0]?.categoryName}
             </div>
             <div className="notification-date">
               <strong>Date:</strong> {new Date(notification.date).toLocaleString()}
             </div>
           </div>
         ))}
-      </div> */}
+      </div>
     </div>
   );
 };
@@ -433,7 +433,7 @@ const Notification = () => {
   const [groceryNotifications, setGroceryItemNotifications] = useState([]);
   // const [deliveryNotifications] = useState([]);
   // const [deliveryNotifications, setDeliveryNotifications] = useState([]);
-  // const [collectionNotifications, setCollectionNotifications] = useState([]);
+  const [collectionNotifications, setCollectionNotifications] = useState([]);
   const [newTicketCount, setNewTicketCount] = useState(0);
   // const [newQuoteCount, setNewQuoteCount] = useState(0);
   // const [newDealerCount, setNewDealerCount] = useState(0);
@@ -445,7 +445,7 @@ const Notification = () => {
   // const [newApartmentCount, setNewApartmentCount] = useState(0);
   const [newGroceryCount, setNewGroceryCount] = useState(0); 
   // const [newDeliveryCount, setNewDeliveryCount] = useState(0); 
-  // const [newCollectionCount, setNewCollectionCount] = useState(0); 
+  const [newCollectionCount, setNewCollectionCount] = useState(0); 
   const [glow, setGlow] = useState(false);
   const [glowTicket, setGlowTicket] = useState(false);   
   // const [glowQuote, setGlowQuote] = useState(false);
@@ -457,7 +457,7 @@ const Notification = () => {
   // const [glowApartment, setGlowApartment] = useState(false);
   const [glowGrocery, setGlowGrocery] = useState(false);
   // const [glowDelivery, setGlowDelivery] = useState(false);
-  // const [glowCollection, setGlowCollection] = useState(false);
+  const [glowCollection, setGlowCollection] = useState(false);
   const [highlightedTicket, setHighlightedTicket] = useState(null);
   // const [highlightedQuote, setHighlightedQuote] = useState(null);
   // const [highlightedDealer, setHighlightedDealer] = useState(null);
@@ -468,7 +468,7 @@ const Notification = () => {
   // const [highlightedApartment, setHighlightedApartment] = useState(null);
   const [highlightedGrocery, setHighlightedGrocery] = useState(null);
   //  const [highlightedDelivery, setHighlightedDelivery] = useState(null);
-  // const [highlightedCollection, setHighlightedCollection] = useState(null);
+  const [highlightedCollection, setHighlightedCollection] = useState(null);
   const [activeTab, setActiveTab] = useState("");
   // const {raiseTicketId} = useParams();
   const navigate = useNavigate();
@@ -483,7 +483,7 @@ const Notification = () => {
   const fetchNotifications = useCallback(async () => {
     try { 
       // const [raiseTicketResponse, getQuoteResponse, getDealerResponse, getOrderResponse, BookTechnicianResponse, collectionsResponse, buyProductResponse, productClosedResponse, apartmentRaiseTicketResponse, groceryItemResponse] = await Promise.all([
-      const [raiseTicketResponse, BookTechnicianResponse, buyProductResponse, groceryItemResponse] = await Promise.all([
+      const [raiseTicketResponse, BookTechnicianResponse, buyProductResponse, groceryItemResponse, collectionsResponse] = await Promise.all([
         fetch(
           "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications"
         ),
@@ -499,7 +499,7 @@ const Notification = () => {
         // fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForAdminList`),
         // fetch(`https://handymanapiv2.azurewebsites.net/api/ApartmentRaiseTicket/GetGetApartmentMaintenanceForAdminList`),
         fetch(`https://handymanapiv2.azurewebsites.net/api/Mart/GetAllMartItems`),
-        // fetch(``),
+        fetch(`https://handymanapiv2.azurewebsites.net/api/LakshmiCollection/GetAllLakshmiCollectionsOpen`),
         // fetch(``),
       ]);
 
@@ -609,17 +609,17 @@ const Notification = () => {
         setHighlightedGrocery(groceryItemFiltered[0].martId);
       }
 
-      // const collectionsData = await collectionsResponse.json();
-      // const collectionsFiltered = collectionsData.filter(
-      //   (item) => item.status === "Open"  && item.collectionsItemId != null)
-      //   .sort((a, b) => new Date(b.date) - new Date(a.date));
-      // const collectionsCount = collectionsFiltered.length;
-      // setCollectionNotifications(collectionsFiltered);
-      // setNewCollectionCount(collectionsCount);
-      // setGlowCollection(collectionsCount > 0);
-      // if (collectionsCount > 0) {
-      //   setHighlightedCollection(collectionsFiltered[0].collectionsItemId);
-      // } 
+      const collectionsData = await collectionsResponse.json();
+      const collectionsFiltered = collectionsData.filter(
+        (item) => item.status === "Open"  && item.lakshmiCollectionId != null)
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
+      const collectionsCount = collectionsFiltered.length;
+      setCollectionNotifications(collectionsFiltered);
+      setNewCollectionCount(collectionsCount);
+      setGlowCollection(collectionsCount > 0);
+      if (collectionsCount > 0) {
+        setHighlightedCollection(collectionsFiltered[0].lakshmiCollectionId);
+      } 
 // const deliveryPartnerData = await deliveryPartnerResponse.json();
 //       const deliveryPartnerFiltered = deliveryPartnerData.filter(
 //         (item) => item.status === "Draft")
@@ -632,7 +632,7 @@ const Notification = () => {
 //         setHighlightedDelivery(deliveryPartnerFiltered[0]);
 //       }
       // const totalNotifications = raiseTicketCount + getQuoteCount + getDealerCount + getOrderCount + bookTechnicianCount + buyProductCount + productClosedCount + apartmentTicketCount + collectionsCount+deliveryPartnerCount;
-      const totalNotifications = raiseTicketCount + bookTechnicianCount + buyProductCount + groceryItemCount; 
+      const totalNotifications = raiseTicketCount + bookTechnicianCount + buyProductCount + groceryItemCount + collectionsCount; 
       setNewNotificationCount(totalNotifications);        
       console.log("newNotificationCount:", newNotificationCount);
       setGlow(totalNotifications > 0);
@@ -700,11 +700,11 @@ const Notification = () => {
   //   setHighlightedDelivery(null);
   // };
 
-  // const handleClearCollectionNotifications = () => {
-  //   setNewCollectionCount(0);
-  //   setGlowCollection(false);
-  //   setHighlightedCollection(null);
-  // };
+  const handleClearCollectionNotifications = () => {
+    setNewCollectionCount(0);
+    setGlowCollection(false);
+    setHighlightedCollection(null);
+  };
 
 const handleTabClick = (tab) => {
   setActiveTab(tab);
@@ -751,7 +751,7 @@ const handleTabClick = (tab) => {
 <div className="notifications-container1 d-flex bg-white">
 {isMobile ? (
   <div className="tabs-mobile d-flex flex-column">
-    {["Raise Ticket", "Book Technician", "Buy Products", "Grocery Items"
+    {["Raise Ticket", "Book Technician", "Buy Products", "Grocery Items", "Lakshmi Collections"
     //  "Technician Get Quote", "Dealer Get Quote", "Raise Ticket Orders",
       //  "Buy Product Closed Orders", "Apartment Raise Ticket", "Lakshmi Collection Orders", "Lakshmi Collections", "Delivery Partner Directory"
       ].map((tab) => (
@@ -762,6 +762,7 @@ const handleTabClick = (tab) => {
           ${tab === "Book Technician" && glowTechnician ? "glow" : ""}
           ${tab === "Buy Products" && glowProduct ? "glow" : ""}
           ${tab === "Grocery Items" && glowGrocery ? "glow" : ""}
+          ${tab === "Lakshmi Collections" && glowGrocery ? "glow" : ""}
           
           `}
           // ${tab === "Technician Get Quote" && glowQuote ? "glow" : ""} 
@@ -769,7 +770,6 @@ const handleTabClick = (tab) => {
           // ${tab === "Raise Ticket Orders" && glowOrder ? "glow" : ""}
           // ${tab === "Buy Product Closed Orders" && glowClosed ? "glow" : ""}
           // ${tab === "Apartment Raise Ticket" && glowApartment ? "glow" : ""}
-          // ${tab === "Lakshmi Collections" && glowGrocery ? "glow" : ""}
           // ${tab === "Delivery Partner Directory" && glowDelivery ? "glow" : ""}
 
         onClick={() => handleTabClick(tab)}
@@ -806,15 +806,15 @@ const handleTabClick = (tab) => {
         {/* {tab === "Delivery Partner Directory" && newDeliveryCount > 0 && (
           <span className="badge bg-danger">{newDeliveryCount}</span> 
         )} */}
-        {/* {tab === "Lakshmi Collections" && newCollectionCount > 0 && (
+        {tab === "Lakshmi Collections" && newCollectionCount > 0 && (
           <span className="badge bg-danger">{newCollectionCount}</span>
-        )} */}
+        )}
       </div>
     ))}
   </div>
 ) : (
   <div className="tabs d-flex">
-    {["Raise Ticket",  "Book Technician", "Buy Products", "Grocery Items"
+    {["Raise Ticket",  "Book Technician", "Buy Products", "Grocery Items", "Lakshmi Collections"
     // "Technician Get Quote", "Dealer Get Quote", "Raise Ticket Orders", "Lakshmi Collections", "Delivery Partner Directory"
     //  "Buy Product Closed Orders", "Apartment Raise Ticket"
     ].map((tab) => (
@@ -825,13 +825,13 @@ const handleTabClick = (tab) => {
           ${tab === "Book Technician" && glowTechnician ? "glow" : ""} 
           ${tab === "Buy Products" && glowProduct ? "glow" : ""} 
           ${tab === "Grocery Items" && glowGrocery ? "glow" : ""}
+          ${tab === "Lakshmi Collections" && glowCollection? "glow" : ""}
           `}
           // ${tab === "Technician Get Quote" && glowQuote ? "glow" : ""} 
           // ${tab === "Dealer Get Quote" && glowDealer ? "glow" : ""} 
           // ${tab === "Raise Ticket Orders" && glowOrder ? "glow" : ""}
           // ${tab === "Buy Product Closed Orders" && glowClosed ? "glow" : ""} 
           // ${tab === "Apartment Raise Ticket" && glowApartment ? "glow" : ""} 
-          // ${tab === "Lakshmi Collections" && glowCollection? "glow" : ""}
           // ${tab === "Delivery Partner Directory" && glowDelivery ? "glow" : ""}
 
         onClick={() => handleTabClick(tab)}
@@ -862,9 +862,9 @@ const handleTabClick = (tab) => {
         {/* {tab === "Delivery Partner Directory" && newDeliveryCount > 0 && (
           <span className="badge bg-danger">{newDeliveryCount}</span>
         )} */}
-         {/* {tab === "Lakshmi Collections" && newCollectionCount > 0 && (
+         {tab === "Lakshmi Collections" && newCollectionCount > 0 && (
           <span className="badge bg-danger">{newCollectionCount}</span>
-        )} */}
+        )}
          {/* {tab === "Buy Product Closed Orders" && newClosedCount > 0 && (
           <span className="badge bg-danger">{newClosedCount}</span>
         )}
@@ -1019,7 +1019,7 @@ const handleTabClick = (tab) => {
           {activeTab === "Apartment Raise Ticket" && (
             <>
               <NotificationsList
-                notifications={apartmentNotifications}
+                notifications={apartmentNotifications}  
                 highlightedItem={highlightedApartment}
               />
               <div
@@ -1077,7 +1077,7 @@ const handleTabClick = (tab) => {
           )}
           </div>
            */}
-          {/* <div>
+          <div>
           {activeTab === "Lakshmi Collections" && (
             <>
               <NotificationsList
@@ -1088,7 +1088,7 @@ const handleTabClick = (tab) => {
                 className="view-notifications text-info mx-2"
                 onClick={() => {
                  navigate(`/lakshmiCollectionsNotificationGrid`);
-                  // handleClearCollectionNotifications();
+                 handleClearCollectionNotifications();
                 }}
                 style={{ cursor: "pointer" }}
               > 
@@ -1096,7 +1096,7 @@ const handleTabClick = (tab) => {
               </div>
             </>
           )}
-          </div>  */}
+          </div> 
         </div>
         </div>
       </div>

@@ -888,8 +888,8 @@ const [cartSummary, setCartSummary] = useState({
   total: 0,
   products: [],
 }); 
-const [dress] = useState([]);
-// const [dress, setDress] = useState([]);
+// const [dress] = useState([]);
+const [dress, setDress] = useState([]);
 const [deliveryProfile, setDeliveryProfile] = useState(null);
 const [showInterestModal, setShowInterestModal] = useState(false);
 const [showNotificationModal, setShowNotificationModal] = useState(false);
@@ -1636,50 +1636,48 @@ const handleGroceryCategoryClick = async (category) => {
   }
 };
 
-// const handleDressCategoryClick = async (category) => {
-//   const { value } = category;
-//   try {
-//     setSelectedCategory(category);
-//     setDress([]);
-//     setError("");
-//     const encodedCategory = encodeURIComponent(value);
-//     localStorage.setItem("encodedCategory", encodedCategory);
-//     navigate(`/lakshmiCollections/${userType}/${userId}`, {
-//       state: { encodedCategory },  
-//     });
-//   } catch (error) {
-//     console.error("Error fetching collections:", error);
-//     setGrocery([]);
-//     setError(`Oops! No collections found for ${value} category.`);
-//   }
-// };    
+const handleDressCategoryClick = async (category) => {
+  const { value } = category;
+  try {
+    setSelectedCategory(category);
+    setDress([]);
+    setError("");
+    const encodedCategory = encodeURIComponent(value);
+    localStorage.setItem("encodedCategory", encodedCategory);
+    navigate(`/lakshmiCollections/${userType}/${userId}`, {
+      state: { encodedCategory },  
+    });
+  } catch (error) {
+    console.error("Error fetching collections:", error);
+    setGrocery([]);
+    setError(`Oops! No collections found for ${value} category.`);
+  }
+};    
         useEffect(() => {
           const fetchAllTickets = async () => {
             try { 
-              const [ticketResponse, productResponse, technicianResponse, groceriesResponse] = await Promise.all([
+              const [ticketResponse, productResponse, technicianResponse, groceriesResponse, lakshmiResponse] = await Promise.all([
                 fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=raiseTicket`),
                 fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=buyProduct`),
                 fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=bookTechnician`),
                 fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=mart`),
-                // fetch(`https://localhost:7091/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=collections`),
+                fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=collections`),
               ]);      
-              // if (!ticketResponse.ok || !productResponse.ok || !technicianResponse || !groceriesResponse || !lakshmiResponse) {
-              if (!ticketResponse.ok || !productResponse.ok || !technicianResponse || !groceriesResponse) {  
-              throw new Error("Failed to fetch ticket, product and technician data");
-              } 
+              if (!ticketResponse.ok || !productResponse.ok || !technicianResponse || !groceriesResponse || !lakshmiResponse) {
+                throw new Error("Failed to fetch ticket, product and technician data");
+              }
               const ticketData = await ticketResponse.json();
               const productData = await productResponse.json();
               const technicianData = await technicianResponse.json(); 
               const groceryData = await groceriesResponse.json(); 
-              // const collectionsData = await lakshmiResponse.json(); 
+              const collectionsData = await lakshmiResponse.json(); 
               const groceryOpenTickets = Array.isArray(groceryData)
               ? groceryData.filter(item => String(item?.status).toLowerCase() === "open")
               : [];
-              setAllTickets([...ticketData, ...productData, ...technicianData, ...groceryOpenTickets]);
-              // const collectionOpenTickets = Array.isArray(collectionsData)
-              // ? collectionsData.filter(item => String(item?.status).toLowerCase() === "open")
-              // : [];
-              // setAllTickets([...ticketData, ...productData, ...technicianData, ...groceryOpenTickets, ...collectionOpenTickets]);
+              const collectionOpenTickets = Array.isArray(collectionsData)
+              ? collectionsData.filter(item => String(item?.status).toLowerCase() === "open")
+              : [];
+              setAllTickets([...ticketData, ...productData, ...technicianData, ...groceryOpenTickets, ...collectionOpenTickets]);
             } catch (error) {
               console.error("Error fetching ticket, product data:", error);
             } finally {
@@ -2465,8 +2463,8 @@ const fetchImageUrl = async (photoId) => {
 
 {/* </div> */}
   {/* Grocery Categories Section className="container my-3"*/}
-  <div className="shadow-lg p-3 rounded-5 mb-1 text-center bg-transparent border-0">
-    <h5 className="fw-bold mb-3" style={{color: "#ff5722", fontSize: "15px"}}>
+  <div className="shadow-lg p-2 rounded-5 mb-1 text-center bg-transparent border-0">
+    <h5 className="fw-bold mb-3" style={{color: "#ff5722", fontSize: "20px"}}>
       Lakshmi Mart  
     </h5>
     <div className="row row-cols-3 row-cols-md-5 g-1">
@@ -2526,8 +2524,8 @@ const fetchImageUrl = async (photoId) => {
 </div>
   </div>
   {/* Handyman Products Section */}
-  <div className="shadow-lg p-3 mb-1 rounded-5 bg-transparent border-0">
-    <h5 className="text-center fw-bold mb-3" style={{color: "#ff5722", fontSize: "18px"}}>Handyman Products</h5>
+  <div className="shadow-lg p-2 mb-1 rounded-5 bg-transparent border-0">
+    <h5 className="text-center fw-bold mb-3" style={{color: "#ff5722", fontSize: "20px"}}>Handyman Products</h5>
     <div className="row row-cols-3 row-cols-md-5 g-2 align-items-stretch">
       {categories.map((cat) => (
         <div
@@ -2619,26 +2617,26 @@ const fetchImageUrl = async (photoId) => {
 )}
 
    {/* Collections Section */}
-  <div className="shadow-lg p-3 rounded-5 text-center bg-transparent border-0">
+  <div className="shadow-lg p-2 rounded-5 text-center bg-transparent border-0">
    <span
    style={{
     background: "linear-gradient(45deg, #ff4081, #ff9800, #ff5722)",
     backgroundClip: "text",             
     WebkitBackgroundClip: "text",       
     color: "transparent",              
-    WebkitTextFillColor: "transparent", 
-    fontSize: "18px",
+    WebkitTextFillColor: "transparent",    
+    fontSize: "20px",
     fontWeight: "bold",
     fontFamily: "'Poppins', sans-serif",
     display: "inline-block",            
   }}
 >
-  Lakshmi Collections Launching Soon....
+  Lakshmi Collections 
 </span>
     <div className="row row-cols-3 row-cols-md-5 g-2">
       {collectionsCategories.map((cat) => (
         <div className="col" key={cat.label}  
-        // onClick={() => handleDressCategoryClick(cat)}
+        onClick={() => handleDressCategoryClick(cat)}
         //  onClick={() => navigate(`/lakshmiCollections/${userType}/${userId}`)}
         >
           <div
@@ -2733,11 +2731,11 @@ const fetchImageUrl = async (photoId) => {
       <div className="ticket-scroll" ref={ticketScrollRef}>
       {!loading && allTickets.length > 0 ? (
           allTickets.map((ticket, index) => (
-              <div key={index} className={`ticket-card1 ${ticket.raiseTicketId ? "raise-ticket-bg" :ticket.martId ? "mart-ticket-bg" : ticket.buyProductId ? "buy-product-bg" : "book-technician-bg"}`}>
+              <div key={index} className={`ticket-card1 ${ticket.raiseTicketId ? "raise-ticket-bg" :ticket.martId ? "mart-ticket-bg" : ticket.lakshmiCollectionId ? "lakshmi-collection-bg" : ticket.buyProductId ? "buy-product-bg" : "book-technician-bg"}`}>
               <div className="ticket-content">
-                <p><strong>{ticket.raiseTicketId ? "Raise TicketId": ticket.martId ? "Order Id" : ticket.buyProductId? "Buy ProductId" : "Book TechnicianId"}:</strong> {ticket.raiseTicketId|| ticket.martId || ticket.buyProductId || ticket.bookTechnicianId}</p>
-                <p><strong>{ticket.subject ? "Subject:" : ticket.productName ? "Product Name" : ticket.productName ? "Job Description" : ""}</strong> {ticket.subject || ticket.productName || ticket.jobDescription}</p>
-                <p><strong>{ticket.category ? "Category:" : "Delivery in 45 minutes"} </strong> {ticket.category || ticket.category || ticket.category}</p>
+                <p><strong>{ticket.raiseTicketId ? "Raise TicketId": ticket.martId ? "Order Id" : ticket.lakshmiCollectionId? "Collection Id": ticket.buyProductId? "Buy ProductId" : "Book TechnicianId"}:</strong> {ticket.raiseTicketId|| ticket.martId || ticket.lakshmiCollectionId || ticket.buyProductId || ticket.bookTechnicianId}</p>
+                <p><strong>{ticket.subject ? "Subject:" : ticket.productName ? "Product Name" : ticket?.categoriess?.[0]?.productName ? "Collection Name" : ticket.productName ? "Job Description" : ""}</strong> {ticket.subject || ticket.productName || ticket?.categoriess?.[0]?.productName || ticket.jobDescription}</p>
+                <p><strong>{ticket.category || ticket.lakshmiCollectionId ? "Category:" : "Delivery in 45 minutes"} </strong> {ticket.category || ticket?.categoriess?.[0]?.categoryName || ticket.category}</p>
                 {/* <p><strong>Category:</strong>{ticket.category ? ticket.category : "Delivery in 45 minutes"}</p> */}
                 <p><strong>Status:</strong> 
                 <span className={ticket.status.toLowerCase()}> {ticket.status}</span>

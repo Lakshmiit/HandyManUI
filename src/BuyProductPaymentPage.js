@@ -70,7 +70,7 @@ const [productName, setProductName] = useState("");
   const [productStatus, setProductStatus] = useState('');
 const [existingFiles, setExistingFiles] = useState([]);
 const [stockLeft, setStockLeft] = useState('');
-const [paymenterror, setPaymentError] = useState(null);
+// const [paymenterror, setPaymentError] = useState(null);
 useEffect(() => {
   if (date && deliveryInDays) {
     try {
@@ -181,11 +181,6 @@ useEffect(() => {
             }
         }, [id]);
 
-  // const deliveryCharges = parseFloat(((totalAmount * 5) / 100).toFixed(2));
-  // const serviceCharges = parseFloat(((totalAmount * 5) / 100).toFixed(2));
-  //  const totalPaymentAmount=(totalAmount + deliveryCharges+serviceCharges).toFixed(2);
-
-   //const totalPaymentAmount = parseFloat((totalAmount + deliveryCharges + serviceCharges).toFixed(2));
 
    useEffect(() => {
     if (!isNaN(totalAmount) && totalAmount > 0) {
@@ -210,10 +205,7 @@ useEffect(() => {
 
 const handleGetQuotation = async (e) => {
   e.preventDefault();
-  if (selectedPayment === "online") {
-    setPaymentError("⚠️ Online payment is not available at the moment. Only Cash On Delivery Available.");
-    return;
-  }
+  
 
   if (!selectedPayment) {
     setError("Please select at least one payment mode.");
@@ -294,7 +286,8 @@ const handleGetQuotation = async (e) => {
       setTechnicianConfirmationCode(data.technicianConfirmationCode);
   
     window.alert(`We are Redirecting to the Payment Page! Your reference number is ${buyProductTicketId}. Technician will contact you shortly.`);
-      window.location.href=`https://handymanserviceproviders.com/BuyProductPaymentPage/${buyProductId}`;
+       window.location.href=`/buyProductOnlinePaymentPage/${buyProductId}`;
+      // window.location.href=`https://handymanserviceproviders-h2gncthtfdemdwe5.centralindia-01.azurewebsites.net/BuyProductPaymentPage/${buyProductId}`;
     }  else if (selectedPayment === 'technician') {
       
          response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/${buyProductId}`,{
@@ -537,7 +530,7 @@ if (loading) {
         <div className='d-flex flex-column m-1'>
         {isMobile ? (
         <div className='d-flex flex-column'>
-        <label className='fs-5'>
+        {/* <label className='fs-5'>
             <input 
             type="radio" 
             className="form-check-input border-dark m-1"
@@ -545,8 +538,8 @@ if (loading) {
             onChange={() => handleCheckboxChange('online')}
             required/>
             Pay Through Online
-          </label>
-          {paymenterror && <p className="text-danger" style={{fontSize: "14px"}}>{paymenterror}</p>}
+          </label> */}
+          {/* {paymenterror && <p className="text-danger" style={{fontSize: "14px"}}>{paymenterror}</p>} */}
           <label className='fs-5'>
             <input 
             type="radio" 
@@ -560,7 +553,7 @@ if (loading) {
           </div>
         ) : (
           <div className="desktop-view d-flex flex-column">
-      <label className="me-4">
+      {/* <label className="me-4">
         <input 
           type="radio" 
           className="form-check-input border-dark me-2"
@@ -569,10 +562,10 @@ if (loading) {
           required
         />
         Pay Through Online
-      </label>
-          {paymenterror && <p className="text-danger" style={{fontSize: "14px"}}>{paymenterror}</p>}
+      </label> */}
+          {/* {paymenterror && <p className="text-danger" style={{fontSize: "14px"}}>{paymenterror}</p>} */}
       <label>
-        <input 
+        <input   
           type="radio" 
           className="form-check-input border-dark me-2"
           checked={selectedPayment === 'technician'}
