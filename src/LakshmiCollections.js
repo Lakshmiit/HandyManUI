@@ -5,7 +5,7 @@ import "./App.css";
 import Sidebar from "./Sidebar.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Dashboard as MoreVertIcon } from "@mui/icons-material";
-import { Button, Modal } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import SearchIcon from '@mui/icons-material/Search';
 import FavoriteIcon from "@mui/icons-material/Favorite"; 
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder"; 
@@ -23,8 +23,8 @@ const [selectedCategory, setSelectedCategory] = useState(null);
    const [products, setProducts] = useState([]);
  const [imageUrls, setImageUrls] = useState({});
   const [imageLoading, setImageLoading] = useState(true);
-  const [showZoomModal, setShowZoomModal] = useState(false);
-  const [zoomImage, setZoomImage] = useState("");
+  // const [showZoomModal, setShowZoomModal] = useState(false);
+  // const [zoomImage, setZoomImage] = useState("");
  const [checked] = useState(false);
 const [searchQuery, setSearchQuery] = useState('');
 
@@ -73,10 +73,10 @@ const handleLike = (productId, e) => {
     );
   };
 
-  const handleImageClick = (imageSrc) => {
-    setZoomImage(imageSrc); 
-    setShowZoomModal(true);    
-  };
+  // const handleImageClick = (imageSrc) => {
+  //   setZoomImage(imageSrc); 
+  //   setShowZoomModal(true);    
+  // };
   
 useEffect(() => {
   const fetchCollectionData = async () => {
@@ -86,9 +86,12 @@ useEffect(() => {
       const url = `https://handymanapiv2.azurewebsites.net/api/UploadLakshmiCollection/GetAllLakshmiCollectionsByCategory?category=${encodedCategory}`;
       const response = await axios.get(url);
       const list = Array.isArray(response.data) ? response.data : [];
-      setProducts(list);
+      const approvedList = list.filter(
+        (p) => String(p?.status || "").trim().toLowerCase() === "approved"
+      );
+      setProducts(approvedList); 
       setImageUrls({});
-      list.forEach(async (product) => {
+      approvedList.forEach(async (product) => {
         const firstPhoto = product.images?.[0];
         if (!firstPhoto) return;
         try {
@@ -293,10 +296,11 @@ useEffect(() => {
                                     // NEW: visually dim when out of stock
                                     // filter: isOutOfStock ? "grayscale(100%) brightness(0.75)" : "none",
                                   }}
-                                  onClick={(e) => {
-                                    e.stopPropagation(); 
-                                    handleImageClick(imageUrls[product.id][0]);
-                                  }}
+                                 onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigate(`/lakshmiCollectionDesigns/${userType}/${userId}/${product.id}`);
+                                }}
+
                                 />
                               ) : (
                                 <span className="text-muted small">Loading Image</span>
@@ -354,7 +358,7 @@ useEffect(() => {
 </div>
         </div>
       </div>
-       <Modal show={showZoomModal} onHide={() => setShowZoomModal(false)} centered>
+       {/* <Modal show={showZoomModal} onHide={() => setShowZoomModal(false)} centered>
                 <button className="close-button text-end mt-0" onClick={() => setShowZoomModal(false)}>
                     &times; </button>
                       <Modal.Body className="text-center">
@@ -362,7 +366,7 @@ useEffect(() => {
                           <img src={zoomImage} alt="Zoomed Product" className="zoom-image" />
                         </div>
                       </Modal.Body>
-                    </Modal>
+                    </Modal> */}
     </>
   );
 };
