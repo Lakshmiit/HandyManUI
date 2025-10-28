@@ -13,6 +13,7 @@ import {
 import "./App.css"; 
 import CartImg from './img/Cart.jpeg';
 import { useNavigate, useParams } from "react-router-dom";
+import Footer from "./Footer.js";
 
 const GroceryCartPage = () => {    
   const navigate = useNavigate();
@@ -540,12 +541,13 @@ const roundedGrandTotal = Math.round(grandTotal);
     </div>
     <div className="text-start"> 
         <button
-          className="btn btn-warning mt-1 mb-5"
+          className="btn btn-warning mt-1 mb-1"
           onClick={() => navigate(`/profilePage/${userType}/${userId}`)}
         >
           Back
         </button>
       </div>
+      <Footer />
     {/* Zoom Modal */}
     <Modal show={showZoomModal} onHide={() => setShowZoomModal(false)} centered>
       <button

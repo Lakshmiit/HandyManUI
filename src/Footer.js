@@ -7,12 +7,12 @@ const Footer = () => {
       <br />
       <span className="small">&copy; 2025 Lakshmi software development center. All rights reserved.</span> <br/>
        <span className="small">
-        <strong> Office Hours :</strong> 09:00 AM-06:00 PM
+        <strong> Office Hours :</strong> 08:00 AM-09:00 PM
       </span>
-      <br />
+      {/* <br />
       <span className="small">
         <strong>Sunday :</strong> 09:00 AM-12:30 PM
-      </span>
+      </span> */}
       <br />  
       <span className="small">
         {" "}

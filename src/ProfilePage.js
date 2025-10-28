@@ -641,7 +641,7 @@ useEffect(() => {
           >
             <div>
               <div className="text-danger blinking-text" style={{ margin: 0, fontSize: 14, fontWeight: "bold", textAlign: "center"}}>
-               🎉 Limited Time Only — Offer Ends 25th Oct! Don’t miss it 🎁
+               🎉 Limited Time Only — Offer Ends 31th Oct! Don’t miss it 🎁
               </div>
               <button
                 type="button"

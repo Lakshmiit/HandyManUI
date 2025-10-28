@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Sidebar from "./Sidebar";
@@ -14,7 +14,8 @@ const LakshmiCollectionDesigns = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [collectionData, setCollectionData] = useState(null);
-  const [attachments, setAttachments] = useState([]); 
+  const [attachments] = useState([]);  
+  // const [attachments, setAttachments] = useState([]); 
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
   const [idx, setIdx] = useState(0);
@@ -24,18 +25,60 @@ const [selectedSize, setSelectedSize] = useState(null);
 const [sizeError, setSizeError] = useState("");
 const [selectedColor, setSelectedColor] = useState(null);
 const [colorError, setColorError] = useState("");
-const [showZoomModal, setShowZoomModal] = useState(false);
 const [zoomImage, setZoomImage] = useState("");
+const [media, setMedia] = useState([]); 
+const [showZoomModal, setShowZoomModal] = useState(false);
+// const [zoomSrc, setZoomSrc] = useState("");
+const [zoomType, setZoomType] = useState("image");
+ const imgRef = useRef(null);
+  const [magVisible, setMagVisible] = useState(false);
+  const [magPos, setMagPos] = useState({ x: 0, y: 0 });
+  const MAG_SIZE = 160;     
+  const MAG_ZOOM = 2.2;
 
 useEffect(() => {
   console.log(loading, err, postMsg);
 }, [loading, err, postMsg]);
 
- const handleImageClick = (imageSrc) => {
-    setZoomImage(imageSrc); 
-    setShowZoomModal(true);
-  };
+//  const handleImageClick = (imageSrc) => {
+//     setZoomImage(imageSrc); 
+//     setShowZoomModal(true);
+//   };
   
+  const handleImgMouseMove = (e) => {
+    if (!imgRef.current) return;
+    const bounds = imgRef.current.getBoundingClientRect();
+    const x = e.clientX - bounds.left;
+    const y = e.clientY - bounds.top;
+    const clampedX = Math.max(0, Math.min(x, bounds.width));
+    const clampedY = Math.max(0, Math.min(y, bounds.height));
+    setMagPos({ x: clampedX, y: clampedY });
+    setMagVisible(true);
+  };
+
+  const handleImgMouseLeave = () => setMagVisible(false);
+
+const isVideoFile = (name = "") => {
+  const ext = name.split(".").pop()?.toLowerCase();
+  return ["mp4", "webm", "ogg", "mov", "m4v"].includes(ext);
+};
+
+const guessVideoMime = (name="") => {
+  const ext = name.split(".").pop()?.toLowerCase();
+  if (ext === "mp4" || ext === "m4v" || ext === "mov") return "video/mp4";
+  if (ext === "webm") return "video/webm";
+  if (ext === "ogg") return "video/ogg";
+  return "video/*";
+};
+
+const extractBase64 = (payload) =>
+  payload?.imageData ||
+  payload?.videoData ||
+  payload?.fileData ||
+  payload?.data ||
+  payload?.base64 ||
+  null;
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     handleResize();
@@ -43,48 +86,150 @@ useEffect(() => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  useEffect(() => {
-    const fetchTicketData = async () => {
-      setLoading(true);
-      setErr("");
-      try {
-        const res = await fetch(
-          `https://handymanapiv2.azurewebsites.net/api/UploadLakshmiCollection/GetLakshmiCollections?id=${id}`
+//   useEffect(() => {
+//     const fetchTicketData = async () => {
+//       setLoading(true);
+//       setErr("");
+//       try {
+//         const res = await fetch(
+//           `https://handymanapiv2.azurewebsites.net/api/UploadLakshmiCollection/GetLakshmiCollections?id=${id}`
+//         );
+//         if (!res.ok) throw new Error("Failed to fetch product");
+//         const data = await res.json();
+//         setCollectionData(data);
+//         const imgFiles = Array.isArray(data.images) ? data.images : []; 
+//         const vidFiles = Array.isArray(data.videos) ? data.videos : [];
+//         const imageRequests =
+//           imgFiles.map((fileName) =>
+//             fetch(
+//               `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
+//                 fileName
+//               )}`
+//             )
+//               .then((r) => {
+//                 if (!r.ok) throw new Error("Image fetch failed");
+//                 return r.json();
+//               })
+//               .then((payload) => {
+//       const b64 = extractBase64(payload);
+//       if (!b64) return null;
+
+//       const isVid = isVideoFile(fileName);
+//       const mime = isVid ? guessVideoMime(fileName) : "image/*";
+
+//       const dataUrl = b64.startsWith("data:")
+//         ? b64
+//         : `data:${mime};base64,${b64}`;
+
+//       return {
+//         fileName,
+//         dataUrl,
+//         type: isVid ? "video" : "image",
+//       };
+//     });
+
+// const mediaRequests = [...imgFiles, ...vidFiles].map(buildRequest);
+// const mediaResults = (await Promise.all(mediaRequests)).filter(Boolean);
+
+// setMedia(mediaResults);
+//         //       .then((payload) => ({
+//         //         fileName,
+//         //         imageData: payload?.imageData || null, 
+//         //       }))
+//         //   ) || [];
+//         // const imgs = await Promise.all(imageRequests);
+//         // setAttachments(imgs.filter((i) => !!i.imageData));
+//       } catch (err) {
+//         console.error("Error fetching collection:", err);
+//         setErr(
+//           err?.message ||
+//             "Something went wrong while loading the collection. Please try again."
+//         );
+//       } finally {
+//         setLoading(false);
+//       }      
+//     };
+//     if (id) fetchTicketData();
+//   }, [id]);
+useEffect(() => {
+  if (!id) return;
+
+  let cancelled = false;
+
+  const fetchTicketData = async () => {
+    setLoading(true);
+    setErr("");
+    try {
+      // 1) product
+      const res = await fetch(
+        `https://handymanapiv2.azurewebsites.net/api/UploadLakshmiCollection/GetLakshmiCollections?id=${id}`
+      );
+      if (!res.ok) throw new Error("Failed to fetch product");
+      const data = await res.json();
+      if (cancelled) return;
+
+      setCollectionData(data);
+      const imgFiles = Array.isArray(data.images) ? data.images : [];
+      const vidFiles = Array.isArray(data.videos) ? data.videos : [];
+
+      const buildRequest = async (fileName) => {
+        const r = await fetch(
+          `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
+            fileName
+          )}`
         );
-        if (!res.ok) throw new Error("Failed to fetch product");
-        const data = await res.json();
-        setCollectionData(data);
-        const imgFiles = Array.isArray(data.images) ? data.images : []; 
-        const imageRequests =
-          imgFiles.map((fileName) =>
-            fetch(
-              `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
-                fileName
-              )}`
-            )
-              .then((r) => {
-                if (!r.ok) throw new Error("Image fetch failed");
-                return r.json();
-              })
-              .then((payload) => ({
-                fileName,
-                imageData: payload?.imageData || null, 
-              }))
-          ) || [];
-        const imgs = await Promise.all(imageRequests);
-        setAttachments(imgs.filter((i) => !!i.imageData));
-      } catch (err) {
-        console.error("Error fetching collection:", err);
+        if (!r.ok) throw new Error("File fetch failed");
+        const payload = await r.json();
+
+        const b64 = extractBase64(payload);
+        if (!b64) return null;
+
+        const isVid = isVideoFile(fileName);
+        const mime = isVid ? guessVideoMime(fileName) : "image/*";
+
+        const dataUrl = b64.startsWith("data:")
+          ? b64
+          : `data:${mime};base64,${b64}`;
+
+        return { fileName, dataUrl, type: isVid ? "video" : "image" };
+      };
+
+      const mediaResults = (
+        await Promise.all([...imgFiles, ...vidFiles].map(buildRequest))
+      ).filter(Boolean);
+
+      if (!cancelled) setMedia(mediaResults);
+    } catch (e) {
+      console.error("Error fetching collection:", e);
+      if (!cancelled) {
         setErr(
-          err?.message ||
+          e?.message ||
             "Something went wrong while loading the collection. Please try again."
         );
-      } finally {
-        setLoading(false);
-      }      
-    };
-    if (id) fetchTicketData();
-  }, [id]);
+      }
+    } finally {
+      if (!cancelled) setLoading(false);
+    }
+  };
+
+  fetchTicketData();
+  return () => {
+    cancelled = true;
+  };
+}, [id]);
+
+const hasMedia = media.length > 0;
+const current = hasMedia ? media[idx] : null;
+
+const nextItem = () => setIdx((p) => (media.length ? (p + 1) % media.length : 0));
+const prevItem = () =>
+  setIdx((p) => (media.length ? (p - 1 + media.length) % media.length : 0));
+
+const handleMediaClick = (src, type) => {
+  setZoomImage(src);
+  setZoomType(type); 
+  setShowZoomModal(true);
+};
 
   // Parse colors from the "colour" field
 const parseColors = (raw) => {
@@ -133,17 +278,17 @@ const allOutOfStock = sizes.length > 0 && sizes.every(s => (s.stock ?? 0) <= 0);
 //   return found?.stock ?? null;
 // }, [sizes, selectedSize]);
 
-  const hasImages = attachments && attachments.length > 0;
-  const currentImg =
-    hasImages && attachments[idx]?.imageData
-      ? `data:image/*;base64,${attachments[idx].imageData}`
-      : null;
-  const nextImg = () =>
-    setIdx((p) => (attachments.length ? (p + 1) % attachments.length : 0));
-  const prevImg = () =>
-    setIdx((p) =>
-      attachments.length ? (p - 1 + attachments.length) % attachments.length : 0
-    );
+  // const hasImages = attachments && attachments.length > 0;
+  // const currentImg =
+  //   hasImages && attachments[idx]?.imageData
+  //     ? `data:image/*;base64,${attachments[idx].imageData}`
+  //     : null;
+  // const nextImg = () =>
+  //   setIdx((p) => (attachments.length ? (p + 1) % attachments.length : 0));
+  // const prevImg = () =>
+  //   setIdx((p) =>
+  //     attachments.length ? (p - 1 + attachments.length) % attachments.length : 0
+  //   );
 
     const onPostSelection = async (event) => {
       event.preventDefault();
@@ -350,8 +495,128 @@ const allOutOfStock = sizes.length > 0 && sizes.every(s => (s.stock ?? 0) <= 0);
               <div className="row">
                 {/* Image Section */}
                 <div className="col-12 col-md-6">
-                  <div className="position-relative border rounded-3 d-flex justify-content-center align-items-center" style={{ minHeight: 310 }}>
-                    {currentImg ? (    
+                  <div
+                    className="position-relative border rounded-3 d-flex justify-content-center align-items-center"
+                    style={{ minHeight: 310 }}
+                  >
+                    {!current ? (
+                      <div className="text-muted">Photos loading…</div>
+                    ) : current.type === "image" ? (
+                      <div
+                        style={{
+                          position: "relative",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          width: "60%",
+                          maxHeight: 300,
+                          borderRadius: 10,
+                          cursor: "zoom-in",
+                        }}
+                        onMouseMove={handleImgMouseMove}
+                        onMouseLeave={handleImgMouseLeave}
+                        onClick={() => handleMediaClick(current.dataUrl, "image")}
+                        >
+                        <img
+                          ref={imgRef}
+                          src={current.dataUrl}
+                          alt={current.fileName || "Product"}
+                          style={{
+                            display: "block",
+                            maxHeight: 300,
+                            width: "100%",
+                            borderRadius: 10,
+                            objectFit: "contain",
+                            userSelect: "none",
+                          }}
+                          draggable={false}
+                        />
+
+                        {/* Magnifier Lens */}
+                        {magVisible && imgRef.current && (
+                          <div
+                            aria-hidden
+                            style={{
+                              position: "absolute",
+                              width: MAG_SIZE,
+                              height: MAG_SIZE,
+                              left: magPos.x - MAG_SIZE / 2,
+                              top: magPos.y - MAG_SIZE / 2,
+                              borderRadius: 8,
+                              border: "2px solid rgba(255,255,255,0.9)",
+                              boxShadow: "0 8px 20px rgba(0,0,0,0.25)",
+                              pointerEvents: "none",
+                              overflow: "hidden",
+                              backgroundImage: `url(${current.dataUrl})`,
+                              backgroundRepeat: "no-repeat",
+                              backgroundSize: `${imgRef.current.clientWidth * MAG_ZOOM}px ${imgRef.current.clientHeight * MAG_ZOOM}px`,
+                              backgroundPosition: `${-(magPos.x * MAG_ZOOM - MAG_SIZE / 2)}px ${-(magPos.y * MAG_ZOOM - MAG_SIZE / 2)}px`,
+                            }}
+                          />
+                        )}
+                      </div>
+                    ) : (
+                      <video
+                        src={current.dataUrl}
+                        controls
+                        playsInline
+                        style={{ maxHeight: 300, width: "100%", borderRadius: 10 }}
+                      />
+                    )}
+
+                    {hasMedia && media.length > 1 && (
+                      <>
+                        <Button
+                          variant="white"
+                          className="position-absolute top-50 start-0 translate-middle-y"
+                          onClick={prevItem}
+                        >
+                          ‹
+                        </Button>
+                        <Button
+                          variant="white"
+                          className="position-absolute top-50 end-0 translate-middle-y"
+                          onClick={nextItem}
+                        >
+                          ›
+                        </Button>
+                      </>
+                    )}
+                  </div>
+
+
+                  {hasMedia && media.length > 1 && (
+                    <div className="d-flex gap-2 mt-2 flex-wrap">
+                      {media.map((m, i) => (
+                        <button
+                          key={m.fileName + i}
+                          className={`border rounded ${i === idx ? "border-2" : ""}`}
+                          style={{ padding: 0, background: "transparent", outline: "none" }}
+                          onClick={() => setIdx(i)}
+                          title={m.fileName}
+                        >
+                          {m.type === "image" ? (
+                            <img
+                              src={m.dataUrl}
+                              alt={m.fileName}
+                              style={{ width: 64, height: 75, objectFit: "cover", borderRadius: 6 }}
+                            />
+                          ) : (
+                            <div style={{ width: 64, height: 75, position: "relative", borderRadius: 6, overflow: "hidden" }}>
+                              <video src={m.dataUrl} muted playsInline style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                              <div style={{
+                                position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center",
+                               fontSize: 18, color: "#fff", fontWeight: 700
+                              }}>▶</div>
+                            </div>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* <div className="position-relative border rounded-3 d-flex justify-content-center align-items-center" style={{ minHeight: 310 }}> */}
+                    {/* {currentImg ? (    
                       <img
                         src={currentImg}
                         alt={attachments[idx]?.fileName || "Product"}
@@ -361,10 +626,10 @@ const allOutOfStock = sizes.length > 0 && sizes.every(s => (s.stock ?? 0) <= 0);
                       />
                     ) : (
                       <div className="text-muted">image Loading</div>
-                    )}
+                    )} */}
 
                     {/* Discount badge on image (top-right) */}
-                      {Number(collectionData?.discount) > 0 && (
+                      {/* {Number(collectionData?.discount) > 0 && (
                         <div
                           style={{
                             position: "absolute",
@@ -403,8 +668,8 @@ const allOutOfStock = sizes.length > 0 && sizes.every(s => (s.stock ?? 0) <= 0);
                         </Button>
                       </>
                     )}
-                  </div>
-                  {hasImages && attachments.length > 1 && (
+                  </div> */}
+                  {/* {hasImages && attachments.length > 1 && (
                     <div className="d-flex gap-2 mt-2 flex-wrap">
                       {attachments.map((a, i) => (
                         <button
@@ -426,7 +691,7 @@ const allOutOfStock = sizes.length > 0 && sizes.every(s => (s.stock ?? 0) <= 0);
                         </button>
                       ))}
                     </div>
-                  )}
+                  )} */}
                 </div>
 
                 {/* Details */}
@@ -568,7 +833,23 @@ const allOutOfStock = sizes.length > 0 && sizes.every(s => (s.stock ?? 0) <= 0);
                 </div>
               </div> 
         </div>
-         <Modal show={showZoomModal} onHide={() => setShowZoomModal(false)} centered>
+        
+        <Modal show={showZoomModal} onHide={() => setShowZoomModal(false)} centered>
+          <button className="close-button text-end mt-0" onClick={() => setShowZoomModal(false)}>
+            &times;
+          </button>
+          <Modal.Body className="text-center">
+            <div className="zoom-container">
+              {zoomType === "video" ? (
+                <video src={zoomImage} controls playsInline style={{ width: "100%", borderRadius: 8 }} />
+              ) : (
+                <img src={zoomImage} alt="Zoomed Product" className="zoom-image" />
+              )}
+            </div>
+          </Modal.Body>
+        </Modal>
+
+         {/* <Modal show={showZoomModal} onHide={() => setShowZoomModal(false)} centered>
           <button className="close-button text-end mt-0" onClick={() => setShowZoomModal(false)}>
               &times; </button>
                 <Modal.Body className="text-center">
@@ -576,7 +857,7 @@ const allOutOfStock = sizes.length > 0 && sizes.every(s => (s.stock ?? 0) <= 0);
                     <img src={zoomImage} alt="Zoomed Product" className="zoom-image" />
                   </div>
                 </Modal.Body>
-              </Modal>
+              </Modal> */}
       </div>
     </>
   );

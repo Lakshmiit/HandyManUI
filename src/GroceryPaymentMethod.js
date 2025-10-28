@@ -6,6 +6,7 @@ import './App.css';
 import { useParams, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { Modal, Button, Form} from 'react-bootstrap';
+import Footer from "./Footer.js";
 
 const GroceryPaymentmethod = () => {
   const navigate = useNavigate();
@@ -1326,7 +1327,7 @@ const handleCheckboxChange = (value) => {
     </div>
     </div>
     </div>
-
+<Footer/>
     {/* Styles for floating menu */}
 <style jsx>{`
         .modal-overlay {

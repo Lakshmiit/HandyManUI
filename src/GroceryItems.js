@@ -12,7 +12,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { CartStorage } from "./CartStorage";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ImageCache from "./utils/ImageCache";
-
+import Footer from "./Footer.js";
 // import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 // import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 const GroceryCard = () => {
@@ -185,7 +185,7 @@ useEffect(() => {
         const ta = getItemTime(a);
         if (tb !== ta) return tb - ta;   
         return String(b.id).localeCompare(String(a.id));
-      });
+      }); 
       const firstImages = safeItems
         .map(p => ({ productId: p.id, photo: Array.isArray(p.images) ? p.images[0] : null }))
         .filter(x => !!x.photo);
@@ -639,7 +639,6 @@ useEffect(() => {
 </div>
     );
   })}
-
 {/* Cart Bar */}
 {(() => {
   // Safe reader that ALWAYS returns an array of categories
@@ -727,13 +726,13 @@ useEffect(() => {
     </div>
   ) : null;
 })()}
-
       </div>
       </>
   )}  
-  
 </div>
-    </div>           
+    </div>    
+    <Footer/>
+       
       </div>
       <Modal show={showZoomModal} onHide={() => { setShowZoomModal(false); setZoomProduct(null); }} centered>
   <button
@@ -761,7 +760,6 @@ useEffect(() => {
     )}
   </Modal.Body>
 </Modal>
-
     </>
   );
 };
