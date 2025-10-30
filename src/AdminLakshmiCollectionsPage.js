@@ -339,10 +339,10 @@ const AdminLakshmiCollectionsPage = () => {
               <div className="row">
                 <div className="row ticket-info">
                   <div className="col-md-6">
-                    <p>
+                    {/* <p>
                       <strong className="me-2"> Selected Colour:</strong>
                       {collectionItems[0]?.colour}
-                    </p>
+                    </p> */}
                     <p>
                       <strong className="me-2"> Total Amount:</strong>
                       {`Rs ${grandTotal}/-`}

@@ -23,8 +23,8 @@ const [posting, setPosting] = useState(false);
 const [postMsg, setPostMsg] = useState("");
 const [selectedSize, setSelectedSize] = useState(null);
 const [sizeError, setSizeError] = useState("");
-const [selectedColor, setSelectedColor] = useState(null);
-const [colorError, setColorError] = useState("");
+// const [selectedColor, setSelectedColor] = useState(null);
+// const [colorError, setColorError] = useState("");
 const [zoomImage, setZoomImage] = useState("");
 const [media, setMedia] = useState([]); 
 const [showZoomModal, setShowZoomModal] = useState(false);
@@ -232,18 +232,18 @@ const handleMediaClick = (src, type) => {
 };
 
   // Parse colors from the "colour" field
-const parseColors = (raw) => {
-  if (!raw) return [];
-  if (Array.isArray(raw)) return raw.map((c) => String(c).trim()).filter(Boolean);
-  if (typeof raw === "string")
-    return raw
-      .split(",")
-      .map((c) => c.trim())
-      .filter(Boolean);
-  return [];
-};
+// const parseColors = (raw) => {
+//   if (!raw) return [];
+//   if (Array.isArray(raw)) return raw.map((c) => String(c).trim()).filter(Boolean);
+//   if (typeof raw === "string")
+//     return raw
+//       .split(",")
+//       .map((c) => c.trim())
+//       .filter(Boolean);
+//   return [];
+// };
 
-const colors = useMemo(() => parseColors(collectionData?.colour), [collectionData?.colour]);
+// const colors = useMemo(() => parseColors(collectionData?.colour), [collectionData?.colour]);
 
 const parseSizesWithStock = (raw) => {
   if (!raw) return [];
@@ -294,34 +294,34 @@ const allOutOfStock = sizes.length > 0 && sizes.every(s => (s.stock ?? 0) <= 0);
       event.preventDefault();
   if (!collectionData) return;
 
-   let valid = true;
+  // let valid = true;
 
   if (sizes.length > 0 && !selectedSize) {
     setSizeError("Please select a size before adding to cart.");
-    valid = false;
+    // valid = false;
   } else {
     setSizeError("");
-  }
+  }   
 
-  if (colors.length > 0 && !selectedColor) {
-    setColorError("Please select a color before adding to cart.");
-    valid = false;
-  } else {
-    setColorError("");
-  }
+  // if (colors.length > 0 && !selectedColor) {
+  //   setColorError("Please select a color before adding to cart.");
+  //   valid = false;
+  // } else {
+  //   setColorError("");
+  // }
 
-  if (!valid) {
-    const targetId = !selectedSize
-      ? "size-section"
-      : !selectedColor
-      ? "color-section"
-      : null;
-    if (targetId) {
-      const el = document.getElementById(targetId);
-      if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-    return; 
-  }
+  // if (!valid) {
+  //   const targetId = !selectedSize
+  //     ? "size-section"
+  //     : !selectedColor
+  //     ? "color-section"
+  //     : null;
+  //   if (targetId) {
+  //     const el = document.getElementById(targetId);
+  //     if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+  //   }
+  //   return; 
+  // }
 
   const selectedImageFileName =
     attachments?.[idx]?.fileName ?? (Array.isArray(collectionData.images) && collectionData.images[0]) ?? "";
@@ -383,7 +383,7 @@ const allOutOfStock = sizes.length > 0 && sizes.every(s => (s.stock ?? 0) <= 0);
         afterDiscountPrice: after.toString(),
         productImage: String(selectedImageFileName),              
         size: String(selectedSize ?? collectionData.size ?? ""),
-        colour: selectedColor,
+        colour: "",
         stockLeft: String(collectionData.stockLeft - qty),
         noOfQuantity: String(qty),
       },
@@ -712,7 +712,7 @@ const allOutOfStock = sizes.length > 0 && sizes.every(s => (s.stock ?? 0) <= 0);
                   </div>
 
                    {/* Color Selection */}
-                  <div id="color-section" className="">
+                  {/* <div id="color-section" className="">
                     <div className="fw-semibold">Select Color</div>
                     {colors.length === 0 ? (
                       <div className="text-muted small">No colors available</div>
@@ -741,7 +741,7 @@ const allOutOfStock = sizes.length > 0 && sizes.every(s => (s.stock ?? 0) <= 0);
                     <div className="mt-1">
                       {colorError && <p className="text-danger mb-0" style={{fontSize: "12px"}}>{colorError}</p>}
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* Size Selection */}
                   <div id="size-section" className="">
