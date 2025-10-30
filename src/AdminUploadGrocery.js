@@ -196,7 +196,8 @@ useEffect(() => {
                 onChange={(e) => setCategory(e.target.value)}>
                 <option>Choose Category</option>
                 <option>Baby Products</option>
-                <option>Bakery, Dry Fruits & Biscuits</option>
+                <option>Dry Fruits & Bakery</option>
+                <option>Biscuits & Chocolates</option>
                 <option>Dairy, Bread & Eggs</option>
                 <option>Oils, Ghee & Dals</option>
                 <option>Home Needs</option>
@@ -206,6 +207,7 @@ useEffect(() => {
                 <option>Puja Essentials</option>
                 <option>Rice, Ravva & Flours</option>
                 <option>Snacks & Branded Foods</option>
+                <option>Stationary</option>
                 <option>Tea, Coffee & Sweets</option>
                 <option>Vegetables & Fruits</option>
                 {/* <option>Family Pack </option> */}
@@ -311,7 +313,7 @@ useEffect(() => {
                 value={`${Math.round(Number(rate || 0) * (1 - (Number((discount || "0").toString().replace("%", "")) / 100)))} /-`}
                 />
             </div>
-
+ 
             {/* Delivery In Days */}
             <div className="form-group">
               <label>Delivery In Minutes <span className="req_star">*</span></label>

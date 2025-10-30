@@ -54,7 +54,9 @@ import OilsImg from './img/oils,ghee.jpeg';
 import MasalaImg from './img/salt,sugar.jpeg';
 import BreadsImg from './img/dairy,bread.jpeg';
 import VegetablesImg from './img/vegetables,fruits.jpeg';
-import DryfruitsImg from './img/dryfruits.jpeg';
+import DryfruitsImg from './img/Bakery.jpeg';
+import BiscuitsImg from './img/Biscuits.jpeg';
+// import StationaryImg from './img/Stationary.jpeg';
 import TeaImg from './img/teacoffee.jpeg';
 import NamkeenImg from './img/sweets.jpeg';
 import HouseHoldImg from './img/HouseHold.jpeg';
@@ -835,7 +837,9 @@ const groceryCategories = [
   { label: 'Oils, Ghee & Dals', value: 'Oils, Ghee & Dals', image: OilsImg },
   { label: 'Masala, Spices, Sugar & Salt', value: 'Masala, Spices, Sugar & Salt', image: MasalaImg },
   { label: 'Dairy, Bread & Eggs', value: 'Dairy, Bread & Eggs', image: BreadsImg },
-  { label: 'Bakery, Dry Fruits & Biscuits', value: 'Bakery, Dry Fruits & Biscuits', image: DryfruitsImg },
+  { label: 'Dry Fruits & Bakery', value: 'Dry Fruits & Bakery', image: DryfruitsImg },
+  { label: 'Biscuits & Chocolates', value: 'Biscuits & Chocolates', image: BiscuitsImg },
+  // { label: 'Stationary', value: 'Stationary', image: StationaryImg },
   { label: 'Instant Food, Chips & Namkeen', value: 'Instant Food, Chips & Namkeen', image: NamkeenImg },
   { label: 'Tea, Coffee & Sweets', value: 'Tea, Coffee & Sweets', image: TeaImg },   
     { label: 'Home Needs', value: 'Home Needs', image: HouseHoldImg },
