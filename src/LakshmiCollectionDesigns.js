@@ -294,14 +294,15 @@ const allOutOfStock = sizes.length > 0 && sizes.every(s => (s.stock ?? 0) <= 0);
       event.preventDefault();
   if (!collectionData) return;
 
-  // let valid = true;
+  //  let valid = true;
 
-  if (sizes.length > 0 && !selectedSize) {
+   if (sizes.length > 0 && !selectedSize) {
     setSizeError("Please select a size before adding to cart.");
-    // valid = false;
-  } else {
-    setSizeError("");
-  }   
+    document.getElementById("size-section")?.scrollIntoView({ behavior: "smooth", block: "center" });
+    return; 
+   } else {
+      setSizeError("");
+    }
 
   // if (colors.length > 0 && !selectedColor) {
   //   setColorError("Please select a color before adding to cart.");
@@ -824,6 +825,8 @@ const allOutOfStock = sizes.length > 0 && sizes.every(s => (s.stock ?? 0) <= 0);
                       title={
                         allOutOfStock
                           ? "Out of stock"
+                          : (sizes.length > 0 && !selectedSize)
+                          ? "Select a size"   
                           : "Add to cart"
                       }
                     >

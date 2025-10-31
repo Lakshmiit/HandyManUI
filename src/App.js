@@ -94,6 +94,10 @@ import ChatPage from './ChatPage.js';
 // import BookTechnicianOnlinePayment from './BookTechnicianOnlinePayment.js'
 // import BookTechnicianPaymentSuccess from './BookTechnicianPaymentSuccess.js';
 // New Pages  
+import GroceryOfferItems from './GroceryOfferItems.js';
+import GroceryOffersCartPage from './GroceryOffersCartPage.js';
+
+
 import GroceryItems from './GroceryItems.js';
 import AdminUploadGrocery from './AdminUploadGrocery.js';
 import AdminUpdateGrocery from './AdminUpdateGrocery.js';      
@@ -166,6 +170,9 @@ function App() {
             <Route path="/device" element={<Device />} />
             <Route path="/chatPage/:userType/:userId" element={<ChatPage />} />
             {/* New Pages */}
+            <Route path="/groceryOffers/:userType/:userId" element={<GroceryOfferItems />} />
+            <Route path="/groceryOffersCart/:userType/:userId" element={<GroceryOffersCartPage />} />
+
             <Route path="/deliveryPartner/:userType/:userId" element={<DeliveryPartner />} />
             <Route path="/deliveryTracking/:id" element={<DeliveryTracking />} />
             {/* <Route path="/deliveryPartnerDirectory" element={<DeliveryPartnerDirectory />} /> */}

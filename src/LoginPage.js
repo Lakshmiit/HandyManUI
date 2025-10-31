@@ -74,76 +74,76 @@ const LoginPage = () => {
   }, []);
 
   
-  const handleOTP = async (e) => {
-    e.preventDefault();
-    if(!mobile)
-    {setError("Please Enter mobile Number");
-    };
-  setError("");
- setSubmitted(true);
-    const payload = {
-      senderValue: mobile,
-      type: "sms",
-    };
-try {
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Auth/sendotp`,{
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-      if (!response.ok) {
-       throw new Error("Failed to send sms.");
-      }
-      localStorage.setItem('mobile', mobile);
-      Navigate('/otpVerification', {
-        state: { mobile }
-      });
-    } catch (error) {
-      console.error("Error sending sms:", error);
-      window.alert('Failed to send sms. Please try again later.');    }
-  };
-
-// const handleOTP = async (e) => {
-//   e.preventDefault();
-
-//   if (!mobile) {
-//     setError("Please enter a mobile number");
-//     return;
-//   }
-
+//   const handleOTP = async (e) => {
+//     e.preventDefault();
+//     if(!mobile)
+//     {setError("Please Enter mobile Number");
+//     };
 //   setError("");
-//   setSubmitted(true);
-
-//   const payload = {
-//     senderValue: mobile,
-//     type: "sms",
+//  setSubmitted(true);
+//     const payload = {
+//       senderValue: mobile,
+//       type: "sms",
+//     };
+// try {
+//       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Auth/sendotp`,{
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify(payload),
+//       });
+//       if (!response.ok) {
+//        throw new Error("Failed to send sms.");
+//       }
+//       localStorage.setItem('mobile', mobile);
+//       Navigate('/otpVerification', {
+//         state: { mobile }
+//       });
+//     } catch (error) {
+//       console.error("Error sending sms:", error);
+//       window.alert('Failed to send sms. Please try again later.');    }
 //   };
 
-//   try {
-//     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Auth/bhashsmssendotp`, {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify(payload),
-//     });      
+const handleOTP = async (e) => {
+  e.preventDefault();
 
-//     if (!response.ok) {
-//       throw new Error("Failed to send sms.");
-//     }
+  if (!mobile) {  
+    setError("Please enter a mobile number");
+    return;
+  }
+
+  setError("");
+  setSubmitted(true);
+
+  const payload = {
+    senderValue: mobile,
+    type: "sms",
+  };
+
+  try {
+    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Auth/bhashsmssendotp`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });      
+
+    if (!response.ok) {
+      throw new Error("Failed to send sms.");
+    }
   
-//     localStorage.setItem('mobile', mobile);
-//     Navigate('/otpVerification', { state: { mobile } });
+    localStorage.setItem('mobile', mobile);
+    Navigate('/otpVerification', { state: { mobile } });
 
-//   } catch (error) {
-//     console.error("Error sending sms:", error);
-//     setError('Failed to send sms. Please try again later.');
-//   } finally {
-//     setSubmitted(false);
-//   }
-// };
+  } catch (error) {
+    console.error("Error sending sms:", error);
+    setError('Failed to send sms. Please try again later.');
+  } finally {
+    setSubmitted(false);
+  }
+};
 
  return (
   <div className="h-100 mt-3 d-flex align-items-center py-2 flex-column">
