@@ -18,9 +18,9 @@ const IMAGE_DOWNLOAD =
 const norm = (s) => String(s || "").toLowerCase().replace(/\s+/g, " ").trim();
 
 const TWO_QTY = new Set([
-  norm("Onion (Ulligadda) 500gm"),
-  norm("Potato (Bangala Dumpa) 500gm"),
-  norm("Tamato 500gm"),
+  norm("Onion (Ulligadda) 500 gm"),
+  norm("Potato (Bangala Dumpa) 500 gm"),
+  norm("Tamato 500 gm"),
   norm("Apples 1 Pc"),
 ]);
 

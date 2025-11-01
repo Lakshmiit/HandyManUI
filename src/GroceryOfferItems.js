@@ -19,8 +19,8 @@ const normalizeName = (s) =>
 
 const TWO_QTY = new Set([
   normalizeName("Onion (Ulligadda) 500 gm"),
-  normalizeName("Potato (Bangala Dumpa) 500gm"),
-  normalizeName("Tamato 500gm"),   
+  normalizeName("Potato (Bangala Dumpa) 500 gm"),
+  normalizeName("Tamato 500 gm"),   
   normalizeName("Apples 1 Pc"),
 ]);
 
