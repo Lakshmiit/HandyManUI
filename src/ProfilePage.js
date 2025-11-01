@@ -23,11 +23,11 @@ import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-import Banner1 from './img/Offers.jpeg';
+import Banner1 from './img/Offers1.jpeg';
 // import BannerVideo from './img/Dusshera.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
 // import VolumeUpIcon from '@mui/icons-material/VolumeUp';
-// import Banner3 from './img/banner-4.jpg'; 
+// import Banner3 from './img/banner-4.jpg';  
 // import Banner2 from './img/Ads2.jpeg';
 import { useNavigate, useParams } from "react-router-dom"; 
 import Logo from "./img/Hm_Logo 1.png";
@@ -931,10 +931,10 @@ const [deliveryPartnerUserId, setDeliveryPartnerUserId] = useState('');
 const [totalItemsSelected, setTotalItemsSelected] = useState('');
 const [transactionNumber, setTransactionNumber] = useState('');
 const [city, setCity] = useState('');
-const HEADER_H = 10;          
-const MOBILE_ICONS_H = 5; 
-const MOBILE_EXTRA =10;     
-const MOBILE_PADDING_TOP = HEADER_H + MOBILE_ICONS_H + MOBILE_EXTRA; // => 170
+const HEADER_H = 0;          
+const MOBILE_ICONS_H = 0; 
+const MOBILE_EXTRA =0;     
+const MOBILE_PADDING_TOP = HEADER_H + MOBILE_ICONS_H + MOBILE_EXTRA;
 const norm = (s) => String(s || "").trim().toLowerCase();
 const isOffersCat = (cat) => norm(cat) === "offers";
 
@@ -1878,7 +1878,7 @@ const fetchImageUrl = async (photoId) => {
                 background: 'red',
                 color: 'white',
                 borderRadius: '50%',
-                padding: '2px 6px',
+                padding: '6px',
                 fontSize: '12px',
                 fontWeight: 'bold',
               }}
@@ -2317,7 +2317,7 @@ const fetchImageUrl = async (photoId) => {
       top: '80px',
       zIndex: 1050,
       height: '90px',
-      padding: '8px 10px',
+      padding: '8px',
       overflowY: 'hidden',
     }}
   >
@@ -2540,7 +2540,7 @@ const fetchImageUrl = async (photoId) => {
             height: isMobile ? "120px" : "140px",
             width: isMobile ? "90px" : "120px",
             cursor: "pointer",
-            padding: "10px",
+            padding: "6px",
             margin: "5px",
             opacity: 1, 
             pointerEvents: "auto", 
@@ -2594,7 +2594,7 @@ const fetchImageUrl = async (photoId) => {
               height: isMobile ? "120px" : "140px",
               width: isMobile ? "90px" : "120px",
               cursor: "pointer",
-              padding: "10px",
+              padding: "8px",
               marginTop: "5px",
             }}
           >
@@ -2736,7 +2736,7 @@ const fetchImageUrl = async (photoId) => {
               height: isMobile ? "120px" : "140px",
               width: isMobile ? "90px" : "120px",
               cursor: "pointer",
-              padding: "10px",
+              padding: "8px",
               margin: "5px",
             }}
           >
