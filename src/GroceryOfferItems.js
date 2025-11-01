@@ -6,20 +6,45 @@ import Sidebar from "./Sidebar.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Dashboard as MoreVertIcon } from "@mui/icons-material";
 import { Button, Modal } from "react-bootstrap";
-import SearchIcon from '@mui/icons-material/Search';
+import SearchIcon from "@mui/icons-material/Search";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { CartStorage } from "./CartStorage";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ImageCache from "./utils/ImageCache";
 import Footer from "./Footer.js";
-const LIMITED_NAMES = [
-  "Tata Iodised Salt 1 kg",
-  "Onion (Ulligadda) 1 Kg",
-  "Maggi 2-Minute Special Masala Instant Noodles 70 g",
-];
 
-const normalizeName = (s) => String(s || "").toLowerCase().replace(/\s+/g, " ").trim();
+const normalizeName = (s) =>
+  String(s || "").toLowerCase().replace(/\s+/g, " ").trim();
+
+const TWO_QTY = new Set([
+  normalizeName("Onion (Ulligadda) 500 gm"),
+  normalizeName("Potato (Bangala Dumpa) 500gm"),
+  normalizeName("Tamato 500gm"),   
+  normalizeName("Apples 1 Pc"),
+]);
+
+// const THREE_QTY = new Set([
+//   normalizeName("Bananas 1 Pc"),
+// ]);
+
+const FOUR_QTY = new Set([
+  normalizeName("Oranges 1 Pc"),
+]);
+
+const getLimit = (product) => {
+  const n = normalizeName(product?.name);
+  if (FOUR_QTY.has(n)) return 4;
+  // if (THREE_QTY.has(n)) return 3;
+  if (TWO_QTY.has(n)) return 2;
+  return 1; 
+};
+
+const clampQtyFor = (product, qty) => {
+  const n = Number(qty) || 0;
+  const limit = getLimit(product);
+  return Math.min(n, limit);
+};
 
 const GroceryOfferItems = () => {
   const navigate = useNavigate();
@@ -34,7 +59,7 @@ const GroceryOfferItems = () => {
   const [zoomImage, setZoomImage] = useState("");
   const [cart, setCart] = useState({});
   const [checked, setChecked] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [likedProducts, setLikedProducts] = useState({});
   const [zoomProduct, setZoomProduct] = useState(null);
   const [grandSummary, setGrandSummary] = useState({ items: 0, total: 0 });
@@ -47,24 +72,13 @@ const GroceryOfferItems = () => {
   const OFFERS = "Offers";
   const encodedCategory = OFFERS;
 
-  const LIMITED_SET = React.useMemo(() => new Set(LIMITED_NAMES.map(normalizeName)), []); 
-const isLimited = React.useCallback(
-  (product) => LIMITED_SET.has(normalizeName(product?.name)),
-  [LIMITED_SET]
-);
-
-const clampQtyFor = React.useCallback(
-  (product, qty) => (isLimited(product) ? Math.min(1, Number(qty) || 0) : (Number(qty) || 0)),
-  [isLimited]
-);
-
   useEffect(() => {
     const saved = CartStorage.getAll() || [];
     const categories = Array.isArray(saved) ? saved : [saved];
-    const exist = categories.find(c => c.categoryName === selectedCategory);
+    const exist = categories.find((c) => c.categoryName === selectedCategory);
     if (exist) {
       const restored = {};
-      (exist.products || []).forEach(p => {
+      (exist.products || []).forEach((p) => {
         restored[String(p.productId)] = Number(p.qty);
       });
       setCart(restored);
@@ -74,7 +88,7 @@ const clampQtyFor = React.useCallback(
   useEffect(() => {
     if (!selectedCategory) return;
     const current = Object.entries(cart).map(([productId, qty]) => {
-      const product = products.find(p => String(p.id) === String(productId));
+      const product = products.find((p) => String(p.id) === String(productId));
       return {
         productId,
         productName: product?.name || "",
@@ -93,76 +107,83 @@ const clampQtyFor = React.useCallback(
     setGrandSummary(CartStorage.grandSummary());
   }, [cart, selectedCategory, products]);
 
-useEffect(() => {
-  if (!products.length) return;
-  setCart(prev => {
-    let changed = false;
-    const next = { ...prev };
-    for (const [pid, qty] of Object.entries(prev)) {
-      const product = products.find(p => String(p.id) === String(pid));
-      if (!product) continue;
+  useEffect(() => {
+    if (!products.length) return;
+    setCart((prev) => {
+      let changed = false;
+      const next = { ...prev };
+      for (const [pid, qty] of Object.entries(prev)) {
+        const product = products.find((p) => String(p.id) === String(pid));
+        if (!product) continue;
+        const stock = Number(product?.stockLeft || 0);
+        let q = clampQtyFor(product, qty); 
+        if (q > stock) q = stock; 
+        if (q !== qty) {
+          next[pid] = q;
+          changed = true;
+        }
+      }
+      return changed ? next : prev;
+    });
+  }, [products]); 
+
+  const handleAdd = (productId) =>
+    setCart((prev) => ({ ...prev, [productId]: 1 }));
+
+  const handleIncrement = (productId) =>
+    setCart((prev) => {
+      const product = products.find((p) => String(p.id) === String(productId));
+      if (!product) return prev;
       const stock = Number(product?.stockLeft || 0);
-      let q = clampQtyFor(product, qty);   // <-- uses limit-1 properly
-      if (q > stock) q = stock;
-      if (q !== qty) { next[pid] = q; changed = true; }
-    }
-    return changed ? next : prev;
-  });
-}, [products, clampQtyFor]);
+      const cur = Number(prev[productId] || 0);
+      const limit = getLimit(product);
+      const maxAllowed = Math.min(stock, limit);
+      if (cur >= maxAllowed) return prev;
 
+      return { ...prev, [productId]: cur + 1 };
+    });
 
-  const handleAdd = (productId) => setCart(prev => ({ ...prev, [productId]: 1 }));
-
-const handleIncrement = (productId) =>
-  setCart(prev => {
-    const product = products.find(p => String(p.id) === String(productId));
-    if (!product) return prev;
-
+  const handleAddClick = (id) => {
+    const product = products.find((p) => String(p.id) === String(id));
+    if (!product) return;
     const stock = Number(product?.stockLeft || 0);
-    const cur = Number(prev[productId] || 0);
-
-    if (isLimited(product)) {
-      if (cur >= 1) return prev;
-      return { ...prev, [productId]: 1 };
+    if (stock <= 0) return;
+    const limit = getLimit(product);
+    if (limit >= 1) {
+      handleAdd(id);
+      setChecked(true);
     }
+  };
 
-    if (cur >= stock) return prev;
-    return { ...prev, [productId]: cur + 1 };
-  });
+  const getQty = (id) => Number(cart?.[id] || 0);
 
-const handleAddClick = (id) => {
-  const product = products.find(p => String(p.id) === String(id));
-  if (!product) return;
-  const stock = Number(product?.stockLeft || 0);
-  if (stock <= 0) return;
+  const canAddMore = (id) => {
+    const product = products.find((p) => String(p.id) === String(id));
+    if (!product) return false;
+    const limit = getLimit(product);
+    const stock = Number(product?.stockLeft || 0);
+    const maxAllowed = Math.min(stock, limit);
+    return getQty(id) < maxAllowed;
+  };
 
-  if (isLimited(product)) {
-    // set to 1 and stop
-    handleAdd(id);
-    setChecked(true);
-    return;
-  }
-  handleAdd(id);
-  setChecked(true);
-};
-
-const canAddMore = (id) => {
-  const product = products.find(p => String(p.id) === String(id));
-  if (!product) return false;
-
-  if (isLimited(product)) return getQty(id) < 1;  
-  const stock = Number(product?.stockLeft || 0);
-  return getQty(id) < stock;
-};
-
-const handleDecrementClick = (productId) => setCart(prev => { const next = (prev[productId] || 0) - 1; const copy = { ...prev }; if (next <= 0) delete copy[productId]; else copy[productId] = next; return copy; });
+  const handleDecrementClick = (productId) =>
+    setCart((prev) => {
+      const next = (prev[productId] || 0) - 1;
+      const copy = { ...prev };
+      if (next <= 0) delete copy[productId];
+      else copy[productId] = next;
+      return copy;
+    });
 
   useEffect(() => {
     localStorage.setItem("cartData", JSON.stringify(cart));
   }, [cart]);
 
   const toggleLike = (productId) => {
-    setLikedProducts(prev => ({ ...prev, [productId]: !prev[productId] }));
+    setLikedProducts((prev) => ({
+      ...prev,
+      [productId]: !prev[productId],
+    }));
   };
 
   const handleImageClick = (imageSrc, product) => {
@@ -171,17 +192,24 @@ const handleDecrementClick = (productId) => setCart(prev => { const next = (prev
     setShowZoomModal(true);
   };
 
-  const getQty = (id) => Number(cart?.[id] || 0);
-
   function getItemTime(p) {
     if (p?.date) {
       const t = Date.parse(p.date);
       if (!Number.isNaN(t)) return t;
     }
     const candidates = [
-      p.createdAt, p.created_on, p.createdDate, p.createDate,
-      p.updatedAt, p.updated_on, p.modifiedAt, p.modified_on,
-      p.addedDate, p.added_at, p.timestamp, p.timeStamp,
+      p.createdAt,
+      p.created_on,
+      p.createdDate,
+      p.createDate,
+      p.updatedAt,
+      p.updated_on,
+      p.modifiedAt,
+      p.modified_on,
+      p.addedDate,
+      p.added_at,
+      p.timestamp,
+      p.timeStamp,
     ];
     for (const c of candidates) {
       const t = Date.parse(c);
@@ -203,8 +231,12 @@ const handleDecrementClick = (productId) => setCart(prev => { const next = (prev
     async function fetchProductsAndFirstImages() {
       try {
         setImageLoading(true);
-        const url = `https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent("Offers")}`;
-        const { data: items } = await axios.get(url, { signal: controller.signal });
+        const url = `https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(
+          "Offers"
+        )}`;
+        const { data: items } = await axios.get(url, {
+          signal: controller.signal,
+        });
         const safeItems = Array.isArray(items) ? items : [];
         if (cancelled) return;
 
@@ -216,8 +248,11 @@ const handleDecrementClick = (productId) => setCart(prev => { const next = (prev
         });
 
         const firstImages = safeItems
-          .map(p => ({ productId: p.id, photo: Array.isArray(p.images) ? p.images[0] : null }))
-          .filter(x => !!x.photo);
+          .map((p) => ({
+            productId: p.id,
+            photo: Array.isArray(p.images) ? p.images[0] : null,
+          }))
+          .filter((x) => !!x.photo);
 
         const cachedMap = {};
         const misses = [];
@@ -231,13 +266,16 @@ const handleDecrementClick = (productId) => setCart(prev => { const next = (prev
         }
 
         setProducts(sorted);
-        if (Object.keys(cachedMap).length) setImageUrls(prev => ({ ...prev, ...cachedMap }));
+        if (Object.keys(cachedMap).length)
+          setImageUrls((prev) => ({ ...prev, ...cachedMap }));
         if (cancelled) return;
 
         const fetchOne = async ({ productId, photo }) => {
           try {
             const res = await fetch(
-              `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
+              `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
+                photo
+              )}`,
               { signal: controller.signal }
             );
             const json = await res.json();
@@ -246,7 +284,7 @@ const handleDecrementClick = (productId) => setCart(prev => { const next = (prev
             ImageCache.setBase64(photo, b64);
             const dataUrl = `data:image/jpeg;base64,${b64}`;
             if (!cancelled) {
-              setImageUrls(prev => {
+              setImageUrls((prev) => {
                 if (prev[productId]?.[0] === dataUrl) return prev;
                 return { ...prev, [productId]: [dataUrl] };
               });
@@ -293,7 +331,9 @@ const handleDecrementClick = (productId) => setCart(prev => { const next = (prev
     }
 
     const currentCategory = decodeURIComponent(encodedCategory);
-    const existingCategory = savedCategories.find((c) => c.categoryName === currentCategory);
+    const existingCategory = savedCategories.find(
+      (c) => c.categoryName === currentCategory
+    );
     if (existingCategory) {
       const restoredCart = {};
       (existingCategory.products || []).forEach((p) => {
@@ -328,26 +368,55 @@ const handleDecrementClick = (productId) => setCart(prev => { const next = (prev
           >
             Lakshmi Mart
             <br />
-            <span style={{ fontSize: "12px", fontWeight: "bold", display: "block", marginTop: "2px", textAlign: "center", fontFamily: "Roboto" }}>
+            <span
+              style={{
+                fontSize: "12px",
+                fontWeight: "bold",
+                display: "block",
+                marginTop: "2px",
+                textAlign: "center",
+                fontFamily: "Roboto",
+              }}
+            >
               FSSAI LIC Number - 20125051001066
             </span>
-            <span style={{ fontSize: "12px", fontWeight: "bold", display: "block", marginTop: "2px", textAlign: "center", fontFamily: "Roboto" }}>
+            <span
+              style={{
+                fontSize: "12px",
+                fontWeight: "bold",
+                display: "block",
+                marginTop: "2px",
+                textAlign: "center",
+                fontFamily: "Roboto",
+              }}
+            >
               Delivery Timings : 08:00 AM -09:00 PM
             </span>
           </h1>
         </div>
 
-        <div className="wrapper d-flex" style={{ marginTop: isMobile ? "65px" : "170px" }}>
+        <div
+          className="wrapper d-flex"
+          style={{ marginTop: isMobile ? "65px" : "170px" }}
+        >
           {!isMobile ? (
             <div className="ml-0 p-0 sde_mnu">
               <Sidebar userType={selectedUserType} />
             </div>
           ) : (
             <div className="groceryfloating-menu">
-              <Button variant="primary" className="rounded-circle shadow" onClick={() => setShowMenu(!showMenu)}>
+              <Button
+                variant="primary"
+                className="rounded-circle shadow"
+                onClick={() => setShowMenu(!showMenu)}
+              >
                 <MoreVertIcon />
               </Button>
-              {showMenu && <div className="sidebar-container"><Sidebar userType={selectedUserType} /></div>}
+              {showMenu && (
+                <div className="sidebar-container">
+                  <Sidebar userType={selectedUserType} />
+                </div>
+              )}
             </div>
           )}
 
@@ -372,13 +441,22 @@ const handleDecrementClick = (productId) => setCart(prev => { const next = (prev
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value.trimStart())}
                 />
-                <SearchIcon className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" style={{ pointerEvents: 'none' }} />
+                <SearchIcon
+                  className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"
+                  style={{ pointerEvents: "none" }}
+                />
               </div>
 
               {selectedCategory && (
                 <>
                   <div className="d-flex align-items-center">
-                    <ArrowBackIcon className="me-2" style={{ color: "green", cursor: "pointer" }} onClick={() => navigate(`/profilePage/${userType}/${userId}`)} />
+                    <ArrowBackIcon
+                      className="me-2"
+                      style={{ color: "green", cursor: "pointer" }}
+                      onClick={() =>
+                        navigate(`/profilePage/${userType}/${userId}`)
+                      }
+                    />
                     <h4 className="fw-bold mb-0">{selectedCategory}</h4>
                   </div>
                 </>
@@ -387,7 +465,10 @@ const handleDecrementClick = (productId) => setCart(prev => { const next = (prev
 
             {selectedCategory && (
               <>
-                <div className="d-flex justify-content-end" style={{ marginTop: "90px" }}>
+                <div
+                  className="d-flex justify-content-end"
+                  style={{ marginTop: "90px" }}
+                >
                   <span className="text-success text-xs">
                     Selected Qty:{" "}
                     <span className="text-danger fw-bold">
@@ -400,8 +481,15 @@ const handleDecrementClick = (productId) => setCart(prev => { const next = (prev
                     <span className="text-danger fw-bold">
                       {Math.round(
                         Object.entries(cart).reduce((sum, [productId, qty]) => {
-                          const product = products.find((p) => String(p.id) === String(productId));
-                          return sum + (product ? Number(product.afterDiscount) * qty : 0);
+                          const product = products.find(
+                            (p) => String(p.id) === String(productId)
+                          );
+                          return (
+                            sum +
+                            (product
+                              ? Number(product.afterDiscount) * qty
+                              : 0)
+                          );
                         }, 0)
                       )}
                     </span>
@@ -409,82 +497,121 @@ const handleDecrementClick = (productId) => setCart(prev => { const next = (prev
                   </span>
                 </div>
 
-                <div className="grocery-row flex flex-wrap gap-1" style={{ marginBottom: "60px" }}>
+                <div
+                  className="grocery-row flex flex-wrap gap-1"
+                  style={{ marginBottom: "60px" }}
+                >
                   {products
-                    .filter((p) =>
-                      p.category?.toLowerCase() === selectedCategory.toLowerCase() &&
-                      p.status === "Approved" &&
-                      Number(p.discount) > 0 &&
-                      (searchQuery === "" || p.name?.toLowerCase().includes(searchQuery.toLowerCase()))
+                    .filter(
+                      (p) =>
+                        p.category?.toLowerCase() ===
+                          selectedCategory.toLowerCase() &&
+                        p.status === "Approved" &&
+                        Number(p.discount) > 0 &&
+                        (searchQuery === "" ||
+                          p.name
+                            ?.toLowerCase()
+                            .includes(searchQuery.toLowerCase()))
                     )
                     .map((product) => {
                       const stock = Number(product.stockLeft || 0);
                       const isOutOfStock = stock <= 0;
-                      // const limited = isLimited(product);
 
                       return (
                         <div
                           key={product.id}
                           className="w-[200px] flex flex-col p-2 bg-white rounded shadow-sm border position-relative"
-                          style={{ minHeight: "230px", opacity: isOutOfStock ? 0.6 : 1 }}
+                          style={{
+                            minHeight: "230px",
+                            opacity: isOutOfStock ? 0.6 : 1,
+                          }}
                         >
                           <div className="d-flex flex-row justify-content-between absolute top-0 left-0 w-full">
                             {Number(product.discount) > 0 && !isOutOfStock && (
-                              <span className="discount-badge">{Math.round(Number(product.discount))}%</span>
+                              <span className="discount-badge">
+                                {Math.round(Number(product.discount))}%
+                              </span>
                             )}
 
                             {!isOutOfStock && (
                               <span
-                                style={{ cursor: "pointer", marginRight: "6px", marginTop: "2px", zIndex: 3 }}
+                                style={{
+                                  cursor: "pointer",
+                                  marginRight: "6px",
+                                  marginTop: "2px",
+                                  zIndex: 3,
+                                }}
                                 onClick={() => toggleLike(product.id)}
                               >
-                                {likedProducts[product.id] ? <FavoriteIcon style={{ color: "red" }} /> : <FavoriteBorderIcon style={{ color: "grey" }} />}
+                                {likedProducts[product.id] ? (
+                                  <FavoriteIcon style={{ color: "red" }} />
+                                ) : (
+                                  <FavoriteBorderIcon
+                                    style={{ color: "grey" }}
+                                  />
+                                )}
                               </span>
                             )}
                           </div>
-
-                          {/* NEW: Limit 1 ribbon */}
-                          {/* {limited && !isOutOfStock && (
-                            <span
-                              style={{
-                                position: "absolute",
-                                top: "6px",
-                                left: "6px",
-                                background: "#ff7043",
-                                color: "#fff",
-                                padding: "2px 6px",
-                                borderRadius: "6px",
-                                fontSize: "10px",
-                                fontWeight: 700,
-                                zIndex: 3,
-                              }}
-                            >
-                              Limit 1
-                            </span>
-                          )} */}
-
                           {/* Product Image */}
-                          <div className="d-flex justify-content-center align-items-center position-relative" style={{ height: "90px" }}>
+                          <div
+                            className="d-flex justify-content-center align-items-center position-relative"
+                            style={{ height: "90px" }}
+                          >
                             {imageUrls[product.id]?.[0] ? (
                               <img
                                 src={imageUrls[product.id]?.[0]}
                                 alt={product.name}
                                 decoding="async"
                                 loading="eager"
-                                fetchpriority="high"
-                                style={{ maxHeight: "80px", maxWidth: "100%", objectFit: "contain", cursor: isOutOfStock ? "not-allowed" : "pointer", borderRadius: "6px" }}
-                                onClick={() => !isOutOfStock && handleImageClick(imageUrls[product.id][0], product)}
+                                fetchPriority="high"
+                                style={{
+                                  maxHeight: "80px",
+                                  maxWidth: "100%",
+                                  objectFit: "contain",
+                                  cursor: isOutOfStock
+                                    ? "not-allowed"
+                                    : "pointer",
+                                  borderRadius: "6px",
+                                }}
+                                onClick={() =>
+                                  !isOutOfStock &&
+                                  handleImageClick(
+                                    imageUrls[product.id][0],
+                                    product
+                                  )
+                                }
                               />
                             ) : (
-                              <span className="text-muted small">Loading Image</span>
+                              <span className="text-muted small">
+                                Loading Image
+                              </span>
                             )}
 
                             {isOutOfStock && (
                               <div
                                 className="position-absolute d-flex justify-content-center align-items-center"
-                                style={{ top: 0, left: 0, width: "100%", height: "100%", background: "rgba(255,255,255,0.75)", borderRadius: "6px", zIndex: 2 }}
+                                style={{
+                                  top: 0,
+                                  left: 0,
+                                  width: "100%",
+                                  height: "100%",
+                                  background: "rgba(255,255,255,0.75)",
+                                  borderRadius: "6px",
+                                  zIndex: 2,
+                                }}
                               >
-                                <span style={{ fontWeight: 500, backgroundColor: "grey", color: "white", fontSize: "10px", borderRadius: "6px", margin: "1px", padding: "2px" }}>
+                                <span
+                                  style={{
+                                    fontWeight: 500,
+                                    backgroundColor: "grey",
+                                    color: "white",
+                                    fontSize: "10px",
+                                    borderRadius: "6px",
+                                    margin: "1px",
+                                    padding: "2px",
+                                  }}
+                                >
                                   Out of Stock
                                 </span>
                               </div>
@@ -492,39 +619,140 @@ const handleDecrementClick = (productId) => setCart(prev => { const next = (prev
                           </div>
 
                           {/* Product Name */}
-                          <h6 className="text-start fw-bold m-0" style={{ fontSize: "11px", display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden", textOverflow: "ellipsis", lineHeight: "1.2em", maxHeight: "3.6em" }}>
+                          <h6
+                            className="text-start fw-bold m-0"
+                            style={{
+                              fontSize: "11px",
+                              display: "-webkit-box",
+                              WebkitLineClamp: 2,
+                              WebkitBoxOrient: "vertical",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              lineHeight: "1.2em",
+                              maxHeight: "3.6em",
+                            }}
+                          >
                             {product.name}
                           </h6>
 
-                          {/* Price/MRP/Units — ONLY when in stock */}
+                         {/* Price/MRP/Units — ONLY when in stock */}
                           {!isOutOfStock && (
                             <div className="text-start m-0" style={{ fontSize: "11px" }}>
-                              {product.afterDiscount != null && <b className="text-success me-2">₹{Math.round(Number(product.afterDiscount))}</b>}
-                              {product.mrp != null && <s className="text-muted">₹{product.mrp}</s>}
-                              {product.units && <b className="text-success" style={{ marginLeft: "5px" }}>{product.units}</b>}
+                              {product.afterDiscount != null && (
+                                <b className="text-success me-2">
+                                  ₹{Math.round(Number(product.afterDiscount))}
+                                </b>
+                              )}
+                              {product.mrp != null && (
+                                <s className="text-muted">₹{product.mrp}</s>
+                              )}
+                              {product.units && (
+                                <b className="text-success" style={{ marginLeft: "5px" }}>
+                                  {product.units}
+                                </b>
+                              )}
+
+                              {/* Move Minimum Limit text here — under price */}
+                              {(() => {
+                                const limit = getLimit(product);
+                                return Number.isFinite(limit) && limit > 0 ? (
+                                  <div
+                                    style={{
+                                      color: "#db1818",
+                                      paddingBottom: "2px",
+                                      fontSize: "10px",
+                                      fontWeight: 600,
+                                    }}
+                                  >
+                                    Max {limit} per customer                                  
+                                    </div>
+                                ) : null;
+                              })()}
                             </div>
                           )}
 
                           {/* Checkbox */}
                           {!isOutOfStock && (
-                            <div style={{ position: "absolute", bottom: "8px", left: "8px" }}>
-                              <input type="checkbox" className="border-dark" checked={cart[product.id] > 0} readOnly />
+                            <div
+                              style={{
+                                position: "absolute",
+                                bottom: "8px",
+                                left: "8px",
+                              }}
+                            >
+                              <input
+                                type="checkbox"
+                                className="border-dark"
+                                checked={cart[product.id] > 0}
+                                readOnly
+                              />
                             </div>
                           )}
 
                           {/* Add/Counter — ONLY when in stock */}
                           {!isOutOfStock && (
-                            <div style={{ position: "absolute", bottom: "8px", right: "8px" }}>
+                            <div
+                              style={{
+                                position: "absolute",
+                                bottom: "8px",
+                                right: "8px",
+                              }}
+                            >
                               {cart[product.id] ? (
-                                <div className="d-flex align-items-center justify-content-between" style={{ backgroundColor: "green", color: "white", borderRadius: "8px", padding: "2px", minWidth: "60px" }}>
-                                  <button className="btn btn-sm p-0 text-white" style={{ fontWeight: "bold", width: "25px", height: "25px" }} onClick={() => handleDecrementClick(product.id)}>–</button>
-                                  <span className="fw-bold">{cart[product.id]}</span>
+                                <div
+                                  className="d-flex align-items-center justify-content-between"
+                                  style={{
+                                    backgroundColor: "green",
+                                    color: "white",
+                                    borderRadius: "8px",
+                                    padding: "2px",
+                                    minWidth: "60px",
+                                  }}
+                                >
                                   <button
                                     className="btn btn-sm p-0 text-white"
-                                    style={{ fontWeight: "bold", width: "25px", height: "25px", opacity: canAddMore(product.id) ? 1 : 0.5, cursor: canAddMore(product.id) ? "pointer" : "not-allowed" }}
-                                    onClick={() => canAddMore(product.id) && handleIncrement(product.id)}
+                                    style={{
+                                      fontWeight: "bold",
+                                      width: "25px",
+                                      height: "25px",
+                                    }}
+                                    onClick={() =>
+                                      handleDecrementClick(product.id)
+                                    }
+                                  >
+                                    –
+                                  </button>
+                                  <span className="fw-bold">
+                                    {cart[product.id]}
+                                  </span>
+                                  <button
+                                    className="btn btn-sm p-0 text-white"
+                                    style={{
+                                      fontWeight: "bold",
+                                      width: "25px",
+                                      height: "25px",
+                                      opacity: canAddMore(product.id) ? 1 : 0.5,
+                                      cursor: canAddMore(product.id)
+                                        ? "pointer"
+                                        : "not-allowed",
+                                    }}
+                                    onClick={() =>
+                                      canAddMore(product.id) &&
+                                      handleIncrement(product.id)
+                                    }
                                     disabled={!canAddMore(product.id)}
-                                    title={!canAddMore(product.id) ? (isLimited(product) ? "Limit 1 per customer" : "No more stock") : "Add one"}
+                                    title={
+                                      !canAddMore(product.id)
+                                        ? Number(product.stockLeft || 0) <=
+                                          getQty(product.id)
+                                          ? "No more stock"
+                                          : getLimit(product) === Infinity
+                                          ? "No more stock"
+                                          : `Limit ${getLimit(
+                                              product
+                                            )} per customer`
+                                        : "Add one"
+                                    }
                                   >
                                     +
                                   </button>
@@ -532,7 +760,14 @@ const handleDecrementClick = (productId) => setCart(prev => { const next = (prev
                               ) : (
                                 <button
                                   className="btn fw-bold"
-                                  style={{ border: "1px solid green", color: "green", backgroundColor: "#f6fff6", borderRadius: "8px", padding: "2px 12px", fontSize: "13px" }}
+                                  style={{
+                                    border: "1px solid green",
+                                    color: "green",
+                                    backgroundColor: "#f6fff6",
+                                    borderRadius: "8px",
+                                    padding: "2px 12px",
+                                    fontSize: "13px",
+                                  }}
                                   onClick={() => handleAddClick(product.id)}
                                 >
                                   ADD
@@ -555,7 +790,12 @@ const handleDecrementClick = (productId) => setCart(prev => { const next = (prev
                         const arr = Array.isArray(parsed) ? parsed : [parsed];
                         return arr
                           .filter(Boolean)
-                          .map((cat) => ({ ...cat, products: Array.isArray(cat?.products) ? cat.products : [] }));
+                          .map((cat) => ({
+                            ...cat,
+                            products: Array.isArray(cat?.products)
+                              ? cat.products
+                              : [],
+                          }));
                       } catch (e) {
                         console.error("Invalid JSON in allCategories:", e);
                         return [];
@@ -568,7 +808,10 @@ const handleDecrementClick = (productId) => setCart(prev => { const next = (prev
                         for (const p of cat.products) {
                           const qty = Number(p?.qty) || 0;
                           if (!qty) continue;
-                          const price = Number(p?.afterDiscountPrice ?? p?.price ?? p?.finalPrice ?? 0) || 0;
+                          const price =
+                            Number(
+                              p?.afterDiscountPrice ?? p?.price ?? p?.finalPrice ?? 0
+                            ) || 0;
                           acc.items += qty;
                           acc.total += price * qty;
                         }
@@ -600,14 +843,25 @@ const handleDecrementClick = (productId) => setCart(prev => { const next = (prev
                           marginBottom: "5px",
                         }}
                       >
-                        <div style={{ display: "flex", alignItems: "center", gap: "10px"}}>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "10px",
+                          }}
+                        >
                           🛒
-                          <div style={{ display: "flex", flexDirection: "column" }}>
-                            <span style={{ fontSize: "10px" }}>{items} items</span>
+                          <div
+                            style={{ display: "flex", flexDirection: "column" }}
+                          >
+                            <span style={{ fontSize: "10px" }}>
+                              {items} items
+                            </span>
                             <span style={{ fontSize: "10px" }}>₹{total}</span>
                             {total < MIN_ORDER_TOTAL && (
                               <span style={{ fontSize: "10px", opacity: 0.9 }}>
-                                Add ₹{MIN_ORDER_TOTAL - total} more to reach minimum order
+                                Add ₹{MIN_ORDER_TOTAL - total} more to reach
+                                minimum order
                               </span>
                             )}
                           </div>
@@ -616,7 +870,14 @@ const handleDecrementClick = (productId) => setCart(prev => { const next = (prev
                         <button
                           type="button"
                           className="text-white fw-bold d-flex align-items-center gap-1"
-                          style={{ fontSize: "12px", cursor: total < MIN_ORDER_TOTAL ? "not-allowed" : "pointer", background: "transparent", border: "none", opacity: total < MIN_ORDER_TOTAL ? 0.7 : 1 }}
+                          style={{
+                            fontSize: "12px",
+                            cursor:
+                              total < MIN_ORDER_TOTAL ? "not-allowed" : "pointer",
+                            background: "transparent",
+                            border: "none",
+                            opacity: total < MIN_ORDER_TOTAL ? 0.7 : 1,
+                          }}
                           onClick={() => {
                             if (total < MIN_ORDER_TOTAL) return;
                             navigate(`/groceryOffersCart/${userType}/${userId}`);
@@ -632,35 +893,82 @@ const handleDecrementClick = (productId) => setCart(prev => { const next = (prev
             )}
           </div>
         </div>
-        <Footer/>
+        <Footer />
       </div>
 
-      <Modal show={showZoomModal} onHide={() => { setShowZoomModal(false); setZoomProduct(null); }} centered>
-        <button className="close-button text-end mt-0" onClick={() => { setShowZoomModal(false); setZoomProduct(null); }}>&times;</button>
+      <Modal
+        show={showZoomModal}
+        onHide={() => {
+          setShowZoomModal(false);
+          setZoomProduct(null);
+        }}
+        centered
+      >
+        <button
+          className="close-button text-end mt-0"
+          onClick={() => {
+            setShowZoomModal(false);
+            setZoomProduct(null);
+          }}
+        >
+          &times;
+        </button>
         <Modal.Body className="text-center">
           <div className="zoom-container">
-            <img src={zoomImage} alt={zoomProduct?.name || "Zoomed Product"} className="zoom-image" />
+            <img
+              src={zoomImage}
+              alt={zoomProduct?.name || "Zoomed Product"}
+              className="zoom-image"
+            />
           </div>
-          <h6 className="text-start fw-bold m-0" style={{ fontSize: "12px" }}>{zoomProduct?.name || ""}</h6>
+          <h6 className="text-start fw-bold m-0" style={{ fontSize: "12px" }}>
+            {zoomProduct?.name || ""}
+          </h6>
           {zoomProduct?.afterDiscount != null && (
             <p className="text-start m-0" style={{ fontSize: "12px" }}>
-              <b className="text-success me-2">₹{Math.round(Number(zoomProduct.afterDiscount))}</b>
-              {zoomProduct?.mrp ? <s className="text-muted">₹{zoomProduct.mrp}</s> : null}
+              <b className="text-success me-2">
+                ₹{Math.round(Number(zoomProduct.afterDiscount))}
+              </b>
+              {zoomProduct?.mrp ? (
+                <s className="text-muted">₹{zoomProduct.mrp}</s>
+              ) : null}
             </p>
           )}
         </Modal.Body>
       </Modal>
 
       <style jsx>{`
-        .zoomable-image { transition: transform 0.3s ease-in-out; }
-        .zoomable-image:hover { transform: scale(1.1); }
-        .zoom-container { position: relative; display: inline-block; }
-        .close-button {
-          position: absolute; top: 4px; right: 5px; background: red; border: none;
-          font-size: 24px; color: white; padding: 5px; border-radius: 50%; cursor: pointer; transition: 0.3s;
+        .zoomable-image {
+          transition: transform 0.3s ease-in-out;
         }
-        .close-button:hover { background: darkred; }
-        .zoom-image { max-width: 70%; height: 50%; border-radius: 5px; }
+        .zoomable-image:hover {
+          transform: scale(1.1);
+        }
+        .zoom-container {
+          position: relative;
+          display: inline-block;
+        }
+        .close-button {
+          position: absolute;
+          top: 4px;
+          right: 5px;
+          background: red;
+          border: none;
+          font-size: 24px;
+          color: white;
+          padding: 5px;
+          border-radius: 50%;
+          cursor: pointer;
+          transition: 0.3s;
+        }
+        .close-button:hover {
+          background: darkred;
+        }
+        .zoom-image {
+          max-width: 70%;
+          height: 50%;
+          border-radius: 5px;
+        }
       `}</style>
     </>
   );

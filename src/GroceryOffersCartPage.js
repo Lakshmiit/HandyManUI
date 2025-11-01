@@ -14,16 +14,31 @@ import Footer from "./Footer.js";
 
 const IMAGE_DOWNLOAD =
   "https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=";
-const OFFERS_API =
-  "https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=Offers";
 
-// === Limit-1 products (by NAME). Change to IDs if you want ===
-const LIMITED_NAMES = new Set([
-  "tata iodised salt 1 kg",
-  "onion (ulligadda) 1 kg",
-  "maggi 2-minute special masala instant noodles 70 g",
-]);
 const norm = (s) => String(s || "").toLowerCase().replace(/\s+/g, " ").trim();
+
+const TWO_QTY = new Set([
+  norm("Onion (Ulligadda) 500gm"),
+  norm("Potato (Bangala Dumpa) 500gm"),
+  norm("Tamato 500gm"),
+  norm("Apples 1 Pc"),
+]);
+
+// const THREE_QTY = new Set([
+//   norm("Bananas 1 Pc"),
+// ]);
+
+const FOUR_QTY = new Set([
+  norm("Oranges 1 Pc"), 
+]);
+
+const getLimitByName = (name) => {
+  const n = norm(name);
+  if (FOUR_QTY.has(n)) return 4;
+  // if (THREE_QTY.has(n)) return 3;
+  if (TWO_QTY.has(n)) return 2;
+  return 1; 
+};
 
 const getFilenameFromValue = (value) => {
   if (!value) return "";
@@ -103,10 +118,10 @@ const GroceryOffersCartPage = () => {
     // keep only items with qty > 0
     const filtered = allItems.filter((it) => it.qty > 0);
 
-    // clamp any limited items to max 1
-    const clamped = filtered.map((it) =>
-      LIMITED_NAMES.has(norm(it.name)) ? { ...it, qty: Math.min(1, it.qty) } : it
-    );
+    const clamped = filtered.map((it) => {
+      const limit = getLimitByName(it.name);
+      return { ...it, qty: Math.min(limit, it.qty) };
+    });
 
     setCartItems(clamped);
     setGrandSummary(computeTotals(clamped));
@@ -150,9 +165,10 @@ const GroceryOffersCartPage = () => {
           })
         );
         const filtered = allItems.filter((it) => it.qty > 0);
-        const clamped = filtered.map((it) =>
-          LIMITED_NAMES.has(norm(it.name)) ? { ...it, qty: Math.min(1, it.qty) } : it
-        );
+        const clamped = filtered.map((it) => {
+          const limit = getLimitByName(it.name);
+          return { ...it, qty: Math.min(limit, it.qty) };
+        });
         setCartItems(clamped);
         setGrandSummary(computeTotals(clamped));
       } catch {}
@@ -253,17 +269,15 @@ const GroceryOffersCartPage = () => {
     localStorage.setItem("allCategories", JSON.stringify(allCategories));
   };
 
-  // ====== CORE: qty change with limit-1 + stock clamp ======
+  // ====== CORE: qty change with per-item limits + stock clamp ======
   const handleQtyChange = (rowId, delta) => {
     setCartItems((prev) => {
       const next = prev
         .map((it) => {
           if (it.id !== rowId) return it;
-          const limited = LIMITED_NAMES.has(norm(it.name));
-          const maxAllowed = Math.min(
-            Number.isFinite(it.stockLeft) ? it.stockLeft : Infinity,
-            limited ? 1 : Infinity
-          );
+          const limit = getLimitByName(it.name);
+          const stockMax = Number.isFinite(it.stockLeft) ? it.stockLeft : Infinity;
+          const maxAllowed = Math.min(stockMax, limit);
           const current = Number(it.qty || 0);
           const proposed = current + delta;
           const clamped = Math.max(0, Math.min(proposed, maxAllowed));
@@ -376,10 +390,11 @@ const GroceryOffersCartPage = () => {
     }
   };
 
+  // ---- Poll stock; re-clamp by stock and per-item limit ----
   useEffect(() => {
     const fetchAndUpdateStock = async () => {
       try {
-        const res = await fetch(OFFERS_API);
+        const res = await fetch(`https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=Offers`);
         const list = (await res.json()) || [];
         const byName = new Map(
           list.map((p) => [norm(p.name), Number(p.stockLeft || 0)])
@@ -395,19 +410,21 @@ const GroceryOffersCartPage = () => {
               byId.get(String(it.productId)) ??
               byName.get(norm(it.name)) ??
               Number(it.stockLeft || 0);
-            const limited = LIMITED_NAMES.has(norm(it.name));
-            const maxAllowed = Math.min(stock, limited ? 1 : Infinity);
+            const limit = getLimitByName(it.name);
+            const maxAllowed = Math.min(stock, limit);
             const clampedQty = Math.max(0, Math.min(Number(it.qty || 0), maxAllowed));
             if (stock !== it.stockLeft || clampedQty !== it.qty) changed = true;
             return { ...it, stockLeft: stock, qty: clampedQty };
           });
+          const filtered = next.filter((i) => i.qty > 0);
           if (changed) {
-            writeBackToStorage(next.filter((i) => i.qty > 0));
-            setGrandSummary(computeTotals(next.filter((i) => i.qty > 0)));
+            writeBackToStorage(filtered);
+            setGrandSummary(computeTotals(filtered));
           }
-          return next.filter((i) => i.qty > 0);
+          return filtered;
         });
       } catch (e) {
+        // ignore poll errors
       }
     };
 
@@ -424,11 +441,7 @@ const GroceryOffersCartPage = () => {
   const itemsTotal = Math.round(
     cartItems.reduce((s, it) => s + it.mrp * it.qty, 0)
   );
-//   const grandTotal = Math.round(
-//     cartItems.reduce((s, it) => s + it.price * it.qty, 0)
-//   );   
   const roundedItemsTotal = Math.round(itemsTotal);
-//   const roundedGrandTotal = Math.round(grandTotal);
 
   return (
     <div
@@ -464,11 +477,9 @@ const GroceryOffersCartPage = () => {
         style={{ overflowY: "auto", padding: "8px", marginTop: "48px" }}
       >
         {cartItems.map((item) => {
-          const limited = LIMITED_NAMES.has(norm(item.name));
-          const maxAllowed = Math.min(
-            Number.isFinite(item.stockLeft) ? item.stockLeft : Infinity,
-            limited ? 1 : Infinity
-          );
+          const limit = getLimitByName(item.name);
+          const stockMax = Number.isFinite(item.stockLeft) ? item.stockLeft : Infinity;
+          const maxAllowed = Math.min(stockMax, limit);
           const canAdd = item.qty < maxAllowed;
 
           return (
@@ -519,21 +530,21 @@ const GroceryOffersCartPage = () => {
                   <span style={{ color: "dark", marginLeft: "5px" }}>
                     {item.units}
                   </span>
-                  {/* {limited && (
+                  {Number.isFinite(limit) && limit > 1 && (
                     <span
                       style={{
                         marginLeft: 6,
-                        background: "#ff7043",
-                        color: "#fff",
-                        padding: "0 6px",
+                        // background: "#ff7043",
+                        color: "red",
+                        padding: "6px",
                         borderRadius: 6,
                         fontSize: 10,
                         fontWeight: 700,
                       }}
                     >
-                      Limit 1
+                      Max {limit} per customer
                     </span>
-                  )} */}
+                  )}
                 </div>
                 <div style={{ fontWeight: "600", fontSize: "12px" }}>
                   ₹{Math.round(item.price)}
@@ -574,8 +585,8 @@ const GroceryOffersCartPage = () => {
                   title={
                     canAdd
                       ? "Add one"
-                      : limited
-                      ? "Limit 1 per customer"
+                      : (Number(item.qty) >= limit && Number.isFinite(limit))
+                      ? `Limit ${limit} per customer`
                       : "No more stock"
                   }
                 >
