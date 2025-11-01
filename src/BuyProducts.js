@@ -85,6 +85,7 @@ const [shouldBlink,setShouldBlink] = useState(false);
 const [deliveryInDays, setDeliveryInDays] = useState('');
 const [numberOfStockAvailable, setNumberOfStockAvailable] = useState('');
 const [disableBuy, setDisableBuy] = useState(false);
+const isGuestName = (name) => (name ?? '').trim().toLowerCase() === 'guest';
 
 
  // Check if there's state passed from ViewProduct page
@@ -156,8 +157,8 @@ const [disableBuy, setDisableBuy] = useState(false);
 // };
 
 useEffect(() => {
-  console.log(buyProductId, loading, editingAddressId);
-}, [buyProductId, loading, editingAddressId]);
+  console.log(buyProductId, loading, editingAddressId, isEditing);
+}, [buyProductId, loading, editingAddressId, isEditing]);
 
   // Fetch customer profile data
     const fetchProfileType = useCallback(async () => {
@@ -837,7 +838,7 @@ useEffect(() => {
   return (
     <div>
    <Header />
-    <div className="d-flex flex-row justify-content-start align-items-start">
+    <div className="d-flex flex-row justify-content-start align-items-start mt-100">
       {/* Sidebar menu for Larger Screens */}
       {!isMobile && (
         <div className=" ml-0 p-0 sde_mnu">
@@ -866,11 +867,11 @@ useEffect(() => {
 
       {/* Main Content */}
       <div className={`container ${isMobile ? 'w-100' : 'w-75'}`}>
-      <h3 className="mb-1 text-center mt-mob-100">Buy Products</h3>
-        <div className=" rounded-3 p-4 bx_sdw w-100">
+      <h3 className=" text-center">Buy Products</h3>
+        <div className=" rounded-3 bx_sdw w-100">
           <form className="form" onSubmit={handleSubmit}>
 <div className="d-flex justify-content-between align-items-center">
-                    <label className="mt-2">Address <span className="req_star">*</span></label>
+                    <label className="">Address <span className="req_star">*</span></label>
                     {/* <Button variant="success m-1 text-white" onClick={() => setShowModal(true)}>
                       Add Address
                     </Button> */}
@@ -878,7 +879,10 @@ useEffect(() => {
           {/* Modal */}
                 <Modal show={showModal} onHide={() => setShowModal(false)}>
             <Modal.Header closeButton>
-                <Modal.Title>{isEditing ? 'Edit Address' : 'Add Address'}</Modal.Title>
+              <Modal.Title className='w-100'>
+                {isGuestName(fullName) ? 'Add Address' : 'Edit Address'}
+              </Modal.Title>
+                {/* <Modal.Title>{isEditing ? 'Edit Address' : 'Add Address'}</Modal.Title> */}
               </Modal.Header>
             <Modal.Body>
               <Form>
@@ -989,7 +993,7 @@ useEffect(() => {
                   />
                 </Form.Group>
                 <Button type="button" variant="primary" onClick={handleAddressEdit}>
-                  {isEditing ? 'Edit Address' : 'Add Address'}
+                  {isGuestName(fullName) ? 'Add Address' : 'Edit Address'}
                 </Button>
               </Form>
             </Modal.Body>

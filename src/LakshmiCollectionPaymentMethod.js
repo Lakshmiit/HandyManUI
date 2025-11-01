@@ -51,6 +51,8 @@ const [mobileNumber, setMobileNumber] = useState('');
   const [collectionItems, setCollectionItems] = useState([]);
 //   const [imageLoading, setImageLoading] = useState(true);
  const [uploadItemsByName, setUploadItemsByName] = useState({});
+const isGuestName = (name) => (name ?? '').trim().toLowerCase() === 'guest';
+
 useEffect(() => {           
   console.log( isChecked, editingAddressId );                     
 }, [isChecked, editingAddressId]);
@@ -495,7 +497,7 @@ const handleUpdatePaymentMethod = async (e) => {
                             <Modal.Header closeButton
                             style={{ backgroundColor: isEditing ? "#ec3b83" : "#de6fa1",color: "white"}}>
                             <Modal.Title className="w-100">
-                                  {isEditing ? "Edit Address" : "Add Address"}
+                                  {isGuestName(fullName) ? "Edit Address" : "Add Address"}
                             </Modal.Title>
                             </Modal.Header>
                         <Modal.Body>
@@ -613,7 +615,7 @@ const handleUpdatePaymentMethod = async (e) => {
                                 color: "white"
                             }}
                             >
-                            {isEditing ? "Edit Address" : "Add Address"}
+                            {isGuestName(fullName) ? "Edit Address" : "Add Address"}
                             </Button>
                           </Form>
                         </Modal.Body>

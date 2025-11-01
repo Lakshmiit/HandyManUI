@@ -58,7 +58,9 @@ const [mobileNumber, setMobileNumber] = useState('');
 const [referralRec, setReferralRec] = useState(null);
 const [referralPoints, setReferralPoints] = useState(0);   
 const [referralAmount, setReferralAmount] = useState(0);  
-const [netPayable, setNetPayable] = useState(0);          
+const [netPayable, setNetPayable] = useState(0);     
+const [isOffersOrder, setIsOffersOrder] = useState(false);
+const isGuestName = (name) => (name ?? '').trim().toLowerCase() === 'guest';
 const readServerPoints = (record) => {
   const raw =
     record?.referralPoints ??
@@ -175,6 +177,13 @@ useEffect(() => {
       if (!res1.ok) throw new Error("Failed to fetch product details");
       const data = await res1.json();
       setCartData(data);
+      // Decide whether this order is Offers-only
+      const catNames = Array.isArray(data?.categories)
+        ? data.categories.map(c => String(c?.categoryName || "").trim().toLowerCase())
+        : [];
+      const onlyOffers = catNames.length > 0 && catNames.every(n => n === "offers");
+      setIsOffersOrder(onlyOffers);
+
       setMartId(data.martId);
       setGrandTotal(data.grandTotal);
       setTotalItemsSelected(data.totalItemsSelected);
@@ -231,6 +240,14 @@ useEffect(() => {
   };
   fetchCart();
 }, [groceryItemId]);
+
+const goBackToCart = () => {
+  if (isOffersOrder) {
+    navigate(`/groceryOffersCart/${userType}/${userId}`);
+  } else {
+    navigate(`/groceryCart/${userType}/${userId}`);
+  }
+};
 
 //  useEffect(() => {
 //   const fetchCart = async () => {
@@ -906,7 +923,8 @@ const handleCheckboxChange = (value) => {
     className="me-2 text-success" 
     role="button" 
     style={{ cursor: "pointer" }}
-    onClick={() => navigate(`/groceryCart/${userType}/${userId}`)}
+    onClick={goBackToCart}
+    // onClick={() => navigate(`/groceryCart/${userType}/${userId}`)}
   >
     <ArrowBackIcon />
   </span>
@@ -918,7 +936,10 @@ const handleCheckboxChange = (value) => {
                       {/* Modal */}
                             <Modal show={showModal} onHide={() => setShowModal(false)}>
                         <Modal.Header closeButton style={{ backgroundColor: isEditing ? "#008000" : "#008000",color: "white"}}>
-                            <Modal.Title className='w-100'>{isEditing ? 'Edit Address' : 'Add Address'}</Modal.Title>
+                            {/* <Modal.Title className='w-100'>{isEditing ? 'Edit Address' : 'Add Address'}</Modal.Title> */}
+                          <Modal.Title className='w-100'>
+                            {isGuestName(fullName) ? 'Add Address' : 'Edit Address'}
+                          </Modal.Title>
                           </Modal.Header>
                         <Modal.Body>
                           <Form>
@@ -1031,11 +1052,11 @@ const handleCheckboxChange = (value) => {
                                             borderColor: isAddressInvalid ? "#008000" : "#008000",
                                             color: "white"
                                         }} onClick={handleAddressEdit}>
-                              {isEditing ? 'Edit Address' : 'Add Address'}
+                              {isGuestName(fullName) ? 'Add Address' : 'Edit Address'}
                             </Button>
                           </Form>
                         </Modal.Body>
-                      </Modal>
+                      </Modal>  
                       </div>
                 
                           <div className="p-3 border rounded bg-light">

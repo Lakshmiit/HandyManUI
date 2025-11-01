@@ -65,11 +65,13 @@ district: '',
 zipCode: '',
 });
 const [serviceUnavailable, setServiceUnavailable] = useState(false);
+const isGuestName = (name) => (name ?? '').trim().toLowerCase() === 'guest';
+
 // const [response, setResponse] = useState(null);
 
   useEffect(() => {
-    console.log(ticketId, loading, fullName, mobileNumber, raiseTicketId, editingAddressId);
-  }, [ticketId, loading, fullName,  mobileNumber, raiseTicketId, editingAddressId]);
+    console.log(ticketId, loading, fullName, mobileNumber, raiseTicketId, editingAddressId, isEditing);
+  }, [ticketId, loading, fullName,  mobileNumber, raiseTicketId, editingAddressId, isEditing]);
 
   // const API_URL = 'https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/';
   // Fetch customer profile data
@@ -393,7 +395,7 @@ const handleUpdateJobDescription = async (e) => {
       },
       body: JSON.stringify(payload1),
     });
-    if (!response.ok) {
+    if (!response.ok) { 
       throw new Error('Failed to Book Technician.');
     }
     const data = await response.json(); 
@@ -493,7 +495,7 @@ const handleUpdateJobDescription = async (e) => {
   return (
     <div>
    <Header />
-    <div className="d-flex flex-row justify-content-start align-items-start">
+    <div className="d-flex flex-row justify-content-start align-items-start mt-100">
        {/* Sidebar for larger screens */}
        {!isMobile && (
         <div className=" ml-0 m-4 p-0 sde_mnu">
@@ -521,7 +523,7 @@ const handleUpdateJobDescription = async (e) => {
 
       {/* Main Content */}
       <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
-      <h1 className="text-center mb-1 mt-mob-100">Book A Technician</h1>
+      <h1 className="text-center mb-1">Book A Technician</h1>
         {/* Display primary address with "Change Address" link */}
          <div className="d-flex justify-content-between align-items-center">
                                 <label className='mt-2'>Address <span className="req_star">*</span></label>
@@ -531,7 +533,7 @@ const handleUpdateJobDescription = async (e) => {
                       {/* Modal */}
                             <Modal show={showModal} onHide={() => setShowModal(false)}>
                         <Modal.Header closeButton>
-                            <Modal.Title>{isEditing ? 'Edit Address' : 'Add Address'}</Modal.Title>
+                            <Modal.Title>{isGuestName(fullName) ? 'Add Address' : 'Edit Address'}</Modal.Title>
                           </Modal.Header>
                         <Modal.Body>
                           <Form>
@@ -640,7 +642,7 @@ const handleUpdateJobDescription = async (e) => {
                               />
                             </Form.Group>
                             <Button type="button" variant="primary" onClick={handleAddressEdit}>
-                              {isEditing ? 'Edit Address' : 'Add Address'}
+                              {isGuestName(fullName) ? 'Add Address' : 'Edit Address'}
                             </Button>
                           </Form>
                         </Modal.Body>
@@ -1229,7 +1231,7 @@ const handleUpdateJobDescription = async (e) => {
           position: fixed;
           top: 0;
           left: 0;
-          width: 110%;
+          width: 100%;
           height: 110%;
           background: rgba(0, 0, 0, 0.5);
           display: flex;

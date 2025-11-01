@@ -63,9 +63,11 @@ const OffersBuyProduct = () => {
   const [deliveryInDays, setDeliveryInDays] = useState('');
   const [numberOfStockAvailable, setNumberOfStockAvailable] = useState('');
   const [disableBuy, setDisableBuy] = useState(false);
+const isGuestName = (name) => (name ?? '').trim().toLowerCase() === 'guest';
+
   useEffect(() => {
-    console.log(loading, productOptions, editingAddressId, buyProductId);
-  }, [loading, productOptions, editingAddressId, buyProductId]);
+    console.log(loading, productOptions, editingAddressId, buyProductId, isEditing);
+  }, [loading, productOptions, editingAddressId, buyProductId, isEditing]);
   
     const fetchProfileType = useCallback(async () => {
       try {
@@ -469,7 +471,7 @@ useEffect(() => {
                      {/* Modal */}
                            <Modal show={showModal} onHide={() => setShowModal(false)}>
                        <Modal.Header closeButton>
-                           <Modal.Title>{isEditing ? 'Edit Address' : 'Add Address'}</Modal.Title>
+                           <Modal.Title>{isGuestName(fullName) ? 'Add Address' : 'Edit Address'}</Modal.Title>
                          </Modal.Header>
                        <Modal.Body>
                          <Form>
@@ -580,7 +582,7 @@ useEffect(() => {
                              />
                            </Form.Group>
                            <Button type="button" variant="primary" onClick={handleAddressEdit}>
-                             {isEditing ? 'Edit Address' : 'Add Address'}
+                             {isGuestName(fullName) ? 'Add Address' : 'Edit Address'}
                            </Button>
                          </Form>
                        </Modal.Body>

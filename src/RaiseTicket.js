@@ -56,10 +56,11 @@ district: '',
 // const [selectedFiles, setSelectedFiles] = useState([]);
 const [shouldBlink,setShouldBlink] = useState(false);
 const [serviceUnavailable, setServiceUnavailable] = useState(false);
+const isGuestName = (name) => (name ?? '').trim().toLowerCase() === 'guest';
 
   useEffect(() => {
-    console.log(ticketId, response, editingAddressId);
-  }, [ticketId, response, editingAddressId]);
+    console.log(ticketId, response, editingAddressId, isEditing);
+  }, [ticketId, response, editingAddressId, isEditing]);
 
   // const API_URL = 'https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/';
   // Fetch customer profile data
@@ -104,7 +105,48 @@ const [serviceUnavailable, setServiceUnavailable] = useState(false);
   }
 }, [addresses]);
 
+// const fetchCustomerData = useCallback(async () => {
+//   try {
+//     const res = await fetch(
+//       `https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/${userId}`
+//     );
+//     if (!res.ok) throw new Error("Failed to fetch customer profile data");
+//     const raw = await res.json();
+//     const list = Array.isArray(raw) ? raw : [raw];
+//     const score = (a) =>
+//       [a?.address, a?.zipCode, a?.mobileNumber, a?.fullName]
+//         .filter((v) => (v ?? "").toString().trim() !== "").length;
+//     const nonEmpty = list.filter(
+//       (a) => (a?.address ?? "").trim() !== "" || (a?.zipCode ?? "").trim() !== ""
+//     );
+//     const keep = nonEmpty.length > 0
+//       ? nonEmpty
+//       : [list.reduce((best, a) => (score(a) > score(best) ? a : best), list[0])]; 
+//     const formatted = keep.map((addr) => ({
+//       id: addr.addressId,
+//       isPrimary: !!addr.isPrimaryAddress,
+//       address: addr.address || "",
+//       state: addr.state || "",
+//       district: addr.district || "",
+//       zipCode: addr.zipCode || "",
+//       emailAddress: addr.emailAddress || "",
+//       mobileNumber: addr.mobileNumber || "",
+//       fullName: (addr.fullName || "").trim(),
+//     }));
+//     setAddresses(formatted);
+//     const customerName =
+//       (keep[0]?.fullName || "").trim();
+//     setFullName(customerName);
+//   } catch (err) {
+//     console.error("Error fetching customer data:", err);
+//   }
+// }, [userId]);
 
+// useEffect(() => {
+//   const primary = addresses.find((a) => a.isPrimary) || addresses[0];
+//   const district = primary?.district?.toLowerCase();
+//   setServiceUnavailable(Boolean(district && district !== "visakhapatnam"));
+// }, [addresses]);
 
 useEffect(() => {
   fetchCustomerData();
@@ -647,7 +689,7 @@ useEffect(() => {
   return (
     <div>
       <Header />
-    <div className="d-flex flex-row justify-content-start align-items-start">
+    <div className="d-flex flex-row justify-content-start align-items-start mt-100">
        {/* Sidebar for larger screens */}
        {!isMobile && (
         <div className=" ml-0 m-4 p-0 sde_mnu">
@@ -675,7 +717,7 @@ useEffect(() => {
 
       {/* Main Content */}
       <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
-      <h1 className="text-center mb-1 mt-mob-100">Raise a Ticket</h1>
+      <h1 className="text-center mb-1">Raise a Ticket</h1>
       {/* Ticket Form */}
       {/* <Form > */}
         {/* Display primary address with "Change Address" link */}
@@ -688,7 +730,7 @@ useEffect(() => {
               {/* Modal */}
                     <Modal show={showModal} onHide={() => setShowModal(false)}>
                 <Modal.Header closeButton>
-                    <Modal.Title>{isEditing ? 'Edit Address' : 'Add Address'}</Modal.Title>
+                    <Modal.Title>{isGuestName(fullName) ? 'Add Address' : 'Edit Address'}</Modal.Title>
                   </Modal.Header>
                 <Modal.Body>
                   <Form>
@@ -800,7 +842,7 @@ useEffect(() => {
                       />
                     </Form.Group>
                     <Button type="button" variant="primary" onClick={handleAddressEdit}>
-                      {isEditing ? 'Edit Address' : 'Add Address'}
+                      {isGuestName(fullName) ? 'Add Address' : 'Edit Address'}
                     </Button>
                   </Form>
                 </Modal.Body>
@@ -1027,7 +1069,7 @@ useEffect(() => {
         {/* Get Quote Button */}
         <Button 
           variant="success" 
-          type="submit" 
+          type="submit"  
           onClick={handleSaveTicket}
           disabled={isSubmitting || isAddressInvalid || serviceUnavailable}
         >
