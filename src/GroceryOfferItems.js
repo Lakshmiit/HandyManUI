@@ -43,7 +43,7 @@ const GroceryOfferItems = () => {
     console.log(imageLoading, checked, grandSummary);
   }, [imageLoading, checked, grandSummary]);
 
-  const MIN_ORDER_TOTAL = 200;
+  const MIN_ORDER_TOTAL = 100;
   const OFFERS = "Offers";
   const encodedCategory = OFFERS;
 

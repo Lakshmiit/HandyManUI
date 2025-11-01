@@ -39,7 +39,7 @@ const fileToUrl = (filenameOrUrl) => {
   return `${IMAGE_DOWNLOAD}${encodeURIComponent(String(filenameOrUrl))}`;
 };
 
-const MIN_ORDER_TOTAL = 200;
+const MIN_ORDER_TOTAL = 100;
 
 const GroceryOffersCartPage = () => {
   const navigate = useNavigate();
@@ -277,7 +277,6 @@ const GroceryOffersCartPage = () => {
     });
   };
 
-  // ====== Proceed (MIN ₹200) ======
   const handleGroceryProceed = async (event) => {
     event.preventDefault();
 
@@ -377,13 +376,11 @@ const GroceryOffersCartPage = () => {
     }
   };
 
-  // ====== 10s stock poller for Offers (clamps qty when stock drops) ======
   useEffect(() => {
     const fetchAndUpdateStock = async () => {
       try {
         const res = await fetch(OFFERS_API);
         const list = (await res.json()) || [];
-        // Build quick lookup by normalized name and by id
         const byName = new Map(
           list.map((p) => [norm(p.name), Number(p.stockLeft || 0)])
         );
@@ -394,7 +391,6 @@ const GroceryOffersCartPage = () => {
         setCartItems((prev) => {
           let changed = false;
           const next = prev.map((it) => {
-            // try id match first, then name
             const stock =
               byId.get(String(it.productId)) ??
               byName.get(norm(it.name)) ??
@@ -412,11 +408,9 @@ const GroceryOffersCartPage = () => {
           return next.filter((i) => i.qty > 0);
         });
       } catch (e) {
-        // swallow polling errors
       }
     };
 
-    // immediate + every 10s
     fetchAndUpdateStock();
     pollRef.current = setInterval(fetchAndUpdateStock, 10000);
     return () => clearInterval(pollRef.current);
