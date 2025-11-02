@@ -24,9 +24,9 @@ const TWO_QTY = new Set([
   norm("Apples 1 Pc"),
 ]);
 
-// const THREE_QTY = new Set([
-//   norm("Bananas 1 Pc"),
-// ]);
+const THREE_QTY = new Set([
+  norm("Raw Banana (Aratikaya) 1 Pc"),
+]);
 
 const FOUR_QTY = new Set([
   norm("Oranges 1 Pc"), 
@@ -35,7 +35,7 @@ const FOUR_QTY = new Set([
 const getLimitByName = (name) => {
   const n = norm(name);
   if (FOUR_QTY.has(n)) return 4;
-  // if (THREE_QTY.has(n)) return 3;
+  if (THREE_QTY.has(n)) return 3;
   if (TWO_QTY.has(n)) return 2;
   return 1; 
 };

@@ -24,9 +24,9 @@ const TWO_QTY = new Set([
   normalizeName("Apples 1 Pc"),
 ]);
 
-// const THREE_QTY = new Set([
-//   normalizeName("Bananas 1 Pc"),
-// ]);
+const THREE_QTY = new Set([
+  normalizeName("Raw Banana (Aratikaya) 1 Pc"),
+]);
 
 const FOUR_QTY = new Set([
   normalizeName("Oranges 1 Pc"),
@@ -35,7 +35,7 @@ const FOUR_QTY = new Set([
 const getLimit = (product) => {
   const n = normalizeName(product?.name);
   if (FOUR_QTY.has(n)) return 4;
-  // if (THREE_QTY.has(n)) return 3;
+  if (THREE_QTY.has(n)) return 3;
   if (TWO_QTY.has(n)) return 2;
   return 1; 
 };
@@ -662,6 +662,7 @@ const GroceryOfferItems = () => {
                                       paddingBottom: "2px",
                                       fontSize: "10px",
                                       fontWeight: 600,
+                                      marginBottom: "28px",
                                     }}
                                   >
                                     Max {limit} per customer                                  
