@@ -23,7 +23,7 @@ import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-import Banner1 from './img/VegetableOffers.jpeg';
+// import Banner1 from './img/VegetableOffers.jpeg';
 // import BannerVideo from './img/Dusshera.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
 // import VolumeUpIcon from '@mui/icons-material/VolumeUp';
@@ -2441,7 +2441,7 @@ const fetchImageUrl = async (photoId) => {
                       {isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
                     </button> */}
                 {/* </div> */}
-                 <div
+                 {/* <div
                     onClick={() => goToCategory("Offers", "groceryOffers")}
                       style={{ cursor: "pointer" }}                
                       // style={{
@@ -2460,7 +2460,7 @@ const fetchImageUrl = async (photoId) => {
                   }}
                   alt="Grocery Offers Banner"
                 />
-              </div>
+              </div> */}
                 {/* <div className="carousel-item">
                   <img
                     src={Banner2}
@@ -2507,14 +2507,14 @@ const fetchImageUrl = async (photoId) => {
   }}>
    {/* <div className="d-flex align-items-center justify-content-center "> */}
   {/* Ribbon / Pill trigger */}
-  {/* <button
+  <button
   type="button"
-  onClick={() => setRedeemOpen(true)}
-  className="redeem-ribbon-btn mt-0"
+   onClick={() => goToCategory("Offers", "groceryOffers")}
+  className="redeem-ribbon-btn mt-0 blinking-text" 
   aria-label="Open Redeem Offer"
 >
-  🎁 Refer & Earn ₹100
-</button> */}
+🎉 45% ABOVE OFF – 1st Week Big Sale! 🎉
+</button>
 
 {/* </div> */}
   {/* Grocery Categories Section className="container my-3"*/}

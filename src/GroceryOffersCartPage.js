@@ -17,29 +17,30 @@ const IMAGE_DOWNLOAD =
 
 const norm = (s) => String(s || "").toLowerCase().replace(/\s+/g, " ").trim();
 
-const TWO_QTY = new Set([
-  norm("Onion (Ulligadda) 500 gm"),
-  norm("Potato (Bangala Dumpa) 500 gm"),
-  norm("Tamato 500 gm"),
-  norm("Apples 1 Pc"),
-]);
+// const TWO_QTY = new Set([
+//   norm("Onion (Ulligadda) 500 gm"),
+//   norm("Potato (Bangala Dumpa) 500 gm"),
+//   norm("Tamato 500 gm"),
+//   norm("Apples 1 Pc"),
+// ]);
 
-const THREE_QTY = new Set([
-  norm("Raw Banana (Aratikaya) 1 Pc"),
-]);
+// const THREE_QTY = new Set([
+//   norm("Raw Banana (Aratikaya) 1 Pc"),
+// ]);
 
-const FOUR_QTY = new Set([
-  norm("Oranges 1 Pc"), 
-]);
+// const FOUR_QTY = new Set([
+//   norm("Oranges 1 Pc"), 
+// ]);
 
-const getLimitByName = (name) => {
-  const n = norm(name);
-  if (FOUR_QTY.has(n)) return 4;
-  if (THREE_QTY.has(n)) return 3;
-  if (TWO_QTY.has(n)) return 2;
-  return 1; 
-};
+// const getLimitByName = (name) => {
+//   const n = norm(name);
+//   if (FOUR_QTY.has(n)) return 4;
+//   if (THREE_QTY.has(n)) return 3;
+//   if (TWO_QTY.has(n)) return 2;
+//   return 1; 
+// };
 
+// const getLimitByName = () => Infinity;
 const getFilenameFromValue = (value) => {
   if (!value) return "";
   const v = String(value);
@@ -118,18 +119,18 @@ const GroceryOffersCartPage = () => {
     // keep only items with qty > 0
     const filtered = allItems.filter((it) => it.qty > 0);
 
-    const clamped = filtered.map((it) => {
-      const limit = getLimitByName(it.name);
-      return { ...it, qty: Math.min(limit, it.qty) };
-    });
+    // const clamped = filtered.map((it) => {
+    //   const limit = getLimitByName(it.name);
+    //   return { ...it, qty: Math.min(limit, it.qty) };
+    // });
 
-    setCartItems(clamped);
-    setGrandSummary(computeTotals(clamped));
+    setCartItems(filtered);
+    setGrandSummary(computeTotals(filtered));
 
     // write back clamp if changed
-    if (JSON.stringify(filtered) !== JSON.stringify(clamped)) {
-      writeBackToStorage(clamped);
-    }
+    // if (JSON.stringify(filtered) !== JSON.stringify(clamped)) {
+    //   writeBackToStorage(clamped);
+    // }
   }, []);
 
   // ----- also recalc if storage changes from elsewhere -----
@@ -165,12 +166,12 @@ const GroceryOffersCartPage = () => {
           })
         );
         const filtered = allItems.filter((it) => it.qty > 0);
-        const clamped = filtered.map((it) => {
-          const limit = getLimitByName(it.name);
-          return { ...it, qty: Math.min(limit, it.qty) };
-        });
-        setCartItems(clamped);
-        setGrandSummary(computeTotals(clamped));
+        // const clamped = filtered.map((it) => {
+        //   const limit = getLimitByName(it.name);
+        //   return { ...it, qty: Math.min(limit, it.qty) };
+        // });
+        setCartItems(filtered);
+        setGrandSummary(computeTotals(filtered));
       } catch {}
     };
     window.addEventListener("storage", onStorage);
@@ -275,12 +276,10 @@ const GroceryOffersCartPage = () => {
       const next = prev
         .map((it) => {
           if (it.id !== rowId) return it;
-          const limit = getLimitByName(it.name);
           const stockMax = Number.isFinite(it.stockLeft) ? it.stockLeft : Infinity;
-          const maxAllowed = Math.min(stockMax, limit);
           const current = Number(it.qty || 0);
           const proposed = current + delta;
-          const clamped = Math.max(0, Math.min(proposed, maxAllowed));
+          const clamped = Math.max(0, Math.min(proposed, stockMax));
           return { ...it, qty: clamped };
         })
         .filter((it) => it.qty > 0);
@@ -410,12 +409,14 @@ const GroceryOffersCartPage = () => {
               byId.get(String(it.productId)) ??
               byName.get(norm(it.name)) ??
               Number(it.stockLeft || 0);
-            const limit = getLimitByName(it.name);
-            const maxAllowed = Math.min(stock, limit);
-            const clampedQty = Math.max(0, Math.min(Number(it.qty || 0), maxAllowed));
+            // const limit = getLimitByName(it.name);
+            // const maxAllowed = Math.min(stock, limit);
+            const clampedQty = Math.max(0, Math.min(Number(it.qty || 0), stock));
             if (stock !== it.stockLeft || clampedQty !== it.qty) changed = true;
             return { ...it, stockLeft: stock, qty: clampedQty };
           });
+
+
           const filtered = next.filter((i) => i.qty > 0);
           if (changed) {
             writeBackToStorage(filtered);
@@ -477,10 +478,8 @@ const GroceryOffersCartPage = () => {
         style={{ overflowY: "auto", padding: "8px", marginTop: "48px" }}
       >
         {cartItems.map((item) => {
-          const limit = getLimitByName(item.name);
           const stockMax = Number.isFinite(item.stockLeft) ? item.stockLeft : Infinity;
-          const maxAllowed = Math.min(stockMax, limit);
-          const canAdd = item.qty < maxAllowed;
+          const canAdd = item.qty < stockMax;
 
           return (
             <div
@@ -530,7 +529,7 @@ const GroceryOffersCartPage = () => {
                   <span style={{ color: "dark", marginLeft: "5px" }}>
                     {item.units}
                   </span>
-                  {Number.isFinite(limit) && limit > 1 && (
+                  {/* {Number.isFinite(limit) && limit > 1 && (
                     <span
                       style={{
                         marginLeft: 6,
@@ -544,7 +543,7 @@ const GroceryOffersCartPage = () => {
                     >
                       Max {limit} per customer
                     </span>
-                  )}
+                  )} */}
                 </div>
                 <div style={{ fontWeight: "600", fontSize: "12px" }}>
                   ₹{Math.round(item.price)}
@@ -582,13 +581,7 @@ const GroceryOffersCartPage = () => {
                     cursor: canAdd ? "pointer" : "not-allowed",
                   }}
                   disabled={!canAdd}
-                  title={
-                    canAdd
-                      ? "Add one"
-                      : (Number(item.qty) >= limit && Number.isFinite(limit))
-                      ? `Limit ${limit} per customer`
-                      : "No more stock"
-                  }
+                  title={canAdd ? "Add one" : "No more stock"}
                 >
                   <AddIcon fontSize="small" />
                 </IconButton>

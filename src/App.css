@@ -1972,7 +1972,7 @@ max-width: none;
 }
 
 .blinking-text {
-  animation: blink-animation 1.5s infinite;
+  animation: blink-animation 2s infinite;
 }
 
 @keyframes blink-animation {
@@ -4504,14 +4504,15 @@ cursor: not-allowed;
 .redeem-ribbon-btn {
   display: block;
   width: 100%;                     
-  max-width: 350px;                
+  max-width: 450px;                
   margin: 0 auto;                  
-  padding: 12px;              
+  padding: 10px;              
   text-align: center;             
-  font-size: 16px;                 
-  font-weight: 700;
-  color: #fff;
-  background: linear-gradient(135deg, #ff512f, #dd2476, #ff9f1a);
+  font-size: 14px;                 
+  font-weight: 600;
+  color: #000;
+  /* background: linear-gradient(135deg, #ff512f, #dd2476, #ff9f1a); */
+  background: linear-gradient(135deg, #FFD700, #FFC300, #FFB700);
   background-size: 300% 300%;
   border: none;
   border-radius: 50px;
