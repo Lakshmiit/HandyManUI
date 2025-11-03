@@ -14,41 +14,41 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ImageCache from "./utils/ImageCache";
 import Footer from "./Footer.js";
 
-// const normalizeName = (s) =>
-//   String(s || "").toLowerCase().replace(/\s+/g, " ").trim();
+const normalizeName = (s) =>
+  String(s || "").toLowerCase().replace(/\s+/g, " ").trim();
 
-// const TWO_QTY = new Set([
-//   normalizeName("Onion (Ulligadda) 500 gm"),
-//   normalizeName("Potato (Bangala Dumpa) 500 gm"),
-//   normalizeName("Tamato 500 gm"),   
-//   normalizeName("Apples 1 Pc"),
-// ]);
+const TWO_QTY = new Set([
+  normalizeName("Aashirvaad Superior Whole Wheat MP Atta 1 kg"),
+  // normalizeName("Potato (Bangala Dumpa) 500 gm"),
+  // normalizeName("Tamato 500 gm"),   
+  // normalizeName("Apples 1 Pc"),
+]);
 
-// const THREE_QTY = new Set([
-//   normalizeName("Raw Banana (Aratikaya) 1 Pc"),
-// ]);
+const ONE_QTY = new Set([
+  normalizeName("Aashirvaad Superior Whole Wheat MP Atta 2 kg"),
+]);
 
 // const FOUR_QTY = new Set([
 //   normalizeName("Oranges 1 Pc"),
 // ]);
 
-// const getLimit = (product) => {
-//   const n = normalizeName(product?.name);
-//   // if (FOUR_QTY.has(n)) return 4;
-//   // if (THREE_QTY.has(n)) return 3;
-//   // if (TWO_QTY.has(n)) return 2;
-//   return 1; 
-// };
+const getLimit = (product) => {
+  const n = normalizeName(product?.name);
+  // if (FOUR_QTY.has(n)) return 4;
+  // if (THREE_QTY.has(n)) return 3;
+  if (TWO_QTY.has(n)) return 2;
+  if (ONE_QTY.has(n)) return 1;
+  return Infinity; 
+};
 
-const getLimit = () => Infinity;
+const clampQtyFor = (product, qty) => {
+  const n = Number(qty) || 0;
+  const limit = getLimit(product);
+  return Math.min(n, limit);
+};
 
-// const clampQtyFor = (product, qty) => {
-//   const n = Number(qty) || 0;
-//   const limit = getLimit(product);
-//   return Math.min(n, limit);
-// };
-
-const clampQtyFor = (_product, qty) => Number(qty) || 0;
+// const getLimit = () => Infinity;
+// const clampQtyFor = (_product, qty) => Number(qty) || 0;
 
 const GroceryOfferItems = () => {
   const navigate = useNavigate();
