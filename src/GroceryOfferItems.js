@@ -39,7 +39,7 @@ const getLimit = (product) => {
   if (TWO_QTY.has(n)) return 2;
   if (ONE_QTY.has(n)) return 1;
   return Infinity; 
-};
+};   
 
 const clampQtyFor = (product, qty) => {
   const n = Number(qty) || 0;

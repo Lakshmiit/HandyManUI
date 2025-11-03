@@ -41,6 +41,21 @@ const norm = (s) => String(s || "").toLowerCase().replace(/\s+/g, " ").trim();
 // };
 
 // const getLimitByName = () => Infinity;
+const TWO_QTY = new Set([
+  norm("Aashirvaad Superior Whole Wheat MP Atta 1 kg"),
+]);
+
+const ONE_QTY = new Set([
+  norm("Aashirvaad Superior Whole Wheat MP Atta 2 kg"),
+]);
+
+const getLimitByName = (name) => {
+  const n = norm(name);
+  if (TWO_QTY.has(n)) return 2;     
+  if (ONE_QTY.has(n)) return 1;     
+  return Infinity;                 
+};
+
 const getFilenameFromValue = (value) => {
   if (!value) return "";
   const v = String(value);
@@ -270,25 +285,44 @@ const GroceryOffersCartPage = () => {
     localStorage.setItem("allCategories", JSON.stringify(allCategories));
   };
 
-  // ====== CORE: qty change with per-item limits + stock clamp ======
-  const handleQtyChange = (rowId, delta) => {
-    setCartItems((prev) => {
-      const next = prev
-        .map((it) => {
-          if (it.id !== rowId) return it;
-          const stockMax = Number.isFinite(it.stockLeft) ? it.stockLeft : Infinity;
-          const current = Number(it.qty || 0);
-          const proposed = current + delta;
-          const clamped = Math.max(0, Math.min(proposed, stockMax));
-          return { ...it, qty: clamped };
-        })
-        .filter((it) => it.qty > 0);
+  // const handleQtyChange = (rowId, delta) => {
+  //   setCartItems((prev) => {
+  //     const next = prev
+  //       .map((it) => {
+  //         if (it.id !== rowId) return it;
+  //         const stockMax = Number.isFinite(it.stockLeft) ? it.stockLeft : Infinity;
+  //         const current = Number(it.qty || 0);
+  //         const proposed = current + delta;
+  //         const clamped = Math.max(0, Math.min(proposed, stockMax));
+  //         return { ...it, qty: clamped };
+  //       })
+  //       .filter((it) => it.qty > 0);
 
-      writeBackToStorage(next);
-      setGrandSummary(computeTotals(next));
-      return next;
-    });
-  };
+  //     writeBackToStorage(next);
+  //     setGrandSummary(computeTotals(next));
+  //     return next;
+  //   });
+  // };
+
+  const handleQtyChange = (rowId, delta) => {
+  setCartItems((prev) => {
+    const next = prev
+      .map((it) => {
+        if (it.id !== rowId) return it;
+        const stockMax = Number.isFinite(it.stockLeft) ? it.stockLeft : Infinity;
+        const limit = getLimitByName(it.name);
+        const maxAllowed = Math.min(stockMax, limit);
+        const current = Number(it.qty || 0);
+        const proposed = current + delta;
+        const clamped = Math.max(0, Math.min(proposed, maxAllowed));
+        return { ...it, qty: clamped };
+      })
+      .filter((it) => it.qty > 0);
+    writeBackToStorage(next);
+    setGrandSummary(computeTotals(next));
+    return next;
+  });
+};
 
   const handleGroceryProceed = async (event) => {
     event.preventDefault();
@@ -401,34 +435,56 @@ const GroceryOffersCartPage = () => {
         const byId = new Map(
           list.map((p) => [String(p.id), Number(p.stockLeft || 0)])
         );
-
         setCartItems((prev) => {
-          let changed = false;
-          const next = prev.map((it) => {
-            const stock =
-              byId.get(String(it.productId)) ??
-              byName.get(norm(it.name)) ??
-              Number(it.stockLeft || 0);
-            // const limit = getLimitByName(it.name);
-            // const maxAllowed = Math.min(stock, limit);
-            const clampedQty = Math.max(0, Math.min(Number(it.qty || 0), stock));
-            if (stock !== it.stockLeft || clampedQty !== it.qty) changed = true;
-            return { ...it, stockLeft: stock, qty: clampedQty };
-          });
+  let changed = false;
+  const next = prev.map((it) => {
+    const stock =
+      byId.get(String(it.productId)) ??
+      byName.get(norm(it.name)) ??
+      Number(it.stockLeft || 0);
+
+    const limit = getLimitByName(it.name);
+    const maxAllowed = Math.min(stock, limit);
+
+    const clampedQty = Math.max(0, Math.min(Number(it.qty || 0), maxAllowed));
+    if (stock !== it.stockLeft || clampedQty !== it.qty) changed = true;
+
+    return { ...it, stockLeft: stock, qty: clampedQty };
+  });
+  const filtered = next.filter((i) => i.qty > 0);
+  if (changed) {
+    writeBackToStorage(filtered);
+    setGrandSummary(computeTotals(filtered));
+  }
+  return filtered;
+});
+
+    //     setCartItems((prev) => {
+    //       let changed = false;
+    //       const next = prev.map((it) => {
+    //         const stock =
+    //           byId.get(String(it.productId)) ??
+    //           byName.get(norm(it.name)) ??
+    //           Number(it.stockLeft || 0);
+    //         // const limit = getLimitByName(it.name);
+    //         // const maxAllowed = Math.min(stock, limit);
+    //         const clampedQty = Math.max(0, Math.min(Number(it.qty || 0), stock));
+    //         if (stock !== it.stockLeft || clampedQty !== it.qty) changed = true;
+    //         return { ...it, stockLeft: stock, qty: clampedQty };
+    //       });
 
 
-          const filtered = next.filter((i) => i.qty > 0);
-          if (changed) {
-            writeBackToStorage(filtered);
-            setGrandSummary(computeTotals(filtered));
-          }
-          return filtered;
-        });
+    //       const filtered = next.filter((i) => i.qty > 0);
+    //       if (changed) {
+    //         writeBackToStorage(filtered);
+    //         setGrandSummary(computeTotals(filtered));
+    //       }
+    //       return filtered;
+    //     });
       } catch (e) {
         // ignore poll errors
-      }
+      }         
     };
-
     fetchAndUpdateStock();
     pollRef.current = setInterval(fetchAndUpdateStock, 10000);
     return () => clearInterval(pollRef.current);
