@@ -2513,7 +2513,7 @@ const fetchImageUrl = async (photoId) => {
   className="redeem-ribbon-btn mt-0 blinking-text" 
   aria-label="Open Redeem Offer"
 >
-🎉 45% ABOVE OFF – 1st Week Big Sale! 🎉
+🎉 30% ABOVE OFF – 1st Week Big Sale! 🎉
 </button>
 
 {/* </div> */}

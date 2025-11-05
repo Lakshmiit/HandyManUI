@@ -719,7 +719,7 @@ const GroceryOffersCartPage = () => {
       <div className="text-start">
         <button
           className="btn btn-warning mt-1 mb-1"
-          onClick={() => navigate(`/groceryOffers/${userType}/${userId}`)}
+          onClick={() => navigate(`/profilePage/${userType}/${userId}`)}
         >
           Back
         </button>

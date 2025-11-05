@@ -167,79 +167,167 @@ function getItemTime(p) {
   return idNum;
 }
 
-useEffect(() => {
-  if (!encodedCategory) return;
-  const decodedCat = decodeURIComponent(encodedCategory);
-  setSelectedCategory(decodedCat);
-  const controller = new AbortController();
-  let cancelled = false;
-  async function fetchProductsAndFirstImages() {
-    try {
-      setImageLoading(true);
-      const url = `https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
-      const { data: items } = await axios.get(url, { signal: controller.signal });
-      const safeItems = Array.isArray(items) ? items : [];
-      if (cancelled) return;
-      const sorted = [...safeItems].sort((a, b) => {
-        const tb = getItemTime(b);
-        const ta = getItemTime(a);
-        if (tb !== ta) return tb - ta;   
-        return String(b.id).localeCompare(String(a.id));
-      }); 
-      const firstImages = safeItems
-        .map(p => ({ productId: p.id, photo: Array.isArray(p.images) ? p.images[0] : null }))
-        .filter(x => !!x.photo);
-      const cachedMap = {};
-      const misses = [];
-      for (const { productId, photo } of firstImages) {
-        const cached = ImageCache.getBase64(photo);
-        if (cached) {
-          cachedMap[productId] = [`data:image/jpeg;base64,${cached}`];
-        } else {
-          misses.push({ productId, photo });
-        }
-      }
-      setProducts(sorted);
-      if (Object.keys(cachedMap).length) setImageUrls(prev => ({ ...prev, ...cachedMap }));
-      if (cancelled) return;
-      const fetchOne = async ({ productId, photo }) => {
-        try {
-          const res = await fetch(
-            `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
-            { signal: controller.signal }
-          );
-          const json = await res.json();
-          const b64 = json?.imageData || "";
-          if (!b64) return;
-          ImageCache.setBase64(photo, b64);
-          const dataUrl = `data:image/jpeg;base64,${b64}`;
-          if (!cancelled) {
-            setImageUrls(prev => {
-              if (prev[productId]?.[0] === dataUrl) return prev;
-              return { ...prev, [productId]: [dataUrl] };
-            });
-          }
-        } catch (e) {
-        }
-      };
+// useEffect(() => {
+//   if (!encodedCategory) return;
+//   const decodedCat = decodeURIComponent(encodedCategory);
+//   setSelectedCategory(decodedCat);
+//   const controller = new AbortController();
+//   let cancelled = false;
+//   async function fetchProductsAndFirstImages() {
+//     try {
+//       setImageLoading(true);
+//       const url = `https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
+//       const { data: items } = await axios.get(url, { signal: controller.signal });
+//       const safeItems = Array.isArray(items) ? items : [];
+//       if (cancelled) return;
+//       const sorted = [...safeItems].sort((a, b) => {
+//         const tb = getItemTime(b);
+//         const ta = getItemTime(a);
+//         if (tb !== ta) return tb - ta;   
+//         return String(b.id).localeCompare(String(a.id));
+//       }); 
+//       const firstImages = safeItems
+//         .map(p => ({ productId: p.id, photo: Array.isArray(p.images) ? p.images[0] : null }))
+//         .filter(x => !!x.photo);
+//       const cachedMap = {};
+//       const misses = [];
+//       for (const { productId, photo } of firstImages) {
+//         const cached = ImageCache.getBase64(photo);
+//         if (cached) {
+//           cachedMap[productId] = [`data:image/jpeg;base64,${cached}`];
+//         } else {
+//           misses.push({ productId, photo });
+//         }
+//       }
+//       setProducts(sorted);
+//       if (Object.keys(cachedMap).length) setImageUrls(prev => ({ ...prev, ...cachedMap }));
+//       if (cancelled) return;
+//       const fetchOne = async ({ productId, photo }) => {
+//         try {
+//           const res = await fetch(
+//             `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
+//             { signal: controller.signal }
+//           );
+//           const json = await res.json();
+//           const b64 = json?.imageData || "";
+//           if (!b64) return;
+//           ImageCache.setBase64(photo, b64);
+//           const dataUrl = `data:image/jpeg;base64,${b64}`;
+//           if (!cancelled) {
+//             setImageUrls(prev => {
+//               if (prev[productId]?.[0] === dataUrl) return prev;
+//               return { ...prev, [productId]: [dataUrl] };
+//             });
+//           }
+//         } catch (e) {
+//         }
+//       };
 
-      await Promise.allSettled(misses.map(fetchOne));
-    } catch (err) {
-      if (err?.name !== "CanceledError" && err?.name !== "AbortError") {
-        console.error("Error fetching grocery products:", err);
-        setProducts([]);
-        setImageUrls({});
+//       await Promise.allSettled(misses.map(fetchOne));
+//     } catch (err) {
+//       if (err?.name !== "CanceledError" && err?.name !== "AbortError") {
+//         console.error("Error fetching grocery products:", err);
+//         setProducts([]);
+//         setImageUrls({});
+//       }
+//     } finally {
+//       if (!cancelled) setImageLoading(false);
+//     }
+//   }
+//   fetchProductsAndFirstImages();
+//   return () => {
+//     cancelled = true;
+//     controller.abort();
+//   };
+// }, [encodedCategory]);
+
+ useEffect(() => {
+    if (!encodedCategory) return;
+    const decodedCat = decodeURIComponent(encodedCategory);
+    setSelectedCategory(decodedCat);
+    let cancelled = false;
+    const controller = new AbortController();
+    const POLL_MS = 2000; 
+    let pollId = null;
+    async function fetchProductsAndFirstImages(warm = false, signal) {
+      try {
+        if (!warm) setImageLoading(true);
+        const url = `https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
+        const { data: items } = await axios.get(url, { signal });
+        const safeItems = Array.isArray(items) ? items : [];
+        if (cancelled) return;
+
+        const sorted = [...safeItems].sort((a, b) => {
+          const tb = getItemTime(b);
+          const ta = getItemTime(a);
+          if (tb !== ta) return tb - ta;
+          return String(b.id).localeCompare(String(a.id));
+        });
+        setProducts(sorted);
+        if (warm) return;
+        const firstImages = safeItems
+          .map(p => ({ productId: p.id, photo: Array.isArray(p.images) ? p.images[0] : null }))
+          .filter(x => !!x.photo);
+
+        const cachedMap = {};
+        const misses = [];
+        for (const { productId, photo } of firstImages) {
+          const cached = ImageCache.getBase64(photo);
+          if (cached) {
+            cachedMap[productId] = [`data:image/jpeg;base64,${cached}`];
+          } else {
+            misses.push({ productId, photo });
+          }
+        }
+
+        if (Object.keys(cachedMap).length) {
+          setImageUrls(prev => ({ ...prev, ...cachedMap }));
+        }
+        if (cancelled) return;
+        const fetchOne = async ({ productId, photo }) => {
+          try {
+            const res = await fetch(
+              `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
+              { signal }
+            );
+            const json = await res.json();
+            const b64 = json?.imageData || "";
+            if (!b64) return;
+            ImageCache.setBase64(photo, b64);
+            const dataUrl = `data:image/jpeg;base64,${b64}`;
+            if (!cancelled) {
+              setImageUrls(prev => {
+                if (prev[productId]?.[0] === dataUrl) return prev;
+                return { ...prev, [productId]: [dataUrl] };
+              });
+            }
+          } catch {}
+        };
+        await Promise.allSettled(misses.map(fetchOne));
+      } catch (err) {
+        if (err?.name !== "CanceledError" && err?.name !== "AbortError") {
+          console.error("Error fetching grocery products:", err);
+          if (!warm) {
+            setProducts([]);
+            setImageUrls({});
+          }
+        }
+      } finally {
+        if (!cancelled && !warm) setImageLoading(false);
       }
-    } finally {
-      if (!cancelled) setImageLoading(false);
     }
-  }
-  fetchProductsAndFirstImages();
-  return () => {
-    cancelled = true;
-    controller.abort();
-  };
-}, [encodedCategory]);
+    fetchProductsAndFirstImages(false, controller.signal);
+    pollId = setInterval(() => {
+      const pollController = new AbortController();
+      fetchProductsAndFirstImages(true, pollController.signal);
+    }, POLL_MS);
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+      if (pollId) clearInterval(pollId);
+    };
+  }, [encodedCategory]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
