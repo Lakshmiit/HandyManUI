@@ -242,7 +242,6 @@ useEffect(() => {
   XLSX.writeFile(workbook, `Grocery_Order_${martId}.xlsx`);
 };
 
-
   return (
   <>
 <div className="d-flex flex-row justify-content-start align-items-start" style={{marginTop: "130px"}}>
@@ -278,7 +277,8 @@ useEffect(() => {
                 <div className="text-center">
                 <strong className="fs-5">Order Number:<span>{martId}</span></strong>
                 </div>
-                <div className="form-group">
+                <div className="row">
+                <div className="col-md-6 form-group">
               <label>
                 Customer Name <span className="req_star">*</span>
               </label>
@@ -290,21 +290,30 @@ useEffect(() => {
                 readOnly
               />
             </div>
-              <div className="form-group">
-                <label>Customer Address <span className="req_star">*</span></label>
-                <input
-                as="textarea"
-                type="text"
-                className="form-control"
-                 value={[address, district, state, pincode, mobileNumber]
-                  .filter(Boolean) 
-                  .join(", ")}
-                onChange={(e) => setAddress(e.target.value)}
-                placeholder="Customer Address"
-                readOnly
-              />
-              </div>
-
+              <div className="col-md-6 form-group">
+                  <label>
+                    Customer Address <span className="req_star">*</span>
+                  </label>
+                  <textarea
+                    className="form-control"
+                    style={{
+                      overflow: "hidden",
+                      resize: "none",
+                      minHeight: "80px",
+                    }}
+                    value={[address, district, state, pincode, mobileNumber]
+                      .filter(Boolean)
+                      .join(", ")}
+                    onChange={(e) => {
+                      e.target.style.height = "auto";
+                      e.target.style.height = e.target.scrollHeight + "px";
+                      setAddress(e.target.value);
+                    }}
+                    placeholder="Customer Address"
+                    readOnly
+                  ></textarea>
+                </div>
+               </div>     
               {/* <div className="row">
           <div className="form-group col-md-6">
             <label>

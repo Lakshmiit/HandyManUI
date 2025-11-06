@@ -413,13 +413,13 @@ if (error) {
             </div>
 
              <div className="form-group">
-              <label>Delivery In Days <span className="req_star">*</span></label>
+              <label>Delivery In Minutes <span className="req_star">*</span></label>
               <input
                 type="text"
                 className="form-control"
                 value={deliveryInDays}
                 onChange={(e) => setDeliveryInDays(e.target.value)}
-                placeholder="Delivery In Days"
+                placeholder="Delivery In Minutes"
               />
             </div>
 

@@ -639,9 +639,9 @@ const GroceryCartPage = () => {
       </div>
       <Divider />
 
-      {roundedGrandTotal < 10 && (
+      {roundedGrandTotal < 100 && (
         <p style={{ color: "red", fontSize: "13px", marginTop: "0px" }}>
-          Minimum order is ₹10 and above
+          Minimum order is ₹100 and above
         </p>
       )}
 
@@ -664,12 +664,12 @@ const GroceryCartPage = () => {
           style={{
             fontWeight: "500",
             fontSize: "15px",
-            cursor: roundedGrandTotal < 10 ? "not-allowed" : "pointer",
-            opacity: roundedGrandTotal < 10 ? 0.6 : 1
+            cursor: roundedGrandTotal < 100 ? "not-allowed" : "pointer",
+            opacity: roundedGrandTotal < 100 ? 0.6 : 1
           }}
-          onClick={roundedGrandTotal >= 10 ? handleGroceryProceed : undefined}
+          onClick={roundedGrandTotal >= 100 ? handleGroceryProceed : undefined}
         >
-          {roundedGrandTotal < 10 ? "Add More Items" : "Proceed →"}
+          {roundedGrandTotal < 100 ? "Add More Items" : "Proceed →"}
         </div>
       </div>
 
