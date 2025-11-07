@@ -14,6 +14,12 @@ import "./App.css";
 import CartImg from './img/Cart.jpeg';
 import { useNavigate, useParams } from "react-router-dom";
 import Footer from "./Footer.js";
+// const normCat = (s) => String(s || "").toLowerCase().trim();
+ 
+// const isBlockedCategory = (catName) => {
+//   const c = normCat(catName);
+//   return c === "offers" || c === "vegetables & fruits offers";
+// };
 
 const GroceryCartPage = () => {    
   const navigate = useNavigate();
@@ -25,6 +31,11 @@ const GroceryCartPage = () => {
   const [zoomImage, setZoomImage] = useState("");
   const [grandSummary, setGrandSummary] = useState({ items: 0, total: 0 });
   const [imageBlobMap, setImageBlobMap] = useState({}); 
+// const normCat = (s) => String(s || "").toLowerCase().trim();
+const isBlockedCategory = React.useCallback((catName) => {
+  const c = String(catName || "").toLowerCase().trim();
+  return c === "offers" || c === "vegetables & fruits offers";
+}, []);
 
   const IMAGE_DOWNLOAD =
     "https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=";
@@ -77,6 +88,8 @@ const GroceryCartPage = () => {
 
       const flat = saved
         .flatMap((cat) =>
+          isBlockedCategory(cat.categoryName)
+      ? [] :
           (cat.products || []).map((p) => ({
             categoryName: cat.categoryName,
             productName: p.productName || p.name || "",
@@ -148,7 +161,9 @@ const GroceryCartPage = () => {
 
       const allItems = updated
         .flatMap((cat) =>
-          (cat.products || []).map((p, idx) => {
+          isBlockedCategory(cat.categoryName)
+      ? [] 
+      : (cat.products || []).map((p, idx) => {
             const persisted = p.image ?? p.productImage ?? "";
             const imageFilename = getFilenameFromValue(persisted);
             const imageUrl = imageFilename
@@ -184,7 +199,7 @@ const GroceryCartPage = () => {
         ),
       });
     },
-    [] 
+    [isBlockedCategory] 
   );
 
   useEffect(() => {
@@ -222,6 +237,9 @@ const GroceryCartPage = () => {
 
     const saved = safeParse("allCategories");
     const allItems = saved.flatMap((cat) =>
+       isBlockedCategory(cat.categoryName)
+    ? [] 
+    :
       (cat.products || []).map((p, idx) => {
         const persisted = p.image ?? p.productImage ?? "";
         const imageFilename = getFilenameFromValue(persisted);
@@ -252,7 +270,7 @@ const GroceryCartPage = () => {
       items: filtered.reduce((s, it) => s + Number(it.qty || 0), 0),
       total: Math.round(filtered.reduce((s, it) => s + Number(it.price || 0) * Number(it.qty || 0), 0)),
     });
-  }, []);
+  }, [isBlockedCategory]);
 
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem("allCategories") || "[]");
@@ -639,9 +657,9 @@ const GroceryCartPage = () => {
       </div>
       <Divider />
 
-      {roundedGrandTotal < 100 && (
+      {roundedGrandTotal < 50 && (
         <p style={{ color: "red", fontSize: "13px", marginTop: "0px" }}>
-          Minimum order is ₹100 and above
+          Minimum order is 50 and above
         </p>
       )}
 
@@ -664,12 +682,12 @@ const GroceryCartPage = () => {
           style={{
             fontWeight: "500",
             fontSize: "15px",
-            cursor: roundedGrandTotal < 100 ? "not-allowed" : "pointer",
-            opacity: roundedGrandTotal < 100 ? 0.6 : 1
+            cursor: roundedGrandTotal < 50 ? "not-allowed" : "pointer",
+            opacity: roundedGrandTotal < 50 ? 0.6 : 1
           }}
-          onClick={roundedGrandTotal >= 100 ? handleGroceryProceed : undefined}
+          onClick={roundedGrandTotal >= 50 ? handleGroceryProceed : undefined}
         >
-          {roundedGrandTotal < 100 ? "Add More Items" : "Proceed →"}
+          {roundedGrandTotal < 50 ? "Add More Items" : "Proceed →"}
         </div>
       </div>
 

@@ -16,7 +16,17 @@ const IMAGE_DOWNLOAD =
   "https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=";
 
 const norm = (s) => String(s || "").toLowerCase().replace(/\s+/g, " ").trim();
-
+// const CATEGORY_OFFERS = norm("Offers");
+const CATEGORY_VF_OFFERS = norm("Vegetables & Fruits Offers");
+const getLimit = (item) => {
+  const category = norm(item?.category);
+  const name = norm(item?.name);
+  if (category === CATEGORY_VF_OFFERS) {
+    if (name.includes("Maggi 2-Minute Special Masala Instant Noodles 70 g")) return 1;
+    return 2;
+  }
+  return Infinity;
+};
 // const TWO_QTY = new Set([
 //   norm("Onion (Ulligadda) 500 gm"),
 //   norm("Potato (Bangala Dumpa) 500 gm"),
@@ -32,29 +42,21 @@ const norm = (s) => String(s || "").toLowerCase().replace(/\s+/g, " ").trim();
 //   norm("Oranges 1 Pc"), 
 // ]);
 
+// const getLimitByName = () => Infinity;
+// const TWO_QTY = new Set([
+//   norm("Aashirvaad Superior Whole Wheat MP Atta 1 kg"),
+// ]);
+
+// const ONE_QTY = new Set([
+//   norm("Aashirvaad Superior Whole Wheat MP Atta 2 kg"),
+// ]);
+
 // const getLimitByName = (name) => {
 //   const n = norm(name);
-//   if (FOUR_QTY.has(n)) return 4;
-//   if (THREE_QTY.has(n)) return 3;
-//   if (TWO_QTY.has(n)) return 2;
-//   return 1; 
+//   if (TWO_QTY.has(n)) return 2;     
+//   if (ONE_QTY.has(n)) return 1;     
+//   return Infinity;                 
 // };
-
-// const getLimitByName = () => Infinity;
-const TWO_QTY = new Set([
-  norm("Aashirvaad Superior Whole Wheat MP Atta 1 kg"),
-]);
-
-const ONE_QTY = new Set([
-  norm("Aashirvaad Superior Whole Wheat MP Atta 2 kg"),
-]);
-
-const getLimitByName = (name) => {
-  const n = norm(name);
-  if (TWO_QTY.has(n)) return 2;     
-  if (ONE_QTY.has(n)) return 1;     
-  return Infinity;                 
-};
 
 const getFilenameFromValue = (value) => {
   if (!value) return "";
@@ -70,7 +72,7 @@ const fileToUrl = (filenameOrUrl) => {
   return `${IMAGE_DOWNLOAD}${encodeURIComponent(String(filenameOrUrl))}`;
 };
 
-const MIN_ORDER_TOTAL = 100;
+const MIN_ORDER_TOTAL = 50;
 
 const GroceryOffersCartPage = () => {
   const navigate = useNavigate();
@@ -309,15 +311,22 @@ const GroceryOffersCartPage = () => {
     const next = prev
       .map((it) => {
         if (it.id !== rowId) return it;
-        const stockMax = Number.isFinite(it.stockLeft) ? it.stockLeft : Infinity;
-        const limit = getLimitByName(it.name);
+
+        const stockMax = Number.isFinite(it.stockLeft)
+          ? it.stockLeft
+          : Infinity;
+
+        const limit = getLimit(it); // category + name aware
         const maxAllowed = Math.min(stockMax, limit);
+
         const current = Number(it.qty || 0);
         const proposed = current + delta;
         const clamped = Math.max(0, Math.min(proposed, maxAllowed));
+
         return { ...it, qty: clamped };
       })
       .filter((it) => it.qty > 0);
+
     writeBackToStorage(next);
     setGrandSummary(computeTotals(next));
     return next;
@@ -443,7 +452,7 @@ const GroceryOffersCartPage = () => {
       byName.get(norm(it.name)) ??
       Number(it.stockLeft || 0);
 
-    const limit = getLimitByName(it.name);
+    const limit = getLimit(it.name);
     const maxAllowed = Math.min(stock, limit);
 
     const clampedQty = Math.max(0, Math.min(Number(it.qty || 0), maxAllowed));
@@ -535,7 +544,9 @@ const GroceryOffersCartPage = () => {
       >
         {cartItems.map((item) => {
           const stockMax = Number.isFinite(item.stockLeft) ? item.stockLeft : Infinity;
-          const canAdd = item.qty < stockMax;
+          const limit = getLimit(item);
+          const maxAllowed = Math.min(stockMax, limit);
+          const canAdd = item.qty < maxAllowed;
 
           return (
             <div
@@ -628,19 +639,28 @@ const GroceryOffersCartPage = () => {
                   {item.qty}
                 </span>
                 <IconButton
-                  size="small"
-                  onClick={() => canAdd && handleQtyChange(item.id, +1)}
-                  style={{
-                    color: "white",
-                    padding: "2px",
-                    opacity: canAdd ? 1 : 0.5,
-                    cursor: canAdd ? "pointer" : "not-allowed",
-                  }}
-                  disabled={!canAdd}
-                  title={canAdd ? "Add one" : "No more stock"}
-                >
-                  <AddIcon fontSize="small" />
-                </IconButton>
+                size="small"
+                onClick={() => canAdd && handleQtyChange(item.id, +1)}
+                style={{
+                  color: "white",
+                  padding: "2px",
+                  opacity: canAdd ? 1 : 0.5,
+                  cursor: canAdd ? "pointer" : "not-allowed",
+                }}
+                disabled={!canAdd}
+                title={
+                  canAdd
+                    ? "Add one"
+                    : item.qty >= stockMax && stockMax !== Infinity
+                    ? "No more stock"
+                    : Number.isFinite(limit)
+                    ? `Limit ${limit} per customer`
+                    : "No more allowed"
+                }
+              >
+                <AddIcon fontSize="small" />
+              </IconButton>
+
               </div>
             </div>
           );

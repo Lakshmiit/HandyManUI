@@ -416,7 +416,7 @@ if (error) {
               <label>Delivery In Minutes <span className="req_star">*</span></label>
               <input
                 type="text"
-                className="form-control"
+                className="form-control" 
                 value={deliveryInDays}
                 onChange={(e) => setDeliveryInDays(e.target.value)}
                 placeholder="Delivery In Minutes"
