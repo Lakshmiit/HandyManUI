@@ -56,7 +56,7 @@ const AdminGroceryList = () => {
   const handleDelete = async (groceryId) => {
     if (!window.confirm("Are you sure you want to delete this grocery?")) return;
     try {
-      await axios.delete(`https://handymanapiv2.azurewebsites.net/api/Product/${groceryId}`);
+      await axios.delete(`https://handymanapiv2.azurewebsites.net/api/UploadGrocery?id=${groceryId}`);
       const prune = (arr) => arr.filter((g) => g.id !== groceryId);
       setFinalGroceries((prev) => prune(prev));
       setFilteredData((prev) => prune(prev));
@@ -168,6 +168,7 @@ const AdminGroceryList = () => {
                 <th>After Discount Price</th>
                 <th>Requested By</th>
                 <th>Stock Left</th>
+                <th>code</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -192,6 +193,7 @@ const AdminGroceryList = () => {
                     )}
                   </td>
                   <td>{(Number(g.stockLeft) || 0) <= 0 ? "No Stock" : Number(g.stockLeft)}</td>
+                  <td>{g.code}</td>
                   <td className="d-flex">
                     <Link to={`/adminUpdateGrocery/${g.id}/Admin`} className="btn btn-warning m-1">
                       <FaEdit />
@@ -209,7 +211,7 @@ const AdminGroceryList = () => {
           </table>
 
           {/* Pagination */}
-          <div className="d-flex justify-content-center mt-3">
+          {/* <div className="d-flex justify-content-center mt-3">
             <nav aria-label="Page navigation">
               <ul className="pagination">
                 {[...Array(Math.ceil(filteredData.length / rowsPerPage))].map((_, i) => (
@@ -221,7 +223,76 @@ const AdminGroceryList = () => {
                 ))}
               </ul>
             </nav>
-          </div>
+          </div> */}
+          {/* Pagination */}
+        <div className="d-flex justify-content-center mt-3">
+          <nav aria-label="Page navigation">
+            <ul className="pagination">
+              <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                <button
+                  className="page-link"
+                  onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                >
+                  &laquo;
+                </button>
+              </li>
+              {Array.from({ length: Math.ceil(filteredData.length / rowsPerPage) }, (_, i) => i + 1)
+                .filter(
+                  (page) =>
+                    page === 1 ||
+                    page === Math.ceil(filteredData.length / rowsPerPage) ||
+                    (page >= currentPage - 2 && page <= currentPage + 2)
+                )
+                .map((page, i, arr) => {
+                  const prevPage = arr[i - 1];
+                  if (prevPage && page - prevPage > 1) {
+                    return (
+                      <React.Fragment key={page}>
+                        <li className="page-item disabled">
+                          <span className="page-link">...</span>
+                        </li>
+                        <li
+                          className={`page-item ${page === currentPage ? "active" : ""}`}
+                        >
+                          <button className="page-link" onClick={() => setCurrentPage(page)}>
+                            {page}
+                          </button>
+                        </li>
+                      </React.Fragment>
+                    );
+                  }
+                  return (
+                    <li
+                      key={page}
+                      className={`page-item ${page === currentPage ? "active" : ""}`}
+                    >
+                      <button className="page-link" onClick={() => setCurrentPage(page)}>
+                        {page}
+                      </button>
+                    </li>
+                  );
+                })}
+              <li
+                className={`page-item ${
+                  currentPage === Math.ceil(filteredData.length / rowsPerPage)
+                    ? "disabled"
+                    : ""
+                }`}
+              >
+                <button
+                  className="page-link"
+                  onClick={() =>
+                    setCurrentPage((p) =>
+                      Math.min(p + 1, Math.ceil(filteredData.length / rowsPerPage))
+                    )
+                  }
+                >
+                  &raquo;
+                </button>
+              </li>
+            </ul>
+          </nav>
+        </div>
         </>
       )}
     </div>

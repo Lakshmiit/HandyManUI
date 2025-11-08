@@ -18,15 +18,34 @@ const IMAGE_DOWNLOAD =
 const norm = (s) => String(s || "").toLowerCase().replace(/\s+/g, " ").trim();
 // const CATEGORY_OFFERS = norm("Offers");
 const CATEGORY_VF_OFFERS = norm("Vegetables & Fruits Offers");
+const CATEGORY_GROCERY_OFFERS = norm("Grocery Offers");
+   
+const MAGGI_70 = norm("Maggi 2-Minute Special Masala Instant Noodles 70 g");
+const ONION_1KG = norm("Onion (Ulligadda) 1 Kg");
+
 const getLimit = (item) => {
   const category = norm(item?.category);
   const name = norm(item?.name);
   if (category === CATEGORY_VF_OFFERS) {
-    if (name.includes("Maggi 2-Minute Special Masala Instant Noodles 70 g")) return 1;
+    if (name.includes(MAGGI_70)) return 1;
     return 2;
+  }
+  if (category === CATEGORY_GROCERY_OFFERS) {
+    if (name.includes(ONION_1KG)) return 1;
+    return Infinity;
   }
   return Infinity;
 };
+
+// const getLimit = (item) => {
+//   const category = norm(item?.category);
+//   const name = norm(item?.name);
+//   if (category === CATEGORY_VF_OFFERS) {
+//     if (name.includes("Maggi 2-Minute Special Masala Instant Noodles 70 g")) return 1;
+//     return 2;
+//   }
+//   return Infinity;
+// };
 // const TWO_QTY = new Set([
 //   norm("Onion (Ulligadda) 500 gm"),
 //   norm("Potato (Bangala Dumpa) 500 gm"),
@@ -316,14 +335,13 @@ const GroceryOffersCartPage = () => {
           ? it.stockLeft
           : Infinity;
 
-        const limit = getLimit(it); // category + name aware
+        const limit = getLimit(it); 
         const maxAllowed = Math.min(stockMax, limit);
-
         const current = Number(it.qty || 0);
         const proposed = current + delta;
         const clamped = Math.max(0, Math.min(proposed, maxAllowed));
 
-        return { ...it, qty: clamped };
+        return { ...it, qty: clamped};
       })
       .filter((it) => it.qty > 0);
 
@@ -452,7 +470,7 @@ const GroceryOffersCartPage = () => {
       byName.get(norm(it.name)) ??
       Number(it.stockLeft || 0);
 
-    const limit = getLimit(it.name);
+    const limit = getLimit(it);
     const maxAllowed = Math.min(stock, limit);
 
     const clampedQty = Math.max(0, Math.min(Number(it.qty || 0), maxAllowed));

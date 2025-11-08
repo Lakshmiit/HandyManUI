@@ -23,12 +23,12 @@ import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-import Banner1 from './img/vegetablesOffers.jpeg';
+import Banner1 from './img/Vegetables&Offers.jpeg';
+import Banner2 from './img/HandymanSpecialOffers.jpeg';
 // import BannerVideo from './img/Dusshera.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
 // import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 // import Banner3 from './img/banner-4.jpg';  
-// import Banner2 from './img/Ads2.jpeg';
 import { useNavigate, useParams } from "react-router-dom"; 
 import Logo from "./img/Hm_Logo 1.png";
 // import SearchIcon from "@mui/icons-material/Search";
@@ -1330,9 +1330,9 @@ useEffect(() => {
   return () => { cancelled = true; };
 }, [userId]);
 
-  // const handleSendRef = async (index, referralValue) => {
-  //   console.log("sendRef", { index, referralValue });
-  // };
+//   const handleSendRef = async (index, referralValue) => {
+//     console.log("sendRef", { index, referralValue });
+//   };
 
 //   const handleRedeemCoins = async (refsPayload) => {
 //   const earned = 50; 
@@ -2474,7 +2474,7 @@ const fetchImageUrl = async (photoId) => {
               >
                 <img 
                   src={Banner1}
-                  className="d-block w-100 img-fluid rounded"
+                  className="d-block w-100 img-fluid rounded mb-2"
                   style={{
                     width: "100%",
                     height: "auto",
@@ -2483,22 +2483,26 @@ const fetchImageUrl = async (photoId) => {
                   alt="Grocery Offers Banner"
                 />
               </div>
-                {/* <div className="carousel-item">
+                {/* <div className="carousel-item"> */}
+                <div
+                    onClick={() => goToCategory("Grocery Offers", "groceryOffers")}
+                      style={{ cursor: "pointer" }} >  
                   <img
                     src={Banner2}
                     className="d-block w-100 img-fluid rounded"
                     style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
                     alt="Slide 2"
                   />
-                </div>
-                <div className="carousel-item">
+                  </div>  
+                {/* </div> */}
+                {/* <div className="carousel-item">
                   <img
                     src={Banner3}
                     className="d-block w-100 img-fluid rounded"
                     style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
                     alt="Slide 3"
                   />
-                </div> */}
+                </div> */} 
               {/* </div> */}
                 {/* Controls */}
                 {/* <button
@@ -2521,17 +2525,17 @@ const fetchImageUrl = async (photoId) => {
               </div>
               </div> 
 
-              <div className="d-flex flex-column align-items-center gap-3">
-              {/* Refer & Earn Strip */}
-                {/* <button
+              {/* <div className="d-flex flex-column align-items-center gap-3 mb-3">
+              // Refer & Earn Strip
+                <button
                 type="button"
                 onClick={() => setRedeemOpen(true)}
                 className="redeem-ribbon-btn mt-0"
                 aria-label="Open Redeem Offer"
               >
                 🎁 Refer & Earn ₹100
-              </button> */}
-            </div>
+              </button>
+            </div> */}
             <div className="d-flex flex-column align-items-center gap-3">
                 {/* Big Sale Strip */}
               <button

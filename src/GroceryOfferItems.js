@@ -47,18 +47,41 @@ const normalizeName = (s) =>
   String(s || "").toLowerCase().replace(/\s+/g, " ").trim();
 
 const CATEGORY_VEG_FRUITS_OFFERS = normalizeName("Vegetables & Fruits Offers");
+const CATEGORY_GROCERY_OFFERS = normalizeName("Grocery Offers");
+const MAGGI_70 = normalizeName(
+  "Maggi 2-Minute Special Masala Instant Noodles 70 g"
+);     
+const ONION_1KG = normalizeName("Onion (Ulligadda) 1 Kg");
+// const getLimit = (product) => {
+//   const category = normalizeName(product?.category);
+//   const name = normalizeName(product?.name);
+//   if (category === CATEGORY_VEG_FRUITS_OFFERS) {
+//     if (name.includes("Maggi 2-Minute Special Masala Instant Noodles 70 g")) {
+//       return 1;
+//     }
+//     return 2;
+//   }
+//   return Infinity;
+// };
 
 const getLimit = (product) => {
   const category = normalizeName(product?.category);
   const name = normalizeName(product?.name);
   if (category === CATEGORY_VEG_FRUITS_OFFERS) {
-    if (name.includes("Maggi 2-Minute Special Masala Instant Noodles 70 g")) {
+    if (name.includes(MAGGI_70)) {
       return 1;
     }
     return 2;
   }
+  if (category === CATEGORY_GROCERY_OFFERS) {
+    if (name.includes(ONION_1KG)) {
+      return 1;
+    }
+    return Infinity;
+  }
   return Infinity;
 };
+
 
 const clampQtyFor = (product, qty) => {
   const n = Number(qty) || 0;
