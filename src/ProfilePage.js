@@ -23,7 +23,7 @@ import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-import Banner1 from './img/Vegetables&Offers.jpeg';
+// import Banner1 from './img/Vegetables&Offers.jpeg';
 import Banner2 from './img/HandymanSpecialOffers.jpeg';
 // import BannerVideo from './img/Dusshera.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
@@ -2463,7 +2463,7 @@ const fetchImageUrl = async (photoId) => {
                       {isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
                     </button> */}
                 {/* </div> */}
-                 <div
+                 {/* <div
                     onClick={() => goToCategory("Vegetables & Fruits Offers", "groceryOffers")}
                       style={{ cursor: "pointer" }}                
                       // style={{
@@ -2482,7 +2482,7 @@ const fetchImageUrl = async (photoId) => {
                   }}
                   alt="Grocery Offers Banner"
                 />
-              </div>
+              </div> */}
                 {/* <div className="carousel-item"> */}
                 <div
                     onClick={() => goToCategory("Grocery Offers", "groceryOffers")}

@@ -168,7 +168,7 @@ const AdminGroceryList = () => {
                 <th>After Discount Price</th>
                 <th>Requested By</th>
                 <th>Stock Left</th>
-                <th>code</th>
+                {/* <th>code</th> */}
                 <th>Actions</th>
               </tr>
             </thead>
@@ -193,7 +193,7 @@ const AdminGroceryList = () => {
                     )}
                   </td>
                   <td>{(Number(g.stockLeft) || 0) <= 0 ? "No Stock" : Number(g.stockLeft)}</td>
-                  <td>{g.code}</td>
+                  {/* <td>{g.code}</td> */}
                   <td className="d-flex">
                     <Link to={`/adminUpdateGrocery/${g.id}/Admin`} className="btn btn-warning m-1">
                       <FaEdit />
