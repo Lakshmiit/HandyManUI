@@ -32,10 +32,10 @@ const GroceryCartPage = () => {
   const [grandSummary, setGrandSummary] = useState({ items: 0, total: 0 });
   const [imageBlobMap, setImageBlobMap] = useState({}); 
 // const normCat = (s) => String(s || "").toLowerCase().trim();
-const isBlockedCategory = React.useCallback((catName) => {
-  const c = String(catName || "").toLowerCase().trim();
-  return c === "offers" || c === "vegetables & fruits offers";
-}, []);
+// const isBlockedCategory = React.useCallback((catName) => {
+//   const c = String(catName || "").toLowerCase().trim();
+//   return c === "offers" || c === "vegetables & fruits offers";
+// }, []);
 
   const IMAGE_DOWNLOAD =
     "https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=";
@@ -88,8 +88,8 @@ const isBlockedCategory = React.useCallback((catName) => {
 
       const flat = saved
         .flatMap((cat) =>
-          isBlockedCategory(cat.categoryName)
-      ? [] :
+      //     isBlockedCategory(cat.categoryName)
+      // ? [] :
           (cat.products || []).map((p) => ({
             categoryName: cat.categoryName,
             productName: p.productName || p.name || "",
@@ -161,9 +161,9 @@ const isBlockedCategory = React.useCallback((catName) => {
 
       const allItems = updated
         .flatMap((cat) =>
-          isBlockedCategory(cat.categoryName)
-      ? [] 
-      : (cat.products || []).map((p, idx) => {
+      //     isBlockedCategory(cat.categoryName)
+      // ? [] : 
+      (cat.products || []).map((p, idx) => {
             const persisted = p.image ?? p.productImage ?? "";
             const imageFilename = getFilenameFromValue(persisted);
             const imageUrl = imageFilename
@@ -199,7 +199,7 @@ const isBlockedCategory = React.useCallback((catName) => {
         ),
       });
     },
-    [isBlockedCategory] 
+    [] 
   );
 
   useEffect(() => {
@@ -237,9 +237,8 @@ const isBlockedCategory = React.useCallback((catName) => {
 
     const saved = safeParse("allCategories");
     const allItems = saved.flatMap((cat) =>
-       isBlockedCategory(cat.categoryName)
-    ? [] 
-    :
+    //    isBlockedCategory(cat.categoryName)
+    // ? []  :
       (cat.products || []).map((p, idx) => {
         const persisted = p.image ?? p.productImage ?? "";
         const imageFilename = getFilenameFromValue(persisted);
@@ -270,7 +269,7 @@ const isBlockedCategory = React.useCallback((catName) => {
       items: filtered.reduce((s, it) => s + Number(it.qty || 0), 0),
       total: Math.round(filtered.reduce((s, it) => s + Number(it.price || 0) * Number(it.qty || 0), 0)),
     });
-  }, [isBlockedCategory]);
+  }, []);
 
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem("allCategories") || "[]");

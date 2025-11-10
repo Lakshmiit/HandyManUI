@@ -24,7 +24,7 @@ import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 // import Banner1 from './img/Vegetables&Offers.jpeg';
-import Banner2 from './img/HandymanSpecialOffers.jpeg';
+// import Banner2 from './img/HandymanSpecialOffers.jpeg';
 // import BannerVideo from './img/Dusshera.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
 // import VolumeUpIcon from '@mui/icons-material/VolumeUp';
@@ -2484,7 +2484,7 @@ const fetchImageUrl = async (photoId) => {
                 />
               </div> */}
                 {/* <div className="carousel-item"> */}
-                <div
+                {/* <div
                     onClick={() => goToCategory("Grocery Offers", "groceryOffers")}
                       style={{ cursor: "pointer" }} >  
                   <img
@@ -2493,7 +2493,7 @@ const fetchImageUrl = async (photoId) => {
                     style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
                     alt="Slide 2"
                   />
-                  </div>  
+                  </div>   */}
                 {/* </div> */}
                 {/* <div className="carousel-item">
                   <img
