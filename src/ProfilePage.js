@@ -23,7 +23,7 @@ import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-// import Banner1 from './img/Vegetables&Offers.jpeg';
+import Banner1 from './img/BrandedProducts.jpeg';
 // import Banner2 from './img/HandymanSpecialOffers.jpeg';
 // import BannerVideo from './img/Dusshera.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
@@ -2463,8 +2463,8 @@ const fetchImageUrl = async (photoId) => {
                       {isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
                     </button> */}
                 {/* </div> */}
-                 {/* <div
-                    onClick={() => goToCategory("Vegetables & Fruits Offers", "groceryOffers")}
+                 <div
+                    // onClick={() => goToCategory("Vegetables & Fruits Offers", "groceryOffers")}
                       style={{ cursor: "pointer" }}                
                       // style={{
                       //   cursor: "pointer",
@@ -2474,7 +2474,7 @@ const fetchImageUrl = async (photoId) => {
               >
                 <img 
                   src={Banner1}
-                  className="d-block w-100 img-fluid rounded mb-2"
+                  className="d-block w-100 img-fluid rounded mb-1"
                   style={{
                     width: "100%",
                     height: "auto",
@@ -2482,7 +2482,7 @@ const fetchImageUrl = async (photoId) => {
                   }}
                   alt="Grocery Offers Banner"
                 />
-              </div> */}
+              </div> 
                 {/* <div className="carousel-item"> */}
                 {/* <div
                     onClick={() => goToCategory("Grocery Offers", "groceryOffers")}
@@ -2616,9 +2616,9 @@ const fetchImageUrl = async (photoId) => {
   })}
 </div>
   </div>
-  {/* Handyman Products Section */}
+  {/* Home Products Section */}
   <div className="shadow-lg p-2 mb-1 rounded-5 bg-transparent border-0">
-    <h5 className="text-center fw-bold mb-3" style={{color: "#ff5722", fontSize: "20px"}}>Handyman Products</h5>
+    <h5 className="text-center fw-bold mb-3" style={{color: "#ff5722", fontSize: "20px"}}>Home Products</h5>
     <div className="row row-cols-3 row-cols-md-5 g-2 align-items-stretch">
       {categories.map((cat) => (
         <div

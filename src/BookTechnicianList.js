@@ -45,7 +45,7 @@ const BookTechnicianList = () => {
             discount: job.discount || 0,
             afterDiscountPrice: job.afterDiscount !== undefined 
               ? job.afterDiscount 
-              : (job.rate ? (job.rate - (job.rate * (job.discount || 0)) / 100).toFixed(2) : "N/A")
+              : (job.rate ? (job.rate - (job.rate * (job.discount || 0)) / 100).toFixed(0) : "N/A")
           };
         });
         setTechnicianData(technicians);
@@ -115,7 +115,7 @@ useEffect(() => {
 
   return (
     <>
-    <div className="d-flex flex-row justify-content-start align-items-start">
+    <div className="d-flex flex-row justify-content-start align-items-start mt-mob-50">
       {/* Sidebar for larger screens */}
       {!isMobile && (
         <div className=" ml-0 p-0 adm_mnu">
@@ -144,7 +144,7 @@ useEffect(() => {
 
       {/* Main Content */}
       <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
-      <h2 className="text-center mb-4">Upload Job Description</h2>
+      <h2 className="text-center mb-4">All Job Description</h2>
       <div className="d-flex align-items-center justify-content-between">
         {/* Category */}
         <div className="form-group text-start col-md-2 ml-2 m-5 mb-2">
