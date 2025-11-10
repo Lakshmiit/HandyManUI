@@ -1,6 +1,6 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useParams, useNavigate, useLocation} from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import "./App.css";
 import Sidebar from "./Sidebar.js";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -14,89 +14,44 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ImageCache from "./utils/ImageCache";
 import Footer from "./Footer.js";
 
-// const TWO_QTY = new Set([
-//   normalizeName("Aashirvaad Superior Whole Wheat MP Atta 1 kg"),
-//   // normalizeName("Potato (Bangala Dumpa) 500 gm"),
-//   // normalizeName("Tamato 500 gm"),   
-//   // normalizeName("Apples 1 Pc"),
-// ]);
-
-// const ONE_QTY = new Set([
-//   normalizeName("Aashirvaad Superior Whole Wheat MP Atta 2 kg"),
-// ]);
-
-// // const FOUR_QTY = new Set([
-// //   normalizeName("Oranges 1 Pc"),
-// // ]);
-
-// const getLimit = (product) => {
-//   const n = normalizeName(product?.name);
-//   // if (FOUR_QTY.has(n)) return 4;
-//   // if (THREE_QTY.has(n)) return 3;
-//   if (TWO_QTY.has(n)) return 2;
-//   if (ONE_QTY.has(n)) return 1;
-//   return Infinity; 
-// };   
-
-// const clampQtyFor = (product, qty) => {
-//   const n = Number(qty) || 0;
-//   const limit = getLimit(product);
-//   return Math.min(n, limit);
-// };
 const normalizeName = (s) =>
   String(s || "").toLowerCase().replace(/\s+/g, " ").trim();
 
-const CATEGORY_VEG_FRUITS_OFFERS = normalizeName("Vegetables & Fruits Offers");
-const CATEGORY_GROCERY_OFFERS = normalizeName("Grocery Offers");
-const MAGGI_70 = normalizeName(
-  "Maggi 2-Minute Special Masala Instant Noodles 70 g"
-);     
-const ONION_1KG = normalizeName("Onion (Ulligadda) 1 Kg");
-// const getLimit = (product) => {
-//   const category = normalizeName(product?.category);
-//   const name = normalizeName(product?.name);
-//   if (category === CATEGORY_VEG_FRUITS_OFFERS) {
-//     if (name.includes("Maggi 2-Minute Special Masala Instant Noodles 70 g")) {
-//       return 1;
-//     }
-//     return 2;
-//   }
-//   return Infinity;
-// };
+const CATEGORY_VEG_FRUITS_OFFERS = normalizeName("Grocery Offers");
+
+const LIMIT_RULES = [
+  { match: normalizeName("Onion (Ulligadda) 500 g"), limit: 2 },
+  { match: normalizeName("Potato (Bangala Dumpa) 500 g"), limit: 2 },
+  { match: normalizeName("Apple 1 Pc"), limit: 1 },
+  { match: normalizeName("Green Chilli (Pachi Mirchi) 100 g"), limit: 1 },
+  { match: normalizeName("Banana 2 Pcs"), limit: 1 },
+  { match: normalizeName("Cucumber (Dosakaya) 250 g"), limit: 1 },
+];
 
 const getLimit = (product) => {
   const category = normalizeName(product?.category);
   const name = normalizeName(product?.name);
-  if (category === CATEGORY_VEG_FRUITS_OFFERS) {
-    if (name.includes(MAGGI_70)) {
-      return 1;
-    }
-    return 2;
-  }
-  if (category === CATEGORY_GROCERY_OFFERS) {
-    if (name.includes(ONION_1KG)) {
-      return 1;
-    }
+  if (category !== CATEGORY_VEG_FRUITS_OFFERS) {
     return Infinity;
+  }
+  for (const rule of LIMIT_RULES) {
+    if (name.includes(rule.match)) {
+      return rule.limit;
+    }
   }
   return Infinity;
 };
 
-
 const clampQtyFor = (product, qty) => {
   const n = Number(qty) || 0;
   const limit = getLimit(product);
-  if (!Number.isFinite(limit)) return n; 
+  if (!Number.isFinite(limit)) return n;
   return Math.min(n, limit);
 };
-
-// const getLimit = () => Infinity;
-// const clampQtyFor = (_product, qty) => Number(qty) || 0;
 
 const GroceryOfferItems = () => {
   const navigate = useNavigate();
   const { userType, userId, selectedUserType } = useParams();
-  // const [selectedCategory, setSelectedCategory] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [products, setProducts] = useState([]);
@@ -110,28 +65,29 @@ const GroceryOfferItems = () => {
   const [likedProducts, setLikedProducts] = useState({});
   const [zoomProduct, setZoomProduct] = useState(null);
   const [grandSummary, setGrandSummary] = useState({ items: 0, total: 0 });
-const location = useLocation();
-const getInitialCategory = () => {
-  const encodedFromState = location?.state?.encodedCategory;
-  if (encodedFromState) {
-    try {
-      return decodeURIComponent(encodedFromState);
-    } catch {
-      return encodedFromState;
+  const location = useLocation();
+
+  const getInitialCategory = () => {
+    const encodedFromState = location?.state?.encodedCategory;
+    if (encodedFromState) {
+      try {
+        return decodeURIComponent(encodedFromState);
+      } catch {
+        return encodedFromState;
+      }
     }
-  }
-  const stored = localStorage.getItem("encodedCategory");
-  if (stored) {
-    try {
-      return decodeURIComponent(stored);
-    } catch {
-      return stored;
+    const stored = localStorage.getItem("encodedCategory");
+    if (stored) {
+      try {
+        return decodeURIComponent(stored);
+      } catch {
+        return stored;
+      }
     }
-  }
-  return "Offers";
-};
-const [selectedCategory] = useState(getInitialCategory);
-// const [selectedCategory, setSelectedCategory] = useState(getInitialCategory);
+    return "Offers";
+  };
+
+  const [selectedCategory] = useState(getInitialCategory);
 
   useEffect(() => {
     console.log(imageLoading, checked, grandSummary);
@@ -141,7 +97,7 @@ const [selectedCategory] = useState(getInitialCategory);
   const OFFERS = "Offers";
   const encodedCategory = OFFERS;
 
-  useEffect(() => { 
+  useEffect(() => {
     const saved = CartStorage.getAll() || [];
     const categories = Array.isArray(saved) ? saved : [saved];
     const exist = categories.find((c) => c.categoryName === selectedCategory);
@@ -185,8 +141,8 @@ const [selectedCategory] = useState(getInitialCategory);
         const product = products.find((p) => String(p.id) === String(pid));
         if (!product) continue;
         const stock = Number(product?.stockLeft || 0);
-        let q = clampQtyFor(product, qty); 
-        if (q > stock) q = stock; 
+        let q = clampQtyFor(product, qty);
+        if (q > stock) q = stock;
         if (q !== qty) {
           next[pid] = q;
           changed = true;
@@ -194,7 +150,7 @@ const [selectedCategory] = useState(getInitialCategory);
       }
       return changed ? next : prev;
     });
-  }, [products]); 
+  }, [products]);
 
   const handleAdd = (productId) =>
     setCart((prev) => ({ ...prev, [productId]: 1 }));
@@ -208,7 +164,6 @@ const [selectedCategory] = useState(getInitialCategory);
       const limit = getLimit(product);
       const maxAllowed = Math.min(stock, limit);
       if (cur >= maxAllowed) return prev;
-
       return { ...prev, [productId]: cur + 1 };
     });
 
@@ -255,6 +210,13 @@ const [selectedCategory] = useState(getInitialCategory);
     }));
   };
 
+  useEffect(() => {
+      const handleResize = () => setIsMobile(window.innerWidth <= 768);
+      handleResize();
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }, []);
+    
   const handleImageClick = (imageSrc, product) => {
     setZoomImage(imageSrc);
     setZoomProduct(product);
@@ -289,284 +251,97 @@ const [selectedCategory] = useState(getInitialCategory);
     return idNum;
   }
 
-  // useEffect(() => {
-  //   if (!encodedCategory) return;
-  //   const decodedCat = decodeURIComponent(encodedCategory);
-  //   setSelectedCategory(decodedCat);
-
-  //   const controller = new AbortController();
-  //   let cancelled = false;
-
-  //   async function fetchProductsAndFirstImages() {
-  //     try {
-  //       setImageLoading(true);
-  //       const url = `https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(
-  //         "Offers"
-  //       )}`;
-  //       const { data: items } = await axios.get(url, {
-  //         signal: controller.signal,
-  //       });
-  //       const safeItems = Array.isArray(items) ? items : [];
-  //       if (cancelled) return;
-
-  //       const sorted = [...safeItems].sort((a, b) => {
-  //         const tb = getItemTime(b);
-  //         const ta = getItemTime(a);
-  //         if (tb !== ta) return tb - ta;
-  //         return String(b.id).localeCompare(String(a.id));
-  //       });
-
-  //       const firstImages = safeItems
-  //         .map((p) => ({
-  //           productId: p.id,
-  //           photo: Array.isArray(p.images) ? p.images[0] : null,
-  //         }))
-  //         .filter((x) => !!x.photo);
-
-  //       const cachedMap = {};
-  //       const misses = [];
-  //       for (const { productId, photo } of firstImages) {
-  //         const cached = ImageCache.getBase64(photo);
-  //         if (cached) {
-  //           cachedMap[productId] = [`data:image/jpeg;base64,${cached}`];
-  //         } else {
-  //           misses.push({ productId, photo });
-  //         }
-  //       }
-
-  //       setProducts(sorted);
-  //       if (Object.keys(cachedMap).length)
-  //         setImageUrls((prev) => ({ ...prev, ...cachedMap }));
-  //       if (cancelled) return;
-
-  //       const fetchOne = async ({ productId, photo }) => {
-  //         try {
-  //           const res = await fetch(
-  //             `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
-  //               photo
-  //             )}`,
-  //             { signal: controller.signal }
-  //           );
-  //           const json = await res.json();
-  //           const b64 = json?.imageData || "";
-  //           if (!b64) return;
-  //           ImageCache.setBase64(photo, b64);
-  //           const dataUrl = `data:image/jpeg;base64,${b64}`;
-  //           if (!cancelled) {
-  //             setImageUrls((prev) => {
-  //               if (prev[productId]?.[0] === dataUrl) return prev;
-  //               return { ...prev, [productId]: [dataUrl] };
-  //             });
-  //           }
-  //         } catch (e) {}
-  //       };
-
-  //       await Promise.allSettled(misses.map(fetchOne));
-  //     } catch (err) {
-  //       if (err?.name !== "CanceledError" && err?.name !== "AbortError") {
-  //         console.error("Error fetching grocery products:", err);
-  //         setProducts([]);
-  //         setImageUrls({});
-  //       }
-  //     } finally {
-  //       if (!cancelled) setImageLoading(false);
-  //     }
-  //   }
-
-  //   fetchProductsAndFirstImages();
-  //   return () => {
-  //     cancelled = true;
-  //     controller.abort();
-  //   };
-  // }, [encodedCategory]);
-
-  // useEffect(() => {
-  //   if (!encodedCategory) return;
-  //   const decodedCat = decodeURIComponent(encodedCategory);
-  //   setSelectedCategory(decodedCat);
-  //   let cancelled = false;
-  //   const controller = new AbortController();
-  //   const POLL_MS = 2000;
-  //   let pollId = null;
-  // async function fetchProductsAndFirstImages(warm = false, signal) {
-  //     try {
-  //       if (!warm) setImageLoading(true);
-  //       const url = `https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(
-  //         "Offers"
-  //       )}`;
-  //       const { data: items } = await axios.get(url, { signal });
-  //       const safeItems = Array.isArray(items) ? items : [];
-  //       if (cancelled) return;
-  //       const sorted = [...safeItems].sort((a, b) => {
-  //         const tb = getItemTime(b);
-  //         const ta = getItemTime(a);
-  //         if (tb !== ta) return tb - ta;
-  //         return String(b.id).localeCompare(String(a.id));
-  //       });
-  //       setProducts(sorted);
-  //       if (warm) return;
-  //       const firstImages = safeItems
-  //         .map((p) => ({
-  //           productId: p.id,
-  //           photo: Array.isArray(p.images) ? p.images[0] : null,
-  //         }))
-  //         .filter((x) => !!x.photo);
-  //       const cachedMap = {};
-  //       const misses = [];
-  //       for (const { productId, photo } of firstImages) {
-  //         const cached = ImageCache.getBase64(photo);
-  //         if (cached) {
-  //           cachedMap[productId] = [`data:image/jpeg;base64,${cached}`];
-  //         } else {
-  //           misses.push({ productId, photo });
-  //         }
-  //       }
-  //       if (Object.keys(cachedMap).length)
-  //         setImageUrls((prev) => ({ ...prev, ...cachedMap }));
-  //       if (cancelled) return;
-  //       const fetchOne = async ({ productId, photo }) => {
-  //         try {
-  //           const res = await fetch(
-  //             `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
-  //               photo
-  //             )}`,
-  //             { signal }
-  //           );
-  //           const json = await res.json();
-  //           const b64 = json?.imageData || "";
-  //           if (!b64) return;
-  //           ImageCache.setBase64(photo, b64);
-  //           const dataUrl = `data:image/jpeg;base64,${b64}`;
-  //           if (!cancelled) {
-  //             setImageUrls((prev) => {
-  //               if (prev[productId]?.[0] === dataUrl) return prev;
-  //               return { ...prev, [productId]: [dataUrl] };
-  //             });
-  //           }
-  //         } catch {}
-  //       };
-  //       await Promise.allSettled(misses.map(fetchOne));
-  //     } catch (err) {
-  //       if (err?.name !== "CanceledError" && err?.name !== "AbortError") {
-  //         console.error("Error fetching grocery products:", err);
-  //         if (!warm) {
-  //           setProducts([]);
-  //           setImageUrls({});
-  //         }
-  //       }
-  //     } finally {
-  //       if (!cancelled && !warm) setImageLoading(false);
-  //     }
-  //   }
-  //   fetchProductsAndFirstImages(false, controller.signal);
-  //   pollId = setInterval(() => {
-  //     const pollController = new AbortController();
-  //     fetchProductsAndFirstImages(true, pollController.signal);
-  //     }, POLL_MS);
-
-  //   return () => {
-  //     cancelled = true;
-  //     controller.abort();
-  //     if (pollId) clearInterval(pollId);
-  //   };
-  // }, [encodedCategory]);
-
   useEffect(() => {
-  if (!selectedCategory) return;
-  let cancelled = false;
-  const controller = new AbortController();
-  const POLL_MS = 2000;
-  let pollId = null;
-  async function fetchProductsAndFirstImages(warm = false, signal) {
-    try {
-      if (!warm) setImageLoading(true);
-      const url = `https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(
-        selectedCategory
-      )}`;
-      const { data: items } = await axios.get(url, { signal });
-      const safeItems = Array.isArray(items) ? items : [];
-      if (cancelled) return;
-      const sorted = [...safeItems].sort((a, b) => {
-        const tb = getItemTime(b);
-        const ta = getItemTime(a);
-        if (tb !== ta) return tb - ta;
-        return String(b.id).localeCompare(String(a.id));
-      });
-      setProducts(sorted);
-      if (warm) return;
-      const firstImages = safeItems
-        .map((p) => ({
-          productId: p.id,
-          photo: Array.isArray(p.images) ? p.images[0] : null,
-        }))
-        .filter((x) => !!x.photo);
-      const cachedMap = {};
-      const misses = [];
-      for (const { productId, photo } of firstImages) {
-        const cached = ImageCache.getBase64(photo);
-        if (cached) {
-          cachedMap[productId] = [`data:image/jpeg;base64,${cached}`];
-        } else {
-          misses.push({ productId, photo });
-        }
-      }
-      if (Object.keys(cachedMap).length) {
-        setImageUrls((prev) => ({ ...prev, ...cachedMap }));
-      }
-      if (cancelled) return;
-      const fetchOne = async ({ productId, photo }) => {
-        try {
-          const res = await fetch(
-            `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
-              photo
-            )}`,
-            { signal }
-          );
-          const json = await res.json();
-          const b64 = json?.imageData || "";
-          if (!b64) return;
-          ImageCache.setBase64(photo, b64);
-          const dataUrl = `data:image/jpeg;base64,${b64}`;
-          if (!cancelled) {
-            setImageUrls((prev) => {
-              if (prev[productId]?.[0] === dataUrl) return prev;
-              return { ...prev, [productId]: [dataUrl] };
-            });
+    if (!selectedCategory) return;
+    let cancelled = false;
+    const controller = new AbortController();
+    const POLL_MS = 2000;
+    let pollId = null;
+
+    async function fetchProductsAndFirstImages(warm = false, signal) {
+      try {
+        if (!warm) setImageLoading(true);
+        const url = `https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(
+          selectedCategory
+        )}`;
+        const { data: items } = await axios.get(url, { signal });
+        const safeItems = Array.isArray(items) ? items : [];
+        if (cancelled) return;
+        const sorted = [...safeItems].sort((a, b) => {
+          const tb = getItemTime(b);
+          const ta = getItemTime(a);
+          if (tb !== ta) return tb - ta;
+          return String(b.id).localeCompare(String(a.id));
+        });
+        setProducts(sorted);
+        if (warm) return;
+        const firstImages = safeItems
+          .map((p) => ({
+            productId: p.id,
+            photo: Array.isArray(p.images) ? p.images[0] : null,
+          }))
+          .filter((x) => !!x.photo);
+        const cachedMap = {};
+        const misses = [];
+        for (const { productId, photo } of firstImages) {
+          const cached = ImageCache.getBase64(photo);
+          if (cached) {
+            cachedMap[productId] = [`data:image/jpeg;base64,${cached}`];
+          } else {
+            misses.push({ productId, photo });
           }
-        } catch {}
-      };
-      await Promise.allSettled(misses.map(fetchOne));
-    } catch (err) {
-      if (err?.name !== "CanceledError" && err?.name !== "AbortError") {
-        console.error("Error fetching grocery products:", err);
-        if (!warm) {
-          setProducts([]);
-          setImageUrls({});
         }
+        if (Object.keys(cachedMap).length) {
+          setImageUrls((prev) => ({ ...prev, ...cachedMap }));
+        }
+        if (cancelled) return;
+        const fetchOne = async ({ productId, photo }) => {
+          try {
+            const res = await fetch(
+              `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
+                photo
+              )}`,
+              { signal }
+            );
+            const json = await res.json();
+            const b64 = json?.imageData || "";
+            if (!b64) return;
+            ImageCache.setBase64(photo, b64);
+            const dataUrl = `data:image/jpeg;base64,${b64}`;
+            if (!cancelled) {
+              setImageUrls((prev) => {
+                if (prev[productId]?.[0] === dataUrl) return prev;
+                return { ...prev, [productId]: [dataUrl] };
+              });
+            }
+          } catch {}
+        };
+        await Promise.allSettled(misses.map(fetchOne));
+      } catch (err) {
+        if (err?.name !== "CanceledError" && err?.name !== "AbortError") {
+          console.error("Error fetching grocery products:", err);
+          if (!warm) {
+            setProducts([]);
+            setImageUrls({});
+          }
+        }
+      } finally {
+        if (!cancelled && !warm) setImageLoading(false);
       }
-    } finally {
-      if (!cancelled && !warm) setImageLoading(false);
     }
-  }
-  fetchProductsAndFirstImages(false, controller.signal);
-  pollId = setInterval(() => {
-    const pollController = new AbortController();
-    fetchProductsAndFirstImages(true, pollController.signal);
-  }, POLL_MS);
-  return () => {
-    cancelled = true;
-    controller.abort();
-    if (pollId) clearInterval(pollId);
-  };
-}, [selectedCategory]);
 
+    fetchProductsAndFirstImages(false, controller.signal);
+    pollId = setInterval(() => {
+      const pollController = new AbortController();
+      fetchProductsAndFirstImages(true, pollController.signal);
+    }, POLL_MS);
 
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 768);
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+    return () => {
+      cancelled = true;
+      controller.abort();
+      if (pollId) clearInterval(pollId);
+    };
+  }, [selectedCategory]);
 
   useEffect(() => {
     let savedCategories = [];
@@ -722,7 +497,10 @@ const [selectedCategory] = useState(getInitialCategory);
                   <span className="text-success text-xs">
                     Selected Qty:{" "}
                     <span className="text-danger fw-bold">
-                      {Object.values(cart).reduce((sum, qty) => sum + qty, 0)}
+                      {Object.values(cart).reduce(
+                        (sum, qty) => sum + qty,
+                        0
+                      )}
                     </span>
                   </span>
 
@@ -730,17 +508,20 @@ const [selectedCategory] = useState(getInitialCategory);
                     Total Price: Rs{" "}
                     <span className="text-danger fw-bold">
                       {Math.round(
-                        Object.entries(cart).reduce((sum, [productId, qty]) => {
-                          const product = products.find(
-                            (p) => String(p.id) === String(productId)
-                          );
-                          return (
-                            sum +
-                            (product
-                              ? Number(product.afterDiscount) * qty
-                              : 0)
-                          );
-                        }, 0)
+                        Object.entries(cart).reduce(
+                          (sum, [productId, qty]) => {
+                            const product = products.find(
+                              (p) => String(p.id) === String(productId)
+                            );
+                            return (
+                              sum +
+                              (product
+                                ? Number(product.afterDiscount) * qty
+                                : 0)
+                            );
+                          },
+                          0
+                        )
                       )}
                     </span>
                     /-
@@ -779,7 +560,10 @@ const [selectedCategory] = useState(getInitialCategory);
                           <div className="d-flex flex-row justify-content-between absolute top-0 left-0 w-full">
                             {Number(product.discount) > 0 && !isOutOfStock && (
                               <span className="discount-badge">
-                                {Math.round(Number(product.discount))}%
+                                {Math.round(
+                                  Number(product.discount)
+                                )}
+                                %
                               </span>
                             )}
 
@@ -803,6 +587,7 @@ const [selectedCategory] = useState(getInitialCategory);
                               </span>
                             )}
                           </div>
+
                           {/* Product Image */}
                           <div
                             className="d-flex justify-content-center align-items-center position-relative"
@@ -885,24 +670,34 @@ const [selectedCategory] = useState(getInitialCategory);
                             {product.name}
                           </h6>
 
-                         {/* Price/MRP/Units — ONLY when in stock */}
+                          {/* Price & Units & Max Limit (in stock only) */}
                           {!isOutOfStock && (
-                            <div className="text-start m-0" style={{ fontSize: "11px" }}>
+                            <div
+                              className="text-start m-0"
+                              style={{ fontSize: "11px" }}
+                            >
                               {product.afterDiscount != null && (
                                 <b className="text-success me-2">
-                                  ₹{Math.round(Number(product.afterDiscount))}
+                                  ₹
+                                  {Math.round(
+                                    Number(product.afterDiscount)
+                                  )}
                                 </b>
                               )}
                               {product.mrp != null && (
-                                <s className="text-muted">₹{product.mrp}</s>
+                                <s className="text-muted">
+                                  ₹{product.mrp}
+                                </s>
                               )}
                               {product.units && (
-                                <b className="text-success" style={{ marginLeft: "5px" }}>
+                                <b
+                                  className="text-success"
+                                  style={{ marginLeft: "5px" }}
+                                >
                                   {product.units}
                                 </b>
                               )}
 
-                              {/* Move Minimum Limit text here — under price */}
                               {(() => {
                                 const limit = getLimit(product);
                                 return Number.isFinite(limit) && limit > 0 ? (
@@ -915,8 +710,8 @@ const [selectedCategory] = useState(getInitialCategory);
                                       marginBottom: "28px",
                                     }}
                                   >
-                                    Max {limit} per customer                                  
-                                    </div>
+                                    Max {limit} per customer
+                                  </div>
                                 ) : null;
                               })()}
                             </div>
@@ -940,7 +735,7 @@ const [selectedCategory] = useState(getInitialCategory);
                             </div>
                           )}
 
-                          {/* Add/Counter — ONLY when in stock */}
+                          {/* Add / Counter */}
                           {!isOutOfStock && (
                             <div
                               style={{
@@ -982,7 +777,9 @@ const [selectedCategory] = useState(getInitialCategory);
                                       fontWeight: "bold",
                                       width: "25px",
                                       height: "25px",
-                                      opacity: canAddMore(product.id) ? 1 : 0.5,
+                                      opacity: canAddMore(product.id)
+                                        ? 1
+                                        : 0.5,
                                       cursor: canAddMore(product.id)
                                         ? "pointer"
                                         : "not-allowed",
@@ -994,8 +791,9 @@ const [selectedCategory] = useState(getInitialCategory);
                                     disabled={!canAddMore(product.id)}
                                     title={
                                       !canAddMore(product.id)
-                                        ? Number(product.stockLeft || 0) <=
-                                          getQty(product.id)
+                                        ? Number(
+                                            product.stockLeft || 0
+                                          ) <= getQty(product.id)
                                           ? "No more stock"
                                           : getLimit(product) === Infinity
                                           ? "No more stock"
@@ -1019,7 +817,9 @@ const [selectedCategory] = useState(getInitialCategory);
                                     padding: "2px 12px",
                                     fontSize: "13px",
                                   }}
-                                  onClick={() => handleAddClick(product.id)}
+                                  onClick={() =>
+                                    handleAddClick(product.id)
+                                  }
                                 >
                                   ADD
                                 </button>
@@ -1030,7 +830,7 @@ const [selectedCategory] = useState(getInitialCategory);
                       );
                     })}
 
-                  {/* Cart Bar (unchanged) */}
+                  {/* Cart Bar */}
                   {(() => {
                     const readAllCategories = () => {
                       if (typeof window === "undefined") return [];
@@ -1038,7 +838,9 @@ const [selectedCategory] = useState(getInitialCategory);
                         const raw = localStorage.getItem("allCategories");
                         if (!raw) return [];
                         const parsed = JSON.parse(raw);
-                        const arr = Array.isArray(parsed) ? parsed : [parsed];
+                        const arr = Array.isArray(parsed)
+                          ? parsed
+                          : [parsed];
                         return arr
                           .filter(Boolean)
                           .map((cat) => ({
@@ -1048,7 +850,10 @@ const [selectedCategory] = useState(getInitialCategory);
                               : [],
                           }));
                       } catch (e) {
-                        console.error("Invalid JSON in allCategories:", e);
+                        console.error(
+                          "Invalid JSON in allCategories:",
+                          e
+                        );
                         return [];
                       }
                     };
@@ -1057,11 +862,15 @@ const [selectedCategory] = useState(getInitialCategory);
                     const summary = allCategories.reduce(
                       (acc, cat) => {
                         for (const p of cat.products) {
-                          const qty = Number(p?.qty) || 0;
+                          const qty =
+                            Number(p?.qty) || 0;
                           if (!qty) continue;
                           const price =
                             Number(
-                              p?.afterDiscountPrice ?? p?.price ?? p?.finalPrice ?? 0
+                              p?.afterDiscountPrice ??
+                                p?.price ??
+                                p?.finalPrice ??
+                                0
                             ) || 0;
                           acc.items += qty;
                           acc.total += price * qty;
@@ -1103,16 +912,35 @@ const [selectedCategory] = useState(getInitialCategory);
                         >
                           🛒
                           <div
-                            style={{ display: "flex", flexDirection: "column" }}
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                            }}
                           >
-                            <span style={{ fontSize: "10px" }}>
+                            <span
+                              style={{
+                                fontSize: "10px",
+                              }}
+                            >
                               {items} items
                             </span>
-                            <span style={{ fontSize: "10px" }}>₹{total}</span>
+                            <span
+                              style={{
+                                fontSize: "10px",
+                              }}
+                            >
+                              ₹{total}
+                            </span>
                             {total < MIN_ORDER_TOTAL && (
-                              <span style={{ fontSize: "10px", opacity: 0.9 }}>
-                                Add ₹{MIN_ORDER_TOTAL - total} more to reach
-                                minimum order
+                              <span
+                                style={{
+                                  fontSize: "10px",
+                                  opacity: 0.9,
+                                }}
+                              >
+                                Add ₹
+                                {MIN_ORDER_TOTAL - total} more to
+                                reach minimum order
                               </span>
                             )}
                           </div>
@@ -1124,14 +952,19 @@ const [selectedCategory] = useState(getInitialCategory);
                           style={{
                             fontSize: "12px",
                             cursor:
-                              total < MIN_ORDER_TOTAL ? "not-allowed" : "pointer",
+                              total < MIN_ORDER_TOTAL
+                                ? "not-allowed"
+                                : "pointer",
                             background: "transparent",
                             border: "none",
-                            opacity: total < MIN_ORDER_TOTAL ? 0.7 : 1,
+                            opacity:
+                              total < MIN_ORDER_TOTAL ? 0.7 : 1,
                           }}
                           onClick={() => {
                             if (total < MIN_ORDER_TOTAL) return;
-                            navigate(`/groceryOffersCart/${userType}/${userId}`);
+                            navigate(
+                              `/groceryOffersCart/${userType}/${userId}`
+                            );
                           }}
                         >
                           View Cart →
@@ -1172,55 +1005,32 @@ const [selectedCategory] = useState(getInitialCategory);
               className="zoom-image"
             />
           </div>
-          <h6 className="text-start fw-bold m-0" style={{ fontSize: "12px" }}>
+          <h6
+            className="text-start fw-bold m-0"
+            style={{ fontSize: "12px" }}
+          >
             {zoomProduct?.name || ""}
           </h6>
           {zoomProduct?.afterDiscount != null && (
-            <p className="text-start m-0" style={{ fontSize: "12px" }}>
+            <p
+              className="text-start m-0"
+              style={{ fontSize: "12px" }}
+            >
               <b className="text-success me-2">
-                ₹{Math.round(Number(zoomProduct.afterDiscount))}
+                ₹
+                {Math.round(
+                  Number(zoomProduct.afterDiscount)
+                )}
               </b>
               {zoomProduct?.mrp ? (
-                <s className="text-muted">₹{zoomProduct.mrp}</s>
+                <s className="text-muted">
+                  ₹{zoomProduct.mrp}
+                </s>
               ) : null}
             </p>
           )}
         </Modal.Body>
       </Modal>
-
-      <style jsx>{`
-        .zoomable-image {
-          transition: transform 0.3s ease-in-out;
-        }
-        .zoomable-image:hover {
-          transform: scale(1.1);
-        }
-        .zoom-container {
-          position: relative;
-          display: inline-block;
-        }
-        .close-button {
-          position: absolute;
-          top: 4px;
-          right: 5px;
-          background: red;
-          border: none;
-          font-size: 24px;
-          color: white;
-          padding: 5px;
-          border-radius: 50%;
-          cursor: pointer;
-          transition: 0.3s;
-        }
-        .close-button:hover {
-          background: darkred;
-        }
-        .zoom-image {
-          max-width: 70%;
-          height: 50%;
-          border-radius: 5px;
-        }
-      `}</style>
     </>
   );
 };

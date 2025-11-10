@@ -14,12 +14,12 @@ import "./App.css";
 import CartImg from './img/Cart.jpeg';
 import { useNavigate, useParams } from "react-router-dom";
 import Footer from "./Footer.js";
-// const normCat = (s) => String(s || "").toLowerCase().trim();
+const normCat = (s) => String(s || "").toLowerCase().trim();
  
-// const isBlockedCategory = (catName) => {
-//   const c = normCat(catName);
-//   return c === "offers" || c === "vegetables & fruits offers";
-// };
+const isBlockedCategory = (catName) => {
+  const c = normCat(catName);
+  return c === "grocery offers";
+};
 
 const GroceryCartPage = () => {    
   const navigate = useNavigate();
@@ -88,8 +88,8 @@ const GroceryCartPage = () => {
 
       const flat = saved
         .flatMap((cat) =>
-      //     isBlockedCategory(cat.categoryName)
-      // ? [] :
+          isBlockedCategory(cat.categoryName)
+      ? [] :
           (cat.products || []).map((p) => ({
             categoryName: cat.categoryName,
             productName: p.productName || p.name || "",
@@ -161,8 +161,8 @@ const GroceryCartPage = () => {
 
       const allItems = updated
         .flatMap((cat) =>
-      //     isBlockedCategory(cat.categoryName)
-      // ? [] : 
+          isBlockedCategory(cat.categoryName)
+      ? [] : 
       (cat.products || []).map((p, idx) => {
             const persisted = p.image ?? p.productImage ?? "";
             const imageFilename = getFilenameFromValue(persisted);
@@ -237,8 +237,8 @@ const GroceryCartPage = () => {
 
     const saved = safeParse("allCategories");
     const allItems = saved.flatMap((cat) =>
-    //    isBlockedCategory(cat.categoryName)
-    // ? []  :
+       isBlockedCategory(cat.categoryName)
+    ? []  :
       (cat.products || []).map((p, idx) => {
         const persisted = p.image ?? p.productImage ?? "";
         const imageFilename = getFilenameFromValue(persisted);

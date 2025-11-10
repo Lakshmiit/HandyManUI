@@ -23,7 +23,8 @@ import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-import Banner1 from './img/BrandedProducts.jpeg';
+import Banner1 from './img/Offers.jpeg';
+// import Banner1 from './img/BrandedProducts.jpeg';
 // import Banner2 from './img/HandymanSpecialOffers.jpeg';
 // import BannerVideo from './img/Dusshera.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
@@ -2464,7 +2465,7 @@ const fetchImageUrl = async (photoId) => {
                     </button> */}
                 {/* </div> */}
                  <div
-                    // onClick={() => goToCategory("Vegetables & Fruits Offers", "groceryOffers")}
+                    onClick={() => goToCategory("Grocery Offers", "groceryOffers")}
                       style={{ cursor: "pointer" }}                
                       // style={{
                       //   cursor: "pointer",
@@ -2544,7 +2545,7 @@ const fetchImageUrl = async (photoId) => {
                 className="redeem-ribbon-btn mt-0 blinking-text"
                 aria-label="Open Redeem Offer"
               >
-                🎉 30% ABOVE OFF – 1st Week Big Sale! 🎉
+                🎉 30% ABOVE OFF – Nov Month Sale! 🎉
               </button>
             </div>
 
