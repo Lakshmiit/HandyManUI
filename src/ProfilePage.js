@@ -2874,7 +2874,7 @@ const fetchImageUrl = async (photoId) => {
                 {/* <p><strong>Assigned To:</strong> {ticket.assignedTo}</p> */}
                 <p><strong>Date:</strong> {ticket.date ? new Date(ticket.date).toLocaleDateString('en-GB') : "N/A"}</p>
               
-                {ticket.paidAmount ? ( 
+                {/* {ticket.paidAmount ? ( 
                     <> 
                       <p><strong>Paid Amount:</strong> {ticket.paidAmount}</p>
                     </>
@@ -2882,10 +2882,10 @@ const fetchImageUrl = async (photoId) => {
                     <>
                      <p><strong>Paid Amount:</strong> Not Paid</p>
                     </> 
-                  )}
+                  )} */}
 
                 {/* View Details Button */}
-                {ticket.martId && ticket.paymentMode?.toLowerCase() === "cash" && (
+                {/* {ticket.martId && ticket.paymentMode?.toLowerCase() === "cash" && (
                   <p className="ticket-content">Pay Now:  
                   <button
                     type="button"
@@ -2902,7 +2902,25 @@ const fetchImageUrl = async (photoId) => {
                     Amount to Pay
                   </button>
                   </p>
-                )}
+                )} */}
+
+                 {/* View Details Button */}
+                  <p className="ticket-content fw-bold">Order:   
+                  <button
+                    type="button"
+                    onClick={() => handleViewDetails(ticket)}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      padding: 0,
+                      color: "blue",
+                      textDecoration: "underline",
+                      cursor: "pointer",
+                    }}
+                  >
+                     View Order
+                  </button>
+                  </p>
 
                   {ticket.paidAmount && (
                     <>
