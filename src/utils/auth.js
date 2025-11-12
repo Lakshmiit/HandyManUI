@@ -1,6 +1,6 @@
 // utils/auth.js
 const STORAGE_KEY = "loginData";
-const EXPIRY_DAYS = 7;
+const EXPIRY_DAYS = 28;
 
 export const setLoginData = (newUserId) => {
   const now = new Date();

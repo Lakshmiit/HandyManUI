@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef, useCallback} from "react";
+import React, { useState, useEffect, useRef} from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import './App.css';
 import { Modal, Button} from 'react-bootstrap';
-import Confetti from "react-confetti";
+// import Confetti from "react-confetti";
 // import LocationOnIcon from '@mui/icons-material/LocationOn';
 // import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 // import NotificationBell from "./NotificationsBell";
@@ -950,171 +950,171 @@ useEffect(() => {
   console.log(  items, grocery,error, unreadCount, showMenu, products, selectedCategory, dress);
 }, [ items, grocery, error,unreadCount, showMenu, products, selectedCategory, dress]);
  
-const [showRedeem, setShowRedeem] = useState(false);
-const [refRecord, setRefRecord] = useState(null);
-const [refLoading, setRefLoading] = useState(true);
-const [shouldShowGetCoins, setShouldShowGetCoins] = useState(false);
-const [referralPoints, setReferralPoints] = useState('');
-const [awardedPoints, setAwardedPoints] = useState(0);
-const [awardLoading, setAwardLoading] = useState(true);
-const [userPoints, setUserPoints] = useState(0);        
-const [pointsLoading, setPointsLoading] = useState(true);
-const [claimAvailable, setClaimAvailable] = useState(false); 
-const AWARDED_POINTS_KEY = `hm_referral_awarded_points_${userId || "guest"}`; 
-const [isReferralUsed, setIsReferralUsed] = useState(false);
- const [showConfetti, setShowConfetti] = useState(false);
-  const [showMessage, setShowMessage] = useState(false);
-  const [redeemOpen, setRedeemOpen] = useState(false);
-  // const shouldMountRedeem = redeemOpen;
-const [windowSize, setWindowSize] = useState({
-  width: typeof window !== "undefined" ? window.innerWidth : 0,
-  height: typeof window !== "undefined" ? window.innerHeight : 0,
-});
-const [displayNumbers, setDisplayNumbers] = useState("");
-
+// const [showRedeem, setShowRedeem] = useState(false);
+// const [refRecord, setRefRecord] = useState(null);
+// const [refLoading, setRefLoading] = useState(true);
+// // const [shouldShowGetCoins, setShouldShowGetCoins] = useState(false);
+// const [referralPoints, setReferralPoints] = useState('');
+// const [awardedPoints, setAwardedPoints] = useState(0);
+// const [awardLoading, setAwardLoading] = useState(true);
+// const [userPoints, setUserPoints] = useState(0);        
+// const [pointsLoading, setPointsLoading] = useState(true);
+// const [claimAvailable, setClaimAvailable] = useState(false); 
+// const AWARDED_POINTS_KEY = `hm_referral_awarded_points_${userId || "guest"}`; 
+// const [isReferralUsed, setIsReferralUsed] = useState(false);
+//  const [showConfetti, setShowConfetti] = useState(false);
+//   const [showMessage, setShowMessage] = useState(false);
+//   const [redeemOpen, setRedeemOpen] = useState(false);
+//   // const shouldMountRedeem = redeemOpen;
+// const [windowSize, setWindowSize] = useState({
+//   width: typeof window !== "undefined" ? window.innerWidth : 0,
+//   height: typeof window !== "undefined" ? window.innerHeight : 0,
+// });
+// const [displayNumbers, setDisplayNumbers] = useState("");
+// redeemOpen, showRedeem, awardLoading,  awardedPoints, referralPoints,
 useEffect(() => {
-  console.log(redeemOpen, showRedeem, awardLoading,  awardedPoints, referralPoints, items, grocery,error, unreadCount, showMenu, products, selectedCategory, dress);
-}, [redeemOpen, showRedeem, awardLoading, awardedPoints, referralPoints, items, grocery, error,unreadCount, showMenu, products, selectedCategory, dress]);
+  console.log( items, grocery,error, unreadCount, showMenu, products, selectedCategory, dress);
+}, [items, grocery, error,unreadCount, showMenu, products, selectedCategory, dress]);
  
-const checkNewOrExisting = useCallback(async (num) => {
-  try {
-    const res = await fetch(
-      `https://handymanapiv2.azurewebsites.net/api/UserOnBoarding/GuestUserVerificationByMobileNo?mobileNo=${encodeURIComponent(
-        num
-      )}`
-    );
-    const text = await res.text();
-    let data = null;
-    try { data = text ? JSON.parse(text) : null; } catch { data = null; }
-    if (data === null) return "not registered";
-    return "registered";
-  } catch {
-    return "invalid";
-  }
-}, []);
+// const checkNewOrExisting = useCallback(async (num) => {
+//   try {
+//     const res = await fetch(
+//       `https://handymanapiv2.azurewebsites.net/api/UserOnBoarding/GuestUserVerificationByMobileNo?mobileNo=${encodeURIComponent(
+//         num
+//       )}`
+//     );
+//     const text = await res.text();
+//     let data = null;
+//     try { data = text ? JSON.parse(text) : null; } catch { data = null; }
+//     if (data === null) return "not registered";
+//     return "registered";
+//   } catch {
+//     return "invalid";
+//   }
+// }, []);
 
-useEffect(() => {
-  const numbers = (refRecord?.referralNumbers || "")
-    .split(",")
-    .map(s => s.trim())
-    .filter(Boolean)
-    .filter((v, i, a) => a.indexOf(v) === i);
+// useEffect(() => {
+//   const numbers = (refRecord?.referralNumbers || "")
+//     .split(",")
+//     .map(s => s.trim())
+//     .filter(Boolean)
+//     .filter((v, i, a) => a.indexOf(v) === i);
 
-  if (numbers.length === 0) {
-    setDisplayNumbers("");
-    return;
-  }
+//   if (numbers.length === 0) {
+//     setDisplayNumbers("");
+//     return;
+//   }
 
-  const checkAllNumbers = async () => {
-    setRefLoading(true);
-    const results = await Promise.all(
-      numbers.map(async (num) => {
-        const status = await checkNewOrExisting(num);
-        if (status === "registered") return `${num} ✅ Registered`;
-        if (status === "not registered") return `${num} ❌ Not Registered`;
-        return `${num} ⚠️ Invalid`;
-      })
-    );
-    setDisplayNumbers(results.join(", "));
-    setRefLoading(false);
-  };
+//   const checkAllNumbers = async () => {
+//     setRefLoading(true);
+//     const results = await Promise.all(
+//       numbers.map(async (num) => {
+//         const status = await checkNewOrExisting(num);
+//         if (status === "registered") return `${num} ✅ Registered`;
+//         if (status === "not registered") return `${num} ❌ Not Registered`;
+//         return `${num} ⚠️ Invalid`;
+//       })
+//     );
+//     setDisplayNumbers(results.join(", "));
+//     setRefLoading(false);
+//   };
 
-  checkAllNumbers();
-}, [refRecord, checkNewOrExisting]);
+//   checkAllNumbers();
+// }, [refRecord, checkNewOrExisting]);
 
-useEffect(() => {
-  const onResize = () => {
-    setWindowSize({
-      width: window.innerWidth,
-      height: window.innerHeight,
-    });
-  };
-  window.addEventListener("resize", onResize);
-  return () => window.removeEventListener("resize", onResize);
-}, []);
+// useEffect(() => {
+//   const onResize = () => {
+//     setWindowSize({
+//       width: window.innerWidth,
+//       height: window.innerHeight,
+//     });
+//   };
+//   window.addEventListener("resize", onResize);
+//   return () => window.removeEventListener("resize", onResize);
+// }, []);
 
-useEffect(() => {
-  const checkNewUser = async () => {
-    try {
-      const rec = await getReferralRecord(userId);
-      if (!rec || readServerPoints(rec) === 0) {
-        setShowRedeem(true);   
-      } else {
-        setShowRedeem(false);
-      }
-    } catch (err) {
-      setShowRedeem(true);
-    }
-  };
-  if (userId) checkNewUser();
-}, [userId]);
+// useEffect(() => {
+//   const checkNewUser = async () => {
+//     try {
+//       const rec = await getReferralRecord(userId);
+//       if (!rec || readServerPoints(rec) === 0) {
+//         setShowRedeem(true);   
+//       } else {
+//         setShowRedeem(false);
+//       }
+//     } catch (err) {
+//       setShowRedeem(true);
+//     }
+//   };
+//   if (userId) checkNewUser();
+// }, [userId]);
 
-useEffect(() => {
-  let cancelled = false;
-  (async () => {
-    try {
-      // 1) Server points (authoritative UI value)
-      const rec = await getReferralRecord(userId);
-      const serverPts = rec ? readServerPoints(rec) : 0;
-      // 2) Local award (pending 100 from Redeem flow)
-      let localAward = 0;
-      try { localAward = Number(localStorage.getItem(AWARDED_POINTS_KEY) || "0"); } catch {}
-      if (!cancelled) {
-        setUserPoints(serverPts);
-        // Enable "Get Coins" ONLY when server is still 0 AND local says 100 is ready
-        setClaimAvailable(serverPts === 0 && localAward === 100);
-      }
-    } catch {
-      if (!cancelled) {
-        setUserPoints(0);
-        setClaimAvailable(false);
-      }
-    } finally {
-      if (!cancelled) setPointsLoading(false);
-    }
-  })();
-  return () => { cancelled = true; };
-}, [userId, AWARDED_POINTS_KEY]);
+// useEffect(() => {
+//   let cancelled = false;
+//   (async () => {
+//     try {
+//       // 1) Server points (authoritative UI value)
+//       const rec = await getReferralRecord(userId);
+//       const serverPts = rec ? readServerPoints(rec) : 0;
+//       // 2) Local award (pending 100 from Redeem flow)
+//       let localAward = 0;
+//       try { localAward = Number(localStorage.getItem(AWARDED_POINTS_KEY) || "0"); } catch {}
+//       if (!cancelled) {
+//         setUserPoints(serverPts);
+//         // Enable "Get Coins" ONLY when server is still 0 AND local says 100 is ready
+//         setClaimAvailable(serverPts === 0 && localAward === 100);
+//       }
+//     } catch {
+//       if (!cancelled) {
+//         setUserPoints(0);
+//         setClaimAvailable(false);
+//       }
+//     } finally {
+//       if (!cancelled) setPointsLoading(false);
+//     }
+//   })();
+//   return () => { cancelled = true; };
+// }, [userId, AWARDED_POINTS_KEY]);
 
-useEffect(() => {
-  const fetchReferral = async () => {
-    try {
-      const rec = await getReferralRecord(userId);
-      if (rec) {
-        const raw =
-          rec?.referralPoints ??
-          rec?.referralpoints ??
-          rec?.ReferralPoints ??
-          rec?.ReferralPoints ??
-          0;
-        const pointsValue = Number(raw) || 0;
-        setReferralPoints(pointsValue);
-        setShouldShowGetCoins(pointsValue === 0); 
-      } else {
-        setReferralPoints(0);
-        setShouldShowGetCoins(true); 
-      }
-    } catch (e) {
-      console.error("Failed to load referral points:", e);
-      setShouldShowGetCoins(false);
-    }
-  };
-  fetchReferral();
-}, [userId]);
+// useEffect(() => {
+//   const fetchReferral = async () => {
+//     try {
+//       const rec = await getReferralRecord(userId);
+//       if (rec) {
+//         const raw =
+//           rec?.referralPoints ??
+//           rec?.referralpoints ??
+//           rec?.ReferralPoints ??
+//           rec?.ReferralPoints ??
+//           0;
+//         const pointsValue = Number(raw) || 0;
+//         setReferralPoints(pointsValue);
+//         setShouldShowGetCoins(pointsValue === 0); 
+//       } else {
+//         setReferralPoints(0);
+//         setShouldShowGetCoins(true); 
+//       }
+//     } catch (e) {
+//       console.error("Failed to load referral points:", e);
+//       setShouldShowGetCoins(false);
+//     }
+//   };
+//   fetchReferral();
+// }, [userId]);
 
 // load once
-useEffect(() => {
-  let cancelled = false;
-  (async () => {
-    try {
-      const rec = await getReferralRecord(userId);
-      if (!cancelled) setRefRecord(rec);
-    } finally {
-      if (!cancelled) setRefLoading(false);
-    }
-  })();
-  return () => { cancelled = true; };
-}, [userId]);
+// useEffect(() => {
+//   let cancelled = false;
+//   (async () => {
+//     try {
+//       const rec = await getReferralRecord(userId);
+//       if (!cancelled) setRefRecord(rec);
+//     } finally {
+//       if (!cancelled) setRefLoading(false);
+//     }
+//   })();
+//   return () => { cancelled = true; };
+// }, [userId]);
 
 // formatter (optional): clean, unique, spaced
 // const displayNumbers = (refRecord?.referralNumbers || "")
@@ -1125,211 +1125,211 @@ useEffect(() => {
 //   .join(", ");
 
 // ---- load once for this user ----
-useEffect(() => {
-  let cancelled = false;
-  (async () => {
-    try {
-      const rec = await getReferralRecord(userId);
-      const pts = rec ? readServerPoints(rec) : 0;
-      if (!cancelled) setUserPoints(pts);
-    } catch {
-      if (!cancelled) setUserPoints(0);
-    } finally {
-      if (!cancelled) setPointsLoading(false);
-    }
-  })();
-  return () => { cancelled = true; };
-}, [userId]);
+// useEffect(() => {
+//   let cancelled = false;
+//   (async () => {
+//     try {
+//       const rec = await getReferralRecord(userId);
+//       const pts = rec ? readServerPoints(rec) : 0;
+//       if (!cancelled) setUserPoints(pts);
+//     } catch {
+//       if (!cancelled) setUserPoints(0);
+//     } finally {
+//       if (!cancelled) setPointsLoading(false);
+//     }
+//   })();
+//   return () => { cancelled = true; };
+// }, [userId]);
 
 // KEY used by ReedemCode
-const awardKeyFor = (uid) => `hm_referral_awarded_points_${uid || "guest"}`;
+// const awardKeyFor = (uid) => `hm_referral_awarded_points_${uid || "guest"}`;
 
 // Read localStorage award (100 only if all 3 registered) — doesn't change UI points
-useEffect(() => {
-  const KEY = awardKeyFor(userId);
-  const readAward = () => {
-    try {
-      const raw = localStorage.getItem(KEY);
-      const n = Number(raw);
-      setAwardedPoints(Number.isFinite(n) ? n : 0);
-    } catch {
-      setAwardedPoints(0);
-    } finally {
-      setAwardLoading(false);
-    }
-  };
-  readAward();
-  const onStorage = (e) => { if (e.key === KEY) readAward(); };
-  window.addEventListener("storage", onStorage);
-  return () => window.removeEventListener("storage", onStorage);
-}, [userId]);
+// useEffect(() => {
+//   const KEY = awardKeyFor(userId);
+//   const readAward = () => {
+//     try {
+//       const raw = localStorage.getItem(KEY);
+//       const n = Number(raw);
+//       setAwardedPoints(Number.isFinite(n) ? n : 0);
+//     } catch {
+//       setAwardedPoints(0);
+//     } finally {
+//       setAwardLoading(false);
+//     }
+//   };
+//   readAward();
+//   const onStorage = (e) => { if (e.key === KEY) readAward(); };
+//   window.addEventListener("storage", onStorage);
+//   return () => window.removeEventListener("storage", onStorage);
+// }, [userId]);
 
-// When clicked, PUT 100 on server, update UI, clear local award
-useEffect(() => {
-  const KEY = awardKeyFor(userId);
-  const readAward = () => {
-    try {
-      const raw = localStorage.getItem(KEY);
-      const n = Number(raw);
-      setAwardedPoints(Number.isFinite(n) ? n : 0);
-    } catch {
-      setAwardedPoints(0);
-    } finally {
-      setAwardLoading(false);
-    }
-  };
-  readAward(); 
-  // keep in sync if another tab updates
-  const onStorage = (e) => {
-    if (e.key === KEY) readAward();
-  };
-  window.addEventListener("storage", onStorage);
-  return () => window.removeEventListener("storage", onStorage);
-}, [userId]);
+// // When clicked, PUT 100 on server, update UI, clear local award
+// useEffect(() => {
+//   const KEY = awardKeyFor(userId);
+//   const readAward = () => {
+//     try {
+//       const raw = localStorage.getItem(KEY);
+//       const n = Number(raw);
+//       setAwardedPoints(Number.isFinite(n) ? n : 0);
+//     } catch {
+//       setAwardedPoints(0);
+//     } finally {
+//       setAwardLoading(false);
+//     }
+//   };
+//   readAward(); 
+//   // keep in sync if another tab updates
+//   const onStorage = (e) => {
+//     if (e.key === KEY) readAward();
+//   };
+//   window.addEventListener("storage", onStorage);
+//   return () => window.removeEventListener("storage", onStorage);
+// }, [userId]);
 
 // ---- helpers (keep near your other helpers) ----
- const getReferralRecord = async (userId) => {
-  if (!userId) return null;
-  const url = `https://handymanapiv2.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(
-    userId
-  )}`;
-  const res = await fetch(url);
-  const text = await res.text();
-  let data = [];
-  try { data = text ? JSON.parse(text) : []; } catch { data = []; }
-  if (Array.isArray(data) && data.length > 0) {
-    data.sort((a, b) => new Date(b.date) - new Date(a.date));
-    const record = data[0];
-    setReferralPoints(Number(record.referralpoints));  
-    setIsReferralUsed(record.isReferralUsed);
-    return record;
-  }
-  setReferralPoints(0);
-  setIsReferralUsed(false);
-  return null;
-};
+//  const getReferralRecord = async (userId) => {
+//   if (!userId) return null;
+//   const url = `https://handymanapiv2.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(
+//     userId
+//   )}`;
+//   const res = await fetch(url);
+//   const text = await res.text();
+//   let data = [];
+//   try { data = text ? JSON.parse(text) : []; } catch { data = []; }
+//   if (Array.isArray(data) && data.length > 0) {
+//     data.sort((a, b) => new Date(b.date) - new Date(a.date));
+//     const record = data[0];
+//     setReferralPoints(Number(record.referralpoints));  
+//     setIsReferralUsed(record.isReferralUsed);
+//     return record;
+//   }
+//   setReferralPoints(0);
+//   setIsReferralUsed(false);
+//   return null;
+// };
 
-const readServerPoints = (record) => {
-  const raw =
-    record?.referralPoints ??
-    record?.referralpoints ??
-    record?.ReferralPoints ??
-    record?.ReferralPoints ??
-    0;
-  const n = Number(raw);
-  return Number.isFinite(n) ? n : 0;
-};
+// const readServerPoints = (record) => {
+//   const raw =
+//     record?.referralPoints ??
+//     record?.referralpoints ??
+//     record?.ReferralPoints ??
+//     record?.ReferralPoints ??
+//     0;
+//   const n = Number(raw);
+//   return Number.isFinite(n) ? n : 0;
+// };
 
-const handleGetCoins = async () => {
-  if (!claimAvailable || pointsLoading) return;
-  try {
-    setPointsLoading(true);
-    setShowConfetti(true);
-    setShowMessage(true);
+// const handleGetCoins = async () => {
+//   if (!claimAvailable || pointsLoading) return;
+//   try {
+//     setPointsLoading(true);
+//     setShowConfetti(true);
+//     setShowMessage(true);
 
-    // Stop confetti after 4 seconds
-    setTimeout(() => {
-      setShowConfetti(false);
-    }, 4000);
+//     // Stop confetti after 4 seconds
+//     setTimeout(() => {
+//       setShowConfetti(false);
+//     }, 4000);
 
-    // Hide message after 5 seconds
-    setTimeout(() => {
-      setShowMessage(false);
-    }, 5000);
-    // Re-check pending award
-    const localAward = Number(localStorage.getItem(AWARDED_POINTS_KEY) || "0");
-    if (localAward !== 100) {
-      setClaimAvailable(false);
-      return;
-    }
-    // Get latest referral record
-    const rec = await getReferralRecord(userId);
-    if (!rec?.id) {
-      alert("No referral record found to credit coins.");
-      return;
-    }
-    // PUT: set referralPoints to "100"
-    const payload = {
-      id: rec.id,
-      date: rec.date,
-      referralNumbers: rec.referralNumbers ?? "",
-      referreId: rec.referreId ?? userId ?? "",
-      isReferralUsed :false,
-      referralPoints: "100", 
-    };
-    const putUrl = `https://handymanapiv2.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(rec.id)}`;
-    const r = await fetch(putUrl, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json; charset=utf-8" },
-      body: JSON.stringify(payload),
-    });
-    if (!r.ok) {
-      const t = await r.text().catch(() => "");
-      throw new Error(`Failed to credit coins (${r.status}). ${t}`);
-    }
-    // Success → reflect in UI + clear local pending
-    setUserPoints(100);
-    setClaimAvailable(false);
-    try { localStorage.setItem(AWARDED_POINTS_KEY, "0"); } catch {}
-  } catch (err) {
-    console.error("Get Coins failed:", err);
-    alert(err.message || "Something went wrong while applying coins.");
-  } finally {
-    setPointsLoading(false);
-  }
-};
+//     // Hide message after 5 seconds
+//     setTimeout(() => {
+//       setShowMessage(false);
+//     }, 5000);
+//     // Re-check pending award
+//     const localAward = Number(localStorage.getItem(AWARDED_POINTS_KEY) || "0");
+//     if (localAward !== 100) {
+//       setClaimAvailable(false);
+//       return;
+//     }
+//     // Get latest referral record
+//     const rec = await getReferralRecord(userId);
+//     if (!rec?.id) {
+//       alert("No referral record found to credit coins.");
+//       return;
+//     }
+//     // PUT: set referralPoints to "100"
+//     const payload = {
+//       id: rec.id,
+//       date: rec.date,
+//       referralNumbers: rec.referralNumbers ?? "",
+//       referreId: rec.referreId ?? userId ?? "",
+//       isReferralUsed :false,
+//       referralPoints: "100", 
+//     };
+//     const putUrl = `https://handymanapiv2.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(rec.id)}`;
+//     const r = await fetch(putUrl, {
+//       method: "PUT",
+//       headers: { "Content-Type": "application/json; charset=utf-8" },
+//       body: JSON.stringify(payload),
+//     });
+//     if (!r.ok) {
+//       const t = await r.text().catch(() => "");
+//       throw new Error(`Failed to credit coins (${r.status}). ${t}`);
+//     }
+//     // Success → reflect in UI + clear local pending
+//     setUserPoints(100);
+//     setClaimAvailable(false);
+//     try { localStorage.setItem(AWARDED_POINTS_KEY, "0"); } catch {}
+//   } catch (err) {
+//     console.error("Get Coins failed:", err);
+//     alert(err.message || "Something went wrong while applying coins.");
+//   } finally {
+//     setPointsLoading(false);
+//   }
+// };
 
 // Read silent award from localStorage and listen for changes
-useEffect(() => {
-  const key = awardKeyFor(userId);
-  const readNow = () => {
-    try {
-      const raw = localStorage.getItem(key);
-      const n = Number(raw);
-      setAwardedPoints(Number.isFinite(n) ? n : 0);
-    } catch {
-      setAwardedPoints(0);
-    } finally {
-      setAwardLoading(false);
-    }
-  };
-  readNow();
-  const onStorage = (e) => {
-    if (e.key === key) readNow();
-  };
-  window.addEventListener("storage", onStorage);
-  return () => window.removeEventListener("storage", onStorage);
-}, [userId]);
+// useEffect(() => {
+//   const key = awardKeyFor(userId);
+//   const readNow = () => {
+//     try {
+//       const raw = localStorage.getItem(key);
+//       const n = Number(raw);
+//       setAwardedPoints(Number.isFinite(n) ? n : 0);
+//     } catch {
+//       setAwardedPoints(0);
+//     } finally {
+//       setAwardLoading(false);
+//     }
+//   };
+//   readNow();
+//   const onStorage = (e) => {
+//     if (e.key === key) readNow();
+//   };
+//   window.addEventListener("storage", onStorage);
+//   return () => window.removeEventListener("storage", onStorage);
+// }, [userId]);
 
-useEffect(() => {
-  let cancelled = false;
-  const bootstrapReferrals = async () => {
-    if (!userId) return;
-    const rec = await getReferralRecord(userId);
-    if (!rec) {
-      // brand-new user: open popup and start with 0 points
-      if (!cancelled) {
-        setShowRedeem(true);
-        setUserPoints(0);
-      }
-      return;
-    }
-    // existing record: load points into UI
-    const serverPts = Math.min(readServerPoints(rec), 150);
-    if (!cancelled) {
-      setUserPoints(serverPts);
-      // if they have no numbers and 0 points -> treat as new-ish, open it
-      const hasNumbers = Boolean((rec.referralNumbers || "").trim());
-      if (!hasNumbers && serverPts === 0) {
-        setShowRedeem(true);
-      } else {
-        setShowRedeem(false);
-      }
-    }
-  };
-  bootstrapReferrals();
-  return () => { cancelled = true; };
-}, [userId]);
+// useEffect(() => {
+//   let cancelled = false;
+//   const bootstrapReferrals = async () => {
+//     if (!userId) return;
+//     const rec = await getReferralRecord(userId);
+//     if (!rec) {
+//       // brand-new user: open popup and start with 0 points
+//       if (!cancelled) {
+//         setShowRedeem(true);
+//         setUserPoints(0);
+//       }
+//       return;
+//     }
+//     // existing record: load points into UI
+//     const serverPts = Math.min(readServerPoints(rec), 150);
+//     if (!cancelled) {
+//       setUserPoints(serverPts);
+//       // if they have no numbers and 0 points -> treat as new-ish, open it
+//       const hasNumbers = Boolean((rec.referralNumbers || "").trim());
+//       if (!hasNumbers && serverPts === 0) {
+//         setShowRedeem(true);
+//       } else {
+//         setShowRedeem(false);
+//       }
+//     }
+//   };
+//   bootstrapReferrals();
+//   return () => { cancelled = true; };
+// }, [userId]);
 
 //   const handleSendRef = async (index, referralValue) => {
 //     console.log("sendRef", { index, referralValue });
@@ -1637,21 +1637,21 @@ const handleCategoryClick = async (category) => {
     setError(`Oops! No products found for ${value} category.`);
   }
 };
-useEffect(() => {
-  const autoOpenForNewUser = async () => {
-    if (!userId) return;
-    try {
-      const rec = await getReferralRecord(userId);
-      if (!rec) {
-        // first time only
-        setRedeemOpen(true);
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  };
-  autoOpenForNewUser();
-}, [userId]);
+// useEffect(() => {
+//   const autoOpenForNewUser = async () => {
+//     if (!userId) return;
+//     try {
+//       const rec = await getReferralRecord(userId);
+//       if (!rec) {
+//         // first time only
+//         setRedeemOpen(true);
+//       }
+//     } catch (e) {
+//       console.error(e);
+//     }
+//   };
+//   autoOpenForNewUser();
+// }, [userId]);
 
 const handleGroceryCategoryClick = async (category) => {
   const { value } = category;
@@ -1666,9 +1666,10 @@ const handleGroceryCategoryClick = async (category) => {
     setError("");
     const encodedCategory = encodeURIComponent(value);
     localStorage.setItem("encodedCategory", encodedCategory);
-    navigate(`/grocery/${userType}/${userId}`, {
-       state: { encodedCategory, userPoints },  
-    });
+    navigate(`/grocery/${userType}/${userId}`);
+    //   {
+    //     state: { encodedCategory, userPoints },  
+    // });
   } catch (error) {
     console.error("Error fetching products:", error);
     setGrocery([]);
@@ -2062,17 +2063,17 @@ const fetchImageUrl = async (photoId) => {
                     </div>
                     <hr style={{ margin: '4px 0' }} />
                    {/* Reedem Coins */}
-                    <div className="d-flex align-items-center" style={{ gap: 10, minHeight: 46 }}>
+                    {/* <div className="d-flex align-items-center" style={{ gap: 10, minHeight: 46 }}> */}
                        {/* Coin  */}
-                      <div className="coin-wrap">
+                      {/* <div className="coin-wrap">
                         <span className="coin-value">{pointsLoading ? "0" : userPoints}</span>
-                      </div>
+                      </div> */}
                       {/* Label  */}
-                      <small style={{ fontSize: 12, lineHeight: 1, cursor: "pointer", color: "#2a50a1", fontWeight: "bold" }}>
+                      {/* <small style={{ fontSize: 12, lineHeight: 1, cursor: "pointer", color: "#2a50a1", fontWeight: "bold" }}>
                         Referral Offer
-                      </small>
+                      </small> */}
                        {/* Button (only when available and referral not used)  */}
-                      {shouldShowGetCoins && !isReferralUsed && (
+                      {/* {shouldShowGetCoins && !isReferralUsed && (
                         <button
                           onClick={handleGetCoins}
                           disabled={!claimAvailable || pointsLoading || userPoints > 0 || isReferralUsed ===true}
@@ -2088,14 +2089,14 @@ const fetchImageUrl = async (photoId) => {
                         >
                           {pointsLoading ? "Checking..." : "Get Coins"}
                         </button>
-                      )}
-                    </div> 
+                      )} */}
+                    {/* </div>  */}
                     {/* Confetti overlay */}
-                    {showConfetti && (
+                    {/* {showConfetti && (
                       <Confetti width={windowSize.width} height={windowSize.height} />
-                    )}
+                    )} */}
                     {/* Toast-like “Congrats” message */}
-                    {showMessage && (
+                    {/* {showMessage && (
                       <div
                         style={{
                           position: "fixed",
@@ -2115,11 +2116,11 @@ const fetchImageUrl = async (photoId) => {
                       >
                         🎉 Congrats! You got <span style={{ color: "#007bff" }}>100</span> points!
                       </div>
-                    )}
+                    )} */}
 
-                    <div style={{ fontSize: "11px", whiteSpace: "pre-wrap" }}>
+                    {/* <div style={{ fontSize: "11px", whiteSpace: "pre-wrap" }}>
                         {refLoading ? "Loading..." : displayNumbers}
-                    </div>
+                    </div> */}
                     <hr style={{ margin: '4px 0' }} />
                     <div className="d-flex align-items-start" style={{ cursor: "pointer" }} onClick={() => document.getElementById('myTicketsSection')?.scrollIntoView({ behavior: 'smooth' })}>
                       <ConfirmationNumberIcon sx={{ fontSize: 24, marginRight: '8px' }} />
@@ -2864,6 +2865,27 @@ const fetchImageUrl = async (photoId) => {
               <div key={index} className={`ticket-card1 ${ticket.raiseTicketId ? "raise-ticket-bg" :ticket.martId ? "mart-ticket-bg" : ticket.lakshmiCollectionId ? "lakshmi-collection-bg" : ticket.buyProductId ? "buy-product-bg" : "book-technician-bg"}`}>
               <div className="ticket-content">
                 <p><strong>{ticket.raiseTicketId ? "Raise TicketId": ticket.martId ? "Order Id" : ticket.lakshmiCollectionId? "Collection Id": ticket.buyProductId? "Buy ProductId" : "Book TechnicianId"}:</strong> {ticket.raiseTicketId|| ticket.martId || ticket.lakshmiCollectionId || ticket.buyProductId || ticket.bookTechnicianId}</p>
+                {/* Show View Order only for Mart orders */}
+{ticket.martId && (
+  <p className="ticket-content fw-bold">
+    Order:&nbsp;
+    <button
+      type="button"
+      onClick={() => handleViewDetails(ticket)}
+      style={{
+        background: "none",
+        border: "none",
+        padding: 0,
+        color: "blue",
+        textDecoration: "underline",
+        cursor: "pointer",
+      }}
+    >
+      View Order
+    </button>
+  </p>
+)}
+
                 <p><strong>{ticket.subject ? "Subject:" : ticket.productName ? "Product Name" : ticket?.categoriess?.[0]?.productName ? "Collection Name" : ticket.productName ? "Job Description" : ""}</strong> {ticket.subject || ticket.productName || ticket?.categoriess?.[0]?.productName || ticket.jobDescription}</p>
                 <p><strong>{ticket.category || ticket.lakshmiCollectionId ? "Category:" : "Delivery in 45 minutes"} </strong> {ticket.category || ticket?.categoriess?.[0]?.categoryName || ticket.category}</p>
                 {/* <p><strong>Category:</strong>{ticket.category ? ticket.category : "Delivery in 45 minutes"}</p> */}
@@ -2905,23 +2927,6 @@ const fetchImageUrl = async (photoId) => {
                 )} */}
 
                  {/* View Details Button */}
-                  <p className="ticket-content fw-bold">Order:   
-                  <button
-                    type="button"
-                    onClick={() => handleViewDetails(ticket)}
-                    style={{
-                      background: "none",
-                      border: "none",
-                      padding: 0,
-                      color: "blue",
-                      textDecoration: "underline",
-                      cursor: "pointer",
-                    }}
-                  >
-                     View Order
-                  </button>
-                  </p>
-
                   {ticket.paidAmount && (
                     <>
                       {/* Only show these if payment is done */}
