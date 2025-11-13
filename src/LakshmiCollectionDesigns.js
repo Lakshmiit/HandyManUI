@@ -772,12 +772,12 @@ const allOutOfStock = sizes.length > 0 && sizes.every(s => (s.stock ?? 0) <= 0);
                               >
                                 {size}
                               </button>
-                              <div
+                              {/* <div
                                 className={`small mt-1 ${outOfStock ? "text-danger" : "text-muted"}`}
                                 style={{ lineHeight: 1, fontSize: "12px" }}
                               >
                                 {stockLabel(stock)}
-                              </div>
+                              </div> */}
                             </div>
                           );
                         })}
