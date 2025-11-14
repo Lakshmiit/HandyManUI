@@ -2487,7 +2487,7 @@ const fetchImageUrl = async (photoId) => {
               </div> 
                  {/* <div className="carousel-item">  */}
                 <div
-                    onClick={() => goToCategory(".Offers", "groceryOffers")}
+                    onClick={() => goToCategory("Offers", "groceryOffers")}
                       style={{ cursor: "pointer" }} >  
                   <img
                     src={Banner2}
@@ -2495,7 +2495,7 @@ const fetchImageUrl = async (photoId) => {
                     style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
                     alt="45% Offers"
                   />
-                  </div>  
+                  </div>   
                 {/* </div> */}
                 {/* <div className="carousel-item">
                   <img
