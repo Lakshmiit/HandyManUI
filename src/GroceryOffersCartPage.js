@@ -23,11 +23,11 @@ const CATEGORY_VF_OFFERS = norm("Grocery Offers");
 
 const LIMIT_RULES = [
   { match: norm("Onion (Ulligadda) 500 g"), limit: 2 },
-  { match: norm("Potato (Bangala Dumpa) 500 g"), limit: 2 },
-  { match: norm("Apple 1 Pc"), limit: 1 },
-  { match: norm("Green Chilli (Pachi Mirchi) 100 g"), limit: 1 },
-  { match: norm("Banana 2 Pcs"), limit: 1 },
-  { match: norm("Cucumber (Dosakaya) 250 g"), limit: 1 },
+  // { match: norm("Potato (Bangala Dumpa) 500 g"), limit: 2 },
+  // { match: norm("Apple 1 Pc"), limit: 1 },
+  // { match: norm("Green Chilli (Pachi Mirchi) 100 g"), limit: 1 },
+  // { match: norm("Banana 2 Pcs"), limit: 1 },
+  // { match: norm("Cucumber (Dosakaya) 250 g"), limit: 1 },
 ];
 
 const getLimit = (item) => {

@@ -21,11 +21,11 @@ const CATEGORY_VEG_FRUITS_OFFERS = normalizeName("Grocery Offers");
 
 const LIMIT_RULES = [
   { match: normalizeName("Onion (Ulligadda) 500 g"), limit: 2 },
-  { match: normalizeName("Potato (Bangala Dumpa) 500 g"), limit: 2 },
-  { match: normalizeName("Apple 1 Pc"), limit: 1 },
-  { match: normalizeName("Green Chilli (Pachi Mirchi) 100 g"), limit: 1 },
-  { match: normalizeName("Banana 2 Pcs"), limit: 1 },
-  { match: normalizeName("Cucumber (Dosakaya) 250 g"), limit: 1 },
+  // { match: normalizeName("Potato (Bangala Dumpa) 500 g"), limit: 2 },
+  // { match: normalizeName("Apple 1 Pc"), limit: 1 },
+  // { match: normalizeName("Green Chilli (Pachi Mirchi) 100 g"), limit: 1 },
+  // { match: normalizeName("Banana 2 Pcs"), limit: 1 },
+  // { match: normalizeName("Cucumber (Dosakaya) 250 g"), limit: 1 },
 ];
 
 const getLimit = (product) => {

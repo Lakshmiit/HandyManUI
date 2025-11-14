@@ -14,12 +14,12 @@ import "./App.css";
 import CartImg from './img/Cart.jpeg';
 import { useNavigate, useParams } from "react-router-dom";
 import Footer from "./Footer.js";
-const normCat = (s) => String(s || "").toLowerCase().trim();
- 
-const isBlockedCategory = (catName) => {
-  const c = normCat(catName);
-  return c === "grocery offers";
-};
+// const normCat = (s) => String(s || "").toLowerCase().trim();
+   
+// const isBlockedCategory = (catName) => {
+//   const c = normCat(catName);
+//   return c === "grocery offers";
+// };
 
 const GroceryCartPage = () => {    
   const navigate = useNavigate();
@@ -45,6 +45,17 @@ const GroceryCartPage = () => {
     return Number.isFinite(n) ? n : f;
   }
 
+function getCustomLimit(name) {
+  const n = String(name || "").toLowerCase().trim();
+  // if (n === "apple 1 pc" || n === "cucumber (dosakaya) 250 g") return 1;
+  if (
+    // n === "potato (bangala dumpa) 500 g" ||
+    // n === "green chilli (pachi mirchi) 100 g" ||
+    n === "onion (ulligadda) 500 g"
+  ) return 2;
+  return Infinity;
+}
+  
   function getFilenameFromValue(value) {
     if (!value) return "";
     const v = String(value);
@@ -88,8 +99,8 @@ const GroceryCartPage = () => {
 
       const flat = saved
         .flatMap((cat) =>
-          isBlockedCategory(cat.categoryName)
-      ? [] :
+      //     isBlockedCategory(cat.categoryName)
+      // ? [] :
           (cat.products || []).map((p) => ({
             categoryName: cat.categoryName,
             productName: p.productName || p.name || "",
@@ -147,7 +158,15 @@ const GroceryCartPage = () => {
             const latestStock = stockMap.get(pname);
             if (latestStock == null) return p;
             const currentQty = toNum(p.qty, 0);
-            const clampedQty = Math.max(0, Math.min(currentQty, latestStock));
+            const clampedQty = Math.max(
+              0,
+              Math.min(
+                currentQty,
+                latestStock,
+                getCustomLimit(p.productName || p.name || "")
+              )
+            );
+            // const clampedQty = Math.max(0, Math.min(currentQty, latestStock));
             return {
               ...p,
               stockLeft: String(latestStock),
@@ -161,8 +180,8 @@ const GroceryCartPage = () => {
 
       const allItems = updated
         .flatMap((cat) =>
-          isBlockedCategory(cat.categoryName)
-      ? [] : 
+      //     isBlockedCategory(cat.categoryName)
+      // ? [] : 
       (cat.products || []).map((p, idx) => {
             const persisted = p.image ?? p.productImage ?? "";
             const imageFilename = getFilenameFromValue(persisted);
@@ -237,8 +256,8 @@ const GroceryCartPage = () => {
 
     const saved = safeParse("allCategories");
     const allItems = saved.flatMap((cat) =>
-       isBlockedCategory(cat.categoryName)
-    ? []  :
+    //    isBlockedCategory(cat.categoryName)
+    // ? []  :
       (cat.products || []).map((p, idx) => {
         const persisted = p.image ?? p.productImage ?? "";
         const imageFilename = getFilenameFromValue(persisted);
@@ -250,7 +269,12 @@ const GroceryCartPage = () => {
           productId: p.productId ?? p.id ?? idx,
           name: p.productName ?? p.name ?? "",
           category: cat.categoryName,
-          qty: Number(p.qty || 0),
+          // qty: Number(p.qty || 0),
+          qty: Math.min(
+            Number(p.qty || 0),
+            Number.isFinite(Number(p.stockLeft)) ? Number(p.stockLeft) : Infinity,
+            getCustomLimit(p.productName ?? p.name ?? "")
+          ),
           mrp: Number(p.mrp || 0),
           discount: Number(p.discount || 0),
           price: Number(p.afterDiscountPrice || p.price || 0),
@@ -284,7 +308,12 @@ const GroceryCartPage = () => {
           productId: p.productId ?? p.id ?? idx,
           name: p.productName ?? p.name ?? "",
           category: cat.categoryName,
-          qty: Number(p.qty || 0),
+          // qty: Number(p.qty || 0),
+          qty: Math.min(
+            Number(p.qty || 0),
+            Number.isFinite(Number(p.stockLeft)) ? Number(p.stockLeft) : Infinity,
+            getCustomLimit(p.productName ?? p.name ?? "")
+          ),
           mrp: Number(p.mrp || 0),
           discount: Number(p.discount || 0),
           price: Number(p.afterDiscountPrice || p.price || 0),
@@ -375,24 +404,46 @@ const GroceryCartPage = () => {
     localStorage.setItem("allCategories", JSON.stringify(allCategories));
   };
 
-  const handleQtyChange = (rowId, delta) => {
-    setCartItems(prev => {
-      const next = prev
-        .map(it => {
-          if (it.id !== rowId) return it;
-          const max = Number.isFinite(it.stockLeft) ? it.stockLeft : Infinity;
-          const current = Number(it.qty || 0);
-          const proposed = current + delta;
-          const clamped = Math.max(0, Math.min(proposed, max));
-          return { ...it, qty: clamped };
-        })
-        .filter(it => it.qty > 0);
+  // const handleQtyChange = (rowId, delta) => {
+  //   setCartItems(prev => {
+  //     const next = prev
+  //       .map(it => {
+  //         if (it.id !== rowId) return it;
+  //         const max = Number.isFinite(it.stockLeft) ? it.stockLeft : Infinity;
+  //         const current = Number(it.qty || 0);
+  //         const proposed = current + delta;
+  //         const clamped = Math.max(0, Math.min(proposed, max));
+  //         return { ...it, qty: clamped };
+  //       })
+  //       .filter(it => it.qty > 0);
 
-      writeBackToStorage(next);
-      setGrandSummary(computeTotals(next));
-      return next;
-    });
-  };
+  //     writeBackToStorage(next);
+  //     setGrandSummary(computeTotals(next));
+  //     return next;
+  //   });
+  // };
+
+  const handleQtyChange = (rowId, delta) => {
+  setCartItems(prev => {
+    const next = prev
+      .map(it => {
+        if (it.id !== rowId) return it;
+        const stockMax = Number.isFinite(it.stockLeft) ? it.stockLeft : Infinity;
+        const limitMax = getCustomLimit(it.name);
+        const max = Math.min(stockMax, limitMax);
+
+        const current = Number(it.qty || 0);
+        const proposed = current + delta;
+        const clamped = Math.max(0, Math.min(proposed, max));
+        return { ...it, qty: clamped };
+      })
+      .filter(it => it.qty > 0);
+
+    writeBackToStorage(next);
+    setGrandSummary(computeTotals(next));
+    return next;
+  });
+};
 
   const computeTotals = (items) => ({
     items: items.reduce((s, it) => s + Number(it.qty || 0), 0),

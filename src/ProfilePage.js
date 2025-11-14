@@ -25,7 +25,7 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 import Banner1 from './img/Offers.jpeg';
 // import Banner1 from './img/BrandedProducts.jpeg';
-// import Banner2 from './img/HandymanSpecialOffers.jpeg';
+import Banner2 from './img/Above45Offers.jpeg';
 // import BannerVideo from './img/Dusshera.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
 // import VolumeUpIcon from '@mui/icons-material/VolumeUp';
@@ -2485,17 +2485,17 @@ const fetchImageUrl = async (photoId) => {
                   alt="Grocery Offers Banner"
                 />
               </div> 
-                {/* <div className="carousel-item"> */}
-                {/* <div
-                    onClick={() => goToCategory("Grocery Offers", "groceryOffers")}
+                 {/* <div className="carousel-item">  */}
+                <div
+                    onClick={() => goToCategory(".Offers", "groceryOffers")}
                       style={{ cursor: "pointer" }} >  
                   <img
                     src={Banner2}
                     className="d-block w-100 img-fluid rounded"
                     style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
-                    alt="Slide 2"
+                    alt="45% Offers"
                   />
-                  </div>   */}
+                  </div>  
                 {/* </div> */}
                 {/* <div className="carousel-item">
                   <img
@@ -2538,17 +2538,17 @@ const fetchImageUrl = async (photoId) => {
                 🎁 Refer & Earn ₹100
               </button>
             </div> */}
-            <div className="d-flex flex-column align-items-center gap-3">
+            {/* <div className="d-flex flex-column align-items-center gap-3">
                 {/* Big Sale Strip */}
-              <button
+              {/* <button
                 type="button"
                 onClick={() => goToCategory("Offers", "groceryOffers")}
                 className="redeem-ribbon-btn mt-0 blinking-text"
                 aria-label="Open Redeem Offer"
               >
                 🎉 30% ABOVE OFF – Nov Month Sale! 🎉
-              </button>
-            </div>
+              </button> */}
+            {/* </div> */} 
 
 <div className="container"  style={{
     // padding: isMobile ? "2px" : "0px",
