@@ -23,7 +23,7 @@ import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-import Banner1 from './img/Offers.jpeg';
+import Banner1 from './img/ComboOffer.jpeg';
 // import Banner1 from './img/BrandedProducts.jpeg';
 import Banner2 from './img/Above45Offers.jpeg';
 // import BannerVideo from './img/Dusshera.mp4';
@@ -953,7 +953,7 @@ useEffect(() => {
 // const [showRedeem, setShowRedeem] = useState(false);
 // const [refRecord, setRefRecord] = useState(null);
 // const [refLoading, setRefLoading] = useState(true);
-// // const [shouldShowGetCoins, setShouldShowGetCoins] = useState(false);
+// const [shouldShowGetCoins, setShouldShowGetCoins] = useState(false);
 // const [referralPoints, setReferralPoints] = useState('');
 // const [awardedPoints, setAwardedPoints] = useState(0);
 // const [awardLoading, setAwardLoading] = useState(true);
@@ -965,7 +965,7 @@ useEffect(() => {
 //  const [showConfetti, setShowConfetti] = useState(false);
 //   const [showMessage, setShowMessage] = useState(false);
 //   const [redeemOpen, setRedeemOpen] = useState(false);
-//   // const shouldMountRedeem = redeemOpen;
+//    const shouldMountRedeem = redeemOpen;
 // const [windowSize, setWindowSize] = useState({
 //   width: typeof window !== "undefined" ? window.innerWidth : 0,
 //   height: typeof window !== "undefined" ? window.innerHeight : 0,
@@ -1102,7 +1102,7 @@ useEffect(() => {
 //   fetchReferral();
 // }, [userId]);
 
-// load once
+// // load once
 // useEffect(() => {
 //   let cancelled = false;
 //   (async () => {
@@ -1116,15 +1116,15 @@ useEffect(() => {
 //   return () => { cancelled = true; };
 // }, [userId]);
 
-// formatter (optional): clean, unique, spaced
-// const displayNumbers = (refRecord?.referralNumbers || "")
-//   .split(",")
-//   .map(s => s.trim())
-//   .filter(Boolean)
-//   .filter((v, i, a) => a.indexOf(v) === i)
-//   .join(", ");
+// // formatter (optional): clean, unique, spaced
+// // const displayNumbers = (refRecord?.referralNumbers || "")
+// //   .split(",")
+// //   .map(s => s.trim())
+// //   .filter(Boolean)
+// //   .filter((v, i, a) => a.indexOf(v) === i)
+// //   .join(", ");
 
-// ---- load once for this user ----
+// // ---- load once for this user ----
 // useEffect(() => {
 //   let cancelled = false;
 //   (async () => {
@@ -1141,10 +1141,10 @@ useEffect(() => {
 //   return () => { cancelled = true; };
 // }, [userId]);
 
-// KEY used by ReedemCode
+// // KEY used by ReedemCode
 // const awardKeyFor = (uid) => `hm_referral_awarded_points_${uid || "guest"}`;
 
-// Read localStorage award (100 only if all 3 registered) — doesn't change UI points
+// // Read localStorage award (100 only if all 3 registered) — doesn't change UI points
 // useEffect(() => {
 //   const KEY = awardKeyFor(userId);
 //   const readAward = () => {
@@ -1187,7 +1187,7 @@ useEffect(() => {
 //   return () => window.removeEventListener("storage", onStorage);
 // }, [userId]);
 
-// ---- helpers (keep near your other helpers) ----
+// // ---- helpers (keep near your other helpers) ----
 //  const getReferralRecord = async (userId) => {
 //   if (!userId) return null;
 //   const url = `https://handymanapiv2.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(
@@ -1279,7 +1279,7 @@ useEffect(() => {
 //   }
 // };
 
-// Read silent award from localStorage and listen for changes
+// // Read silent award from localStorage and listen for changes
 // useEffect(() => {
 //   const key = awardKeyFor(userId);
 //   const readNow = () => {
@@ -2076,7 +2076,7 @@ const fetchImageUrl = async (photoId) => {
                       {/* {shouldShowGetCoins && !isReferralUsed && (
                         <button
                           onClick={handleGetCoins}
-                          disabled={!claimAvailable || pointsLoading || userPoints > 0 || isReferralUsed ===true}
+                          disabled={!claimAvailable || pointsLoading || userPoints > 0 || isReferralUsed === true}
                           className="bg-primary"
                           style={{
                             fontSize: 12,
@@ -2524,11 +2524,11 @@ const fetchImageUrl = async (photoId) => {
                   <span className="visually-hidden">Next</span>
                 </button> */}
               </div>
-              </div>
+              </div>  
               </div> 
 
               {/* <div className="d-flex flex-column align-items-center gap-3 mb-3">
-              // Refer & Earn Strip
+              // {/* Refer & Earn Strip 
                 <button
                 type="button"
                 onClick={() => setRedeemOpen(true)}

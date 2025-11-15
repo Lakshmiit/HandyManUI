@@ -23,13 +23,18 @@ const CATEGORY_VF_OFFERS = norm("Grocery Offers");
 
 const LIMIT_RULES = [
   { match: norm("Onion (Ulligadda) 500 g"), limit: 2 },
+  { match: norm("Cucumber (Dosakaya) 500 g"), limit: 2 },
+  { match: norm("Tomato 250 g"), limit: 2 },
+  { match: norm("Combo Pack 1 - Daawat Basmati Rice 1Kg + Eastern Garam Masala 100g + Visakha Dairy Paneer 200g"), limit: 2 },
+  { match: norm("Combo Pack 2 - Daawat Biryani Basmati Rice 1Kg + Eastern Garam Masala 100g + Visakha Dairy Paneer 200g"), limit: 2 },
+
   // { match: norm("Potato (Bangala Dumpa) 500 g"), limit: 2 },
   // { match: norm("Apple 1 Pc"), limit: 1 },
   // { match: norm("Green Chilli (Pachi Mirchi) 100 g"), limit: 1 },
   // { match: norm("Banana 2 Pcs"), limit: 1 },
   // { match: norm("Cucumber (Dosakaya) 250 g"), limit: 1 },
 ];
-
+ 
 const getLimit = (item) => {
   const category = norm(item?.category);
   const name = norm(item?.name);

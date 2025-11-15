@@ -49,13 +49,17 @@ function getCustomLimit(name) {
   const n = String(name || "").toLowerCase().trim();
   // if (n === "apple 1 pc" || n === "cucumber (dosakaya) 250 g") return 1;
   if (
-    // n === "potato (bangala dumpa) 500 g" ||
-    // n === "green chilli (pachi mirchi) 100 g" ||
-    n === "onion (ulligadda) 500 g"
+    n === "onion (ulligadda) 500 g" ||
+    n === "tomato 250 g" || 
+    n === "cucumber (dosakaya) 500 g" ||
+    n === "combo pack 1 - daawat basmati rice 1kg + eastern garam masala 100g + visakha dairy paneer 200g" ||
+    n === "combo pack 2 - daawat biryani basmati rice 1kg + eastern garam masala 100g + visakha dairy paneer 200g"
   ) return 2;
-  return Infinity;
+  return Infinity;   
 }
-  
+  // n === "potato (bangala dumpa) 500 g" ||
+  // n === "green chilli (pachi mirchi) 100 g" ||
+
   function getFilenameFromValue(value) {
     if (!value) return "";
     const v = String(value);
@@ -74,7 +78,7 @@ function getCustomLimit(name) {
     async (signal) => {
       const norm = (s) => String(s || "").toLowerCase().trim();
       const isOffersRow = (obj) => norm(obj?.category) === "offers";
-
+ 
       function pickBestNonOffer(items, name) {
         const pool = (items || []).filter((it) => !isOffersRow(it));
         if (!pool.length) return null;
