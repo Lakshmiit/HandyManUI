@@ -124,7 +124,8 @@ import DeliveryTracking from './DeliveryTracking.js';
 import DeliveryPartner from './DeliveryPartner.js';
 import AdminCollectionNotificationGrid from './AdminCollectionNotificationGrid.js'
 // import DeliveryPartnerDirectory from './DeliveryPartnerDirectory.js';
-
+import TermsAndConditions from './TermsandConditions.js';
+import PrivacyPolicy from './PrivacyPolicy.js';
 import { getLoginData } from "./utils/auth";
 
 const PreventBackNavigation = () => {
@@ -167,6 +168,8 @@ function App() {
         <main>
           {/* className="mt-100" */}
           <Routes>
+            <Route path="/termsandConditions" element={<TermsAndConditions />} />
+            <Route path="/privacyPolicy" element={<PrivacyPolicy />} />
             <Route path="/device" element={<Device />} />
             <Route path="/chatPage/:userType/:userId" element={<ChatPage />} />
             {/* New Pages */}
