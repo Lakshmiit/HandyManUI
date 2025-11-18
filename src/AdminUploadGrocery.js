@@ -201,18 +201,30 @@ useEffect(() => {
                 <option>Baby Products</option>
                 <option>Dry Fruits & Bakery</option>
                 <option>Biscuits & Chocolates</option>
-                <option>Dairy, Bread & Eggs</option>
-                <option>Oils, Ghee & Dals</option>
+                <option>Drinks & Juices</option>
+                <option>Milk, Curd & Ghee</option>
+                <option>Bread & Eggs</option>
+                <option>Oils & Dals</option>
+                {/* <option>Oils, Ghee & Dals</option> */}
+                <option>Sugar, Salt & Jaggery</option>
+                <option>Masala, Spices & Pickles</option>
                 <option>Home Needs</option>
                 <option>Instant Food, Chips & Namkeen</option>
-                <option>Masala, Spices, Sugar & Salt</option>
-                <option>Personal Care</option>
+                {/* <option>Masala, Spices, Sugar & Salt</option> */}
+                <option>Health Care</option>
+                <option>Bath & Body Care</option>
+                <option>Skin & Face Care</option>
+                <option>Hair Care</option>
                 <option>Puja Essentials</option>
-                <option>Rice, Ravva & Flours</option>
-                <option>Snacks & Branded Foods</option>
+                <option>Rice & Ravva</option>
+                <option>Atta & Flours</option>
+                <option>Kitchenware Appliances</option>
                 <option>Stationary</option>
-                <option>Tea, Coffee & Sweets</option>
-                <option>Vegetables & Fruits</option>
+                <option>Tea & Coffee</option>
+                <option>Vegetables</option>
+                <option>Fruits</option>
+                <option>Soups & Sauces</option>
+                <option>Sweets & Snacks</option>
                 {/* <option>Family Pack </option> */}
                 {/* <option>Staples & Grains</option> */}
               </select>

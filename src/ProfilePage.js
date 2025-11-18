@@ -23,7 +23,7 @@ import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-import Banner1 from './img/Offers.jpeg';
+import Banner1 from './img/MilkOffers.jpeg';
 // import Banner1 from './img/BrandedProducts.jpeg';
 import Banner2 from './img/Above45Offers.jpeg'; 
 // import BannerVideo from './img/Dusshera.mp4';
@@ -46,17 +46,30 @@ import Electronics from './img/Electronics.jpeg';
 import Plumbing from './img/Plumbing.jpeg';
 import Hardware from './img/Hardware.jpeg';
 import HomeDecor from './img/HomeDecor.jpeg';
+import HomeAppliances from './img/HomeAppliances.jpeg';
 import BabyKidsImg from './img/BabyKids.jpeg';
 import PoojaImg from './img/Pooja.jpeg';
 // import FamilyPackImg from './img/FamilyPack.jpeg';
-import PersonalCareImg from './img/PersonalCare.jpeg';
-import RavvaImg from './img/Rice&Ravva.jpeg';
-import OilsImg from './img/oils,ghee.jpeg';
-import MasalaImg from './img/salt,sugar.jpeg';
-import BreadsImg from './img/dairy,bread.jpeg';
-import VegetablesImg from './img/vegetables,fruits.jpeg';
+// import PersonalCareImg from './img/PersonalCare.jpeg';
+import HairImg from './img/HairCare.jpeg';
+import BathBodyImg from './img/BathBody.jpeg';
+import RavvaImg from './img/RiceRavva.jpeg';
+import AttaImg from './img/AttaFlours.jpeg';
+import OilsImg from './img/OilDals.jpeg';
+import SugarImg from './img/SugarSalt.jpeg';
+import MasalaImg from './img/MasalaPickles.jpeg';
+import MilkImg from './img/MilkGhee.jpeg';
+import BreadsImg from './img/BreadEggs.jpeg';
+import DrinkImg from './img/DrinkJuice.jpeg';
+import BakeryImg from './img/BakerySweets.jpeg';
+import VegetablesImg from './img/Vegetables.jpeg';
+import FruitsImg from './img/Fruits.jpeg';
 import DryfruitsImg from './img/Bakery.jpeg';
+import SoupsImg from './img/SoupSauces.jpeg';
+import KitchenImg from './img/Kitchenware.jpeg';
 import BiscuitsImg from './img/Biscuits.jpeg';
+import HealthImg from './img/HealthCare.jpeg';
+import SkinImg from './img/SkinFace.jpeg';
 // import StationaryImg from './img/Stationary.jpeg';
 import TeaImg from './img/teacoffee.jpeg';
 import NamkeenImg from './img/sweets.jpeg';
@@ -825,7 +838,8 @@ const getMenuList = (userType, userId, category, district ,ZipCode,technicianFul
   }
 };
 const categories = [
-{ label: 'Home Decors', value: 'Home Decors', image: HomeDecor },          
+{ label: 'Home Decors', value: 'Home Decors', image: HomeDecor }, 
+{ label: 'Home Appliances', value: 'Home Appliances', image: HomeAppliances },         
 { label: 'Electrical Items', value: 'Electrical items', image: Electrical }, 
 { label: 'Electronics Appliances', value: 'Electronics appliances', image: Electronics },   
 { label: 'Plumbing & Sanitary', value: 'Sanitary items', image: Plumbing },         
@@ -834,20 +848,33 @@ const categories = [
 
 const groceryCategories = [
   // { label: 'Offers', value: 'Offers', image: Banner1 },
-  { label: 'Rice, Ravva & Flours', value: 'Rice, Ravva & Flours', image: RavvaImg },
-  { label: 'Oils, Ghee & Dals', value: 'Oils, Ghee & Dals', image: OilsImg },
-  { label: 'Masala, Spices, Sugar & Salt', value: 'Masala, Spices, Sugar & Salt', image: MasalaImg },
-  { label: 'Dairy, Bread & Eggs', value: 'Dairy, Bread & Eggs', image: BreadsImg },
+  { label: 'Rice & Ravva', value: 'Rice & Ravva', image: RavvaImg },
+  { label: 'Atta & Flours', value: 'Atta & Flours', image: AttaImg },
+  { label: 'Oils & Dals', value: 'Oils & Dals', image: OilsImg },
+  // { label: 'Oils, Ghee & Dals', value: 'Oils, Ghee & Dals', image: OilsImg },
+  { label: 'Sugar, Salt & Jaggery', value: 'Sugar, Salt & Jaggery', image: SugarImg },
+  { label: 'Masala, Spices & Pickles', value: 'Masala, Spices & Pickles', image: MasalaImg },
+  { label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
+  { label: 'Bread & Eggs', value: 'Bread & Eggs', image: BreadsImg },
   { label: 'Dry Fruits & Bakery', value: 'Dry Fruits & Bakery', image: DryfruitsImg },
   { label: 'Biscuits & Chocolates', value: 'Biscuits & Chocolates', image: BiscuitsImg },
+  { label: 'Drinks & Juices', value: 'Drinks & Juices', image: DrinkImg },
+  { label: 'Sweets & Snacks', value: 'Sweets & Snacks', image: BakeryImg },
   // { label: 'Stationary', value: 'Stationary', image: StationaryImg },
   { label: 'Instant Food, Chips & Namkeen', value: 'Instant Food, Chips & Namkeen', image: NamkeenImg },
-  { label: 'Tea, Coffee & Sweets', value: 'Tea, Coffee & Sweets', image: TeaImg },   
-    { label: 'Home Needs', value: 'Home Needs', image: HouseHoldImg },
+  { label: 'Soups & Sauces', value: 'Soups & Sauces', image: SoupsImg},
+  { label: 'Tea & Coffee', value: 'Tea & Coffee', image: TeaImg },   
+  { label: 'Home Needs', value: 'Home Needs', image: HouseHoldImg },
   { label: 'Puja Essentials', value: 'Puja Essentials', image: PoojaImg },
-  { label: 'Personal Care', value: 'Personal Care', image: PersonalCareImg },
+  { label: 'Skin & Face Care', value: 'Skin & Face Care', image: SkinImg },
+  { label: 'Bath & Body Care', value: 'Bath & Body Care', image: BathBodyImg },
+  { label: 'Hair Care', value: 'Hair Care', image: HairImg },
+  // { label: 'Personal Care', value: 'Personal Care', image: PersonalCareImg },
   { label: 'Baby Products', value: 'Baby Products', image: BabyKidsImg },
-  { label: 'Vegetables & Fruits', value: 'Vegetables & Fruits', image: VegetablesImg },
+  { label: 'Health Care', value: 'Health Care', image: HealthImg },
+  { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
+  { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
+  { label: 'Kitchenware Appliances', value: 'Kitchenware Appliances', image: KitchenImg },
   // { label: 'Family Pack', value: 'Family Pack', image: FamilyPackImg },
 ];
 

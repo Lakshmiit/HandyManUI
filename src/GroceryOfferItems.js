@@ -20,11 +20,14 @@ const normalizeName = (s) =>
 const CATEGORY_VEG_FRUITS_OFFERS = normalizeName("Grocery Offers");
 
 const LIMIT_RULES = [
+  { match: normalizeName("Apple 1 Pc"), limit: 1 },
+  { match: normalizeName("Visakha Dairy Milk 200 ml"), limit: 2 },
+  { match: normalizeName("Visakha Dairy Curd 180 g Pack 2"), limit: 1 },
   { match: normalizeName("Onion (Ulligadda) 500 g"), limit: 2 },
   { match: normalizeName("Cucumber (Dosakaya) 500 g"), limit: 2 },
   { match: normalizeName("Tomato 250 g"), limit: 2 },
-  { match: normalizeName("Combo Pack 1 - Daawat Basmati Rice 1Kg + Eastern Garam Masala 100g + Visakha Dairy Paneer 200g"), limit: 2 },
-  { match: normalizeName("Combo Pack 2 - Daawat Biryani Basmati Rice 1Kg + Eastern Garam Masala 100g + Visakha Dairy Paneer 200g"), limit: 2 },
+  // { match: normalizeName("Combo Pack 1 - Daawat Basmati Rice 1Kg + Eastern Garam Masala 100g + Visakha Dairy Paneer 200g"), limit: 2 },
+  // { match: normalizeName("Combo Pack 2 - Daawat Biryani Basmati Rice 1Kg + Eastern Garam Masala 100g + Visakha Dairy Paneer 200g"), limit: 2 },
 
   // { match: normalizeName("Potato (Bangala Dumpa) 500 g"), limit: 2 },
   // { match: normalizeName("Apple 1 Pc"), limit: 1 },
