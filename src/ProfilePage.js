@@ -23,7 +23,7 @@ import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-import Banner1 from './img/ChickenOffers.jpeg';
+import Banner1 from './img/ChickenOffers10.jpeg';
 // import Banner1 from './img/BrandedProducts.jpeg';
 import Banner2 from './img/Above45Offers.jpeg'; 
 // import BannerVideo from './img/Dusshera.mp4';
@@ -73,7 +73,7 @@ import SkinImg from './img/SkinFace.jpeg';
 // import StationaryImg from './img/Stationary.jpeg';
 import TeaImg from './img/teacoffee.jpeg';
 import NamkeenImg from './img/sweets.jpeg';
-import HouseHoldImg from './img/HouseHold.jpeg';
+import HouseHoldImg from './img/HouseHold.jpeg';   
 import ChickenImg from './img/Chicken.jpeg';
 import setkurti from './img/3pcsset.jpeg';
 import kurti from './img/2pcsset.jpeg';
@@ -2921,7 +2921,7 @@ const fetchImageUrl = async (photoId) => {
                 <p><strong>Status:</strong> 
                 <span className={ticket.status.toLowerCase()}> {ticket.status}</span>
                 </p> 
-                <p><strong>{ticket.assignedTo ? "Assigned To" : "Payment Mode"}: </strong> {ticket.assignedTo || ticket.assignedTo || ticket.assignedTo || ticket.paymentMode}</p>
+                <p><strong>{ticket.assignedTo ? "Assigned To" : "Payment Mode"}: </strong> {ticket.assignedTo || ticket.assignedTo || ticket.assignedTo || `${ticket.paymentMode} or UPI`}</p>
                 {/* <p><strong>Assigned To:</strong> {ticket.assignedTo}</p> */}
                 <p><strong>Date:</strong> {ticket.date ? new Date(ticket.date).toLocaleDateString('en-GB') : "N/A"}</p>
               
