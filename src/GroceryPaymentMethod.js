@@ -63,7 +63,7 @@ const [isOffersOrder, setIsOffersOrder] = useState(false);
 const isGuestName = (name) => (name ?? '').trim().toLowerCase() === 'guest';
 const readServerPoints = (record) => {
   const raw =
-    record?.referralPoints ??
+    record?.referralPoints ?? 
     record?.referralpoints ??
     record?.ReferralPoints ??
     0;
@@ -962,6 +962,7 @@ const handleCheckboxChange = (value) => {
                                 maxLength="10"
                                 value={mobileNumber}
                                 onChange={(e) => setMobileNumber(e.target.value)}
+                                readOnly
                               />
                               </Form.Group>
                             <Form.Group className="mb-3">

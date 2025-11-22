@@ -476,21 +476,22 @@ function getItemTime(p) {
               />
               <h4 className="fw-bold mb-0">{selectedCategory}</h4>
             </div>
-             {selectedCategory === "Vegetables & Fruits" && (
-              <div
-                className="mt-2 rounded-3 "
-                style={{
-                  backgroundColor: "#fff3e0",
-                  color: "red",
-                  fontSize: "13px",
-                  fontWeight: "600",
-                  // display: "inline-block",
-                  border: "1px solid #ffd180",
-                }}
-              >
-                📝 Yendada and Madhurawada Locations are Delivered.
-              </div>
-            )}
+             {(selectedCategory === "Vegetables" ||
+                selectedCategory === "Fruits" ||
+                selectedCategory === "Chicken") && (
+                <div
+                  className="mt-2 rounded-3"
+                  style={{
+                    backgroundColor: "#fff3e0",
+                    color: "red",
+                    fontSize: "13px",
+                    fontWeight: "600",
+                    border: "1px solid #ffd180",
+                  }}
+                >
+                  📝 Yendada and Madhurawada Locations are Delivered.
+                </div>
+              )}
             </>
           )}
         </div>
