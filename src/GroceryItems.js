@@ -489,7 +489,7 @@ function getItemTime(p) {
                     border: "1px solid #ffd180",
                   }}
                 >
-                  📝 Yendada and Madhurawada Locations are Delivered.
+                  📝 Delivery is only for Yendada and Madhurawada.
                 </div>
               )}
             </>
