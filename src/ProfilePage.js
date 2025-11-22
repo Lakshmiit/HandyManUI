@@ -23,7 +23,7 @@ import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-import Banner1 from './img/MilkOffers.jpeg';
+import Banner1 from './img/ChickenOffers.jpeg';
 // import Banner1 from './img/BrandedProducts.jpeg';
 import Banner2 from './img/Above45Offers.jpeg'; 
 // import BannerVideo from './img/Dusshera.mp4';
@@ -74,6 +74,7 @@ import SkinImg from './img/SkinFace.jpeg';
 import TeaImg from './img/teacoffee.jpeg';
 import NamkeenImg from './img/sweets.jpeg';
 import HouseHoldImg from './img/HouseHold.jpeg';
+import ChickenImg from './img/Chicken.jpeg';
 import setkurti from './img/3pcsset.jpeg';
 import kurti from './img/2pcsset.jpeg';
 import { CartStorage } from "./CartStorage";
@@ -848,6 +849,7 @@ const categories = [
 
 const groceryCategories = [
   // { label: 'Offers', value: 'Offers', image: Banner1 },
+  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
   { label: 'Rice & Ravva', value: 'Rice & Ravva', image: RavvaImg },
   { label: 'Atta & Flours', value: 'Atta & Flours', image: AttaImg },
   { label: 'Oils & Dals', value: 'Oils & Dals', image: OilsImg },

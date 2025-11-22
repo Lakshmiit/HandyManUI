@@ -199,6 +199,7 @@ useEffect(() => {
                 <option>Vegetables & Fruits Offers</option> 
                 <option>Grocery Offers</option> 
                 <option>Baby Products</option>
+                <option>Chicken</option>
                 <option>Dry Fruits & Bakery</option>
                 <option>Biscuits & Chocolates</option>
                 <option>Drinks & Juices</option>
