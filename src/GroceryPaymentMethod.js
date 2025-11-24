@@ -703,54 +703,155 @@ localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
 //   }
 // };     
 
+const normalizeName = (name) => {
+  return (name ?? "")
+    .toLowerCase()      
+    .replace(/\s+/g, "") 
+    .replace(/[^a-z0-9]/g, "");
+};
+
+const buildProductMapFromCart = (cart) => {
+  const products = (cart?.categories ?? []).flatMap(c => c?.products ?? []);
+  const map = new Map();
+  for (const p of products) {
+    const name = normalizeName(p?.productName);
+    if (!name) continue;
+    const qty = Number(
+      p?.noOfQuantity ??
+      p?.noofQuantity ??
+      p?.qty ??
+      p?.quantity ??
+      0
+    ) || 0;
+    const stockLeft = Number(
+      p?.stockLeft ??
+      p?.StockLeft ??
+      p?.stockleft ??
+      0
+    ) || 0;
+    map.set(name, { qty, stockLeft });
+  }
+  return map;
+};
+
+// const handleUpdateStockLeft = async () => {
+//   try {
+//     if (!Array.isArray(groceryData) || groceryData.length === 0) {
+//       throw new Error("No grocery data to update.");
+//     }
+//     if (!cartData) {
+//       throw new Error("Cart data unavailable.");
+//     }
+//     const productsFromCart = (cartData?.categories ?? [])
+//       .flatMap(c => c?.products ?? []);
+//     const qtyMap = new Map(
+//       productsFromCart
+//         .map(p => {
+//           const name = p?.productName?.trim();
+//           const qty = Number(
+//             p?.noOfQuantity ?? p?.noofQuantity ?? p?.qty ?? p?.quantity ?? 0
+//           );
+//           return name ? [name, isNaN(qty) ? 0 : qty] : null;
+//         })
+//         .filter(Boolean)
+//     );
+//     const toNum = (v, fallback = 0) => {
+//       const n = Number(v);
+//       return Number.isFinite(n) ? n : fallback;
+//     };
+//     const requests = groceryData.map(async (item) => {
+//       const nameKey = item?.name?.trim() || item?._matchedProductName?.trim();
+//       const purchasedQty = toNum(qtyMap.get(nameKey) ?? 0, 0);
+//       const prevStock = toNum(item?.stockLeft, 0);
+//       const newStock = Math.max(0, prevStock - purchasedQty);
+//       const payload = {
+//         id: item.id,
+//         date: item.date, 
+//         GroceryItemId: item.groceryItemId,
+//         Name: item.name,
+//         Category: item.category,
+//         Images: Array.isArray(item.images) ? item.images : [],
+//         MRP: item.mrp,                    
+//         Discount: item.discount,
+//         AfterDiscount: item.afterDiscount,
+//         StockLeft: String(newStock),      
+//         DeliveryIn: item.deliveryIn,
+//         RequestedBy: "Admin",
+//         Status: item.status,
+//         Code: item.code,
+//         Units: item.units,
+//       };
+
+//       const res = await fetch(
+//         `https://handymanapiv2.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${encodeURIComponent(item.id)}`,
+//         {
+//           method: "PUT",
+//           headers: { "Content-Type": "application/json" },
+//           body: JSON.stringify(payload),
+//         }
+//       );
+
+//       if (!res.ok) {
+//         const msg = await res.text().catch(() => "");
+//         throw new Error(`Failed for ${item.id} (HTTP ${res.status}). ${msg}`);
+//       }
+
+//       return { id: item.id, name: nameKey, prevStock, purchasedQty, newStock };
+//     });
+
+//     const results = await Promise.allSettled(requests);
+//     const ok = results.filter(r => r.status === "fulfilled").map(r => r.value);
+//     const fail = results.filter(r => r.status === "rejected").map(r => r.reason);
+
+//     console.log("✅ Updated:", ok);
+//     if (fail.length) {
+//       console.warn("⚠️ Failed updates:", fail);
+//       // window.alert(`Some items failed to update (${fail.length}). Check console.`);
+//     }       
+//   } catch (error) {
+//     console.error("Error:", error);
+//     window.alert("Failed to Update Grocery. Please try again later.");
+//   }
+// };
+
 const handleUpdateStockLeft = async () => {
   try {
     if (!Array.isArray(groceryData) || groceryData.length === 0) {
-      throw new Error("No grocery data to update.");
+      console.warn("No grocery data to update.");
+      return;
     }
     if (!cartData) {
-      throw new Error("Cart data unavailable.");
+      console.warn("Cart data unavailable.");
+      return;
     }
-    const productsFromCart = (cartData?.categories ?? [])
-      .flatMap(c => c?.products ?? []);
-    const qtyMap = new Map(
-      productsFromCart
-        .map(p => {
-          const name = p?.productName?.trim();
-          const qty = Number(
-            p?.noOfQuantity ?? p?.noofQuantity ?? p?.qty ?? p?.quantity ?? 0
-          );
-          return name ? [name, isNaN(qty) ? 0 : qty] : null;
-        })
-        .filter(Boolean)
-    );
-    const toNum = (v, fallback = 0) => {
-      const n = Number(v);
-      return Number.isFinite(n) ? n : fallback;
-    };
+    const productMap = buildProductMapFromCart(cartData);
     const requests = groceryData.map(async (item) => {
-      const nameKey = item?.name?.trim() || item?._matchedProductName?.trim();
-      const purchasedQty = toNum(qtyMap.get(nameKey) ?? 0, 0);
-      const prevStock = toNum(item?.stockLeft, 0);
-      const newStock = Math.max(0, prevStock - purchasedQty);
+    const key = normalizeName(item?._matchedProductName || item?.name);
+      if (!key) return null;
+      const info = productMap.get(key);
+      if (!info) {
+        console.warn(`No cart match for grocery item ${item.id} (${key})`);
+        return null;
+      }
+      const prevStock = info.stockLeft; 
+      const newStock = prevStock;       
       const payload = {
         id: item.id,
-        date: item.date, 
+        date: item.date,
         GroceryItemId: item.groceryItemId,
         Name: item.name,
         Category: item.category,
         Images: Array.isArray(item.images) ? item.images : [],
-        MRP: item.mrp,                    
+        MRP: item.mrp,
         Discount: item.discount,
         AfterDiscount: item.afterDiscount,
-        StockLeft: String(newStock),      
+        StockLeft: String(newStock),   
         DeliveryIn: item.deliveryIn,
         RequestedBy: "Admin",
         Status: item.status,
         Code: item.code,
         Units: item.units,
       };
-
       const res = await fetch(
         `https://handymanapiv2.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${encodeURIComponent(item.id)}`,
         {
@@ -759,27 +860,18 @@ const handleUpdateStockLeft = async () => {
           body: JSON.stringify(payload),
         }
       );
-
       if (!res.ok) {
         const msg = await res.text().catch(() => "");
-        throw new Error(`Failed for ${item.id} (HTTP ${res.status}). ${msg}`);
+        throw new Error(`Failed for ${item.id}: ${msg}`);
       }
-
-      return { id: item.id, name: nameKey, prevStock, purchasedQty, newStock };
+      console.log(`✔ Stock unchanged for ${item.name}: ${prevStock}`);
+      return true;
     });
-
-    const results = await Promise.allSettled(requests);
-    const ok = results.filter(r => r.status === "fulfilled").map(r => r.value);
-    const fail = results.filter(r => r.status === "rejected").map(r => r.reason);
-
-    console.log("✅ Updated:", ok);
-    if (fail.length) {
-      console.warn("⚠️ Failed updates:", fail);
-      // window.alert(`Some items failed to update (${fail.length}). Check console.`);
-    }       
+    await Promise.allSettled(requests);
+    console.log("Stock updated (unchanged).");
   } catch (error) {
-    console.error("Error:", error);
-    window.alert("Failed to Update Grocery. Please try again later.");
+    console.error("Error updating stock:", error);
+    alert("Failed to update grocery stock.");
   }
 };
 
@@ -813,9 +905,9 @@ const sendLmartsms = async () => {
 
 const handlePaymentAndSms = async () => {
   try {
-    await handleUpdatePaymentMethod();   
     await handleUpdateStockLeft();
-    await sendLmartsms();                
+    await sendLmartsms();
+    await handleUpdatePaymentMethod();
     console.log("Payment updated & SMS sent ✅");
   } catch (error) {
     console.error("Error in payment+sms flow:", error);

@@ -643,7 +643,7 @@ const Notification = () => {
 
   useEffect(() => {
   fetchNotifications();
-  const interval = setInterval(fetchNotifications, 60000);
+  const interval = setInterval(fetchNotifications, 1500);
   return () => clearInterval(interval);
 }, [fetchNotifications]);
   
