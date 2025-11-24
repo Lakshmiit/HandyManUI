@@ -23,6 +23,7 @@ const CATEGORY_VF_OFFERS = norm("Grocery Offers");
 
 const LIMIT_RULES = [
   { match: norm("Apple 1 Pc"), limit: 1 },
+  { match: norm("Crompton 9W LED bulb"), limit: 1 },
   { match: norm("Visakha Dairy Milk 200 ml"), limit: 2 },
   { match: norm("Visakha Dairy Curd 180 g Pack 2"), limit: 1 },
   { match: norm("Onion (Ulligadda) 500 g"), limit: 2 },

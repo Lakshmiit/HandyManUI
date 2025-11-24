@@ -21,6 +21,7 @@ const CATEGORY_VEG_FRUITS_OFFERS = normalizeName("Grocery Offers");
 
 const LIMIT_RULES = [
   { match: normalizeName("Apple 1 Pc"), limit: 1 },
+  { match: normalizeName("Crompton 9W LED bulb"), limit: 1 },
   { match: normalizeName("Visakha Dairy Milk 200 ml"), limit: 2 },
   { match: normalizeName("Visakha Dairy Curd 180 g Pack 2"), limit: 1 },
   { match: normalizeName("Onion (Ulligadda) 500 g"), limit: 2 },

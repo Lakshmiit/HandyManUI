@@ -47,7 +47,7 @@ const GroceryCartPage = () => {
 
 function getCustomLimit(name) {
   const n = String(name || "").toLowerCase().trim();
-  if (n === "apple 1 pc" || n === "visakha dairy curd 180 g pack 2") return 1;
+  if (n === "apple 1 pc" || n === "visakha dairy curd 180 g pack 2" || n === "crompton 9w led bulb") return 1;
   if (
     // n === "apple 1 pc" ||
     n === "visakha dairy milk 200 ml" ||
