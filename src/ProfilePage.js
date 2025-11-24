@@ -23,8 +23,8 @@ import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-import Banner1 from './img/ChickenOffers10.jpeg';
-// import Banner1 from './img/BrandedProducts.jpeg';
+// import Banner1 from './img/ChickenOffers10.jpeg';
+import Banner1 from './img/Offers.jpeg';
 import Banner2 from './img/Above45Offers.jpeg'; 
 // import BannerVideo from './img/Dusshera.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
@@ -849,6 +849,8 @@ const categories = [
 
 const groceryCategories = [
   // { label: 'Offers', value: 'Offers', image: Banner1 },
+  { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
+  { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
   { label: 'Chicken', value: 'Chicken', image: ChickenImg },
   { label: 'Rice & Ravva', value: 'Rice & Ravva', image: RavvaImg },
   { label: 'Atta & Flours', value: 'Atta & Flours', image: AttaImg },
@@ -874,8 +876,6 @@ const groceryCategories = [
   // { label: 'Personal Care', value: 'Personal Care', image: PersonalCareImg },
   { label: 'Baby Products', value: 'Baby Products', image: BabyKidsImg },
   { label: 'Health Care', value: 'Health Care', image: HealthImg },
-  { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
-  { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
   { label: 'Kitchenware Appliances', value: 'Kitchenware Appliances', image: KitchenImg },
   // { label: 'Family Pack', value: 'Family Pack', image: FamilyPackImg },
 ];
