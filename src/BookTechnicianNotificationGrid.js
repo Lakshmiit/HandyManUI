@@ -106,9 +106,9 @@ const BookTechnicianNotification = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
+  // const handlePageChange = (pageNumber) => {
+  //   setCurrentPage(pageNumber);
+  // };
 
  // Get paginated data
  const indexOfLastTicket = currentPage * rowsPerPage;
@@ -298,28 +298,73 @@ const BookTechnicianNotification = () => {
         </div>
         {/* Pagination */}
         <div className="d-flex justify-content-center mt-3">
-          <nav aria-label="Page navigation">
-            <ul className="pagination">
-              {[...Array(Math.ceil(filteredData.length / rowsPerPage))].map(
-                (_, index) => (
-                  <li
-                    key={index} 
-                    className={`page-item ${
-                      index + 1 === currentPage ? "active" : ""
-                    }`}
-                  >
-                    <button
-                      className="page-link"
-                      onClick={() => handlePageChange(index + 1)}
-                    >
-                      {index + 1}
-                    </button>
-                  </li>
-                )
-              )}
-            </ul>
-          </nav>
-        </div>
+                  <nav aria-label="Page navigation">
+                    <ul className="pagination">
+                      <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                        <button
+                          className="page-link"
+                          onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                        >
+                          &laquo;
+                        </button>
+                      </li>
+                      {Array.from({ length: Math.ceil(filteredData.length / rowsPerPage) }, (_, i) => i + 1)
+                        .filter(
+                          (page) =>
+                            page === 1 ||
+                            page === Math.ceil(filteredData.length / rowsPerPage) ||
+                            (page >= currentPage - 2 && page <= currentPage + 2)
+                        )
+                        .map((page, i, arr) => {
+                          const prevPage = arr[i - 1];
+                          if (prevPage && page - prevPage > 1) {
+                            return (
+                              <React.Fragment key={page}>
+                                <li className="page-item disabled">
+                                  <span className="page-link">...</span>
+                                </li>
+                                <li
+                                  className={`page-item ${page === currentPage ? "active" : ""}`}
+                                >
+                                  <button className="page-link" onClick={() => setCurrentPage(page)}>
+                                    {page}
+                                  </button>
+                                </li>
+                              </React.Fragment>
+                            );
+                          }
+                          return (
+                            <li
+                              key={page}
+                              className={`page-item ${page === currentPage ? "active" : ""}`}
+                            >
+                              <button className="page-link" onClick={() => setCurrentPage(page)}>
+                                {page}
+                              </button>
+                            </li>
+                          );
+                        })}
+                      <li
+                        className={`page-item ${
+                          currentPage === Math.ceil(filteredData.length / rowsPerPage)
+                            ? "disabled"
+                            : ""
+                        }`}
+                      >
+                        <button
+                          className="page-link"
+                          onClick={() =>
+                            setCurrentPage((p) =>
+                              Math.min(p + 1, Math.ceil(filteredData.length / rowsPerPage))
+                            )
+                          }
+                        >
+                          &raquo;
+                        </button>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
       </div>
 
       {/* Styles for floating menu */}

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef} from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import './App.css';
 import { Modal, Button} from 'react-bootstrap';
-// import Confetti from "react-confetti";
+import Confetti from "react-confetti";
 // import LocationOnIcon from '@mui/icons-material/LocationOn';
 // import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 // import NotificationBell from "./NotificationsBell";
@@ -24,8 +24,8 @@ import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 // import Banner1 from './img/ChickenOffers10.jpeg';
-import Banner1 from './img/Offers.jpeg';
-import Banner2 from './img/Above45Offers.jpeg'; 
+import Banner1 from './img/unbeatable.jpeg';
+import Banner2 from './img/NovMonth.jpeg'; 
 // import BannerVideo from './img/Dusshera.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
 // import VolumeUpIcon from '@mui/icons-material/VolumeUp';
@@ -75,6 +75,7 @@ import TeaImg from './img/teacoffee.jpeg';
 import NamkeenImg from './img/sweets.jpeg';
 import HouseHoldImg from './img/HouseHold.jpeg';   
 import ChickenImg from './img/Chicken.jpeg';
+import KidsImg from './img/KidsZone.jpeg';
 import setkurti from './img/3pcsset.jpeg';
 import kurti from './img/2pcsset.jpeg';
 import { CartStorage } from "./CartStorage";
@@ -848,37 +849,34 @@ const categories = [
 ];
 
 const groceryCategories = [
-  // { label: 'Offers', value: 'Offers', image: Banner1 },
   { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
   { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
-  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
   { label: 'Rice & Ravva', value: 'Rice & Ravva', image: RavvaImg },
   { label: 'Atta & Flours', value: 'Atta & Flours', image: AttaImg },
   { label: 'Oils & Dals', value: 'Oils & Dals', image: OilsImg },
-  // { label: 'Oils, Ghee & Dals', value: 'Oils, Ghee & Dals', image: OilsImg },
   { label: 'Sugar, Salt & Jaggery', value: 'Sugar, Salt & Jaggery', image: SugarImg },
-  { label: 'Masala, Spices & Pickles', value: 'Masala, Spices & Pickles', image: MasalaImg },
   { label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
   { label: 'Bread & Eggs', value: 'Bread & Eggs', image: BreadsImg },
-  { label: 'Dry Fruits & Bakery', value: 'Dry Fruits & Bakery', image: DryfruitsImg },
+  { label: 'Masala, Spices & Pickles', value: 'Masala, Spices & Pickles', image: MasalaImg },
+  { label: 'Instant Food, Chips & Namkeen', value: 'Instant Food, Chips & Namkeen', image: NamkeenImg },
   { label: 'Biscuits & Chocolates', value: 'Biscuits & Chocolates', image: BiscuitsImg },
   { label: 'Drinks & Juices', value: 'Drinks & Juices', image: DrinkImg },
   { label: 'Sweets & Snacks', value: 'Sweets & Snacks', image: BakeryImg },
-  // { label: 'Stationary', value: 'Stationary', image: StationaryImg },
-  { label: 'Instant Food, Chips & Namkeen', value: 'Instant Food, Chips & Namkeen', image: NamkeenImg },
+  { label: 'Dry Fruits & Bakery', value: 'Dry Fruits & Bakery', image: DryfruitsImg },
   { label: 'Soups & Sauces', value: 'Soups & Sauces', image: SoupsImg},
   { label: 'Tea & Coffee', value: 'Tea & Coffee', image: TeaImg },   
+  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
   { label: 'Home Needs', value: 'Home Needs', image: HouseHoldImg },
   { label: 'Puja Essentials', value: 'Puja Essentials', image: PoojaImg },
   { label: 'Skin & Face Care', value: 'Skin & Face Care', image: SkinImg },
   { label: 'Bath & Body Care', value: 'Bath & Body Care', image: BathBodyImg },
   { label: 'Hair Care', value: 'Hair Care', image: HairImg },
-  // { label: 'Personal Care', value: 'Personal Care', image: PersonalCareImg },
   { label: 'Baby Products', value: 'Baby Products', image: BabyKidsImg },
+  { label: 'Kids Zone', value: 'Kids Zone', image: KidsImg },
   { label: 'Health Care', value: 'Health Care', image: HealthImg },
-  { label: 'Kitchenware Appliances', value: 'Kitchenware Appliances', image: KitchenImg },
-  // { label: 'Family Pack', value: 'Family Pack', image: FamilyPackImg },
+  { label: 'Kitchenware Appliances', value: 'Kitchenware Appliances', image: KitchenImg }
 ];
+
 
 const collectionsCategories = [
   { label: 'Dupatta Sets', value: 'Dupatta Sets', image: setkurti },
@@ -966,7 +964,7 @@ const MOBILE_EXTRA =0;
 const MOBILE_PADDING_TOP = HEADER_H + MOBILE_ICONS_H + MOBILE_EXTRA;
 const norm = (s) => String(s || "").trim().toLowerCase();
 const isOffersCat = (cat) => norm(cat) === "offers";
-
+const [showCashbackModal, setShowCashbackModal] = useState(false);
 function decideCartRoute(products) {
   const hasOffers = (products || []).some(p => isOffersCat(p.category));
   const hasNonOffers = (products || []).some(p => !isOffersCat(p.category));
@@ -974,11 +972,33 @@ function decideCartRoute(products) {
 if (hasNonOffers && !hasOffers) return "groceryCart";
   return "groceryCart";
 }
+const [showConfetti, setShowConfetti] = useState(false);
+const [windowSize, setWindowSize] = useState({
+  width: window.innerWidth,
+  height: window.innerHeight,
+});
+const [hasCheckedFirstOrder, setHasCheckedFirstOrder] = useState(false);
 
 useEffect(() => {
-  console.log(  items, grocery,error, unreadCount, showMenu, products, selectedCategory, dress);
-}, [ items, grocery, error,unreadCount, showMenu, products, selectedCategory, dress]);
- 
+  if (showCashbackModal) {
+    setShowConfetti(true);
+    const timer = setTimeout(() => setShowConfetti(false), 3000);
+    return () => clearTimeout(timer);
+  }
+}, [showCashbackModal]);
+
+useEffect(() => {
+  const handleResize = () => {
+    setWindowSize({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
+  };
+  window.addEventListener("resize", handleResize);
+  return () => window.removeEventListener("resize", handleResize);
+}, []);
+
+
 // const [showRedeem, setShowRedeem] = useState(false);
 // const [refRecord, setRefRecord] = useState(null);
 // const [refLoading, setRefLoading] = useState(true);
@@ -1376,6 +1396,44 @@ useEffect(() => {
 //   });
 //   window.alert(`Coins added: ${earned}`);
 // };
+
+useEffect(() => {
+  if (!profile.mobileNumber) {
+    console.log("CheckFirstOrder: no mobileNumber yet");
+    return;
+  }
+  const alreadyShown = localStorage.getItem("handymanFirstOrderPopupShown");
+  if (alreadyShown === "true") {
+    console.log("Cashback popup shown");
+    return;
+  }
+  if (hasCheckedFirstOrder) {
+    console.log("CheckFirstOrder: already checked, skipping");
+    return;
+  }
+  console.log("CheckFirstOrder: starting for", profile.mobileNumber);
+  const checkFirstOrder = async () => {
+    try {
+      const url = `https://handymanapiv2.azurewebsites.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${profile.mobileNumber}`;
+      const response = await fetch(url);
+      const rawText = await response.text();
+      console.log("CheckFirstOrder response status:", response.status);
+      console.log("CheckFirstOrder rawText:", rawText);
+      const text = (rawText || "").trim().toLowerCase();
+      if (text.includes("firstorder can not be found")) {
+        console.log("Match found -> opening cashback modal");
+        setShowCashbackModal(true);
+       } else {
+        console.log("No match in response text, not showing modal");
+      }
+    } catch (err) {
+      console.error("Error calling CheckFirstOrder:", err);
+    } finally {
+      setHasCheckedFirstOrder(true);
+    }
+  };
+  checkFirstOrder();
+}, [profile.mobileNumber, hasCheckedFirstOrder]);
 
 useEffect(() => {
   const fetchDeliveryData = async () => {
@@ -2978,6 +3036,48 @@ const fetchImageUrl = async (photoId) => {
         </div> 
         </div>
         </div>
+        {/* First Order Cashback Modal */}
+        <Modal
+          show={showCashbackModal}
+          onHide={() => setShowCashbackModal(false)}
+          centered
+          dialogClassName="cashback-modal"
+        >
+          <Modal.Body className="cashback-modal-body text-center">
+            <button
+              type="button"
+              className="cashback-close-btn"
+              onClick={() => setShowCashbackModal(false)}
+            >
+              ×
+            </button>
+            {showConfetti && (
+              <Confetti
+                width={windowSize.width}
+                height={windowSize.height}
+                numberOfPieces={10000}
+                recycle={false}
+              />
+            )}
+            <div className="cashback-badge">₹50 CASHBACK</div>
+            <h3 className="cashback-title mt-3 mb-2">
+              Thank You for Choosing <span>Handyman</span>!
+            </h3>
+            <p className="cashback-text mb-2">
+              You&apos;ve got <strong>₹50 cashback</strong> on your first order.
+            </p>
+            <p className="cashback-subtext mb-4">
+              Place your first order and you can avail this cashback offer on your bill.
+            </p>
+            {/* <Button
+              variant="light"
+              className="cashback-cta-btn"
+              onClick={() => setShowCashbackModal(false)}
+            >
+            </Button> */}
+          </Modal.Body>
+        </Modal>
+  
         {/* Modal for Mart Ticket Details */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered size="lg">
         <Modal.Header

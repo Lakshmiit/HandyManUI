@@ -60,6 +60,7 @@ const [transactionStatus, setTransactionStatus] = useState("");
 const [cartData, setCartData] = useState(null);
 const [code, setCode] = useState("");
 const [units, setUnits] = useState("");
+const [cashbackAmount, setCashbackAmount] = useState(0);
 
 useEffect(() => {
   console.log(id, customerId, loading, longitude, latitude, grandTotal, paidAmount, transactionNumber, transactionStatus, totalItemsSelected, cartData, code, units);
@@ -111,10 +112,14 @@ useEffect(() => {
       // setTransactionType(data.transactionType);
       setPaidAmount(data.paidAmount);
       setTransactionNumber(data.transactionNumber);
+      
+      let allProducts = [];
+      let totalAmountFromApi = 0;
 
       if (data.categories && Array.isArray(data.categories)) {
-        let allProducts = [];
+        // let allProducts = [];
         data.categories.forEach((cat) => {
+          totalAmountFromApi += Number(cat.totalAmount) || 0;
           cat.products.forEach((p, idx) => {
             allProducts.push({
               serial: allProducts.length + 1,
@@ -135,6 +140,14 @@ useEffect(() => {
         setCode(allProducts[0].code || "");
         setUnits(allProducts[0].units || "");
         }
+      }
+      const grandTotalNumeric = Number(data.grandTotal) || 0;
+      const cashback = totalAmountFromApi - grandTotalNumeric;
+
+      if (cashback === 50 || cashback === 100) {
+        setCashbackAmount(cashback);
+      } else {
+        setCashbackAmount(0);
       }
     } catch (error) {
       console.error("Error fetching grocery product data:", error);
@@ -377,8 +390,18 @@ useEffect(() => {
     ))}
   </tbody>
   <tfoot>
+     {cashbackAmount > 0 && (
     <tr>
-      <td colSpan="7" className="text-end fw-bold">
+      <td colSpan="8" className="text-end fw-bold text-danger">
+        Cashback Applied:
+      </td>
+      <td className="fw-bold text-success">
+        ₹{cashbackAmount}
+      </td>
+    </tr>
+  )}
+    <tr>
+      <td colSpan="8" className="text-end fw-bold">
         Grand Total:
       </td>
       <td className="fw-bold">     

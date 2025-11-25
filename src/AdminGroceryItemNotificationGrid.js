@@ -24,22 +24,17 @@ const AdminGroceryItemNotificationGrid = () => {
   const [pinCodes, setPinCodes] = useState([]);
   const rowsPerPage = 15;
 
-  // Helper: sort newest -> oldest
   const sortNewestFirst = (a, b) => {
-    // Try common created date fields
     const aDate =
       a.createdAt || a.created_on || a.createdOn || a.createdDate || a.date || a.created || a.timestamp;
     const bDate =
       b.createdAt || b.created_on || b.createdOn || b.createdDate || b.date || b.created || b.timestamp;
-
     const aTime = aDate ? new Date(aDate).getTime() : NaN;
     const bTime = bDate ? new Date(bDate).getTime() : NaN;
 
     if (!isNaN(aTime) && !isNaN(bTime)) {
-      return bTime - aTime; // newer first
+      return bTime - aTime; 
     }
-
-    // Fallback: numeric id or martId descending
     const aId = Number.isFinite(+a.id) ? +a.id : Number.isFinite(+a.martId) ? +a.martId : 0;
     const bId = Number.isFinite(+b.id) ? +b.id : Number.isFinite(+b.martId) ? +b.martId : 0;
     return bId - aId;
@@ -52,14 +47,11 @@ const AdminGroceryItemNotificationGrid = () => {
     axios.get(url)
       .then(response => {
         const groceries = response.data.map(g => ({ ...g }));
-
-        // ✅ Sort newest first so page 1 shows the latest
-        const sorted = [...groceries].sort(sortNewestFirst);
-
+        const groceriesStatus = groceries.filter((g) =>  (g.status === "Open"));
+        const sorted = [...groceriesStatus].sort(sortNewestFirst);
         setGroceryData(sorted);
         setFilteredData(sorted);
 
-        // ✅ Extract unique values for dropdowns
         const uniqueStates = [...new Set(sorted.map(g => g.state).filter(Boolean))];
         const uniqueDistricts = [...new Set(sorted.map(g => g.district).filter(Boolean))];
         const uniquePinCodes = [...new Set(sorted.map(g => g.zipCode).filter(Boolean))];
@@ -80,7 +72,7 @@ const AdminGroceryItemNotificationGrid = () => {
   }, []);
 
   const handleDelete = (groceryId) => {
-    const confirmDelete = window.confirm('Are you sure you want to delete this product?');
+    const confirmDelete = window.confirm('Are you sure you want to delete this grocery?');
     if (confirmDelete) {
       axios.delete(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${groceryId}`)
         .then(() => {
@@ -89,7 +81,7 @@ const AdminGroceryItemNotificationGrid = () => {
           setCurrentPage(1); // keep newest-first on first page after delete
         })
         .catch(error => {
-          console.error("Error deleting product:", error);
+          console.error("Error deleting grocery:", error);
         });
     } 
   };
@@ -121,9 +113,9 @@ const AdminGroceryItemNotificationGrid = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
+  // const handlePageChange = (pageNumber) => {
+  //   setCurrentPage(pageNumber);
+  // };
 
   // Paginate after sorting newest-first
   const indexOfLastTicket = currentPage * rowsPerPage;
@@ -346,6 +338,74 @@ const AdminGroceryItemNotificationGrid = () => {
 
           {/* Pagination */}
           <div className="d-flex justify-content-center mt-3">
+                    <nav aria-label="Page navigation">
+                      <ul className="pagination">
+                        <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                          <button
+                            className="page-link"
+                            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                          >
+                            &laquo;
+                          </button>
+                        </li>
+                        {Array.from({ length: Math.ceil(filteredData.length / rowsPerPage) }, (_, i) => i + 1)
+                          .filter(
+                            (page) =>
+                              page === 1 ||
+                              page === Math.ceil(filteredData.length / rowsPerPage) ||
+                              (page >= currentPage - 2 && page <= currentPage + 2)
+                          )
+                          .map((page, i, arr) => {
+                            const prevPage = arr[i - 1];
+                            if (prevPage && page - prevPage > 1) {
+                              return (
+                                <React.Fragment key={page}>
+                                  <li className="page-item disabled">
+                                    <span className="page-link">...</span>
+                                  </li>
+                                  <li
+                                    className={`page-item ${page === currentPage ? "active" : ""}`}
+                                  >
+                                    <button className="page-link" onClick={() => setCurrentPage(page)}>
+                                      {page}
+                                    </button>
+                                  </li>
+                                </React.Fragment>
+                              );
+                            }
+                            return (
+                              <li
+                                key={page}
+                                className={`page-item ${page === currentPage ? "active" : ""}`}
+                              >
+                                <button className="page-link" onClick={() => setCurrentPage(page)}>
+                                  {page}
+                                </button>
+                              </li>
+                            );
+                          })}
+                        <li
+                          className={`page-item ${
+                            currentPage === Math.ceil(filteredData.length / rowsPerPage)
+                              ? "disabled"
+                              : ""
+                          }`}
+                        >
+                          <button
+                            className="page-link"
+                            onClick={() =>
+                              setCurrentPage((p) =>
+                                Math.min(p + 1, Math.ceil(filteredData.length / rowsPerPage))
+                              )
+                            }
+                          >
+                            &raquo;
+                          </button>
+                        </li>
+                      </ul>
+                    </nav>
+                  </div>
+          {/* <div className="d-flex justify-content-center mt-3">
             <nav aria-label="Page navigation">
               <ul className="pagination">
                 {[...Array(Math.ceil(filteredData.length / rowsPerPage))].map(
@@ -365,7 +425,7 @@ const AdminGroceryItemNotificationGrid = () => {
                 )}
               </ul>
             </nav>
-          </div>
+          </div> */}
         </div>
 
         {/* Styles for floating menu */}
