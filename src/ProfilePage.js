@@ -2492,7 +2492,7 @@ const fetchImageUrl = async (photoId) => {
                 data-bs-interval="6000"
               >
                 {/* Indicators */}
-                {/* <div className="carousel-indicators">
+                <div className="carousel-indicators">
                     <button
                       type="button"
                       data-bs-target="#productCarousel"
@@ -2507,19 +2507,19 @@ const fetchImageUrl = async (photoId) => {
                       data-bs-slide-to="1"
                       aria-label="Slide 2"
                     ></button>
-                    <button
+                    {/* <button
                     type="button"
                     data-bs-target="#productCarousel"
                     data-bs-slide-to="2"
                     aria-label="Slide 3" 
-                  ></button>
-                   <button
+                  ></button> */}
+                   {/* <button
                     type="button"
                     data-bs-target="#productCarousel"
                     data-bs-slide-to="3"
                     aria-label="Slide 4" 
-                  ></button>
-                </div> */}
+                  ></button> */}
+                </div>
                 {/* Carousel items */}
                 {/* <div className="carousel-inner">
                   <div className="carousel-item active">
@@ -2552,15 +2552,10 @@ const fetchImageUrl = async (photoId) => {
                       {isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
                     </button> */}
                 {/* </div> */}
-                 <div
+                <div className="carousel-inner">
+                 <div className="carousel-item active"
                     onClick={() => goToCategory("Grocery Offers", "groceryOffers")}
-                      style={{ cursor: "pointer" }}                
-                      // style={{
-                      //   cursor: "pointer",
-                      //   position: "relative",
-                      //   display: "inline-block",
-                      // }}
-              >
+                      style={{ cursor: "pointer" }} >
                 <img 
                   src={Banner1}
                   className="d-block w-100 img-fluid rounded mb-1"
@@ -2569,10 +2564,10 @@ const fetchImageUrl = async (photoId) => {
                     height: "auto",
                     objectFit: "contain",
                   }}
-                  alt="Grocery Offers Banner"
+                  alt="Slide 1"
                 />
               </div> 
-                 {/* <div className="carousel-item">  */}
+                 <div className="carousel-item"> 
                 <div
                     onClick={() => goToCategory("Offers", "groceryOffers")}
                       style={{ cursor: "pointer" }} >  
@@ -2580,10 +2575,10 @@ const fetchImageUrl = async (photoId) => {
                     src={Banner2}
                     className="d-block w-100 img-fluid rounded"
                     style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
-                    alt="45% Offers"
+                    alt="Slide 2"
                   />
                   </div>   
-                {/* </div> */}
+                </div> 
                 {/* <div className="carousel-item">
                   <img
                     src={Banner3}
@@ -2592,9 +2587,9 @@ const fetchImageUrl = async (photoId) => {
                     alt="Slide 3"
                   />
                 </div> */} 
-              {/* </div> */}
+              </div>
                 {/* Controls */}
-                {/* <button
+                 <button
                   className="carousel-control-prev"
                   type="button"
                   data-bs-target="#productCarousel"
@@ -2609,7 +2604,7 @@ const fetchImageUrl = async (photoId) => {
                   data-bs-slide="next">
                   <span className="carousel-control-next-icon custom-carousel-icon" aria-hidden="true"></span>
                   <span className="visually-hidden">Next</span>
-                </button> */}
+                </button> 
               </div>
               </div>  
               </div> 

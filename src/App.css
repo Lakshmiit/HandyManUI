@@ -3907,9 +3907,14 @@ word-break: break-word;
 
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
+  filter: invert(1) brightness(200%);
+}
+
+/* .carousel-control-prev-icon,
+.carousel-control-next-icon {
   filter: invert(27%) sepia(98%) saturate(2000%) 
           hue-rotate(200deg) brightness(95%) contrast(90%);
-}
+} */
 
 .grocery-card {
   position: relative; 
