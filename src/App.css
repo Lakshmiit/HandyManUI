@@ -4501,17 +4501,19 @@ cursor: not-allowed;
   100% { filter: drop-shadow(0 0 5px #FFD700); }
 }
 
+
+
+
 .redeem-ribbon-btn {
   display: block;
-  width: 100%;                     
-  max-width: 450px;                
-  margin: 0 auto;                  
-  padding: 10px;              
-  text-align: center;             
-  font-size: 14px;                 
+  width: 100%;
+  max-width: 450px;
+  margin: 0 auto;
+  padding: 10px;
+  text-align: center;
+  font-size: 14px;
   font-weight: 600;
   color: #000;
-  /* background: linear-gradient(135deg, #ff512f, #dd2476, #ff9f1a); */
   background: linear-gradient(135deg, #FFD700, #FFC300, #FFB700);
   background-size: 300% 300%;
   border: none;
@@ -4520,6 +4522,10 @@ cursor: not-allowed;
   box-shadow: 0 4px 12px rgba(221, 36, 118, 0.5);
   transition: background-position 0.6s ease, transform 0.2s ease, box-shadow 0.2s ease;
   letter-spacing: 0.5px;
+
+  /* ✅ Add these lines */
+  position: relative;
+  z-index: 10;
 }
 
 .redeem-ribbon-btn:hover {
@@ -4552,4 +4558,74 @@ cursor: not-allowed;
 
 .lakshmi-collection-bg {
   background-color: #f3d2e2; 
+}
+
+.cashback-modal .modal-content {
+  border-radius: 40px;
+  border: none;
+  overflow: hidden;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+}
+
+.cashback-modal-body {
+  position: relative;
+  padding: 28px;
+  background: radial-gradient(circle at top left, #ffb300, #ff7043, #ff4081);
+  color: #fff;
+  border-radius: 50px;
+}
+
+.cashback-close-btn {
+  position: absolute;
+  top: 8px;
+  right: 20px;
+  border: none;
+  background: transparent;
+  font-size: 26px;
+  font-weight: 600;
+  color: #ffffffcc;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.cashback-close-btn:hover {
+  color: #fff;
+}
+
+.cashback-badge {
+  display: inline-block;
+  padding: 8px;
+  border-radius: 1000px;
+  background: rgba(0, 0, 0, 0.2);
+  font-weight: 700;
+  letter-spacing: 1px;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.cashback-title {
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.cashback-title span {
+  color: #ffe082;
+}
+
+.cashback-text {
+  font-size: 15px;
+}
+
+.cashback-subtext {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.cashback-cta-btn {
+  border-radius: 999px;
+  padding: 8px 24px;
+  font-weight: 600;
+  border: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
 }
