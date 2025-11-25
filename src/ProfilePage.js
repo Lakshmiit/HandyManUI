@@ -3039,13 +3039,13 @@ const fetchImageUrl = async (photoId) => {
           dialogClassName="cashback-modal"
         >
           <Modal.Body className="cashback-modal-body text-center">
-            <button
+            {/* <button
               type="button"
               className="cashback-close-btn"
               onClick={() => setShowCashbackModal(false)}
             >
               ×
-            </button>
+            </button> */}
             {showConfetti && (
               <Confetti
                 width={windowSize.width}
@@ -3064,12 +3064,12 @@ const fetchImageUrl = async (photoId) => {
             <p className="cashback-subtext mb-4">
               Place your first order and you can avail this cashback offer on your bill.
             </p>
-            {/* <Button
+            <Button
               variant="light"
               className="cashback-cta-btn"
               onClick={() => setShowCashbackModal(false)}
-            >
-            </Button> */}
+            > Close
+            </Button>
           </Modal.Body>
         </Modal>
   

@@ -17,8 +17,8 @@ const GroceryPaymentmethod = () => {
   const {groceryItemId} = useParams();
    const [isMobile, setIsMobile] = useState(false);
     // const [showMenu, setShowMenu] = useState(false);
-   const [isChecked, setIsChecked] = useState('');
-const [selectedPayment, setSelectedPayment] = useState(null);
+   const [isChecked, setIsChecked] = useState(true);
+const [selectedPayment, setSelectedPayment] = useState("cash");
 const [error, setError] = useState("");
   const [martId, setMartId] = useState('');
   const [totalItemsSelected, setTotalItemsSelected] = useState('');
@@ -596,14 +596,14 @@ const goBackToCart = () => {
   }, []);
 
   const handleUpdatePaymentMethod = async () => {
-  if (!selectedPayment) {
-    setError("Please select at least one payment method.");
-    return;
-  }
-  if (!isChecked) {
-    alert("You must accept the terms and conditions.");
-    return;
-  }
+  // if (!selectedPayment) {
+  //   setError("Please select at least one payment method.");
+  //   return;
+  // }
+  // if (!isChecked) {
+  //   alert("You must accept the terms and conditions.");
+  //   return;
+  // }
 
   try {
     const primaryAddress = addresses.find((addr) => addr.type === "primary");
@@ -1167,7 +1167,7 @@ const handleCheckboxChange = (value) => {
 </div>
 
 <div className="d-flex justify-content-between align-items-center">
-                                <label className='mt-2 fs-6'>Address <span className="req_star">*</span></label>
+                                <label className='mt-2 fs-6 fw-bold'>Address <span className="req_star">*</span></label>
                       {/* Modal */}
                             <Modal show={showModal} onHide={() => setShowModal(false)}>
                         <Modal.Header closeButton style={{ backgroundColor: isEditing ? "#008000" : "#008000",color: "white"}}>
@@ -1431,11 +1431,21 @@ const handleCheckboxChange = (value) => {
           </tbody>
         </table>
          {cashbackMessage && (
-                  <p style={{ color: "red", fontWeight: "500" }}>{cashbackMessage}</p>
-                )}
+          <p style={{ color: "red", fontWeight: "500", display: "flex", alignItems: "center" }}>
+            <span
+              className="me-2 text-success"
+              role="button"
+              style={{ cursor: "pointer" }}
+              onClick={goBackToCart}
+            >
+              <ArrowBackIcon />
+            </span>
+            {cashbackMessage}
+          </p>
+        )}
 
       <div className='payment m-2'>
-        <label className='text-white w-100 p-2' style={{background: "#008000",borderRadius: "15px", fontSize: "15px"}}>Select Payment Mode</label>
+        <label className='text-white w-100 p-2' style={{background: "#008000",borderRadius: "15px", fontSize: "14px"}}>Pay After Delivery – No Advance Needed</label>
         <div className='d-flex flex-column m-1'>
         {isMobile ? (
         <div className='d-flex flex-column'>
