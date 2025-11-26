@@ -144,8 +144,12 @@ useEffect(() => {
       const grandTotalNumeric = Number(data.grandTotal) || 0;
       const cashback = totalAmountFromApi - grandTotalNumeric;
 
-      if (cashback === 50 || cashback === 100) {
-        setCashbackAmount(cashback);
+      // if (cashback === 50 || cashback === 100) 
+        
+      if ((cashback >= 49 && cashback <= 51) ||
+    (cashback >= 99 && cashback <= 101))
+        {
+        setCashbackAmount(cashback); 
       } else {
         setCashbackAmount(0);
       }

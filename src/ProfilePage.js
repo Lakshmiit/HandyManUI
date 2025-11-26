@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef} from "react";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { Carousel as BsCarousel } from "bootstrap";
 import './App.css';
 import { Modal, Button} from 'react-bootstrap';
 import Confetti from "react-confetti";
@@ -978,6 +980,7 @@ const [windowSize, setWindowSize] = useState({
   height: window.innerHeight,
 });
 const [hasCheckedFirstOrder, setHasCheckedFirstOrder] = useState(false);
+const [cashbackAmount, setCashbackAmount] = useState(0);
 
 useEffect(() => {
   if (showCashbackModal) {
@@ -1398,6 +1401,25 @@ useEffect(() => {
 // };
 
 useEffect(() => {
+  const element = document.getElementById("productCarousel");
+  if (!element) return;
+  if (element._bsCarouselInstance) {
+    element._bsCarouselInstance.dispose();
+  }
+  const carousel = new BsCarousel(element, {
+    interval: 2000,   
+    ride: "carousel", 
+    pause: false,     
+    wrap: true,       
+  });
+  element._bsCarouselInstance = carousel;
+  return () => {
+    carousel.dispose();
+    element._bsCarouselInstance = null;
+  };
+}, []);
+
+useEffect(() => {
   if (!profile.mobileNumber) {
     console.log("CheckFirstOrder: no mobileNumber yet");
     return;
@@ -1470,9 +1492,13 @@ useEffect(() => {
       setTotalItemsSelected(data.totalItemsSelected);
       setDeliveryPartnerUserId(data.deliveryPartnerUserId);
       setAssignedTo(data.assignedTo);
+      let allProducts = [];
+      let totalAmountFromApi = 0;
+
       if (data.categories && Array.isArray(data.categories)) {
-        let allProducts = [];
+        // let allProducts = [];
         data.categories.forEach((cat) => {
+          totalAmountFromApi += Number(cat.totalAmount) || 0;
           cat.products.forEach((p, idx) => {
             allProducts.push({
               serial: allProducts.length + 1,
@@ -1487,6 +1513,17 @@ useEffect(() => {
           });
         });
         setItems(allProducts);
+      }
+      const grandTotalNumeric = Number(data.grandTotal) || 0;
+      const cashback = totalAmountFromApi - grandTotalNumeric;
+
+      // if (cashback === 50 || cashback === 100) 
+        
+      if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101))
+        {
+        setCashbackAmount(cashback); 
+      } else {
+        setCashbackAmount(0);
       }
     } catch (error) {
       console.error("Error fetching grocery product data:", error);
@@ -1821,8 +1858,35 @@ const handleDressCategoryClick = async (category) => {
           fetchAllTickets();
         }, [userId]);
 
+        const calculateCashback = (ticket) => {
+  if (!ticket || !ticket.categories) return 0;
+
+  let totalAmountFromApi = 0;
+
+  ticket.categories.forEach((cat) => {
+    if (cat.totalAmount != null) {
+      totalAmountFromApi += Number(cat.totalAmount) || 0;
+    } else if (Array.isArray(cat.products)) {
+      cat.products.forEach((p) => {
+        const price = Number(p.afterDiscountPrice || 0);
+        const qty = Number(p.noOfQuantity || 0);
+        totalAmountFromApi += price * qty;
+      });
+    }
+  });
+
+  const grandTotalNumeric = Number(ticket.grandTotal) || 0;
+  const cashback = totalAmountFromApi - grandTotalNumeric;
+  if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101)) {
+    return cashback;
+  }
+  return 0;
+};
+
         const handleViewDetails = (ticket) => {
           setSelectedTicket(ticket);
+          const cb = calculateCashback(ticket);
+          setCashbackAmount(cb);
           setShowModal(true);
         };
       
@@ -2487,9 +2551,9 @@ const fetchImageUrl = async (photoId) => {
                 <div>
               <div
                 id="productCarousel"
-                className="carousel slide mb-4 rounded "
+                className="carousel slide mb-4 rounded"
                 data-bs-ride="carousel"
-                data-bs-interval="6000"
+                data-bs-interval="1500"
               >
                 {/* Indicators */}
                 <div className="carousel-indicators">
@@ -2499,13 +2563,13 @@ const fetchImageUrl = async (photoId) => {
                       data-bs-slide-to="0"
                       className="active"
                       aria-current="true"
-                      aria-label="Slide 1"
+                      aria-label="Slide 0"
                     ></button>
                     <button
                       type="button"
                       data-bs-target="#productCarousel"
                       data-bs-slide-to="1"
-                      aria-label="Slide 2"
+                      aria-label="Slide 1"
                     ></button>
                     {/* <button
                     type="button"
@@ -2558,12 +2622,8 @@ const fetchImageUrl = async (photoId) => {
                       style={{ cursor: "pointer" }} >
                 <img 
                   src={Banner1}
-                  className="d-block w-100 img-fluid rounded mb-1"
-                  style={{
-                    width: "100%",
-                    height: "auto",
-                    objectFit: "contain",
-                  }}
+                  className="d-block w-100 img-fluid rounded"
+                  style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
                   alt="Slide 1"
                 />
               </div> 
@@ -3117,21 +3177,37 @@ const fetchImageUrl = async (photoId) => {
             </div>
           )}
         </Modal.Body>
-
         {/* Fixed Footer */}
         <Modal.Footer
-          style={{
-            position: "sticky",
-            bottom: 0,
-            background: "white",
-            zIndex: 2,
-            display: "flex",
-            justifyContent: "space-between",
-            width: "100%",
-          }}
-        >
-          <h5 className="mb-0">Grand Total: ₹{selectedTicket?.grandTotal}</h5>
-          {/* <Button
+  style={{
+    position: "sticky",
+    bottom: 0,
+    background: "white",
+    zIndex: 2,
+    width: "100%",
+  }}
+>
+  <div
+    style={{
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      width: "100%",
+      flexWrap: "wrap",
+    }}
+  >
+    {cashbackAmount > 0 && (
+      <div className="fw-bold mb-1">
+        <span className="text-danger me-2">Cashback Applied:</span>
+        <span className="text-success">₹{Math.round(cashbackAmount)}</span>
+      </div>
+    )}
+
+    <h5 className="mb-0">
+      Grand Total: ₹{selectedTicket?.grandTotal}
+    </h5>
+  </div>
+{/* <Button
             variant="success"
             onClick={() => {
               if (selectedTicket?.id) {
