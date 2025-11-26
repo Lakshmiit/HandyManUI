@@ -26,7 +26,7 @@ import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 // import Banner1 from './img/ChickenOffers10.jpeg';
-import Banner1 from './img/unbeatable.jpeg';
+import Banner1 from './img/Offers.jpeg';
 import Banner2 from './img/NovMonth.jpeg'; 
 // import BannerVideo from './img/Dusshera.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
