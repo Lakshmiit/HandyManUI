@@ -22,10 +22,11 @@ const CATEGORY_OFFERS = norm("Offers");
 const CATEGORY_VF_OFFERS = norm("Grocery Offers");
 
 const LIMIT_RULES = [
+  { match: norm("Visakha Dairy Happy Full Cream Milk 500 ml"), limit: 1 },
+  { match: norm("Visakha Dairy Good Milk 180 ml"), limit: 1 },
+  { match: norm("Visakha Dairy Milk 200 ml"), limit: 1 },
+  { match: norm("Visakha Dairy Curd 180 g"), limit: 1 },
   { match: norm("Apple 1 Pc"), limit: 1 },
-  { match: norm("Crompton 9W LED bulb"), limit: 1 },
-  { match: norm("Visakha Dairy Milk 200 ml"), limit: 2 },
-  { match: norm("Visakha Dairy Curd 180 g Pack 2"), limit: 1 },
   { match: norm("Onion (Ulligadda) 500 g"), limit: 2 },
   { match: norm("Cucumber (Dosakaya) 500 g"), limit: 2 },
   { match: norm("Tomato 250 g"), limit: 2 },

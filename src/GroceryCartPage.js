@@ -47,11 +47,11 @@ const GroceryCartPage = () => {
 
 function getCustomLimit(name) {
   const n = String(name || "").toLowerCase().trim();
-  if (n === "apple 1 pc" || n === "visakha dairy curd 180 g pack 2" || n === "crompton 9w led bulb") return 1;
+  if (n === "apple 1 pc" || n === "visakha dairy curd 180 g" || n === "visakha dairy happy full cream milk 500 ml" ||
+    n === "visakha dairy milk 200 ml" || n === "visakha dairy good milk 180 ml"
+  ) return 1;
   if (
     // n === "apple 1 pc" ||
-    n === "visakha dairy milk 200 ml" ||
-    // n === "visakha dairy curd 180 g pack 2" ||
     n === "onion (ulligadda) 500 g" ||
     n === "tomato 250 g" || 
     n === "cucumber (dosakaya) 500 g" 
