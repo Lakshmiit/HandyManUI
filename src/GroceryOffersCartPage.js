@@ -28,7 +28,7 @@ const LIMIT_RULES = [
   { match: norm("Visakha Dairy Curd 180 g"), limit: 1 },
   { match: norm("Apple 1 Pc"), limit: 1 },
   { match: norm("Cucumber (Dosakaya) 500 g"), limit: 1 },
-  { match: norm("Green Chilli (Pachchi Mirchi) 250 g"), limit: 1 },
+  { match: norm("Green Chilli (Pachchi Mirchi) 200 g"), limit: 1 },
   { match: norm("Tomato 500 g"), limit: 1 },
   { match: norm("Lemon (Nimakaya) (3pcs)"), limit: 1 },
   { match: norm("Onion (Ulligadda) 500 g"), limit: 2 },
