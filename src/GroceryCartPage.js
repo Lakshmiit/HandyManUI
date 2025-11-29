@@ -48,20 +48,20 @@ const GroceryCartPage = () => {
 function getCustomLimit(name) {
   const n = String(name || "").toLowerCase().trim();
   if (n === "apple 1 pc" || n === "visakha dairy curd 180 g" || n === "visakha dairy happy full cream milk 500 ml" ||
-    n === "visakha dairy milk 200 ml" || n === "visakha dairy good milk 180 ml"
+    n === "visakha dairy milk 200 ml" || n === "visakha dairy good milk 180 ml" || n === "cucumber (dosakaya) 500 g"
+    || n === "green chilli (pachchi mirchi) 250 g" || n === "tomato 500 g" || n === "lemon (nimakaya) (3pcs)"
   ) return 1;
   if (
     // n === "apple 1 pc" ||
-    n === "onion (ulligadda) 500 g" ||
-    n === "tomato 250 g" || 
-    n === "cucumber (dosakaya) 500 g" 
+    n === "onion (ulligadda) 500 g" || 
+    n === "potato (bangala dumpa) 500 g" ||
+    n === "ivy gourd (dondakaya) 250 g"
+     
     // n === "combo pack 1 - daawat basmati rice 1kg + eastern garam masala 100g + visakha dairy paneer 200g" ||
     // n === "combo pack 2 - daawat biryani basmati rice 1kg + eastern garam masala 100g + visakha dairy paneer 200g"
   ) return 2;
   return Infinity;   
 }
-  // n === "potato (bangala dumpa) 500 g" ||
-  // n === "green chilli (pachi mirchi) 100 g" ||
 
   function getFilenameFromValue(value) {
     if (!value) return "";

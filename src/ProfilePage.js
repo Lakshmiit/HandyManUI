@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Carousel as BsCarousel } from "bootstrap";
 import './App.css';
 import { Modal, Button} from 'react-bootstrap';
-import Confetti from "react-confetti";
+// import Confetti from "react-confetti";
 // import LocationOnIcon from '@mui/icons-material/LocationOn';
 // import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 // import NotificationBell from "./NotificationsBell";
@@ -25,9 +25,9 @@ import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-// import Banner1 from './img/ChickenOffers10.jpeg';
-import Banner1 from './img/MilkOffers.jpeg';
-import Banner2 from './img/NovMonth.jpeg'; 
+import Banner1 from './img/ChickenOffers.jpeg';
+// import Banner1 from './img/MilkOffers.jpeg';
+// import Banner2 from './img/NovMonth.jpeg'; 
 // import BannerVideo from './img/Dusshera.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
 // import VolumeUpIcon from '@mui/icons-material/VolumeUp';
@@ -966,7 +966,6 @@ const MOBILE_EXTRA =0;
 const MOBILE_PADDING_TOP = HEADER_H + MOBILE_ICONS_H + MOBILE_EXTRA;
 const norm = (s) => String(s || "").trim().toLowerCase();
 const isOffersCat = (cat) => norm(cat) === "offers";
-const [showCashbackModal, setShowCashbackModal] = useState(false);
 function decideCartRoute(products) {
   const hasOffers = (products || []).some(p => isOffersCat(p.category));
   const hasNonOffers = (products || []).some(p => !isOffersCat(p.category));
@@ -974,32 +973,33 @@ function decideCartRoute(products) {
 if (hasNonOffers && !hasOffers) return "groceryCart";
   return "groceryCart";
 }
-const [showConfetti, setShowConfetti] = useState(false);
-const [windowSize, setWindowSize] = useState({
-  width: window.innerWidth,
-  height: window.innerHeight,
-});
+// const [showCashbackModal, setShowCashbackModal] = useState(false);
+// const [showConfetti, setShowConfetti] = useState(false);
+// const [windowSize, setWindowSize] = useState({
+//   width: window.innerWidth,
+//   height: window.innerHeight,
+// });
 const [hasCheckedFirstOrder, setHasCheckedFirstOrder] = useState(false);
 const [cashbackAmount, setCashbackAmount] = useState(0);
 
-useEffect(() => {
-  if (showCashbackModal) {
-    setShowConfetti(true);
-    const timer = setTimeout(() => setShowConfetti(false), 3000);
-    return () => clearTimeout(timer);
-  }
-}, [showCashbackModal]);
+// useEffect(() => {
+//   if (showCashbackModal) {
+//     setShowConfetti(true);
+//     const timer = setTimeout(() => setShowConfetti(false), 3000);
+//     return () => clearTimeout(timer);
+//   }
+// }, [showCashbackModal]);
 
-useEffect(() => {
-  const handleResize = () => {
-    setWindowSize({
-      width: window.innerWidth,
-      height: window.innerHeight,
-    });
-  };
-  window.addEventListener("resize", handleResize);
-  return () => window.removeEventListener("resize", handleResize);
-}, []);
+// useEffect(() => {
+//   const handleResize = () => {
+//     setWindowSize({
+//       width: window.innerWidth,
+//       height: window.innerHeight,
+//     });
+//   };
+//   window.addEventListener("resize", handleResize);
+//   return () => window.removeEventListener("resize", handleResize);
+// }, []);
 
 
 // const [showRedeem, setShowRedeem] = useState(false);
@@ -1444,7 +1444,7 @@ useEffect(() => {
       const text = (rawText || "").trim().toLowerCase();
       if (text.includes("firstorder can not be found")) {
         console.log("Match found -> opening cashback modal");
-        setShowCashbackModal(true);
+        // setShowCashbackModal(true);
        } else {
         console.log("No match in response text, not showing modal");
       }
@@ -1518,8 +1518,9 @@ useEffect(() => {
       const cashback = totalAmountFromApi - grandTotalNumeric;
 
       // if (cashback === 50 || cashback === 100) 
+      // if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101))
         
-      if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101))
+      if (cashback >= 99 && cashback <= 101)
         {
         setCashbackAmount(cashback); 
       } else {
@@ -1535,6 +1536,7 @@ useEffect(() => {
     fetchDeliveryData();
   }
 }, [id]);
+
  useEffect(() => {
   const fetchGroceryData = async () => {
     try {
@@ -2627,7 +2629,7 @@ const fetchImageUrl = async (photoId) => {
                   alt="Slide 1"
                 />
               </div> 
-                 <div className="carousel-item"> 
+                 {/* <div className="carousel-item"> 
                 <div
                     onClick={() => goToCategory("Offers", "groceryOffers")}
                       style={{ cursor: "pointer" }} >  
@@ -2638,7 +2640,7 @@ const fetchImageUrl = async (photoId) => {
                     alt="Slide 2"
                   />
                   </div>   
-                </div> 
+                </div>  */}
                 {/* <div className="carousel-item">
                   <img
                     src={Banner3}
@@ -3092,20 +3094,20 @@ const fetchImageUrl = async (photoId) => {
         </div>
         </div>
         {/* First Order Cashback Modal */}
-        <Modal
+        {/* <Modal
           show={showCashbackModal}
           onHide={() => setShowCashbackModal(false)}
           centered
           dialogClassName="cashback-modal"
         >
           <Modal.Body className="cashback-modal-body text-center">
-            {/* <button
+             <button
               type="button"
               className="cashback-close-btn"
               onClick={() => setShowCashbackModal(false)}
             >
               ×
-            </button> */}
+            </button> 
             {showConfetti && (
               <Confetti
                 width={windowSize.width}
@@ -3131,7 +3133,7 @@ const fetchImageUrl = async (photoId) => {
             > Close
             </Button>
           </Modal.Body>
-        </Modal>
+        </Modal> */}
   
         {/* Modal for Mart Ticket Details */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered size="lg">
@@ -3147,13 +3149,13 @@ const fetchImageUrl = async (photoId) => {
             <div>
               {/* Table Header */}
               <table className="table table-bordered table-striped mb-0">
-                <thead className="table-success" style={{ position: "sticky", top: 0, zIndex: 2 }}>
+                <thead className="table-success" style={{top: 0, zIndex: 2 }}>
                   <tr>
                     <th style={{ width: "10%" }}>S.No</th>
                     <th style={{ width: "40%" }}>Product Name</th>
                     <th style={{ width: "20%" }}>Quantity</th>
                     <th style={{ width: "30%" }}>Price (₹)</th>
-                  </tr>
+                  </tr> 
                 </thead>
               </table>
 
@@ -3178,7 +3180,7 @@ const fetchImageUrl = async (photoId) => {
           )}
         </Modal.Body>
         {/* Fixed Footer */}
-        <Modal.Footer
+       <Modal.Footer
   style={{
     position: "sticky",
     bottom: 0,
@@ -3190,23 +3192,29 @@ const fetchImageUrl = async (photoId) => {
   <div
     style={{
       display: "flex",
-      justifyContent: "space-between",
+      justifyContent: "flex-end",
       alignItems: "center",
       width: "100%",
+      gap: "20px",
       flexWrap: "wrap",
+      textAlign: "right",
     }}
   >
+    <h5 className="mb-0">
+      Total Amount: ₹{selectedTicket?.categories?.[0]?.totalAmount}
+    </h5>
+
     {cashbackAmount > 0 && (
-      <div className="fw-bold mb-1">
+      <div className="fw-bold mb-0">
         <span className="text-danger me-2">Cashback Applied:</span>
         <span className="text-success">₹{Math.round(cashbackAmount)}</span>
       </div>
     )}
-
     <h5 className="mb-0">
       Grand Total: ₹{selectedTicket?.grandTotal}
     </h5>
   </div>
+</Modal.Footer>
 {/* <Button
             variant="success"
             onClick={() => {
@@ -3217,7 +3225,6 @@ const fetchImageUrl = async (photoId) => {
           >
             Pay Now
           </Button> */}
-        </Modal.Footer>
       </Modal>
          <Footer />
         </>    
