@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Carousel as BsCarousel } from "bootstrap";
 import './App.css';
 import { Modal, Button} from 'react-bootstrap';
-// import Confetti from "react-confetti";
+import Confetti from "react-confetti";
 // import LocationOnIcon from '@mui/icons-material/LocationOn';
 // import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 // import NotificationBell from "./NotificationsBell";
@@ -25,9 +25,9 @@ import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-import Banner1 from './img/ChickenOffers.jpeg';
-// import Banner1 from './img/MilkOffers.jpeg';
-// import Banner2 from './img/NovMonth.jpeg'; 
+// import Banner1 from './img/ChickenOffers.jpeg';
+import Banner1 from './img/10Offers.jpeg';
+import Banner2 from './img/30AboveOffers.jpeg'; 
 // import BannerVideo from './img/Dusshera.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
 // import VolumeUpIcon from '@mui/icons-material/VolumeUp';
@@ -973,33 +973,33 @@ function decideCartRoute(products) {
 if (hasNonOffers && !hasOffers) return "groceryCart";
   return "groceryCart";
 }
-// const [showCashbackModal, setShowCashbackModal] = useState(false);
-// const [showConfetti, setShowConfetti] = useState(false);
-// const [windowSize, setWindowSize] = useState({
-//   width: window.innerWidth,
-//   height: window.innerHeight,
-// });
+const [showCashbackModal, setShowCashbackModal] = useState(false);
+const [showConfetti, setShowConfetti] = useState(false);
+const [windowSize, setWindowSize] = useState({
+  width: window.innerWidth,
+  height: window.innerHeight,
+});
 const [hasCheckedFirstOrder, setHasCheckedFirstOrder] = useState(false);
 const [cashbackAmount, setCashbackAmount] = useState(0);
 
-// useEffect(() => {
-//   if (showCashbackModal) {
-//     setShowConfetti(true);
-//     const timer = setTimeout(() => setShowConfetti(false), 3000);
-//     return () => clearTimeout(timer);
-//   }
-// }, [showCashbackModal]);
+useEffect(() => {
+  if (showCashbackModal) {
+    setShowConfetti(true);
+    const timer = setTimeout(() => setShowConfetti(false), 3000);
+    return () => clearTimeout(timer);
+  }
+}, [showCashbackModal]);
 
-// useEffect(() => {
-//   const handleResize = () => {
-//     setWindowSize({
-//       width: window.innerWidth,
-//       height: window.innerHeight,
-//     });
-//   };
-//   window.addEventListener("resize", handleResize);
-//   return () => window.removeEventListener("resize", handleResize);
-// }, []);
+useEffect(() => {
+  const handleResize = () => {
+    setWindowSize({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
+  };
+  window.addEventListener("resize", handleResize);
+  return () => window.removeEventListener("resize", handleResize);
+}, []);
 
 
 // const [showRedeem, setShowRedeem] = useState(false);
@@ -1444,7 +1444,7 @@ useEffect(() => {
       const text = (rawText || "").trim().toLowerCase();
       if (text.includes("firstorder can not be found")) {
         console.log("Match found -> opening cashback modal");
-        // setShowCashbackModal(true);
+        setShowCashbackModal(true);
        } else {
         console.log("No match in response text, not showing modal");
       }
@@ -2629,7 +2629,7 @@ const fetchImageUrl = async (photoId) => {
                   alt="Slide 1"
                 />
               </div> 
-                 {/* <div className="carousel-item"> 
+                 <div className="carousel-item"> 
                 <div
                     onClick={() => goToCategory("Offers", "groceryOffers")}
                       style={{ cursor: "pointer" }} >  
@@ -2640,7 +2640,7 @@ const fetchImageUrl = async (photoId) => {
                     alt="Slide 2"
                   />
                   </div>   
-                </div>  */}
+                </div> 
                 {/* <div className="carousel-item">
                   <img
                     src={Banner3}
@@ -3094,20 +3094,20 @@ const fetchImageUrl = async (photoId) => {
         </div>
         </div>
         {/* First Order Cashback Modal */}
-        {/* <Modal
+        <Modal
           show={showCashbackModal}
           onHide={() => setShowCashbackModal(false)}
           centered
           dialogClassName="cashback-modal"
         >
           <Modal.Body className="cashback-modal-body text-center">
-             <button
+             {/* <button
               type="button"
               className="cashback-close-btn"
               onClick={() => setShowCashbackModal(false)}
             >
               ×
-            </button> 
+            </button>  */}
             {showConfetti && (
               <Confetti
                 width={windowSize.width}
@@ -3133,7 +3133,7 @@ const fetchImageUrl = async (photoId) => {
             > Close
             </Button>
           </Modal.Body>
-        </Modal> */}
+        </Modal>
   
         {/* Modal for Mart Ticket Details */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered size="lg">

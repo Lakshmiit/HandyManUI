@@ -65,10 +65,6 @@ const [isOffersOrder, setIsOffersOrder] = useState(false);
   const [isNewUser, setIsNewUser] = useState(false);
     const [showConfetti, setShowConfetti] = useState(false);
 const [cashbackMessage, setCashbackMessage] = useState("");const isGuestName = (name) => (name ?? '').trim().toLowerCase() === 'guest';
-
-useEffect (() => {
-  console.log(isNewUser);
-}, [isNewUser]);
 const readServerPoints = (record) => {
   const raw =
     record?.referralPoints ?? 
@@ -78,15 +74,12 @@ const readServerPoints = (record) => {
   const n = Number(raw);
   return Number.isFinite(n) ? n : 0;
 };
-// const netPayables=  grandTotal -firstOrderDiscount
+const netPayables=  grandTotal -firstOrderDiscount
 
-//   const totalPayable =
-//     isNewUser || grandTotal >= 1000 ? netPayables : netPayable;
+  const totalPayable =
+    isNewUser || grandTotal >= 1000 ? netPayables : netPayable;
 const numericGrandTotal = Number(grandTotal) || 0;
-const netPayables = numericGrandTotal - firstOrderDiscount;
-const totalPayable = numericGrandTotal >= 1000 ? netPayables : netPayable;
-
-// const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 100;
+const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 100;
 
   const loginMeta = (() => {
     try {
@@ -125,15 +118,56 @@ const totalPayable = numericGrandTotal >= 1000 ? netPayables : netPayable;
         text === "null" ||
         text.includes("Firstorder Can not be found")
       ) {
-        return null; 
+        return null; // new user
       }
+
       // Case 2: Existing user → JSON data
       return JSON.parse(text);
     } catch (error) {
       console.log("API ERROR:", error);
-      return null; 
+      return null; // treat error as new user
     }
   };
+
+  // useEffect(() => {
+  //   let cancelled = false;
+  //   (async () => {
+  //     try {
+  //       const result = await CheckFirstOrder(mobile);
+
+  //       if (cancelled) return;
+
+  //       if (result === null  ) {
+  //         // New user → apply ₹50 discount
+  //         setFirstOrderDiscount(50);
+  //         setGrandTotal((prev) => prev - 50);
+  //       } else {
+  //         // Existing user → no discount
+  //         setFirstOrderDiscount(0);
+  //       }
+
+  //       if(grandTotal >=1000)
+  //       {
+  //         setFirstOrderDiscount(100);
+  //         setGrandTotal((prev) => prev -100);
+  //       }
+
+  //        else {
+  //         // Existing user → no discount
+  //         setFirstOrderDiscount(0);
+  //        }
+  //     } catch (e) {
+  //       console.error("Failed to load First Order:", e);
+  //       if (!cancelled) {
+  //         setFirstOrderDiscount(0);
+  //       }
+  //     }
+  //   })();
+
+  //   return () => {
+  //     cancelled = true;
+  //   };
+  // }, [mobile]);
 
   useEffect(() => {
     let cancelled = false;
@@ -147,25 +181,21 @@ const totalPayable = numericGrandTotal >= 1000 ? netPayables : netPayable;
         let discount = 0;
         let msg = "";
 
-        // if (newUser) {
-        //   if (gt >= 1000) {
-        //     discount = 100;
-        //     msg = "";
-        //   } else if (gt >= 100) {
-        //     discount = 50;
-        //     msg = "";
-        //   } else {
-        //     discount = 0;
-        //     msg = "Order ₹100 or more to get ₹50 cashback on your first order!";
-        //   }
-        // } 
-        // else {
-        //   discount = gt >= 1000 ? 100 : 0;
-        //   msg = "";
-        // }
-         if (gt >= 1000) {
+        if (newUser) {
+          if (gt >= 1000) {
             discount = 100;
+            msg = "";
+          } else if (gt >= 100) {
+            discount = 50;
+            msg = "";
+          } else {
+            discount = 0;
+            msg = "Order ₹100 or more to get ₹50 cashback on your first order!";
           }
+        } else {
+          discount = gt >= 1000 ? 100 : 0;
+          msg = "";
+        }
         setFirstOrderDiscount(discount);
         setCashbackMessage(msg);
         console.log("discount123456789", discount);
@@ -183,9 +213,6 @@ const totalPayable = numericGrandTotal >= 1000 ? netPayables : netPayable;
       cancelled = true;
     };
 }, [mobile, grandTotal]);
-
-
-
 
 const getReferralRecord = async (userId) => {
   if (!userId) return null;
@@ -550,8 +577,7 @@ const goBackToCart = () => {
 
     const primaryAddress = addresses.find(addr => addr.type === 'primary');
     const isAddressInvalid = !primaryAddress || !primaryAddress.address || !primaryAddress.zipCode;
-    const isOrderDisabled = isAddressInvalid || serviceUnavailable; 
-    // const isOrderDisabled = isAddressInvalid || serviceUnavailable || isFirstOrderMinNotReached;
+     const isOrderDisabled = isAddressInvalid || serviceUnavailable || isFirstOrderMinNotReached;
     useEffect(() => {
         if (isAddressInvalid) {
           setShouldBlink(true);
@@ -1340,8 +1366,9 @@ const handleCheckboxChange = (value) => {
                       )}   
                     </div>
     <div className="grocery-confirmation">
-    <p className='text-center' style={{ fontSize: "14px" }}><span className='name'>{fullName}</span> Thank you for Choosing the Lakshmi Mart</p>
-      <div style={{ textAlign: "center" }}>
+    <p className='text-center' style={{ fontSize: "13px" }}><span className='name'>{fullName}</span> Thank you for Choosing the Lakshmi Mart</p>
+      
+       <div style={{ textAlign: "center" }}>
        {firstOrderDiscount > 0 && (
         <span style={{ whiteSpace: "nowrap", color: "green"  }}>
           🎉 You have got 
@@ -1353,7 +1380,7 @@ const handleCheckboxChange = (value) => {
         </span>
       )}
       </div>
-      <table className="grocery-table m-2">
+  <table className="grocery-table m-2">
           <tbody>
             <tr>
               <td style={{ width: "40%", fontSize: "14px" }}>Order Id</td>
@@ -1364,22 +1391,11 @@ const handleCheckboxChange = (value) => {
               <td style={{ width: "40%" }}>{totalItemsSelected}</td>
             </tr>
 {showConfetti && <Confetti />}
-      {/* {firstOrderDiscount > 0 && (
-       <p style={{ color: "green", fontWeight: "bold",display: "inline" }}>
- 🎉 You have got ₹{firstOrderDiscount} cashback!
-</p> */}
-
             <tr>
               <td style={{ width: "40%", fontSize: "14px" }}>Grand Total</td>
               <td style={{ width: "40%" }}>Rs {grandTotal} /-</td>
             </tr>
-            {Number(referralAmount) > 0 && (
-              <tr>
-                <td style={{ width: "40%", fontSize: "14px" }}>Referral Earn Amount</td>
-                <td style={{ width: "40%", color: "red" }}>- Rs {referralAmount} /-</td>
-              </tr>
-            )}
-              {/* {(isNewUser || grandTotal >= 1000) && (
+            {(isNewUser || grandTotal >= 1000) && (
         <tr>
           <td style={{ width: "40%", fontSize: "14px" }}>
             Cash Back
@@ -1387,19 +1403,17 @@ const handleCheckboxChange = (value) => {
 
           <td style={{ width: "40%", fontSize: "14px" }}>
             {firstOrderDiscount > 0
-              ? `Rs ${firstOrderDiscount} /-`
+              ? `₹${firstOrderDiscount}`
               : "-"}
           </td>
         </tr>
-      )} */}
-      {Number(grandTotal) >= 1000 && (
-  <tr>
-    <td style={{ width: "40%", fontSize: "14px" }}>Cash Back</td>
-    <td style={{ width: "40%", fontSize: "14px" }}>
-      {firstOrderDiscount > 0 ? `Rs ${firstOrderDiscount} /-` : "-"}
-    </td>
-  </tr>
-)}
+      )}
+            {Number(referralAmount) > 0 && (
+              <tr>
+                <td style={{ width: "40%", fontSize: "14px" }}>Referral Earn Amount</td>
+                <td style={{ width: "40%", color: "red" }}>- Rs {referralAmount} /-</td>
+              </tr>
+            )}
              <tr>
                 <td style={{ width: "40%", fontSize: "14px", fontWeight: 600 }}>Total Payable</td>
                 <td style={{ width: "40%", fontWeight: 700 }}>Rs {totalPayable} /-</td>
@@ -1607,8 +1621,8 @@ const handleCheckboxChange = (value) => {
       ? "Please add a valid address"
       : serviceUnavailable
       ? "Service unavailable in your area"
-      // : isFirstOrderMinNotReached
-      // ? "Minimum order value ₹100 required on your first order to get ₹50 cashback."
+      : isFirstOrderMinNotReached
+      ? "Minimum order value ₹100 required on your first order to get ₹50 cashback."
       : ""
   }
 >
