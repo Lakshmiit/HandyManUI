@@ -57,7 +57,9 @@ function getCustomLimit(name) {
     n === "ivy gourd (dondakaya) 250 g" ||
     n === "green chilli (pachchi mirchi) 100 g" || 
     n === "tomato 250 g" ||
-    n === "raw banana 1 pc"
+    n === "raw banana 1 pc" || 
+    n === "freedom refined sunflower oil 1 l" || 
+    n === "gold drop refined sunflower oil 1 l"
      
     // n === "combo pack 1 - daawat basmati rice 1kg + eastern garam masala 100g + visakha dairy paneer 200g" ||
     // n === "combo pack 2 - daawat biryani basmati rice 1kg + eastern garam masala 100g + visakha dairy paneer 200g"
@@ -78,6 +80,9 @@ function getCustomLimit(name) {
     if (/^https?:\/\//i.test(String(filenameOrUrl))) return filenameOrUrl;
     return `${IMAGE_DOWNLOAD}${encodeURIComponent(String(filenameOrUrl))}`;
   }
+
+     const norm = (s) => String(s || "").toLowerCase().trim();
+     const MIN_ORDER_TOTAL = cartItems.some((it) => norm(it.category) === "grocery offers") ? 100 : 50;
 
   const refreshStocksOnce = React.useCallback(
     async (signal) => {
@@ -715,12 +720,17 @@ function getCustomLimit(name) {
         </div>
       </div>
       <Divider />
+        {roundedGrandTotal < MIN_ORDER_TOTAL && (
+          <p style={{ color: "red", fontSize: "13px", marginTop: "0px" }}>
+            Minimum order is ₹{MIN_ORDER_TOTAL} and above
+          </p>
+        )}
 
-      {roundedGrandTotal < 50 && (
+      {/* {roundedGrandTotal < 50 && (
         <p style={{ color: "red", fontSize: "13px", marginTop: "0px" }}>
           Minimum order is 50 and above
         </p>
-      )}
+      )} */}
 
       {/* Footer */}
       <div
@@ -741,13 +751,25 @@ function getCustomLimit(name) {
           style={{
             fontWeight: "500",
             fontSize: "15px",
+            cursor: roundedGrandTotal < MIN_ORDER_TOTAL ? "not-allowed" : "pointer",
+            opacity: roundedGrandTotal < MIN_ORDER_TOTAL ? 0.6 : 1
+          }}
+          onClick={roundedGrandTotal >= MIN_ORDER_TOTAL ? handleGroceryProceed : undefined}
+        >
+          {roundedGrandTotal < MIN_ORDER_TOTAL ? "Add More Items" : "Proceed →"}
+        </div>
+
+        {/* <div
+          style={{
+            fontWeight: "500",
+            fontSize: "15px",
             cursor: roundedGrandTotal < 50 ? "not-allowed" : "pointer",
             opacity: roundedGrandTotal < 50 ? 0.6 : 1
           }}
           onClick={roundedGrandTotal >= 50 ? handleGroceryProceed : undefined}
         >
           {roundedGrandTotal < 50 ? "Add More Items" : "Proceed →"}
-        </div>
+        </div> */}
       </div>
 
       <div className="text-start"> 

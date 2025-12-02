@@ -25,7 +25,6 @@ const LIMIT_RULES = [
   { match: normalizeName("Visakha Dairy Milk 200 ml"), limit: 1 },
   { match: normalizeName("Visakha Dairy Curd 180 g"), limit: 1 },
   { match: normalizeName("Apple 1 Pc"), limit: 1 },
-  // { match: normalizeName("Cucumber (Dosakaya) 500 g"), limit: 1 },
   { match: normalizeName("Green Chilli (Pachchi Mirchi) 100 g"), limit: 2 },
   { match: normalizeName("Tomato 250 g"), limit: 2 },
   { match: normalizeName("Lemon (Nimakaya) (3pcs)"), limit: 1 },
@@ -33,14 +32,9 @@ const LIMIT_RULES = [
   { match: normalizeName("Ivy Gourd (Dondakaya) 250 g"), limit: 2 },
   { match: normalizeName("Potato (Bangala Dumpa) 500 g"), limit: 2 },
   { match: normalizeName("Raw Banana (Aratikaya) 1 Pc"), limit: 2 },
-  // { match: normalizeName("Tomato 250 g"), limit: 2 },
-  // { match: normalizeName("Combo Pack 1 - Daawat Basmati Rice 1Kg + Eastern Garam Masala 100g + Visakha Dairy Paneer 200g"), limit: 2 },
-  // { match: normalizeName("Combo Pack 2 - Daawat Biryani Basmati Rice 1Kg + Eastern Garam Masala 100g + Visakha Dairy Paneer 200g"), limit: 2 },
+  { match: normalizeName("Freedom Refined Sunflower Oil 1 L"), limit: 2 },
+  { match: normalizeName("Gold Drop Refined Sunflower Oil 1 L"), limit: 2 },
 
-  // { match: normalizeName("Potato (Bangala Dumpa) 500 g"), limit: 2 },
-  // { match: normalizeName("Apple 1 Pc"), limit: 1 },
-  // { match: normalizeName("Green Chilli (Pachi Mirchi) 100 g"), limit: 1 },
-  // { match: normalizeName("Banana 2 Pcs"), limit: 1 },
 ];
 const getLimit = (product) => {
   const category = normalizeName(product?.category);
@@ -107,7 +101,7 @@ const GroceryOfferItems = () => {
     console.log(imageLoading, checked, grandSummary);
   }, [imageLoading, checked, grandSummary]);
 
-  const MIN_ORDER_TOTAL = 50;
+  const MIN_ORDER_TOTAL = normalizeName(selectedCategory) === normalizeName("Grocery Offers") ? 100 : 50;
   const OFFERS = "Offers";
   const encodedCategory = OFFERS;
 

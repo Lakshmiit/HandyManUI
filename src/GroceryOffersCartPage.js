@@ -19,7 +19,11 @@ const norm = (s) =>
   String(s || "").toLowerCase().replace(/\s+/g, " ").trim();
 
 const CATEGORY_OFFERS = norm("Offers");
-const CATEGORY_VF_OFFERS = norm("Grocery Offers");
+// const CATEGORY_VF_OFFERS = norm("Grocery Offers");
+const CATEGORY_VF_OFFERS = [
+  norm("Grocery Offers"),
+  norm("Oils & Dals"),
+];
 
 const LIMIT_RULES = [
   { match: norm("Visakha Dairy Happy Full Cream Milk 500 ml"), limit: 1 },
@@ -35,19 +39,16 @@ const LIMIT_RULES = [
   { match: norm("Ivy Gourd (Dondakaya) 250 g"), limit: 2 },
   { match: norm("Potato (Bangala Dumpa) 500 g"), limit: 2 },
   { match: norm("Raw Banana (Aratikaya) 1 Pc"), limit: 2 },
-  // { match: norm("Combo Pack 1 - Daawat Basmati Rice 1Kg + Eastern Garam Masala 100g + Visakha Dairy Paneer 200g"), limit: 2 },
-  // { match: norm("Combo Pack 2 - Daawat Biryani Basmati Rice 1Kg + Eastern Garam Masala 100g + Visakha Dairy Paneer 200g"), limit: 2 },
-  // { match: norm("Potato (Bangala Dumpa) 500 g"), limit: 2 },
-  // { match: norm("Green Chilli (Pachi Mirchi) 100 g"), limit: 1 },
-  // { match: norm("Banana 2 Pcs"), limit: 1 },
-  // { match: norm("Cucumber (Dosakaya) 250 g"), limit: 1 },
+  { match: norm("Freedom Refined Sunflower Oil 1 L"), limit: 2 },
+  { match: norm("Gold Drop Refined Sunflower Oil 1 L"), limit: 2 },
 ];
  
 const getLimit = (item) => {
   const category = norm(item?.category);
   const name = norm(item?.name);
   if (category === CATEGORY_OFFERS) return Infinity;
-  if (category === CATEGORY_VF_OFFERS) {
+  // if (category === CATEGORY_VF_OFFERS) {
+  if (CATEGORY_VF_OFFERS.includes(category)) {
     for (const rule of LIMIT_RULES) {
       if (name.includes(rule.match)) return rule.limit;
     }
@@ -72,7 +73,7 @@ const fileToUrl = (filenameOrUrl) => {
   return `${IMAGE_DOWNLOAD}${encodeURIComponent(String(filenameOrUrl))}`;
 };
 
-const MIN_ORDER_TOTAL = 50;
+const MIN_ORDER_TOTAL = 100;
 const isValidCartItem = (it) => {
   const hasName = Boolean(String(it.name || "").trim());
   const hasQty = Number(it.qty) > 0;

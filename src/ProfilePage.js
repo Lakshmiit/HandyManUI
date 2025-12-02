@@ -67,20 +67,25 @@ import BakeryImg from './img/BakerySweets.jpeg';
 import VegetablesImg from './img/Vegetables.jpeg';
 import FruitsImg from './img/Fruits.jpeg';
 import DryfruitsImg from './img/Bakery.jpeg';
-import SoupsImg from './img/SoupSauces.jpeg';
+import SoupsImg from './img/SoupsSauces.jpeg';
 import KitchenImg from './img/Kitchenware.jpeg';
 import BiscuitsImg from './img/Biscuits.jpeg';
 import HealthImg from './img/HealthCare.jpeg';
 import SkinImg from './img/SkinFace.jpeg';
 // import StationaryImg from './img/Stationary.jpeg';
 import TeaImg from './img/teacoffee.jpeg';
-import NamkeenImg from './img/sweets.jpeg';
+import NamkeenImg from './img/InstantFoodImg.jpeg';
 import HouseHoldImg from './img/HouseHold.jpeg';   
 import ChickenImg from './img/Chicken.jpeg';
 import KidsImg from './img/KidsZone.jpeg';
 import setkurti from './img/3pcsset.jpeg';
 import kurti from './img/2pcsset.jpeg';
 import { CartStorage } from "./CartStorage";
+// import BathImg from './img/bathImg.jpeg';
+// import FlourImg from './img/FlourImg.jpeg';
+// import FaceImg from './img/FaceImg.jpeg';
+// import NeedImg from './img/NeedsImg.jpeg';
+
 //import ReedemCode from "./ReedemCode";     
 // import RedeemIcon from "@mui/icons-material/Redeem";
 
@@ -849,6 +854,13 @@ const categories = [
 { label: 'Plumbing & Sanitary', value: 'Sanitary items', image: Plumbing },         
 { label: 'Hardware Items', value: 'Hardware items', image: Hardware },      
 ];
+
+// const offerCategories = [
+// { label: 'Bath & Body Care', value: 'Bath & Body Care', image: BathImg },
+// { label: 'Atta, Flours & Masala', value: 'Atta, Flours & Masala', image: FlourImg },         
+// { label: 'Home Needs', value: 'Home Needs', image: NeedImg}, 
+// { label: 'Skin & Face Care', value: 'Skin & Face Care', image: FaceImg },
+// ];
 
 const groceryCategories = [
   { label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
@@ -2701,6 +2713,53 @@ const fetchImageUrl = async (photoId) => {
     // paddingTop: isMobile ? "70px" : "0px"
     paddingTop: isMobile ? `${MOBILE_PADDING_TOP}px` : "0px",
   }}>
+
+  {/* <div
+  className="shadow-lg p-2 rounded-5 mb-1 text-center border-0"
+  style={{
+    background: "radical-gradient(to bottom right, #FDFBFF, #e3bc3b, #FDFBFF)"
+  }}
+>
+    <h5 className="fw-bold mb-3" style={{ color: "#ff5722", fontSize: "20px" }}>
+      Lakshmi Mart
+    </h5> 
+
+     <div className="row row-cols-3 row-cols-md-5 g-1">
+      {offerCategories.map((cat) => {
+        return (
+          <div
+            className="col"
+            key={cat.label}
+            style={{ cursor: "pointer" }}
+          >
+            <div
+              className="OfferIcon-card border-0 shadow-sm text-center d-flex flex-column align-items-center justify-content-between"
+              style={{
+                height: isMobile ? "120px" : "140px",
+                width: isMobile ? "90px" : "120px",
+                cursor: "pointer",
+                opacity: 1,
+                pointerEvents: "auto"
+              }}
+            >
+              <img
+                src={cat.image}
+                alt={cat.label}
+                style={{
+                  height: "80px",
+                  width: "80px",
+                  borderRadius: "8px",
+                  marginTop: "2px",
+                  objectFit: "cover",
+                }}
+              />
+            </div>
+          </div>
+        );
+      })}
+    </div>
+</div> */}
+
   {/* Grocery Categories Section className="container my-3"*/}
   <div className="shadow-lg p-2 rounded-5 mb-1 text-center bg-transparent border-0">
     <h5 className="fw-bold mb-3" style={{color: "#ff5722", fontSize: "20px"}}>
