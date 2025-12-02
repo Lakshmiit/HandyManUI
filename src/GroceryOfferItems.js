@@ -942,13 +942,14 @@ const GroceryOfferItems = () => {
                             {total < MIN_ORDER_TOTAL && (
                               <span
                                 style={{
-                                  fontSize: "10px",
+                                  fontSize: "13px",
                                   opacity: 0.9,
+                                  fontWeight: "bold",
                                 }}
                               >
                                 Add ₹
                                 {MIN_ORDER_TOTAL - total} more to
-                                reach minimum order
+                                reach Minimum Order
                               </span>
                             )}
                           </div>
