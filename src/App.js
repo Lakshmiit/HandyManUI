@@ -127,6 +127,8 @@ import AdminCollectionNotificationGrid from './AdminCollectionNotificationGrid.j
 import TermsAndConditions from './TermsandConditions.js';
 import PrivacyPolicy from './PrivacyPolicy.js';
 import { getLoginData } from "./utils/auth";
+import GroceryCrazyDealOffers from './GroceryCrazyDealOffers.js';
+import GroceryCrazyCartPage from './GroceryCrazyCartPage.js';
 
 const PreventBackNavigation = () => {
    const navigate = useNavigate();
@@ -172,10 +174,13 @@ function App() {
             <Route path="/privacyPolicy" element={<PrivacyPolicy />} />
             <Route path="/device" element={<Device />} />
             <Route path="/chatPage/:userType/:userId" element={<ChatPage />} />
-            {/* New Pages */}
             <Route path="/groceryOffers/:userType/:userId" element={<GroceryOfferItems />} />
             <Route path="/groceryOffersCart/:userType/:userId" element={<GroceryOffersCartPage />} />
+            {/* New Pages */}
+            <Route path="/groceryCrazyOffers/:userType/:userId" element={<GroceryCrazyDealOffers />} />
+            <Route path="/groceryCrazyCart/:userType/:userId" element={<GroceryCrazyCartPage />} />
 
+ 
             <Route path="/deliveryPartner/:userType/:userId" element={<DeliveryPartner />} />
             <Route path="/deliveryTracking/:id" element={<DeliveryTracking />} />
             {/* <Route path="/deliveryPartnerDirectory" element={<DeliveryPartnerDirectory />} /> */}

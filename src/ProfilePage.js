@@ -81,10 +81,12 @@ import KidsImg from './img/KidsZone.jpeg';
 import setkurti from './img/3pcsset.jpeg';
 import kurti from './img/2pcsset.jpeg';
 import { CartStorage } from "./CartStorage";
-// import BathImg from './img/bathImg.jpeg';
-// import FlourImg from './img/FlourImg.jpeg';
-// import FaceImg from './img/FaceImg.jpeg';
-// import NeedImg from './img/NeedsImg.jpeg';
+import BathImg from './img/bathImg.jpeg';
+import FlourImg from './img/FlourImg.jpeg';
+import FaceImg from './img/FaceImg.jpeg';  
+import NeedImg from './img/NeedsImg.jpeg';
+import RiceImg from './img/Ravva.jpeg';  
+import CoffeeImg from './img/Coffee.jpeg';
 
 //import ReedemCode from "./ReedemCode";     
 // import RedeemIcon from "@mui/icons-material/Redeem";
@@ -855,13 +857,15 @@ const categories = [
 { label: 'Hardware Items', value: 'Hardware items', image: Hardware },      
 ];
 
-// const offerCategories = [
-// { label: 'Bath & Body Care', value: 'Bath & Body Care', image: BathImg },
-// { label: 'Atta, Flours & Masala', value: 'Atta, Flours & Masala', image: FlourImg },         
-// { label: 'Home Needs', value: 'Home Needs', image: NeedImg}, 
-// { label: 'Skin & Face Care', value: 'Skin & Face Care', image: FaceImg },
-// ];
-
+const offerCategories = [
+{ label: 'Rice & Ravva', value: 'Rice & Ravva', image: RiceImg },
+{ label: 'Atta, Flours & Masala', value: 'Atta, Flours & Masala', image: FlourImg }, 
+{ label: 'Tea & Coffee', value: 'Tea & Coffee', image: CoffeeImg },
+{ label: 'Home Needs', value: 'Home Needs', image: NeedImg}, 
+{ label: 'Bath & Body Care', value: 'Bath & Body Care', image: BathImg },
+{ label: 'Skin & Face Care', value: 'Skin & Face Care', image: FaceImg },
+];
+    
 const groceryCategories = [
   { label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
   { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
@@ -1791,6 +1795,25 @@ const handleCategoryClick = async (category) => {
 //   autoOpenForNewUser();
 // }, [userId]);
 
+const handleCrazyDealsGroceryClick = async (category) => {
+  const { value } = category;
+  try {
+    setSelectedCategory(category);
+    setGrocery([]);
+    setError("");
+    const encodedCategory = encodeURIComponent(value);
+    localStorage.setItem("encodedCategory", encodedCategory);
+    navigate(`/groceryCrazyOffers/${userType}/${userId}`);
+    //   {
+    //     state: { encodedCategory, userPoints },  
+    // });
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    setGrocery([]);
+    setError(`Oops! No grocery items found for ${value} category.`);
+  }
+};
+
 const handleGroceryCategoryClick = async (category) => {
   const { value } = category;
   //  if (value === "Vegetables & Fruits") {
@@ -2714,23 +2737,23 @@ const fetchImageUrl = async (photoId) => {
     paddingTop: isMobile ? `${MOBILE_PADDING_TOP}px` : "0px",
   }}>
 
-  {/* <div
+  <div
   className="shadow-lg p-2 rounded-5 mb-1 text-center border-0"
-  style={{
-    background: "radical-gradient(to bottom right, #FDFBFF, #e3bc3b, #FDFBFF)"
-  }}
 >
-    <h5 className="fw-bold mb-3" style={{ color: "#ff5722", fontSize: "20px" }}>
-      Lakshmi Mart
-    </h5> 
+    {/* <h5 className="fw-bold mb-1 crazy-title" style={{ color: "#da9100", fontSize: "20px" }}>
+      CRAZY DEALS 
+    </h5>  */}
+    <h5 className="deal-3d">🎉 CRAZY DEALS 🎉</h5>
+    <p style={{color: "#ff5722", fontSize: "14px", fontWeight: 500}}>Buy monthly groceries ₹1999 get extra discount ₹250-offer valid till 10th December!</p>
 
      <div className="row row-cols-3 row-cols-md-5 g-1">
       {offerCategories.map((cat) => {
-        return (
-          <div
-            className="col"
-            key={cat.label}
-            style={{ cursor: "pointer" }}
+        return (  
+          <div   
+            className="col"  
+            key={cat.label}  
+            style={{ cursor: "pointer" }}  
+            onClick={() => handleCrazyDealsGroceryClick(cat)}   
           >
             <div
               className="OfferIcon-card border-0 shadow-sm text-center d-flex flex-column align-items-center justify-content-between"
@@ -2758,7 +2781,7 @@ const fetchImageUrl = async (photoId) => {
         );
       })}
     </div>
-</div> */}
+</div>
 
   {/* Grocery Categories Section className="container my-3"*/}
   <div className="shadow-lg p-2 rounded-5 mb-1 text-center bg-transparent border-0">

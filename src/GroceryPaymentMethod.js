@@ -181,19 +181,43 @@ const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 100;
         let discount = 0;
         let msg = "";
 
-        if (newUser) {
-          if (gt >= 1000) {
+        // if (newUser) {
+        //   if (gt >= 1000) {
+        //     discount = 100;
+        //     msg = "";
+        //   } else if (gt >= 100) {
+        //     discount = 50;
+        //     msg = "";
+        //   } else {
+        //     discount = 0;
+        //     msg = "Order ₹100 or more to get ₹50 cashback on your first order!";
+        //   }
+        // } else {
+        //   discount = gt >= 1000 ? 100 : 0;
+        //   msg = "";
+        // }
+         if (newUser) {
+          if (gt >= 1999) {
+            discount = 250;
+            msg = "";
+          } else if (gt >= 1000) {
             discount = 100;
             msg = "";
           } else if (gt >= 100) {
             discount = 50;
-            msg = "";
+            msg = "";    
           } else {
             discount = 0;
             msg = "Order ₹100 or more to get ₹50 cashback on your first order!";
           }
         } else {
-          discount = gt >= 1000 ? 100 : 0;
+          if (gt >= 1999) {
+            discount = 250;
+          } else if (gt >= 1000) {
+            discount = 100;
+          } else {
+            discount = 0;
+          }
           msg = "";
         }
         setFirstOrderDiscount(discount);
