@@ -150,10 +150,9 @@ useEffect(() => {
       specificationDesc: specificationDesc,
       warranty: warranty,
       Category: category,
-      ProductStatus: "Pending Approval",
       AdditionalInformation:moreInfo,
       ProductOwnedBy:"Admin",
-
+      ProductStatus: "Pending Approval",
     };
 
     try {
@@ -255,7 +254,8 @@ useEffect(() => {
                 <option>Electrical items</option>
                 <option>Electronics appliances</option>
                 <option>Hardware items</option>
-                {/* <option>Health Care</option> */}
+                {/* <option>Health Care</option> */} 
+                <option>Home Appliances</option>
                 <option>Home Decors</option>
                 <option>Paints</option>
                 <option>Sanitary items</option>

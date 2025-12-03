@@ -139,7 +139,7 @@ const isGuestName = (name) => (name ?? '').trim().toLowerCase() === 'guest';
 
   const handleGetQuotation = async (e) => {
     e.preventDefault();
-
+    
      if (numberOfStockAvailable === 0) {
     setQuantityError("No stock available.");
     return;
@@ -245,6 +245,13 @@ const isGuestName = (name) => (name ?? '').trim().toLowerCase() === 'guest';
     }
   };
 
+  useEffect(() => {
+  if (!loading && Number(numberOfStockAvailable) > 0 && !requiredQuality) {
+    setRequiredQuality(1);  
+  }
+}, [loading, numberOfStockAvailable, requiredQuality]);
+
+
   const handleQuantityChange = (e) => {
     const value = e.target.value.trim();
   if (Number(numberOfStockAvailable) === 0) {
@@ -275,7 +282,6 @@ const isGuestName = (name) => (name ?? '').trim().toLowerCase() === 'guest';
       setDisableBuy(false);
       setIsChecked(true);
     }
-
     setRequiredQuality(qty);
   } else {
     setQuantityError("Please enter a valid quantity.");
@@ -586,7 +592,7 @@ useEffect(() => {
                            </Button>
                          </Form>
                        </Modal.Body>
-                     </Modal>
+                     </Modal> 
                              </div>
                
                          <div className="p-3 border rounded bg-light">
@@ -810,10 +816,10 @@ useEffect(() => {
                 className="form-control"
                 value={requiredQuality}
                 onChange={handleQuantityChange}
-                disabled={isAddressInvalid}
+                disabled={isAddressInvalid || Number(numberOfStockAvailable) === 0}
                 required
               >
-                <option value="">Select Quantity</option>
+                {/* <option value="">Select Quantity</option> */}
                 {[1, 2, 3, 4, 5].map((qty) => (
                   <option key={qty} value={qty}>
                     {qty}
