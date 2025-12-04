@@ -47,7 +47,7 @@ const GroceryCartPage = () => {
 
 function getCustomLimit(name) {
   const n = String(name || "").toLowerCase().trim();
-  if (n === "apple 1 pc" || n === "visakha dairy curd 180 g" || n === "visakha dairy happy full cream milk 500 ml" ||
+  if (n === "apple 1 pc" || n === "visakha dairy curd 180 g" ||
     n === "visakha dairy milk 200 ml" || n === "visakha dairy good milk 180 ml" || n === "lemon (nimakaya) (3pcs)"
   ) return 1;
   if (
@@ -59,7 +59,8 @@ function getCustomLimit(name) {
     n === "tomato 250 g" ||
     n === "raw banana 1 pc" || 
     n === "freedom refined sunflower oil 1 l" || 
-    n === "gold drop refined sunflower oil 1 l"
+    n === "gold drop refined sunflower oil 1 l" ||
+    n === "visakha dairy happy full cream milk 500 ml" 
      
     // n === "combo pack 1 - daawat basmati rice 1kg + eastern garam masala 100g + visakha dairy paneer 200g" ||
     // n === "combo pack 2 - daawat biryani basmati rice 1kg + eastern garam masala 100g + visakha dairy paneer 200g"
