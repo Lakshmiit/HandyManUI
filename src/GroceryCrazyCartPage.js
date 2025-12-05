@@ -37,6 +37,7 @@ const GroceryCrazyCartPage = () => {
 function getCustomLimit(name) {
   const n = String(name || "").toLowerCase().trim();
   if (n === "apple 1 pc" || n === "visakha dairy curd 180 g" ||
+    n === "visakha dairy happy full cream milk 500 ml" ||
     n === "visakha dairy milk 200 ml" || n === "visakha dairy good milk 180 ml" || n === "lemon (nimakaya) (3pcs)"
   ) return 1;
   if (
@@ -48,8 +49,7 @@ function getCustomLimit(name) {
     n === "tomato 250 g" ||
     n === "raw banana 1 pc" || 
     n === "freedom refined sunflower oil 1 l" || 
-    n === "gold drop refined sunflower oil 1 l" ||
-    n === "visakha dairy happy full cream milk 500 ml" 
+    n === "gold drop refined sunflower oil 1 l"  
  ) return 2;
   return Infinity;   
 }

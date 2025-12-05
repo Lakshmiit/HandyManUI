@@ -2744,8 +2744,13 @@ const fetchImageUrl = async (photoId) => {
       CRAZY DEALS 
     </h5>  */}
     <h5 className="deal-3d">🎉 CRAZY DEALS 🎉</h5>
-    <p style={{color: "#ff5722", fontSize: "14px", fontWeight: 500}}>Buy monthly groceries ₹1999 get extra discount ₹250-offer valid till 10th December!</p>
-
+      <div style={{color: "#ff5722", fontSize: "14px", fontWeight: "500"}}>
+        Buy Monthly Groceries 
+        <span style = {{ fontSize: "18px", fontWeight: "700"}}> ₹1999 </span> 
+        Get Extra Discount 
+        <span style = {{ fontSize: "18px", fontWeight: "700"}}> ₹250</span>
+      </div>
+   
      <div className="row row-cols-3 row-cols-md-5 g-1">
       {offerCategories.map((cat) => {
         return (  
@@ -2781,7 +2786,8 @@ const fetchImageUrl = async (photoId) => {
         );
       })}
     </div>
-</div>
+    <span style={{color: "#ff5722", fontSize: "14px", fontWeight: 500}}>Offer Valid Till 10th December!</span>
+</div> 
 
   {/* Grocery Categories Section className="container my-3"*/}
   <div className="shadow-lg p-2 rounded-5 mb-1 text-center bg-transparent border-0">
