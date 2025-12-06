@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Carousel as BsCarousel } from "bootstrap";
 import './App.css';
 import { Modal, Button} from 'react-bootstrap';
-import Confetti from "react-confetti";
+// import Confetti from "react-confetti";
 // import LocationOnIcon from '@mui/icons-material/LocationOn';
 // import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 // import NotificationBell from "./NotificationsBell";
@@ -25,8 +25,8 @@ import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-// import Banner1 from './img/ChickenOffers.jpeg';
-import Banner1 from './img/CricketMatch.jpeg';
+import Banner1 from './img/ChickenOffers.jpeg';
+// import Banner1 from './img/CricketMatch.jpeg';
 import Banner2 from './img/45AboveOffers.jpeg'; 
 // import BannerVideo from './img/Dusshera.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
@@ -87,7 +87,7 @@ import FaceImg from './img/FaceImg.jpeg';
 import NeedImg from './img/NeedsImg.jpeg';
 import RiceImg from './img/Ravva.jpeg';  
 import CoffeeImg from './img/Coffee.jpeg';
-import ThumsUpBottle from './img/thumsup.jpeg';
+// import ThumsUpBottle from './img/thumsup.jpeg';
 // import IcecreamImg from './img/IceCreams.jpeg';
 //import ReedemCode from "./ReedemCode";     
 // import RedeemIcon from "@mui/icons-material/Redeem";
@@ -991,63 +991,63 @@ function decideCartRoute(products) {
 if (hasNonOffers && !hasOffers) return "groceryCart";
   return "groceryCart";
 }
-const [showCashbackModal] = useState(false);
+// const [showCashbackModal] = useState(false);
 // const [showCashbackModal, setShowCashbackModal] = useState(false);
-const [showConfetti, setShowConfetti] = useState(false);
-const [windowSize, setWindowSize] = useState({
-  width: window.innerWidth,
-  height: window.innerHeight,
-});
+// const [showConfetti, setShowConfetti] = useState(false);
+// const [windowSize, setWindowSize] = useState({
+//   width: window.innerWidth,
+//   height: window.innerHeight,
+// });
 const [hasCheckedFirstOrder, setHasCheckedFirstOrder] = useState(false);
 const [cashbackAmount, setCashbackAmount] = useState(0);
 // Cricket Logic 
-const [showBatBallAnimation, setShowBatBallAnimation] = useState(false);
-const [showThumbsUp, setShowThumbsUp] = useState(false);
-const [animationCompleted, setAnimationCompleted] = useState(false);
+// const [showBatBallAnimation, setShowBatBallAnimation] = useState(false);
+// const [showThumbsUp, setShowThumbsUp] = useState(false);
+// const [animationCompleted, setAnimationCompleted] = useState(false);
 
-useEffect(() => {
-  if (showCashbackModal) {
-    setShowConfetti(true);
-    const timer = setTimeout(() => setShowConfetti(false), 3000);
-    return () => clearTimeout(timer);
-  }
-}, [showCashbackModal]);
+// useEffect(() => {
+//   if (showCashbackModal) {
+//     setShowConfetti(true);
+//     const timer = setTimeout(() => setShowConfetti(false), 3000);
+//     return () => clearTimeout(timer);
+//   }
+// }, [showCashbackModal]);
 
-useEffect(() => {
-  const handleResize = () => {
-    setWindowSize({
-      width: window.innerWidth,
-      height: window.innerHeight,
-    });
-  };
-  window.addEventListener("resize", handleResize);
-  return () => window.removeEventListener("resize", handleResize);
-}, []);
+// useEffect(() => {
+//   const handleResize = () => {
+//     setWindowSize({
+//       width: window.innerWidth,
+//       height: window.innerHeight,
+//     });
+//   };
+//   window.addEventListener("resize", handleResize);
+//   return () => window.removeEventListener("resize", handleResize);
+// }, []);
 // cashback
-useEffect(() => {
-    if (showThumbsUp) {
-      setShowConfetti(true);
-      const timer = setTimeout(() => setShowConfetti(false), 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [showThumbsUp]);
+// useEffect(() => {
+//     if (showThumbsUp) {
+//       setShowConfetti(true);
+//       const timer = setTimeout(() => setShowConfetti(false), 2000);
+//       return () => clearTimeout(timer);
+//     }
+//   }, [showThumbsUp]);
   
 // Cricket Logic 
-useEffect(() => {
-  setShowBatBallAnimation(true);
-  const thumbsTimer = setTimeout(() => {
-    setShowThumbsUp(true);
-  }, 1000);
-  const endTimer = setTimeout(() => {
-    setShowBatBallAnimation(false);
-    setShowThumbsUp(false);
-    setAnimationCompleted(true);
-  }, 4000);
-  return () => {
-    clearTimeout(thumbsTimer);
-    clearTimeout(endTimer);
-  };
-}, []);
+// useEffect(() => {
+//   setShowBatBallAnimation(true);
+//   const thumbsTimer = setTimeout(() => {
+//     setShowThumbsUp(true);
+//   }, 1000);
+//   const endTimer = setTimeout(() => {
+//     setShowBatBallAnimation(false);
+//     setShowThumbsUp(false);
+//     setAnimationCompleted(true);
+//   }, 4000);
+//   return () => {
+//     clearTimeout(thumbsTimer);
+//     clearTimeout(endTimer);
+//   };
+// }, []);
 
 // const [showRedeem, setShowRedeem] = useState(false);
 // const [refRecord, setRefRecord] = useState(null);
@@ -1072,8 +1072,8 @@ useEffect(() => {
 // const [displayNumbers, setDisplayNumbers] = useState("");
 // redeemOpen, showRedeem, awardLoading,  awardedPoints, referralPoints,
 useEffect(() => {
-  console.log( showBatBallAnimation, items, grocery,error, unreadCount, showMenu, products, selectedCategory, dress);
-}, [showBatBallAnimation, items, grocery, error,unreadCount, showMenu, products, selectedCategory, dress]);
+  console.log( items, grocery,error, unreadCount, showMenu, products, selectedCategory, dress);
+}, [items, grocery, error,unreadCount, showMenu, products, selectedCategory, dress]);
  
 // const checkNewOrExisting = useCallback(async (num) => {
 //   try {
@@ -1476,7 +1476,7 @@ useEffect(() => {
 
 useEffect(() => {
   // Cricket logic 
-  if (!animationCompleted) return;  
+  // if (!animationCompleted) return;  
   if (!profile.mobileNumber) {
     console.log("CheckFirstOrder: no mobileNumber yet");
     return;
@@ -1512,7 +1512,7 @@ useEffect(() => {
     }
   };
   checkFirstOrder();
-}, [animationCompleted, profile.mobileNumber, hasCheckedFirstOrder]);
+}, [profile.mobileNumber, hasCheckedFirstOrder]);
 
 useEffect(() => {
   const fetchDeliveryData = async () => {
@@ -3223,7 +3223,8 @@ const fetchImageUrl = async (photoId) => {
         </div> 
         </div>
         </div>
-       {showThumbsUp && (
+       
+       {/* {showThumbsUp && (
   <div className="thumbsup-overlay">
     <div className="thumbsup-box">
       {showConfetti && windowSize.width > 0 && windowSize.height > 0 && (
@@ -3260,7 +3261,7 @@ const fetchImageUrl = async (photoId) => {
       </small>
     </div>
   </div>
-)}
+)}  */}
 
         {/* First Order Cashback Modal */}
         {/* <Modal
