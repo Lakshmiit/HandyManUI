@@ -436,7 +436,7 @@ useEffect(() => {
   return (
     <div>
   <Header />
-    <div className="d-flex flex-row justify-content-start align-items-start">
+    <div className="d-flex flex-row justify-content-start align-items-start mt-mob-50">
       {/* Sidebar menu for Larger Screens */}
       {!isMobile && (
         <div className=" ml-0 m-4 p-0 sde_mnu">
@@ -465,7 +465,7 @@ useEffect(() => {
 
       {/* Main Content */}
       <div className={`container ${isMobile ? 'w-100' : 'w-75'}`}>
-      <h3 className=" text-center mt-mob-50">Buy Products Offers Page</h3>
+      <h3 className=" text-center">Buy Products Offers Page</h3>
         <div className=" rounded-3 p-2 bx_sdw w-100">
           <form className="form" onSubmit={handleSubmit}>
            <div className="d-flex justify-content-between align-items-center">

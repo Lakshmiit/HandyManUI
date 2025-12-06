@@ -20,6 +20,7 @@ const normalizeName = (s) =>
 const CATEGORY_VEG_FRUITS_OFFERS = normalizeName("Grocery Offers");
 
 const LIMIT_RULES = [
+  { match: normalizeName("Thums Up (250ml PET bottle)"), limit: 1 },
   { match: normalizeName("Visakha Dairy Happy Full Cream Milk 500 ml"), limit: 1 },
   { match: normalizeName("Visakha Dairy Good Milk 180 ml"), limit: 1 },
   { match: normalizeName("Visakha Dairy Milk 200 ml"), limit: 1 },

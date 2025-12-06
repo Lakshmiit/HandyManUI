@@ -49,7 +49,8 @@ function getCustomLimit(name) {
   const n = String(name || "").toLowerCase().trim();
   if (n === "apple 1 pc" || n === "visakha dairy curd 180 g" ||
     n === "visakha dairy happy full cream milk 500 ml" ||
-    n === "visakha dairy milk 200 ml" || n === "visakha dairy good milk 180 ml" || n === "lemon (nimakaya) (3pcs)"
+    n === "visakha dairy milk 200 ml" || n === "visakha dairy good milk 180 ml" || n === "lemon (nimakaya) (3pcs)" || 
+    n === "thums up (250ml pet bottle)"
   ) return 1;
   if (
     // n === "apple 1 pc" ||

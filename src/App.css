@@ -4681,3 +4681,65 @@ cursor: not-allowed;
       text-shadow: 0 0 0 #000;
     }
   }
+
+.batball-overlay, .thumbsup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 5000;
+}
+
+.batball-box, .thumbsup-box {
+  background: #fff;
+  padding: 20px 30px;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+}
+
+.bat {
+  font-size: 60px;
+  animation: swing 1s infinite ease-in-out;
+}
+
+.ball {
+  font-size: 30px;
+  animation: moveBall 1s infinite linear;
+}
+
+@keyframes swing {
+  0% { transform: rotate(-20deg); }
+  50% { transform: rotate(20deg); }
+  100% { transform: rotate(-20deg); }
+}
+
+@keyframes moveBall {
+  0% { transform: translateX(-40px); }
+  50% { transform: translateX(40px); }
+  100% { transform: translateX(-40px); }
+}
+
+.thumb {
+  font-size: 60px;
+  animation: pop 0.7s ease-out;
+}
+
+@keyframes pop {
+  0% { transform: scale(0.2); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.bat-icon {
+  width: 110px;      
+  height: auto;
+  object-fit: contain;
+}
+
+.ball-icon {
+  width: 50px;      
+  height: auto;
+  object-fit: contain;
+}

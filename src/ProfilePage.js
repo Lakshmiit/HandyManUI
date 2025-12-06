@@ -26,7 +26,7 @@ import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 // import Banner1 from './img/ChickenOffers.jpeg';
-import Banner1 from './img/MilkOffers.jpeg';
+import Banner1 from './img/CricketMatch.jpeg';
 import Banner2 from './img/45AboveOffers.jpeg'; 
 // import BannerVideo from './img/Dusshera.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
@@ -87,7 +87,8 @@ import FaceImg from './img/FaceImg.jpeg';
 import NeedImg from './img/NeedsImg.jpeg';
 import RiceImg from './img/Ravva.jpeg';  
 import CoffeeImg from './img/Coffee.jpeg';
-
+import ThumsUpBottle from './img/thumsup.jpeg';
+// import IcecreamImg from './img/IceCreams.jpeg';
 //import ReedemCode from "./ReedemCode";     
 // import RedeemIcon from "@mui/icons-material/Redeem";
 
@@ -102,7 +103,7 @@ import CoffeeImg from './img/Coffee.jpeg';
 //   showTrigger = false,     
 //   badgeClassName = "redeem-badge",
 //   openOverride,
-//   onClose,
+//   onClose,        
 //   closeOnInvite = true,    
 //   initialConsumed = false,
 // }) {
@@ -880,6 +881,7 @@ const groceryCategories = [
   { label: 'Instant Food, Chips & Namkeen', value: 'Instant Food, Chips & Namkeen', image: NamkeenImg },
   { label: 'Biscuits & Chocolates', value: 'Biscuits & Chocolates', image: BiscuitsImg },
   { label: 'Drinks & Juices', value: 'Drinks & Juices', image: DrinkImg },
+  // { label: 'Ice Creams', value: 'Ice Creams', image: IcecreamImg },
   { label: 'Sweets & Snacks', value: 'Sweets & Snacks', image: BakeryImg },
   { label: 'Dry Fruits & Bakery', value: 'Dry Fruits & Bakery', image: DryfruitsImg },
   { label: 'Soups & Sauces', value: 'Soups & Sauces', image: SoupsImg},
@@ -989,7 +991,8 @@ function decideCartRoute(products) {
 if (hasNonOffers && !hasOffers) return "groceryCart";
   return "groceryCart";
 }
-const [showCashbackModal, setShowCashbackModal] = useState(false);
+const [showCashbackModal] = useState(false);
+// const [showCashbackModal, setShowCashbackModal] = useState(false);
 const [showConfetti, setShowConfetti] = useState(false);
 const [windowSize, setWindowSize] = useState({
   width: window.innerWidth,
@@ -997,6 +1000,10 @@ const [windowSize, setWindowSize] = useState({
 });
 const [hasCheckedFirstOrder, setHasCheckedFirstOrder] = useState(false);
 const [cashbackAmount, setCashbackAmount] = useState(0);
+// Cricket Logic 
+const [showBatBallAnimation, setShowBatBallAnimation] = useState(false);
+const [showThumbsUp, setShowThumbsUp] = useState(false);
+const [animationCompleted, setAnimationCompleted] = useState(false);
 
 useEffect(() => {
   if (showCashbackModal) {
@@ -1016,7 +1023,31 @@ useEffect(() => {
   window.addEventListener("resize", handleResize);
   return () => window.removeEventListener("resize", handleResize);
 }, []);
-
+// cashback
+useEffect(() => {
+    if (showThumbsUp) {
+      setShowConfetti(true);
+      const timer = setTimeout(() => setShowConfetti(false), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [showThumbsUp]);
+  
+// Cricket Logic 
+useEffect(() => {
+  setShowBatBallAnimation(true);
+  const thumbsTimer = setTimeout(() => {
+    setShowThumbsUp(true);
+  }, 5000);
+  const endTimer = setTimeout(() => {
+    setShowBatBallAnimation(false);
+    setShowThumbsUp(false);
+    setAnimationCompleted(true);
+  }, 10000);
+  return () => {
+    clearTimeout(thumbsTimer);
+    clearTimeout(endTimer);
+  };
+}, []);
 
 // const [showRedeem, setShowRedeem] = useState(false);
 // const [refRecord, setRefRecord] = useState(null);
@@ -1041,8 +1072,8 @@ useEffect(() => {
 // const [displayNumbers, setDisplayNumbers] = useState("");
 // redeemOpen, showRedeem, awardLoading,  awardedPoints, referralPoints,
 useEffect(() => {
-  console.log( items, grocery,error, unreadCount, showMenu, products, selectedCategory, dress);
-}, [items, grocery, error,unreadCount, showMenu, products, selectedCategory, dress]);
+  console.log( showBatBallAnimation, items, grocery,error, unreadCount, showMenu, products, selectedCategory, dress);
+}, [showBatBallAnimation, items, grocery, error,unreadCount, showMenu, products, selectedCategory, dress]);
  
 // const checkNewOrExisting = useCallback(async (num) => {
 //   try {
@@ -1434,8 +1465,18 @@ useEffect(() => {
     element._bsCarouselInstance = null;
   };
 }, []);
+// // cashback logic
+// useEffect(() => {
+//   if (!showCashbackModal) return; 
+//   const timer = setTimeout(() => {
+//     setShowCashbackModal(false);
+//   }, 5000);
+//   return () => clearTimeout(timer); 
+// }, [showCashbackModal]);
 
 useEffect(() => {
+  // Cricket logic 
+  if (!animationCompleted) return;  
   if (!profile.mobileNumber) {
     console.log("CheckFirstOrder: no mobileNumber yet");
     return;
@@ -1460,7 +1501,7 @@ useEffect(() => {
       const text = (rawText || "").trim().toLowerCase();
       if (text.includes("firstorder can not be found")) {
         console.log("Match found -> opening cashback modal");
-        setShowCashbackModal(true);
+        // setShowCashbackModal(true);
        } else {
         console.log("No match in response text, not showing modal");
       }
@@ -1471,7 +1512,7 @@ useEffect(() => {
     }
   };
   checkFirstOrder();
-}, [profile.mobileNumber, hasCheckedFirstOrder]);
+}, [animationCompleted, profile.mobileNumber, hasCheckedFirstOrder]);
 
 useEffect(() => {
   const fetchDeliveryData = async () => {
@@ -1536,11 +1577,11 @@ useEffect(() => {
       // if (cashback === 50 || cashback === 100) 
       // if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101))
         
-      if (cashback >= 99 && cashback <= 101)
+      if ((cashback >= 99 && cashback <= 101) || (cashback >= 249 && cashback <= 251))
         {
         setCashbackAmount(cashback); 
       } else {
-        setCashbackAmount(0);
+        setCashbackAmount(0);     
       }
     } catch (error) {
       console.error("Error fetching grocery product data:", error);
@@ -1914,7 +1955,8 @@ const handleDressCategoryClick = async (category) => {
 
   const grandTotalNumeric = Number(ticket.grandTotal) || 0;
   const cashback = totalAmountFromApi - grandTotalNumeric;
-  if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101)) {
+  // if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101)) {
+  if ((cashback >= 99 && cashback <= 101) || (cashback >= 249 && cashback <= 251)) {
     return cashback;
   }
   return 0;
@@ -3181,26 +3223,65 @@ const fetchImageUrl = async (photoId) => {
         </div> 
         </div>
         </div>
+       {showThumbsUp && (
+  <div className="thumbsup-overlay">
+    <div className="thumbsup-box">
+      {showConfetti && windowSize.width > 0 && windowSize.height > 0 && (
+        <Confetti
+          width={windowSize.width}
+          height={windowSize.height}
+          numberOfPieces={40000}
+          recycle={false}
+        />
+      )}
+      <div className="emoji-row" style={{ fontSize: "2.5rem", marginBottom: "0.5rem" }}>
+        🏏
+      </div>
+      <p
+        style={{
+          fontSize: "1rem",
+          fontWeight: "600",
+          color: "#ff4500",
+        }}
+      >
+        India vs South Africa – Vizag Match Special!
+      </p>
+      <img
+        src={ThumsUpBottle}
+        alt="Thums Up Bottle"
+        style={{
+          width: "80px",
+          height: "auto",
+          animation: "popDrink 0.7s ease-out",
+        }}
+      />
+      <small style={{ display: "block", fontWeight: "600" }}>
+        Enjoy the match with a refreshing sip – Thums Up just for ₹1/-
+      </small>
+    </div>
+  </div>
+)}
+
         {/* First Order Cashback Modal */}
-        <Modal
+        {/* <Modal
           show={showCashbackModal}
           onHide={() => setShowCashbackModal(false)}
           centered
           dialogClassName="cashback-modal"
         >
           <Modal.Body className="cashback-modal-body text-center">
-             {/* <button
+             <button
               type="button"
               className="cashback-close-btn"
               onClick={() => setShowCashbackModal(false)}
             >
               ×
-            </button>  */}
+            </button> 
             {showConfetti && (
               <Confetti
                 width={windowSize.width}
                 height={windowSize.height}
-                numberOfPieces={10000}
+                numberOfPieces={15000}
                 recycle={false}
               />
             )}
@@ -3221,7 +3302,7 @@ const fetchImageUrl = async (photoId) => {
             > Close
             </Button>
           </Modal.Body>
-        </Modal>
+        </Modal> */}
   
         {/* Modal for Mart Ticket Details */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered size="lg">
@@ -3319,4 +3400,3 @@ const fetchImageUrl = async (photoId) => {
   );
 };
 export default ProfilePage;
-

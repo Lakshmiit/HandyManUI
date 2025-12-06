@@ -105,7 +105,7 @@ const AdminProductList = () => {
   }
 
   return (
-    <div className="container mt-3">
+    <div className="container mt-mob-50">
       <h2 className="text-center">All Products</h2>
        {/* Search Bar */}
         <div className="form-group col-md-3">

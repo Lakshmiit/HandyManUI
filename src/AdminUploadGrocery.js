@@ -211,6 +211,7 @@ useEffect(() => {
                   <option>Instant Food, Chips & Namkeen</option>
                   <option>Biscuits & Chocolates</option>
                   <option>Drinks & Juices</option>
+                  <option>Ice Creams</option>   
                   <option>Sweets & Snacks</option>
                   <option>Dry Fruits & Bakery</option>
                   <option>Soups & Sauces</option>
