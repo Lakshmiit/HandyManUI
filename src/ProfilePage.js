@@ -1037,12 +1037,12 @@ useEffect(() => {
   setShowBatBallAnimation(true);
   const thumbsTimer = setTimeout(() => {
     setShowThumbsUp(true);
-  }, 5000);
+  }, 1000);
   const endTimer = setTimeout(() => {
     setShowBatBallAnimation(false);
     setShowThumbsUp(false);
     setAnimationCompleted(true);
-  }, 10000);
+  }, 4000);
   return () => {
     clearTimeout(thumbsTimer);
     clearTimeout(endTimer);
@@ -3230,7 +3230,7 @@ const fetchImageUrl = async (photoId) => {
         <Confetti
           width={windowSize.width}
           height={windowSize.height}
-          numberOfPieces={40000}
+          numberOfPieces={50000}
           recycle={false}
         />
       )}
