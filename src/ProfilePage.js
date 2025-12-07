@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Carousel as BsCarousel } from "bootstrap";
 import './App.css';
 import { Modal, Button} from 'react-bootstrap';
-// import Confetti from "react-confetti";
+import Confetti from "react-confetti";
 // import LocationOnIcon from '@mui/icons-material/LocationOn';
 // import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 // import NotificationBell from "./NotificationsBell";
@@ -25,8 +25,8 @@ import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-import Banner1 from './img/ChickenOffers.jpeg';
-// import Banner1 from './img/CricketMatch.jpeg';
+// import Banner1 from './img/ChickenOffers.jpeg';
+import Banner1 from './img/MilkOffers.jpeg';
 import Banner2 from './img/45AboveOffers.jpeg'; 
 // import BannerVideo from './img/Dusshera.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
@@ -992,12 +992,12 @@ if (hasNonOffers && !hasOffers) return "groceryCart";
   return "groceryCart";
 }
 // const [showCashbackModal] = useState(false);
-// const [showCashbackModal, setShowCashbackModal] = useState(false);
-// const [showConfetti, setShowConfetti] = useState(false);
-// const [windowSize, setWindowSize] = useState({
-//   width: window.innerWidth,
-//   height: window.innerHeight,
-// });
+const [showCashbackModal, setShowCashbackModal] = useState(false);
+const [showConfetti, setShowConfetti] = useState(false);
+const [windowSize, setWindowSize] = useState({
+  width: window.innerWidth,
+  height: window.innerHeight,
+});
 const [hasCheckedFirstOrder, setHasCheckedFirstOrder] = useState(false);
 const [cashbackAmount, setCashbackAmount] = useState(0);
 // Cricket Logic 
@@ -1005,24 +1005,24 @@ const [cashbackAmount, setCashbackAmount] = useState(0);
 // const [showThumbsUp, setShowThumbsUp] = useState(false);
 // const [animationCompleted, setAnimationCompleted] = useState(false);
 
-// useEffect(() => {
-//   if (showCashbackModal) {
-//     setShowConfetti(true);
-//     const timer = setTimeout(() => setShowConfetti(false), 3000);
-//     return () => clearTimeout(timer);
-//   }
-// }, [showCashbackModal]);
+useEffect(() => {
+  if (showCashbackModal) {
+    setShowConfetti(true);
+    const timer = setTimeout(() => setShowConfetti(false), 3000);
+    return () => clearTimeout(timer);
+  }
+}, [showCashbackModal]);
 
-// useEffect(() => {
-//   const handleResize = () => {
-//     setWindowSize({
-//       width: window.innerWidth,
-//       height: window.innerHeight,
-//     });
-//   };
-//   window.addEventListener("resize", handleResize);
-//   return () => window.removeEventListener("resize", handleResize);
-// }, []);
+useEffect(() => {
+  const handleResize = () => {
+    setWindowSize({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
+  };
+  window.addEventListener("resize", handleResize);
+  return () => window.removeEventListener("resize", handleResize);
+}, []);
 // cashback
 // useEffect(() => {
 //     if (showThumbsUp) {
@@ -1466,13 +1466,13 @@ useEffect(() => {
   };
 }, []);
 // // cashback logic
-// useEffect(() => {
-//   if (!showCashbackModal) return; 
-//   const timer = setTimeout(() => {
-//     setShowCashbackModal(false);
-//   }, 5000);
-//   return () => clearTimeout(timer); 
-// }, [showCashbackModal]);
+useEffect(() => {
+  if (!showCashbackModal) return; 
+  const timer = setTimeout(() => {
+    setShowCashbackModal(false);
+  }, 5000);
+  return () => clearTimeout(timer); 
+}, [showCashbackModal]);
 
 useEffect(() => {
   // Cricket logic 
@@ -1501,7 +1501,7 @@ useEffect(() => {
       const text = (rawText || "").trim().toLowerCase();
       if (text.includes("firstorder can not be found")) {
         console.log("Match found -> opening cashback modal");
-        // setShowCashbackModal(true);
+         setShowCashbackModal(true);
        } else {
         console.log("No match in response text, not showing modal");
       }
@@ -1577,7 +1577,7 @@ useEffect(() => {
       // if (cashback === 50 || cashback === 100) 
       // if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101))
         
-      if ((cashback >= 99 && cashback <= 101) || (cashback >= 249 && cashback <= 251))
+      if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101) || (cashback >= 249 && cashback <= 251))
         {
         setCashbackAmount(cashback); 
       } else {
@@ -1956,7 +1956,7 @@ const handleDressCategoryClick = async (category) => {
   const grandTotalNumeric = Number(ticket.grandTotal) || 0;
   const cashback = totalAmountFromApi - grandTotalNumeric;
   // if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101)) {
-  if ((cashback >= 99 && cashback <= 101) || (cashback >= 249 && cashback <= 251)) {
+  if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101) || (cashback >= 249 && cashback <= 251)) {
     return cashback;
   }
   return 0;
@@ -3264,25 +3264,25 @@ const fetchImageUrl = async (photoId) => {
 )}  */}
 
         {/* First Order Cashback Modal */}
-        {/* <Modal
+         <Modal
           show={showCashbackModal}
           onHide={() => setShowCashbackModal(false)}
           centered
           dialogClassName="cashback-modal"
         >
           <Modal.Body className="cashback-modal-body text-center">
-             <button
+             {/* <button
               type="button"
               className="cashback-close-btn"
               onClick={() => setShowCashbackModal(false)}
             >
               ×
-            </button> 
+            </button>  */}
             {showConfetti && (
               <Confetti
                 width={windowSize.width}
                 height={windowSize.height}
-                numberOfPieces={15000}
+                numberOfPieces={5000}
                 recycle={false}
               />
             )}
@@ -3303,7 +3303,7 @@ const fetchImageUrl = async (photoId) => {
             > Close
             </Button>
           </Modal.Body>
-        </Modal> */}
+        </Modal> 
   
         {/* Modal for Mart Ticket Details */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered size="lg">
@@ -3401,3 +3401,4 @@ const fetchImageUrl = async (photoId) => {
   );
 };
 export default ProfilePage;
+   

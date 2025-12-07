@@ -118,9 +118,8 @@ const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 100;
         text === "null" ||
         text.includes("Firstorder Can not be found")
       ) {
-        return null; // new user
+        return null; 
       }
-
       // Case 2: Existing user → JSON data
       return JSON.parse(text);
     } catch (error) {
@@ -197,26 +196,28 @@ const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 100;
         //   msg = "";
         // }
          if (newUser) {
-          if (gt >= 1999) {
+          if (gt > 1999) {
             discount = 250;
             msg = "";
           } else if (gt >= 1000) {
             discount = 100;
             msg = "";
           } 
-          // else if (gt >= 100) {
-          //   discount = 50;
-          //   msg = "";    
-          // }
+          else if (gt >= 100) {
+            discount = 50;
+            msg = "";    
+          }
            else {
             discount = 0;
             msg = "Order ₹100 or more to get ₹50 cashback on your first order!";
           }
         } else {
-          if (gt >= 1999) {
+          if (gt > 1999) {
             discount = 250;
           } else if (gt >= 1000) {
             discount = 100;
+          } else if (gt >= 100) {
+            discount = 50;
           } else {
             discount = 0;
           }
@@ -276,7 +277,7 @@ useEffect(() => {
 useEffect(() => {
   const gt = Number(grandTotal) || 0;
   const pts = Number(referralPoints) || 0;
-  const applied = Math.min(pts, gt);   // cap by grand total
+  const applied = Math.min(pts, gt);   
   setReferralAmount(applied);
   setNetPayable(Math.max(0, gt - applied));
 }, [grandTotal, referralPoints]);
@@ -1402,7 +1403,7 @@ const handleCheckboxChange = (value) => {
           <span style={{ fontWeight: "bold", color: "red" }}>
             {firstOrderDiscount}
           </span>
-          <span style={{ fontWeight: "normal", color: "green" }}> cashback!</span>
+          <span style={{ fontWeight: "normal", color: "green" }}> cashback! 🎉</span>
         </span>
       )}
       </div>
