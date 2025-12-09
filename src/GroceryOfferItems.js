@@ -17,7 +17,11 @@ import Footer from "./Footer.js";
 const normalizeName = (s) =>
   String(s || "").toLowerCase().replace(/\s+/g, " ").trim();
 
-const CATEGORY_VEG_FRUITS_OFFERS = normalizeName("Grocery Offers");
+const CATEGORY_VEG_FRUITS_OFFERS = [
+  normalizeName("Grocery Offers"),
+  normalizeName("Oils & Dals"),
+  normalizeName("Atta & Flours"),
+];
 
 const LIMIT_RULES = [
   { match: normalizeName("Thums Up (250ml PET bottle)"), limit: 1 },
@@ -35,6 +39,11 @@ const LIMIT_RULES = [
   { match: normalizeName("Raw Banana (Aratikaya) 1 Pc"), limit: 2 },
   { match: normalizeName("Freedom Refined Sunflower Oil 1 L"), limit: 2 },
   { match: normalizeName("Gold Drop Refined Sunflower Oil 1 L"), limit: 2 },
+  { match: normalizeName("Independence Refined Sunflower Oil 1 L"), limit: 2 },
+  { match: normalizeName("Freedom Refined Sunflower Oil 5 L"), limit: 1 },
+  { match: normalizeName("Gold Drop Refined Sunflower Oil Can 5 L"), limit: 1 },
+  { match: normalizeName("Aashirvaad Superior Whole Wheat Atta 5 Kg"), limit: 1 },
+  { match: normalizeName("Aashirvaad High Fibre Atta with Multigrains 5 kg"), limit: 1 },
 
 ];
 const getLimit = (product) => {
@@ -424,7 +433,7 @@ const GroceryOfferItems = () => {
                 fontFamily: "Roboto",
               }}
             >
-              Delivery Timings : 08:00 AM -09:00 PM
+              Delivery Timings : 06:00 AM -09:00 PM
             </span>
           </h1>
         </div>

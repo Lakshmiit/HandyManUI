@@ -25,7 +25,8 @@ import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-// import Banner1 from './img/ChickenOffers.jpeg';
+// import Banner1 from './img/ChickenOffers.jpeg';.
+import Banner from './img/DeliveryPoster.jpeg';
 import Banner1 from './img/MilkOffers.jpeg';
 import Banner2 from './img/45AboveOffers.jpeg'; 
 // import BannerVideo from './img/Dusshera.mp4';
@@ -88,7 +89,7 @@ import NeedImg from './img/NeedsImg.jpeg';
 import RiceImg from './img/Ravva.jpeg';  
 import CoffeeImg from './img/Coffee.jpeg';
 // import ThumsUpBottle from './img/thumsup.jpeg';
-// import IcecreamImg from './img/IceCreams.jpeg';
+import IcecreamImg from './img/IceCreams.jpeg';
 //import ReedemCode from "./ReedemCode";     
 // import RedeemIcon from "@mui/icons-material/Redeem";
 
@@ -881,7 +882,7 @@ const groceryCategories = [
   { label: 'Instant Food, Chips & Namkeen', value: 'Instant Food, Chips & Namkeen', image: NamkeenImg },
   { label: 'Biscuits & Chocolates', value: 'Biscuits & Chocolates', image: BiscuitsImg },
   { label: 'Drinks & Juices', value: 'Drinks & Juices', image: DrinkImg },
-  // { label: 'Ice Creams', value: 'Ice Creams', image: IcecreamImg },
+  { label: 'Ice Creams', value: 'Ice Creams', image: IcecreamImg },
   { label: 'Sweets & Snacks', value: 'Sweets & Snacks', image: BakeryImg },
   { label: 'Dry Fruits & Bakery', value: 'Dry Fruits & Bakery', image: DryfruitsImg },
   { label: 'Soups & Sauces', value: 'Soups & Sauces', image: SoupsImg},
@@ -2625,6 +2626,16 @@ const fetchImageUrl = async (photoId) => {
 
         {/* Address with Location */}
         <div className="col-md-9">
+          {/* <div className="carousel-item active"
+                    onClick={() => goToCategory("Grocery Offers", "groceryOffers")}
+                      style={{ cursor: "pointer" }} > */}
+                <img 
+                  src={Banner}
+                  className="d-block w-100 img-fluid rounded"
+                  style={{ width: '50%', height: 'auto', objectFit: 'contain', marginBottom: "5px" }}
+                  alt="Poster"
+                />
+              {/* </div>  */}
       {/* Carousel className="mx-auto"*/}
                <div className="container">
                 <div>

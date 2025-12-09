@@ -26,6 +26,7 @@ const CATEGORY_VF_OFFERS = [
 ];
 
 const LIMIT_RULES = [
+  { match: norm("Thums Up (250ml PET bottle)"), limit: 1 },
   { match: norm("Visakha Dairy Happy Full Cream Milk 500 ml"), limit: 1 },
   { match: norm("Visakha Dairy Good Milk 180 ml"), limit: 1 },
   { match: norm("Visakha Dairy Milk 200 ml"), limit: 1 },
