@@ -47,7 +47,7 @@ const GroceryCartPage = () => {
 
 function getCustomLimit(name) {
   const n = String(name || "").toLowerCase().trim();
-  if (n === "apple 1 pc" || n === "visakha dairy curd 180 g" ||
+  if ( n === "visakha dairy curd 180 g" ||
     n === "visakha dairy happy full cream milk 500 ml" ||
     n === "visakha dairy milk 200 ml" || n === "visakha dairy good milk 180 ml" || n === "lemon (nimakaya) (3pcs)" ||     n === "freedom refined sunflower oil 5 l" ||
     n === "gold drop refined sunflower oil can 5 l" ||

@@ -478,7 +478,8 @@ function getItemTime(p) {
             </div>
              {(selectedCategory === "Vegetables" ||
                 selectedCategory === "Fruits" ||
-                selectedCategory === "Chicken") && (
+                selectedCategory === "Chicken" || 
+              selectedCategory === "Ice Creams" ) && (
                 <div
                   className="mt-2 rounded-3"
                   style={{

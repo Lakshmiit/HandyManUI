@@ -24,12 +24,10 @@ const CATEGORY_VEG_FRUITS_OFFERS = [
 ];
 
 const LIMIT_RULES = [
-  { match: normalizeName("Thums Up (250ml PET bottle)"), limit: 1 },
   { match: normalizeName("Visakha Dairy Happy Full Cream Milk 500 ml"), limit: 1 },
   { match: normalizeName("Visakha Dairy Good Milk 180 ml"), limit: 1 },
   { match: normalizeName("Visakha Dairy Milk 200 ml"), limit: 1 },
   { match: normalizeName("Visakha Dairy Curd 180 g"), limit: 1 },
-  { match: normalizeName("Apple 1 Pc"), limit: 1 },
   { match: normalizeName("Green Chilli (Pachchi Mirchi) 100 g"), limit: 2 },
   { match: normalizeName("Tomato 250 g"), limit: 2 },
   { match: normalizeName("Lemon (Nimakaya) (3pcs)"), limit: 1 },
@@ -44,16 +42,16 @@ const LIMIT_RULES = [
   { match: normalizeName("Gold Drop Refined Sunflower Oil Can 5 L"), limit: 1 },
   { match: normalizeName("Aashirvaad Superior Whole Wheat Atta 5 Kg"), limit: 1 },
   { match: normalizeName("Aashirvaad High Fibre Atta with Multigrains 5 kg"), limit: 1 },
-
 ];
 const getLimit = (product) => {
-  const category = normalizeName(product?.category);
-  const name = normalizeName(product?.name);
-  if (category !== CATEGORY_VEG_FRUITS_OFFERS) {
-    return Infinity;
-  }
+  if (!product) return Infinity;
+  const category = normalizeName(product?.category || "");
+  const name = normalizeName(product?.name || "");
+    if (!CATEGORY_VEG_FRUITS_OFFERS.includes(category)) {
+      return Infinity;
+    }
   for (const rule of LIMIT_RULES) {
-    if (name.includes(rule.match)) {
+    if (rule.match && name.includes(rule.match)) {
       return rule.limit;
     }
   }

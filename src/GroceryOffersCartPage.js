@@ -18,20 +18,19 @@ const IMAGE_DOWNLOAD =
 const norm = (s) =>
   String(s || "").toLowerCase().replace(/\s+/g, " ").trim();
 
-const CATEGORY_OFFERS = norm("Offers");
+// const CATEGORY_OFFERS = norm("Grocery Offers");
 // const CATEGORY_VF_OFFERS = norm("Grocery Offers");
 const CATEGORY_VF_OFFERS = [
   norm("Grocery Offers"),
   norm("Oils & Dals"),
+  norm("Atta & Flours"),
 ];
 
 const LIMIT_RULES = [
-  { match: norm("Thums Up (250ml PET bottle)"), limit: 1 },
   { match: norm("Visakha Dairy Happy Full Cream Milk 500 ml"), limit: 1 },
   { match: norm("Visakha Dairy Good Milk 180 ml"), limit: 1 },
   { match: norm("Visakha Dairy Milk 200 ml"), limit: 1 },
   { match: norm("Visakha Dairy Curd 180 g"), limit: 1 },
-  { match: norm("Apple 1 Pc"), limit: 1 },
   // { match: norm("Cucumber (Dosakaya) 500 g"), limit: 1 },
   { match: norm("Green Chilli (Pachchi Mirchi) 100 g"), limit: 2 },
   { match: norm("Tomato 250 g"), limit: 2 },
@@ -42,18 +41,24 @@ const LIMIT_RULES = [
   { match: norm("Raw Banana (Aratikaya) 1 Pc"), limit: 2 },
   { match: norm("Freedom Refined Sunflower Oil 1 L"), limit: 2 },
   { match: norm("Gold Drop Refined Sunflower Oil 1 L"), limit: 2 },
+  { match: norm("Independence Refined Sunflower Oil 1 L"), limit: 2 },
+  { match: norm("Freedom Refined Sunflower Oil 5 L"), limit: 1 },
+  { match: norm("Gold Drop Refined Sunflower Oil Can 5 L"), limit: 1 },
+  { match: norm("Aashirvaad Superior Whole Wheat Atta 5 Kg"), limit: 1 },
+  { match: norm("Aashirvaad High Fibre Atta with Multigrains 5 kg"), limit: 1 },
 ];
- 
+     
 const getLimit = (item) => {
+  if (!item) return Infinity;
   const category = norm(item?.category);
   const name = norm(item?.name);
-  if (category === CATEGORY_OFFERS) return Infinity;
+if (!CATEGORY_VF_OFFERS.includes(category)) return Infinity;
   // if (category === CATEGORY_VF_OFFERS) {
-  if (CATEGORY_VF_OFFERS.includes(category)) {
+  // if (CATEGORY_VF_OFFERS.includes(category)) {
     for (const rule of LIMIT_RULES) {
-      if (name.includes(rule.match)) return rule.limit;
+      if (rule.match && name.includes(rule.match)) {
+        return rule.limit;
     }
-    return Infinity;
   }
   return Infinity;
 };
