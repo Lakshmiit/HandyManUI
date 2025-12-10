@@ -82,12 +82,12 @@ import KidsImg from './img/KidsZone.jpeg';
 import setkurti from './img/3pcsset.jpeg';
 import kurti from './img/2pcsset.jpeg';
 import { CartStorage } from "./CartStorage";
-import BathImg from './img/bathImg.jpeg';
-import FlourImg from './img/FlourImg.jpeg';
-import FaceImg from './img/FaceImg.jpeg';  
-import NeedImg from './img/NeedsImg.jpeg';
-import RiceImg from './img/Ravva.jpeg';  
-import CoffeeImg from './img/Coffee.jpeg';
+// import BathImg from './img/bathImg.jpeg';
+// import FlourImg from './img/FlourImg.jpeg';
+// import FaceImg from './img/FaceImg.jpeg';  
+// import NeedImg from './img/NeedsImg.jpeg';
+// import RiceImg from './img/Ravva.jpeg';  
+// import CoffeeImg from './img/Coffee.jpeg';
 // import ThumsUpBottle from './img/thumsup.jpeg';
 import IcecreamImg from './img/IceCreams.jpeg';
 //import ReedemCode from "./ReedemCode";     
@@ -859,14 +859,14 @@ const categories = [
 { label: 'Hardware Items', value: 'Hardware items', image: Hardware },      
 ];
 
-const offerCategories = [
-{ label: 'Rice & Ravva', value: 'Rice & Ravva', image: RiceImg },
-{ label: 'Atta, Flours & Masala', value: 'Atta, Flours & Masala', image: FlourImg }, 
-{ label: 'Tea & Coffee', value: 'Tea & Coffee', image: CoffeeImg },
-{ label: 'Home Needs', value: 'Home Needs', image: NeedImg}, 
-{ label: 'Bath & Body Care', value: 'Bath & Body Care', image: BathImg },
-{ label: 'Skin & Face Care', value: 'Skin & Face Care', image: FaceImg },
-];
+// const offerCategories = [
+// { label: 'Rice & Ravva', value: 'Rice & Ravva', image: RiceImg },
+// { label: 'Atta, Flours & Masala', value: 'Atta, Flours & Masala', image: FlourImg }, 
+// { label: 'Tea & Coffee', value: 'Tea & Coffee', image: CoffeeImg },
+// { label: 'Home Needs', value: 'Home Needs', image: NeedImg}, 
+// { label: 'Bath & Body Care', value: 'Bath & Body Care', image: BathImg },
+// { label: 'Skin & Face Care', value: 'Skin & Face Care', image: FaceImg },
+// ];
     
 const groceryCategories = [
   { label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
@@ -1576,9 +1576,9 @@ useEffect(() => {
       const cashback = totalAmountFromApi - grandTotalNumeric;
 
       // if (cashback === 50 || cashback === 100) 
-      // if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101))
+      if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101))
         
-      if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101) || (cashback >= 249 && cashback <= 251))
+      // if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101) || (cashback >= 249 && cashback <= 251))
         {
         setCashbackAmount(cashback); 
       } else {
@@ -1837,24 +1837,24 @@ const handleCategoryClick = async (category) => {
 //   autoOpenForNewUser();
 // }, [userId]);
 
-const handleCrazyDealsGroceryClick = async (category) => {
-  const { value } = category;
-  try {
-    setSelectedCategory(category);
-    setGrocery([]);
-    setError("");
-    const encodedCategory = encodeURIComponent(value);
-    localStorage.setItem("encodedCategory", encodedCategory);
-    navigate(`/groceryCrazyOffers/${userType}/${userId}`);
-    //   {
-    //     state: { encodedCategory, userPoints },  
-    // });
-  } catch (error) {
-    console.error("Error fetching products:", error);
-    setGrocery([]);
-    setError(`Oops! No grocery items found for ${value} category.`);
-  }
-};
+// const handleCrazyDealsGroceryClick = async (category) => {
+//   const { value } = category;
+//   try {
+//     setSelectedCategory(category);
+//     setGrocery([]);
+//     setError("");
+//     const encodedCategory = encodeURIComponent(value);
+//     localStorage.setItem("encodedCategory", encodedCategory);
+//     navigate(`/groceryCrazyOffers/${userType}/${userId}`);
+//     //   {
+//     //     state: { encodedCategory, userPoints },  
+//     // });
+//   } catch (error) {
+//     console.error("Error fetching products:", error);
+//     setGrocery([]);
+//     setError(`Oops! No grocery items found for ${value} category.`);
+//   }
+// };
 
 const handleGroceryCategoryClick = async (category) => {
   const { value } = category;
@@ -1956,8 +1956,8 @@ const handleDressCategoryClick = async (category) => {
 
   const grandTotalNumeric = Number(ticket.grandTotal) || 0;
   const cashback = totalAmountFromApi - grandTotalNumeric;
-  // if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101)) {
-  if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101) || (cashback >= 249 && cashback <= 251)) {
+  if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101)) {
+  // if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101) || (cashback >= 249 && cashback <= 251)) {
     return cashback;
   }
   return 0;
@@ -2790,12 +2790,10 @@ const fetchImageUrl = async (photoId) => {
     paddingTop: isMobile ? `${MOBILE_PADDING_TOP}px` : "0px",
   }}>
 
-  <div
+  {/* <div
   className="shadow-lg p-2 rounded-5 mb-1 text-center border-0"
 >
-    {/* <h5 className="fw-bold mb-1 crazy-title" style={{ color: "#da9100", fontSize: "20px" }}>
-      CRAZY DEALS 
-    </h5>  */}
+
     <h5 className="deal-3d">🎉 CRAZY DEALS 🎉</h5>
       <div style={{color: "#ff5722", fontSize: "14px", fontWeight: "500"}}>
         Buy Monthly Groceries 
@@ -2840,7 +2838,7 @@ const fetchImageUrl = async (photoId) => {
       })}
     </div>
     <span style={{color: "#ff5722", fontSize: "14px", fontWeight: 500}}>Offer Valid Till 10th December!</span>
-</div> 
+</div>  */}
 
   {/* Grocery Categories Section className="container my-3"*/}
   <div className="shadow-lg p-2 rounded-5 mb-1 text-center bg-transparent border-0">

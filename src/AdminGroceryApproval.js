@@ -91,7 +91,7 @@ const AdminGroceryApproval = () => {
     );
   }
 
-  const { name, category, mrp, discount, stockLeft, deliveryIn, requestedBy, afterDiscount, code, units } = groceryData;
+  const { name, category, mrp, discount, stockLeft, deliveryIn, requestedBy, afterDiscount, code, units, manufactureDate, expireDate } = groceryData;
 
   return (
     <div className="d-flex flex-row mt-100">
@@ -152,18 +152,20 @@ const AdminGroceryApproval = () => {
       <div className="col-sm-6">
         <p><strong>Name:</strong> {name}</p>
         <p><strong>Category:</strong> {category}</p>
-        <p><strong>Delivery In:</strong> {deliveryIn}</p>
-        <p><strong>Stock Left:</strong> {stockLeft}</p>
-        <p><strong>Requested By:</strong> {requestedBy}</p>
-      </div>
-      <div className="col-sm-6">
         <p><strong>Rate:</strong> Rs {mrp} /-</p>
         <p><strong>Discount:</strong> {discount}%</p>
-        <p><strong>Units:</strong> {units}</p>
-        <p><strong>Code:</strong> {code}</p>
-        <p className="text-success fw-bold">
+         <p className="text-success fw-bold">
           <strong>Final Price:</strong> Rs {Number(afterDiscount).toFixed(0)} /-
         </p>
+        <p><strong>Stock Left:</strong> {stockLeft}</p>
+      </div> 
+      <div className="col-sm-6">
+        <p><strong>Requested By:</strong> {requestedBy}</p>
+        <p><strong>Delivery In:</strong> {deliveryIn} Minutes</p>
+        <p><strong>Units:</strong> {units}</p>
+        <p><strong>Code:</strong> {code}</p>
+        <p><strong>Manufacture Date:</strong> {manufactureDate}</p>
+        <p><strong>Expiry Date:</strong> {expireDate}</p>
       </div>
     </div>
   </div>

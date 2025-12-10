@@ -411,7 +411,7 @@ function getItemTime(p) {
                 fontFamily: "Roboto",
               }}
             >
-                Delivery Timings : 06:00 AM -09:00 PM
+                Delivery Timings : 06:00 AM -10:00 PM
             </span>
           </h1>
         </div>

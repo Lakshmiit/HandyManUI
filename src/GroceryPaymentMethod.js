@@ -77,7 +77,7 @@ const readServerPoints = (record) => {
 const netPayables=  grandTotal -firstOrderDiscount
 
   const totalPayable =
-    isNewUser || grandTotal >= 1000 ? netPayables : netPayable;
+    isNewUser || grandTotal > 1000 ? netPayables : netPayable;
 const numericGrandTotal = Number(grandTotal) || 0;
 const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 100;
 
@@ -118,8 +118,9 @@ const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 100;
         text === "null" ||
         text.includes("Firstorder Can not be found")
       ) {
-        return null; 
+        return null; // new user
       }
+
       // Case 2: Existing user → JSON data
       return JSON.parse(text);
     } catch (error) {
@@ -180,49 +181,47 @@ const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 100;
         let discount = 0;
         let msg = "";
 
-        // if (newUser) {
-        //   if (gt >= 1000) {
+        if (newUser) {
+          if (gt > 1000) {
+            discount = 100;
+            msg = "";
+          } else if (gt >= 100) {
+            discount = 50;
+            msg = "";
+          } else {
+            discount = 0;
+            msg = "Order ₹100 or more to get ₹50 cashback on your first order!";
+          }
+        } else {
+          discount = gt > 1000 ? 100 : 0;
+          msg = "";
+        }
+        //  if (newUser) {
+        //   // if (gt >= 1999) {
+        //   //   discount = 250;
+        //   //   msg = "";
+        //   // } 
+        //   if (gt > 1000) {
         //     discount = 100;
         //     msg = "";
         //   } else if (gt >= 100) {
         //     discount = 50;
-        //     msg = "";
+        //     msg = "";    
         //   } else {
         //     discount = 0;
         //     msg = "Order ₹100 or more to get ₹50 cashback on your first order!";
         //   }
         // } else {
-        //   discount = gt >= 1000 ? 100 : 0;
+        //   // if (gt >= 1999) {
+        //   //   discount = 250;
+        //   // }
+        //    if (gt > 1000) {
+        //     discount = 100;
+        //   } else {
+        //     discount = 0;
+        //   }
         //   msg = "";
         // }
-         if (newUser) {
-          if (gt > 1999) {
-            discount = 250;
-            msg = "";
-          } else if (gt >= 1000) {
-            discount = 100;
-            msg = "";
-          } 
-          else if (gt >= 100) {
-            discount = 50;
-            msg = "";    
-          }
-           else {
-            discount = 0;
-            msg = "Order ₹100 or more to get ₹50 cashback on your first order!";
-          }
-        } else {
-          if (gt > 1999) {
-            discount = 250;
-          } else if (gt >= 1000) {
-            discount = 100;
-          } else if (gt >= 100) {
-            discount = 50;
-          } else {
-            discount = 0;
-          }
-          msg = "";
-        }
         setFirstOrderDiscount(discount);
         setCashbackMessage(msg);
         console.log("discount123456789", discount);
@@ -277,7 +276,7 @@ useEffect(() => {
 useEffect(() => {
   const gt = Number(grandTotal) || 0;
   const pts = Number(referralPoints) || 0;
-  const applied = Math.min(pts, gt);   
+  const applied = Math.min(pts, gt);   // cap by grand total
   setReferralAmount(applied);
   setNetPayable(Math.max(0, gt - applied));
 }, [grandTotal, referralPoints]);
@@ -1403,7 +1402,7 @@ const handleCheckboxChange = (value) => {
           <span style={{ fontWeight: "bold", color: "red" }}>
             {firstOrderDiscount}
           </span>
-          <span style={{ fontWeight: "normal", color: "green" }}> cashback! 🎉</span>
+          <span style={{ fontWeight: "normal", color: "green" }}> cashback!</span>
         </span>
       )}
       </div>
@@ -1692,7 +1691,6 @@ const handleCheckboxChange = (value) => {
 };
 
 export default GroceryPaymentmethod;
-
 
 
 // import React, { useEffect, useState, useCallback } from "react";
