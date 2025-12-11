@@ -64,7 +64,8 @@ function getCustomLimit(name) {
     n === "raw banana 1 pc" || 
     n === "freedom refined sunflower oil 1 l" || 
     n === "gold drop refined sunflower oil 1 l" ||
-    n === "independence refined sunflower oil 1 l" 
+    n === "independence refined sunflower oil 1 l" ||
+    n === "aashirvaad superior whole wheat mp atta 1 kg"
      
     // n === "combo pack 1 - daawat basmati rice 1kg + eastern garam masala 100g + visakha dairy paneer 200g" ||
     // n === "combo pack 2 - daawat biryani basmati rice 1kg + eastern garam masala 100g + visakha dairy paneer 200g"

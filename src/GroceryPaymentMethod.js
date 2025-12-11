@@ -120,14 +120,30 @@ const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 100;
       ) {
         return null; // new user
       }
-
-      // Case 2: Existing user → JSON data
-      return JSON.parse(text);
-    } catch (error) {
-      console.log("API ERROR:", error);
-      return null; // treat error as new user
+  let parsed;
+    try {
+      parsed = JSON.parse(text);
+    } catch (err) {
+      console.warn("Could not parse CheckFirstOrder response:", err);
+      return null;
     }
-  };
+    if (parsed && !Array.isArray(parsed)) {
+      parsed = [parsed];
+    }
+    return Array.isArray(parsed) ? parsed : null;
+  } catch (error) {
+    console.error("API ERROR:", error);
+    return null;
+  }
+};
+
+  //     // Case 2: Existing user → JSON data
+  //     return JSON.parse(text);
+  //   } catch (error) {
+  //     console.log("API ERROR:", error);
+  //     return null; // treat error as new user
+  //   }
+  // };
 
   // useEffect(() => {
   //   let cancelled = false;
@@ -169,75 +185,137 @@ const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 100;
   //   };
   // }, [mobile]);
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const result = await CheckFirstOrder(mobile);
-        if (cancelled) return;
-        const newUser = result === null;
-        setIsNewUser(newUser);
-        const gt = Number(grandTotal) || 0;
-        let discount = 0;
-        let msg = "";
+//   useEffect(() => {
+//     let cancelled = false;
+//     (async () => {
+//       try {
+//         const result = await CheckFirstOrder(mobile);
+//         if (cancelled) return;
+//         const newUser = result === null;
+//         setIsNewUser(newUser);
+//         const gt = Number(grandTotal) || 0;
+//         let discount = 0;
+//         let msg = "";
 
-        if (newUser) {
-          if (gt > 1000) {
-            discount = 100;
-            msg = "";
-          } else if (gt >= 100) {
-            discount = 50;
-            msg = "";
-          } else {
-            discount = 0;
-            msg = "Order ₹100 or more to get ₹50 cashback on your first order!";
+//         if (newUser) {
+//           if (gt > 1000) {
+//             discount = 100;
+//             msg = "";
+//           } else if (gt >= 100) {
+//             discount = 50;
+//             msg = "";
+//           } else {
+//             discount = 0;
+//             msg = "Order ₹100 or more to get ₹50 cashback on your first order!";
+//           }
+//         } else {
+//           discount = gt > 1000 ? 100 : 0;
+//           msg = "";
+//         }
+//         //  if (newUser) {
+//         //   // if (gt >= 1999) {
+//         //   //   discount = 250;
+//         //   //   msg = "";
+//         //   // } 
+//         //   if (gt > 1000) {
+//         //     discount = 100;
+//         //     msg = "";
+//         //   } else if (gt >= 100) {
+//         //     discount = 50;
+//         //     msg = "";    
+//         //   } else {
+//         //     discount = 0;
+//         //     msg = "Order ₹100 or more to get ₹50 cashback on your first order!";
+//         //   }
+//         // } else {
+//         //   // if (gt >= 1999) {
+//         //   //   discount = 250;
+//         //   // }
+//         //    if (gt > 1000) {
+//         //     discount = 100;
+//         //   } else {
+//         //     discount = 0;
+//         //   }
+//         //   msg = "";
+//         // }
+//         setFirstOrderDiscount(discount);
+//         setCashbackMessage(msg);
+//         console.log("discount123456789", discount);
+//       } catch (e) {
+//         console.error("Failed:", e);
+//         if (!cancelled) {
+//           setIsNewUser(false);
+//           setFirstOrderDiscount(0);
+//           setCashbackMessage("");
+//         }
+//       }
+//     })();
+
+//     return () => {
+//       cancelled = true;
+//     };
+// }, [mobile, grandTotal]);
+
+useEffect(() => {
+  let cancelled = false;
+  (async () => {
+    try {
+      const prevOrders = await CheckFirstOrder(mobile);
+      if (cancelled) return;
+      const newUser = prevOrders === null;
+      setIsNewUser(newUser);
+    let hasReceived100Cashback = false;
+      if (Array.isArray(prevOrders)) {
+        hasReceived100Cashback = prevOrders.some((order) => {
+          try {
+            const sumTotalAmount = (order.categories ?? []).reduce((s, c) => {
+              return s + Number(c?.totalAmount ?? 0);
+            }, 0);
+            const gt = Number(order.grandTotal ?? 0);
+            return Math.abs(Math.round(sumTotalAmount) - Math.round(gt)) === 100;
+          } catch (e) {
+            return false;
           }
+        });
+      }
+      const gt = Number(grandTotal) || 0;
+      let discount = 0;
+      let msg = "";
+      if (newUser) {
+        if (gt > 1000) {
+          discount = 100;
+          msg = "";
+        } else if (gt >= 100) {
+          discount = 50;
+          msg = "";
+        } else {
+          discount = 0;
+          msg = "Order ₹100 or more to get ₹50 cashback on your first order!";
+        }
+      } else {
+         if (hasReceived100Cashback) {
+          discount = 0;
+          msg = "";
         } else {
           discount = gt > 1000 ? 100 : 0;
           msg = "";
         }
-        //  if (newUser) {
-        //   // if (gt >= 1999) {
-        //   //   discount = 250;
-        //   //   msg = "";
-        //   // } 
-        //   if (gt > 1000) {
-        //     discount = 100;
-        //     msg = "";
-        //   } else if (gt >= 100) {
-        //     discount = 50;
-        //     msg = "";    
-        //   } else {
-        //     discount = 0;
-        //     msg = "Order ₹100 or more to get ₹50 cashback on your first order!";
-        //   }
-        // } else {
-        //   // if (gt >= 1999) {
-        //   //   discount = 250;
-        //   // }
-        //    if (gt > 1000) {
-        //     discount = 100;
-        //   } else {
-        //     discount = 0;
-        //   }
-        //   msg = "";
-        // }
-        setFirstOrderDiscount(discount);
-        setCashbackMessage(msg);
-        console.log("discount123456789", discount);
-      } catch (e) {
-        console.error("Failed:", e);
-        if (!cancelled) {
-          setIsNewUser(false);
-          setFirstOrderDiscount(0);
-          setCashbackMessage("");
-        }
       }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
+      setFirstOrderDiscount(discount);
+      setCashbackMessage(msg);
+      console.log("CheckFirstOrder -> newUser:", newUser, "hasReceived100Cashback:", hasReceived100Cashback, "discount:", discount);
+    } catch (e) {
+      console.error("Failed while checking first order:", e);
+      if (!cancelled) {
+        setIsNewUser(false);
+        setFirstOrderDiscount(0);
+        setCashbackMessage("");
+      }
+    }
+  })();
+  return () => {
+    cancelled = true;
+  };
 }, [mobile, grandTotal]);
 
 const getReferralRecord = async (userId) => {
@@ -276,7 +354,7 @@ useEffect(() => {
 useEffect(() => {
   const gt = Number(grandTotal) || 0;
   const pts = Number(referralPoints) || 0;
-  const applied = Math.min(pts, gt);   // cap by grand total
+  const applied = Math.min(pts, gt);   
   setReferralAmount(applied);
   setNetPayable(Math.max(0, gt - applied));
 }, [grandTotal, referralPoints]);
@@ -1421,7 +1499,18 @@ const handleCheckboxChange = (value) => {
               <td style={{ width: "40%", fontSize: "14px" }}>Grand Total</td>
               <td style={{ width: "40%" }}>Rs {grandTotal} /-</td>
             </tr>
-            {(isNewUser || grandTotal >= 1000) && (
+            {firstOrderDiscount > 0 && (
+              <tr>
+                <td style={{ width: "40%", fontSize: "14px" }}>
+                  Cash Back
+                </td>
+
+                <td style={{ width: "40%", fontSize: "14px" }}>
+                  {`₹${firstOrderDiscount}`}
+                </td>
+              </tr>
+            )}
+            {/* {(isNewUser || grandTotal > 1000) && (
         <tr>
           <td style={{ width: "40%", fontSize: "14px" }}>
             Cash Back
@@ -1433,7 +1522,7 @@ const handleCheckboxChange = (value) => {
               : "-"}
           </td>
         </tr>
-      )}
+      )} */}
             {Number(referralAmount) > 0 && (
               <tr>
                 <td style={{ width: "40%", fontSize: "14px" }}>Referral Earn Amount</td>

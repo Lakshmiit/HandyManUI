@@ -42,6 +42,7 @@ const LIMIT_RULES = [
   { match: normalizeName("Gold Drop Refined Sunflower Oil Can 5 L"), limit: 1 },
   { match: normalizeName("Aashirvaad Superior Whole Wheat Atta 5 Kg"), limit: 1 },
   { match: normalizeName("Aashirvaad High Fibre Atta with Multigrains 5 kg"), limit: 1 },
+  { match: normalizeName("Aashirvaad Superior Whole Wheat MP Atta 1 Kg"), limit: 2 },
 ];
 const getLimit = (product) => {
   if (!product) return Infinity;
@@ -431,7 +432,7 @@ const GroceryOfferItems = () => {
                 fontFamily: "Roboto",
               }}
             >
-              Delivery Timings : 06:00 AM -10:00 PM
+              Delivery Timings : 06:00 AM -09:00 PM
             </span>
           </h1>
         </div>

@@ -46,6 +46,7 @@ const LIMIT_RULES = [
   { match: norm("Gold Drop Refined Sunflower Oil Can 5 L"), limit: 1 },
   { match: norm("Aashirvaad Superior Whole Wheat Atta 5 Kg"), limit: 1 },
   { match: norm("Aashirvaad High Fibre Atta with Multigrains 5 kg"), limit: 1 },
+  { match: norm("Aashirvaad Superior Whole Wheat MP Atta 1 Kg"), limit: 2 },
 ];
      
 const getLimit = (item) => {

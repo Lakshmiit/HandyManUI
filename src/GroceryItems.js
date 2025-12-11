@@ -411,7 +411,7 @@ function getItemTime(p) {
                 fontFamily: "Roboto",
               }}
             >
-                Delivery Timings : 06:00 AM -10:00 PM
+                Delivery Timings : 06:00 AM -09:00 PM
             </span>
           </h1>
         </div>
@@ -474,14 +474,14 @@ function getItemTime(p) {
                 style={{ color: "green", cursor: "pointer" }}
                 onClick={() => navigate(`/profilePage/${userType}/${userId}`)}
               />
-              <h4 className="fw-bold mb-0">{selectedCategory}</h4>
+              <h4 className="fw-bold mt-1">{selectedCategory}</h4>
             </div>
              {(selectedCategory === "Vegetables" ||
                 selectedCategory === "Fruits" ||
                 selectedCategory === "Chicken" || 
               selectedCategory === "Ice Creams" ) && (
                 <div
-                  className="mt-2 rounded-3"
+                  className="mt-1 rounded-3"
                   style={{
                     backgroundColor: "#fff3e0",
                     color: "red",
