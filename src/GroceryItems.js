@@ -517,7 +517,7 @@ function getItemTime(p) {
         onClick={() => navigate(`/profilePage/${userType}/${userId}`)}/>      
         <h4 className="font-bold ">{selectedCategory}</h4>
       </div> */}
-  <div className="d-flex justify-content-end" style={{marginTop: "90px"}}>
+  <div className="d-flex justify-content-end" style={{marginTop: "120px"}}>
   <span className="text-success text-xs">
     Selected Qty:{" "}
     <span className="text-danger fw-bold">
@@ -555,7 +555,6 @@ function getItemTime(p) {
   .map((product) => {
     const stock = Number(product.stockLeft || 0);
     const isOutOfStock = stock <= 0;
-
     return (
       <div
   key={product.id}
@@ -568,7 +567,6 @@ function getItemTime(p) {
         {Math.round(Number(product.discount))}%
       </span>
     )}
-
     {!isOutOfStock && (
       <span
         style={{ cursor: "pointer", marginRight: "6px", marginTop: "2px", zIndex: 3 }}
@@ -582,7 +580,6 @@ function getItemTime(p) {
       </span>
     )}
   </div>
-
   {/* Product Image */}
   <div
     className="d-flex justify-content-center align-items-center position-relative"

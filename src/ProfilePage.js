@@ -27,7 +27,8 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 // import Banner1 from './img/ChickenOffers.jpeg';.
 import Banner from './img/DeliveryPoster.jpeg';
-import Banner1 from './img/MilkOffers.jpeg';
+// import Banner1 from './img/MilkOffers.jpeg';
+import Banner1 from './img/ChickenOffers.jpeg';
 import Banner2 from './img/45AboveOffers.jpeg'; 
 // import BannerVideo from './img/Dusshera.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
@@ -858,18 +859,10 @@ const categories = [
 { label: 'Plumbing & Sanitary', value: 'Sanitary items', image: Plumbing },         
 { label: 'Hardware Items', value: 'Hardware items', image: Hardware },      
 ];
-
-// const offerCategories = [
-// { label: 'Rice & Ravva', value: 'Rice & Ravva', image: RiceImg },
-// { label: 'Atta, Flours & Masala', value: 'Atta, Flours & Masala', image: FlourImg }, 
-// { label: 'Tea & Coffee', value: 'Tea & Coffee', image: CoffeeImg },
-// { label: 'Home Needs', value: 'Home Needs', image: NeedImg}, 
-// { label: 'Bath & Body Care', value: 'Bath & Body Care', image: BathImg },
-// { label: 'Skin & Face Care', value: 'Skin & Face Care', image: FaceImg },
-// ];
     
 const groceryCategories = [
   { label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
+  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
   { label: 'Ice Creams', value: 'Ice Creams', image: IcecreamImg },
   { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
   { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
@@ -895,7 +888,6 @@ const groceryCategories = [
   { label: 'Kids Zone', value: 'Kids Zone', image: KidsImg },
   { label: 'Health Care', value: 'Health Care', image: HealthImg },
   { label: 'Kitchenware Appliances', value: 'Kitchenware Appliances', image: KitchenImg },
-  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
 ];
 
 
@@ -1001,10 +993,80 @@ const [windowSize, setWindowSize] = useState({
 });
 const [hasCheckedFirstOrder, setHasCheckedFirstOrder] = useState(false);
 const [cashbackAmount, setCashbackAmount] = useState(0);
-// Cricket Logic 
-// const [showBatBallAnimation, setShowBatBallAnimation] = useState(false);
-// const [showThumbsUp, setShowThumbsUp] = useState(false);
-// const [animationCompleted, setAnimationCompleted] = useState(false);
+
+// Grocery Search & Filter States
+// const [allGroceryProducts, setAllGroceryProducts] = useState([]);
+// const [filteredGroceryProducts, setFilteredGroceryProducts] = useState([]);
+// const [activeGroceryCategory, setActiveGroceryCategory] = useState(null);
+// const [grocerySearch, setGrocerySearch] = useState("");
+// const [groceryLoading, setGroceryLoading] = useState(false);
+// const [groceryQty, setGroceryQty] = useState({});
+
+// const increaseQty = (product) => {
+//   setGroceryQty((prev) => ({
+//     ...prev,
+//     [product.id]: (prev[product.id] || 0) + 1,
+//   }));
+// };
+
+// const decreaseQty = (product) => {
+//   setGroceryQty((prev) => {
+//     const current = prev[product.id] || 0;
+//     if (current <= 1) {
+//       const copy = { ...prev };
+//       delete copy[product.id];
+//       return copy;
+//     }
+//     return {
+//       ...prev,
+//       [product.id]: current - 1,
+//     };
+//   });
+// };
+
+// useEffect(() => {
+//   const fetchAllGroceries = async () => {
+//     setGroceryLoading(true);
+//     try {
+//       const res = await axios.get(
+//         "https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetAllGroceryItems"
+//       );
+//       setAllGroceryProducts(res.data || []);
+//     } catch (err) {
+//       console.error("Error fetching grocery items", err);
+//     } finally {
+//       setGroceryLoading(false);
+//     }
+//   };
+//   fetchAllGroceries();
+// }, []);
+
+// useEffect(() => {
+//   let result = allGroceryProducts.filter(
+//     (p) => p.status === "Approved"
+//   );
+//   if (grocerySearch.trim()) {
+//     result = result.filter((p) =>
+//       p.name.toLowerCase().includes(grocerySearch.toLowerCase())
+//     );
+//   } else if (activeGroceryCategory) {
+//     result = result.filter(
+//       (p) => p.category === activeGroceryCategory
+//     );
+//   } else {
+//     result = [];
+//   }
+//   setFilteredGroceryProducts(result);
+// }, [grocerySearch, activeGroceryCategory, allGroceryProducts]);
+
+// const getGroceryImage = (p) => {
+//   if (!p?.images || p.images.length === 0) {
+//     return "/no-image.png"; 
+//   }
+//   return `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
+//     p.images[0]
+//   )}`;
+// };
 
 useEffect(() => {
   if (showCashbackModal) {
@@ -1024,31 +1086,6 @@ useEffect(() => {
   window.addEventListener("resize", handleResize);
   return () => window.removeEventListener("resize", handleResize);
 }, []);
-// cashback
-// useEffect(() => {
-//     if (showThumbsUp) {
-//       setShowConfetti(true);
-//       const timer = setTimeout(() => setShowConfetti(false), 2000);
-//       return () => clearTimeout(timer);
-//     }
-//   }, [showThumbsUp]);
-  
-// Cricket Logic 
-// useEffect(() => {
-//   setShowBatBallAnimation(true);
-//   const thumbsTimer = setTimeout(() => {
-//     setShowThumbsUp(true);
-//   }, 1000);
-//   const endTimer = setTimeout(() => {
-//     setShowBatBallAnimation(false);
-//     setShowThumbsUp(false);
-//     setAnimationCompleted(true);
-//   }, 4000);
-//   return () => {
-//     clearTimeout(thumbsTimer);
-//     clearTimeout(endTimer);
-//   };
-// }, []);
 
 // const [showRedeem, setShowRedeem] = useState(false);
 // const [refRecord, setRefRecord] = useState(null);
@@ -1467,13 +1504,13 @@ useEffect(() => {
   };
 }, []);
 // // cashback logic
-useEffect(() => {
-  if (!showCashbackModal) return; 
-  const timer = setTimeout(() => {
-    setShowCashbackModal(false);
-  }, 5000);
-  return () => clearTimeout(timer); 
-}, [showCashbackModal]);
+// useEffect(() => {
+//   if (!showCashbackModal) return; 
+//   const timer = setTimeout(() => {
+//     setShowCashbackModal(false);
+//   }, 5000);
+//   return () => clearTimeout(timer); 
+// }, [showCashbackModal]);
 
 useEffect(() => {
   // Cricket logic 
@@ -1502,7 +1539,7 @@ useEffect(() => {
       const text = (rawText || "").trim().toLowerCase();
       if (text.includes("firstorder can not be found")) {
         console.log("Match found -> opening cashback modal");
-         setShowCashbackModal(true);
+        //  setShowCashbackModal(true);
        } else {
         console.log("No match in response text, not showing modal");
       }
@@ -1576,10 +1613,10 @@ useEffect(() => {
       const cashback = totalAmountFromApi - grandTotalNumeric;
 
       // if (cashback === 50 || cashback === 100) 
-      if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101))
-        
+      // if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101))
       // if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101) || (cashback >= 249 && cashback <= 251))
-        {
+      if ((cashback >= 99 && cashback <= 101))
+      {
         setCashbackAmount(cashback); 
       } else {
         setCashbackAmount(0);     
@@ -2065,7 +2102,7 @@ const fetchImageUrl = async (photoId) => {
   if (loading) {
     return 
   }
-
+  // console.log(allItems.slice(0,20));
   return (
     <>
     <header className="header d-flex align-items-center justify-content-between p-2 bg-white shadow-sm" 
@@ -2543,29 +2580,84 @@ const fetchImageUrl = async (photoId) => {
               customerName={profile.fullName}
             />
         )} */}
-          {isMobile && (
-            <div
-              className="d-flex justify-content-between align-items-center px-2"
-              style={{ fontFamily: 'Poppins, sans-serif', marginTop: '0', fontSize: '18px' }}
-            >
+
+        {isMobile && (
+            <div>
+             {/* <div ref={containerRef} style={{ position: "relative", marginTop: 10 }}> */}
+              {/* <input
+                type="text"
+                className="form-control"
+                placeholder="Search products or groceries..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={handleKeyDown}
+                autoComplete="off"
+              /> */}
+              {/* {showDropdown && (
+                <div style={{
+                  position: "absolute", zIndex: 2000, top: "calc(100% + 6px)",
+                  left: 0, right: 0, background: "#fff", border: "1px solid rgba(0,0,0,0.12)",
+                  borderRadius: 8, maxHeight: "40vh", overflowY: "auto", boxShadow: "0 8px 20px rgba(0,0,0,0.08)"
+                }}>
+                  {isFetching ? (
+                    <div className="p-3">Loading items...</div>
+                  ) : suggestions.length === 0 ? (
+                    <div className="p-3 text-muted">No matches</div>
+                  ) : suggestions.map((item, idx) => {
+                    const primary = (item.title && item.title.trim()) ? item.title : (item.raw?.name || item.raw?.productName || item.category || "Unnamed Item");
+                    const secondary = item.category || (item.source === "grocery" ? "Grocery" : "Product");
+                    return (
+                      <button
+                        key={`${item.id}-${idx}`}
+                        onClick={() => handleSelect(item)}
+                        onMouseEnter={() => setActiveIndex(idx)}
+                        style={{
+                          display: "flex", alignItems: "center", width: "100%", padding: "10px 12px",
+                          background: idx === activeIndex ? "rgba(0,0,0,0.04)" : "transparent", border: "none", textAlign: "left"
+                        }}
+                        type="button"
+                      >
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontWeight: 600, whiteSpace: "normal" }}>{primary}</div>
+                          <small className="text-muted">{secondary} • {item.source === "grocery" ? "Grocery" : "Product"}</small>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )} */}
               <div className="text-primary fw-bold fs-5 ">
-                Welcome{' '}
+                Welcome{" "}
                 <small className="text-dark">
                   {profile.fullName}
                 </small>
               </div>
-              {/* <a
-                href={`https://wa.me/?text=${encodeURIComponent("Check this service: https://handymanserviceproviders.com")}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <WhatsAppIcon style={{ color: "#25D366", fontSize: 30, margin: '5px' }} />
-              </a> */}
             </div>
           )}
+          {/* 🔍 Grocery Search */}
+          {/* <div style={{ position: "relative", marginBottom: "12px" }}>
+            <input
+              className="form-control ps-5 "
+              placeholder="Search grocery products"
+              value={grocerySearch}
+              onChange={(e) => {
+                setGrocerySearch(e.target.value);
+                setActiveGroceryCategory(null);
+              }}
+            />
+            <SearchIcon
+              style={{
+                position: "absolute",
+                left: "12px",
+                top: "50%",
+                transform: "translateY(-50%)",
+                color: "#777",
+              }}
+            />
+          </div> */}
 
           {/* Mobile Dashboard Icons */}
-          {isMobile && (
+          {isMobile && (   
   <div
     className="mobile-top-icons position-fixed start-0 end-0 bg-white border-bottom shadow-sm"
     style={{
@@ -2841,6 +2933,88 @@ const fetchImageUrl = async (photoId) => {
 </div>  */}
 
   {/* Grocery Categories Section className="container my-3"*/}
+  {/* {(activeGroceryCategory || grocerySearch) && (
+  <div
+    style={{ cursor: "pointer", color: "green", marginBottom: "10px" }}
+    onClick={() => {
+      setActiveGroceryCategory(null);
+      setGrocerySearch("");
+    }}
+  >
+    ← Back to Categories
+  </div>
+)}
+
+{groceryLoading && <p>Loading products...</p>}
+
+<div className="row">
+  {filteredGroceryProducts.map((p) => (
+    <div key={p.id} className="col-6 col-md-3 mb-3">
+      <div className="border rounded p-2 h-100">
+        <img
+          src={getGroceryImage(p)}
+          alt={p.name}
+          onError={(e) => {
+            e.target.src = "/no-image.png";
+          }}
+          style={{
+            height: "80px",
+            objectFit: "contain",
+            width: "100%",
+          }}
+        />
+        <div style={{ fontSize: "12px", fontWeight: "bold", minHeight: "36px" }}>
+          {p.name}
+        </div>
+
+        <div style={{ fontSize: "12px" }}>
+          <b className="text-success">₹{Math.round(p.afterDiscount)}</b>{" "}
+          <s className="text-muted">₹{p.mrp}</s>
+        </div>
+
+       {groceryQty[p.id] ? (
+        <div className="d-flex justify-content-between align-items-center mt-2">
+          <button
+            className="btn btn-sm btn-outline-danger"
+            onClick={() => decreaseQty(p)}
+          >
+            −
+          </button>
+
+          <span className="fw-bold">
+            {groceryQty[p.id]}
+          </span>
+
+          <button
+            className="btn btn-sm btn-outline-success"
+            onClick={() => increaseQty(p)}
+            disabled={groceryQty[p.id] >= Number(p.stockLeft)}
+          >
+            +
+          </button>
+        </div>
+      ) : (
+        <button
+          className="btn btn-sm btn-outline-success w-100 mt-2"
+          onClick={() => increaseQty(p)}
+          disabled={Number(p.stockLeft) <= 0}
+        >
+          ADD
+        </button>
+      )}
+      </div>
+    </div>
+  ))}
+</div>
+
+{!groceryLoading &&
+  (activeGroceryCategory || grocerySearch) &&
+  filteredGroceryProducts.length === 0 && (
+    <p className="text-center text-muted mt-4">
+      No products found
+    </p>
+)} */}
+
   <div className="shadow-lg p-2 rounded-5 mb-1 text-center bg-transparent border-0">
     <h5 className="fw-bold mb-3" style={{color: "#ff5722", fontSize: "20px"}}>
       Lakshmi Mart  

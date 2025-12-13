@@ -74,12 +74,12 @@ const readServerPoints = (record) => {
   const n = Number(raw);
   return Number.isFinite(n) ? n : 0;
 };
-const netPayables=  grandTotal -firstOrderDiscount
+const netPayables=  grandTotal - firstOrderDiscount
 
   const totalPayable =
     isNewUser || grandTotal > 1000 ? netPayables : netPayable;
-const numericGrandTotal = Number(grandTotal) || 0;
-const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 100;
+// const numericGrandTotal = Number(grandTotal) || 0;
+// const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 100;
 
   const loginMeta = (() => {
     try {
@@ -285,13 +285,15 @@ useEffect(() => {
         if (gt > 1000) {
           discount = 100;
           msg = "";
-        } else if (gt >= 100) {
-          discount = 50;
-          msg = "";
-        } else {
-          discount = 0;
-          msg = "Order ₹100 or more to get ₹50 cashback on your first order!";
-        }
+        } 
+        // else if (gt >= 100) {
+        //   discount = 50;
+        //   msg = "";
+        // } 
+        // else {
+        //   discount = 0;
+        //   msg = "Order ₹100 or more to get ₹50 cashback on your first order!";
+        // }
       } else {
          if (hasReceived100Cashback) {
           discount = 0;
@@ -681,7 +683,8 @@ const goBackToCart = () => {
 
     const primaryAddress = addresses.find(addr => addr.type === 'primary');
     const isAddressInvalid = !primaryAddress || !primaryAddress.address || !primaryAddress.zipCode;
-     const isOrderDisabled = isAddressInvalid || serviceUnavailable || isFirstOrderMinNotReached;
+     const isOrderDisabled = isAddressInvalid || serviceUnavailable;
+    //  const isOrderDisabled = isAddressInvalid || serviceUnavailable || isFirstOrderMinNotReached;
     useEffect(() => {
         if (isAddressInvalid) {
           setShouldBlink(true);
@@ -1736,8 +1739,8 @@ const handleCheckboxChange = (value) => {
       ? "Please add a valid address"
       : serviceUnavailable
       ? "Service unavailable in your area"
-      : isFirstOrderMinNotReached
-      ? "Minimum order value ₹100 required on your first order to get ₹50 cashback."
+      // : isFirstOrderMinNotReached
+      // ? "Minimum order value ₹100 required on your first order to get ₹50 cashback."
       : ""
   }
 >
