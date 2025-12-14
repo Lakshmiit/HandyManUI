@@ -25,10 +25,9 @@ import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-// import Banner1 from './img/ChickenOffers.jpeg';.
 import Banner from './img/DeliveryPoster.jpeg';
-// import Banner1 from './img/MilkOffers.jpeg';
-import Banner1 from './img/ChickenOffers.jpeg';
+import Banner1 from './img/MilkOffers.jpeg';
+// import Banner1 from './img/ChickenOffers.jpeg';
 import Banner2 from './img/45AboveOffers.jpeg'; 
 // import BannerVideo from './img/Dusshera.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
@@ -1539,7 +1538,7 @@ useEffect(() => {
       const text = (rawText || "").trim().toLowerCase();
       if (text.includes("firstorder can not be found")) {
         console.log("Match found -> opening cashback modal");
-        //  setShowCashbackModal(true);
+         setShowCashbackModal(true);
        } else {
         console.log("No match in response text, not showing modal");
       }
@@ -1591,7 +1590,6 @@ useEffect(() => {
       let totalAmountFromApi = 0;
 
       if (data.categories && Array.isArray(data.categories)) {
-        // let allProducts = [];
         data.categories.forEach((cat) => {
           totalAmountFromApi += Number(cat.totalAmount) || 0;
           cat.products.forEach((p, idx) => {
@@ -1612,8 +1610,7 @@ useEffect(() => {
       const grandTotalNumeric = Number(data.grandTotal) || 0;
       const cashback = totalAmountFromApi - grandTotalNumeric;
 
-      // if (cashback === 50 || cashback === 100) 
-      // if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101))
+      if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101))
       // if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101) || (cashback >= 249 && cashback <= 251))
       if ((cashback >= 99 && cashback <= 101))
       {

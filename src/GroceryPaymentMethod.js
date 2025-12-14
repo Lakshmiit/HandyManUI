@@ -78,8 +78,8 @@ const netPayables=  grandTotal - firstOrderDiscount
 
   const totalPayable =
     isNewUser || grandTotal > 1000 ? netPayables : netPayable;
-// const numericGrandTotal = Number(grandTotal) || 0;
-// const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 100;
+const numericGrandTotal = Number(grandTotal) || 0;
+const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 100;
 
   const loginMeta = (() => {
     try {
@@ -101,17 +101,13 @@ const netPayables=  grandTotal - firstOrderDiscount
 
   const CheckFirstOrder = async (mobile) => {
     if (!mobile) return null;
-
     const url = `https://handymanapiv2.azurewebsites.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${encodeURIComponent(
       mobile
     )}`;
-
     try {
       const res = await fetch(url);
       const text = await res.text();
-
       console.log("RAW RESPONSE:", text);
-
       // Case 1: New User → Backend returns a message string
       if (
         !text ||
@@ -286,14 +282,14 @@ useEffect(() => {
           discount = 100;
           msg = "";
         } 
-        // else if (gt >= 100) {
-        //   discount = 50;
-        //   msg = "";
-        // } 
-        // else {
-        //   discount = 0;
-        //   msg = "Order ₹100 or more to get ₹50 cashback on your first order!";
-        // }
+        else if (gt >= 100) {
+          discount = 50;
+          msg = "";
+        } 
+        else {
+          discount = 0;
+          msg = "Order ₹100 or more to get ₹50 cashback on your first order!";
+        }
       } else {
          if (hasReceived100Cashback) {
           discount = 0;
@@ -416,7 +412,6 @@ useEffect(() => {
 useEffect(() => {
   const fetchCart = async () => {
     if (!groceryItemId) return;
-
     const ctrl = new AbortController();
     try {
       const res1 = await fetch(
@@ -426,13 +421,11 @@ useEffect(() => {
       if (!res1.ok) throw new Error("Failed to fetch product details");
       const data = await res1.json();
       setCartData(data);
-      // Decide whether this order is Offers-only
       const catNames = Array.isArray(data?.categories)
         ? data.categories.map(c => String(c?.categoryName || "").trim().toLowerCase())
         : [];
       const onlyOffers = catNames.length > 0 && catNames.every(n => n === "offers");
       setIsOffersOrder(onlyOffers);
-
       setMartId(data.martId);
       setGrandTotal(data.grandTotal);
       setTotalItemsSelected(data.totalItemsSelected);
@@ -558,7 +551,6 @@ const goBackToCart = () => {
   useEffect(() => {
   const primary = addresses.find(addr => addr.type === "primary");
   const district = primary?.district?.toLowerCase();
-
   if (district && district !== "visakhapatnam") {
     setServiceUnavailable(true);  
   } else {
@@ -609,7 +601,6 @@ const goBackToCart = () => {
 
   // Handle address editing
   const handleAddressEdit = async () => {
-
     if (!newAddress || !zipCode || !mobileNumber || !state || !district) {
       alert("Please fill in all required fields.");
       return; 
@@ -683,8 +674,8 @@ const goBackToCart = () => {
 
     const primaryAddress = addresses.find(addr => addr.type === 'primary');
     const isAddressInvalid = !primaryAddress || !primaryAddress.address || !primaryAddress.zipCode;
-     const isOrderDisabled = isAddressInvalid || serviceUnavailable;
-    //  const isOrderDisabled = isAddressInvalid || serviceUnavailable || isFirstOrderMinNotReached;
+    //  const isOrderDisabled = isAddressInvalid || serviceUnavailable;
+     const isOrderDisabled = isAddressInvalid || serviceUnavailable || isFirstOrderMinNotReached;
     useEffect(() => {
         if (isAddressInvalid) {
           setShouldBlink(true);
@@ -698,7 +689,6 @@ const goBackToCart = () => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     handleResize(); // Set initial state
     window.addEventListener('resize', handleResize);
-
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
@@ -1739,8 +1729,8 @@ const handleCheckboxChange = (value) => {
       ? "Please add a valid address"
       : serviceUnavailable
       ? "Service unavailable in your area"
-      // : isFirstOrderMinNotReached
-      // ? "Minimum order value ₹100 required on your first order to get ₹50 cashback."
+      : isFirstOrderMinNotReached
+      ? "Minimum order value ₹100 required on your first order to get ₹50 cashback."
       : ""
   }
 >
