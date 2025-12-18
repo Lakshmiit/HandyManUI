@@ -10,6 +10,7 @@ import Confetti from "react-confetti";
 // import NotificationBell from "./NotificationsBell";
 // import OrdersNotificationBell from "./OrdersBellNotifications";
 // import TrackStatusNotificationBell from "./TrackStatusBellNotifications";
+import ImageCache from "./utils/ImageCache";
 import axios from "axios";    
 import Footer from './Footer.js';
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
@@ -35,7 +36,7 @@ import Banner2 from './img/45AboveOffers.jpeg';
 // import Banner3 from './img/banner-4.jpg';  
 import { useNavigate, useParams } from "react-router-dom"; 
 import Logo from "./img/Hm_Logo 1.png";
-// import SearchIcon from "@mui/icons-material/Search";
+import SearchIcon from "@mui/icons-material/Search";
 // import ArticleIcon from '@mui/icons-material/Article';
 import AnnouncementIcon from '@mui/icons-material/Announcement';
 import LogoutIcon from "@mui/icons-material/Logout";   
@@ -82,6 +83,8 @@ import KidsImg from './img/KidsZone.jpeg';
 import setkurti from './img/3pcsset.jpeg';
 import kurti from './img/2pcsset.jpeg';
 import { CartStorage } from "./CartStorage";
+import IcecreamImg from './img/IceCreams.jpeg';
+import ChirstmasIcon from './img/Chirstmas.jpeg';
 // import BathImg from './img/bathImg.jpeg';
 // import FlourImg from './img/FlourImg.jpeg';
 // import FaceImg from './img/FaceImg.jpeg';  
@@ -89,7 +92,6 @@ import { CartStorage } from "./CartStorage";
 // import RiceImg from './img/Ravva.jpeg';  
 // import CoffeeImg from './img/Coffee.jpeg';
 // import ThumsUpBottle from './img/thumsup.jpeg';
-import IcecreamImg from './img/IceCreams.jpeg';
 //import ReedemCode from "./ReedemCode";     
 // import RedeemIcon from "@mui/icons-material/Redeem";
 
@@ -860,8 +862,8 @@ const categories = [
 ];
     
 const groceryCategories = [
+  { label: 'Chirstmas', value: 'Chirstmas Offers', image: ChirstmasIcon },
   { label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
-  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
   { label: 'Ice Creams', value: 'Ice Creams', image: IcecreamImg },
   { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
   { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
@@ -887,15 +889,25 @@ const groceryCategories = [
   { label: 'Kids Zone', value: 'Kids Zone', image: KidsImg },
   { label: 'Health Care', value: 'Health Care', image: HealthImg },
   { label: 'Kitchenware Appliances', value: 'Kitchenware Appliances', image: KitchenImg },
+  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
 ];
-
 
 const collectionsCategories = [
   { label: 'Dupatta Sets', value: 'Dupatta Sets', image: setkurti },
   { label: 'Kurta Sets', value: 'Kurta Sets', image: kurti},
   ];
 
+  // const API_URL = "https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetAllGroceryItems";
+  const IMAGE_API =
+  "https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=";
+
 const ProfilePage = () => {
+   const [allProducts, setAllProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [imageUrls, setImageUrls] = useState({});
+  const [searchQuery, setSearchQuery] = useState("");
+   const [listening, setListening] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const {userId} = useParams();
     const {userType} = useParams();
@@ -903,7 +915,7 @@ const ProfilePage = () => {
     const [fullName, setFullName] = useState('');
     const [menuList, setMenuList] = useState([]);
     const [profile, setProfile] = useState({});
-    const [loading, setLoading] = useState(true); 
+    // const [loading, setLoading] = useState(true); 
     const [selectedTicket, setSelectedTicket] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [profileImage, setProfileImage] = useState(null);
@@ -974,16 +986,7 @@ const HEADER_H = 0;
 const MOBILE_ICONS_H = 0; 
 const MOBILE_EXTRA =0;     
 const MOBILE_PADDING_TOP = HEADER_H + MOBILE_ICONS_H + MOBILE_EXTRA;
-const norm = (s) => String(s || "").trim().toLowerCase();
-const isOffersCat = (cat) => norm(cat) === "offers";
-function decideCartRoute(products) {
-  const hasOffers = (products || []).some(p => isOffersCat(p.category));
-  const hasNonOffers = (products || []).some(p => !isOffersCat(p.category));
-  if (hasOffers && !hasNonOffers) return "groceryOffersCart";
-if (hasNonOffers && !hasOffers) return "groceryCart";
-  return "groceryCart";
-}
-// const [showCashbackModal] = useState(false);
+const [cartImages, setCartImages] = useState({});
 const [showCashbackModal, setShowCashbackModal] = useState(false);
 const [showConfetti, setShowConfetti] = useState(false);
 const [windowSize, setWindowSize] = useState({
@@ -992,7 +995,249 @@ const [windowSize, setWindowSize] = useState({
 });
 const [hasCheckedFirstOrder, setHasCheckedFirstOrder] = useState(false);
 const [cashbackAmount, setCashbackAmount] = useState(0);
+const [cart, setCart] = useState({});
+const [showZoomModal, setShowZoomModal] = useState(false);
+const [zoomImage, setZoomImage] = useState("");
+const [zoomProduct, setZoomProduct] = useState(null);
+const displayProducts =
+  searchQuery.trim().length > 0 ? filteredProducts : products;
+  const [imageLoading, setImageLoading] = useState(true);
 
+useEffect(() => {
+  console.log( imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery,error, unreadCount, showMenu, products, selectedCategory, dress);
+}, [imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery, error,unreadCount, showMenu, products, selectedCategory, dress]);
+ 
+function getItemTime(p) {
+  if (p?.date) {
+    const t = Date.parse(p.date); 
+    if (!Number.isNaN(t)) return t;
+  }
+
+  const candidates = [
+    p.createdAt, p.created_on, p.createdDate, p.createDate,
+    p.updatedAt, p.updated_on, p.modifiedAt, p.modified_on,
+    p.addedDate, p.added_at, p.timestamp, p.timeStamp,
+  ];
+  for (const c of candidates) {
+    const t = Date.parse(c);
+    if (!Number.isNaN(t)) return t;
+  }
+
+  if (typeof p.id === "number") return p.id;
+  const idNum = Number(String(p.id || "").replace(/\D/g, "")) || 0;
+  return idNum;
+}
+
+useEffect(() => {
+  if (!selectedCategory) return;
+
+  let cancelled = false;
+  const controller = new AbortController();
+  const POLL_MS = 2000;
+  let pollId = null;
+
+  const category = selectedCategory; // use directly
+
+  async function fetchProductsAndFirstImages(warm = false, signal) {
+    try {
+      if (!warm) setImageLoading(true);
+
+      // No encodeURIComponent used
+      const url = `https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${category}`;
+
+      const { data: items } = await axios.get(url, { signal });
+      const safeItems = Array.isArray(items) ? items : [];
+
+      if (cancelled) return;
+
+      const sorted = [...safeItems].sort((a, b) => {
+        const tb = getItemTime(b);
+        const ta = getItemTime(a);
+        if (tb !== ta) return tb - ta;
+        return String(b.id).localeCompare(String(a.id));
+      });
+
+      setProducts(sorted);
+
+      if (warm) return;
+
+      const firstImages = safeItems
+        .map((p) => ({
+          productId: p.id,
+          photo: Array.isArray(p.images) ? p.images[0] : null,
+        }))
+        .filter((x) => !!x.photo);
+
+      const cachedMap = {};
+      const misses = [];    
+
+      for (const { productId, photo } of firstImages) {
+        const cached = ImageCache.getBase64(photo);
+        if (cached) {
+          cachedMap[productId] = [`data:image/jpeg;base64,${cached}`];
+        } else {
+          misses.push({ productId, photo });
+        }
+      }
+
+      if (Object.keys(cachedMap).length) {
+        setImageUrls((prev) => ({ ...prev, ...cachedMap }));
+      }
+
+      if (cancelled) return;
+
+      const fetchOne = async ({ productId, photo }) => {
+        try {
+          const res = await fetch(
+            `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`,
+            { signal }
+          );
+
+          const json = await res.json();
+          const b64 = json?.imageData || "";
+          if (!b64) return;
+
+          ImageCache.setBase64(photo, b64);
+          const dataUrl = `data:image/jpeg;base64,${b64}`;
+
+          if (!cancelled) {
+            setImageUrls((prev) => {
+              if (prev[productId]?.[0] === dataUrl) return prev;
+              return { ...prev, [productId]: [dataUrl] };
+            });
+          }
+        } catch {}
+      };
+
+      await Promise.allSettled(misses.map(fetchOne));
+    } catch (err) {
+      if (err?.name !== "CanceledError" && err?.name !== "AbortError") {
+        console.error("Error fetching grocery products:", err);
+        if (!warm) {
+          setProducts([]);
+          setImageUrls({});
+        }
+      }
+    } finally {
+      if (!cancelled && !warm) setImageLoading(false);
+    }
+  }
+
+  // First load
+  fetchProductsAndFirstImages(false, controller.signal);
+
+  // Polling
+  pollId = setInterval(() => {
+    const pollController = new AbortController();
+    fetchProductsAndFirstImages(true, pollController.signal);
+  }, POLL_MS);
+
+  return () => {
+    cancelled = true;
+    controller.abort();
+    if (pollId) clearInterval(pollId);
+  };
+}, [selectedCategory]); // use selectedCategory only
+
+// const cartProducts = React.useMemo(() => {
+//   try {
+//     const raw = localStorage.getItem("allCategories");
+//     if (!raw) return [];
+//     const categories = JSON.parse(raw);   
+//     return categories.flatMap(cat =>
+//       (cat.products || []).filter(p => Number(p.qty) > 0)
+//     );
+//   } catch {
+//     return [];
+//   }
+// }, []);
+
+useEffect(() => {
+  const categories = JSON.parse(localStorage.getItem("allCategories") || "[]");
+
+  categories.forEach(cat => {
+    cat.products.forEach(async (p) => {
+      if (!p.imageFile || cartImages[p.id]) return;
+
+      try {
+        const res = await fetch(
+          `${IMAGE_API}${encodeURIComponent(p.imageFile)}`
+        );
+        const json = await res.json();
+
+        if (json?.imageData) {
+          setCartImages(prev => ({
+            ...prev,
+            [p.id]: `data:image/jpeg;base64,${json.imageData}`,
+          }));
+        }
+      } catch (err) {
+        console.error("Cart image load failed", err);
+      }
+    });
+  });
+}, [cartImages]); 
+
+useEffect(() => {
+  const raw = localStorage.getItem("allCategories");
+  if (!raw) return;
+
+  const categories = JSON.parse(raw);
+
+  categories.forEach(cat => {
+    cat.products.forEach(async (item) => {
+      if (!item.imageFile || cartImages[item.id]) return;
+      try {
+        const res = await fetch(
+          `${IMAGE_API}${encodeURIComponent(item.imageFile)}`
+        );
+        const json = await res.json();
+        if (json?.imageData) {
+          setCartImages(prev => ({
+            ...prev,
+            [item.id]: `data:image/jpeg;base64,${json.imageData}`,
+          }));
+        }
+      } catch (e) {
+        console.error("Cart image fetch failed", e);
+      }
+    });
+  });
+}, [cartImages]); 
+
+// useEffect(() => {
+//   const categories = JSON.parse(localStorage.getItem("allCategories") || "[]");
+//   const products = categories.flatMap(cat => cat.products || []);
+//   products.forEach(async (p) => {
+//     if (!p.images?.[0] || cartImages[p.id]) return;
+//     try {
+//       const res = await fetch(
+//         `${IMAGE_API}${encodeURIComponent(p.images[0])}`
+//       );
+//       const json = await res.json();
+//       if (json?.imageData) {
+//         setCartImages(prev => ({
+//           ...prev,
+//           [p.id]: `data:image/jpeg;base64,${json.imageData}`,
+//         }));
+//       }
+//     } catch (e) {
+//       console.error("Cart image load failed", e);
+//     }
+//   });
+// }, [cartImages]);
+
+
+// const norm = (s) => String(s || "").trim().toLowerCase();
+// const isOffersCat = (cat) => norm(cat) === "offers";
+// function decideCartRoute(products) {
+//   const hasOffers = (products || []).some(p => isOffersCat(p.category));
+//   const hasNonOffers = (products || []).some(p => !isOffersCat(p.category));
+//   if (hasOffers && !hasNonOffers) return "groceryOffersCart";
+// if (hasNonOffers && !hasOffers) return "groceryCart";
+//   return "groceryCart";
+// }
+// const [showCashbackModal] = useState(false);
 // Grocery Search & Filter States
 // const [allGroceryProducts, setAllGroceryProducts] = useState([]);
 // const [filteredGroceryProducts, setFilteredGroceryProducts] = useState([]);
@@ -1108,10 +1353,7 @@ useEffect(() => {
 // });
 // const [displayNumbers, setDisplayNumbers] = useState("");
 // redeemOpen, showRedeem, awardLoading,  awardedPoints, referralPoints,
-useEffect(() => {
-  console.log( items, grocery,error, unreadCount, showMenu, products, selectedCategory, dress);
-}, [items, grocery, error,unreadCount, showMenu, products, selectedCategory, dress]);
- 
+
 // const checkNewOrExisting = useCallback(async (num) => {
 //   try {
 //     const res = await fetch(
@@ -1484,6 +1726,143 @@ useEffect(() => {
 //   window.alert(`Coins added: ${earned}`);
 // };
 
+   const handleImageClick = (imageSrc, product) => {
+  setZoomImage(imageSrc);
+  setZoomProduct(product);       
+  setShowZoomModal(true);
+};
+  /* ================= VOICE SEARCH ================= */
+  const startVoiceSearch = () => {
+    if (!("webkitSpeechRecognition" in window)) {
+      alert("Voice search not supported in this browser");
+      return;
+    }
+
+    const recognition = new window.webkitSpeechRecognition();
+    recognition.lang = "en-IN";
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    setListening(true);
+
+    recognition.onresult = (event) => {
+      const spokenText = event.results[0][0].transcript;
+      setSearchQuery(spokenText);
+      setListening(false);
+    };
+
+    recognition.onerror = () => setListening(false);
+    recognition.onend = () => setListening(false);
+
+    recognition.start();
+  };
+
+  /* ================= FETCH PRODUCTS ================= */
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        const res = await axios.get(`https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetAllGroceryItems`);
+        setAllProducts(Array.isArray(res.data) ? res.data : []);
+      } catch (err) {
+        console.error("Error fetching grocery items", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  /* ================= FILTER ================= */
+  useEffect(() => {
+    let result = allProducts.filter((p) => p.status === "Approved");
+
+    if (searchQuery.trim()) {
+      result = result.filter((p) =>
+        p.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    } else {
+      result = [];
+    }
+
+    setFilteredProducts(result);
+  }, [searchQuery, allProducts]);
+
+  /* ================= FETCH IMAGES ================= */
+  useEffect(() => {
+    if (!filteredProducts.length) return;
+
+    const controller = new AbortController();
+
+    filteredProducts.forEach(async (p) => {
+      if (!p.images?.[0] || imageUrls[p.id]) return;
+
+      try {
+        const res = await fetch(
+          `${IMAGE_API}${encodeURIComponent(p.images[0])}`,
+          { signal: controller.signal }
+        );
+        const json = await res.json();
+        if (!json?.imageData) return;
+
+        setImageUrls((prev) => ({
+          ...prev,
+          [p.id]: `data:image/jpeg;base64,${json.imageData}`,
+        }));
+      } catch {}
+    });
+
+    return () => controller.abort();
+  }, [filteredProducts, imageUrls]);
+
+  /* ================= CART HANDLERS ================= */
+//  const handleAddClick = (product) => {
+//   setCart(prev => ({ ...prev, [product.id]: 1 }));
+//   updateLocalStorageCart(product, 1);
+// };
+
+const handleAddClick = (product) => {
+  // const imageSource =
+  //   product.generatedFileName ||
+  //   (product.imageData ? base64ToBlobUrl(product.imageData) : "");
+  updateLocalStorageCart(
+    {
+      ...product,
+     imageFile: product.images?.[0] || ""
+    },
+    1
+  );
+  setCart(prev => ({ ...prev, [product.id]: 1 }));
+};
+
+ const handleIncrement = (product, stockLeft) => {
+  setCart(prev => {
+    const qty = prev[product.id] || 0;
+    if (qty >= stockLeft) return prev;
+    const newQty = qty + 1;
+    updateLocalStorageCart(product, newQty);
+    return { ...prev, [product.id]: newQty };
+  });
+};
+
+  const handleDecrementClick = (product) => {
+  setCart(prev => {
+    const qty = prev[product.id] || 0;
+    const newQty = qty - 1;
+
+    updateLocalStorageCart(product, newQty);
+
+    if (newQty <= 0) {
+      const copy = { ...prev };
+      delete copy[product.id];
+      return copy;
+    }
+    return { ...prev, [product.id]: newQty };
+  });
+};
+
+  const canAddMore = (id, stockLeft) => (cart[id] || 0) < stockLeft;
+
 useEffect(() => {
   const element = document.getElementById("productCarousel");
   if (!element) return;
@@ -1610,9 +1989,9 @@ useEffect(() => {
       const grandTotalNumeric = Number(data.grandTotal) || 0;
       const cashback = totalAmountFromApi - grandTotalNumeric;
 
-      if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101))
-      // if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101) || (cashback >= 249 && cashback <= 251))
-      if ((cashback >= 99 && cashback <= 101))
+      // if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101))
+      if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101) || (cashback >= 299 && cashback <= 301))
+      // if ((cashback >= 99 && cashback <= 101))
       {
         setCashbackAmount(cashback); 
       } else {
@@ -1705,47 +2084,47 @@ useEffect(() => {
   setCartSummary(summary);
 }, []);
 
-useEffect(() => {
-  const updateCartSummary = () => {
-    let savedCategories = [];
-    try {
-      const raw = localStorage.getItem("allCategories");
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        savedCategories = Array.isArray(parsed) ? parsed : [parsed];
-      }
-    } catch (e) {
-      console.error("Invalid JSON in localStorage:", e);
-    }
-    let items = 0, total = 0, products = [];
-    savedCategories.forEach((cat) => {
-      (cat.products || []).forEach((p) => {
-        if (Number(p.qty) > 0) {
-          items += Number(p.qty);
-          const afterDiscountPrice = Number(
-            p.afterDiscountPrice || p.price || p.finalPrice || 0
-          );
-          total += afterDiscountPrice * Number(p.qty);
-          products.push({
-            id: p.productId || p.id,
-            productName: p.productName || p.name || "",
-            image: p.image || p.img || "",
-            mrp: Number(p.mrp) || Number(p.mrpPrice) || 0,
-            discount: Number(p.discount) || Number(p.discountPercent) || 0,
-            afterDiscountPrice,
-            qty: Number(p.qty),
-            category: cat.categoryName,
-          });
-        }
-      });
-    });
-    setCartSummary({ items, total, products });
-    console.log("cartSummary:", { items, total, products });
-  };
-  updateCartSummary();
-  window.addEventListener("storage", updateCartSummary);
-  return () => window.removeEventListener("storage", updateCartSummary);
-}, []);
+// useEffect(() => {
+//   const updateCartSummary = () => {
+//     let savedCategories = [];
+//     try {
+//       const raw = localStorage.getItem("allCategories");
+//       if (raw) {
+//         const parsed = JSON.parse(raw);
+//         savedCategories = Array.isArray(parsed) ? parsed : [parsed];
+//       }
+//     } catch (e) {
+//       console.error("Invalid JSON in localStorage:", e);
+//     }
+//     let items = 0, total = 0, products = [];
+//     savedCategories.forEach((cat) => {
+//       (cat.products || []).forEach((p) => {
+//         if (Number(p.qty) > 0) {
+//           items += Number(p.qty);
+//           const afterDiscountPrice = Number(
+//             p.afterDiscountPrice || p.price || p.finalPrice || 0
+//           );
+//           total += afterDiscountPrice * Number(p.qty);
+//           products.push({
+//             id: p.productId || p.id,
+//             productName: p.productName || p.name || "",
+//             image: p.image || p.img || "",
+//             mrp: Number(p.mrp) || Number(p.mrpPrice) || 0,
+//             discount: Number(p.discount) || Number(p.discountPercent) || 0,
+//             afterDiscountPrice,
+//             qty: Number(p.qty),
+//             category: cat.categoryName,
+//           });
+//         }
+//       });
+//     });
+//     setCartSummary({ items, total, products });
+//     console.log("cartSummary:", { items, total, products });
+//   };
+//   updateCartSummary();
+//   window.addEventListener("storage", updateCartSummary);
+//   return () => window.removeEventListener("storage", updateCartSummary);
+// }, []);
 
 const handleUpdatePaymentMethod = async () => {
     try {
@@ -1892,27 +2271,24 @@ const handleCategoryClick = async (category) => {
 
 const handleGroceryCategoryClick = async (category) => {
   const { value } = category;
-  //  if (value === "Vegetables & Fruits") {
-  //   console.log(`Vegetables & Fruits clicked - navigation blocked`);
-  //   setSelectedCategory(category); 
-  //   return;
-  // }
   try {
     setSelectedCategory(category);
     setGrocery([]);
     setError("");
     const encodedCategory = encodeURIComponent(value);
     localStorage.setItem("encodedCategory", encodedCategory);
+    if (value === "Chirstmas Offers") {
+      navigate(`/groceryChristmasOffers/${userType}/${userId}`);
+      return;
+    }
     navigate(`/grocery/${userType}/${userId}`);
-    //   {
-    //     state: { encodedCategory, userPoints },  
-    // });
   } catch (error) {
     console.error("Error fetching products:", error);
     setGrocery([]);
     setError(`Oops! No grocery items found for ${value} category.`);
   }
 };
+
 
  const goToCategory = (categoryValue, route = "groceryOffers") => {
     const encodedCategory = encodeURIComponent(categoryValue);
@@ -1990,8 +2366,8 @@ const handleDressCategoryClick = async (category) => {
 
   const grandTotalNumeric = Number(ticket.grandTotal) || 0;
   const cashback = totalAmountFromApi - grandTotalNumeric;
-  if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101)) {
-  // if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101) || (cashback >= 249 && cashback <= 251)) {
+  // if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101)) {
+  if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101) || (cashback >= 299 && cashback <= 301)) {
     return cashback;
   }
   return 0;
@@ -2081,6 +2457,13 @@ const handleDressCategoryClick = async (category) => {
         }
       }, [category, district, userType, userId, zipCode, fullName, isMobile]);
 
+      useEffect(() => {
+  window.addEventListener("storage", () => {
+    setCartImages({});
+  });
+  return () => window.removeEventListener("storage", () => {});
+}, []);
+
 const fetchImageUrl = async (photoId) => {
   try { 
     if (!photoId) return;
@@ -2099,7 +2482,51 @@ const fetchImageUrl = async (photoId) => {
   if (loading) {
     return 
   }
-  // console.log(allItems.slice(0,20));
+
+const updateLocalStorageCart = (product, qty) => {
+  const stored = JSON.parse(localStorage.getItem("allCategories")) || [];
+  const categoryName = product.category || "Search Items";
+  let category = stored.find(c => c.categoryName === categoryName);
+  if (!category) {
+    category = { categoryName, products: [] };
+    stored.push(category);
+  }
+  // const imageValue =
+  //   product.image ||
+  //   product.productImage ||
+  //   product.generatedFileName ||
+  //   "";
+
+  const index = category.products.findIndex(
+    p => (p.productId || p.id) === product.id
+  );
+
+  if (qty <= 0) {
+    if (index !== -1) category.products.splice(index, 1);
+  } else {
+    const item = {
+      productId: product.id,
+      productName: product.name || product.productName,
+      qty,
+      mrp: product.mrp,
+      discount: product.discount,
+      afterDiscountPrice: product.afterDiscount,
+      stockLeft: product.stockLeft,
+      units: product.units,
+      code: product.code,
+      image: product.imageFile || product.images?.[0] || "",
+    };
+
+    if (index === -1) {
+      category.products.push(item);
+    } else {
+      category.products[index] = item;
+    }
+  }
+
+  localStorage.setItem("allCategories", JSON.stringify(stored));
+};
+
   return (
     <>
     <header className="header d-flex align-items-center justify-content-between p-2 bg-white shadow-sm" 
@@ -2623,12 +3050,329 @@ const fetchImageUrl = async (photoId) => {
                   })}
                 </div>
               )} */}
+               <div style={{ padding: "12px", maxWidth: "1100px", margin: "auto" }}>
+      {/* 🔍 SEARCH + 🎤 MIC */}
+      <div style={{ position: "relative", marginBottom: "12px" }}>
+        <input
+          className="form-control ps-5 pe-5"
+          placeholder="Search or speak product name"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+
+        <SearchIcon
+          style={{
+            position: "absolute",
+            left: "12px",
+            top: "50%",
+            transform: "translateY(-50%)",
+            color: "#777",
+          }}
+        />
+
+         {/* 🎤 Better Mic Button */}
+  <button
+    onClick={startVoiceSearch}
+    title="Speak product name"
+    style={{
+      position: "absolute",
+      right: "10px",
+      top: "50%",
+      transform: "translateY(-50%)",
+      width: "30px",
+      height: "30px",
+      borderRadius: "50%",
+      border: listening
+        ? "2px solid red"
+        : "2px solid transparent",
+      background: listening ? "rgba(255,0,0,0.1)" : "transparent",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      cursor: "pointer",
+      transition: "0.2s ease-in-out",
+    }}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      height="18"
+      viewBox="0 0 24 24"
+      width="18"
+      fill={listening ? "red" : "#555"}
+    >
+      <path d="M12 14a2 2 0 0 0 2-2V6a2 2 0 1 0-4 0v6a2 2 0 0 0 2 2zm5-2a5 5 0 0 1-10 0H5a7 7 0 0 0 14 0h-2zm-5 9c-1.1 0-2-.9-2-2h4a2 2 0 0 1-2 2z" />
+    </svg>
+  </button>
+</div>
+ {/* 📦 PRODUCTS */}
+      {loading && <p>Loading products...</p>}
+
+      <div className="grocery-row flex flex-wrap gap-1" style={{marginBottom: "5px"}}>
+       {displayProducts.map((product) => {
+  const stock = Number(product.stockLeft || 0);
+  const isOutOfStock = stock <= 0;
+    return (
+      <div
+  key={product.id}
+  className="w-[200px] flex flex-col p-2 bg-white rounded shadow-sm border position-relative"
+  style={{ minHeight: "230px", opacity: isOutOfStock ? 0.6 : 1 }}
+>
+  <div className="d-flex flex-row justify-content-between absolute top-0 left-0 w-full">
+    {Number(product.discount) > 0 && !isOutOfStock && (
+      <span className="discount-badge">
+        {Math.round(Number(product.discount))}%
+      </span>
+    )}
+    {/* {!isOutOfStock && (
+      <span
+        style={{ cursor: "pointer", marginRight: "6px", marginTop: "2px", zIndex: 3 }}
+        onClick={() => toggleLike(product.id)}
+      >
+        {likedProducts[product.id] ? (
+          <FavoriteIcon style={{ color: "red" }} />
+        ) : (
+          <FavoriteBorderIcon style={{ color: "grey" }} />
+        )}
+      </span>
+    )} */}
+  </div>
+  {/* Product Image */}
+  <div
+    className="d-flex justify-content-center align-items-center position-relative"
+    style={{ height: "90px" }}
+  >
+    {imageUrls[product.id] ? (
+      <img
+        src={cartImages[product.id] || imageUrls[product.id]}
+        alt={product.name}
+        decoding="async"
+        loading="eager"
+        fetchpriority="high"
+        style={{
+          maxHeight: "80px",
+          maxWidth: "100%",
+          objectFit: "contain",
+          cursor: isOutOfStock ? "not-allowed" : "pointer",
+          borderRadius: "6px",
+        }}
+        onClick={() => !isOutOfStock && handleImageClick(
+      cartImages[product.id] || imageUrls[product.id],
+      product
+    )}/>
+    ) : (
+      <span className="text-muted small">Loading Image</span>
+    )}
+
+    {isOutOfStock && (
+      <div
+        className="position-absolute d-flex justify-content-center align-items-center"
+        style={{
+          top: 0, left: 0, width: "100%", height: "100%",
+          background: "rgba(255,255,255,0.75)", borderRadius: "6px", zIndex: 2,
+        }}
+      >
+        <span
+          style={{
+            fontWeight: 500, backgroundColor: "grey", color: "white",
+            fontSize: "10px", borderRadius: "6px", margin: "1px", padding: "2px",
+          }}
+        >
+          Out of Stock
+        </span>
+      </div>
+    )}
+  </div>
+
+  {/* Product Name */}
+  <h6
+    className="text-start fw-bold m-0"
+    style={{
+      fontSize: "11px",
+      display: "-webkit-box",
+      WebkitLineClamp: 3,
+      WebkitBoxOrient: "vertical",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      lineHeight: "1.2em",
+      maxHeight: "3.6em",
+    }}
+  >
+    {product.name}
+  </h6>
+
+  {/* Price/MRP/Units — ONLY when in stock */}
+  {!isOutOfStock && (
+    <div className="text-start m-0" style={{ fontSize: "11px" }}>
+      {product.afterDiscount != null && (
+        <b className="text-success me-2">
+          ₹{Math.round(Number(product.afterDiscount))}
+        </b>
+      )}
+      {product.mrp != null && <s className="text-muted">₹{product.mrp}</s>}
+      {product.units && (
+        <b className="text-success" style={{ marginLeft: "5px" }}>
+          {product.units}
+        </b>
+      )}
+    </div>
+  )}
+
+  {/* Checkbox */}
+  {!isOutOfStock && (
+    <div style={{ position: "absolute", bottom: "8px", left: "8px" }}>
+      <input
+        type="checkbox"
+        className="border-dark"
+        checked={cart[product.id] > 0}
+        readOnly
+      />
+    </div>
+  )}
+
+{/* Add/Counter — ONLY when in stock */}
+{!isOutOfStock && (
+  <div style={{ position: "absolute", bottom: "8px", right: "8px" }}>
+    {cart[product.id] ? (
+      <div
+        className="d-flex align-items-center justify-content-between"
+        style={{
+          backgroundColor: "green",
+          color: "white",
+          borderRadius: "8px",
+          padding: "2px",
+          minWidth: "60px",
+        }}
+      >
+        {/* ➖ DECREMENT */}
+        <button
+          className="btn btn-sm p-0 text-white"
+          onClick={() => handleDecrementClick(product)}
+        >
+          –
+        </button>
+
+        <span className="fw-bold">{cart[product.id]}</span>
+
+        {/* ➕ INCREMENT */}
+        <button
+          className="btn btn-sm p-0 text-white"
+          disabled={!canAddMore(product.id, stock)}
+          onClick={() => handleIncrement(product, stock)}
+        >
+          +
+        </button>
+      </div>
+    ) : (
+      /* ADD */
+      <button
+        className="btn fw-bold"
+        style={{
+          border: "1px solid green",
+          color: "green",
+          backgroundColor: "#f6fff6",
+          borderRadius: "8px",
+          padding: "2px 12px",
+          fontSize: "13px",
+        }}
+        onClick={() => handleAddClick(product)}
+      >
+        ADD
+      </button>
+    )}
+  </div>
+)}
+</div>
+    );
+  })}
+{/* Cart Bar */}
+{(() => {
+  // Safe reader that ALWAYS returns an array of categories
+  const readAllCategories = () => {
+    if (typeof window === "undefined") return []; // SSR guard
+    try {
+      const raw = localStorage.getItem("allCategories");
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      const arr = Array.isArray(parsed) ? parsed : [parsed];
+      // ensure each category has an array `products`
+      return arr
+        .filter(Boolean)
+        .map((cat) => ({
+          ...cat,
+          products: Array.isArray(cat?.products) ? cat.products : [],
+        }));
+    } catch (e) {
+      console.error("Invalid JSON in allCategories:", e);
+      return [];
+    }
+  };
+  const allCategories = readAllCategories();
+  const summary = allCategories.reduce(
+    (acc, cat) => {
+      for (const p of cat.products) {
+        const qty = Number(p?.qty) || 0;
+        if (!qty) continue;
+        const price =
+          Number(p?.afterDiscountPrice ?? p?.price ?? p?.finalPrice ?? 0) || 0;
+        acc.items += qty;
+        acc.total += price * qty;
+      }
+      return acc;
+    },
+    { items: 0, total: 0 }
+  );
+  const items = summary.items;
+  const total = Math.round(summary.total);
+  return items > 0 ? (
+    <div
+      style={{
+        position: "fixed",
+        bottom: "0px",
+        left: 0,
+        width: "100%",
+        backgroundColor: "green",
+        color: "white",
+        padding: "12px",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        fontWeight: "bold",
+        zIndex: 2000,
+        borderRadius: "20px",
+        marginTop: "10px",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        🛒
+        <div style={{ display: "flex", flexDirection: "column", lineHeight: "1.2" }}>
+          <span style={{ fontSize: "12px" }}>{items} items</span>
+          <span style={{ fontSize: "12px" }}>₹{total}</span>
+        </div>
+      </div>
+      <button
+        type="button"
+        className="text-white fw-bold d-flex align-items-center gap-1"
+        style={{
+          fontSize: "12px",
+          cursor: "pointer",
+          background: "transparent",
+          border: "none",
+        }}
+        onClick={() => navigate(`/groceryCart/${userType}/${userId}`)}
+      >
+        View Cart →
+      </button>
+    </div>
+  ) : null;
+})()}
+      </div>
               <div className="text-primary fw-bold fs-5 ">
                 Welcome{" "}
                 <small className="text-dark">
                   {profile.fullName}
                 </small>
               </div>
+            </div>
             </div>
           )}
           {/* 🔍 Grocery Search */}
@@ -2652,7 +3396,6 @@ const fetchImageUrl = async (photoId) => {
               }}
             />
           </div> */}
-
           {/* Mobile Dashboard Icons */}
           {isMobile && (   
   <div
@@ -3123,7 +3866,7 @@ const fetchImageUrl = async (photoId) => {
     </div>
   </div>
 
-{cartSummary.items > 0 && (
+{/* {cartSummary.items > 0 && (
   <div
     style={{
       position: "fixed",
@@ -3161,7 +3904,7 @@ const fetchImageUrl = async (photoId) => {
       onClick={() => navigate(`/groceryCart/${userType}/${userId}`)}
     >
   View Cart →
-  </button> */}
+  </button> *
   <button
   type="button"
   className="text-white fw-bold d-flex align-items-center gap-1"
@@ -3199,7 +3942,7 @@ const fetchImageUrl = async (photoId) => {
   View Cart →
 </button>
   </div> 
-)}
+)}  */}
 
    {/* Collections Section */}
   <div className="shadow-lg p-2 rounded-5 text-center bg-transparent border-0">
@@ -3233,7 +3976,7 @@ const fetchImageUrl = async (photoId) => {
               padding: "8px",
               margin: "5px",
             }}
-          >
+          >  
             <img
               src={cat.image}
               alt={cat.label}
@@ -3321,6 +4064,7 @@ const fetchImageUrl = async (photoId) => {
                 <p><strong>{ticket.raiseTicketId ? "Raise TicketId": ticket.martId ? "Order Id" : ticket.lakshmiCollectionId? "Collection Id": ticket.buyProductId? "Buy ProductId" : "Book TechnicianId"}:</strong> {ticket.raiseTicketId|| ticket.martId || ticket.lakshmiCollectionId || ticket.buyProductId || ticket.bookTechnicianId}</p>
                 {/* Show View Order only for Mart orders */}
 {ticket.martId && (
+  <>
   <p className="ticket-content fw-bold">
     Order:&nbsp;
     <button
@@ -3338,6 +4082,8 @@ const fetchImageUrl = async (photoId) => {
       View Order
     </button>
   </p>
+  <p className="fw-bold">Grand Total : {ticket.grandTotal} /-</p>
+  </>
 )}
 
                 <p><strong>{ticket.subject ? "Subject:" : ticket.productName ? "Product Name" : ticket?.categoriess?.[0]?.productName ? "Collection Name" : ticket.productName ? "Job Description" : ""}</strong> {ticket.subject || ticket.productName || ticket?.categoriess?.[0]?.productName || ticket.jobDescription}</p>
@@ -3550,18 +4296,22 @@ const fetchImageUrl = async (photoId) => {
       textAlign: "right",
     }}
   >
-    <h5 className="mb-0">
-      Total Amount: ₹{selectedTicket?.categories?.[0]?.totalAmount}
+     <h5 className="mb-0">
+      Total Amount: ₹
+      {selectedTicket?.categories?.reduce(
+        (sum, category) => sum + (category.totalAmount || 0),
+        0
+      )} /-
     </h5>
 
     {cashbackAmount > 0 && (
       <div className="fw-bold mb-0">
         <span className="text-danger me-2">Cashback Applied:</span>
-        <span className="text-success">₹{Math.round(cashbackAmount)}</span>
+        <span className="text-success">₹{Math.round(cashbackAmount)} /-</span>
       </div>
     )}
     <h5 className="mb-0">
-      Grand Total: ₹{selectedTicket?.grandTotal}
+      Grand Total: ₹{selectedTicket?.grandTotal} /-
     </h5>
   </div>
 </Modal.Footer>

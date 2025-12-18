@@ -79,7 +79,7 @@ const netPayables=  grandTotal - firstOrderDiscount
   const totalPayable =
     isNewUser || grandTotal > 1000 ? netPayables : netPayable;
 const numericGrandTotal = Number(grandTotal) || 0;
-const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 100;
+const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;
 
   const loginMeta = (() => {
     try {
@@ -260,48 +260,51 @@ useEffect(() => {
       if (cancelled) return;
       const newUser = prevOrders === null;
       setIsNewUser(newUser);
-    let hasReceived100Cashback = false;
-      if (Array.isArray(prevOrders)) {
-        hasReceived100Cashback = prevOrders.some((order) => {
-          try {
-            const sumTotalAmount = (order.categories ?? []).reduce((s, c) => {
-              return s + Number(c?.totalAmount ?? 0);
-            }, 0);
-            const gt = Number(order.grandTotal ?? 0);
-            return Math.abs(Math.round(sumTotalAmount) - Math.round(gt)) === 100;
-          } catch (e) {
-            return false;
-          }
-        });
-      }
+      const receivedCashbacks = new Set();
+        if (Array.isArray(prevOrders)) {
+          prevOrders.forEach((order) => {
+            try {
+              const sumTotalAmount = (order.categories ?? []).reduce(
+                (s, c) => s + Number(c?.totalAmount ?? 0),
+                0
+              );
+              const gt = Number(order.grandTotal ?? 0);
+              const diff = Math.round(sumTotalAmount) - Math.round(gt);
+
+              if ([50, 150, 300].includes(diff)) {
+                receivedCashbacks.add(diff);
+              }
+            } catch (e) {}
+          });
+        }
       const gt = Number(grandTotal) || 0;
       let discount = 0;
       let msg = "";
       if (newUser) {
-        if (gt > 1000) {
+        if (gt > 1999 && !receivedCashbacks.has(300)) {
+          discount = 300;
+        } else if (gt > 1000 && !receivedCashbacks.has(100)) {
           discount = 100;
-          msg = "";
-        } 
-        else if (gt >= 100) {
+        } else if (gt >= 150 && !receivedCashbacks.has(50)) {
           discount = 50;
-          msg = "";
-        } 
-        else {
+        } else {
           discount = 0;
-          msg = "Order ₹100 or more to get ₹50 cashback on your first order!";
+          msg = "Order ₹150 or more to get ₹50 cashback on your first order!";
         }
       } else {
-         if (hasReceived100Cashback) {
-          discount = 0;
-          msg = "";
+        // Existing user logic
+        if (gt > 1000 && !receivedCashbacks.has(100)) {
+          discount = 100;
+        } else if (gt > 1999 && !receivedCashbacks.has(300)) {
+          discount = 300;
         } else {
-          discount = gt > 1000 ? 100 : 0;
-          msg = "";
+          discount = 0;
         }
       }
-      setFirstOrderDiscount(discount);
-      setCashbackMessage(msg);
-      console.log("CheckFirstOrder -> newUser:", newUser, "hasReceived100Cashback:", hasReceived100Cashback, "discount:", discount);
+
+    setFirstOrderDiscount(discount);
+    setCashbackMessage(msg);
+      console.log("CheckFirstOrder -> newUser:", newUser, "receivedCashbacks:", receivedCashbacks, "discount:", discount);
     } catch (e) {
       console.error("Failed while checking first order:", e);
       if (!cancelled) {
@@ -1730,7 +1733,7 @@ const handleCheckboxChange = (value) => {
       : serviceUnavailable
       ? "Service unavailable in your area"
       : isFirstOrderMinNotReached
-      ? "Minimum order value ₹100 required on your first order to get ₹50 cashback."
+      ? "Minimum order value ₹150 required on your first order to get ₹50 cashback."
       : ""
   }
 >
@@ -4803,4 +4806,3 @@ export default GroceryPaymentmethod;
 // };
 
 // export default GroceryPaymentmethod;
-

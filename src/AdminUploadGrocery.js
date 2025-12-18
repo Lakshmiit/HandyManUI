@@ -26,6 +26,8 @@ const AdminUploadGrocery = () => {
   const [stockLeft, setStockLeft] = useState('');
   const [code, setCode] = useState('');
   const [units, setUnits] = useState('');
+  // const [manufactureDate,setManufactureDate] =useState('');
+  // const [expireDate,setExpireDate]=useState('');
   const handleFileChange = (event) => {
     const selectedFiles = Array.from(event.target.files);
     if (selectedFiles.length + groceryPhotos.length > 1) {
@@ -122,6 +124,8 @@ useEffect(() => {
       requestedBy: "Admin",
       Code: code,
       Units: units,
+      // ManufactureDate: manufactureDate,
+      // ExpireDate : expireDate,
     };
 
     try {
@@ -196,8 +200,7 @@ useEffect(() => {
                 onChange={(e) => setCategory(e.target.value)}>
                 <option>Choose Category</option>
                 <option>Offers</option>
-                <option>Atta, Flours & Masala</option>
-                <option>Vegetables & Fruits Offers</option> 
+                <option>Chirstmas Offers</option>
                 <option>Grocery Offers</option> 
                 <option>Vegetables</option>
                   <option>Fruits</option>
@@ -330,7 +333,32 @@ useEffect(() => {
                 value={`${Math.round(Number(rate || 0) * (1 - (Number((discount || "0").toString().replace("%", "")) / 100)))} /-`}
                 />
             </div>
- 
+            
+            {/* Manufacturing Date Left */}
+            {/* <div className="form-group">
+              <label>Manufacture Date <span className="req_star">*</span></label>
+              <input
+                type="text"
+                className="form-control"
+                value={manufactureDate}
+                onChange={(e) => setManufactureDate(e.target.value)}
+                placeholder="Manufacture Date"
+              />
+            </div> */}
+
+
+            {/* Expire Date Left */}
+            {/* <div className="form-group">
+              <label>Expire Date <span className="req_star">*</span></label>
+              <input
+                type="text"
+                className="form-control"
+                value={expireDate}
+                onChange={(e) => setExpireDate(e.target.value)}
+                placeholder="Expire Date"
+              />  
+            </div> */}
+
             {/* Delivery In Days */}
             <div className="form-group">
               <label>Delivery In Minutes <span className="req_star">*</span></label>

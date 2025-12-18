@@ -31,6 +31,7 @@ const GroceryCartPage = () => {
   const [zoomImage, setZoomImage] = useState("");
   const [grandSummary, setGrandSummary] = useState({ items: 0, total: 0 });
   const [imageBlobMap, setImageBlobMap] = useState({}); 
+  
 // const normCat = (s) => String(s || "").toLowerCase().trim();
 // const isBlockedCategory = React.useCallback((catName) => {
 //   const c = String(catName || "").toLowerCase().trim();
@@ -97,7 +98,7 @@ function getCustomLimit(name) {
       //     n === "thums up (250ml pet bottle)"
       //   );
       // });
-
+ 
       // const MIN_ORDER_TOTAL = (hasGroceryOffers || hasThumsUp1Rs) ? 100 : 50;
      const MIN_ORDER_TOTAL = cartItems.some((it) => norm(it.category) === "grocery offers") ? 100 : 50;
   const refreshStocksOnce = React.useCallback(
