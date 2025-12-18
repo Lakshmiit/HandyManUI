@@ -293,10 +293,10 @@ useEffect(() => {
         }
       } else {
         // Existing user logic
-        if (gt > 1000 && !receivedCashbacks.has(100)) {
-          discount = 100;
-        } else if (gt > 1999 && !receivedCashbacks.has(300)) {
+        if (gt > 1999 && !receivedCashbacks.has(300)) {
           discount = 300;
+        } else if (gt > 1000 && !receivedCashbacks.has(100)) {
+          discount = 100;
         } else {
           discount = 0;
         }

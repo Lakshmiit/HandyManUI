@@ -26,11 +26,11 @@ import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-import Banner from './img/DeliveryPoster.jpeg';
+// import Banner from './img/ChristmasVideo.mp4';
 import Banner1 from './img/MilkOffers.jpeg';
 // import Banner1 from './img/ChickenOffers.jpeg';
 import Banner2 from './img/45AboveOffers.jpeg'; 
-// import BannerVideo from './img/Dusshera.mp4';
+import BannerVideo from './img/ChristmasVideo.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
 // import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 // import Banner3 from './img/banner-4.jpg';  
@@ -84,7 +84,7 @@ import setkurti from './img/3pcsset.jpeg';
 import kurti from './img/2pcsset.jpeg';
 import { CartStorage } from "./CartStorage";
 import IcecreamImg from './img/IceCreams.jpeg';
-import ChirstmasIcon from './img/Chirstmas.jpeg';
+// import ChirstmasIcon from './img/Chirstmas.jpeg';
 // import BathImg from './img/bathImg.jpeg';
 // import FlourImg from './img/FlourImg.jpeg';
 // import FaceImg from './img/FaceImg.jpeg';  
@@ -862,7 +862,7 @@ const categories = [
 ];
     
 const groceryCategories = [
-  { label: 'Chirstmas', value: 'Chirstmas Offers', image: ChirstmasIcon },
+  // { label: 'Chirstmas', value: 'Chirstmas Offers', image: ChirstmasIcon },
   { label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
   { label: 'Ice Creams', value: 'Ice Creams', image: IcecreamImg },
   { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
@@ -929,7 +929,7 @@ const ProfilePage = () => {
    const [error, setError] = useState('');
     const [products, setProducts] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
-//      const videoRef = useRef(null);
+     const videoRef = useRef(null);
 // const [isMuted] = useState(true);
 // const [isMuted, setIsMuted] = useState(true);
 const [unreadCount, setUnreadCount] = useState(0);
@@ -2277,10 +2277,10 @@ const handleGroceryCategoryClick = async (category) => {
     setError("");
     const encodedCategory = encodeURIComponent(value);
     localStorage.setItem("encodedCategory", encodedCategory);
-    if (value === "Chirstmas Offers") {
-      navigate(`/groceryChristmasOffers/${userType}/${userId}`);
-      return;
-    }
+    // if (value === "Chirstmas Offers") {
+    //   navigate(`/groceryChristmasOffers/${userType}/${userId}`);
+    //   return;
+    // }
     navigate(`/grocery/${userType}/${userId}`);
   } catch (error) {
     console.error("Error fetching products:", error);
@@ -3461,12 +3461,12 @@ const updateLocalStorageCart = (product, qty) => {
           {/* <div className="carousel-item active"
                     onClick={() => goToCategory("Grocery Offers", "groceryOffers")}
                       style={{ cursor: "pointer" }} > */}
-                <img 
+                {/* <img 
                   src={Banner}
                   className="d-block w-100 img-fluid rounded"
                   style={{ width: '50%', height: 'auto', objectFit: 'contain', marginBottom: "5px" }}
                   alt="Poster"
-                />
+                /> */}
               {/* </div>  */}
       {/* Carousel className="mx-auto"*/}
                <div className="container">
@@ -3475,7 +3475,9 @@ const updateLocalStorageCart = (product, qty) => {
                 id="productCarousel"
                 className="carousel slide mb-4 rounded"
                 data-bs-ride="carousel"
-                data-bs-interval="1500"
+                data-bs-interval="3000"
+                data-bs-pause="false"
+                data-bs-touch="true"
               >
                 {/* Indicators */}
                 <div className="carousel-indicators">
@@ -3493,12 +3495,12 @@ const updateLocalStorageCart = (product, qty) => {
                       data-bs-slide-to="1"
                       aria-label="Slide 1"
                     ></button>
-                    {/* <button
+                    <button
                     type="button"
                     data-bs-target="#productCarousel"
                     data-bs-slide-to="2"
                     aria-label="Slide 3" 
-                  ></button> */}
+                  ></button>
                    {/* <button
                     type="button"
                     data-bs-target="#productCarousel"
@@ -3507,19 +3509,28 @@ const updateLocalStorageCart = (product, qty) => {
                   ></button> */}
                 </div>
                 {/* Carousel items */}
-                {/* <div className="carousel-inner">
+                <div className="carousel-inner">
                   <div className="carousel-item active">
                     <video
                       ref={videoRef}
                       className="d-block w-100 rounded"
                       style={{ width: '90%', height: 'auto', objectFit: 'cover' }}
                       autoPlay
-                      loop
+                      // loop
                       playsInline
-                      muted={isMuted}
+                      muted
+                       onEnded={() => {
+                          const carousel = document.querySelector('#productCarousel');
+                          if (carousel) {
+                            const bsCarousel = window.bootstrap.Carousel.getOrCreateInstance(carousel);
+                            bsCarousel.next();
+                          }
+                        }}
+                      onClick={() => navigate(`/groceryChristmasOffers/${userType}/${userId}`)}
+                      // muted={isMuted}
                     >
                       <source src={BannerVideo} type="video/mp4" />
-                    </video> */}
+                    </video>
                     {/* <button
                       onClick={toggleMute}
                       style={{
@@ -3537,9 +3548,9 @@ const updateLocalStorageCart = (product, qty) => {
                     >
                       {isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
                     </button> */}
-                {/* </div> */}
-                <div className="carousel-inner">
-                 <div className="carousel-item active"
+                </div>
+                {/* <div className="carousel-inner"> */}
+                 <div className="carousel-item"
                     onClick={() => goToCategory("Grocery Offers", "groceryOffers")}
                       style={{ cursor: "pointer" }} >
                 <img 
