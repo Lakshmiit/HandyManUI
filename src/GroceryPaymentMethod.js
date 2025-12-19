@@ -252,77 +252,144 @@ const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;
 //     };
 // }, [mobile, grandTotal]);
 
+// useEffect(() => {
+//   let cancelled = false;
+//   (async () => {
+//     try {
+//       const prevOrders = await CheckFirstOrder(mobile);
+//       if (cancelled) return;
+//       const newUser = prevOrders === null;
+//       setIsNewUser(newUser);
+//       const receivedCashbacks = new Set();
+//         if (Array.isArray(prevOrders)) {
+//           prevOrders.forEach((order) => {
+//             try {
+//               const sumTotalAmount = (order.categories ?? []).reduce(
+//                 (s, c) => s + Number(c?.totalAmount ?? 0),
+//                 0
+//               );
+//               const gt = Number(order.grandTotal ?? 0);
+//               const diff = Math.round(sumTotalAmount) - Math.round(gt);
+//               if ([50, 100, 300].includes(diff)) {
+//                 receivedCashbacks.add(diff);
+//               }
+//             } catch (e) {}
+//           });
+//         }
+//       const gt = Number(grandTotal) || 0;
+//       let discount = 0;
+//       let msg = "";
+//       if (newUser) {
+//         if (gt > 1999 && !receivedCashbacks.has(300)) {
+//           discount = 300;
+//         } else if (gt > 1000 && !receivedCashbacks.has(100)) {
+//           discount = 100;
+//         } else if (gt > 150 && !receivedCashbacks.has(50)) {
+//           discount = 50;
+//         } else {
+//           discount = 0;
+//           msg = "Order ₹150 or more to get ₹50 cashback on your first order!";
+//         }
+//       } else {
+//         // Existing user logic
+//         if (gt > 1999 && !receivedCashbacks.has(300)) {
+//           discount = 300;
+//         } else if (gt > 1000 && !receivedCashbacks.has(100)) {
+//           discount = 100;
+//         } else {
+//           discount = 0;
+//         }
+//       }
+
+//     setFirstOrderDiscount(discount);
+//     setCashbackMessage(msg);
+//       console.log("CheckFirstOrder -> newUser:", newUser, "receivedCashbacks:", receivedCashbacks, "discount:", discount);
+//     } catch (e) {
+//       console.error("Failed while checking first order:", e);
+//       if (!cancelled) {
+//         setIsNewUser(false);
+//         setFirstOrderDiscount(0);
+//         setCashbackMessage("");
+//       }
+//     }    
+//   })();
+//   return () => {
+//     cancelled = true;
+//   };
+// }, [mobile, grandTotal]);
+
 useEffect(() => {
   let cancelled = false;
   (async () => {
     try {
       const prevOrders = await CheckFirstOrder(mobile);
       if (cancelled) return;
-      const newUser = prevOrders === null;
-      setIsNewUser(newUser);
-      const receivedCashbacks = new Set();
-        if (Array.isArray(prevOrders)) {
-          prevOrders.forEach((order) => {
-            try {
-              const sumTotalAmount = (order.categories ?? []).reduce(
-                (s, c) => s + Number(c?.totalAmount ?? 0),
-                0
-              );
-              const gt = Number(order.grandTotal ?? 0);
-              const diff = Math.round(sumTotalAmount) - Math.round(gt);
-
-              if ([50, 150, 300].includes(diff)) {
-                receivedCashbacks.add(diff);
-              }
-            } catch (e) {}
-          });
-        }
-      const gt = Number(grandTotal) || 0;
+      const isNew = prevOrders === null;
+      setIsNewUser(isNew);
+      const usedCashbacks = new Set();
+      if (Array.isArray(prevOrders)) {
+        prevOrders.forEach((order) => {
+          const categoryTotal = (order.categories ?? []).reduce(
+            (sum, c) => sum + Number(c?.totalAmount ?? 0),
+            0
+          );
+          const paid = Number(order.grandTotal ?? 0);
+          const diff = Math.round(categoryTotal - paid);
+          if (diff === 50) {
+            usedCashbacks.add(50);
+          }
+          if (diff === 100) {
+            usedCashbacks.add(100);
+            usedCashbacks.add(50);
+          }
+          if (diff === 300) {
+            usedCashbacks.add(300);
+            usedCashbacks.add(50); 
+          }  
+        });
+      }
+      const currentGT = Number(grandTotal) || 0;
       let discount = 0;
       let msg = "";
-      if (newUser) {
-        if (gt > 1999 && !receivedCashbacks.has(300)) {
-          discount = 300;
-        } else if (gt > 1000 && !receivedCashbacks.has(100)) {
-          discount = 100;
-        } else if (gt >= 150 && !receivedCashbacks.has(50)) {
-          discount = 50;
-        } else {
-          discount = 0;
+      if (currentGT >= 2000 && !usedCashbacks.has(300)) {
+        discount = 300;
+      } else if (currentGT >= 1000 && !usedCashbacks.has(100)) {
+        discount = 100;
+      } else if (currentGT >= 150 && !usedCashbacks.has(50)) {
+        discount = 50;
+      } else {
+        discount = 0; 
+        if (isNew) {
           msg = "Order ₹150 or more to get ₹50 cashback on your first order!";
         }
-      } else {
-        // Existing user logic
-        if (gt > 1999 && !receivedCashbacks.has(300)) {
-          discount = 300;
-        } else if (gt > 1000 && !receivedCashbacks.has(100)) {
-          discount = 100;
-        } else {
-          discount = 0;
-        }
       }
+      setFirstOrderDiscount(discount);
+      setCashbackMessage(msg);
+      console.log("✅ Cashback FINAL CHECK:", {
+        usedCashbacks: [...usedCashbacks],
+        applied: discount,
+        currentGT,
+      });
 
-    setFirstOrderDiscount(discount);
-    setCashbackMessage(msg);
-      console.log("CheckFirstOrder -> newUser:", newUser, "receivedCashbacks:", receivedCashbacks, "discount:", discount);
-    } catch (e) {
-      console.error("Failed while checking first order:", e);
+    } catch (err) {
+      console.error("Cashback check failed:", err);
       if (!cancelled) {
-        setIsNewUser(false);
         setFirstOrderDiscount(0);
         setCashbackMessage("");
       }
     }
   })();
+
   return () => {
     cancelled = true;
   };
 }, [mobile, grandTotal]);
 
+
 const getReferralRecord = async (userId) => {
   if (!userId) return null;
   const url = `https://handymanapiv2.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
-  const res = await fetch(url);
+  const res = await fetch(url);     
   const text = await res.text();
   let data = []; 
   try { data = text ? JSON.parse(text) : []; } catch { data = []; }

@@ -84,7 +84,6 @@ import setkurti from './img/3pcsset.jpeg';
 import kurti from './img/2pcsset.jpeg';
 import { CartStorage } from "./CartStorage";
 import IcecreamImg from './img/IceCreams.jpeg';
-// import ChirstmasIcon from './img/Chirstmas.jpeg';
 // import BathImg from './img/bathImg.jpeg';
 // import FlourImg from './img/FlourImg.jpeg';
 // import FaceImg from './img/FaceImg.jpeg';  
@@ -1002,6 +1001,37 @@ const [zoomProduct, setZoomProduct] = useState(null);
 const displayProducts =
   searchQuery.trim().length > 0 ? filteredProducts : products;
   const [imageLoading, setImageLoading] = useState(true);
+  const [placeholderIndex, setPlaceholderIndex] = useState(0);
+const placeholderSuggestions = [
+  'Search "Plum Cake"',
+  'Search "Christmas Tree"',
+  'Search "Milk"',
+  'Search "Freedom Refined Sunflower Oil"',
+  'Search "Sona Masoori Rice"',
+  'Search "Paneer"',
+  'Search "Red Label"',
+  'Search "Bru"',
+  'Search "Aashirvaad"',
+  'Search "Surf Excel"',
+  'Search "Toothpaste"',
+  'Search "Lizol"',
+  'Search "Maggi"',
+  'Search "Horlicks"',
+  'Search "Eggs"',
+  'Search "Chocolate"',
+  'Search "Butter"',
+  'Search "Bread"',
+  'Search "Chicken"',
+  'Search "Shampoo"',
+  'Search "Soap"',
+];
+
+useEffect(() => {
+  const interval = setInterval(() => {
+    setPlaceholderIndex((prev) => (prev + 1) % placeholderSuggestions.length);
+  }, 1500); 
+  return () => clearInterval(interval);
+}, [placeholderSuggestions.length]);
 
 useEffect(() => {
   console.log( imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery,error, unreadCount, showMenu, products, selectedCategory, dress);
@@ -3055,18 +3085,19 @@ const updateLocalStorageCart = (product, qty) => {
       <div style={{ position: "relative", marginBottom: "12px" }}>
         <input
           className="form-control ps-5 pe-5"
-          placeholder="Search or speak product name"
+          placeholder={placeholderSuggestions[placeholderIndex]}
+          style={{border: "2px solid #000", borderRadius: "6px"}}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-
+  
         <SearchIcon
-          style={{
+          style={{ 
             position: "absolute",
             left: "12px",
             top: "50%",
             transform: "translateY(-50%)",
-            color: "#777",
+            color: "#000",
           }}
         />
 
@@ -3079,8 +3110,8 @@ const updateLocalStorageCart = (product, qty) => {
       right: "10px",
       top: "50%",
       transform: "translateY(-50%)",
-      width: "30px",
-      height: "30px",
+      width: "40px",
+      height: "40px",
       borderRadius: "50%",
       border: listening
         ? "2px solid red"
@@ -3095,10 +3126,10 @@ const updateLocalStorageCart = (product, qty) => {
   >
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      height="18"
+      height="22"
       viewBox="0 0 24 24"
-      width="18"
-      fill={listening ? "red" : "#555"}
+      width="22"
+      fill={listening ? "red" : "#000"}
     >
       <path d="M12 14a2 2 0 0 0 2-2V6a2 2 0 1 0-4 0v6a2 2 0 0 0 2 2zm5-2a5 5 0 0 1-10 0H5a7 7 0 0 0 14 0h-2zm-5 9c-1.1 0-2-.9-2-2h4a2 2 0 0 1-2 2z" />
     </svg>
@@ -3519,22 +3550,30 @@ const updateLocalStorageCart = (product, qty) => {
                       // loop
                       playsInline
                       muted
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();  
+                        const encodedCategory = encodeURIComponent("Christmas Offers");
+                        localStorage.setItem("encodedCategory", encodedCategory);
+                        navigate(`/groceryChristmasOffers/${userType}/${userId}`, {
+                          state: { encodedCategory },
+                        });
+                      }}
                        onEnded={() => {
                           const carousel = document.querySelector('#productCarousel');
                           if (carousel) {
                             const bsCarousel = window.bootstrap.Carousel.getOrCreateInstance(carousel);
                             bsCarousel.next();
                           }
-                        }}
-                      onClick={() => navigate(`/groceryChristmasOffers/${userType}/${userId}`)}
-                      // muted={isMuted}
+                        }}                     
+                           // muted={isMuted}
                     >
                       <source src={BannerVideo} type="video/mp4" />
                     </video>
                     {/* <button
                       onClick={toggleMute}
                       style={{
-                        position: 'absolute',
+                        position: 'absolute',    
                         bottom: '20px',
                         right: '20px' ,
                         background: 'rgba(0,0,0,0.5)',

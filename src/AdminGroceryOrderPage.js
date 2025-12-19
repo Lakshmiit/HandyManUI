@@ -394,7 +394,7 @@ useEffect(() => {
       // if (cashback === 50 || cashback === 100) 
         
       if ((cashback >= 49 && cashback <= 51) ||
-    (cashback >= 99 && cashback <= 101) || (cashback >= 249 && cashback <= 251))
+    (cashback >= 99 && cashback <= 101) || (cashback >= 299 && cashback <= 301))
         {
         setCashbackAmount(cashback); 
       } else {

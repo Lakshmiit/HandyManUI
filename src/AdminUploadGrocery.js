@@ -200,7 +200,7 @@ useEffect(() => {
                 onChange={(e) => setCategory(e.target.value)}>
                 <option>Choose Category</option>
                 <option>Offers</option>
-                <option>Chirstmas Offers</option>
+                <option>Christmas Offers</option>
                 <option>Grocery Offers</option> 
                 <option>Vegetables</option>
                   <option>Fruits</option>
