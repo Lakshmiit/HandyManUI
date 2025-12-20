@@ -984,9 +984,9 @@ const [deliveryPartnerUserId, setDeliveryPartnerUserId] = useState('');
 const [totalItemsSelected, setTotalItemsSelected] = useState('');
 const [transactionNumber, setTransactionNumber] = useState('');
 const [city, setCity] = useState('');
-const HEADER_H = 0;          
-const MOBILE_ICONS_H = 0; 
-const MOBILE_EXTRA =0;     
+const HEADER_H = 40;          
+const MOBILE_ICONS_H = 40; 
+const MOBILE_EXTRA =40;     
 const MOBILE_PADDING_TOP = HEADER_H + MOBILE_ICONS_H + MOBILE_EXTRA;
 const [cartImages, setCartImages] = useState({});
 const [showCashbackModal, setShowCashbackModal] = useState(false);
@@ -3494,16 +3494,16 @@ const updateLocalStorageCart = (product, qty) => {
         <div className="col-md-9">
           {/* <div className="carousel-item active"
                     onClick={() => goToCategory("Grocery Offers", "groceryOffers")}
-                      style={{ cursor: "pointer" }} > */}
-                {/* <img 
-                  src={Banner}
+                      style={{ cursor: "pointer" }} >
+                <img 
+                  src={Banner2}
                   className="d-block w-100 img-fluid rounded"
-                  style={{ width: '50%', height: 'auto', objectFit: 'contain', marginBottom: "5px" }}
+                  style={{ width: '50%', height: 'auto', objectFit: 'contain', marginBottom: "200px" }}
                   alt="Poster"
-                /> */}
-              {/* </div>  */}
+                />
+              </div>  */}
       {/* Carousel className="mx-auto"*/}
-               <div className="container">
+               {/* <div className="container">
                 <div>
               <div
                 id="productCarousel"
@@ -3512,9 +3512,9 @@ const updateLocalStorageCart = (product, qty) => {
                 data-bs-interval="3000"
                 data-bs-pause="false"
                 data-bs-touch="true"
-              >
+              > */}
                 {/* Indicators */}
-                <div className="carousel-indicators">
+                {/* <div className="carousel-indicators">
                     <button
                       type="button"
                       data-bs-target="#productCarousel"
@@ -3540,18 +3540,18 @@ const updateLocalStorageCart = (product, qty) => {
                     data-bs-target="#productCarousel"
                     data-bs-slide-to="3"
                     aria-label="Slide 1" 
-                  ></button>
+                  ></button> */}
                    {/* <button
                     type="button"
                     data-bs-target="#productCarousel"
                     data-bs-slide-to="3"
                     aria-label="Slide 4" 
                   ></button> */}
-                </div>
+                {/* </div> */}
                 {/* Carousel items */}
-                <div className="carousel-inner">
                 {/* <div className="carousel-inner"> */}
-                 <div className="carousel-item active"
+                {/* <div className="carousel-inner"> */}
+                 {/* <div className="carousel-item active"
                     onClick={() => goToCategory("Chicken Offers", "groceryOffers")}
                       style={{ cursor: "pointer" }} >
                 <img 
@@ -3560,8 +3560,8 @@ const updateLocalStorageCart = (product, qty) => {
                   style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
                   alt="Slide 1"
                 />
-              </div> 
-                 <div className="carousel-item"> 
+              </div>  */}
+                 {/* <div className="carousel-item"> 
                 <div
                     onClick={() => goToCategory("Grocery Offers", "groceryOffers")}
                       style={{ cursor: "pointer" }} >  
@@ -3572,8 +3572,8 @@ const updateLocalStorageCart = (product, qty) => {
                     alt="Slide 2"
                   />
                   </div>   
-                </div> 
-                 <div className="carousel-item ">
+                </div>  */}
+                 {/* <div className="carousel-item ">
                     <video
                       ref={videoRef}
                       className="d-block w-100 rounded"
@@ -3601,7 +3601,7 @@ const updateLocalStorageCart = (product, qty) => {
                            // muted={isMuted}
                     >
                       <source src={BannerVideo} type="video/mp4" />
-                    </video>
+                    </video> */}
                     {/* <button
                       onClick={toggleMute}
                       style={{
@@ -3619,7 +3619,7 @@ const updateLocalStorageCart = (product, qty) => {
                     >
                       {isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
                     </button> */}
-                </div>
+                {/* </div>
                  <div className="carousel-item">
                   <img
                     src={Banner3}
@@ -3628,9 +3628,9 @@ const updateLocalStorageCart = (product, qty) => {
                     alt="Slide 3"
                   />
                 </div> 
-              </div>
+              </div> */}
                 {/* Controls */}
-                 <button
+                 {/* <button
                   className="carousel-control-prev"
                   type="button"
                   data-bs-target="#productCarousel"
@@ -3648,7 +3648,119 @@ const updateLocalStorageCart = (product, qty) => {
                 </button> 
               </div>
               </div>  
-              </div> 
+              </div>  */}
+              {/* Top Carousel Section */}
+<div className="container">
+  <div>
+    {/* PRODUCT CAROUSEL */}
+    <div
+      id="productCarousel"
+      className="carousel slide mb-4 rounded"
+      data-bs-ride="carousel"
+      data-bs-interval="3000"
+      data-bs-pause="false"
+      data-bs-touch="true"
+    >
+      {/* Indicators */}
+      <div className="carousel-indicators">
+        <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="0" className="active" aria-current="true"></button>
+        <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="1"></button>
+        <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="2"></button>
+        {/* <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="3"></button> */}
+      </div>
+      {/* Carousel Items */}
+      <div className="carousel-inner">
+        {/* Slide 1 */}
+        <div 
+          className="carousel-item active"
+          onClick={() => goToCategory("Chicken Offers", "groceryOffers")}
+          style={{ cursor: "pointer" }}
+        >
+          <img 
+            src={Banner1}
+            className="d-block w-100 img-fluid rounded"
+            style={{ objectFit: "contain" }}
+            alt="Slide 1"
+          />
+        </div>
+        {/* Slide 2 - Video */}
+        <div className="carousel-item">
+          <video
+            ref={videoRef}
+            className="d-block w-100 rounded"
+            style={{ objectFit: "cover" }}
+            autoPlay
+            playsInline
+            muted
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              const encodedCategory = encodeURIComponent("Christmas Offers");
+              localStorage.setItem("encodedCategory", encodedCategory);
+              navigate(`/groceryChristmasOffers/${userType}/${userId}`, {
+                state: { encodedCategory },
+              });
+            }}
+            onEnded={() => {
+              const carousel = document.querySelector("#productCarousel");
+              if (carousel) {
+                const bsCarousel = window.bootstrap.Carousel.getOrCreateInstance(carousel);
+                bsCarousel.next();
+              }
+            }}
+          >
+            <source src={BannerVideo} type="video/mp4" />
+          </video>
+        </div>
+
+        {/* Slide 3 */}
+        <div className="carousel-item">
+          <img
+            src={Banner3}
+            className="d-block w-100 img-fluid rounded"
+            style={{ objectFit: "contain" }}
+            alt="Slide 3"
+          />
+        </div>
+      </div>
+      {/* Controls */}
+      <button
+        className="carousel-control-prev"
+        type="button"
+        data-bs-target="#productCarousel"
+        data-bs-slide="prev"
+      >
+        <span className="carousel-control-prev-icon custom-carousel-icon"></span>
+        <span className="visually-hidden">Previous</span>
+      </button>
+      <button
+        className="carousel-control-next"
+        type="button"
+        data-bs-target="#productCarousel"
+        data-bs-slide="next"
+      >
+        <span className="carousel-control-next-icon custom-carousel-icon"></span>
+        <span className="visually-hidden">Next</span>
+      </button>
+
+    </div>  
+  </div>
+</div>
+
+{/* NOW Banner2 is placed BELOW carousel */}
+<div
+  className="carousel-item active"
+  onClick={() => goToCategory("Grocery Offers", "groceryOffers")}
+  style={{ cursor: "pointer", marginTop: "1px" }}
+>
+  <img
+    src={Banner2}
+    className="d-block w-100 img-fluid rounded"
+    style={{ objectFit: "contain" }}
+    alt="Poster"
+  />
+</div>
+
 
               {/* <div className="d-flex flex-column align-items-center gap-3 mb-3">
               // {/* Refer & Earn Strip 

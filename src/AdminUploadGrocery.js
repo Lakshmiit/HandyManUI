@@ -221,11 +221,11 @@ useEffect(() => {
                 required
                 onChange={(e) => setCategory(e.target.value)}>
                 <option>Choose Category</option>
-                <option>Chicken Offers</option>
                 <option>Offers</option>
                 <option>DWCRA</option>
                 <option>Christmas Offers</option>
-                <option>Grocery Offers</option> 
+                <option>Grocery Offers</option>
+                <option>Chicken Offers</option>
                 <option>Vegetables</option>
                   <option>Fruits</option>
                   <option>Rice & Ravva</option>
