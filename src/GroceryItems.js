@@ -81,9 +81,7 @@ useEffect(() => {
     units: product?.units || "",
   };
 });
-
   CartStorage.upsertCategory(selectedCategory, current);
-
   setGrandSummary(CartStorage.grandSummary());
 }, [cart, selectedCategory, products]);
 
@@ -128,7 +126,7 @@ const toggleLike = (productId) => {
 // const handleAddClick = (id) => {
 //     handleAdd(id);
 //     setChecked(true);
-//   };        
+//   };          
 
 const getQty = (id) => Number(cart?.[id] || 0);
 
@@ -465,6 +463,19 @@ function getItemTime(p) {
                         style={{ pointerEvents: 'none' }}
                       />
                     </div>
+                   {selectedCategory === "DWCRA" && (
+                    <div
+                      className="mt-1 text-center"
+                      style={{
+                        fontSize: "14px",
+                        fontWeight: "600",
+                        color: "green",
+                        letterSpacing: "1px",
+                      }}
+                    >
+                      DWCRA MANUFACTURING PRODUCTS
+                    </div>
+                  )}
 
           {selectedCategory && (
             <>
@@ -751,7 +762,6 @@ function getItemTime(p) {
 
   const allCategories = readAllCategories();
 
-  // Single pass tally (more robust than nested reduce)
   const summary = allCategories.reduce(
     (acc, cat) => {
       for (const p of cat.products) {

@@ -39,7 +39,7 @@ const LIMIT_RULES = [
   { match: norm("Ivy Gourd (Dondakaya) 250 g"), limit: 2 },
   { match: norm("Potato (Bangala Dumpa) 500 g"), limit: 2 },
   { match: norm("Raw Banana (Aratikaya) 1 Pc"), limit: 2 },
-  { match: norm("Freedom Refined Sunflower Oil 1 L"), limit: 2 },
+  { match: norm("Freedom Refined Sunflower Oil 1 L"), limit: 1 },
   { match: norm("Gold Drop Refined Sunflower Oil 1 L"), limit: 2 },
   { match: norm("Independence Refined Sunflower Oil 1 L"), limit: 2 },
   { match: norm("Freedom Refined Sunflower Oil 5 L"), limit: 1 },

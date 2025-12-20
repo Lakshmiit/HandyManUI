@@ -53,7 +53,8 @@ function getCustomLimit(name) {
     n === "visakha dairy milk 200 ml" || n === "visakha dairy good milk 180 ml" || n === "lemon (nimakaya) (3pcs)" ||     n === "freedom refined sunflower oil 5 l" ||
     n === "gold drop refined sunflower oil can 5 l" ||
     n === "aashirvaad high fibre atta with multigrains 5 kg" ||
-    n === "aashirvaad superior whole wheat atta 5 kg"
+    n === "aashirvaad superior whole wheat atta 5 kg" || 
+    n === "freedom refined sunflower oil 1 l"
   ) return 1;
   if (
     // n === "apple 1 pc" ||
@@ -62,8 +63,7 @@ function getCustomLimit(name) {
     n === "ivy gourd (dondakaya) 250 g" ||
     n === "green chilli (pachchi mirchi) 100 g" || 
     n === "tomato 250 g" ||
-    n === "raw banana 1 pc" || 
-    n === "freedom refined sunflower oil 1 l" || 
+    n === "raw banana 1 pc"  || 
     n === "gold drop refined sunflower oil 1 l" ||
     n === "independence refined sunflower oil 1 l" ||
     n === "aashirvaad superior whole wheat mp atta 1 kg"

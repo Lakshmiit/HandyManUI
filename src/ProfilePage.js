@@ -27,8 +27,8 @@ import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 // import Banner from './img/ChristmasVideo.mp4';
-import Banner1 from './img/MilkOffers.jpeg';
-// import Banner1 from './img/ChickenOffers.jpeg';
+// import Banner1 from './img/MilkOffers.jpeg';   
+import Banner1 from './img/ChickenOffers.jpeg';
 import Banner2 from './img/45AboveOffers.jpeg'; 
 import BannerVideo from './img/ChristmasVideo.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
@@ -79,11 +79,13 @@ import TeaImg from './img/teacoffee.jpeg';
 import NamkeenImg from './img/InstantFoodImg.jpeg';
 import HouseHoldImg from './img/HouseHold.jpeg';   
 import ChickenImg from './img/Chicken.jpeg';
+import StationaryImg from './img/Stationary.jpeg';
 import KidsImg from './img/KidsZone.jpeg';
 import setkurti from './img/3pcsset.jpeg';
 import kurti from './img/2pcsset.jpeg';
 import { CartStorage } from "./CartStorage";
 import IcecreamImg from './img/IceCreams.jpeg';
+import DwakraProducts from './img/DwakraLogo.jpeg';
 // import BathImg from './img/bathImg.jpeg';
 // import FlourImg from './img/FlourImg.jpeg';
 // import FaceImg from './img/FaceImg.jpeg';  
@@ -861,12 +863,14 @@ const categories = [
 ];
     
 const groceryCategories = [
-  // { label: 'Chirstmas', value: 'Chirstmas Offers', image: ChirstmasIcon },
+  { label: 'DWCRA Products', value: 'DWCRA', image: DwakraProducts },
   { label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
+  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
   { label: 'Ice Creams', value: 'Ice Creams', image: IcecreamImg },
   { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
   { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
   { label: 'Rice & Ravva', value: 'Rice & Ravva', image: RavvaImg },
+  { label: 'Stationary', value: 'Stationary', image: StationaryImg },
   { label: 'Atta & Flours', value: 'Atta & Flours', image: AttaImg },
   { label: 'Oils & Dals', value: 'Oils & Dals', image: OilsImg },
   { label: 'Sugar, Salt & Jaggery', value: 'Sugar, Salt & Jaggery', image: SugarImg },
@@ -888,7 +892,6 @@ const groceryCategories = [
   { label: 'Kids Zone', value: 'Kids Zone', image: KidsImg },
   { label: 'Health Care', value: 'Health Care', image: HealthImg },
   { label: 'Kitchenware Appliances', value: 'Kitchenware Appliances', image: KitchenImg },
-  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
 ];
 
 const collectionsCategories = [
@@ -1010,7 +1013,7 @@ const placeholderSuggestions = [
   'Search "Sona Masoori Rice"',
   'Search "Paneer"',
   'Search "Red Label"',
-  'Search "Bru"',
+  'Search "Coffee"',
   'Search "Aashirvaad"',
   'Search "Surf Excel"',
   'Search "Toothpaste"',
@@ -1947,7 +1950,7 @@ useEffect(() => {
       const text = (rawText || "").trim().toLowerCase();
       if (text.includes("firstorder can not be found")) {
         console.log("Match found -> opening cashback modal");
-         setShowCashbackModal(true);
+        //  setShowCashbackModal(true);
        } else {
         console.log("No match in response text, not showing modal");
       }
@@ -2020,7 +2023,7 @@ useEffect(() => {
       const cashback = totalAmountFromApi - grandTotalNumeric;
 
       // if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101))
-      if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101) || (cashback >= 299 && cashback <= 301))
+      if ((cashback >= 99 && cashback <= 101) || (cashback >= 299 && cashback <= 301))
       // if ((cashback >= 99 && cashback <= 101))
       {
         setCashbackAmount(cashback); 
@@ -2397,7 +2400,7 @@ const handleDressCategoryClick = async (category) => {
   const grandTotalNumeric = Number(ticket.grandTotal) || 0;
   const cashback = totalAmountFromApi - grandTotalNumeric;
   // if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101)) {
-  if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101) || (cashback >= 299 && cashback <= 301)) {
+  if ((cashback >= 99 && cashback <= 101) || (cashback >= 299 && cashback <= 301)) {
     return cashback;
   }
   return 0;

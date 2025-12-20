@@ -33,6 +33,8 @@ const [stockLeft, setStockLeft] = useState('');
 const [date, setDate] = useState('');
 const [code, setCode] = useState('');
 const [units, setUnits] = useState('');
+const [manufactureDate,setManufactureDate] =useState('');
+const [expireDate,setExpireDate]=useState('');
 // const [gst, setGST] = useState('');
 useEffect(() => {
     console.log(grocery);
@@ -63,6 +65,8 @@ useEffect(() => {
                   setDate(groceryData.date);
                   setCode(groceryData.code);
                   setUnits(groceryData.units);
+                  setManufactureDate(groceryData.manufactureDate);
+                  setExpireDate(groceryData.expireDate);
                 } catch (error) {
                   setError(error.message);
               } finally {
@@ -185,7 +189,9 @@ const handleRemoveFile = (index) => {
         Status: groceryStatus,
         code: code,
         units: units,
-        RequestedBy: "Admin"
+        RequestedBy: "Admin",
+        manufactureDate: manufactureDate,
+        expireDate: expireDate,
     };
     try {
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${uniqueId}`, {
@@ -409,6 +415,28 @@ if (error) {
                 value={`${Math.round(Number(rate || 0) * (1 - (Number((discount || "0").toString().replace("%", "")) / 100)))} /-`}
                 onChange={(e) => setDiscount(e.target.value)}
                 placeholder="If any Discount Enter Percentage"
+              />
+            </div>
+
+               <div className="form-group">
+              <label>Manufacture Date <span className="req_star">*</span></label>
+              <input
+                type="text"
+                className="form-control" 
+                value={manufactureDate}
+                onChange={(e) => setManufactureDate(e.target.value)}
+                placeholder="Manufacture Date"
+              />
+            </div>
+
+             <div className="form-group">
+              <label>Expiry Date <span className="req_star">*</span></label>
+              <input
+                type="text"
+                className="form-control" 
+                value={expireDate}
+                onChange={(e) => setExpireDate(e.target.value)}
+                placeholder="Expiry Date"
               />
             </div>
 

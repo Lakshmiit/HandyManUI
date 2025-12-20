@@ -26,8 +26,8 @@ const AdminUploadGrocery = () => {
   const [stockLeft, setStockLeft] = useState('');
   const [code, setCode] = useState('');
   const [units, setUnits] = useState('');
-  // const [manufactureDate,setManufactureDate] =useState('');
-  // const [expireDate,setExpireDate]=useState('');
+  const [manufactureDate,setManufactureDate] =useState('');
+  const [expireDate,setExpireDate]=useState('');
   const handleFileChange = (event) => {
     const selectedFiles = Array.from(event.target.files);
     if (selectedFiles.length + groceryPhotos.length > 1) {
@@ -105,9 +105,29 @@ useEffect(() => {
     }
   };
 
+  const validateForm = () => {
+  if (!groceryName.trim()) return "Product Name is required";
+  if (!category || category === "Choose Category") return "Category is required";
+  if (!units.trim()) return "Units are required";
+  if (!code.trim()) return "Code is required";
+  if (!rate || isNaN(rate)) return "Valid Rate is required";
+  if (discount === "" || isNaN(discount)) return "Valid Discount is required";
+  if (!deliveryInDays.trim()) return "Delivery In Minutes is required";
+  if (!stockLeft.trim()) return "Stock Left is required";
+
+  if (uploadedFiles.length === 0) {
+    return "Please upload product photo";
+  }
+  return null; 
+};
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-   
+      const errorMessage = validateForm();
+      if (errorMessage) {
+        alert(errorMessage);
+        return;
+      }
     const payload = {
       id: "unique-id",   
       date: "string",
@@ -124,8 +144,8 @@ useEffect(() => {
       requestedBy: "Admin",
       Code: code,
       Units: units,
-      // ManufactureDate: manufactureDate,
-      // ExpireDate : expireDate,
+      ManufactureDate: manufactureDate,
+      ExpireDate : expireDate,
     };
 
     try {
@@ -187,6 +207,7 @@ useEffect(() => {
                 type="text"
                 className="form-control"
                 value={groceryName}
+                required
                 onChange={(e) => setGroceryName(e.target.value)}
                 placeholder="Enter Product Name"
               />
@@ -197,9 +218,11 @@ useEffect(() => {
               <select
                 className="form-control"
                 value={category}
+                required
                 onChange={(e) => setCategory(e.target.value)}>
                 <option>Choose Category</option>
                 <option>Offers</option>
+                <option>DWCRA</option>
                 <option>Christmas Offers</option>
                 <option>Grocery Offers</option> 
                 <option>Vegetables</option>
@@ -242,6 +265,7 @@ useEffect(() => {
                 type="text"
                 className="form-control"
                 value={units}
+                required
                 onChange={(e) => setUnits(e.target.value)}
                 placeholder="Enter Units"
               />
@@ -253,6 +277,7 @@ useEffect(() => {
               <input
                 type="text"
                 className="form-control"
+                required
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 placeholder="Enter Code"
@@ -295,6 +320,7 @@ useEffect(() => {
                 type="text"
                 className="form-control"
                 value={rate}
+                required
                 onChange={(e) => setRate(e.target.value)}
                 placeholder="Enter Product Rate"
               />
@@ -307,6 +333,7 @@ useEffect(() => {
                 type="text"
                 className="form-control"
                 value={discount}
+                required
                 onChange={(e) => setDiscount(e.target.value)}
                 placeholder="If any Discount Enter Percentage"
               />
@@ -335,7 +362,7 @@ useEffect(() => {
             </div>
             
             {/* Manufacturing Date Left */}
-            {/* <div className="form-group">
+            <div className="form-group">
               <label>Manufacture Date <span className="req_star">*</span></label>
               <input
                 type="text"
@@ -344,11 +371,11 @@ useEffect(() => {
                 onChange={(e) => setManufactureDate(e.target.value)}
                 placeholder="Manufacture Date"
               />
-            </div> */}
+            </div>
 
 
             {/* Expire Date Left */}
-            {/* <div className="form-group">
+            <div className="form-group">
               <label>Expire Date <span className="req_star">*</span></label>
               <input
                 type="text"
@@ -357,7 +384,7 @@ useEffect(() => {
                 onChange={(e) => setExpireDate(e.target.value)}
                 placeholder="Expire Date"
               />  
-            </div> */}
+            </div>
 
             {/* Delivery In Days */}
             <div className="form-group">
@@ -366,6 +393,7 @@ useEffect(() => {
                 type="text"
                 className="form-control"
                 value={deliveryInDays}
+                required
                 onChange={(e) => setDeliveryInDays(e.target.value)}
                 placeholder="Delivery In Minutes"
               />
@@ -378,6 +406,7 @@ useEffect(() => {
                 type="text"
                 className="form-control"
                 value={stockLeft}
+                required
                 onChange={(e) => setStockLeft(e.target.value)}
                 placeholder="Stock Left"
               />
@@ -389,6 +418,7 @@ useEffect(() => {
       <button
         type="submit"
         className="btn btn-success w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
+        disabled={uploadedFiles.length === 0}
       >
         <UploadIcon className="me-2" />
         <span>Upload Grocery</span>
