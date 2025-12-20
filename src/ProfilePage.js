@@ -27,9 +27,9 @@ import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 // import Banner from './img/ChristmasVideo.mp4';
-// import Banner1 from './img/MilkOffers.jpeg';   
+import Banner2 from './img/MilkOffers.jpeg';   
 import Banner1 from './img/ChickenOffers.jpeg';
-import Banner2 from './img/45AboveOffers.jpeg'; 
+import Banner3 from './img/45AboveOffers.jpeg'; 
 import BannerVideo from './img/ChristmasVideo.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
 // import VolumeUpIcon from '@mui/icons-material/VolumeUp';
@@ -3535,6 +3535,12 @@ const updateLocalStorageCart = (product, qty) => {
                     data-bs-slide-to="2"
                     aria-label="Slide 3" 
                   ></button>
+                  <button
+                    type="button"
+                    data-bs-target="#productCarousel"
+                    data-bs-slide-to="3"
+                    aria-label="Slide 1" 
+                  ></button>
                    {/* <button
                     type="button"
                     data-bs-target="#productCarousel"
@@ -3544,7 +3550,30 @@ const updateLocalStorageCart = (product, qty) => {
                 </div>
                 {/* Carousel items */}
                 <div className="carousel-inner">
-                  <div className="carousel-item active">
+                {/* <div className="carousel-inner"> */}
+                 <div className="carousel-item active"
+                    onClick={() => goToCategory("Chicken Offers", "groceryOffers")}
+                      style={{ cursor: "pointer" }} >
+                <img 
+                  src={Banner1}
+                  className="d-block w-100 img-fluid rounded"
+                  style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
+                  alt="Slide 1"
+                />
+              </div> 
+                 <div className="carousel-item"> 
+                <div
+                    onClick={() => goToCategory("Grocery Offers", "groceryOffers")}
+                      style={{ cursor: "pointer" }} >  
+                  <img
+                    src={Banner2}
+                    className="d-block w-100 img-fluid rounded"
+                    style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
+                    alt="Slide 2"
+                  />
+                  </div>   
+                </div> 
+                 <div className="carousel-item ">
                     <video
                       ref={videoRef}
                       className="d-block w-100 rounded"
@@ -3591,37 +3620,14 @@ const updateLocalStorageCart = (product, qty) => {
                       {isMuted ? <VolumeOffIcon /> : <VolumeUpIcon />}
                     </button> */}
                 </div>
-                {/* <div className="carousel-inner"> */}
-                 <div className="carousel-item"
-                    onClick={() => goToCategory("Grocery Offers", "groceryOffers")}
-                      style={{ cursor: "pointer" }} >
-                <img 
-                  src={Banner1}
-                  className="d-block w-100 img-fluid rounded"
-                  style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
-                  alt="Slide 1"
-                />
-              </div> 
-                 <div className="carousel-item"> 
-                <div
-                    onClick={() => goToCategory("Offers", "groceryOffers")}
-                      style={{ cursor: "pointer" }} >  
-                  <img
-                    src={Banner2}
-                    className="d-block w-100 img-fluid rounded"
-                    style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
-                    alt="Slide 2"
-                  />
-                  </div>   
-                </div> 
-                {/* <div className="carousel-item">
+                 <div className="carousel-item">
                   <img
                     src={Banner3}
                     className="d-block w-100 img-fluid rounded"
                     style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
                     alt="Slide 3"
                   />
-                </div> */} 
+                </div> 
               </div>
                 {/* Controls */}
                  <button
