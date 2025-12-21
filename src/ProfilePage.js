@@ -28,7 +28,7 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 // import Banner from './img/ChristmasVideo.mp4';
 import Banner2 from './img/MilkOffers.jpeg';   
-import Banner1 from './img/ChickenOffers.jpeg';
+// import Banner1 from './img/ChickenOffers.jpeg';
 import Banner3 from './img/45AboveOffers.jpeg'; 
 import BannerVideo from './img/ChristmasVideo.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
@@ -865,7 +865,6 @@ const categories = [
 const groceryCategories = [
   { label: 'DWCRA Products', value: 'DWCRA', image: DwakraProducts },
   { label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
-  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
   { label: 'Ice Creams', value: 'Ice Creams', image: IcecreamImg },
   { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
   { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
@@ -892,6 +891,7 @@ const groceryCategories = [
   { label: 'Kids Zone', value: 'Kids Zone', image: KidsImg },
   { label: 'Health Care', value: 'Health Care', image: HealthImg },
   { label: 'Kitchenware Appliances', value: 'Kitchenware Appliances', image: KitchenImg },
+  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
 ];
 
 const collectionsCategories = [
@@ -984,9 +984,9 @@ const [deliveryPartnerUserId, setDeliveryPartnerUserId] = useState('');
 const [totalItemsSelected, setTotalItemsSelected] = useState('');
 const [transactionNumber, setTransactionNumber] = useState('');
 const [city, setCity] = useState('');
-const HEADER_H = 40;          
-const MOBILE_ICONS_H = 40; 
-const MOBILE_EXTRA =40;     
+const HEADER_H = 0;          
+const MOBILE_ICONS_H = 0; 
+const MOBILE_EXTRA =0;     
 const MOBILE_PADDING_TOP = HEADER_H + MOBILE_ICONS_H + MOBILE_EXTRA;
 const [cartImages, setCartImages] = useState({});
 const [showCashbackModal, setShowCashbackModal] = useState(false);
@@ -1005,6 +1005,19 @@ const displayProducts =
   searchQuery.trim().length > 0 ? filteredProducts : products;
   const [imageLoading, setImageLoading] = useState(true);
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
+  const carouselRef = useRef(null);
+  useEffect(() => {
+  if (!carouselRef.current) return;
+  const carousel = new BsCarousel(carouselRef.current, {
+    interval: 3000,
+    ride: "carousel",
+    pause: false,
+    wrap: true,
+    touch: true,
+  });
+  carousel.cycle(); 
+  return () => carousel.dispose();
+}, []);
 const placeholderSuggestions = [
   'Search "Plum Cake"',
   'Search "Christmas Tree"',
@@ -1915,13 +1928,13 @@ useEffect(() => {
   };
 }, []);
 // // cashback logic
-// useEffect(() => {
-//   if (!showCashbackModal) return; 
-//   const timer = setTimeout(() => {
-//     setShowCashbackModal(false);
-//   }, 5000);
-//   return () => clearTimeout(timer); 
-// }, [showCashbackModal]);
+useEffect(() => {
+  if (!showCashbackModal) return; 
+  const timer = setTimeout(() => {
+    setShowCashbackModal(false);
+  }, 5000);
+  return () => clearTimeout(timer); 
+}, [showCashbackModal]);
 
 useEffect(() => {
   // Cricket logic 
@@ -1950,7 +1963,7 @@ useEffect(() => {
       const text = (rawText || "").trim().toLowerCase();
       if (text.includes("firstorder can not be found")) {
         console.log("Match found -> opening cashback modal");
-        //  setShowCashbackModal(true);
+         setShowCashbackModal(true);
        } else {
         console.log("No match in response text, not showing modal");
       }
@@ -2023,7 +2036,7 @@ useEffect(() => {
       const cashback = totalAmountFromApi - grandTotalNumeric;
 
       // if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101))
-      if ((cashback >= 99 && cashback <= 101) || (cashback >= 299 && cashback <= 301))
+      if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101) || (cashback >= 299 && cashback <= 301))
       // if ((cashback >= 99 && cashback <= 101))
       {
         setCashbackAmount(cashback); 
@@ -2400,7 +2413,7 @@ const handleDressCategoryClick = async (category) => {
   const grandTotalNumeric = Number(ticket.grandTotal) || 0;
   const cashback = totalAmountFromApi - grandTotalNumeric;
   // if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101)) {
-  if ((cashback >= 99 && cashback <= 101) || (cashback >= 299 && cashback <= 301)) {
+  if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101) || (cashback >= 299 && cashback <= 301)) {
     return cashback;
   }
   return 0;
@@ -3550,7 +3563,6 @@ const updateLocalStorageCart = (product, qty) => {
                 {/* </div> */}
                 {/* Carousel items */}
                 {/* <div className="carousel-inner"> */}
-                {/* <div className="carousel-inner"> */}
                  {/* <div className="carousel-item active"
                     onClick={() => goToCategory("Chicken Offers", "groceryOffers")}
                       style={{ cursor: "pointer" }} >
@@ -3654,11 +3666,13 @@ const updateLocalStorageCart = (product, qty) => {
   <div>
     {/* PRODUCT CAROUSEL */}
     <div
+     ref={carouselRef}
       id="productCarousel"
-      className="carousel slide mb-4 rounded"
+      className="carousel slide mb-2 rounded"
       data-bs-ride="carousel"
       data-bs-interval="3000"
       data-bs-pause="false"
+      data-bs-wrap="true"
       data-bs-touch="true"
     >
       {/* Indicators */}
@@ -3671,7 +3685,19 @@ const updateLocalStorageCart = (product, qty) => {
       {/* Carousel Items */}
       <div className="carousel-inner">
         {/* Slide 1 */}
-        <div 
+        <div
+        className="carousel-item active"
+        onClick={() => goToCategory("Grocery Offers", "groceryOffers")}
+        style={{ cursor: "pointer"}}
+      >
+        <img
+          src={Banner2}
+          className="d-block w-100 img-fluid rounded"
+          style={{ objectFit: "contain" }}
+          alt="Slide 1"
+        />
+      </div>
+        {/* <div 
           className="carousel-item active"
           onClick={() => goToCategory("Chicken Offers", "groceryOffers")}
           style={{ cursor: "pointer" }}
@@ -3682,7 +3708,7 @@ const updateLocalStorageCart = (product, qty) => {
             style={{ objectFit: "contain" }}
             alt="Slide 1"
           />
-        </div>
+        </div> */}
         {/* Slide 2 - Video */}
         <div className="carousel-item">
           <video
@@ -3701,13 +3727,15 @@ const updateLocalStorageCart = (product, qty) => {
                 state: { encodedCategory },
               });
             }}
-            onEnded={() => {
-              const carousel = document.querySelector("#productCarousel");
-              if (carousel) {
-                const bsCarousel = window.bootstrap.Carousel.getOrCreateInstance(carousel);
-                bsCarousel.next();
-              }
-            }}
+           onEnded={() => {
+            if (!carouselRef.current) return;
+
+            const carousel =
+              BsCarousel.getOrCreateInstance(carouselRef.current);
+
+            carousel.next();
+            carousel.cycle(); 
+          }}
           >
             <source src={BannerVideo} type="video/mp4" />
           </video>
@@ -3747,21 +3775,6 @@ const updateLocalStorageCart = (product, qty) => {
   </div>
 </div>
 
-{/* NOW Banner2 is placed BELOW carousel */}
-<div
-  className="carousel-item active"
-  onClick={() => goToCategory("Grocery Offers", "groceryOffers")}
-  style={{ cursor: "pointer", marginTop: "1px" }}
->
-  <img
-    src={Banner2}
-    className="d-block w-100 img-fluid rounded"
-    style={{ objectFit: "contain" }}
-    alt="Poster"
-  />
-</div>
-
-
               {/* <div className="d-flex flex-column align-items-center gap-3 mb-3">
               // {/* Refer & Earn Strip 
                 <button
@@ -3794,9 +3807,7 @@ const updateLocalStorageCart = (product, qty) => {
   }}>
 
   {/* <div
-  className="shadow-lg p-2 rounded-5 mb-1 text-center border-0"
->
-
+  className="shadow-lg p-2 rounded-5 mb-1 text-center border-0">
     <h5 className="deal-3d">🎉 CRAZY DEALS 🎉</h5>
       <div style={{color: "#ff5722", fontSize: "14px", fontWeight: "500"}}>
         Buy Monthly Groceries 
@@ -3804,7 +3815,6 @@ const updateLocalStorageCart = (product, qty) => {
         Get Extra Discount 
         <span style = {{ fontSize: "18px", fontWeight: "700"}}> ₹250</span>
       </div>
-   
      <div className="row row-cols-3 row-cols-md-5 g-1">
       {offerCategories.map((cat) => {
         return (  
@@ -3812,8 +3822,7 @@ const updateLocalStorageCart = (product, qty) => {
             className="col"  
             key={cat.label}  
             style={{ cursor: "pointer" }}  
-            onClick={() => handleCrazyDealsGroceryClick(cat)}   
-          >
+            onClick={() => handleCrazyDealsGroceryClick(cat)}>
             <div
               className="OfferIcon-card border-0 shadow-sm text-center d-flex flex-column align-items-center justify-content-between"
               style={{
@@ -3842,7 +3851,6 @@ const updateLocalStorageCart = (product, qty) => {
     </div>
     <span style={{color: "#ff5722", fontSize: "14px", fontWeight: 500}}>Offer Valid Till 10th December!</span>
 </div>  */}
-
   {/* Grocery Categories Section className="container my-3"*/}
   {/* {(activeGroceryCategory || grocerySearch) && (
   <div
@@ -3855,9 +3863,7 @@ const updateLocalStorageCart = (product, qty) => {
     ← Back to Categories
   </div>
 )}
-
 {groceryLoading && <p>Loading products...</p>}
-
 <div className="row">
   {filteredGroceryProducts.map((p) => (
     <div key={p.id} className="col-6 col-md-3 mb-3">
@@ -3877,12 +3883,10 @@ const updateLocalStorageCart = (product, qty) => {
         <div style={{ fontSize: "12px", fontWeight: "bold", minHeight: "36px" }}>
           {p.name}
         </div>
-
         <div style={{ fontSize: "12px" }}>
           <b className="text-success">₹{Math.round(p.afterDiscount)}</b>{" "}
           <s className="text-muted">₹{p.mrp}</s>
         </div>
-
        {groceryQty[p.id] ? (
         <div className="d-flex justify-content-between align-items-center mt-2">
           <button
@@ -3891,11 +3895,9 @@ const updateLocalStorageCart = (product, qty) => {
           >
             −
           </button>
-
           <span className="fw-bold">
             {groceryQty[p.id]}
           </span>
-
           <button
             className="btn btn-sm btn-outline-success"
             onClick={() => increaseQty(p)}
@@ -3917,7 +3919,6 @@ const updateLocalStorageCart = (product, qty) => {
     </div>
   ))}
 </div>
-
 {!groceryLoading &&
   (activeGroceryCategory || grocerySearch) &&
   filteredGroceryProducts.length === 0 && (
