@@ -30,7 +30,7 @@ import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStati
 import Banner2 from './img/MilkOffers.jpeg';   
 // import Banner1 from './img/ChickenOffers.jpeg';
 import Banner3 from './img/45AboveOffers.jpeg'; 
-import BannerVideo from './img/ChristmasVideo.mp4';
+// import BannerVideo from './img/ChristmasVideo.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
 // import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 // import Banner3 from './img/banner-4.jpg';  
@@ -74,7 +74,7 @@ import KitchenImg from './img/Kitchenware.jpeg';
 import BiscuitsImg from './img/Biscuits.jpeg';
 import HealthImg from './img/HealthCare.jpeg';
 import SkinImg from './img/SkinFace.jpeg';
-// import StationaryImg from './img/Stationary.jpeg';
+import ChristmasImg from './img/Christmas.jpeg';
 import TeaImg from './img/teacoffee.jpeg';
 import NamkeenImg from './img/InstantFoodImg.jpeg';
 import HouseHoldImg from './img/HouseHold.jpeg';   
@@ -865,10 +865,11 @@ const categories = [
 const groceryCategories = [
   { label: 'DWCRA Products', value: 'DWCRA', image: DwakraProducts },
   { label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
+  { label: 'Christmas', value: 'Christmas Offers', image: ChristmasImg },
   { label: 'Ice Creams', value: 'Ice Creams', image: IcecreamImg },
   { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
   { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
-  { label: 'Rice & Ravva', value: 'Rice & Ravva', image: RavvaImg },
+  { label: 'Rice & Ravva', value: 'Rice & Ravva', image: RavvaImg },   
   { label: 'Stationary', value: 'Stationary', image: StationaryImg },
   { label: 'Atta & Flours', value: 'Atta & Flours', image: AttaImg },
   { label: 'Oils & Dals', value: 'Oils & Dals', image: OilsImg },
@@ -931,7 +932,7 @@ const ProfilePage = () => {
    const [error, setError] = useState('');
     const [products, setProducts] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
-     const videoRef = useRef(null);
+    //  const videoRef = useRef(null);
 // const [isMuted] = useState(true);
 // const [isMuted, setIsMuted] = useState(true);
 const [unreadCount, setUnreadCount] = useState(0);
@@ -1783,23 +1784,18 @@ useEffect(() => {
       alert("Voice search not supported in this browser");
       return;
     }
-
     const recognition = new window.webkitSpeechRecognition();
     recognition.lang = "en-IN";
     recognition.continuous = false;
     recognition.interimResults = false;
-
     setListening(true);
-
     recognition.onresult = (event) => {
       const spokenText = event.results[0][0].transcript;
       setSearchQuery(spokenText);
       setListening(false);
     };
-
     recognition.onerror = () => setListening(false);
     recognition.onend = () => setListening(false);
-
     recognition.start();
   };
 
@@ -3153,23 +3149,22 @@ const updateLocalStorageCart = (product, qty) => {
 </div>
  {/* 📦 PRODUCTS */}
       {loading && <p>Loading products...</p>}
-
       <div className="grocery-row flex flex-wrap gap-1" style={{marginBottom: "5px"}}>
        {displayProducts.map((product) => {
-  const stock = Number(product.stockLeft || 0);
-  const isOutOfStock = stock <= 0;
-    return (
-      <div
-  key={product.id}
-  className="w-[200px] flex flex-col p-2 bg-white rounded shadow-sm border position-relative"
-  style={{ minHeight: "230px", opacity: isOutOfStock ? 0.6 : 1 }}
->
-  <div className="d-flex flex-row justify-content-between absolute top-0 left-0 w-full">
-    {Number(product.discount) > 0 && !isOutOfStock && (
-      <span className="discount-badge">
-        {Math.round(Number(product.discount))}%
-      </span>
-    )}
+        const stock = Number(product.stockLeft);
+        const isOutOfStock = isNaN(stock) || stock <= 0;
+          return (
+            <div
+        key={product.id}
+        className="w-[200px] flex flex-col p-2 bg-white rounded shadow-sm border position-relative"
+        style={{ minHeight: "230px", opacity: isOutOfStock ? 0.6 : 1 }}
+      >
+        <div className="d-flex flex-row justify-content-between absolute top-0 left-0 w-full">
+          {Number(product.discount) > 0 && !isOutOfStock && (
+            <span className="discount-badge">
+              {Math.round(Number(product.discount))}%
+            </span>
+          )}
     {/* {!isOutOfStock && (
       <span
         style={{ cursor: "pointer", marginRight: "6px", marginTop: "2px", zIndex: 3 }}
@@ -3413,6 +3408,28 @@ const updateLocalStorageCart = (product, qty) => {
   ) : null;
 })()}
       </div>
+      <Modal show={showZoomModal} onHide={() => { setShowZoomModal(false); setZoomProduct(null); }} centered>
+        <button
+          className="close-button text-end"
+          onClick={() => { setShowZoomModal(false); setZoomProduct(null); }}
+        >
+          &times;
+        </button>
+        <Modal.Body className="text-center">
+          <div className="zoom-container">
+            <img src={zoomImage} alt={zoomProduct?.name || "Zoomed Product"} className="zoom-image" />
+          </div>
+          <h6 className="text-start fw-bold" style={{ fontSize: "12px" }}>
+            {zoomProduct?.name || ""}
+          </h6>
+        {zoomProduct?.afterDiscount != null && (
+            <p className="text-start" style={{ fontSize: "12px" }}>
+              <b className="text-success me-2">₹{Math.round(Number(zoomProduct.afterDiscount))}</b>
+              {zoomProduct?.mrp ? <s className="text-muted">₹{zoomProduct.mrp}</s> : null}
+            </p>
+          )}
+        </Modal.Body>
+      </Modal>
               <div className="text-primary fw-bold fs-5 ">
                 Welcome{" "}
                 <small className="text-dark">
@@ -3710,7 +3727,7 @@ const updateLocalStorageCart = (product, qty) => {
           />
         </div> */}
         {/* Slide 2 - Video */}
-        <div className="carousel-item">
+        {/* <div className="carousel-item">
           <video
             ref={videoRef}
             className="d-block w-100 rounded"
@@ -3729,23 +3746,22 @@ const updateLocalStorageCart = (product, qty) => {
             }}
            onEnded={() => {
             if (!carouselRef.current) return;
-
             const carousel =
               BsCarousel.getOrCreateInstance(carouselRef.current);
-
             carousel.next();
             carousel.cycle(); 
           }}
           >
             <source src={BannerVideo} type="video/mp4" />
           </video>
-        </div>
+        </div> */}
 
         {/* Slide 3 */}
         <div className="carousel-item">
           <img
             src={Banner3}
             className="d-block w-100 img-fluid rounded"
+            onClick={() => goToCategory("Offers", "groceryOffers")}
             style={{ objectFit: "contain" }}
             alt="Slide 3"
           />

@@ -47,19 +47,16 @@ const AdminGroceryItemNotificationGrid = () => {
     axios.get(url)
       .then(response => {
         const groceries = response.data.map(g => ({ ...g }));
-        const groceriesStatus = groceries.filter((g) =>  (g.status === "Open"));
+        const groceriesStatus = groceries.filter((g) =>  (g.status === "Open" || g.status === "Closed"));
         const sorted = [...groceriesStatus].sort(sortNewestFirst);
         setGroceryData(sorted);
         setFilteredData(sorted);
-
         const uniqueStates = [...new Set(sorted.map(g => g.state).filter(Boolean))];
         const uniqueDistricts = [...new Set(sorted.map(g => g.district).filter(Boolean))];
         const uniquePinCodes = [...new Set(sorted.map(g => g.zipCode).filter(Boolean))];
-
         setStates(uniqueStates);
         setDistricts(uniqueDistricts);
         setPinCodes(uniquePinCodes);
-
         // Always land on page 1 after load
         setCurrentPage(1);
       })

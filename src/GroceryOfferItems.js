@@ -284,12 +284,16 @@ const GroceryOfferItems = () => {
         const { data: items } = await axios.get(url, { signal });
         const safeItems = Array.isArray(items) ? items : [];
         if (cancelled) return;
-        const sorted = [...safeItems].sort((a, b) => {
-          const tb = getItemTime(b);
-          const ta = getItemTime(a);
-          if (tb !== ta) return tb - ta;
-          return String(b.id).localeCompare(String(a.id));
-        });
+       const sorted = [...safeItems].sort((a, b) => {
+        const stockA = Number(a.stockLeft || 0);
+        const stockB = Number(b.stockLeft || 0);
+        if (stockA <= 0 && stockB > 0) return 1;
+        if (stockA > 0 && stockB <= 0) return -1;
+        const timeA = getItemTime(a);
+        const timeB = getItemTime(b);
+        if (timeA !== timeB) return timeB - timeA;
+        return String(b.id).localeCompare(String(a.id));
+      });
         setProducts(sorted);
         if (warm) return;
         const firstImages = safeItems

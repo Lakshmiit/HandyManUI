@@ -13,6 +13,9 @@ const AdminGroceryList = () => {
   const [grocerystatus, setGrocerystatus] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+const [showLowStockModal, setShowLowStockModal] = useState(false);
+const [lowStockItems, setLowStockItems] = useState([]);
+
   const rowsPerPage = 15;
   const navigate = useNavigate(); 
   const toInt = (v) => {
@@ -25,7 +28,7 @@ const AdminGroceryList = () => {
     (async () => {
       setLoading(true);
       try {
-        const url = "https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetAllGroceryItems";
+        const url = "https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetAllGroceryItemsForAdmin";
         const { data } = await axios.get(url);
         const groceries = (Array.isArray(data) ? data : []).map((g) => ({
           ...g,
@@ -36,6 +39,8 @@ const AdminGroceryList = () => {
           stockLeft: toInt(g.stockLeft),
           category: g.category ?? "",
           status: g.status ?? "",
+          expireDate: g.expireDate ?? "",
+          manufactureDate: g.manufactureDate ?? "",
         }));
         groceries.sort((a, b) => a.name.localeCompare(b.name));
         if (cancelled) return;
@@ -52,6 +57,15 @@ const AdminGroceryList = () => {
 
     return () => { cancelled = true; };
   }, []);
+
+ useEffect(() => {
+  if (!finalGroceries.length) return;
+
+  const lowItems = finalGroceries.filter(
+    (g) => (Number(g.stockLeft) || 0) <= 1
+  );
+  setLowStockItems(lowItems);
+}, [finalGroceries]);
 
   const handleDelete = async (groceryId) => {
     if (!window.confirm("Are you sure you want to delete this grocery?")) return;
@@ -93,6 +107,50 @@ const AdminGroceryList = () => {
   return (
     <div className="container my-2 ">
       <h2 className="text-center mb-2 mt-mob-50">All Grocery</h2>
+{showLowStockModal && (
+  <>
+    <div className="modal fade show d-block">
+      <div className="modal-dialog modal-lg" role="document">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title">Low Stock Products</h5>
+            <button
+              type="button"
+              className="btn-close"
+              onClick={() => setShowLowStockModal(false)}
+            />
+          </div>
+          <div className="modal-body">
+
+            <ul className="list-group">
+              {lowStockItems
+                .filter(
+                  (item, index, self) =>
+                    index === self.findIndex((t) => t.id === item.id) 
+                )
+                .map((item) => (
+                  <li key={item.id} className="list-group-item d-flex justify-content-between">
+                    <span>{item.name}</span>
+                    <span className="fw-bold">Stock: {Number(item.stockLeft) || 0}</span>
+                  </li>
+                ))}
+            </ul>
+
+          </div>
+          <div className="modal-footer">
+            <button
+              type="button"
+              className="btn btn-danger"
+              onClick={() => setShowLowStockModal(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </>
+)}
 
       {/* Search Bar */}
       <div className="form-group col-md-3">
@@ -143,7 +201,14 @@ const AdminGroceryList = () => {
         </div>
 
         {/* Add New Product */}
-        <div className="d-flex justify-content-center col-md-6 ">
+        <div className="d-flex justify-content-end align-items-center col-md-6">
+          <button
+            className="btn btn-outline-danger me-2"
+            disabled={lowStockItems.length === 0}
+            onClick={() => setShowLowStockModal(true)}
+          >
+            Low Stock ({lowStockItems.length})
+          </button>
           <button
             className="btn btn-success"
             onClick={() => navigate(`/adminUploadGrocery/Admin`)}
@@ -165,10 +230,12 @@ const AdminGroceryList = () => {
                 <th>Grocery Name</th>
                 <th>Price</th>
                 <th>Discount</th>
-                <th>After Discount Price</th>
+                <th>Discount Price</th>
                 <th>Requested By</th>
+                <th>MFG Date</th>
+                <th>EXP Date</th>
                 <th>Stock Left</th>
-                {/* <th>code</th> */}
+                <th>code</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -178,7 +245,7 @@ const AdminGroceryList = () => {
                 <tr key={g.id ?? index}>
                   <td className="product-name-cell">{g.name}</td>
                   <td>₹{Math.round(g.mrp)}</td>
-                  <td>{g.discount ? `${Math.round(g.discount)}%` : "No discount"}</td>
+                  <td className="fw-bold">{g.discount ? `${Math.round(g.discount)}%` : "No discount"}</td>
                   <td>₹{Math.round(g.afterDiscount)}</td>
                   <td>
                     {g.requestedBy ? (
@@ -192,8 +259,10 @@ const AdminGroceryList = () => {
                       "N/A"
                     )}
                   </td>
+                  <td>{g.manufactureDate}</td>
+                  <td>{g.expireDate}</td>
                   <td>{(Number(g.stockLeft) || 0) <= 0 ? "No Stock" : Number(g.stockLeft)}</td>
-                  {/* <td>{g.code}</td> */}
+                  <td>{g.code}</td>
                   <td className="d-flex">
                     <Link to={`/adminUpdateGrocery/${g.id}/Admin`} className="btn btn-warning m-1">
                       <FaEdit />
