@@ -43,7 +43,10 @@ function getCustomLimit(name) {
     n === "gold drop refined sunflower oil can 5 l" ||
     n === "aashirvaad high fibre atta with multigrains 5 kg" ||
     n === "aashirvaad superior whole wheat atta 5 kg" || 
-    n === "freedom refined sunflower oil 1 l" 
+    n === "freedom refined sunflower oil 1 l" ||
+    n === "pomegranate 2 pcs (300-400 g)" ||
+    n === "royal gala apple 2 pcs (200-300 g)" ||
+    n === "banana 2 pcs"
   ) return 1;
   if (
     n === "onion (ulligadda) 500 g" || 
@@ -52,9 +55,11 @@ function getCustomLimit(name) {
     n === "green chilli (pachchi mirchi) 100 g" || 
     n === "tomato 250 g" ||
     n === "raw banana 1 pc" || 
-    n === "gold drop refined sunflower oil 1 l" ||
     n === "independence refined sunflower oil 1 l" 
  ) return 2;
+ if (
+    n === "gold drop refined sunflower oil 1 l"
+   ) return 3;
   return Infinity;   
 }
 

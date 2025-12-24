@@ -41,6 +41,7 @@ const [transactionDetails, setTransactionDetails] = useState('');
 const [customerId, setCustomerId] = useState('');
 const [mobileNumber, setMobileNumber] = useState('');
 const [customerName, setCustomerName] = useState('');
+const [date, setDate] = useState('');
 // const [selectedSlot, setSelectedSlot] = useState(false);
 // const [date, setDate] = useState('');
 const [error, setError] = useState('');
@@ -64,6 +65,8 @@ const [units, setUnits] = useState("");
  const [groceryData, setgroceryData] = useState();
   const [groceryId, setgroceryId] = useState();
 const [cashbackAmount, setCashbackAmount] = useState(0);
+const showFreeSugar =
+  Number(grandTotal) > 499 && Number(grandTotal) < 998;
 
 
 useEffect(() => {
@@ -92,6 +95,7 @@ useEffect(() => {
         setGrandTotal(data.grandTotal);
         setTotalItemsSelected(data.totalItemsSelected);
         setCustomerName(data.customerName);
+        setDate(data.date);
         const products = (data?.categories ?? []).flatMap(
           (c) => c?.products ?? []
         );
@@ -554,29 +558,30 @@ useEffect(() => {
                 readOnly
               />
             </div>
-              <div className="col-md-6 form-group">
-                  <label>
-                    Customer Address <span className="req_star">*</span>
-                  </label>
-                  <textarea
-                    className="form-control"
-                    style={{
-                      overflow: "hidden",
-                      resize: "none",
-                      minHeight: "80px",
-                    }}
-                    value={[address, district, state, pincode, mobileNumber]
-                      .filter(Boolean)
-                      .join(", ")}
-                    onChange={(e) => {
-                      e.target.style.height = "auto";
-                      e.target.style.height = e.target.scrollHeight + "px";
-                      setAddress(e.target.value);
-                    }}
-                    placeholder="Customer Address"
-                    readOnly
-                  ></textarea>
-                </div>
+            
+             <div className="col-md-6 form-group">
+            <label>
+              Customer Address <span className="req_star">*</span>
+            </label>
+            <textarea
+              className="form-control"
+              style={{
+                overflow: "hidden",
+                resize: "none",
+                minHeight: "80px",
+              }}
+              value={[address, district, state, pincode, mobileNumber]
+                .filter(Boolean)
+                .join(", ")}
+              onInput={(e) => {
+                e.target.style.height = "auto";
+                e.target.style.height = e.target.scrollHeight + "px";
+              }}
+              placeholder="Customer Address"
+              readOnly
+            ></textarea>
+          </div>
+          <div className="col-md-6 form-group">Date: {date ? date.split("T")[0] : ""}</div> 
                </div>     
               {/* <div className="row">
           <div className="form-group col-md-6">
@@ -648,6 +653,13 @@ useEffect(() => {
       </td>
       <td className="fw-bold text-success">
         ₹{cashbackAmount}
+      </td>
+    </tr>
+  )}
+   {showFreeSugar && (
+    <tr>
+      <td colSpan="9" className="text-end fw-bold text-success">
+        🎁 Give Customer <strong>1 Kg Sugar FREE</strong>
       </td>
     </tr>
   )}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef} from "react";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Carousel as BsCarousel } from "bootstrap";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import { Carousel } from "bootstrap";
 import './App.css';
 import { Modal, Button} from 'react-bootstrap';
 import Confetti from "react-confetti";
@@ -86,6 +86,10 @@ import kurti from './img/2pcsset.jpeg';
 import { CartStorage } from "./CartStorage";
 import IcecreamImg from './img/IceCreams.jpeg';
 import DwakraProducts from './img/DwakraLogo.jpeg';
+import Banner1Img from './img/50Cashback.jpeg';
+import Banner2Img from './img/100Cashback.jpeg';
+import Banner3Img from './img/300Cashback.jpeg';
+import ChristmasWish from './img/ChristmasWishes.jpeg';
 // import BathImg from './img/bathImg.jpeg';
 // import FlourImg from './img/FlourImg.jpeg';
 // import FaceImg from './img/FaceImg.jpeg';  
@@ -99,7 +103,7 @@ import DwakraProducts from './img/DwakraLogo.jpeg';
 // function ReedemCode({
 //   initialOpen = true,
 //   userPoints = 0,          
-//   onPointsChange,          
+//   onPointsChange,             
 //   onSendRef,               
 //   onRedeem,                
 //   referrerId = "",
@@ -871,6 +875,7 @@ const groceryCategories = [
   { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
   { label: 'Rice & Ravva', value: 'Rice & Ravva', image: RavvaImg },   
   { label: 'Stationary', value: 'Stationary', image: StationaryImg },
+  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
   { label: 'Atta & Flours', value: 'Atta & Flours', image: AttaImg },
   { label: 'Oils & Dals', value: 'Oils & Dals', image: OilsImg },
   { label: 'Sugar, Salt & Jaggery', value: 'Sugar, Salt & Jaggery', image: SugarImg },
@@ -892,7 +897,6 @@ const groceryCategories = [
   { label: 'Kids Zone', value: 'Kids Zone', image: KidsImg },
   { label: 'Health Care', value: 'Health Care', image: HealthImg },
   { label: 'Kitchenware Appliances', value: 'Kitchenware Appliances', image: KitchenImg },
-  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
 ];
 
 const collectionsCategories = [
@@ -1003,22 +1007,43 @@ const [showZoomModal, setShowZoomModal] = useState(false);
 const [zoomImage, setZoomImage] = useState("");
 const [zoomProduct, setZoomProduct] = useState(null);
 const displayProducts =
-  searchQuery.trim().length > 0 ? filteredProducts : products;
-  const [imageLoading, setImageLoading] = useState(true);
-  const [placeholderIndex, setPlaceholderIndex] = useState(0);
-  const carouselRef = useRef(null);
-  useEffect(() => {
+searchQuery.trim().length > 0 ? filteredProducts : products;
+const [imageLoading, setImageLoading] = useState(true);
+const [placeholderIndex, setPlaceholderIndex] = useState(0);
+const carouselRef = useRef(null);
+const firstCategories = groceryCategories.slice(0, 9);
+const secondCategories = groceryCategories.slice(9, 18);
+const thirdCategories = groceryCategories.slice(18, 27);
+const fourthCategories = groceryCategories.slice(27, 32);
+
+const groceryCarouselRef = useRef(null);
+
+useEffect(() => {
+  if (groceryCarouselRef.current) {
+    new Carousel(groceryCarouselRef.current, {
+      interval: 2500,   
+      ride: "carousel", 
+      pause: false,   
+      touch: true,
+      wrap: true,
+    });
+  }
+}, []);
+
+ useEffect(() => {
   if (!carouselRef.current) return;
-  const carousel = new BsCarousel(carouselRef.current, {
+  const carouselInstance = new Carousel(carouselRef.current, {
     interval: 3000,
     ride: "carousel",
     pause: false,
     wrap: true,
     touch: true,
   });
-  carousel.cycle(); 
-  return () => carousel.dispose();
+  return () => {
+    carouselInstance.dispose();
+  };
 }, []);
+
 const placeholderSuggestions = [
   'Search "Plum Cake"',
   'Search "Christmas Tree"',
@@ -1077,14 +1102,12 @@ function getItemTime(p) {
 
 useEffect(() => {
   if (!selectedCategory) return;
-
   let cancelled = false;
   const controller = new AbortController();
   const POLL_MS = 2000;
   let pollId = null;
 
-  const category = selectedCategory; // use directly
-
+  const category = selectedCategory; 
   async function fetchProductsAndFirstImages(warm = false, signal) {
     try {
       if (!warm) setImageLoading(true);
@@ -1905,24 +1928,24 @@ const handleAddClick = (product) => {
 
   const canAddMore = (id, stockLeft) => (cart[id] || 0) < stockLeft;
 
-useEffect(() => {
-  const element = document.getElementById("productCarousel");
-  if (!element) return;
-  if (element._bsCarouselInstance) {
-    element._bsCarouselInstance.dispose();
-  }
-  const carousel = new BsCarousel(element, {
-    interval: 2000,   
-    ride: "carousel", 
-    pause: false,     
-    wrap: true,       
-  });
-  element._bsCarouselInstance = carousel;
-  return () => {
-    carousel.dispose();
-    element._bsCarouselInstance = null;
-  };
-}, []);
+// useEffect(() => {
+//   const element = document.getElementById("productCarousel");
+//   if (!element) return;
+//   if (element._bsCarouselInstance) {
+//     element._bsCarouselInstance.dispose();
+//   }
+//   const carousel = new BsCarousel(element, {
+//     interval: 2000,   
+//     ride: "carousel", 
+//     pause: false,     
+//     wrap: true,       
+//   });
+//   element._bsCarouselInstance = carousel;
+//   return () => {
+//     carousel.dispose();
+//     element._bsCarouselInstance = null;
+//   };
+// }, []);
 // // cashback logic
 useEffect(() => {
   if (!showCashbackModal) return; 
@@ -3520,6 +3543,12 @@ const updateLocalStorageCart = (product, qty) => {
   </div>
 )}
 
+                        <img
+                          src={ChristmasWish}
+                          className="d-block w-100 img-fluid rounded mb-1"
+                          style={{ objectFit: "contain" }}
+                          alt="Cashback"
+                        />
         {/* Address with Location */}
         <div className="col-md-9">
           {/* <div className="carousel-item active"
@@ -3679,117 +3708,117 @@ const updateLocalStorageCart = (product, qty) => {
               </div>  
               </div>  */}
               {/* Top Carousel Section */}
-<div className="container">
-  <div>
-    {/* PRODUCT CAROUSEL */}
-    <div
-     ref={carouselRef}
-      id="productCarousel"
-      className="carousel slide mb-2 rounded"
-      data-bs-ride="carousel"
-      data-bs-interval="3000"
-      data-bs-pause="false"
-      data-bs-wrap="true"
-      data-bs-touch="true"
-    >
-      {/* Indicators */}
-      <div className="carousel-indicators">
-        <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="0" className="active" aria-current="true"></button>
-        <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="1"></button>
-        <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="2"></button>
-        {/* <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="3"></button> */}
-      </div>
-      {/* Carousel Items */}
-      <div className="carousel-inner">
-        {/* Slide 1 */}
-        <div
-        className="carousel-item active"
-        onClick={() => goToCategory("Grocery Offers", "groceryOffers")}
-        style={{ cursor: "pointer"}}
-      >
-        <img
-          src={Banner2}
-          className="d-block w-100 img-fluid rounded"
-          style={{ objectFit: "contain" }}
-          alt="Slide 1"
-        />
-      </div>
-        {/* <div 
-          className="carousel-item active"
-          onClick={() => goToCategory("Chicken Offers", "groceryOffers")}
-          style={{ cursor: "pointer" }}
-        >
-          <img 
-            src={Banner1}
-            className="d-block w-100 img-fluid rounded"
-            style={{ objectFit: "contain" }}
-            alt="Slide 1"
-          />
-        </div> */}
-        {/* Slide 2 - Video */}
-        {/* <div className="carousel-item">
-          <video
-            ref={videoRef}
-            className="d-block w-100 rounded"
-            style={{ objectFit: "cover" }}
-            autoPlay
-            playsInline
-            muted
-            onClick={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              const encodedCategory = encodeURIComponent("Christmas Offers");
-              localStorage.setItem("encodedCategory", encodedCategory);
-              navigate(`/groceryChristmasOffers/${userType}/${userId}`, {
-                state: { encodedCategory },
-              });
-            }}
-           onEnded={() => {
-            if (!carouselRef.current) return;
-            const carousel =
-              BsCarousel.getOrCreateInstance(carouselRef.current);
-            carousel.next();
-            carousel.cycle(); 
-          }}
-          >
-            <source src={BannerVideo} type="video/mp4" />
-          </video>
-        </div> */}
+                <div className="container">
+                  <div>
+                    {/* PRODUCT CAROUSEL */}
+                    <div
+                    ref={carouselRef}
+                      id="productCarousel"
+                      className="carousel slide mb-2 rounded"
+                      data-bs-ride="carousel"
+                      data-bs-interval="3000"
+                      data-bs-pause="false"
+                      data-bs-wrap="true"
+                      data-bs-touch="true"
+                    >
+                      {/* Indicators */}
+                      <div className="carousel-indicators">
+                        <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="0" className="active" aria-current="true"></button>
+                        <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="1"></button>
+                        <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="2"></button>
+                        {/* <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="3"></button> */}
+                      </div>
+                      {/* Carousel Items */}
+                      <div className="carousel-inner">
+                        {/* Slide 1 */}
+                        <div
+                        className="carousel-item active"
+                        onClick={() => goToCategory("Grocery Offers", "groceryOffers")}
+                        style={{ cursor: "pointer"}}
+                      >
+                        <img
+                          src={Banner2}
+                          className="d-block w-100 img-fluid rounded"
+                          style={{ objectFit: "contain" }}
+                          alt="Slide 1"
+                        />
+                      </div>
+                        {/* <div 
+                          className="carousel-item active"
+                          onClick={() => goToCategory("Chicken Offers", "groceryOffers")}
+                          style={{ cursor: "pointer" }}
+                        >
+                          <img 
+                            src={Banner1}
+                            className="d-block w-100 img-fluid rounded"
+                            style={{ objectFit: "contain" }}
+                            alt="Slide 1"
+                          />
+                        </div> */}
+                        {/* Slide 2 - Video */}
+                        {/* <div className="carousel-item">
+                          <video
+                            ref={videoRef}
+                            className="d-block w-100 rounded"
+                            style={{ objectFit: "cover" }}
+                            autoPlay
+                            playsInline
+                            muted
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              e.preventDefault();
+                              const encodedCategory = encodeURIComponent("Christmas Offers");
+                              localStorage.setItem("encodedCategory", encodedCategory);
+                              navigate(`/groceryChristmasOffers/${userType}/${userId}`, {
+                                state: { encodedCategory },
+                              });
+                            }}
+                          onEnded={() => {
+                            if (!carouselRef.current) return;
+                            const carousel =
+                              BsCarousel.getOrCreateInstance(carouselRef.current);
+                            carousel.next();
+                            carousel.cycle(); 
+                          }}
+                          >
+                            <source src={BannerVideo} type="video/mp4" />
+                          </video>
+                        </div> */}
 
-        {/* Slide 3 */}
-        <div className="carousel-item">
-          <img
-            src={Banner3}
-            className="d-block w-100 img-fluid rounded"
-            onClick={() => goToCategory("Offers", "groceryOffers")}
-            style={{ objectFit: "contain" }}
-            alt="Slide 3"
-          />
-        </div>
-      </div>
-      {/* Controls */}
-      <button
-        className="carousel-control-prev"
-        type="button"
-        data-bs-target="#productCarousel"
-        data-bs-slide="prev"
-      >
-        <span className="carousel-control-prev-icon custom-carousel-icon"></span>
-        <span className="visually-hidden">Previous</span>
-      </button>
-      <button
-        className="carousel-control-next"
-        type="button"
-        data-bs-target="#productCarousel"
-        data-bs-slide="next"
-      >
-        <span className="carousel-control-next-icon custom-carousel-icon"></span>
-        <span className="visually-hidden">Next</span>
-      </button>
+                        {/* Slide 3 */}
+                        <div className="carousel-item">
+                          <img
+                            src={Banner3}
+                            className="d-block w-100 img-fluid rounded"
+                            onClick={() => goToCategory("Offers", "groceryOffers")}
+                            style={{ objectFit: "contain" }}
+                            alt="Slide 3"
+                          />
+                        </div>
+                      </div>
+                      {/* Controls */}
+                      <button
+                        className="carousel-control-prev"
+                        type="button"
+                        data-bs-target="#productCarousel"
+                        data-bs-slide="prev"
+                      >
+                        <span className="carousel-control-prev-icon custom-carousel-icon"></span>
+                        <span className="visually-hidden">Previous</span>
+                      </button>
+                      <button
+                        className="carousel-control-next"
+                        type="button"
+                        data-bs-target="#productCarousel"
+                        data-bs-slide="next"
+                      >
+                        <span className="carousel-control-next-icon custom-carousel-icon"></span>
+                        <span className="visually-hidden">Next</span>
+                      </button>
 
-    </div>  
-  </div>
-</div>
+                    </div>  
+                  </div>
+                </div>
 
               {/* <div className="d-flex flex-column align-items-center gap-3 mb-3">
               // {/* Refer & Earn Strip 
@@ -3947,7 +3976,7 @@ const updateLocalStorageCart = (product, qty) => {
     <h5 className="fw-bold mb-3" style={{color: "#ff5722", fontSize: "20px"}}>
       Lakshmi Mart  
     </h5>
-    <div className="row row-cols-3 row-cols-md-5 g-1">
+    {/* <div className="row row-cols-3 row-cols-md-5 g-1">
   {groceryCategories.map((cat) => {
     //  const isBlockedCategory  = cat.value === "Vegetables & Fruits";
     return (
@@ -4001,8 +4030,343 @@ const updateLocalStorageCart = (product, qty) => {
       </div>
     );
   })}
+</div> */}
+{/* <div className="shadow-lg p-2 rounded-5 mb-1 bg-transparent"> */}
+  {/* ---------- FIRST CATEGORIES ---------- */}
+  {/* <div className="row row-cols-3 row-cols-md-5 g-1">
+      {firstCategories.map((cat) => {
+    return (
+      <div
+        className="col"
+        key={cat.label}
+        onClick={() => handleGroceryCategoryClick(cat)}
+        style={{ cursor: "pointer" }}     
+       >
+        <div
+          className="groceryIcon-card border-0 shadow-sm text-center d-flex flex-column align-items-center justify-content-between"
+          style={{
+            height: isMobile ? "120px" : "140px",
+            width: isMobile ? "90px" : "120px",
+            cursor: "pointer",
+            padding: "6px",
+            margin: "5px",
+            opacity: 1, 
+            pointerEvents: "auto", 
+          }}
+        >
+          <img
+            src={cat.image}
+            alt={cat.label}
+            style={{
+              height: "80px",
+              width: "80px",
+              borderRadius: "8px",
+              marginTop: "2px",
+              objectFit: "cover",
+            }}
+          />
+          <span
+            style={{
+              fontSize: "11px",
+              fontWeight: "500",
+              marginTop: "5px",
+              minHeight: "24px", 
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              lineHeight: "1.2",
+            }}
+          >
+            {cat.label}
+          </span>
+        </div>
+      </div>
+    );
+  })}
+  </div> */}
+
+  {/* ---------- REMAINING CATEGORIES ---------- */}
+  {/* <div className="row row-cols-3 row-cols-md-5 g-1">
+      {remainingCategories.map((cat) => {
+    return (
+      <div
+        className="col"
+        key={cat.label}
+        onClick={() => handleGroceryCategoryClick(cat)}
+        style={{ cursor: "pointer" }}     
+       >
+        <div
+          className="groceryIcon-card border-0 shadow-sm text-center d-flex flex-column align-items-center justify-content-between"
+          style={{
+            height: isMobile ? "120px" : "140px",
+            width: isMobile ? "90px" : "120px",
+            cursor: "pointer",
+            padding: "6px",
+            margin: "5px",
+            opacity: 1, 
+            pointerEvents: "auto", 
+          }}
+        >
+          <img
+            src={cat.image}
+            alt={cat.label}
+            style={{
+              height: "80px",
+              width: "80px",
+              borderRadius: "8px",
+              marginTop: "2px",
+              objectFit: "cover",
+            }}
+          />
+          <span
+            style={{
+              fontSize: "11px",
+              fontWeight: "500",
+              marginTop: "5px",
+              minHeight: "24px", 
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              lineHeight: "1.2",
+            }}
+          >
+            {cat.label}
+          </span>
+        </div>
+      </div>
+    );
+  })}
+  </div> */}
+{/* </div> */}
+
+<div className="row row-cols-3 row-cols-md-5 g-1">
+  {firstCategories.map((cat) => (
+    <div
+       className="col"
+        key={cat.label}
+        onClick={() => handleGroceryCategoryClick(cat)}
+        style={{ cursor: "pointer" }}   
+    >
+      <div
+          className="groceryIcon-card border-0 shadow-sm text-center d-flex flex-column align-items-center justify-content-between"
+          style={{
+            height: isMobile ? "120px" : "140px",
+            width: isMobile ? "90px" : "120px",
+            cursor: "pointer",
+            padding: "6px",
+            margin: "5px",
+            opacity: 1, 
+            pointerEvents: "auto", 
+          }}
+        >
+          <img
+            src={cat.image}
+            alt={cat.label}
+            style={{
+              height: "80px",
+              width: "80px",
+              borderRadius: "8px",
+              marginTop: "2px",
+              objectFit: "cover",
+            }}
+          />
+          <span
+            style={{
+              fontSize: "11px",
+              fontWeight: "500",
+              marginTop: "5px",
+              minHeight: "24px", 
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              lineHeight: "1.2",
+            }}
+          >
+            {cat.label}
+          </span>
+        </div>
+    </div>
+  ))}
+</div>
+                      <div style={{ cursor: "pointer"}}>
+                        <img
+                          src={Banner1Img}
+                          className="d-block w-100 img-fluid rounded"
+                          style={{ objectFit: "contain" }}
+                          alt="Cashback"
+                        />
+                      </div>
+<div className="row row-cols-3 row-cols-md-5 g-1">
+  {secondCategories.map((cat) => (
+    <div
+      className="col"
+      key={cat.label}
+      onClick={() => handleGroceryCategoryClick(cat)}
+      style={{ cursor: "pointer" }}
+    >
+      <div
+          className="groceryIcon-card border-0 shadow-sm text-center d-flex flex-column align-items-center justify-content-between"
+          style={{
+            height: isMobile ? "120px" : "140px",
+            width: isMobile ? "90px" : "120px",
+            cursor: "pointer",
+            padding: "6px",
+            margin: "5px",
+            opacity: 1, 
+            pointerEvents: "auto", 
+          }}
+        >
+          <img
+            src={cat.image}
+            alt={cat.label}
+            style={{
+              height: "80px",
+              width: "80px",
+              borderRadius: "8px",
+              marginTop: "2px",
+              objectFit: "cover",
+            }}
+          />
+          <span
+            style={{
+              fontSize: "11px",
+              fontWeight: "500",
+              marginTop: "5px",
+              minHeight: "24px", 
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              lineHeight: "1.2",
+            }}
+          >
+            {cat.label}
+          </span>
+        </div>
+    </div>
+  ))}
+</div>
+                      <div style={{ cursor: "pointer"}}>
+                        <img
+                          src={Banner2Img}
+                          className="d-block w-100 img-fluid rounded"
+                          style={{ objectFit: "contain" }}
+                          alt="Cashback"
+                        />
+                      </div>
+<div className="row row-cols-3 row-cols-md-5 g-1">
+  {thirdCategories.map((cat) => (
+    <div
+       className="col"
+        key={cat.label}
+        onClick={() => handleGroceryCategoryClick(cat)}
+        style={{ cursor: "pointer" }}   
+    >
+      <div
+          className="groceryIcon-card border-0 shadow-sm text-center d-flex flex-column align-items-center justify-content-between"
+          style={{
+            height: isMobile ? "120px" : "140px",
+            width: isMobile ? "90px" : "120px",
+            cursor: "pointer",
+            padding: "6px",
+            margin: "5px",
+            opacity: 1, 
+            pointerEvents: "auto", 
+          }}
+        >
+          <img
+            src={cat.image}
+            alt={cat.label}
+            style={{
+              height: "80px",
+              width: "80px",
+              borderRadius: "8px",
+              marginTop: "2px",
+              objectFit: "cover",
+            }}
+          />
+          <span
+            style={{
+              fontSize: "11px",
+              fontWeight: "500",
+              marginTop: "5px",
+              minHeight: "24px", 
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              lineHeight: "1.2",
+            }}
+          >
+            {cat.label}
+          </span>
+        </div>
+    </div>
+  ))}
+</div>
+ <div style={{ cursor: "pointer"}}>
+                        <img
+                          src={Banner3Img}
+                          className="d-block w-100 img-fluid rounded"
+                          style={{ objectFit: "contain" }}
+                          alt="Cashback"
+                        />
+                      </div>
+                      <div className="row row-cols-3 row-cols-md-5 g-1">
+  {fourthCategories.map((cat) => (
+    <div
+       className="col"
+        key={cat.label}
+        onClick={() => handleGroceryCategoryClick(cat)}
+        style={{ cursor: "pointer" }}   
+    >
+      <div
+          className="groceryIcon-card border-0 shadow-sm text-center d-flex flex-column align-items-center justify-content-between"
+          style={{
+            height: isMobile ? "120px" : "140px",
+            width: isMobile ? "90px" : "120px",
+            cursor: "pointer",
+            padding: "6px",
+            margin: "5px",
+            opacity: 1, 
+            pointerEvents: "auto", 
+          }}
+        >
+          <img
+            src={cat.image}
+            alt={cat.label}
+            style={{
+              height: "80px",
+              width: "80px",
+              borderRadius: "8px",
+              marginTop: "2px",
+              objectFit: "cover",
+            }}
+          />
+          <span
+            style={{
+              fontSize: "11px",
+              fontWeight: "500",
+              marginTop: "5px",
+              minHeight: "24px", 
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              lineHeight: "1.2",
+            }}
+          >
+            {cat.label}
+          </span>
+        </div>
+    </div>
+  ))}
 </div>
   </div>
+  
   {/* Home Products Section */}
   <div className="shadow-lg p-2 mb-1 rounded-5 bg-transparent border-0">
     <h5 className="text-center fw-bold mb-3" style={{color: "#ff5722", fontSize: "20px"}}>Home Products</h5>

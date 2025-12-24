@@ -8,7 +8,7 @@ import axios from 'axios';
 import { Modal, Button, Form} from 'react-bootstrap';
 import Footer from "./Footer.js";
 import Confetti from "react-confetti";
-
+import SugarImg from './img/SugarOffer.jpeg';
 const GroceryPaymentmethod = () => {
   const navigate = useNavigate();
   // const location = useLocation();
@@ -64,7 +64,9 @@ const [isOffersOrder, setIsOffersOrder] = useState(false);
  const [firstOrderDiscount, setFirstOrderDiscount] = useState(0);
   const [isNewUser, setIsNewUser] = useState(false);
     const [showConfetti, setShowConfetti] = useState(false);
-const [cashbackMessage, setCashbackMessage] = useState("");const isGuestName = (name) => (name ?? '').trim().toLowerCase() === 'guest';
+const [cashbackMessage, setCashbackMessage] = useState("");
+// const [date, setDate] = useState("");
+const isGuestName = (name) => (name ?? '').trim().toLowerCase() === 'guest';
 const readServerPoints = (record) => {
   const raw =
     record?.referralPoints ?? 
@@ -74,6 +76,9 @@ const readServerPoints = (record) => {
   const n = Number(raw);
   return Number.isFinite(n) ? n : 0;
 };
+const showSugarOffer =
+  Number(grandTotal) >= 499 && Number(grandTotal) <= 998;
+
 const netPayables=  grandTotal - firstOrderDiscount
 
   const totalPayable =
@@ -502,6 +507,7 @@ useEffect(() => {
       setGrandTotal(data.grandTotal);
       setTotalItemsSelected(data.totalItemsSelected);
       setCustomerName(data.customerName);
+      // setDate(data.date);
       const products = (data?.categories ?? []).flatMap(c => c?.products ?? []);
       const selected = products.filter(
         p => p?.isSelected || p?.selected || (p?.qty ?? p?.quantity ?? 0) > 0
@@ -1534,10 +1540,11 @@ const handleCheckboxChange = (value) => {
                         </div>
                       )}   
                     </div>
+
     <div className="grocery-confirmation">
     <p className='text-center' style={{ fontSize: "13px" }}><span className='name'>{fullName}</span> Thank you for Choosing the Lakshmi Mart</p>
       
-       <div style={{ textAlign: "center" }}>
+       <div style={{ textAlign: "center" }}>    
        {firstOrderDiscount > 0 && (
         <span style={{ whiteSpace: "nowrap", color: "green"  }}>
           🎉 You have got 
@@ -1549,6 +1556,32 @@ const handleCheckboxChange = (value) => {
         </span>
       )}
       </div>
+      {/* {showSugarOffer && ( */}
+  <div
+    className="d-flex align-items-center justify-content-between p-2"
+    style={{
+      background: "linear-gradient(90deg, #fff3cd, #ffe69c)",
+      border: "2px dashed #ff9800",
+      borderRadius: "12px",
+    }}
+  >
+    <div>
+      <strong style={{ color: "#d84315" }}>
+        🎁 Get 1 Kg Sugar FREE
+      </strong>
+      <div style={{ fontSize: "13px" }}>
+        On orders above ₹499
+      </div>
+    </div>
+
+    <img
+      src={SugarImg}
+      alt="Free Sugar"
+      style={{ width: "60px", height: "60px" }}
+    />
+  </div>
+{/* )} */}
+
   <table className="grocery-table m-2">
           <tbody>
             <tr>
@@ -1564,6 +1597,21 @@ const handleCheckboxChange = (value) => {
               <td style={{ width: "40%", fontSize: "14px" }}>Grand Total</td>
               <td style={{ width: "40%" }}>Rs {grandTotal} /-</td>
             </tr>
+           {showSugarOffer && (
+            <tr>
+              <td colSpan="2" style={{ textAlign: "center" }}>
+                <img
+                  src={SugarImg}
+                  alt="Free Sugar"
+                  style={{ width: "60px", height: "60px" }}
+                />
+                <div style={{ fontSize: "13px", fontWeight: 600, color: "green" }}>
+                  🎁 1 Kg Sugar FREE
+                </div>
+              </td>
+            </tr>
+          )}
+
             {firstOrderDiscount > 0 && (
               <tr>
                 <td style={{ width: "40%", fontSize: "14px" }}>

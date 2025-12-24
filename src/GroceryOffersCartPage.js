@@ -27,6 +27,9 @@ const CATEGORY_VF_OFFERS = [
 ];
 
 const LIMIT_RULES = [
+  { match: norm("Banana 2 Pcs"), limit: 1 }, 
+  { match: norm("Pomegranate 2 Pcs (300-400 g)"), limit: 1 },
+  { match: norm("Royal Gala Apple 2 Pcs (200-300 g)"), limit: 1 },
   { match: norm("Visakha Dairy Happy Full Cream Milk 500 ml"), limit: 1 },
   { match: norm("Visakha Dairy Good Milk 180 ml"), limit: 1 },
   { match: norm("Visakha Dairy Milk 200 ml"), limit: 1 },
@@ -40,13 +43,13 @@ const LIMIT_RULES = [
   { match: norm("Potato (Bangala Dumpa) 500 g"), limit: 2 },
   { match: norm("Raw Banana (Aratikaya) 1 Pc"), limit: 2 },
   { match: norm("Freedom Refined Sunflower Oil 1 L"), limit: 1 },
-  { match: norm("Gold Drop Refined Sunflower Oil 1 L"), limit: 2 },
+  { match: norm("Gold Drop Refined Sunflower Oil 1 L"), limit: 3 },
   { match: norm("Independence Refined Sunflower Oil 1 L"), limit: 2 },
-  { match: norm("Freedom Refined Sunflower Oil 5 L"), limit: 1 },
+  { match: norm("Freedom Refined Sunflower Oil 5 L"), limit: 1 }, 
   { match: norm("Gold Drop Refined Sunflower Oil Can 5 L"), limit: 1 },
   { match: norm("Aashirvaad Superior Whole Wheat Atta 5 Kg"), limit: 1 },
   { match: norm("Aashirvaad High Fibre Atta with Multigrains 5 kg"), limit: 1 },
-  { match: norm("Aashirvaad Superior Whole Wheat MP Atta 1 Kg"), limit: 2 },
+  // { match: norm("Aashirvaad Superior Whole Wheat MP Atta 1 Kg"), limit: 2 },
 ];
      
 const getLimit = (item) => {

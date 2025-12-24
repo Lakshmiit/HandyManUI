@@ -13,8 +13,8 @@ const AdminGroceryList = () => {
   const [grocerystatus, setGrocerystatus] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-const [showLowStockModal, setShowLowStockModal] = useState(false);
-const [lowStockItems, setLowStockItems] = useState([]);
+// const [showLowStockModal, setShowLowStockModal] = useState(false);
+// const [lowStockItems, setLowStockItems] = useState([]);
 
   const rowsPerPage = 15;
   const navigate = useNavigate(); 
@@ -58,14 +58,14 @@ const [lowStockItems, setLowStockItems] = useState([]);
     return () => { cancelled = true; };
   }, []);
 
- useEffect(() => {
-  if (!finalGroceries.length) return;
+//  useEffect(() => {
+//   if (!finalGroceries.length) return;
 
-  const lowItems = finalGroceries.filter(
-    (g) => (Number(g.stockLeft) || 0) <= 1
-  );
-  setLowStockItems(lowItems);
-}, [finalGroceries]);
+//   const lowItems = finalGroceries.filter(
+//     (g) => (Number(g.stockLeft) || 0) <= 1
+//   );
+//   setLowStockItems(lowItems);
+// }, [finalGroceries]);
 
   const handleDelete = async (groceryId) => {
     if (!window.confirm("Are you sure you want to delete this grocery?")) return;
@@ -107,7 +107,7 @@ const [lowStockItems, setLowStockItems] = useState([]);
   return (
     <div className="container my-2 ">
       <h2 className="text-center mb-2 mt-mob-50">All Grocery</h2>
-{showLowStockModal && (
+{/* {showLowStockModal && (
   <>
     <div className="modal fade show d-block">
       <div className="modal-dialog modal-lg" role="document">
@@ -150,7 +150,7 @@ const [lowStockItems, setLowStockItems] = useState([]);
       </div>
     </div>
   </>
-)}
+)} */}
 
       {/* Search Bar */}
       <div className="form-group col-md-3">
@@ -202,13 +202,13 @@ const [lowStockItems, setLowStockItems] = useState([]);
 
         {/* Add New Product */}
         <div className="d-flex justify-content-end align-items-center col-md-6">
-          <button
+          {/* <button
             className="btn btn-outline-danger me-2"
             disabled={lowStockItems.length === 0}
             onClick={() => setShowLowStockModal(true)}
           >
             Low Stock ({lowStockItems.length})
-          </button>
+          </button> */}
           <button
             className="btn btn-success"
             onClick={() => navigate(`/adminUploadGrocery/Admin`)}
