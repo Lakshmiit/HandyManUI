@@ -16,25 +16,26 @@ const IMAGE_DOWNLOAD =
   "https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=";
 
 const norm = (s) =>
-  String(s || "").toLowerCase().replace(/\s+/g, " ").trim();
+  String(s || "").toLowerCase().replace(/\s+/g, " ").replace("500ml", "500 ml").trim();
 
 // const CATEGORY_OFFERS = norm("Grocery Offers");
 // const CATEGORY_VF_OFFERS = norm("Grocery Offers");
 const CATEGORY_VF_OFFERS = [
   norm("Grocery Offers"),
+  norm("Milk, Curd & Ghee"),   
   norm("Oils & Dals"),
   norm("Atta & Flours"),
 ];
 
 const LIMIT_RULES = [
-  { match: norm("Banana 2 Pcs"), limit: 1 }, 
+  { match: norm("Visakha Dairy Ganga Toned Milk 500 ml"), limit: 2 },
+  { match: norm("Banana 3 Pcs"), limit: 1 }, 
   { match: norm("Pomegranate 2 Pcs (300-400 g)"), limit: 1 },
   { match: norm("Royal Gala Apple 2 Pcs (200-300 g)"), limit: 1 },
   { match: norm("Visakha Dairy Happy Full Cream Milk 500 ml"), limit: 1 },
   { match: norm("Visakha Dairy Good Milk 180 ml"), limit: 1 },
-  { match: norm("Visakha Dairy Milk 200 ml"), limit: 1 },
+  { match: norm("Visakha Dairy Milk 200 ml"), limit: 1 },    
   { match: norm("Visakha Dairy Curd 180 g"), limit: 1 },
-  // { match: norm("Cucumber (Dosakaya) 500 g"), limit: 1 },
   { match: norm("Green Chilli (Pachchi Mirchi) 100 g"), limit: 2 },
   { match: norm("Tomato 250 g"), limit: 2 },
   { match: norm("Lemon (Nimakaya) (3pcs)"), limit: 1 },
@@ -65,6 +66,15 @@ if (!CATEGORY_VF_OFFERS.includes(category)) return Infinity;
     }
   }
   return Infinity;
+};
+// clampQty
+    const clampQty = (item, qty) => {
+  const stockMax = Number.isFinite(item.stockLeft)
+    ? item.stockLeft
+    : Infinity;
+  const limit = getLimit(item);
+  const maxAllowed = Math.min(stockMax, limit);
+  return Math.max(0, Math.min(qty, maxAllowed));
 };
 
 const getFilenameFromValue = (value) => {
@@ -190,6 +200,7 @@ const GroceryOffersCartPage = () => {
         return [];
       }
     };
+    
     const saved0 = safeParse("allCategories");
     if (!saved0.length) {
       const activeOrderId = localStorage.getItem("activeOrderId");
@@ -198,9 +209,20 @@ const GroceryOffersCartPage = () => {
       if (snap) localStorage.setItem("allCategories", snap);
     }
     const saved = safeParse("allCategories");
-    const allItems = mapSavedToItems(saved);
-    setCartItems(allItems);
-    setGrandSummary(computeTotals(allItems));
+    const rawItems = mapSavedToItems(saved);
+
+const clampedItems = rawItems.map((it) => ({
+  ...it,
+  qty: clampQty(it, Number(it.qty || 0)),
+}));
+
+writeBackToStorage(clampedItems);
+setCartItems(clampedItems);
+setGrandSummary(computeTotals(clampedItems));
+
+    // const allItems = mapSavedToItems(saved);
+    // setCartItems(allItems);
+    // setGrandSummary(computeTotals(allItems));
   }, []);
 
   useEffect(() => {
@@ -275,28 +297,49 @@ const GroceryOffersCartPage = () => {
     };
   }, [cartItems, imageBlobMap]);
 
-  const handleQtyChange = (rowId, delta) => {
-    setCartItems((prev) => {
-      const next = prev
-        .map((it) => {
-          if (it.id !== rowId) return it;
-          const stockMax = Number.isFinite(it.stockLeft)
-            ? it.stockLeft
-            : Infinity;
-          const limit = getLimit(it);
-          const maxAllowed = Math.min(stockMax, limit);
-          const current = Number(it.qty || 0);
-          const proposed = current + delta;
-          const clamped = Math.max(0, Math.min(proposed, maxAllowed));
+  // const handleQtyChange = (rowId, delta) => {
+  //   setCartItems((prev) => {
+  //     const next = prev
+  //       .map((it) => {
+  //         if (it.id !== rowId) return it;
+  //         const stockMax = Number.isFinite(it.stockLeft)
+  //           ? it.stockLeft
+  //           : Infinity;
+  //         const limit = getLimit(it);
+  //         // const maxAllowed = Math.min(stockMax, limit);
+  //         // const current = Number(it.qty || 0);
+  //         const proposed = Number(it.qty || 0) + delta;
+  //         const clamped = clampQty(it, proposed);
 
-          return { ...it, qty: clamped };
-        })
-        .filter(isValidCartItem); 
-      writeBackToStorage(next);
-      setGrandSummary(computeTotals(next));
-      return next;
-    });
-  };
+  //         // const proposed = current + delta;
+  //         // const clamped = Math.max(0, Math.min(proposed, maxAllowed));
+
+  //         return { ...it, qty: clamped };
+  //       })
+  //       .filter(isValidCartItem); 
+  //     writeBackToStorage(next);
+  //     setGrandSummary(computeTotals(next));
+  //     return next;
+  //   });
+  // };
+const handleQtyChange = (rowId, delta) => {
+  setCartItems((prev) => {
+    const next = prev
+      .map((it) => {
+        if (it.id !== rowId) return it;
+
+        const proposed = Number(it.qty || 0) + delta;
+        const clamped = clampQty(it, proposed);
+
+        return { ...it, qty: clamped };
+      })
+      .filter(isValidCartItem);
+
+    writeBackToStorage(next);
+    setGrandSummary(computeTotals(next));
+    return next;
+  });
+};
 
   // ----- Proceed -----
   const handleGroceryProceed = async (event) => {

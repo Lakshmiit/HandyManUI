@@ -45,9 +45,22 @@ const GroceryCartPage = () => {
     const n = Number(v);
     return Number.isFinite(n) ? n : f;
   }
+// function normalizeName(name) {
+//   return String(name || "")
+//     .toLowerCase()
+//     .replace(/\s+/g, " ")
+//     .replace("500ml", "500 ml")
+//     .trim();
+// }
 
 function getCustomLimit(name) {
-  const n = String(name || "").toLowerCase().trim();
+  // const n = normalizeName(name);
+  const n = String(name || "")
+  .toLowerCase()
+  .replace(/\s+/g, " ")
+  .replace("500ml", "500 ml")
+  .trim();
+
   if ( n === "visakha dairy curd 180 g" ||
     n === "visakha dairy happy full cream milk 500 ml" ||
     n === "visakha dairy milk 200 ml" || n === "visakha dairy good milk 180 ml" || n === "lemon (nimakaya) (3pcs)" ||     n === "freedom refined sunflower oil 5 l" ||
@@ -57,17 +70,17 @@ function getCustomLimit(name) {
     n === "freedom refined sunflower oil 1 l" ||
     n === "pomegranate 2 pcs (300-400 g)" ||
     n === "royal gala apple 2 pcs (200-300 g)" ||
-    n === "banana 2 pcs"
+    n === "banana 3 pcs"
   ) return 1;
   if (
     // n === "apple 1 pc" ||
+    n === "visakha dairy ganga toned milk 500 ml" ||
     n === "onion (ulligadda) 500 g" || 
     n === "potato (bangala dumpa) 500 g" ||
     n === "ivy gourd (dondakaya) 250 g" ||
     n === "green chilli (pachchi mirchi) 100 g" || 
-    n === "tomato 250 g" ||
+    n === "tomato 250 g" ||    
     n === "raw banana 1 pc"  || 
-    // n === "gold drop refined sunflower oil 1 l" ||
     n === "independence refined sunflower oil 1 l"
     // n === "aashirvaad superior whole wheat mp atta 1 kg"
     // n === "combo pack 1 - daawat basmati rice 1kg + eastern garam masala 100g + visakha dairy paneer 200g" ||
@@ -703,12 +716,13 @@ function getCustomLimit(name) {
                   size="small"
                   onClick={() => handleQtyChange(item.id, 1)}
                   style={{ color: "white", padding: "2px", opacity: item.qty >= item.stockLeft ? 0.5 : 1 }}
-                  disabled={Number.isFinite(item.stockLeft) && item.qty >= item.stockLeft}
+                  disabled={ item.qty >= Math.min(item.stockLeft, getCustomLimit(item.name))}
+                  // disabled={Number.isFinite(item.stockLeft) && item.qty >= item.stockLeft}
                   title={Number.isFinite(item.stockLeft) && item.qty >= item.stockLeft ? "No more stock" : "Add one"}
                 >
                   <AddIcon fontSize="small" />
                 </IconButton>
-              </div>
+              </div>   
             )}
           </div>
         ))}

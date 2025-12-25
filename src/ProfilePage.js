@@ -89,7 +89,6 @@ import DwakraProducts from './img/DwakraLogo.jpeg';
 import Banner1Img from './img/50Cashback.jpeg';
 import Banner2Img from './img/100Cashback.jpeg';
 import Banner3Img from './img/300Cashback.jpeg';
-import ChristmasWish from './img/ChristmasWishes.jpeg';
 // import BathImg from './img/bathImg.jpeg';
 // import FlourImg from './img/FlourImg.jpeg';
 // import FaceImg from './img/FaceImg.jpeg';  
@@ -3542,13 +3541,12 @@ const updateLocalStorageCart = (product, qty) => {
     </div>
   </div>
 )}
-
-                        <img
+                        {/* <img
                           src={ChristmasWish}
                           className="d-block w-100 img-fluid rounded mb-1"
                           style={{ objectFit: "contain" }}
                           alt="Cashback"
-                        />
+                        /> */}
         {/* Address with Location */}
         <div className="col-md-9">
           {/* <div className="carousel-item active"

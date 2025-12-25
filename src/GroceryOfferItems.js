@@ -15,16 +15,18 @@ import ImageCache from "./utils/ImageCache";
 import Footer from "./Footer.js";
 
 const normalizeName = (s) =>
-  String(s || "").toLowerCase().replace(/\s+/g, " ").trim();
+  String(s || "").toLowerCase().replace(/\s+/g, " ").replace("500ml", "500 ml").trim();
 
 const CATEGORY_VEG_FRUITS_OFFERS = [
   normalizeName("Grocery Offers"),
+  normalizeName("Milk, Curd & Ghee"),
   normalizeName("Oils & Dals"),
   normalizeName("Atta & Flours"),
 ];
-
+       
 const LIMIT_RULES = [
-  { match: normalizeName("Banana 2 Pcs"), limit: 1 },
+  { match: normalizeName("Visakha Dairy Ganga Toned Milk 500 ml"), limit: 2 },
+  { match: normalizeName("Banana 3 Pcs"), limit: 1 },
   { match: normalizeName("Pomegranate 2 Pcs (300-400 g)"), limit: 1 },
   { match: normalizeName("Royal Gala Apple 2 Pcs (200-300 g)"), limit: 1 },
   { match: normalizeName("Visakha Dairy Happy Full Cream Milk 500 ml"), limit: 1 },
