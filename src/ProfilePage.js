@@ -74,7 +74,7 @@ import KitchenImg from './img/Kitchenware.jpeg';
 import BiscuitsImg from './img/Biscuits.jpeg';
 import HealthImg from './img/HealthCare.jpeg';
 import SkinImg from './img/SkinFace.jpeg';
-import ChristmasImg from './img/Christmas.jpeg';
+// import ChristmasImg from './img/Christmas.jpeg';
 import TeaImg from './img/teacoffee.jpeg';
 import NamkeenImg from './img/InstantFoodImg.jpeg';
 import HouseHoldImg from './img/HouseHold.jpeg';   
@@ -868,13 +868,12 @@ const categories = [
 const groceryCategories = [
   { label: 'DWCRA Products', value: 'DWCRA', image: DwakraProducts },
   { label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
-  { label: 'Christmas', value: 'Christmas Offers', image: ChristmasImg },
+  // { label: 'Christmas', value: 'Christmas Offers', image: ChristmasImg },
   { label: 'Ice Creams', value: 'Ice Creams', image: IcecreamImg },
   { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
   { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
   { label: 'Rice & Ravva', value: 'Rice & Ravva', image: RavvaImg },   
   { label: 'Stationary', value: 'Stationary', image: StationaryImg },
-  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
   { label: 'Atta & Flours', value: 'Atta & Flours', image: AttaImg },
   { label: 'Oils & Dals', value: 'Oils & Dals', image: OilsImg },
   { label: 'Sugar, Salt & Jaggery', value: 'Sugar, Salt & Jaggery', image: SugarImg },
@@ -896,6 +895,7 @@ const groceryCategories = [
   { label: 'Kids Zone', value: 'Kids Zone', image: KidsImg },
   { label: 'Health Care', value: 'Health Care', image: HealthImg },
   { label: 'Kitchenware Appliances', value: 'Kitchenware Appliances', image: KitchenImg },
+  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
 ];
 
 const collectionsCategories = [
@@ -3723,7 +3723,7 @@ const updateLocalStorageCart = (product, qty) => {
                       <div className="carousel-indicators">
                         <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="0" className="active" aria-current="true"></button>
                         <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="1"></button>
-                        <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="2"></button>
+                        {/* <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="2"></button> */}
                         {/* <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="3"></button> */}
                       </div>
                       {/* Carousel Items */}

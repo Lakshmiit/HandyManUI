@@ -59,33 +59,33 @@ function getCustomLimit(name) {
   .toLowerCase()
   .replace(/\s+/g, " ")
   .replace("500ml", "500 ml")
+  .replace("1l", "1 l")
   .trim();
 
   if ( n === "visakha dairy curd 180 g" ||
     n === "visakha dairy happy full cream milk 500 ml" ||
-    n === "visakha dairy milk 200 ml" || n === "visakha dairy good milk 180 ml" || n === "lemon (nimakaya) (3pcs)" ||     n === "freedom refined sunflower oil 5 l" ||
+    n === "visakha dairy milk 200 ml" || n === "visakha dairy good milk 180 ml" || 
+    n === "lemon (nimakaya) (3pcs)" || 
+    n === "freedom refined sunflower oil 5 l" ||
     n === "gold drop refined sunflower oil can 5 l" ||
     n === "aashirvaad high fibre atta with multigrains 5 kg" ||
-    n === "aashirvaad superior whole wheat atta 5 kg" || 
-    n === "freedom refined sunflower oil 1 l" ||
+    n === "aashirvaad superior whole wheat atta 5 kg" ||
     n === "pomegranate 2 pcs (300-400 g)" ||
     n === "royal gala apple 2 pcs (200-300 g)" ||
-    n === "banana 3 pcs"
+    n === "banana 3 pcs" 
   ) return 1;
   if (
-    // n === "apple 1 pc" ||
     n === "visakha dairy ganga toned milk 500 ml" ||
     n === "onion (ulligadda) 500 g" || 
     n === "potato (bangala dumpa) 500 g" ||
     n === "ivy gourd (dondakaya) 250 g" ||
     n === "green chilli (pachchi mirchi) 100 g" || 
     n === "tomato 250 g" ||    
-    n === "raw banana 1 pc"  || 
-    n === "independence refined sunflower oil 1 l"
-    // n === "aashirvaad superior whole wheat mp atta 1 kg"
-    // n === "combo pack 1 - daawat basmati rice 1kg + eastern garam masala 100g + visakha dairy paneer 200g" ||
-    // n === "combo pack 2 - daawat biryani basmati rice 1kg + eastern garam masala 100g + visakha dairy paneer 200g"
-  ) return 2;
+    n === "raw banana 2 pc"  ||    
+    n === "independence refined sunflower oil 1 l"  || 
+    n === "freedom refined sunflower oil 1 l"  ||
+    n === "freedom refined sunflower oil bottle 1 l"
+    ) return 2;
   if (
     n === "gold drop refined sunflower oil 1 l"
    ) return 3;

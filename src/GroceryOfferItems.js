@@ -15,7 +15,7 @@ import ImageCache from "./utils/ImageCache";
 import Footer from "./Footer.js";
 
 const normalizeName = (s) =>
-  String(s || "").toLowerCase().replace(/\s+/g, " ").replace("500ml", "500 ml").trim();
+  String(s || "").toLowerCase().replace(/\s+/g, " ").replace("500ml", "500 ml").replace("1l", "1 l").trim();
 
 const CATEGORY_VEG_FRUITS_OFFERS = [
   normalizeName("Grocery Offers"),
@@ -39,8 +39,9 @@ const LIMIT_RULES = [
   { match: normalizeName("Onion (Ulligadda) 500 g"), limit: 2 },
   { match: normalizeName("Ivy Gourd (Dondakaya) 250 g"), limit: 2 },
   { match: normalizeName("Potato (Bangala Dumpa) 500 g"), limit: 2 },
-  { match: normalizeName("Raw Banana (Aratikaya) 1 Pc"), limit: 2 },
-  { match: normalizeName("Freedom Refined Sunflower Oil 1 L"), limit: 1 },
+  { match: normalizeName("Raw Banana (Aratikaya) 2 Pc"), limit: 2 },
+  { match: normalizeName("Freedom Refined Sunflower Oil 1 L"), limit: 2 },
+  { match: normalizeName("Freedom Refined Sunflower Oil Bottle 1 L"), limit: 2 },
   { match: normalizeName("Gold Drop Refined Sunflower Oil 1 L"), limit: 3 },
   { match: normalizeName("Independence Refined Sunflower Oil 1 L"), limit: 2 },
   { match: normalizeName("Freedom Refined Sunflower Oil 5 L"), limit: 1 },

@@ -16,14 +16,14 @@ const IMAGE_DOWNLOAD =
   "https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=";
 
 const norm = (s) =>
-  String(s || "").toLowerCase().replace(/\s+/g, " ").replace("500ml", "500 ml").trim();
+  String(s || "").toLowerCase().replace(/\s+/g, " ").replace("500ml", "500 ml").replace("1l", "1 l").trim();
 
 // const CATEGORY_OFFERS = norm("Grocery Offers");
 // const CATEGORY_VF_OFFERS = norm("Grocery Offers");
 const CATEGORY_VF_OFFERS = [
   norm("Grocery Offers"),
   norm("Milk, Curd & Ghee"),   
-  norm("Oils & Dals"),
+  norm("Oils & Dals"),     
   norm("Atta & Flours"),
 ];
 
@@ -42,8 +42,9 @@ const LIMIT_RULES = [
   { match: norm("Onion (Ulligadda) 500 g"), limit: 2 },
   { match: norm("Ivy Gourd (Dondakaya) 250 g"), limit: 2 },
   { match: norm("Potato (Bangala Dumpa) 500 g"), limit: 2 },
-  { match: norm("Raw Banana (Aratikaya) 1 Pc"), limit: 2 },
-  { match: norm("Freedom Refined Sunflower Oil 1 L"), limit: 1 },
+  { match: norm("Raw Banana (Aratikaya) 2 Pc"), limit: 2 },
+  { match: norm("Freedom Refined Sunflower Oil 1 L"), limit: 2 },
+  { match: norm("Freedom Refined Sunflower Oil Bottle 1 L"), limit: 2 },
   { match: norm("Gold Drop Refined Sunflower Oil 1 L"), limit: 3 },
   { match: norm("Independence Refined Sunflower Oil 1 L"), limit: 2 },
   { match: norm("Freedom Refined Sunflower Oil 5 L"), limit: 1 }, 
