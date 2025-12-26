@@ -340,16 +340,16 @@ useEffect(() => {
           );
           const paid = Number(order.grandTotal ?? 0);
           const diff = Math.round(categoryTotal - paid);
-          // if (diff === 50) {
-          //   usedCashbacks.add(50);
-          // }
+          if (diff === 50) {
+            usedCashbacks.add(50);
+          }
           if (diff === 100) {
             usedCashbacks.add(100);
-            // usedCashbacks.add(50);
+            usedCashbacks.add(50);
           }
           if (diff === 300) {
             usedCashbacks.add(300);
-            // usedCashbacks.add(50); 
+            usedCashbacks.add(50); 
           }  
         });
       }
@@ -404,7 +404,7 @@ const getReferralRecord = async (userId) => {
     data.sort((a, b) => new Date(b.date) - new Date(a.date));
     return data[0];
   }
-  return null;
+  return null; 
 };
 
 useEffect(() => {
