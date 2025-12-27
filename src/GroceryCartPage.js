@@ -55,12 +55,28 @@ const GroceryCartPage = () => {
 
 function getCustomLimit(name) {
   // const n = normalizeName(name);
-  const n = String(name || "")
-  .toLowerCase()
-  .replace(/\s+/g, " ")
-  .replace("500ml", "500 ml")
-  .replace("1l", "1 l")
-  .trim();
+ const n = String(name || "")
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .replace(/(\d+)\s*l\b/, "$1 l")
+    .replace(/(\d+)\s*ml\b/, "$1 ml")
+    .trim();
+
+  // if (
+  //   /\bfreedom refined sunflower oil\b/.test(n) &&
+  //   /\b1 l\b/.test(n) &&
+  //   /\bbottle\b/.test(n)
+  // ) {        
+  //   return 1;
+  // }
+
+  // if (
+  //   /\bfreedom refined sunflower oil\b/.test(n) &&
+  //   /\b1 l\b/.test(n) &&
+  //   !/\bbottle\b/.test(n)
+  // ) {
+  //   return 2;
+  // }
 
   if ( n === "visakha dairy curd 180 g" ||
     n === "visakha dairy happy full cream milk 500 ml" ||
@@ -72,7 +88,10 @@ function getCustomLimit(name) {
     n === "aashirvaad superior whole wheat atta 5 kg" ||
     n === "pomegranate 2 pcs (300-400 g)" ||
     n === "royal gala apple 2 pcs (200-300 g)" ||
-    n === "banana 3 pcs" 
+    n === "banana 4 pcs" 
+    ||
+    n === "freedom refined sunflower oil bottle 1 l"
+    
   ) return 1;
   if (
     n === "visakha dairy ganga toned milk 500 ml" ||
@@ -83,14 +102,14 @@ function getCustomLimit(name) {
     n === "tomato 250 g" ||    
     n === "raw banana 2 pc"  ||    
     n === "independence refined sunflower oil 1 l"  || 
-    n === "freedom refined sunflower oil 1 l"  ||
-    n === "freedom refined sunflower oil bottle 1 l"
+    n === "freedom refined sunflower oil 1 l"  
     ) return 2;
-  if (
+  if (   
     n === "gold drop refined sunflower oil 1 l"
    ) return 3;
   return Infinity;   
 }
+console.log(getCustomLimit("Freedom Refined Sunflower Oil Bottle 1 L"));
 
   function getFilenameFromValue(value) {
     if (!value) return "";
@@ -153,7 +172,11 @@ function getCustomLimit(name) {
           (cat.products || []).map((p) => ({
             categoryName: cat.categoryName,
             productName: p.productName || p.name || "",
-            qty: toNum(p.qty, 0),
+            qty: Math.min(
+            toNum(p.qty, 0),
+            getCustomLimit(p.productName || p.name || "")
+          ),
+            // qty: toNum(p.qty, 0),
             mrp: toNum(p.mrp, 0),
             discount: toNum(p.discount, 0),
             price: toNum(p.afterDiscountPrice ?? p.price, 0),
@@ -206,17 +229,14 @@ function getCustomLimit(name) {
             if (!pname) return p;
             const latestStock = stockMap.get(pname);
             if (latestStock == null) return p;
-            const currentQty = toNum(p.qty, 0);
-            const clampedQty = Math.max(
-              0,
-              Math.min(
-                currentQty,
-                latestStock,
-                getCustomLimit(p.productName || p.name || "")
-              )
-            );
+            const limit = getCustomLimit(p.productName || p.name || "");
+              const currentQty = Math.min(toNum(p.qty, 0), limit);
+              const clampedQty = Math.max(
+                0,
+                Math.min(currentQty, latestStock)
+              );
             // const clampedQty = Math.max(0, Math.min(currentQty, latestStock));
-            return {
+            return {       
               ...p,
               stockLeft: String(latestStock),
               qty: clampedQty,
@@ -257,8 +277,8 @@ function getCustomLimit(name) {
           })
         )
         // ✅ include offers too; only require qty > 0
-        .filter((it) => it.qty > 0);
-
+        // .filter((it) => it.qty > 0);
+        .filter((it) => it.qty > 0 && Number(it.stockLeft) > 0);
       setCartItems(allItems);
       setGrandSummary({
         items: allItems.reduce((s, it) => s + toNum(it.qty, 0), 0),
@@ -271,59 +291,44 @@ function getCustomLimit(name) {
   );
 
   useEffect(() => {
-    const ctrl = new AbortController();
+  const ctrl = new AbortController();
+  const tick = () => {
+    if (ctrl.signal.aborted) return;
+    refreshStocksOnce(ctrl.signal).catch((e) => {
+      if (e?.name !== "AbortError") console.warn("Stock refresh failed:", e);
+    });
+  };
 
-    const tick = () => {
-      if (ctrl.signal.aborted) return;
-      refreshStocksOnce(ctrl.signal).catch((e) => {
-        if (e?.name !== "AbortError") console.warn("Stock refresh failed:", e);
-      });
-    };
+  tick();
+  const id = setInterval(tick, 5000);
+  return () => {
+    clearInterval(id);
+    ctrl.abort();
+  };
+}, [refreshStocksOnce]);
 
-    tick();                   
-    const id = setInterval(tick, 5000);
-    return () => {
-      clearInterval(id);
-      ctrl.abort();
-    };
-  }, [refreshStocksOnce]);
+const buildCartFromStorage = React.useCallback(() => {
+  const saved = JSON.parse(localStorage.getItem("allCategories") || "[]");
 
-  useEffect(() => {
-    const safeParse = (key) => {
-      try { return JSON.parse(localStorage.getItem(key) || "[]"); }
-      catch { return []; }
-    };
-
-    const saved0 = safeParse("allCategories");
-    if (!saved0.length) {
-      const activeOrderId = localStorage.getItem("activeOrderId");
-      const snap = activeOrderId && localStorage.getItem(`cartSnapshot_${activeOrderId}`);
-      if (snap) {
-        localStorage.setItem("allCategories", snap);
-      }
-    }         
-
-    const saved = safeParse("allCategories");
-    const allItems = saved.flatMap((cat) =>
-    //    isBlockedCategory(cat.categoryName)
-    // ? []  :
-      (cat.products || []).map((p, idx) => {
+  const items = saved.flatMap((cat) =>
+    (cat.products || [])
+      .filter(p => Number(p.qty) > 0)   
+      .map((p, idx) => {
         const persisted = p.image ?? p.productImage ?? "";
         const imageFilename = getFilenameFromValue(persisted);
         const imageUrl = imageFilename
           ? fileToUrl(imageFilename)
           : (typeof persisted === "string" ? persisted : "");
-        return {
+        const rawQty = Number(p.qty);
+        const limit = getCustomLimit(p.productName ?? p.name ?? "");
+        const stock = Number(p.stockLeft || Infinity);
+        return {          
           id: `${cat.categoryName}-${p.productId ?? p.id ?? idx}`,
           productId: p.productId ?? p.id ?? idx,
           name: p.productName ?? p.name ?? "",
           category: cat.categoryName,
-          // qty: Number(p.qty || 0),
-          qty: Math.min(
-            Number(p.qty || 0),
-            Number.isFinite(Number(p.stockLeft)) ? Number(p.stockLeft) : Infinity,
-            getCustomLimit(p.productName ?? p.name ?? "")
-          ),
+          // qty: Number(p.qty),
+          qty: Math.min(rawQty, limit, stock),
           mrp: Number(p.mrp || 0),
           discount: Number(p.discount || 0),
           price: Number(p.afterDiscountPrice || p.price || 0),
@@ -334,52 +339,113 @@ function getCustomLimit(name) {
           imageUrl,
         };
       })
-    );
+  );
 
-    const filtered = allItems.filter((it) => it.qty > 0); // includes offers
-    setCartItems(filtered);
-    setGrandSummary({
-      items: filtered.reduce((s, it) => s + Number(it.qty || 0), 0),
-      total: Math.round(filtered.reduce((s, it) => s + Number(it.price || 0) * Number(it.qty || 0), 0)),
-    });
-  }, []);
+  return items;
+}, []);
 
-  useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem("allCategories") || "[]");
-    const allItems = saved.flatMap((cat) =>
-      (cat.products || []).map((p, idx) => {
-        const persisted = p.image ?? p.productImage ?? "";
-        const imageFilename = getFilenameFromValue(persisted);
-        const imageUrl = imageFilename ? fileToUrl(imageFilename) : (typeof persisted === "string" ? persisted : "");
+useEffect(() => {
+  const items = buildCartFromStorage();
+  setCartItems(items);
+  setGrandSummary({
+    items: items.reduce((s, it) => s + it.qty, 0),
+    total: Math.round(items.reduce((s, it) => s + it.price * it.qty, 0)),
+  });
+}, [buildCartFromStorage]);
 
-        return {
-          id: `${cat.categoryName}-${p.productId ?? p.id ?? idx}`,
-          productId: p.productId ?? p.id ?? idx,
-          name: p.productName ?? p.name ?? "",
-          category: cat.categoryName,
-          // qty: Number(p.qty || 0),
-          qty: Math.min(
-            Number(p.qty || 0),
-            Number.isFinite(Number(p.stockLeft)) ? Number(p.stockLeft) : Infinity,
-            getCustomLimit(p.productName ?? p.name ?? "")
-          ),
-          mrp: Number(p.mrp || 0),
-          discount: Number(p.discount || 0),
-          price: Number(p.afterDiscountPrice || p.price || 0),
-          stockLeft: Number(p.stockLeft || 0),
-          code: p.code,
-          units: p.units,
-          imageFilename,       
-          imageUrl,         
-        };
-      })
-    );
-    setCartItems(allItems.filter(it => it.qty > 0)); // includes offers
-    setGrandSummary({
-      items: allItems.reduce((s, it) => s + Number(it.qty || 0), 0),
-      total: Math.round(allItems.reduce((s, it) => s + Number(it.price || 0) * Number(it.qty || 0), 0)),
-    });
-  }, []);
+
+  // useEffect(() => {
+  //   const safeParse = (key) => {
+  //     try { return JSON.parse(localStorage.getItem(key) || "[]"); }
+  //     catch { return []; }
+  //   };
+
+  //   const saved0 = safeParse("allCategories");
+  //   if (!saved0.length) {
+  //     const activeOrderId = localStorage.getItem("activeOrderId");
+  //     const snap = activeOrderId && localStorage.getItem(`cartSnapshot_${activeOrderId}`);
+  //     if (snap) {
+  //       localStorage.setItem("allCategories", snap);
+  //     }
+  //   }         
+
+  //   const saved = safeParse("allCategories");
+  //   const allItems = saved.flatMap((cat) =>
+  //   //    isBlockedCategory(cat.categoryName)
+  //   // ? []  :
+  //     (cat.products || []).map((p, idx) => {
+  //       const persisted = p.image ?? p.productImage ?? "";
+  //       const imageFilename = getFilenameFromValue(persisted);
+  //       const imageUrl = imageFilename
+  //         ? fileToUrl(imageFilename)
+  //         : (typeof persisted === "string" ? persisted : "");
+  //       return {
+  //         id: `${cat.categoryName}-${p.productId ?? p.id ?? idx}`,
+  //         productId: p.productId ?? p.id ?? idx,
+  //         name: p.productName ?? p.name ?? "",
+  //         category: cat.categoryName,
+  //         // qty: Number(p.qty || 0),
+  //         qty: Math.min(
+  //           Number(p.qty || 0),
+  //           Number.isFinite(Number(p.stockLeft)) ? Number(p.stockLeft) : Infinity,
+  //           getCustomLimit(p.productName ?? p.name ?? "")
+  //         ),
+  //         mrp: Number(p.mrp || 0),
+  //         discount: Number(p.discount || 0),
+  //         price: Number(p.afterDiscountPrice || p.price || 0),
+  //         stockLeft: Number(p.stockLeft || 0),
+  //         code: p.code,
+  //         units: p.units,
+  //         imageFilename,
+  //         imageUrl,
+  //       };
+  //     })
+  //   );
+
+  //   const filtered = allItems.filter((it) => it.qty > 0); // includes offers
+  //   setCartItems(filtered);
+  //   setGrandSummary({
+  //     items: filtered.reduce((s, it) => s + Number(it.qty || 0), 0),
+  //     total: Math.round(filtered.reduce((s, it) => s + Number(it.price || 0) * Number(it.qty || 0), 0)),
+  //   });
+  // }, []);
+
+  // useEffect(() => {
+  //   const saved = JSON.parse(localStorage.getItem("allCategories") || "[]");
+  //   const allItems = saved.flatMap((cat) =>
+  //     (cat.products || []).map((p, idx) => {
+  //       const persisted = p.image ?? p.productImage ?? "";
+  //       const imageFilename = getFilenameFromValue(persisted);
+  //       const imageUrl = imageFilename ? fileToUrl(imageFilename) : (typeof persisted === "string" ? persisted : "");
+
+  //       return {
+  //         id: `${cat.categoryName}-${p.productId ?? p.id ?? idx}`,
+  //         productId: p.productId ?? p.id ?? idx,
+  //         name: p.productName ?? p.name ?? "",
+  //         category: cat.categoryName,
+  //         // qty: Number(p.qty || 0),
+  //         qty: Math.min(
+  //           Number(p.qty || 0),
+  //           Number.isFinite(Number(p.stockLeft)) ? Number(p.stockLeft) : Infinity,
+  //           getCustomLimit(p.productName ?? p.name ?? "")
+  //         ),
+  //         mrp: Number(p.mrp || 0),
+  //         discount: Number(p.discount || 0),
+  //         price: Number(p.afterDiscountPrice || p.price || 0),
+  //         stockLeft: Number(p.stockLeft || 0),
+  //         code: p.code,
+  //         units: p.units,
+  //         imageFilename,       
+  //         imageUrl,         
+  //       };
+  //     })
+  //   );
+  //   setCartItems(allItems.filter(it => it.qty > 0)); // includes offers
+  //   setGrandSummary({
+  //     items: allItems.reduce((s, it) => s + Number(it.qty || 0), 0),
+  //     total: Math.round(allItems.reduce((s, it) => s + Number(it.price || 0) * Number(it.qty || 0), 0)),
+  //   });
+  // }, []);
 
   useEffect(() => {
     const filenames = Array.from(
@@ -711,12 +777,17 @@ function getCustomLimit(name) {
                 >
                   <RemoveIcon fontSize="small" />
                 </IconButton>
-                <span style={{ fontWeight: "bold", fontSize: "12px" }}>{item.qty}</span>
+                <span style={{ fontWeight: "bold", fontSize: "12px" }}>{Math.min(item.qty, getCustomLimit(item.name))}</span>
+                {/* <span style={{ fontWeight: "bold", fontSize: "12px" }}>{item.qty}</span> */}
                 <IconButton
                   size="small"
                   onClick={() => handleQtyChange(item.id, 1)}
                   style={{ color: "white", padding: "2px", opacity: item.qty >= item.stockLeft ? 0.5 : 1 }}
-                  disabled={ item.qty >= Math.min(item.stockLeft, getCustomLimit(item.name))}
+                  disabled={
+                    Math.min(item.qty, getCustomLimit(item.name)) >=
+                    Math.min(item.stockLeft, getCustomLimit(item.name))
+                  }
+                  // disabled={ item.qty >= Math.min(item.stockLeft, getCustomLimit(item.name))}
                   // disabled={Number.isFinite(item.stockLeft) && item.qty >= item.stockLeft}
                   title={Number.isFinite(item.stockLeft) && item.qty >= item.stockLeft ? "No more stock" : "Add one"}
                 >
@@ -1347,7 +1418,7 @@ export default GroceryCartPage;
 //   const extractedId = data.id;
 //   if (extractedId) {
 //     // localStorage.setItem("orderId", extractedId);
-//     // console.log("extractedId:", extractedId);
+//     // console.log("extractedId:", extractedId);      
 //     // localStorage.removeItem("allCategories");
 // const currentCart = localStorage.getItem("allCategories") || "[]";
 // localStorage.setItem(`cartSnapshot_${extractedId}`, currentCart);

@@ -26,7 +26,7 @@ const CATEGORY_VEG_FRUITS_OFFERS = [
        
 const LIMIT_RULES = [
   { match: normalizeName("Visakha Dairy Ganga Toned Milk 500 ml"), limit: 2 },
-  { match: normalizeName("Banana 3 Pcs"), limit: 1 },
+  { match: normalizeName("Banana 4 Pcs"), limit: 1 },
   { match: normalizeName("Pomegranate 2 Pcs (300-400 g)"), limit: 1 },
   { match: normalizeName("Royal Gala Apple 2 Pcs (200-300 g)"), limit: 1 },
   { match: normalizeName("Visakha Dairy Happy Full Cream Milk 500 ml"), limit: 1 },
@@ -41,7 +41,7 @@ const LIMIT_RULES = [
   { match: normalizeName("Potato (Bangala Dumpa) 500 g"), limit: 2 },
   { match: normalizeName("Raw Banana (Aratikaya) 2 Pc"), limit: 2 },
   { match: normalizeName("Freedom Refined Sunflower Oil 1 L"), limit: 2 },
-  { match: normalizeName("Freedom Refined Sunflower Oil Bottle 1 L"), limit: 2 },
+  { match: normalizeName("Freedom Refined Sunflower Oil Bottle 1 L"), limit: 1 },
   { match: normalizeName("Gold Drop Refined Sunflower Oil 1 L"), limit: 3 },
   { match: normalizeName("Independence Refined Sunflower Oil 1 L"), limit: 2 },
   { match: normalizeName("Freedom Refined Sunflower Oil 5 L"), limit: 1 },
