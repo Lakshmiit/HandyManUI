@@ -27,8 +27,8 @@ import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 // import Banner from './img/ChristmasVideo.mp4';
-// import Banner2 from './img/MilkOffers.jpeg';   
-import Banner2 from './img/ChickenOffers.jpeg';
+import Banner2 from './img/MilkOffers.jpeg';   
+// import Banner2 from './img/ChickenOffers.jpeg';
 import Banner3 from './img/45AboveOffers.jpeg'; 
 // import BannerVideo from './img/ChristmasVideo.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
@@ -86,7 +86,7 @@ import kurti from './img/2pcsset.jpeg';
 import { CartStorage } from "./CartStorage";
 import IcecreamImg from './img/IceCreams.jpeg';
 import DwakraProducts from './img/DwakraLogo.jpeg';
-// import Banner1Img from './img/50Cashback.jpeg';
+import Banner1Img from './img/50Cashback.jpeg';
 import Banner2Img from './img/100Cashback.jpeg';
 import Banner3Img from './img/300Cashback.jpeg';
 // import BathImg from './img/bathImg.jpeg';
@@ -868,7 +868,7 @@ const categories = [
 const groceryCategories = [
   { label: 'DWCRA Products', value: 'DWCRA', image: DwakraProducts },
   { label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
-  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
+  { label: 'Kitchenware Appliances', value: 'Kitchenware Appliances', image: KitchenImg },
   { label: 'Ice Creams', value: 'Ice Creams', image: IcecreamImg },
   { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
   { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
@@ -894,7 +894,8 @@ const groceryCategories = [
   { label: 'Baby Products', value: 'Baby Products', image: BabyKidsImg },
   { label: 'Kids Zone', value: 'Kids Zone', image: KidsImg },
   { label: 'Health Care', value: 'Health Care', image: HealthImg },
-  { label: 'Kitchenware Appliances', value: 'Kitchenware Appliances', image: KitchenImg },
+  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
+
 ];
 
 const collectionsCategories = [
@@ -1944,13 +1945,13 @@ const handleAddClick = (product) => {
 // }, []);
 
 // // cashback logic
-// useEffect(() => {
-//   if (!showCashbackModal) return; 
-//   const timer = setTimeout(() => {
-//     setShowCashbackModal(false);
-//   }, 5000);
-//   return () => clearTimeout(timer); 
-// }, [showCashbackModal]);
+useEffect(() => {
+  if (!showCashbackModal) return; 
+  const timer = setTimeout(() => {
+    setShowCashbackModal(false);
+  }, 5000);
+  return () => clearTimeout(timer); 
+}, [showCashbackModal]);
 
 useEffect(() => {
   // Cricket logic 
@@ -1979,7 +1980,7 @@ useEffect(() => {
       const text = (rawText || "").trim().toLowerCase();
       if (text.includes("firstorder can not be found")) {
         console.log("Match found -> opening cashback modal");
-        //  setShowCashbackModal(true);
+         setShowCashbackModal(true);
        } else {
         console.log("No match in response text, not showing modal");
       }
@@ -4187,14 +4188,14 @@ const updateLocalStorageCart = (product, qty) => {
     </div>
   ))}
 </div>
-                    {/*  <div style={{ cursor: "pointer"}}>
+                     <div style={{ cursor: "pointer"}}>
                         <img
                           src={Banner1Img}
                           className="d-block w-100 img-fluid rounded"
                           style={{ objectFit: "contain" }}
                           alt="Cashback"
                         />
-                      </div> */}
+                      </div>
 <div className="row row-cols-3 row-cols-md-5 g-1">
   {secondCategories.map((cat) => (
     <div

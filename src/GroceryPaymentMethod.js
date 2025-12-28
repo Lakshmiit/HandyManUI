@@ -340,16 +340,16 @@ useEffect(() => {
           );
           const paid = Number(order.grandTotal ?? 0);
           const diff = Math.round(categoryTotal - paid);
-          // if (diff === 50) {
-          //   usedCashbacks.add(50);
-          // }
+          if (diff === 50) {
+            usedCashbacks.add(50);
+          }
           if (diff === 100) {
             usedCashbacks.add(100);
-            // usedCashbacks.add(50);
+            usedCashbacks.add(50);
           }
           if (diff === 300) {
             usedCashbacks.add(300);
-            // usedCashbacks.add(50); 
+            usedCashbacks.add(50); 
           }  
         });
       }
@@ -361,14 +361,14 @@ useEffect(() => {
       } else if (currentGT >= 1000 && !usedCashbacks.has(100)) {
         discount = 100;
       } 
-      // else if (currentGT >= 150 && !usedCashbacks.has(50)) {
-      //   discount = 50;
-      // } 
+      else if (currentGT >= 150 && !usedCashbacks.has(50)) {
+        discount = 50;
+      } 
       else {
         discount = 0; 
-        // if (isNew) {
-        //   msg = "Order ₹150 or more to get ₹50 cashback on your first order!";
-        // }
+        if (isNew) {
+          msg = "Order ₹150 or more to get ₹50 cashback on your first order!";
+        }
       }
       setFirstOrderDiscount(discount);
       setCashbackMessage(msg);
