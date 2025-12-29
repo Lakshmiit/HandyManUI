@@ -3390,7 +3390,7 @@ const updateLocalStorageCart = (product, qty) => {
     <div
       style={{
         position: "fixed",
-        bottom: "0px",
+        bottom: "40px",
         left: 0,
         width: "100%",
         backgroundColor: "green",
@@ -3400,9 +3400,9 @@ const updateLocalStorageCart = (product, qty) => {
         justifyContent: "space-between",
         alignItems: "center",
         fontWeight: "bold",
-        zIndex: 2000,
+        zIndex: 2000, 
         borderRadius: "20px",
-        marginTop: "10px",
+        marginTop: "0px",
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>

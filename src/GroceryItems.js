@@ -787,7 +787,7 @@ function getItemTime(p) {
     <div
       style={{
         position: "fixed",
-        bottom: "0px",
+        bottom: "40px",
         left: 0,
         width: "100%",
         backgroundColor: "green",
