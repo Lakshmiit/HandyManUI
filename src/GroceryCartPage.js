@@ -88,8 +88,8 @@ function getCustomLimit(name) {
     n === "aashirvaad superior whole wheat atta 5 kg" ||
     n === "pomegranate 2 pcs (300-400 g)" ||
     n === "royal gala apple 2 pcs (200-300 g)" ||
-    n === "banana 4 pcs" 
-    ||
+    n === "banana 4 pcs" ||
+    n === "fresh orange imported (narinja) 2 pcs (400-450 g)" ||
     n === "freedom refined sunflower oil bottle 1 l"
     
   ) return 1;

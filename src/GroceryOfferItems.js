@@ -28,6 +28,7 @@ const LIMIT_RULES = [
   { match: normalizeName("Visakha Dairy Ganga Toned Milk 500 ml"), limit: 2 },
   { match: normalizeName("Banana 4 Pcs"), limit: 1 },
   { match: normalizeName("Pomegranate 2 Pcs (300-400 g)"), limit: 1 },
+  { match: normalizeName("Fresh Orange Imported (Narinja) 2 Pcs (400-450 g)"), limit: 1 },
   { match: normalizeName("Royal Gala Apple 2 Pcs (200-300 g)"), limit: 1 },
   { match: normalizeName("Visakha Dairy Happy Full Cream Milk 500 ml"), limit: 1 },
   { match: normalizeName("Visakha Dairy Good Milk 180 ml"), limit: 1 },
