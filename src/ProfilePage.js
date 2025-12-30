@@ -74,7 +74,6 @@ import KitchenImg from './img/Kitchenware.jpeg';
 import BiscuitsImg from './img/Biscuits.jpeg';
 import HealthImg from './img/HealthCare.jpeg';
 import SkinImg from './img/SkinFace.jpeg';
-// import ChristmasImg from './img/Christmas.jpeg';
 import TeaImg from './img/teacoffee.jpeg';
 import NamkeenImg from './img/InstantFoodImg.jpeg';
 import HouseHoldImg from './img/HouseHold.jpeg';   
@@ -89,6 +88,7 @@ import DwakraProducts from './img/DwakraLogo.jpeg';
 import Banner1Img from './img/50Cashback.jpeg';
 import Banner2Img from './img/100Cashback.jpeg';
 import Banner3Img from './img/300Cashback.jpeg';
+import DeliveryImg from './img/DeliveryPoster.jpeg';
 // import BathImg from './img/bathImg.jpeg';
 // import FlourImg from './img/FlourImg.jpeg';
 // import FaceImg from './img/FaceImg.jpeg';  
@@ -867,26 +867,25 @@ const categories = [
     
 const groceryCategories = [
   { label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
-  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
-  { label: 'DWCRA Products', value: 'DWCRA', image: DwakraProducts },
-  { label: 'Kitchenware Appliances', value: 'Kitchenware Appliances', image: KitchenImg },
-  { label: 'Ice Creams', value: 'Ice Creams', image: IcecreamImg },
-  { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
+   { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
   { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
-  { label: 'Rice & Ravva', value: 'Rice & Ravva', image: RavvaImg },   
-  { label: 'Stationary', value: 'Stationary', image: StationaryImg },
+  { label: 'Kitchenware Appliances', value: 'Kitchenware Appliances', image: KitchenImg },
+  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
+  { label: 'Ice Creams', value: 'Ice Creams', image: IcecreamImg },
   { label: 'Atta & Flours', value: 'Atta & Flours', image: AttaImg },
-  { label: 'Oils & Dals', value: 'Oils & Dals', image: OilsImg },
-  { label: 'Sugar, Salt & Jaggery', value: 'Sugar, Salt & Jaggery', image: SugarImg },
-  { label: 'Bread & Eggs', value: 'Bread & Eggs', image: BreadsImg },
+  { label: 'Rice & Ravva', value: 'Rice & Ravva', image: RavvaImg }, 
+   { label: 'Oils & Dals', value: 'Oils & Dals', image: OilsImg },
+  { label: 'Sugar, Salt & Jaggery', value: 'Sugar, Salt & Jaggery', image: SugarImg }, 
   { label: 'Masala, Spices & Pickles', value: 'Masala, Spices & Pickles', image: MasalaImg },
   { label: 'Instant Food, Chips & Namkeen', value: 'Instant Food, Chips & Namkeen', image: NamkeenImg },
+{ label: 'Bread & Eggs', value: 'Bread & Eggs', image: BreadsImg },
   { label: 'Biscuits & Chocolates', value: 'Biscuits & Chocolates', image: BiscuitsImg },
   { label: 'Drinks & Juices', value: 'Drinks & Juices', image: DrinkImg },
   { label: 'Sweets & Snacks', value: 'Sweets & Snacks', image: BakeryImg },
   { label: 'Dry Fruits & Bakery', value: 'Dry Fruits & Bakery', image: DryfruitsImg },
   { label: 'Soups & Sauces', value: 'Soups & Sauces', image: SoupsImg},
   { label: 'Tea & Coffee', value: 'Tea & Coffee', image: TeaImg },   
+  { label: 'Stationary', value: 'Stationary', image: StationaryImg },
   { label: 'Home Needs', value: 'Home Needs', image: HouseHoldImg },
   { label: 'Puja Essentials', value: 'Puja Essentials', image: PoojaImg },
   { label: 'Skin & Face Care', value: 'Skin & Face Care', image: SkinImg },
@@ -895,6 +894,7 @@ const groceryCategories = [
   { label: 'Baby Products', value: 'Baby Products', image: BabyKidsImg },
   { label: 'Kids Zone', value: 'Kids Zone', image: KidsImg },
   { label: 'Health Care', value: 'Health Care', image: HealthImg },
+  { label: 'DWCRA Products', value: 'DWCRA', image: DwakraProducts },
 
 ];
 
@@ -3968,7 +3968,14 @@ const updateLocalStorageCart = (product, qty) => {
       No products found
     </p>
 )} */}
-
+<div style={{ cursor: "pointer"}}>
+                        <img
+                          src={DeliveryImg}
+                          className="d-block w-100 img-fluid rounded"
+                          style={{ objectFit: "contain" }}
+                          alt="Poster"
+                        /> 
+                      </div>
   <div className="shadow-lg p-2 rounded-5 mb-1 text-center bg-transparent border-0">
     <h5 className="fw-bold mb-3" style={{color: "#ff5722", fontSize: "20px"}}>
       Lakshmi Mart  
