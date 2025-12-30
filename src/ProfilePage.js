@@ -1010,10 +1010,10 @@ searchQuery.trim().length > 0 ? filteredProducts : products;
 const [imageLoading, setImageLoading] = useState(true);
 const [placeholderIndex, setPlaceholderIndex] = useState(0);
 const carouselRef = useRef(null);
-const firstCategories = groceryCategories.slice(0, 9);
-const secondCategories = groceryCategories.slice(9, 18);
-const thirdCategories = groceryCategories.slice(18, 27);
-const fourthCategories = groceryCategories.slice(27, 32);
+const firstCategories = groceryCategories.slice(0, 6);
+const secondCategories = groceryCategories.slice(6, 15);
+const thirdCategories = groceryCategories.slice(15, 24);
+const fourthCategories = groceryCategories.slice(24, 30);
 
 const groceryCarouselRef = useRef(null);
 
@@ -3704,6 +3704,14 @@ const updateLocalStorageCart = (product, qty) => {
               </div>
               </div>  
               </div>  */}
+              <div style={{ cursor: "pointer"}}>
+                        <img
+                          src={DeliveryImg}
+                          className="d-block w-100 img-fluid rounded mb-2"
+                          style={{ objectFit: "contain" }}
+                          alt="Poster"
+                        /> 
+                      </div>
               {/* Top Carousel Section */}
                 <div className="container">
                   <div>
@@ -3968,14 +3976,7 @@ const updateLocalStorageCart = (product, qty) => {
       No products found
     </p>
 )} */}
-<div style={{ cursor: "pointer"}}>
-                        <img
-                          src={DeliveryImg}
-                          className="d-block w-100 img-fluid rounded"
-                          style={{ objectFit: "contain" }}
-                          alt="Poster"
-                        /> 
-                      </div>
+
   <div className="shadow-lg p-2 rounded-5 mb-1 text-center bg-transparent border-0">
     <h5 className="fw-bold mb-3" style={{color: "#ff5722", fontSize: "20px"}}>
       Lakshmi Mart  
