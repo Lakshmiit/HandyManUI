@@ -866,8 +866,9 @@ const categories = [
 ];
     
 const groceryCategories = [
-  { label: 'DWCRA Products', value: 'DWCRA', image: DwakraProducts },
   { label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
+  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
+  { label: 'DWCRA Products', value: 'DWCRA', image: DwakraProducts },
   { label: 'Kitchenware Appliances', value: 'Kitchenware Appliances', image: KitchenImg },
   { label: 'Ice Creams', value: 'Ice Creams', image: IcecreamImg },
   { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
@@ -894,7 +895,6 @@ const groceryCategories = [
   { label: 'Baby Products', value: 'Baby Products', image: BabyKidsImg },
   { label: 'Kids Zone', value: 'Kids Zone', image: KidsImg },
   { label: 'Health Care', value: 'Health Care', image: HealthImg },
-  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
 
 ];
 
@@ -3400,7 +3400,7 @@ const updateLocalStorageCart = (product, qty) => {
         justifyContent: "space-between",
         alignItems: "center",
         fontWeight: "bold",
-        zIndex: 2000, 
+        zIndex: 2000,   
         borderRadius: "20px",
         marginTop: "0px",
       }}
