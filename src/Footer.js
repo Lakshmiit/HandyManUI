@@ -5,7 +5,7 @@ const Footer = () => {
     <footer className="footer" style={{fontSize: "12px"}}>
      <strong> Powered by</strong> <span className="text-warning strong">Lakshmi Sai Service Provider</span>
       <br />
-      <span className="small">&copy; 2025 Lakshmi software development center. All rights reserved.</span> <br/>
+      <span className="small">&copy; 2026 Lakshmi software development center. All rights reserved.</span> <br/>
        <span className="small">
         <strong> Office Hours :</strong> 06:00 AM-09:00 PM
       </span>

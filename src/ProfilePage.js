@@ -27,8 +27,9 @@ import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 // import Banner from './img/ChristmasVideo.mp4';
-import Banner2 from './img/MilkOffers.jpeg';   
+// import Banner2 from './img/MilkOffers.jpeg';   
 // import Banner2 from './img/ChickenOffers.jpeg';
+import Banner2 from './img/DrinkOffers.jpeg';   
 import Banner3 from './img/45AboveOffers.jpeg'; 
 // import BannerVideo from './img/ChristmasVideo.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
@@ -88,7 +89,9 @@ import DwakraProducts from './img/DwakraLogo.jpeg';
 import Banner1Img from './img/50Cashback.jpeg';
 import Banner2Img from './img/100Cashback.jpeg';
 import Banner3Img from './img/300Cashback.jpeg';
-import DeliveryImg from './img/DeliveryPoster.jpeg';
+import DeliveryImg from './img/NewYearWishes.jpeg';
+
+// import DeliveryImg from './img/DeliveryPoster.jpeg';
 // import BathImg from './img/bathImg.jpeg';
 // import FlourImg from './img/FlourImg.jpeg';
 // import FaceImg from './img/FaceImg.jpeg';  
@@ -870,7 +873,6 @@ const groceryCategories = [
    { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
   { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
   { label: 'Kitchenware Appliances', value: 'Kitchenware Appliances', image: KitchenImg },
-  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
   { label: 'Ice Creams', value: 'Ice Creams', image: IcecreamImg },
   { label: 'Atta & Flours', value: 'Atta & Flours', image: AttaImg },
   { label: 'Rice & Ravva', value: 'Rice & Ravva', image: RavvaImg }, 
@@ -895,7 +897,7 @@ const groceryCategories = [
   { label: 'Kids Zone', value: 'Kids Zone', image: KidsImg },
   { label: 'Health Care', value: 'Health Care', image: HealthImg },
   { label: 'DWCRA Products', value: 'DWCRA', image: DwakraProducts },
-
+  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
 ];
 
 const collectionsCategories = [
