@@ -90,7 +90,13 @@ function getCustomLimit(name) {
     n === "royal gala apple 2 pcs (200-300 g)" ||
     n === "banana 4 pcs" ||
     n === "fresh orange imported (narinja) 2 pcs (400-450 g)" ||
-    n === "freedom refined sunflower oil bottle 1 l"
+    n === "freedom refined sunflower oil bottle 1 l" ||
+    n === "sprite soft drink 250 ml buy 2 get 1" ||
+    n === "fanta orange 250 ml buy 2 get 1" ||
+    n === "thums up soft drink 250 ml buy 2 get 1" ||
+    n === "red bull energy drink can 250 ml buy 2 get 1" ||
+    n === "coca-cola soft drink can 300 ml buy 2 get 1" ||
+    n === "appy fizz (apple flavoured sparkling drink) 250 ml buy 2 get 1"
     
   ) return 1;
   if (
