@@ -90,13 +90,7 @@ function getCustomLimit(name) {
     n === "royal gala apple 2 pcs (200-300 g)" ||
     n === "banana 4 pcs" ||
     n === "fresh orange imported (narinja) 2 pcs (400-450 g)" ||
-    n === "freedom refined sunflower oil bottle 1 l" ||
-    n === "sprite soft drink 250 ml buy 2 get 1" ||
-    n === "fanta orange 250 ml buy 2 get 1" ||
-    n === "thums up soft drink 250 ml buy 2 get 1" ||
-    n === "red bull energy drink can 250 ml buy 2 get 1" ||
-    n === "coca-cola soft drink can 300 ml buy 2 get 1" ||
-    n === "appy fizz (apple flavoured sparkling drink) 250 ml buy 2 get 1"
+    n === "freedom refined sunflower oil bottle 1 l" 
     
   ) return 1;
   if (
@@ -111,11 +105,12 @@ function getCustomLimit(name) {
     n === "freedom refined sunflower oil 1 l"  
     ) return 2;
   if (   
-    n === "gold drop refined sunflower oil 1 l"
+    n === "gold drop refined sunflower oil 1 l" ||
+    n === "aashirvaad superior whole wheat mp atta 1 kg" ||
+    n === "aashirvaad high fibre atta with multigrains 1 kg"
    ) return 3;
   return Infinity;   
 }
-console.log(getCustomLimit("Freedom Refined Sunflower Oil Bottle 1 L"));
 
   function getFilenameFromValue(value) {
     if (!value) return "";
@@ -143,7 +138,7 @@ console.log(getCustomLimit("Freedom Refined Sunflower Oil Bottle 1 L"));
       // });
  
       // const MIN_ORDER_TOTAL = (hasGroceryOffers || hasThumsUp1Rs) ? 100 : 50;
-     const MIN_ORDER_TOTAL = cartItems.some((it) => norm(it.category) === "grocery offers") ? 100 : 50;
+     const MIN_ORDER_TOTAL = cartItems.some((it) => norm(it.category) === "grocery offers") ? 100 : 100;
   const refreshStocksOnce = React.useCallback(
     async (signal) => {
       const norm = (s) => String(s || "").toLowerCase().trim();

@@ -76,6 +76,32 @@ const readServerPoints = (record) => {
   const n = Number(raw);
   return Number.isFinite(n) ? n : 0;
 };
+
+// const shareLocationOnWhatsApp = () => {
+//     if (!navigator.geolocation) {
+//       alert("Geolocation is not supported by your browser");
+//       return;
+//     }
+
+//     navigator.geolocation.getCurrentPosition(
+//       (position) => {
+//         const latitude = position.coords.latitude;
+//         const longitude = position.coords.longitude;
+
+//         const message = `Hi I am ${fullName}. My order Id is ${martId}. I want to place an order. My location: https://www.google.com/maps?q=${latitude},${longitude}`;
+
+//         const whatsappUrl = `https://wa.me/917989328864?text=${encodeURIComponent(
+//           message
+//         )}`;
+
+//         window.open(whatsappUrl, "_blank");
+//       },
+//       (error) => {
+//         alert("Please enable location access to share your location.");
+//       }
+//     );
+//   };
+
 const showSugarOffer =
   Number(grandTotal) >= 499 && Number(grandTotal) <= 998;
 
@@ -390,7 +416,7 @@ useEffect(() => {
   return () => {
     cancelled = true;
   };
-}, [mobile, grandTotal]);
+}, [mobile, grandTotal]);    
 
 
 const getReferralRecord = async (userId) => {
@@ -799,7 +825,7 @@ const goBackToCart = () => {
       id: groceryItemId,
       userId: userId,
       martId: martId,
-      date: new Date(),
+      date: new Date(),   
       grandTotal: String(totalPayable), 
       totalItemsSelected: totalItemsSelected,
       status: "Open",
@@ -917,9 +943,13 @@ localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
   localStorage.removeItem("activeOrderId");
   localStorage.removeItem("allCategories");
   localStorage.removeItem(`cartMeta_${groceryItemId}`);
-  window.alert(`Thank You for choosing the Lakshmi Mart Services! Your reference order number is ${martId}. Delivery in 45 minutes`);
-  window.location.href = `/profilePage/${userType}/${userId}`;
-   }
+  window.alert(`Thank You for choosing the Lakshmi Mart Services! Your reference order number is ${martId}. Delivery in 45 minutes. Please Share your location.`);
+    window.location.href = `/profilePage/${userType}/${userId}`;
+//   shareLocationOnWhatsApp();    
+  //   setTimeout(() => {
+  //   window.location.href = `/profilePage/${userType}/${userId}`;
+  // }, 2000);  
+   }    
   } catch (error) {
     console.error('Error:', error);
     window.alert('Failed to Update Technician. Please try again later.');
@@ -1567,7 +1597,7 @@ const handleCheckboxChange = (value) => {
   >
     <div>
       <strong style={{ color: "#d84315" }}>
-        🎁 Get 1 Kg Sugar FREE
+        🎁 Get 500 g Sugar FREE    
       </strong>
       <div style={{ fontSize: "13px" }}>
         On orders above ₹499
@@ -1606,7 +1636,7 @@ const handleCheckboxChange = (value) => {
                   style={{ width: "60px", height: "60px" }}
                 />
                 <div style={{ fontSize: "13px", fontWeight: 600, color: "green" }}>
-                  🎁 1 Kg Sugar FREE
+                  🎁 500 g Sugar FREE
                 </div>
               </td>
             </tr>
@@ -3049,7 +3079,7 @@ export default GroceryPaymentmethod;
 //                       backgroundColor: isAddressInvalid ? "#008000" : "#008000",
 //                       borderColor: isAddressInvalid ? "#008000" : "#008000",
 //                       color: "white",
-//                     }}
+//                     }}   
 //                     className={`text-white mx-1 ${
 //                       shouldBlink ? "blinking-button" : ""
 //                     }`}

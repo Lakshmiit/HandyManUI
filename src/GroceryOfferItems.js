@@ -25,12 +25,8 @@ const CATEGORY_VEG_FRUITS_OFFERS = [
 ];
        
 const LIMIT_RULES = [
-  { match: normalizeName("Sprite Soft Drink 250 ml Buy 2 Get 1"), limit: 1 },
-  { match: normalizeName("Fanta Orange 250 ml Buy 2 Get 1"), limit: 1 },
-  { match: normalizeName("Thums Up Soft Drink 250 ml Buy 2 Get 1"), limit: 1 },
-  { match: normalizeName("Red Bull Energy Drink Can 250 ml Buy 2 Get 1"), limit: 1 },
-  { match: normalizeName("Coca-Cola soft drink Can 300 ml Buy 2 Get 1"), limit: 1 },
-  { match: normalizeName("Appy Fizz (Apple Flavoured Sparkling Drink) 250 ml Buy 2 Get 1"), limit: 1 },
+  { match: normalizeName("Aashirvaad High Fibre Atta with Multigrains 1 Kg"), limit: 3 },
+  { match: normalizeName("Aashirvaad Superior Whole Wheat MP Atta 1 Kg"), limit: 3 },
   { match: normalizeName("Visakha Dairy Ganga Toned Milk 500 ml"), limit: 2 },
   { match: normalizeName("Banana 4 Pcs"), limit: 1 },
   { match: normalizeName("Pomegranate 2 Pcs (300-400 g)"), limit: 1 },

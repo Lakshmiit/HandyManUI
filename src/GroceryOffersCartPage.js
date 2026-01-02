@@ -28,12 +28,8 @@ const CATEGORY_VF_OFFERS = [
 ];
 
 const LIMIT_RULES = [
-  { match: norm("Sprite Soft Drink 250 ml Buy 2 Get 1"), limit: 1 },
-  { match: norm("Fanta Orange 250 ml Buy 2 Get 1"), limit: 1 },
-  { match: norm("Thums Up Soft Drink 250 ml Buy 2 Get 1"), limit: 1 },
-  { match: norm("Red Bull Energy Drink Can 250 ml Buy 2 Get 1"), limit: 1 },
-  { match: norm("Coca-Cola soft drink Can 300 ml Buy 2 Get 1"), limit: 1 },
-  { match: norm("Appy Fizz (Apple Flavoured Sparkling Drink) 250 ml Buy 2 Get 1"), limit: 1 },
+  { match: norm("Aashirvaad High Fibre Atta with Multigrains 1 Kg"), limit: 3 },
+  { match: norm("Aashirvaad Superior Whole Wheat MP Atta 1 Kg"), limit: 3 },
   { match: norm("Visakha Dairy Ganga Toned Milk 500 ml"), limit: 2 },
   { match: norm("Banana 4 Pcs"), limit: 1 }, 
   { match: norm("Pomegranate 2 Pcs (300-400 g)"), limit: 1 },

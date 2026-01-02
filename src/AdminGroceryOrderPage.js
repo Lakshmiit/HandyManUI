@@ -659,7 +659,7 @@ useEffect(() => {
    {showFreeSugar && (
     <tr>
       <td colSpan="9" className="text-end fw-bold text-success">
-        🎁 Give Customer <strong>1 Kg Sugar FREE</strong>
+        🎁 Give Customer <strong>500 g Sugar FREE</strong>
       </td>
     </tr>
   )}
