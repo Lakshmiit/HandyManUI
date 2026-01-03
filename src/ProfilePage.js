@@ -27,8 +27,8 @@ import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 // import Banner from './img/ChristmasVideo.mp4';
-import Banner2 from './img/MilkOffers.jpeg';   
-// import Banner2 from './img/ChickenOffers.jpeg';
+// import Banner2 from './img/MilkOffers.jpeg';   
+import Banner2 from './img/ChickenOffers.jpeg';
 // import Banner2 from './img/DrinkOffers.jpeg';   F
 import Banner3 from './img/45AboveOffers.jpeg'; 
 // import BannerVideo from './img/ChristmasVideo.mp4';
@@ -870,6 +870,7 @@ const categories = [
     
 const groceryCategories = [
   { label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
+  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
    { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
   { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
   { label: 'Kitchenware Appliances', value: 'Kitchenware Appliances', image: KitchenImg },
@@ -897,7 +898,6 @@ const groceryCategories = [
   { label: 'Kids Zone', value: 'Kids Zone', image: KidsImg },
   { label: 'Health Care', value: 'Health Care', image: HealthImg },
   { label: 'DWCRA Products', value: 'DWCRA', image: DwakraProducts },
-  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
 ];
 
 const collectionsCategories = [
@@ -1017,31 +1017,19 @@ const secondCategories = groceryCategories.slice(6, 15);
 const thirdCategories = groceryCategories.slice(15, 24);
 const fourthCategories = groceryCategories.slice(24, 30);
 
-const groceryCarouselRef = useRef(null);
-
-useEffect(() => {
-  if (groceryCarouselRef.current) {
-    new Carousel(groceryCarouselRef.current, {
-      interval: 2500,   
-      ride: "carousel", 
-      pause: false,   
-      touch: true,
-      wrap: true,
-    });
-  }
-}, []);
-
  useEffect(() => {
   if (!carouselRef.current) return;
-  const carouselInstance = new Carousel(carouselRef.current, {
-    interval: 3000,
-    ride: "carousel",
-    pause: false,
-    wrap: true,
-    touch: true,
+  Carousel.getInstance(carouselRef.current)?.dispose();
+  const carousel = new Carousel(carouselRef.current, {
+    interval: 5000,      
+    ride: "carousel",   
+    pause: false,       
+    wrap: true,         
+    touch: true,       
   });
+  carousel.cycle();
   return () => {
-    carouselInstance.dispose();
+    carousel.dispose();
   };
 }, []);
 
@@ -3722,11 +3710,11 @@ const updateLocalStorageCart = (product, qty) => {
                     ref={carouselRef}
                       id="productCarousel"
                       className="carousel slide mb-2 rounded"
-                      data-bs-ride="carousel"
-                      data-bs-interval="3000"
-                      data-bs-pause="false"
-                      data-bs-wrap="true"
-                      data-bs-touch="true"
+                      // data-bs-ride="carousel"
+                      // data-bs-interval="3000"
+                      // data-bs-pause="false"
+                      // data-bs-wrap="true"
+                      // data-bs-touch="true"
                     >
                       {/* Indicators */}
                       <div className="carousel-indicators">
