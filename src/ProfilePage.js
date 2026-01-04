@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef} from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import { Carousel } from "bootstrap";
+import { Carousel as BsCarousel } from "bootstrap";
 import './App.css';
 import { Modal, Button} from 'react-bootstrap';
 import Confetti from "react-confetti";
@@ -27,8 +27,8 @@ import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 // import Banner from './img/ChristmasVideo.mp4';
-// import Banner2 from './img/MilkOffers.jpeg';   
-import Banner2 from './img/ChickenOffers.jpeg';
+import Banner2 from './img/MilkOffers.jpeg';   
+// import Banner2 from './img/ChickenOffers.jpeg';
 // import Banner2 from './img/DrinkOffers.jpeg';   F
 import Banner3 from './img/45AboveOffers.jpeg'; 
 // import BannerVideo from './img/ChristmasVideo.mp4';
@@ -870,7 +870,6 @@ const categories = [
     
 const groceryCategories = [
   { label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
-  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
    { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
   { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
   { label: 'Kitchenware Appliances', value: 'Kitchenware Appliances', image: KitchenImg },
@@ -898,6 +897,7 @@ const groceryCategories = [
   { label: 'Kids Zone', value: 'Kids Zone', image: KidsImg },
   { label: 'Health Care', value: 'Health Care', image: HealthImg },
   { label: 'DWCRA Products', value: 'DWCRA', image: DwakraProducts },
+  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
 ];
 
 const collectionsCategories = [
@@ -1012,24 +1012,25 @@ searchQuery.trim().length > 0 ? filteredProducts : products;
 const [imageLoading, setImageLoading] = useState(true);
 const [placeholderIndex, setPlaceholderIndex] = useState(0);
 const carouselRef = useRef(null);
+const carouselInstance = useRef(null);
 const firstCategories = groceryCategories.slice(0, 6);
 const secondCategories = groceryCategories.slice(6, 15);
 const thirdCategories = groceryCategories.slice(15, 24);
 const fourthCategories = groceryCategories.slice(24, 30);
 
- useEffect(() => {
-  if (!carouselRef.current) return;
-  Carousel.getInstance(carouselRef.current)?.dispose();
-  const carousel = new Carousel(carouselRef.current, {
-    interval: 5000,      
-    ride: "carousel",   
-    pause: false,       
-    wrap: true,         
-    touch: true,       
+useEffect(() => {
+  if (!carouselRef.current || carouselInstance.current) return;
+  carouselInstance.current = new BsCarousel(carouselRef.current, {
+    interval: 3000,
+    ride: "carousel",
+    pause: false,
+    wrap: true,
+    touch: true,
   });
-  carousel.cycle();
+  carouselInstance.current.cycle();
   return () => {
-    carousel.dispose();
+    carouselInstance.current?.dispose();
+    carouselInstance.current = null;
   };
 }, []);
 
