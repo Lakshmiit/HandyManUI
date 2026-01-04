@@ -25,6 +25,7 @@ const CATEGORY_VEG_FRUITS_OFFERS = [
 ];
        
 const LIMIT_RULES = [
+  { match: normalizeName("Guava 2 Pcs (600-700 g)"), limit: 1 },
   { match: normalizeName("Aashirvaad High Fibre Atta with Multigrains 1 Kg"), limit: 3 },
   { match: normalizeName("Aashirvaad Superior Whole Wheat MP Atta 1 Kg"), limit: 3 },
   { match: normalizeName("Visakha Dairy Ganga Toned Milk 500 ml"), limit: 2 },

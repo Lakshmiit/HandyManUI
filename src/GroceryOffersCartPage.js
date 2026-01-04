@@ -28,6 +28,7 @@ const CATEGORY_VF_OFFERS = [
 ];
 
 const LIMIT_RULES = [
+  { match: norm("Guava 2 Pcs (600-700 g)"), limit: 1 },
   { match: norm("Aashirvaad High Fibre Atta with Multigrains 1 Kg"), limit: 3 },
   { match: norm("Aashirvaad Superior Whole Wheat MP Atta 1 Kg"), limit: 3 },
   { match: norm("Visakha Dairy Ganga Toned Milk 500 ml"), limit: 2 },

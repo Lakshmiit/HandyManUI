@@ -129,7 +129,7 @@ const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;
 
   const mobile =
     state.mobile ?? loginMeta.mobile ?? localStorage.getItem("mobile") ?? "";
-
+    
   const CheckFirstOrder = async (mobile) => {
     if (!mobile) return null;
     const url = `https://handymanapiv2.azurewebsites.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${encodeURIComponent(
@@ -916,9 +916,9 @@ const goBackToCart = () => {
       body: JSON.stringify(payload),
     });
 
-    if (!response.ok) {
-      throw new Error('Failed to Update Technician.');
-    }
+    // if (!response.ok) {
+    //   throw new Error('Failed to Update Technician.');
+    // }
     // const data = await response.json();
 localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
   localStorage.removeItem("activeOrderId");
