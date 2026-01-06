@@ -944,7 +944,9 @@ localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
   localStorage.removeItem("allCategories");
   localStorage.removeItem(`cartMeta_${groceryItemId}`);
   window.alert(`Thank You for choosing the Lakshmi Mart Services! Your reference order number is ${martId}. Delivery in 45 minutes. Please Share your location.`);
-    window.location.href = `/profilePage/${userType}/${userId}`;
+    //window.location.href = `/profilePage/${userType}/${userId}`;
+
+    window.location.href = `/customerLocation/${fullName}/${martId}/${userType}/${userId}/${groceryItemId}`;
 //   shareLocationOnWhatsApp();    
   //   setTimeout(() => {
   //   window.location.href = `/profilePage/${userType}/${userId}`;

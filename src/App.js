@@ -130,6 +130,7 @@ import { getLoginData } from "./utils/auth";
 import GroceryChristmasOffers from './GroceryChristmasOffers.js';
 import GroceryChristmasCartPage from './GroceryChristmasCartPage.js';
 
+import CustomerLocation from "./CustomerLocation.js";
 const PreventBackNavigation = () => {
    const navigate = useNavigate();
    const location = useLocation(); 
@@ -304,6 +305,7 @@ function App() {
             <Route path="/apartmentRaiseTicketActionView/:apartmentRaiseTicketId" element={<ApartmentRaiseActionView />} />
             <Route path="/apartmentNotificationGrid" element={<ApartmentNotificationGrid />} />
             <Route path="/aboutApartmentRaiseTicket/:userType/:userId" element={<AboutApartmentRaiseTicket />} />
+            <Route path="/customerLocation/:fullName/:martId/:userType/:userId/:groceryItemId" element={<CustomerLocation />} />
             </Routes>
         </main>
         {/* <Footer /> */}
