@@ -1,26 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import './App.css';
-import {  Button } from 'react-bootstrap'; // Import Bootstrap components for modal
-import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
-import AdminSidebar from './AdminSidebar';
-import Footer from './Footer.js';
-
+// import VisibilityIcon from '@mui/icons-material/Visibility';
+import {
+  Dashboard as DashboardIcon,
+  SupportAgent as SupportAgentIcon,
+  PersonAdd as PersonAddIcon,
+  Route as RouteIcon,
+  Notifications as NotificationsIcon,
+  ShoppingCart as ShoppingCartIcon,
+  Payments as PaymentsIcon,
+  // AccountCircle,
+  Inventory as InventoryIcon,
+} from '@mui/icons-material';
 
 const ProductAdmin = () => {
-  const [isMobile, setIsMobile] = useState(false);
-  const [showMenu, setShowMenu] = useState(false);
-  // const {selectedUserType} = useParams();
   const [productData, setProductData] = useState(null);
-  const [imageUrls, setImageUrls] = useState([]); 
-  // const [productType] = useState("Approved");
-  // const [comments] = useState("");
+  const [imageUrls, setImageUrls] = useState([]);
+  // const [productType, setProductType] = useState("Approve");
+  // const [comments, setComments] = useState("");
   const { id } = useParams();
   const navigate = useNavigate(); // Hook to programmatically navigate
-  const { ProductOwnedBy } = useParams(); 
-  // const {userType} = useParams();
+  const { productownedby } = useParams(); 
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -31,7 +34,7 @@ const ProductAdmin = () => {
         const imageRequests =
           data.productPhotos?.map((photo) =>
             fetch(
-              `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+              `https://handymanapiservices.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
             )
               .then((res) => res.json())
               .then((data) => ({
@@ -47,15 +50,6 @@ const ProductAdmin = () => {
     };
     fetchData();
   }, [id]);
-
-  // Detect screen size for responsiveness
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 768);
-    handleResize(); // Set initial state
-    window.addEventListener('resize', handleResize);
-
-    return () => window.removeEventListener('resize', handleResize);
-  }, []); 
 
   // const handleSubmit = async () => {
   //   if (!productData) {
@@ -91,7 +85,6 @@ const ProductAdmin = () => {
   //   }
   // };
 
-
   if (!productData) {
     return (
       <div className="d-flex justify-content-center align-items-center vh-100">
@@ -108,11 +101,9 @@ const ProductAdmin = () => {
     catalogue,
     productSize,
     color,
-    units,
     rate,
     discount,
     specifications,
-    specificationDesc,
     warranty,
     additionalInformation,
   } = productData;
@@ -122,37 +113,25 @@ const ProductAdmin = () => {
   return (
     <div className="wrapper bg-light">
       <div className="container-fluid mt-4 h-100 d-flex flex-column">
-        <div className="d-flex flex-row justify-content-start align-items-start">
+        <div className="row">
           {/* Sidebar */}
-          {!isMobile && (
-          <div className=" ml-0 p-0 adm_mnu h-90">
-          <AdminSidebar  />
+          <div className="col-md-3 p-3 bg-dark text-white border-end rounded">
+            <h5 className="text-center mb-4">Admin Panel</h5>
+            <ul className="list-unstyled">
+              <li className="mb-3"><DashboardIcon /> Dashboard</li>
+              <li className="mb-3"><SupportAgentIcon /> Support</li>
+              <li className="mb-3"><PersonAddIcon /> Add User</li>
+              <li className="mb-3"><RouteIcon /> Routes</li>
+              <li className="mb-3"><NotificationsIcon /> Notifications</li>
+              <li className="mb-3"><ShoppingCartIcon /> Orders</li>
+              <li className="mb-3"><PaymentsIcon /> Payments</li>
+              <li className="mb-3"><InventoryIcon /> Inventory</li>
+            </ul>
           </div>
-          )}
-          
-          {/* Floating menu for mobile */}
-      {isMobile && (
-        <div className="floating-menu">
-          <Button
-            variant="primary"
-            className="rounded-circle shadow"
-            onClick={() => setShowMenu(!showMenu)}
-          >
-            <MoreVertIcon />
-          </Button>
-
-          {showMenu && (
-              <div className="sidebar-container">
-                <AdminSidebar  />
-              </div>
-          )}
-        </div>
-      )}
 
           {/* Main Content */}
-          <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
-          <div className=" col-md-9">
-            <div className="bg-white rounded shadow-sm">
+          <div className="col-md-9">
+            <div className="bg-white p-4 rounded shadow-sm">
               <h3 className="mb-4 text-primary">Product Details</h3>
 
               {/* Carousel */}
@@ -222,7 +201,6 @@ const ProductAdmin = () => {
                   <p><strong>Catalogue:</strong> {catalogue}</p>
                   <p><strong>Size:</strong> {productSize}</p>
                   <p><strong>Color:</strong> {color}</p>
-                  <p><strong>Units:</strong> {units} </p>
                   <p><strong>Rate:</strong> ${rate}</p>
                   <p><strong>Discount:</strong> {discount}%</p>
                   <p><strong>Price After Discount:</strong> ${afterDiscountPrice.toFixed(2)}</p>
@@ -232,10 +210,9 @@ const ProductAdmin = () => {
                   <ul>
                     {specifications?.map((spec, index) => (
                       <li key={index}>
-                        {spec.label} : {spec.value}
+                        {spec.label}: {spec.value}
                       </li>
                     ))}
-                    <li>{specificationDesc}</li>
                   </ul>
                   <h5>Warranty</h5>
                   <p>{warranty} months</p>
@@ -243,49 +220,16 @@ const ProductAdmin = () => {
                   <p>{additionalInformation}</p>
                 </div>
               </div>
-               {/* Approval Section
-               <div className="mt-4">
-                  <h5>Approval</h5>
-                  <div className="form-check">
-                    <input
-                      type="radio"
-                      className="form-check-input"
-                      name="productStatus"
-                      id="approve"
-                      value="Approved"
-                      checked={productType === 'Approved'}
-                      onChange={() => setProductType('Approved')}
-                    />
-                    <label className="form-check-label" htmlFor="approve">Approve</label>
-                  </div>
-                  <div className="form-check">
-                    <input
-                      type="radio"
-                      className="form-check-input"
-                      name="productStatus"
-                      id="reject"
-                      value="Reject"
-                      checked={productType === 'Reject'}
-                      onChange={() => setProductType('Reject')}
-                    />
-                    <label className="form-check-label" htmlFor="reject">Reject</label>
-                  </div>
-                  <textarea
-                    className="form-control mt-3"
-                    placeholder="Comments"
-                    value={comments}
-                    onChange={(e) => setComments(e.target.value)}
-                  />
-                </div> */}
 
-          
+           
+              {/* Submit Button */}
               <div className="mt-3">
                 {/* View Single Product Button */}
       <button
         type="button"
-        className='btn btn-warning text-white m-2'
        
-          onClick={() => navigate(`/product-list/${ProductOwnedBy}`)}
+       
+          onClick={() => navigate(`/product-list/${productownedby}`)}
       >
       
         <span>Back</span>
@@ -296,24 +240,6 @@ const ProductAdmin = () => {
         </div>
       </div>
     </div>
-    <Footer /> 
-
-    {/* Styles for floating menu */}
-<style jsx>{`
-        .menu-popup {
-          position: absolute;
-          top: 50px; /* Keeps the popup aligned below the floating menu */
-          left: 0; /* Aligns the popup to the left */
-          background: white;
-          border: 1px solid #ddd;
-          border-radius: 5px;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-          width: 200px;
-        }
-      `}</style>
-
-
-  </div>
   );
 };
 
