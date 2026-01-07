@@ -14,62 +14,55 @@ jobs:
     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     runs-on: ubuntu-latest
     name: Build and Deploy Job
+
     steps:
-      # Checkout the repository
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: true
           lfs: false
 
-      # Set up Node.js environment
+      # 🔒 HARD LOCK NODE VERSION
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: '18.20.4'
+          cache: 'npm'
 
-      # Install Dependencies (Ensure Firebase & jszip are Installed)
+      # ✅ Install dependencies safely
       - name: Install Dependencies
         run: |
-          echo "Installing all dependencies..."
-          npm install firebase jszip --save  # Ensure Firebase & jszip are installed
-          npm ci  # Install all dependencies from package-lock.json
-          echo "Dependencies installed successfully."
+          echo "Installing dependencies..."
+          npm ci
+          echo "Dependencies installed."
 
-      # Verify Firebase & jszip Installation
+      # Optional: verify packages
       - name: Verify Installed Packages
         run: |
-          echo "Checking Firebase and jszip installation..."
-          npm list firebase || echo "⚠️ Firebase is NOT installed!"
-          npm list jszip || echo "⚠️ jszip is NOT installed!"
+          npm list firebase || echo "Firebase missing"
+          npm list jszip || echo "jszip missing"
 
-      # Build the App
       - name: Build the App
-        run: |
-          echo "Building the app..."
-          CI=false npm run build  # Allow warnings, but don't fail the build
+        run: npm run build
 
-      # Deploy to Azure Static Web Apps
       - name: Build And Deploy
-        id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_AGREEABLE_PEBBLE_0B4DB7D1E }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          action: "upload"
-          app_location: "/"  # Change this if your React app is inside a subfolder
-          api_location: "" 
+          action: upload
+          app_location: "/"
+          api_location: ""
           output_location: "build"
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
     name: Close Pull Request Job
+
     steps:
-      # Close pull request step
       - name: Close Pull Request
-        id: closepullrequest
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_AGREEABLE_PEBBLE_0B4DB7D1E }}
-          action: "close"
+          action: close
