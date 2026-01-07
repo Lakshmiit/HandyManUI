@@ -3342,7 +3342,7 @@ const updateLocalStorageCart = (product, qty) => {
 </div>
     );
   })}
-{/* Cart Bar */}
+{/* Cart Bar */}               
 {(() => {
   // Safe reader that ALWAYS returns an array of categories
   const readAllCategories = () => {
