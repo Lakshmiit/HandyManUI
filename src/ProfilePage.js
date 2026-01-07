@@ -879,7 +879,7 @@ const groceryCategories = [
   { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
   { label: 'Ice Creams', value: 'Ice Creams', image: IcecreamImg },
   { label: 'Atta & Flours', value: 'Atta & Flours', image: AttaImg },
-  { label: 'Rice & Ravva', value: 'Rice & Ravva', image: RavvaImg }, 
+  { label: 'Rice & Ravva', value: 'Rice & Ravva', image: RavvaImg },    
    { label: 'Oils & Dals', value: 'Oils & Dals', image: OilsImg },
   { label: 'Sugar, Salt & Jaggery', value: 'Sugar, Salt & Jaggery', image: SugarImg }, 
   { label: 'Masala, Spices & Pickles', value: 'Masala, Spices & Pickles', image: MasalaImg },
