@@ -62,6 +62,7 @@ const RaiseQuoteTechnician = () => {
   // const [internalStatus, setInternalStatus] = useState('');
   // const [ticketId, setTicketId] = useState('');
   const [materialQuotation] = useState([{discount: "", fixedDiscount: "", deliveryCharges: "", fixedDeliveryChargs: "", servicecharges: "", fixedServicecharges: "", gst: "", fixedGST: "", gradntotal: ""}]);  
+  // const [errors, setErrors] = useState([]);
   // const [anyOtherCharge, setAnyOtherCharges] = useState('100');
   // const [serviceCharge, setServiceCharges] = useState('10');
   // const [gstCharge, setGSTCharge] = useState('18');
@@ -69,7 +70,6 @@ const RaiseQuoteTechnician = () => {
     console.log(ticketData, status, id, technicianData, userId, assignedTo);
   }, [ticketData, status, id, technicianData, userId, assignedTo]); 
 
-  // alert(enableForward);
 
   useEffect(() => {
     const fetchticketData = async () => {

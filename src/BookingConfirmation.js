@@ -300,8 +300,8 @@ UTRTransactionNumber: "",
                     value='option2' 
                     checked={option2Day && option2Time ? true : false} 
                     readOnly  
-                  />
-                  Option 2 */}
+                  />*/}
+                  Option 2 
                 </strong>
                 <div><span style={{ fontWeight: "bold" }}>Date:</span> {option2Day || 'N/A'}</div>
                 <div><span style={{ fontWeight: "bold" }}>Time:</span> {option2Time || 'N/A'}</div>

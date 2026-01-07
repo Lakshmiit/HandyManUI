@@ -132,8 +132,7 @@ const CustomerOrders = () => {
 
   return (
     <div>
-  {isMobile && <Header />}
-
+   <Header />
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className="ml-0 p-0 sde_mnu">

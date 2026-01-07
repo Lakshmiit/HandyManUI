@@ -68,7 +68,7 @@ useEffect(() => {
         console.log("API Response:", response.data); 
 
         const tickets = response.data.tickets || [];
-        const filteredTickets = tickets.filter((ticket) => (ticket.internalStatus === "Customer Approved" 
+        const filteredTickets = tickets.filter((ticket) => (ticket.internalStatus === "Customer Approved" || ticket.internalStatus === "Closed" 
           // || ticket.internalStatus === "Closed"
         )  && ticket.lowestBidderTechnicainId === userId);
         

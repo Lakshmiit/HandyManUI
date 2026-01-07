@@ -151,10 +151,10 @@ const [transactionStatus, setTransactionStatus] = useState('');
         //  alert(JSON.stringify(data));
         setDeliveryData(data);
         setNoteId(data.id);
-        setOption1Day(data.option1Day || '');
-        setOption2Day(data.option2Day || '');
-        setOption1Time(data.option1Time || '');
-        setOption2Time(data.option2Time || '');
+        // setOption1Day(data.option1Day || '');
+        // setOption2Day(data.option2Day || '');
+        // setOption1Time(data.option1Time || '');
+        // setOption2Time(data.option2Time || '');
         setDeliveryId(data.deliveryNoteId);
         
         // setTechnicianStatus(data.technicianStatus);
@@ -1048,9 +1048,11 @@ const total = Number(enterQuoteAmount- fixedDiscount) + Number(othercharges);
     
      
   <div className="form-group m-2">
-    <label className="section-title">Required Materials Details</label>
+    {requestType === "With Material" && (
+      <div>
     {!isMobile ? (
       <div className="mt-3">
+         <label className="section-title">Required Materials Details</label>
         <div className='d-flex gap-3 text-start'>
           <div style={{ flex: 4, textAlign: 'center'}}>
             <label className="fw-bold">Material</label>
@@ -1107,6 +1109,7 @@ const total = Number(enterQuoteAmount- fixedDiscount) + Number(othercharges);
     </div>    
     ) : (
     <div>
+       <label className="section-title">Required Materials Details</label>
       {technicianMaterial.map((spec, index) => (
         <div key={index} className="card w-100 mb-3 shadow-sm" style={{ maxWidth: "300px" }}>
           <div className="card-body">
@@ -1144,7 +1147,7 @@ const total = Number(enterQuoteAmount- fixedDiscount) + Number(othercharges);
       ))}
     </div>
   )}
-      
+      {/* Material Collection Point */}
         <div className='payment m-1'>
             <label className='section-title'>Material Collection Point</label>
             <table className="customer-details-table">
@@ -1165,13 +1168,11 @@ const total = Number(enterQuoteAmount- fixedDiscount) + Number(othercharges);
             </label>
             <button className='btn btn-warning m-1 fs-5' title='save' 
             onClick={handleBothMaterialActions} disabled={!isMaterialCollected || isMaterialSaved}
-            // disabled={!(internalStatus === "Dealer Approved" && assignedTo === "Technical Agency") &&
-            //   (internalStatus === "Technician Approved" && assignedTo === "Dealer/Trader")}
-
-            // disabled={internalStatus === "Customer Approved"}
              >Save</button> 
         </div>
-        
+        </div>
+        )}
+
       <h3 className="section-title">Customer Details</h3>
       <table className="customer-details-table">
         <tbody>

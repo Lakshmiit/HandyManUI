@@ -94,15 +94,14 @@ const TrackNotification = () => {
   const fetchNotifications = async () => {
     try {
       const trackTicketResponse = await fetch(
-        `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTrackTicketsByCustomerId?customerId=${userId}
-`
+        `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTrackTicketsByCustomerId?customerId=${userId}`
       );
       const trackData = await trackTicketResponse.json();
       const getTrackNotifications = trackData.filter(
         (item) => item.assignedTo === "Customer" && (item.internalStatus === "Assigned" || item.internalStatus === "Closed" 
           // || item.internalStatus === "Pending" 
 
-          || item.internalStatus === "Customer Approved" ||  item.internalStatus === "PaymentDone")
+          || item.internalStatus === "Customer Approved" ||  item.internalStatus === "PaymentDone") 
       );
         const trackCount = getTrackNotifications.length;
 
@@ -137,7 +136,7 @@ const TrackNotification = () => {
 
   return (
     <div>
-  {isMobile && <Header />}
+   <Header />
     <div className="d-flex flex-row justify-content-start align-items-start">
       {!isMobile && (
         <div className="ml-0 m-4 p-0 sde_mnu">
@@ -212,7 +211,7 @@ const TrackNotification = () => {
                 {/* <div
                   className="view-notifications text-info mx-2"
                   onClick={() => {
-                    navigate(`/customerTrackConfirmation/${raiseTicketId}/${userType}`);
+                    navigate(`/trackStatusGrid/${userType}/${userId}`);
                     handleClearTrackNotifications();
                   }}
                   style={{ cursor: "pointer" }}

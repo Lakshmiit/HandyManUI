@@ -13,8 +13,8 @@ import {
 } from "@mui/icons-material";
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import "./App.css";
-
-const TrackStatus = () => {
+ 
+const TrackStatusGrid = () => {
   const { userType } = useParams();
   const { selectedUserType } = useParams();
   const [isMobile, setIsMobile] = useState(false);
@@ -28,14 +28,14 @@ const TrackStatus = () => {
   const [pinCodes, setPinCodes] = useState([]);
   const [assigned, setAssigned] = useState([]);
    const { district, category } = useParams();
-   const {customerId} = useParams();
+   const {userId} = useParams();
   const rowsPerPage = 15;
 useEffect(() => {
     console.log(ticketData, states,districts,pinCodes,assigned);
   }, [ticketData, states,districts,pinCodes,assigned]);
   useEffect(() => {
     setLoading(true);
-    const url = ``;
+    const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTrackTicketsByCustomerId?customerId=${userId}`;
     axios
       .get(url)
       .then((response) => {
@@ -43,6 +43,7 @@ useEffect(() => {
           ...ticket,
           
         }));
+        // const filterTrackTickets = tickets.filter((ticket) => ticket.internalStatus === "Closed");
         setTicketData(tickets);
         setFilteredData(tickets);
 
@@ -66,7 +67,7 @@ useEffect(() => {
       .finally(() => {
         setLoading(false);
       });
-  }, [setAssigned, setDistricts, setPinCodes, setStates, setTicketData, district, category]);
+  }, [setAssigned, setDistricts, setPinCodes, setStates, setTicketData,userId, district, category]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -143,7 +144,7 @@ useEffect(() => {
       )}
 
       <div className={`container m-1 ${isMobile ? "w-100" : "w-75"}`}>
-        <h2 className="text-center mb-4">Raise Ticket Status</h2>
+        <h2 className="text-center mb-4">Track Status Notifications</h2>
         <table className="table table-bordered">
           <thead>
             <tr> 
@@ -167,7 +168,7 @@ useEffect(() => {
                 <td>{ticket.assignedTo}</td>
                 <td className="d-flex align-items-center">
                   <Link
-                    to={`/customerTrackConfirmation/${ticket.id}/${userType}/${customerId}`}
+                    to={`/trackStatusNotifications/${ticket.id}/${userType}/${userId}`}
                     className="btn btn-info mx-2"
                   >
                     <FaEye />
@@ -187,7 +188,7 @@ useEffect(() => {
           </tbody>
         </table>
         <div className="mt-4 text-end">
-          <Link to={`/trackStatusNotifications/${userType}/${customerId}`} className="btn btn-warning text-white mx-2" title='Back'>
+          <Link to={`/trackStatusNotifications/${userType}/${userId}`} className="btn btn-warning text-white mx-2" title='Back'>
             <ArrowLeftIcon />
           </Link>
         </div>
@@ -238,4 +239,4 @@ useEffect(() => {
   ); 
 };
 
-export default TrackStatus;
+export default TrackStatusGrid;

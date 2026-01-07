@@ -212,7 +212,6 @@ useEffect(() => {
   
     const zip = new JSZip();
     const folder = zip.folder("Download Invoice"); // Optional folder name inside ZIP
-  
     // Add files to ZIP
     for (const invoice of uploadInvoice) {
       try {
@@ -223,7 +222,6 @@ useEffect(() => {
         console.error("Error fetching Invoice:", error);
       }
     }
-  
     // Generate ZIP and download
     try {
       const content = await zip.generateAsync({ type: "blob" });
@@ -239,15 +237,12 @@ useEffect(() => {
   const handleResize = () => setIsMobile(window.innerWidth <= 768);
   handleResize(); // Set initial state
   window.addEventListener('resize', handleResize);
-
   return () => window.removeEventListener('resize', handleResize);
 }, []);
-
 
    const handleSubmit = (e) => {
      e.preventDefault();
    };
-
 
   return (
 <>
@@ -258,7 +253,6 @@ useEffect(() => {
           <AdminSidebar />
         </div>
       )}
-
       {isMobile && (
         <div className="floating-menu">
           <Button
@@ -285,7 +279,6 @@ useEffect(() => {
                 <div className="text-center">
                 <strong className="mt-2">Order Number:<span>{buyProductTicketId}</span></strong>
                 </div>
-
                 <div className="form-group">
               <label>
                 Customer Name <span className="req_star">*</span>
@@ -299,7 +292,6 @@ useEffect(() => {
                 readOnly
               />
             </div>
-
               <div className="form-group">
                 <label>Customer Address <span className="req_star">*</span></label>
                 <input
@@ -312,7 +304,6 @@ useEffect(() => {
                 readOnly
               />
               </div>
-  
             <div className="form-group">
               <label>Category <span className="req_star">*</span></label>
               <input
@@ -324,7 +315,6 @@ useEffect(() => {
                 readOnly
               />
             </div>
-
             <div className="form-group">
               <label>Product Name <span className="req_star">*</span></label>
               <input
@@ -336,7 +326,6 @@ useEffect(() => {
                 readOnly
               />
             </div>
-
             <div className="form-group">
               <label>
                 Product Catalogue <span className="req_star">*</span>
@@ -350,7 +339,6 @@ useEffect(() => {
                 readOnly
               />
             </div>
-
             <div className="row">
             <div className="col-md-6">
               <label>Product Size <span className="req_star">*</span></label>
@@ -363,7 +351,6 @@ useEffect(() => {
                 readOnly
               />
             </div>
-
             <div className="col-md-6">
                 <label>Rate <span className="req_star">*</span></label>
                 <input
@@ -399,7 +386,6 @@ useEffect(() => {
               </div>
               </div>
 
-
             {/* <div className="form-group">
               <label>Color (Optional)</label>
               <input
@@ -410,7 +396,6 @@ useEffect(() => {
                 placeholder="Enter Color"
               />
             </div> */}
-
             {/* <button
               type="button"
               className="btn btn-warning text-white w-50 mt-2"
@@ -432,7 +417,6 @@ useEffect(() => {
               View Product
             </button>
  */}
-
             {/* <div className="form-group mb-3">
               <label>Other Than Product</label>
               <input
@@ -443,7 +427,6 @@ useEffect(() => {
                 placeholder="Enter Product Name"
               />
             </div> */}
-
             <div className="row">
             {/* <div className="col-md-6">
                 <label>Rate <span className="req_star">*</span></label>
@@ -462,7 +445,6 @@ useEffect(() => {
               <p><strong className="me-2"> Required Quantity:</strong>{requiredQuantity}</p>
               <p><strong className="me-2"> Total Amount:</strong>{`Rs ${totalAmount}/-`}</p>
               </div>
-
               <div className="col-md-6">
               <p><strong className="me-2"> Delivery Charges:</strong>{deliveryCharges}</p>
               <p><strong className="me-2"> Service Charges:</strong>{serviceCharges}</p>
@@ -491,7 +473,6 @@ useEffect(() => {
             Pay On In Presence of Technician
           </label>
     </div>
-
     {paymentMode === "technician" && (
     <div className="form-group">
               <label>Payment Transaction Details <span className="req_star">*</span></label>
@@ -516,7 +497,6 @@ useEffect(() => {
                 readOnly
               />
             </div>  */}
-
             <div className="form-group">
               <label>Technician Details <span className="req_star">*</span></label>
               <input
@@ -528,7 +508,6 @@ useEffect(() => {
                 readOnly
               />
             </div>
-
             <div className="form-group">
               <label>Invoice Details <span className="req_star">*</span></label>
               <input
@@ -571,7 +550,6 @@ useEffect(() => {
               {/* <button className='btn btn-warning m-1' onClick={handleUploadInvoice}
               >Save</button>
           </div> */}
-
           <button className='btn btn-warning fs-5 m-2' onClick={handleDownloadAllAttachments}>Download Invoice</button>
           </div> 
           <div className="form-group">
@@ -585,7 +563,6 @@ useEffect(() => {
                 readOnly
               />
             </div>
-
             <div className="col-md-6">
               <label>Order Confirmation Code <span className="req_star">*</span></label>
               <input
@@ -597,20 +574,17 @@ useEffect(() => {
                 readOnly
               />
             </div>
-
             <div className="mt-2 text-end">
                 <Button className="btn btn-warning text-white" 
                   onClick={() => Navigate(`/adminNotifications`)}
                    title="Back">
                   <ArrowBack /> 
                 </Button>
-    
             </div> 
             </div>
           </form>
         </div>
       </div>
-
       {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {

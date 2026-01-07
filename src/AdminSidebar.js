@@ -13,7 +13,7 @@ import GroupsIcon from "@mui/icons-material/Groups";
 import DescriptionIcon from '@mui/icons-material/Description';
 
 const menuConfig = [
-  { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", TargetUrl: "https://lakshmisaiserviceproviders.com/UserIdLogin" },
+  { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", TargetUrl: `https://lakshmisaiserviceproviders.com/Dashboard` },
   {
     MenuIcon: <AccountCircleIcon />,
     MenuTitle: "Profile Directory",
@@ -60,9 +60,11 @@ const Sidebar = () => {
                 textDecoration: "none",
               }}
             >
+               <Link to={menu.TargetUrl}>
               <div style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none", fontSize: "16px" }}>
                 {menu.MenuIcon} {menu.MenuTitle}
               </div>
+              </Link>
               {menu.subMenu && <ArrowDropDownIcon />}
             </div>
           </div>

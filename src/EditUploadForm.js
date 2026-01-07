@@ -4,28 +4,24 @@ import "./App.css"; // Add this for the required CSS.
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import UpdateIcon from '@mui/icons-material/Update';
 import { useNavigate, useParams } from 'react-router-dom';
-import Footer from './Footer.js';
-import AdminSidebar from './AdminSidebar';
-import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
-import {  Button } from 'react-bootstrap';
+import Sidebar from './Sidebar';
 
 const ProductUpload = () => {
     const { id } = useParams(); // Retrieve the dynamic id from URL
-    // const [selectedUserType] = useState("");
-    const [isMobile, setIsMobile] = useState(false);
-    const [showMenu, setShowMenu] = useState(false);
+    const [selectedUserType] = useState("customer");
     const navigate = useNavigate();
     const [product, setProduct] = useState(null);
     const [productPhotos, setProductPhotos] = useState([]);
     const [uploadedFiles, setUploadedFiles] = useState([]);
-    // const [alertMessage, setAlertMessage] = useState("");
+    const [alertMessage, setAlertMessage] = useState("");
     const [showAlert, setShowAlert] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    
     const [productName, setProductName] = useState("");
     const [catalogue, setCatalogue] = useState("");
     const [productSize, setProductSize] = useState("");
-    const [category, setCategory] = useState("");
     const [units, setUnits] = useState("");
     const [rate, setRate] = useState("");
     const [discount, setDiscount] = useState("");
@@ -34,13 +30,11 @@ const ProductUpload = () => {
     const [warranty, setWarranty] = useState("");
     const [moreInfo, setMoreInfo] = useState("");
     const [color, setColor] = useState("");
-    const {ProductOwnedBy} = useParams();
-    // const {userType} = useParams();
     useEffect(() => {
         const fetchProductData = async () => {
             try {
                 setLoading(true);
-                const productResponse = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/${id}`);
+                const productResponse = await fetch(`https://handymanapiservices.azurewebsites.net/api/Product/${id}`);
                 if (!productResponse.ok) {
                     throw new Error('Product not found');
                 }
@@ -48,18 +42,16 @@ const ProductUpload = () => {
                 console.log("productData:", productData);
                 setProduct(productData);
                 setProductName(productData.productName);
-                  // setProductID(productData.productId);
-                setCategory(productData.category);
-                setCatalogue(productData.catalogue);
-                setColor(productData.color);
-                setProductSize(productData.productSize);
-                setUnits(productData.units);
+                setCatalogue(productData.catalog);
+                setColor(productData.colors);
+                setProductSize(productData.Size);
+                setUnits(productData.unit);
                 setRate(productData.rate);
                 setDiscount(productData.discount);
                 setSpecifications(productData.specifications || [{ label: "", value: "" }]);
                 setSpecificationDesc(productData.specificationDesc);
                 setWarranty(productData.warranty);
-                setMoreInfo(productData.additionalInformation);
+                setMoreInfo(productData.additionalInfo);
                 setUploadedFiles(productData.images || []);
             } catch (error) {
                 setError(error.message);
@@ -67,46 +59,27 @@ const ProductUpload = () => {
                 setLoading(false);
             }
         };
+
         if (id) {
             fetchProductData();
         }
     }, [id]);
 
-    // Detect screen size for responsiveness
-    useEffect(() => {
-      const handleResize = () => setIsMobile(window.innerWidth <= 768);
-      handleResize(); // Set initial state
-      window.addEventListener('resize', handleResize);
-    
-      return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
 
     const handleFileChange = (event) => {
         const selectedFiles = Array.from(event.target.files);
-        const uniqueFiles = selectedFiles.filter(
-            (file) => !productPhotos.some((photo) => photo.name === file.name)
-        );
-
-        if (uniqueFiles.length + uploadedFiles.length > 5) {
+        if (selectedFiles.length + uploadedFiles.length > 5) {
             alert("You can only upload up to 5 files.");
             return;
         }
-        setProductPhotos([...productPhotos, ...uniqueFiles]);
-        //setAlertMessage("Please click on the Upload Files button to upload the Images.");
+        setProductPhotos([...productPhotos, ...selectedFiles]);
+        setAlertMessage("Please click on the Upload Files button to upload the Images.");
         setShowAlert(true);
     };
 
-    const handleRemoveFile = (index, isNewFile = true) => {
-        if (isNewFile) {
-            const updatedPhotos = [...productPhotos];
-            updatedPhotos.splice(index, 1);
-            setProductPhotos(updatedPhotos);
-        } else {
-            const updatedFiles = [...uploadedFiles];
-            updatedFiles.splice(index, 1);
-            setUploadedFiles(updatedFiles);
-        }
+    const handleRemoveFile = (index) => {
+        const updatedUploadedFiles = uploadedFiles.filter((_, i) => i !== index);
+        setUploadedFiles(updatedUploadedFiles);
     };
  
     // Handle change of specification field (label or value)
@@ -134,8 +107,7 @@ const ProductUpload = () => {
     // Handle file upload
     const handleUploadFiles = async () => {
         setLoading(true);
-        setShowAlert(false);
-        const uploadedFilesList = [...uploadedFiles];
+        const uploadedFilesList = [];
     
         // Loop through selected files and upload each one
         for (let i = 0; i < productPhotos.length; i++) {
@@ -162,7 +134,6 @@ const ProductUpload = () => {
     
         // Once all files are uploaded, update the state with the uploaded files
         setUploadedFiles(uploadedFilesList);
-        setProductPhotos([]);
         setLoading(false);
     };
 
@@ -183,7 +154,7 @@ const ProductUpload = () => {
             formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
             formData.append('fileName', fileName);
 
-            const response = await fetch('https://handymanapiv2.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
+            const response = await fetch('https://handymanapiservices.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
                 method: 'POST',
                 headers: { 'Accept': 'text/plain' },
                 body: formData
@@ -203,15 +174,15 @@ const ProductUpload = () => {
 
         const payload = {
             id,
-            ProductId: "string",
-            category: category,
-            ProductStatus: "Pending Approval",
             productName,
-            productPhotos:uploadedFiles.map((file) => file.src),
-            catalogue: catalogue,
-            productSize: productSize,
-            color: color,
-            units: units,
+            images: uploadedFiles.map(file => ({
+                src: file.src,
+                alt: file.alt
+            })),
+            catalog: catalogue,
+            Size: productSize,
+            colors: color,
+            unit: units,
             rate: parseFloat(rate),
             discount: parseFloat(discount),
             afterDiscountPrice: parseFloat(rate) - parseFloat(discount),
@@ -221,12 +192,11 @@ const ProductUpload = () => {
             })),
             specificationDesc: specificationDesc,
             warranty,
-            additionalInformation: moreInfo,
-            ProductOwnedBy:"Admin",
+            additionalInfo: moreInfo
         };
-    
+
         try {
-            const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/${id}`, {
+            const response = await fetch(`https://handymanapiservices.azurewebsites.net/api/product/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -236,7 +206,7 @@ const ProductUpload = () => {
 
             if (response.ok) {
                 alert("Product updated successfully!");
-                navigate(`/product-list/${ProductOwnedBy}`);
+                navigate(`/product-list`);
             } else {
                 alert("Please fill in all mandatory fields.");
                 alert("Failed to update product.");
@@ -259,36 +229,13 @@ const ProductUpload = () => {
     }
 
     return (
-        <>
         <div className="d-flex flex-row justify-content-start align-items-start">
-            {/* Sidebar menu for Larger Screens */}
-            {!isMobile && (
-                <div className=" ml-0 p-0 adm_mnu h-90">
-                <AdminSidebar  />
-                </div>
-            )}
+            <div className="sidebar-container">
+        <Sidebar userType={selectedUserType} />
+      </div>
 
-            {/* Floating menu for mobile */}
-            {isMobile && (
-                <div className="floating-menu">
-                <Button
-                    variant="primary"
-                    className="rounded-circle shadow"
-                    onClick={() => setShowMenu(!showMenu)}
-                >
-                    <MoreVertIcon />
-                </Button>
-
-                {showMenu && (
-                    <div className="sidebar-container">
-                        <AdminSidebar  />
-                    </div>
-                )}
-                </div>
-            )}
-
-       <div className={`container  ${isMobile ? 'w-100' : 'w-75'}`}>
-                <h3 className="mb-2 text-center">Update Product</h3>
+            <div className="m-3">
+                <h3 className="mb-3 text-center">Update Product</h3>
                 <div className="bg-white rounded-3 p-3 bx_sdw w-60 m-auto">
                     <form onSubmit={handleSubmit}>
                         {/* Product Name */}
@@ -301,17 +248,6 @@ const ProductUpload = () => {
                                 onChange={(e) => setProductName(e.target.value)}
                                 placeholder="Enter Product Name"
                             />
-                        </div>
-
-                        {/* Category */}
-                        <div className="form-group">
-                        <label>Category <span className="req_star">*</span></label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            value={category}
-                            onChange={(e) => setCategory(e.target.value)}
-                        />
                         </div>
 
                         {/* Catalogue */}
@@ -371,7 +307,6 @@ const ProductUpload = () => {
                                 multiple
                                 onChange={handleFileChange}
                             />
-                            {/* Display New Photos */}
                             <div className="mt-2">
                                     {productPhotos.map((file, index) => (
                                         <div key={index} className="d-flex align-items-center gap-2 mb-2">
@@ -386,27 +321,25 @@ const ProductUpload = () => {
                                         </div>
                                     ))}
                             </div>
-                                {/* Display Old Photos */}
+                        </div>
+                                {/* Other inputs */}
                                 <div>
                                     {uploadedFiles.map((file, index) => (
                                         <div key={index} className="d-flex align-items-center gap-2 mb-2">
                                             <img src={file.src} alt={file.alt} width="100" />
                                             <button
                                                 type="button"
-                                                onClick={() => handleRemoveFile(index, false)}
+                                                onClick={() => handleRemoveFile(index)}
                                                 className="btn btn-danger btn-sm px-2 py-1 gap-5"
                                             >
                                                 X
                                             </button>
                                         </div>
                                     ))}
-                                    </div>
-                                    {/* Alert for uploading files */}
-                                    {showAlert && (
-                                        <div className="alert alert-danger  mt-2">
-                                        Please click the <strong>Upload Files</strong> button to upload the selected images.
-                                        </div>
-                                    )}
+                                    {showAlert && 
+                                    <div className="m-2 alert alert-info text-danger" role="alert">
+                                        {alertMessage}
+                                    </div>}
                                     <button
                                         type="button"
                                         className="btn btn-primary mt-2"
@@ -416,6 +349,7 @@ const ProductUpload = () => {
                                         {loading ? 'Uploading...' : 'Upload Files'}
                                     </button>
                                 </div>
+
 
                         {/* Rate */}
                         <div className="form-group">
@@ -516,7 +450,7 @@ const ProductUpload = () => {
                             <button
                                 type="button"
                                 className="btn btn-primary w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
-                                onClick={() => navigate(`/product-list/${ProductOwnedBy}`)}
+                                onClick={() => navigate('/product-list')}
                             >
                                 <VisibilityIcon className="me-2" />
                                 <span>View Product</span>
@@ -525,28 +459,7 @@ const ProductUpload = () => {
                     </form>
                 </div>
             </div>
-            {/* Styles for floating menu */}
-<style jsx>{`
-        .floating-menu {
-          position: fixed;
-          top: 80px; /* Increased from 20px to avoid overlapping with the logo */
-          left: 20px; /* Adjusted for placement on the left side */
-          z-index: 1000;
-        }
-        .menu-popup {
-          position: absolute;
-          top: 50px; /* Keeps the popup aligned below the floating menu */
-          left: 0; /* Aligns the popup to the left */
-          background: white;
-          border: 1px solid #ddd;
-          border-radius: 5px;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-          width: 200px;
-        }
-      `}</style>
         </div>
-   <Footer /> 
-    </>
     );
 };
 

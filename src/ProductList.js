@@ -3,8 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
-import Footer from './Footer.js';
-
 const ProductView = () => {
   const [productData, setProductData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -17,18 +15,18 @@ const ProductView = () => {
   const [loading, setLoading] = useState(true); // Loading state
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 15;
-  // const {userType} = useParams();
   const navigate = useNavigate();
- 
+
   // Define dynamic parameters for the URL
  
 
-  const { ProductOwnedBy } = useParams(); 
+  const { productownedby } = useParams(); 
 
   // Fetch product data, categories, and catalogues
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv2.azurewebsites.net/api/Product/GetProductList?ProductOwnedBy=Admin`
+    const url = `https://handymanapiv2.azurewebsites.net/api/Product/GetProductList?ProductOwnedBy=${productownedby}`;
+
     axios.get(url)
       .then(response => {
         const products = response.data.map((product) => ({
@@ -54,7 +52,7 @@ const ProductView = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, [ProductOwnedBy]);
+  }, [productownedby]);
 
   // Handle delete functionality
   const handleDelete = (productId) => {
@@ -105,10 +103,9 @@ const ProductView = () => {
     return <div>Loading...</div>; // Show loading message while data is fetching
   }
 
-  return ( 
-    <>
-    <div className="container">
-      <h2 className="text-center mb-2">All Products</h2>
+  return (
+    <div className="container my-5">
+      <h2 className="text-center mb-4">All Products</h2>
       <div className="d-flex align-items-center justify-content-between">
         {/* Category */}
         <div className="form-group text-start col-md-2 ml-2 m-5 mb-2">
@@ -161,11 +158,14 @@ const ProductView = () => {
           </select>
         </div>
 
+
+
+
         {/* Add New Product Button */}
         <div className="text-end col-md-3 mb-1">
   <button
     className="btn btn-success"
-    onClick={() => navigate(`/product/${ProductOwnedBy}`)}
+    onClick={() => navigate(`/product/${productownedby}`)}
   >
     Add New Product
   </button>
@@ -201,10 +201,10 @@ const ProductView = () => {
       <td>{product.discount ? `${product.discount}%` : "No discount"}</td>
       <td>₹{product.afterDiscountPrice || 'N/A'}</td>
       <td>
-        <Link to={`/product-edit/${product.id}/${ProductOwnedBy}`} className="btn btn-warning mx-2" title="Edit">
+        <Link to={`/product-edit/${product.id}`} className="btn btn-warning mx-2" title="Edit">
           <FaEdit />
         </Link>
-        <Link to={`/product-view/${product.id}/${ProductOwnedBy}`} className="btn btn-info mx-2" title="View">
+        <Link to={`/product-view/${product.id}/${productownedby}`} className="btn btn-info mx-2" title="View">
           <FaEye />
         </Link>
         <button
@@ -236,14 +236,9 @@ const ProductView = () => {
               </ul>
             </nav>
           </div>
-          <div className='text-end m-1'>
-          <button className="btn btn-warning" title="back" onClick={() => navigate(`/Dashboard`)}>Back</button>
-          </div>
         </>
       )}
     </div>
-     <Footer /> 
-</>
   );
 };
 

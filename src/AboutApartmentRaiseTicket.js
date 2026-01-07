@@ -28,7 +28,7 @@ const AboutApartmentRaiseTicket = () => {
   return (
     <>
     <Header />
-    <div className="mt-mob-50 offer-banner text-center text-white py-2">
+    <div className="mt-100 offer-banner text-center text-white py-2">
          <b className='mx-5'>Apartment Common Area Monthly Maintenance Plan</b>
       </div>
        <p className="mb-0 text-center fw-bold">

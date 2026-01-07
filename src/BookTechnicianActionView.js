@@ -316,7 +316,7 @@ const handleUpdateJobDescription = async (e) => {
     InvoiceId: "",
     InvoiceURL: "",
     TechnicianPincode: selectPincode,
-    TechnicianName: selectedTechnicians,
+    TechnicianName   : selectedTechnicians,
     TechnicianFullName: "",
   }; 
  

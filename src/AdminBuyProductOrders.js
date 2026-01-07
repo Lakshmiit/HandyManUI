@@ -700,7 +700,7 @@ useEffect(() => {
 
   return (
   <>
-<div className="d-flex flex-row justify-content-start align-items-start mt-mob-50">
+<div className="d-flex flex-row justify-content-start align-items-start mt-100">
       {/* Sidebar menu for Larger Screens */}
       {!isMobile && (
         <div className=" ml-0 p-0 adm_mnu h-90">

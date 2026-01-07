@@ -807,9 +807,10 @@ const handleBothActions =  (e) => {
       </table>
     
         <div className="form-group m-2">
-          <label className='section-title'>Required Materials Details</label>
-          {!isMobile ? (
+          {requestType === "With Material" && (
+          !isMobile ? (
           <div className='mt-3'>
+            <label className='section-title'>Required Materials Details</label>
           <div className='d-flex gap-3 text-center'>
           <div style={{ flex: 4}}>
             <label className="fw-bold">Material</label>
@@ -859,6 +860,7 @@ const handleBothActions =  (e) => {
           </div>
           ) : (
             <div>
+              <label className='section-title'>Required Materials Details</label>
       {specifications.map((spec, index) => (
         <div key={index} className="card mb-3 shadow-sm" style={{ maxWidth: "300px" }}>
           <div className="card-body">
@@ -870,24 +872,10 @@ const handleBothActions =  (e) => {
         </div>
       ))}
     </div>
-  )}
+  ))}
+</div>
 
-{/* <h3 className="section-title">Invoice Details</h3>
-      <table className="customer-details-table">
-        <tbody>
-            <tr>
-            <td><strong>Invoice Number</strong></td>
-            <td></td>
-            </tr>
-            <tr>
-            <td><strong>Invoice Date</strong></td>
-            <td></td>
-            </tr>
-        </tbody>
-      </table>
-      <button className='btn btn-warning fs-5 m-2'>Upload Invoice</button>
-      <button className='btn btn-warning m-2 fs-5' title='save'>Save</button> */}
-        </div>
+       {requestType === "With Material" && (
         <div className='payment'>
             <label className='section-title'>Material Collection Point</label>
             <table className='customer-details-table'>
@@ -902,14 +890,8 @@ const handleBothActions =  (e) => {
                     </tr> 
                 </tbody>
             </table>
-            {/* <label className='fs-5'>
-            <input
-            type='checkbox'
-            className='form-check-input m-1 border-dark' />
-            Material Collected to Technician
-            </label> */}
-            {/* <button className='btn btn-warning m-2 fs-5'>Save</button> */}
         </div>
+        )}
         <h3 className="section-title">Invoice Details</h3>
       <table className="customer-details-table">
         <tbody>

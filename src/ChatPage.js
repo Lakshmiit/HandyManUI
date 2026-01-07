@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useRef  } from 'react';
+import React, { useState, useEffect,useRef, useCallback  } from 'react';
 import { ArrowBack, Send } from '@mui/icons-material';
 import { Box, Modal,Typography, DialogContent, DialogTitle, TextField, IconButton, Divider, Tabs, Tab, Button } from '@mui/material';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
@@ -12,6 +12,7 @@ import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import { Dialog, } from '@mui/material';
 import ChatLogo from './img/ChatLogo_123.jpeg';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import DeleteIcon from '@mui/icons-material/Delete';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';             
 // import ShareIcon from '@mui/icons-material/Share';
@@ -47,7 +48,8 @@ const menuList = [
 const chatEndRef = useRef(null);
   const [cameraOpen, setCameraOpen] = useState(false);
 const videoRef = useRef(null);
-const [tabType, setTabType] = useState('news');
+const [tabType] = useState('news');
+// const [tabType, setTabType] = useState('news');
 const seenMessages = useRef(new Set());
 const isAdmin = userType === 'admin';
 const [showMessageInfo, setShowMessageInfo] = useState(false);
@@ -57,41 +59,128 @@ const [messageCounts, setMessageCounts] = useState({
   buysell: 0,
   tolet: 0,
 });
-const [likedMessages, setLikedMessages] = useState(new Set());
-const skipScrollRef = useRef(false);
+// const [likedMessages, setLikedMessages] = useState(new Set());
+// const skipScrollRef = useRef(false);
 const [openDisclaimer, setOpenDisclaimer] = useState(false);
+// const [retrievedId] = useState(null);
+const [countData] = useState(null);
+// const [retrievedId, setRetrievedId] = useState(null);
+// const [countData, setCountData] = useState(null);
+const chatContainerRef = useRef(null);
+const [autoScroll, setAutoScroll] = useState(true);
+const [userLikes] = useState([]);
+// const [userLikes, setUserLikes] = useState([]);
+
+useEffect(() => {
+  const container = chatContainerRef.current;
+  if (!container) return;
+  const handleScroll = () => {
+    const isNearBottom =
+      container.scrollHeight - container.scrollTop - container.clientHeight < 50;
+    setAutoScroll(isNearBottom);
+  };
+  container.addEventListener("scroll", handleScroll);
+  return () => container.removeEventListener("scroll", handleScroll);
+}, []);
+
+// // Scroll only when autoScroll is true
+// useEffect(() => {
+//   if (autoScroll && chatEndRef.current) {
+//     chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+//   }
+// }, [messages, autoScroll]);
+
+// useEffect(() => {
+//     const fetchUserLikes = async () => {
+//       try {
+//         const response = await fetch(
+//           `https://handymanapiv2.azurewebsites.net/api/UserLikes/GetUserLikes?UserId=${userId}`
+//         );
+//         if (!response.ok) {
+//           throw new Error("Failed to fetch user likes");
+//         }
+//         const data = await response.json();
+//         const filteredData = data.map((item) => ({
+//           id: item.id,
+//           userLikesId: item.userLikesId,
+//           messageId: item.messageId,
+//           userId: item.userId,
+//           islike: item.islike,
+//           date: item.date,
+//         }));
+//         setUserLikes(filteredData);
+//       } catch (error) {
+//         console.error("Error fetching user likes:", error);
+//       }
+//     };
+//     fetchUserLikes();
+//   }, [userId]);
+
 const handleShowMessageInfo = (msg) => {
   setSelectedMessage(msg);
   setShowMessageInfo(true);
 };
+
+const handleDeleteMessage = async (messageId) => {
+  if (!messageId) {
+    console.error("Message ID is missing!");
+    return;
+  }
+  try {
+    await axios.delete(`https://handymanapiv2.azurewebsites.net/api/ChatBot?id=${messageId}`);
+    setMessages(prev => prev.filter(msg => msg.id !== messageId));
+  } catch (error) {
+    console.error("Error deleting message:", error);
+  }
+};
+
+// const markTabSeen = (tab) => {
+//   const seenTabs = JSON.parse(localStorage.getItem('seenTabs') || '{}');
+//   seenTabs[tab] = true;
+//   localStorage.setItem('seenTabs', JSON.stringify(seenTabs));
+// };
+
+const clearTabSeen = (tab) => {
+  const seenTabs = JSON.parse(localStorage.getItem('seenTabs') || '{}');
+  seenTabs[tab] = false;
+  localStorage.setItem('seenTabs', JSON.stringify(seenTabs));
+};
+
 
 const handleClickOpen = (imgData) => {
   setSelectedImage(imgData);
   setOpen(true);
 };
 
+ useEffect(() => {
+    document.body.classList.add("chat-scroll");
+    return () => {
+      document.body.classList.remove("chat-scroll");
+    };
+  }, []);
+
 const handleClose = () => {
   setOpen(false);
 };
-useEffect(() => {
-  const storedLikes = localStorage.getItem(`likedMessages_${userId}`);
-  if (storedLikes) {
-    setLikedMessages(new Set(JSON.parse(storedLikes)));
-  }
-}, [userId]);
+// useEffect(() => {
+//   const storedLikes = localStorage.getItem(`likedMessages_${userId}`);
+//   if (storedLikes) {
+//     setLikedMessages(new Set(JSON.parse(storedLikes)));
+//   }
+// }, [userId]);
 
-const toggleLike = (messageId) => {
-  setLikedMessages((prev) => {
-    const updated = new Set(prev);
-    if (updated.has(messageId)) {
-      updated.delete(messageId);
-    } else {
-      updated.add(messageId);
-    }
-    localStorage.setItem(`likedMessages_${userId}`, JSON.stringify([...updated]));
-    return updated;
-  });
-};
+// const toggleLike = (messageId) => {
+//   setLikedMessages((prev) => {
+//     const updated = new Set(prev);
+//     if (updated.has(messageId)) {
+//       updated.delete(messageId);
+//     } else {
+//       updated.add(messageId);
+//     }
+//     localStorage.setItem(`likedMessages_${userId}`, JSON.stringify([...updated]));
+//     return updated;
+//   });
+// };
 
 useEffect(() => {
   if (
@@ -113,52 +202,91 @@ const removeSelectedFile = (indexToRemove) => {
 const handleCapture = () => {
   const canvas = document.createElement('canvas');
   const video = videoRef.current;
+
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
-  canvas.getContext('2d').drawImage(video, 0, 0);
 
-  canvas.toBlob((blob) => {
-    const file = new File([blob], `captured_${Date.now()}.jpg`, { type: 'image/jpeg' });
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  if (canvas.toBlob) {
+    canvas.toBlob((blob) => {
+      const file = new File([blob], `captured_${Date.now()}.jpg`, { type: 'image/jpeg' });
+      setSelectedFile((prev) => [...prev, file]);
+      setCameraOpen(false);
+    }, 'image/jpeg');
+  } else {
+    const dataUrl = canvas.toDataURL('image/jpeg');
+    const byteString = atob(dataUrl.split(',')[1]);
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const intArray = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < byteString.length; i++) {
+      intArray[i] = byteString.charCodeAt(i);
+    }
+    const file = new File([intArray], `captured_${Date.now()}.jpg`, { type: 'image/jpeg' });
     setSelectedFile((prev) => [...prev, file]);
-    setCameraOpen(false);
-  }, 'image/jpeg');
+    setCameraOpen(false); 
+  }
 };
 
 useEffect(() => {
   if (cameraOpen) {
-    navigator.mediaDevices.getUserMedia({ video: true })
-      .then((stream) => {
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-        }
-      })
-      .catch((err) => {
-        console.error('Error accessing camera:', err);
-      });
+    navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment' } 
+    })
+    .then((stream) => {
+      if (videoRef.current) {
+        const video = videoRef.current;
+        video.srcObject = stream;
+        video.setAttribute('playsinline', true); 
+        video.muted = true; 
+        video.play().catch(err => console.error('Error playing video:', err));
+      }
+    })
+    .catch((err) => {
+      console.error('Error accessing camera:', err);
+    });
   } else {
     if (videoRef.current && videoRef.current.srcObject) {
-      videoRef.current.srcObject.getTracks().forEach((track) => track.stop());
+      videoRef.current.srcObject.getTracks().forEach(track => track.stop());
     }
   }
 }, [cameraOpen]);
 
+// useEffect(() => {
+//    if (skipScrollRef.current) {
+//     skipScrollRef.current = false; 
+//     return; 
+//   }
+//   if (chatEndRef.current) {
+//     chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+//   }
+// }, [messages]);
+
+  useEffect(() => {
+    console.log(profile,profileImage,countData, loading, autoScroll);
+  }, [loading, profileImage, countData,profile, autoScroll]);
+
+//   useEffect(() => {
+//   if (!isAdmin) return; 
+
+//   if (['news', 'buysell', 'tolet'].includes(tabType)) {
+//     messages.forEach(msg => {
+//       if (!seenMessages.current.has(msg.id)) {
+//         fetch('https://handymanapiv2.azurewebsites.net/api/MarkMessageSeen/UploadMessageSeenCount', {
+//           method: 'POST',
+//           headers: { 'Content-Type': 'application/json' },
+//           body: JSON.stringify({ id: "string", messageId: msg.id, userId })
+//         })
+//           .then(() => seenMessages.current.add(msg.id))
+//           .catch(console.error);
+//       }
+//     });
+//   }
+// }, [messages, tabType, userId, isAdmin]);
+
 useEffect(() => {
-   if (skipScrollRef.current) {
-    skipScrollRef.current = false; 
-    return; 
-  }
-  if (chatEndRef.current) {
-    chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
-  }
-}, [messages]);
-
-  useEffect(() => {
-    console.log(profile,profileImage, loading);
-  }, [loading, profileImage, profile]);
-
-  useEffect(() => {
-  if (!isAdmin) return; 
-
+  if (!isAdmin) return;
   if (['news', 'buysell', 'tolet'].includes(tabType)) {
     messages.forEach(msg => {
       if (!seenMessages.current.has(msg.id)) {
@@ -167,8 +295,14 @@ useEffect(() => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id: "string", messageId: msg.id, userId })
         })
-          .then(() => seenMessages.current.add(msg.id))
-          .catch(console.error);
+        .then(() => {
+          seenMessages.current.add(msg.id);
+          setMessageCounts(prev => ({
+            ...prev,
+            [tabType]: Math.max(0, prev[tabType] - 1),
+          }));
+        })
+        .catch(console.error);
       }
     });
   }
@@ -219,59 +353,215 @@ useEffect(() => {
   fetchProfileData();
 }, [userType, userId]);
 
+
 useEffect(() => {
-  const fetchCounts = async () => {
+  const fetchProfileData = async () => {
     try {
-      const types = ['news', 'buysell', 'tolet'];
-      const counts = {};
-      for (const type of types) {
-        const res = await fetch(`https://handymanapiv2.azurewebsites.net/api/ChatBot/GetChatMessagesByType?type=${type}`);
-        if (!res.ok) throw new Error(`Failed to fetch ${type} messages`);
-        const data = await res.json();
-        counts[type] = data.length;
+      const response = await fetch(
+        `https://handymanapiv2.azurewebsites.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`
+      );
+      if (!response.ok) throw new Error('Failed to fetch profile data');
+      const data = await response.json();
+      setProfile(data);
+      setFullName(data.fullName);
+
+      if (data.photoAttachmentId) {
+        fetchImageUrl(data.photoAttachmentId);
       }
-      setMessageCounts(counts);
-    } catch (err) {
-      console.error('Error fetching message counts:', err);
+    } catch (error) {
+      console.log('Error Fetching Data:', error);
+    } finally {
+      setLoading(false);
     }
   };
-  fetchCounts();
+  fetchProfileData();
+}, [userType, userId]);
+
+//   const fetchCounts = useCallback(async () => {
+//     try {
+//       const types = ['news', 'buysell', 'tolet'];
+//       const counts = {};
+//       for (const type of types) {
+//         const res = await fetch(`https://handymanapiv2.azurewebsites.net/api/ChatBot/GetChatMessagesByType?type=${type}`);
+//         if (!res.ok) throw new Error(`Failed to fetch ${type} messages`);
+//         const data = await res.json();
+//         counts[type] = data.length;
+//         const seenTabs = JSON.parse(localStorage.getItem('seenTabs') || '{}');
+//         Object.keys(seenTabs).forEach(tab => {
+//           if (seenTabs[tab]) counts[tab] = 0;
+//         });
+//       }
+//       if (retrievedId) {
+//         const seenRes = await fetch(
+//           `https://handymanapiv2.azurewebsites.net/api/ChatMessageTabSeenByUser/GetChatMessageTabSeenByUserById?id=${retrievedId}`
+//         );
+//         if (!seenRes.ok) throw new Error("Failed to fetch tab seen status");
+//         const tabData = await seenRes.json();
+//         if (tabData.chatTabNews === false) counts.news = 0;
+//         if (tabData.chatTabBuySell === false) counts.buysell = 0;
+//         if (tabData.chatTabTolet === false) counts.tolet = 0;
+//       }
+//       localStorage.setItem("chatCounts", JSON.stringify(counts));
+//       setMessageCounts(counts);
+//     } catch (err) {
+//       console.error('Error fetching message counts:', err);
+//     }
+// }, [retrievedId]); 
+
+const fetchCounts = useCallback(async () => {
+  try {
+    const types = ['news', 'buysell', 'tolet'];
+    const results = await Promise.all(
+      types.map(type =>
+        fetch(`https://handymanapiv2.azurewebsites.net/api/ChatBot/GetChatMessagesByType?type=${type}`)
+          .then(res => res.ok ? res.json() : [])
+          .catch(() => [])
+      )
+    );
+    const counts = {};
+    types.forEach((type, idx) => {
+      counts[type] = results[idx].length;
+    });
+    const seenTabs = JSON.parse(localStorage.getItem('seenTabs') || '{}');
+    Object.keys(seenTabs).forEach(tab => {
+      if (seenTabs[tab]) counts[tab] = 0;
+    });
+    // if (retrievedId) {
+    //   const seenRes = await fetch(
+    //     `https://handymanapiv2.azurewebsites.net/api/ChatMessageTabSeenByUser/GetChatMessageTabSeenByUserById?id=${retrievedId}`
+    //   );
+    //   if (seenRes.ok) {
+    //     const tabData = await seenRes.json();
+    //     if (!tabData.chatTabNews) counts.news = 0;
+    //     if (!tabData.chatTabBuySell) counts.buysell = 0;
+    //     if (!tabData.chatTabTolet) counts.tolet = 0;
+    //   }
+    // }
+    localStorage.setItem("chatCounts", JSON.stringify(counts));
+    setMessageCounts(counts);
+  } catch (err) {
+    console.error('Error fetching message counts:', err);
+  }
+// }, [retrievedId]);
 }, []);
 
+
+useEffect(() => {
+  fetchCounts();
+}, [fetchCounts]);
+
+// useEffect(() => {
+//   const fetchIndividualCounts = async () => {
+//   try {
+//     // const types = ['news', 'buysell', 'tolet'];
+//     // const counts = {};
+//     // for (const type of types) {
+//       const res = await fetch(`https://handymanapiv2.azurewebsites.net/api/ChatBot/GetChatBotByUserId?UserId=${userId}`);
+//       if (!res.ok) throw new Error(`Failed to fetch messages`);
+//       const data = await res.json();
+//      setIndividualCounts(data);
+//     // }
+//     // setMessageCounts(counts);
+//   } catch (err) {
+//     console.error('Error fetching message counts:', err);
+//   }
+// };
+//  fetchIndividualCounts();
+// }, [userId]);
+
+  // useEffect(() => {
+  //   const fetchMessages = async () => {
+  //     try {
+  //       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/ChatBot/GetChatMessagesByType?type=${tabType}`);
+  //       if (!response.ok) throw new Error('Failed to fetch messages');
+  //       const data = await response.json();
+  //       const updatedMessages = await Promise.all(data.map(async (msg) => {
+  //         if (!msg.uploadFile || msg.uploadFile.length === 0) return msg;
+  //         const imageFiles = await Promise.all(
+  //           msg.uploadFile.map(async (photo) => {
+  //             try {
+  //               const res = await fetch(`https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`);
+  //               const fileData = await res.json();
+  //               return {
+  //                 src: photo,
+  //                 imageData: fileData.imageData,
+  //               };
+  //             } catch {
+  //               return null;
+  //             }
+  //           })
+  //         );
+  //         return {
+  //           ...msg,
+  //           uploadedImages: imageFiles.filter(Boolean),
+  //         };
+  //       }));
+  //       setMessages(updatedMessages);
+  //       // const seenTabs = JSON.parse(localStorage.getItem('seenTabs') || '{}');
+  //       const prevCount = messageCounts[tabType] || 0;
+  //       if (data.length > prevCount) {
+  //         clearTabSeen(tabType);
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching messages:', error);
+  //     }
+  //   };
+  //   fetchMessages();
+  // }, [tabType, messageCounts]);
+
   useEffect(() => {
-    const fetchMessages = async () => {
-      try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/ChatBot/GetChatMessagesByType?type=${tabType}`);
-        if (!response.ok) throw new Error('Failed to fetch messages');
-        const data = await response.json();
-        const updatedMessages = await Promise.all(data.map(async (msg) => {
-          if (!msg.uploadFile || msg.uploadFile.length === 0) return msg;
+  const fetchMessages = async () => {
+    try {
+      const res = await fetch(`https://handymanapiv2.azurewebsites.net/api/ChatBot/GetChatMessagesByType?type=${tabType}`);
+      if (!res.ok) throw new Error('Failed to fetch messages');
+      const data = await res.json();
+      // Fetch all images in parallel for all messages
+      const updatedMessages = await Promise.all(
+        data.map(async (msg) => {
+          if (!msg.uploadFile?.length) return msg;
           const imageFiles = await Promise.all(
-            msg.uploadFile.map(async (photo) => {
-              try {
-                const res = await fetch(`https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`);
-                const fileData = await res.json();
-                return {
-                  src: photo,
-                  imageData: fileData.imageData,
-                };
-              } catch {
-                return null;
-              }
-            })
+            msg.uploadFile.map(photo =>
+              fetch(`https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`)
+                .then(r => r.json())
+                .then(fileData => ({ src: photo, imageData: fileData.imageData }))
+                .catch(() => null)
+            )
           );
-          return {
-            ...msg,
-            uploadedImages: imageFiles.filter(Boolean),
-          };
-        }));
-        setMessages(updatedMessages);
-      } catch (error) {
-        console.error('Error fetching messages:', error);
+          return { ...msg, uploadedImages: imageFiles.filter(Boolean) };
+        })
+      );
+      setMessages(updatedMessages);
+      const prevCount = messageCounts[tabType] || 0;
+      if (data.length > prevCount) clearTabSeen(tabType);
+    } catch (err) {
+      console.error('Error fetching messages:', err);
+    }
+  };
+  fetchMessages();
+}, [tabType, messageCounts]);
+
+
+  // Identify today's first message 
+const hasScrolledToTodayRef = useRef(false);
+useEffect(() => {
+  if (hasScrolledToTodayRef.current) return; 
+
+  if (messages.length > 0) {
+    const today = new Date().toDateString();
+    const firstTodayIndex = messages.findIndex(msg => {
+      if (!msg.dateTime) return false;
+      return new Date(msg.dateTime).toDateString() === today;
+    });
+
+    if (firstTodayIndex !== -1) {
+      const messageElement = document.getElementById(`msg-${firstTodayIndex}`);
+      if (messageElement) {
+        messageElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        hasScrolledToTodayRef.current = true; 
       }
-    };
-    fetchMessages();
-  }, [tabType]);
+    }
+  }
+}, [messages]);
 
  // Fetch seen count for selected message
 useEffect(() => {
@@ -394,6 +684,11 @@ setMessages((prev) => [
     uploadedImages: uploadedImages.filter(Boolean), 
   }
 ]);
+
+setMessageCounts(prev => ({
+  ...prev,
+  [tabType]: (prev[tabType] || 0) + 1
+}));
     setMessageInput('');
     setSelectedFile([]);
   } catch (error) {
@@ -404,12 +699,11 @@ setMessages((prev) => [
 };
 
 const handleLikeClick = async (message) => {
-  const isLiked = likedMessages.has(message.id);
+  const isLiked = userLikes.some((like) => like.messageId === message.id && like.islike);
+
   const currentLikes = Number(message.numberOfLikes) || 0;
   const updatedLikes = isLiked ? currentLikes - 1 : currentLikes + 1;
 
-  toggleLike(message.id);
- skipScrollRef.current = true;
   setMessages((prevMessages) =>
     prevMessages.map((msg) =>
       msg.id === message.id ? { ...msg, numberOfLikes: updatedLikes } : msg
@@ -417,20 +711,74 @@ const handleLikeClick = async (message) => {
   );
 
   try {
-    await axios.put(`https://handymanapiv2.azurewebsites.net/api/ChatBot/UpdateChatBot?id=${message.id}`, {
-      id: message.id,
-      userName: message.userName,
-      dateTime: message.dateTime, 
-      userId: message.userId,
-      chatBotId: message.chatBotId,
-      message: message.message,
-      chatType:  message.chatType,
-      numberOfLikes: updatedLikes.toString(),
-      uploadFile: message.uploadFile || [],
-    });
+    await axios.put(
+      `https://handymanapiv2.azurewebsites.net/api/ChatBot/UpdateChatBot?id=${message.id}`,
+      {
+        id: message.id,
+        userName: message.userName,
+        dateTime: message.dateTime,
+        userId: message.userId,
+        chatBotId: message.chatBotId,
+        message: message.message,
+        chatType: message.chatType,
+        numberOfLikes: updatedLikes.toString(),
+        uploadFile: message.uploadFile || [],
+      }
+    );
+
+    // const existingLike = userLikes.find(
+    //   (like) => like.messageId === message.id && like.userId === userId
+    // );
+
+    // if (existingLike) {
+    //   const updatedLike = {
+    //     ...existingLike,
+    //     islike: !existingLike.islike,
+    //     date: new Date().toISOString(),
+    //   };
+
+    //   await axios.put(
+    //     `https://handymanapiv2.azurewebsites.net/api/UserLikes/UpdateUserLikes?id=${existingLike.id}&userId=${userId}`,
+    //     updatedLike
+    //   );
+
+    //   setUserLikes((prev) =>
+    //     prev.map((l) => (l.id === existingLike.id ? updatedLike : l))
+    //   );
+    // } 
+    // else {
+    //   const newLike = {
+    //     id: "string",
+    //     userLikesId: "string",
+    //     messageId: message.id,
+    //     userId: userId,
+    //     islike: true,
+    //     date: new Date().toISOString(),
+    //   };
+
+    //   await axios.post(
+    //     "https://handymanapiv2.azurewebsites.net/api/UserLikes/UploadUserLikesController",
+    //     newLike
+    //   );
+
+    //   setUserLikes((prev) => [...prev, newLike]);
+    // }
+
+    // const res = await axios.get(
+    //   `https://handymanapiv2.azurewebsites.net/api/UserLikes/GetUserLikes?UserId=${userId}`
+    // );
+    // const filteredData = res.data.map((item) => ({
+    //   id: item.id,
+    //   userLikesId: item.userLikesId,
+    //   messageId: item.messageId,
+    //   userId: item.userId,
+    //   islike: item.islike,
+    //   date: item.date,
+    // }));
+    // setUserLikes(filteredData);
   } catch (error) {
-    console.error("Error updating like count:", error);
-    toggleLike(message.id);
+    console.error("Error updating like:", error);
+
     setMessages((prevMessages) =>
       prevMessages.map((msg) =>
         msg.id === message.id ? { ...msg, numberOfLikes: currentLikes } : msg
@@ -439,6 +787,177 @@ const handleLikeClick = async (message) => {
   }
 };
 
+
+
+
+// const handleLikeClick = async (message) => {
+//   const isLiked = likedMessages.has(message.id);
+//   const currentLikes = Number(message.numberOfLikes) || 0;
+//   const updatedLikes = isLiked ? currentLikes - 1 : currentLikes + 1;
+
+//   toggleLike(message.id);
+//   skipScrollRef.current = true;
+
+//   setMessages((prevMessages) =>
+//     prevMessages.map((msg) =>
+//       msg.id === message.id ? { ...msg, numberOfLikes: updatedLikes } : msg
+//     )
+//   );
+
+//   try {
+//     await axios.put(`https://handymanapiv2.azurewebsites.net/api/ChatBot/UpdateChatBot?id=${message.id}`, {
+//       id: message.id,
+//       userName: message.userName,
+//       dateTime: message.dateTime,
+//       userId: message.userId,
+//       chatBotId: message.chatBotId,
+//       message: message.message,
+//       chatType: message.chatType,
+//       numberOfLikes: updatedLikes.toString(),
+//       uploadFile: message.uploadFile || [],
+//     });
+
+//     await axios.post("https://handymanapiv2.azurewebsites.net/api/UserLikes/UploadUserLikesController", {
+//       id: "string", 
+//       userLikesId: "string", 
+//       messageId: message.id,
+//       userId: userId,
+//       islike: !isLiked, 
+//       date: "string",
+//     });
+
+//   } catch (error) {
+//     console.error("Error updating like:", error);
+
+//     toggleLike(message.id);
+//     setMessages((prevMessages) =>
+//       prevMessages.map((msg) =>
+//         msg.id === message.id ? { ...msg, numberOfLikes: currentLikes } : msg
+//       )
+//     );
+//   }
+// };
+
+// const handleLikeClick = async (message) => {
+//   const isLiked = likedMessages.has(message.id);
+//   const currentLikes = Number(message.numberOfLikes) || 0;
+//   const updatedLikes = isLiked ? currentLikes - 1 : currentLikes + 1;
+
+//   toggleLike(message.id);
+//  skipScrollRef.current = true;
+//   setMessages((prevMessages) =>
+//   prevMessages.map((msg) =>
+//     msg.id === message.id ? { ...msg, numberOfLikes: updatedLikes } : msg
+//   )
+// );
+
+//   try {
+//     await axios.put(`https://handymanapiv2.azurewebsites.net/api/ChatBot/UpdateChatBot?id=${message.id}`, {
+//       id: message.id,
+//       userName: message.userName,
+//       dateTime: message.dateTime, 
+//       userId: message.userId,
+//       chatBotId: message.chatBotId,
+//       message: message.message,
+//       chatType:  message.chatType,
+//       numberOfLikes: updatedLikes.toString(),
+//       uploadFile: message.uploadFile || [],
+//     });
+//   } catch (error) {
+//     console.error("Error updating like count:", error);
+//     toggleLike(message.id);
+//     setMessages((prevMessages) =>
+//       prevMessages.map((msg) =>
+//         msg.id === message.id ? { ...msg, numberOfLikes: currentLikes } : msg
+//       )
+//     );
+//   }
+// }; 
+
+// const handleIndividualCount = useCallback(async (tabType) => {
+//     if (tabType === "news") {
+//       const payload = {
+//         id: "string",
+//         dateTime: "string",
+//         chatMessageTabSeenByUserId: "string",
+//         userId: userId,
+//         chatTabNews: false,
+//         chatTabBuySell: true,
+//         chatTabTolet: true
+//       };
+
+//       try {
+//         const response = await fetch(
+//           `https://handymanapiv2.azurewebsites.net/api/ChatMessageTabSeenByUser/UploadChatMessageTabSeenByUser`,
+//           {
+//             method: 'POST',
+//             headers: { 'Content-Type': 'application/json' },
+//             body: JSON.stringify(payload),
+//           }
+//         );
+
+//         if (!response.ok) throw new Error("Failed to submit Count.");
+//         const data = await response.json();
+//         console.log("POST API Response:", data);
+//         markTabSeen(tabType);
+//         const match = data.message.match(/^chatMessageTabSeenByUser(.+?) uploaded successfully\.$/);
+//         if (match && match[1]) {
+//           setRetrievedId(match[1]); 
+//         }
+//       } catch (error) {
+//         console.error("Error in POST:", error);
+//       }
+//     } else if ((tabType === "buysell" || tabType === "tolet") && retrievedId) {
+//       try {
+//         const getResponse = await fetch(
+//           `https://handymanapiv2.azurewebsites.net/api/ChatMessageTabSeenByUser/GetChatMessageTabSeenByUserById?id=${retrievedId}`
+//         );
+//         if (!getResponse.ok) throw new Error("Failed to fetch details by ID.");
+//         const getData = await getResponse.json();
+//         const updatedPayload = {
+//           ...getData,
+//           chatTabBuySell: tabType === "buysell" ? false : getData.chatTabBuySell,
+//           chatTabTolet: tabType === "tolet" ? false : getData.chatTabTolet
+//         };
+
+//         const putResponse = await fetch(
+//           `https://handymanapiv2.azurewebsites.net/api/ChatMessageTabSeenByUser/UpdateChatMessageTabSeenByUser?id=${retrievedId}`,
+//           {
+//             method: 'PUT',
+//             headers: { 'Content-Type': 'application/json' },
+//             body: JSON.stringify(updatedPayload),
+//           }
+//         );
+
+//         if (!putResponse.ok) throw new Error("Failed to update Count.");
+//         const putData = await putResponse.json();
+//         console.log("PUT API Response:", putData);
+//         markTabSeen(tabType);
+//         const countPayload = {
+//           id: retrievedId,
+//           dateTime: getData.dateTime,
+//           chatMessageTabSeenByUserId: getData.chatMessageTabSeenByUserId,
+//           userId: getData.userId,
+//           chatTabNews: getData.chatTabNews,
+//           chatTabBuySell: tabType === "buysell" ? false : getData.chatTabBuySell,
+//           chatTabTolet: tabType === "tolet" ? false : getData.chatTabTolet,
+//         };
+//         setCountData(countPayload);
+//         await fetchCounts();
+//       } catch (error) {
+//         console.error("Error in GET/PUT:", error);
+//       }
+//     } else {
+//       console.warn("No retrievedId available yet for GET/PUT");
+//     }
+//   }, [userId, retrievedId, fetchCounts]);
+
+//   useEffect(() => {
+//   if (tabType === "news") {
+//     handleIndividualCount(tabType);
+//   }
+// }, [tabType, handleIndividualCount]); 
+
   // const handleEmojiClick = (emojiObject) => {
   //   setMessageInput((prev) => prev + emojiObject.emoji);
   //   setShowEmojiPicker(false);
@@ -446,9 +965,14 @@ const handleLikeClick = async (message) => {
 
   return (
     <>
-     <Header style={{ position: 'fixed', top: 0, width: '100%', zIndex: 1000 }} />
-      <div className="d-flex flex-row justify-content-start align-items-start">
-        <div className={`container ${isMobile ? 'w-100' : 'w-100'}`} style={{ paddingTop: '140px' }}>
+    <Box className="chat-page" >
+    <Box className="chat-header">
+     <Header />
+     
+     <div className="main-content" style={{ paddingTop: isMobile ? '150px' : '140px', overflowY: 'auto',
+  height: 'calc(100vh - 0px)' }}>
+        <div className={`container ${isMobile ? 'w-100' : 'w-100'}`}
+        >
           {isMobile && (
             <div
               className="mobile-top-icons position-fixed start-0 end-0 bg-white border-bottom shadow-sm"
@@ -487,22 +1011,30 @@ const handleLikeClick = async (message) => {
               </div>
             </div>
           )}
-          <Box sx={{ maxWidth: 500,  boxShadow: 3, borderRadius: 2, overflow: 'hidden' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', bgcolor: '#2196f3', color: 'white', px: 2, py: 1 }}>
+          {/* <Box sx={{ maxWidth: 500,  boxShadow: 3, borderRadius: 2, overflow: 'hidden' }}> */}
+             <Box className="chat-top-bar mt-mob-50" sx={{ display: 'flex', alignItems: 'center', bgcolor: '#2196f3', color: 'white', px: 2, py: 1 }}>
               <div onClick={() => {
             localStorage.setItem('selectedTabType', tabType); 
             localStorage.setItem('selectedTabCount', messageCounts[tabType]); 
-            navigate(`/profilePage/${userType}/${userId}`);
+             navigate(`/profilePage/${userType}/${userId}`);
           }} style={{ cursor: 'pointer'}}>
-                <ArrowBack fontSize='large'/>
+                <ArrowBack fontSize='large' />
               </div>
              <img src={ChatLogo} alt="" className='HMchat-logo-img' />
               <Typography variant="h6" sx={{ ml: 2 }}>Announcements</Typography>
             </Box>
-            
-           <Tabs
+          {/* <Box className="chat-tabs" sx={{ flexShrink: 0, borderBottom: '1px solid #ddd' }}> */}
+            <Tabs 
               value={tabType}
-              onChange={(_, newValue) => setTabType(newValue)}
+              // onChange={(_, newValue) => {
+              //   setTabType(newValue);
+              //   if (newValue === "news") {
+              //     handleIndividualCount("news");
+              //   } else if ((newValue === "buysell" || newValue === "tolet") && retrievedId) {
+              //     handleIndividualCount(newValue);
+              //   }
+              //   // handleIndividualCount(newValue); 
+              // }}
               variant="fullWidth"
               sx={{ bgcolor: '#f5f5f5' }}
             >
@@ -510,14 +1042,15 @@ const handleLikeClick = async (message) => {
               <Tab value="buysell" label={`Buy/Sell (${messageCounts.buysell})`} />
               <Tab value="tolet" label={`Tolets (${messageCounts.tolet})`} />
             </Tabs>
-
+           </div>
+          
             {tabType === 'news' && <Box p={2}></Box>}
             {tabType === 'buysell' && <Box p={2}></Box>}
             {tabType === 'tolet' && <Box p={2}></Box>}
 
-            <Box className="chat-container">
+            <Box className="chat-messages" ref={chatContainerRef}>
               {messages.map((msg, idx) => (
-                <Box key={idx} className={`chat-message ${msg.userId === userId ? 'user' : 'other'}`}>
+                <Box  id={`msg-${idx}`} key={msg.id} className={`chat-message ${msg.userId === userId ? 'user' : 'other'}`}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                     <div className="chat-img-wrapper">
                       <img src={profileImage} alt="Profile" className="chat-img" />
@@ -532,44 +1065,54 @@ const handleLikeClick = async (message) => {
                         <ExpandMoreIcon />
                       </Typography>
                     )}
+                     {(
+                          (
+                            (userType === 'admin' && (tabType === 'buysell' || tabType === 'news')) ||
+                            (userType === 'customer' && tabType === 'buysell')
+                          ) &&
+                          msg.userId === userId 
+                        ) && (
+                          <IconButton
+                            onClick={() => {
+                              console.log("Trying to delete", msg);
+                              handleDeleteMessage(msg.id);
+                            }}
+                            color="error"
+                            size="small"
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        )}
                   </Box>
 
                  {msg.uploadedImages?.length > 0 && (
-                    <Box sx={{ mt: 2, display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-                      {msg.uploadedImages.map((img, i) => (
-                        <Box key={i} sx={{ position: 'relative', width: '950px', height: '220px', cursor: 'pointer' }}>
-                          <img
-                            src={`data:image/jpeg;base64,${img.imageData}`}
-                            alt={`uploaded-${i}`}
-                            onClick={() => handleClickOpen(`data:image/jpeg;base64,${img.imageData}`)}
-                            style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px', border: '1px solid #ddd' }}
-                          />
-                          {/* <a
-                            href={`data:image/jpeg;base64,${img.imageData}`}
-                            download={img.src}
-                            style={{
-                              position: 'absolute',
-                              bottom: '8px',
-                              right: '8px',
-                              backgroundColor: 'rgba(16, 200, 191, 0.8)',
-                              borderRadius: '50%',
-                              padding: '6px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              textDecoration: 'none'
-                            }}
-                          >
-                            <svg xmlns="http://www.w3.org/2000/svg" height="25" viewBox="0 0 24 24" width="25" fill="black">
-                              <path d="M0 0h24v24H0V0z" fill="none" />
-                              <path d="M5 20h14v-2H5v2zM13 4h-2v8H8l4 4 4-4h-3z" />
-                            </svg>
-                          </a> */}
-                        </Box>
-                      ))}
-                    </Box>
-                  )}
-
+                  <Box sx={{ mt:1, display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                    {msg.uploadedImages.map((img, i) => (
+                      <Box
+                        key={i}
+                        sx={{
+                          position: 'relative',
+                          width: '1050px',
+                          height: '200px',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <img
+                          src={`data:image/jpeg;base64,${img.imageData}`}
+                          alt={`uploaded-${i}`}
+                          onClick={() =>
+                            handleClickOpen(`data:image/jpeg;base64,${img.imageData}`)
+                          }
+                          style={{
+                            maxWidth: '100%',
+                            borderRadius: '8px',
+                          }}
+                        />
+                      </Box>
+                    ))}
+                  </Box>
+                )}
+                      
                   {/* Dialog for image zoom */}
                   <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
                     <DialogTitle sx={{ m: 0, p: 0 }}>
@@ -596,22 +1139,34 @@ const handleLikeClick = async (message) => {
                     </DialogContent>
                   </Dialog>
 
-                  {msg.message && <Typography variant="body2">{msg.message}</Typography>}
+                  <Box sx={{ mt: 2 }}>
+                    {msg.message &&
+                      msg.message
+                        .replace(/\s*([A-Za-z ]+):\s*/g, "\n$1: ")
+                        .replace(/(Rs\s*\d+\s*\/-)\s*(?=[A-Za-z])/g, "$1\n")
+                        .replace(/\n{2,}/g, "\n")
+                        .split("\n")
+                        .map((line, index) => (
+                          <Typography key={index} variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
+                            {line.trim()}
+                          </Typography>
+                        ))}
+                  </Box>
+
+                  {/* {msg.message && <Typography variant="body2">{msg.message}</Typography>} */}
                   {msg.dateTime && !isNaN(Date.parse(msg.dateTime)) && (
                     <Typography variant="caption" sx={{ fontSize: '0.75rem', color: '#666', marginTop: '2px' }}>
                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                         <IconButton
                           size="small"
                           onClick={() => handleLikeClick(msg)}
-                          // sx={{ padding: '4px' }} 
                         >
-                          {likedMessages.has(msg.id) ? (
-                            <FavoriteIcon fontSize="small" sx={{ color: 'red' }} />
+                          {userLikes.some((like) => like.messageId === msg.id && like.islike) ? (
+                            <FavoriteIcon fontSize="small" sx={{ color: "red" }} />
                           ) : (
                             <FavoriteBorderIcon fontSize="small" />
                           )}
                         </IconButton>
-
                         <Typography variant="caption" sx={{ fontSize: '0.75rem', color: '#666' }}>
                           {msg.numberOfLikes}
                         </Typography>
@@ -740,7 +1295,7 @@ const handleLikeClick = async (message) => {
             {(tabType !== 'news' || isAdmin) ? (
               <>
                 <Divider />
-                <Box className="chat-input-container">
+                <Box className="chat-input">
                   {/* <IconButton onClick={() => setShowEmojiPicker((prev) => !prev)}><InsertEmoticonIcon /></IconButton> */}
                   <TextField placeholder="Type your message..." variant="outlined" size="small" fullWidth value={messageInput} onChange={(e) => setMessageInput(e.target.value)} />
                   <>
@@ -750,26 +1305,31 @@ const handleLikeClick = async (message) => {
                   </>
                   <IconButton color="primary" onClick={handleSend}><Send /></IconButton>
                 </Box>
-
                 {/* {showEmojiPicker && (
                   <Box sx={{ position: 'absolute', bottom: '60px', right: '20px' }}>
                     <Picker onEmojiClick={handleEmojiClick} />
                   </Box>
                 )} */}
                  <Dialog open={cameraOpen} onClose={() => setCameraOpen(false)} fullWidth maxWidth="sm">
-      <Box p={2}>
-        <Typography variant="h6" mb={2}>Take a Photo</Typography>
-        <video ref={videoRef} autoPlay style={{ width: '100%', borderRadius: '8px' }} />
-        <Box display="flex" justifyContent="space-between" mt={2}>
-          <Button onClick={() => setCameraOpen(false)} variant="outlined" color="secondary">
-            Cancel
-          </Button>
-          <Button onClick={handleCapture} variant="contained" color="primary">
-            Capture
-          </Button>
-        </Box>
-      </Box>
-    </Dialog>
+                  <Box p={2}>
+                    <Typography variant="h6" mb={2}>Take a Photo</Typography>
+                    <video
+                      ref={videoRef}
+                      autoPlay
+                      playsInline
+                      muted
+                      style={{ width: '100%', borderRadius: '8px' }}
+                    />
+                    <Box display="flex" justifyContent="space-between" mt={2}>
+                      <Button onClick={() => setCameraOpen(false)} variant="outlined" color="secondary">
+                        Cancel   
+                      </Button>
+                      <Button onClick={handleCapture} variant="contained" color="primary">
+                        Capture
+                      </Button>
+                    </Box>
+                  </Box>
+                </Dialog>
               </>
             ) : (
               <Box p={2} textAlign="center">
@@ -818,7 +1378,8 @@ const handleLikeClick = async (message) => {
   </Box>
 </Dialog>
       </>
-          </Box>
+        
+
          <div 
           style={{ 
             display: 'flex', 
@@ -843,9 +1404,10 @@ const handleLikeClick = async (message) => {
             Back
           </div>
         </div>
-        </div>
-      </div>
-    </>
+          </div>
+        </Box>
+      </Box>
+      </>
   );
 };
 

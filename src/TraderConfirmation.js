@@ -469,7 +469,6 @@ useEffect(() => {
         throw new Error('Failed to save ticket data');
       }
       alert('Ticket saved Successfully!');
-      // Navigate(`/paymentConfirmation/${raiseTicketId}/${userType}`)
     } catch (error) {
       console.error('Error saving ticket data:', error);
       window.alert('Failed to save the ticket data. Please try again later.');

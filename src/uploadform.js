@@ -1,20 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./App.css"; // Add this for the required CSS.
 import { useNavigate } from 'react-router-dom';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import UploadIcon from '@mui/icons-material/Upload';
-import AdminSidebar from './AdminSidebar';
-import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
-import {  Button } from 'react-bootstrap';
+import Sidebar from './Sidebar';
 import { useParams } from 'react-router-dom';
-import Header from './Header.js';
-import Footer from './Footer.js';
-
-
 const ProductUpload = () => {
-  const [isMobile, setIsMobile] = useState(false);
-  const [showMenu, setShowMenu] = useState(false);
+  const [selectedUserType] = useState("customer");
  // const [ProductStatus] = useState("Draft");
   const [productName, setProductName] = useState("");
   const [category, setCategory] = useState("");
@@ -31,15 +24,12 @@ const ProductUpload = () => {
   const [uploadedFiles, setUploadedFiles] = useState([]); // To store the uploaded files (URLs or file names)
   const [color, setColor] = useState("");
   const [specificationDesc, setSpecificationDesc] = useState("");
+  const [alertMessage, setAlertMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
-  // const { userType} = useParams();
-  // const [alertMessage, setAlertMessage] = useState("");
   const navigate = useNavigate(); // Hook to programmatically navigate
-  const { ProductOwnedBy } = useParams(); 
-  // const { selectedUserType} = useParams();
+  const { productownedby } = useParams(); 
   //const { productstatus } = useState("Pending Approval");
   // Handle file input change (multiple files)
-
   const handleFileChange = (event) => {
     const selectedFiles = Array.from(event.target.files);
     if (selectedFiles.length + productPhotos.length > 5) {
@@ -47,22 +37,13 @@ const ProductUpload = () => {
       return;
     }
     setProductPhotos([...productPhotos, ...selectedFiles]);
+    setAlertMessage("Please click on Upload Files button to upload the selected image");
     setShowAlert(true);
   };
-
-  // Detect screen size for responsiveness
-useEffect(() => {
-  const handleResize = () => setIsMobile(window.innerWidth <= 768);
-  handleResize(); // Set initial state
-  window.addEventListener('resize', handleResize);
-
-  return () => window.removeEventListener('resize', handleResize);
-}, []);
 
   // Handle file upload
   const handleUploadFiles = async () => {
     setLoading(true);
-    setShowAlert(false);
     const uploadedFilesList = [];
 
     // Loop through selected files and upload each one
@@ -81,7 +62,7 @@ useEffect(() => {
           src: response, // Assuming the response contains the file URL or filename
           alt: fileName  // Using the file name as the alt text
         });
-        alert("Image Uploaded Sucessfully"); 
+        //alert("Image Uploaded Sucessfully"); 
       }
       else {
         alert("Failed Upload Image");
@@ -112,7 +93,7 @@ useEffect(() => {
       formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
       formData.append('fileName', fileName);
 
-      const response = await fetch('https://handymanapiv2.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
+      const response = await fetch('https://handymanapiservices.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
         method: 'POST',
         headers: {
           'Accept': 'text/plain',
@@ -121,7 +102,7 @@ useEffect(() => {
       });
 
       const responseData = await response.text();
-      return responseData || ''; 
+      return responseData || ''; // Assuming the response contains the file URL or filename
     } catch (error) {
       console.error('Error uploading file:', error);
       return '';
@@ -133,31 +114,31 @@ useEffect(() => {
     event.preventDefault();
 
     const payload = {
-      id: "unique-id", 
-      productId: "string",
+      id: "unique-id", // Replace with unique ID logic if necessary
       productName: productName,
       ProductPhotos: uploadedFiles.map(file => file.src),
       Catalogue: catalogue,
       ProductSize: productSize,
-      Color: color, 
-      Units: units,
+      Color: color, // Assuming hardcoded colors, replace as needed
+      unit: units,
       rate: parseFloat(rate),
       discount: parseFloat(discount),
       afterDiscountPrice: parseFloat(rate) - parseFloat(discount),
       specifications: specifications.map(spec => ({
         label: spec.label,
         value: spec.value,
-      })), 
+      })),
       specificationDesc: specificationDesc,
       warranty: warranty,
+      additionalInfo: moreInfo,
       Category: category,
       ProductStatus: "Pending Approval",
-      AdditionalInformation:moreInfo,
-      ProductOwnedBy:"Admin",
+      ProductOwnedBy:productownedby,
+      AdditionalInformation:moreInfo
     };
 
     try {
-      const response = await fetch("https://handymanapiv2.azurewebsites.net/api/Product/ProductUpload", {
+      const response = await fetch("https://handymanapiv2.azurewebsites.net/api/product/productupload", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -168,7 +149,7 @@ useEffect(() => {
       if (response.ok) {
         alert("Product uploaded successfully!");
 
-        
+        // Reset the form or perform other actions as needed
       } else {
         alert("Please fill in all mandatory fields.");
         alert("Failed to upload product.");
@@ -201,40 +182,11 @@ useEffect(() => {
   };
 
   return (
-    <>
-    <div>
-      <div className="header-container">
-      <Header />
-      </div>  
-    
-    <div className=" m-0 d-flex flex-row justify-content-start align-items-start">
-      {/* Sidebar menu for Larger Screens */}
-      {!isMobile && (
-        <div className="ml-0 p-0 adm_mnu h-90">
-          <AdminSidebar />
-        </div>
-      )}
-
-      {/* Floating menu for mobile */}
-      {isMobile && (
-        <div className="floating-menu">
-          <Button
-            variant="primary"
-            className="rounded-circle shadow"
-            onClick={() => setShowMenu(!showMenu)}
-          >
-            <MoreVertIcon />
-          </Button>
-
-          {showMenu && (
-              <div className="sidebar-container">
-                <AdminSidebar />
-              </div>
-          )}
-        </div>
-      )}
-
-       <div className={`container m-3 ${isMobile ? 'w-100' : 'w-75'}`}>
+    <div className="d-flex flex-row justify-content-start align-items-start">
+      <div className="sidebar-container">
+        <Sidebar userType={selectedUserType} />
+      </div>
+      <div className="m-3">
         <h3 className="mb-3 text-center">Upload Products</h3>
         <div className="bg-white rounded-3 p-3 bx_sdw w-60 m-auto">
           <form onSubmit={handleSubmit}>
@@ -257,10 +209,9 @@ useEffect(() => {
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
               >
-                <option>Choose Category</option>
-                <option>Home Decors</option>
                 <option>Electrical items</option>
-                <option>Sanitary items</option>     
+                <option>Plumbing Materials</option>
+                <option>Sanitary items</option>
                 <option>Electronics appliances</option>
                 <option>Paints</option>
                 <option>Hardware items</option>
@@ -323,16 +274,15 @@ useEffect(() => {
                 multiple
                 onChange={handleFileChange}
               />
-              {showAlert && (
-                <div className="alert alert-danger  mt-2">
-                  Please click the <strong>Upload Files</strong> button to upload the selected images.
-                </div>
-              )}
               <div className="mt-2">
                 {productPhotos.map((file, index) => (
                   <p key={index}>{file.name}</p>
                 ))}
               </div>
+              {showAlert && 
+              <div className="alert alert-info text-danger" role="alert">
+                {alertMessage} 
+              </div>}
               <button
                 type="button"
                 className="btn btn-primary mt-2"
@@ -366,6 +316,7 @@ useEffect(() => {
                 placeholder="If any Discount Enter Percentage"
               />
             </div>
+
 
             {/* Product Specifications */}
             <div className="form-group">
@@ -448,7 +399,7 @@ useEffect(() => {
         type="button"
         className="btn btn-primary w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
        
-          onClick={() => navigate(`/product-list/${ProductOwnedBy}`)}
+          onClick={() => navigate(`/product-list/${productownedby}`)}
       >
         <VisibilityIcon className="me-2" />
         <span>View Product</span>
@@ -459,9 +410,6 @@ useEffect(() => {
         </div>
       </div>
     </div>
-    </div>
-        <Footer /> 
-</>
   );
 };
 

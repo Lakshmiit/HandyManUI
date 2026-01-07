@@ -19,7 +19,7 @@ const ApartmentRaiseActionView = () => {
   const [showMenu, setShowMenu] = useState(false);
   const {apartmentRaiseTicketId} = useParams();
   const [state, setState] = useState('');
-  const [district, setDistrict] = useState('')
+  const [district, setDistrict] = useState('');
   // const [address, setAddress] = useState('');
   // const [isMaterialType, setIsWithMaterial] = useState('');
   const [apartmentData, setApartmentData] = useState(''); 

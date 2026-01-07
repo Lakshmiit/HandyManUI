@@ -8,7 +8,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { ArrowBack, Dashboard as MoreVertIcon} from '@mui/icons-material';
 // import ForwardIcon from '@mui/icons-material/Forward';
-import { Button } from 'react-bootstrap'; // Import Bootstrap components for modal
+import { Button } from 'react-bootstrap'; 
 // import axios from 'axios';
 
 const AdminBuyProductOrdersView = () => {
@@ -66,7 +66,6 @@ const [mobileNumber, setMobileNumber] = useState('');
 const [customerName, setCustomerName] = useState('');
 const [date, setDate] = useState('');
 const [emailAddress, setEmailAddress] = useState("");
-
 
   const location = useLocation();
  // Check if there's state passed from ViewProduct page
@@ -145,7 +144,6 @@ useEffect(() => {
         setProductData(data);
     //  alert(JSON.stringify(data));
         setDate(data.date);
-
          setId(data.id);
         setBuyProductTicketId(data.buyProductId);
         // alert(buyProductTicketId);
@@ -277,7 +275,6 @@ useEffect(() => {
   const handleResize = () => setIsMobile(window.innerWidth <= 768);
   handleResize(); // Set initial state
   window.addEventListener('resize', handleResize);
-
   return () => window.removeEventListener('resize', handleResize);
 }, []);
 
@@ -299,7 +296,6 @@ useEffect(() => {
     const handleUploadFiles = async () => {
       setLoading(true);
       setShowAlert(false);
-      
       const uploadedFilesList=[];
       for (let i = 0; i < productInvoice.length; i++) {
         const file = productInvoice[i];
@@ -337,7 +333,6 @@ useEffect(() => {
           const formData = new FormData();
           formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
           formData.append('fileName', fileName);
-    
           const response = await fetch('https://handymanapiv2.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
             method: 'POST',
             headers: {
@@ -345,7 +340,6 @@ useEffect(() => {
             },
             body: formData,
           });
-    
           const responseData = await response.text();
           return responseData || ''; 
         } catch (error) {
@@ -359,7 +353,6 @@ useEffect(() => {
           uploadedFiles.forEach((file) => URL.revokeObjectURL(file));
         };
       }, [uploadedFiles]);
-
 
   return (
 <>
@@ -380,7 +373,6 @@ useEffect(() => {
           >
             <MoreVertIcon />
           </Button>
-
           {showMenu && (
             <div className="sidebar-container">
               <AdminSidebar />
@@ -397,7 +389,6 @@ useEffect(() => {
                 <div className="text-center">
                 <strong className="m-2">Order Number:<span>{buyProductTicketId}</span></strong>
                 </div>
-
                 <div className="form-group">
               <label>
                 Customer Name <span className="req_star">*</span>
@@ -411,7 +402,6 @@ useEffect(() => {
                 readOnly
               />
             </div>
-
               <div className="form-group">
                 <label>Customer Address <span className="req_star">*</span></label>
                 <input
@@ -424,7 +414,6 @@ useEffect(() => {
                 readOnly
               />
               </div>
-  
             <div className="form-group">
               <label>Category <span className="req_star">*</span></label>
               <input
@@ -436,7 +425,6 @@ useEffect(() => {
                 readOnly
               />
             </div>
-
             <div className="form-group">
               <label>Product Name <span className="req_star">*</span></label>
               <input
@@ -461,7 +449,6 @@ useEffect(() => {
                 </ul>
               )} */}
             </div>
-
             <div className="form-group">
               <label>
                 Product Catalogue <span className="req_star">*</span>
@@ -475,7 +462,6 @@ useEffect(() => {
                 readOnly
               />
             </div>
-
             <div className="row">
             <div className="col-md-6">
               <label>Product Size <span className="req_star">*</span></label>
@@ -488,7 +474,6 @@ useEffect(() => {
                 readOnly
               />
             </div>
-
             <div className="col-md-6">
                 <label>Rate <span className="req_star">*</span></label>
                 <input
@@ -523,7 +508,6 @@ useEffect(() => {
                 />
               </div>
               </div>
-
             <div className="row">
               <div className="row ticket-info" >
               <div className="col-md-6">
@@ -532,7 +516,6 @@ useEffect(() => {
               <p><strong className="me-2"> Required Quantity:</strong>{requiredQuantity}</p>
               <p><strong className="me-2"> Total Amount:</strong>{`Rs ${totalAmount}/-`}</p>
               </div>
-
               <div className="col-md-6">
               <p><strong className="me-2"> Delivery Charges:</strong>{deliveryCharges}</p>
               <p><strong className="me-2"> Service Charges:</strong>{serviceCharges}</p>
@@ -583,7 +566,6 @@ useEffect(() => {
                 required
               />
             </div>  */}
-
             <div className="form-group">
               <label>Technician Details <span className="req_star">*</span></label>
               <input
@@ -595,7 +577,6 @@ useEffect(() => {
                 required
               />
             </div>
-
             <div className="form-group">
               <label>Invoice Details <span className="req_star">*</span></label>
               <input
@@ -605,7 +586,6 @@ useEffect(() => {
                 onChange={(e) => setInvoiceDetails(e.target.value)}
                 placeholder="Enter Invoice Details"
                 required
-                
               />
 <div className="form-group">
           <label className="section-title fs-5 m-1">Upload Invoice</label>
@@ -640,7 +620,6 @@ useEffect(() => {
               >Save</button> */}
           </div>
           </div> 
-
             <div className="col-md-6">
               <label>Order Confirmation Code <span className="req_star">*</span></label>
               <input
@@ -652,7 +631,6 @@ useEffect(() => {
                 readOnly
               />
             </div>
-
             <div className="col-md-6">
               <label>Assigned To <span className="req_star">*</span></label>
               <select
@@ -664,10 +642,8 @@ useEffect(() => {
               >
                 <option value="">Select AssignedTo</option>
                 <option>Customer</option>
-
               </select>
             </div>
- 
             <div className="mt-4 text-end">
             <Button className="btn btn-warning text-white mx-2" onClick={() => navigate(`/buyProductNotificationGrid`)} title="Back">
                 <ArrowBack />
@@ -675,12 +651,10 @@ useEffect(() => {
                 {/* <Button type="submit" className="btn btn-warning text-white mx-2" onClick={handleGetQuotation} title="Forward">
                 <ForwardIcon />
                 </Button> */}
-    
             </div>
             </div>
           </form>
         </div>
-        
       </div>
       {/* Styles for floating menu */}
 <style jsx>{`

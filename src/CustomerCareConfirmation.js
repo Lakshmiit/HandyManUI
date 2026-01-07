@@ -850,9 +850,10 @@ const handleStatusChange = (event) => {
       </table>
     
         <div className="form-group m-2">
-          <label className='section-title'>Required Materials Details</label>
-          {!isMobile ? (
+          {requestType === "With Material" && ( 
+          !isMobile ? (
           <div className='mt-3'>
+            <label className='section-title'>Required Materials Details</label>
             <div className='d-flex gap-3 text-center'>
           <div style={{ flex: 4}}>
             <label className="fw-bold">Material</label>
@@ -903,6 +904,7 @@ const handleStatusChange = (event) => {
           </div>
           ) : (
             <div>
+              <label className='section-title'>Required Materials Details</label>
       {specifications.map((spec, index) => (
         <div key={index} className="card mb-3 shadow-sm" style={{ maxWidth: "300px" }}>
           <div className="card-body">
@@ -914,7 +916,8 @@ const handleStatusChange = (event) => {
         </div>
       ))}
     </div>
-  )}
+  ))}
+
 {rateQuotedBy === "Customer Care" && (
   <>
 <h3 className="section-title">Invoice Details</h3>
@@ -1090,8 +1093,10 @@ const handleStatusChange = (event) => {
           />
           </div>
 
-          {/* Order Id */}
-                  <Row>
+          
+                    {/* OrderId */}
+                      {transactionDetails !== "cash" && (
+                          <Row>
                             <Col md={12}>
                               <Form.Group>
                                 <label>Order Id</label>
@@ -1105,10 +1110,8 @@ const handleStatusChange = (event) => {
                                 />
                               </Form.Group>
                             </Col>
-                          </Row>
           
                           {/* Order Date */}
-                          <Row>
                             <Col md={12}>
                               <Form.Group>
                                 <label>Order Date</label>
@@ -1122,10 +1125,8 @@ const handleStatusChange = (event) => {
                                 />
                               </Form.Group>
                             </Col>
-                          </Row>
           
                           {/* Paid Amount */}
-                          <Row>
                             <Col md={12}>
                               <Form.Group>
                                 <label>Paid Amount</label>
@@ -1139,10 +1140,8 @@ const handleStatusChange = (event) => {
                                 />
                               </Form.Group>
                             </Col>
-                          </Row>
           
                           {/* Transaction Status */}
-                          <Row>
                             <Col md={12}>
                               <Form.Group>
                                 <label>Transaction Status</label>
@@ -1156,10 +1155,8 @@ const handleStatusChange = (event) => {
                                 />
                               </Form.Group>
                             </Col>
-                          </Row>
           
                           {/* Transaction Type */}
-                          <Row>
                             <Col md={12}>
                               <Form.Group>
                                 <label>Transaction Type</label>
@@ -1174,6 +1171,8 @@ const handleStatusChange = (event) => {
                               </Form.Group>
                             </Col>
                           </Row>
+
+                      )}
 {/*           
                           Invoice Id
                           <Row>

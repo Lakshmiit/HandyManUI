@@ -207,10 +207,8 @@ useEffect(() => {
       alert("No files to download");
       return;
     }
-  
     const zip = new JSZip();
     const folder = zip.folder("Download Invoice"); // Optional folder name inside ZIP
-  
     // Add files to ZIP
     for (const invoice of uploadInvoice) {
       try {
@@ -221,7 +219,6 @@ useEffect(() => {
         console.error("Error fetching Invoice:", error);
       }
     }
-  
     // Generate ZIP and download
     try {
       const content = await zip.generateAsync({ type: "blob" });
@@ -231,7 +228,6 @@ useEffect(() => {
       alert("Failed to download Invoice. Please try again.");
     }
   };
-
 
   // const validRate = Number(rate) || 0;
   // const validDiscount = Number(discount) || 0;
@@ -305,7 +301,6 @@ useEffect(() => {
   //     window.alert('Failed to update Buy Product Closed Details. Please try again later.');    }
   // };
   
-
   // const handleButtonClick = () => {
   //   if (!isClicked) {
   //     handleGetQuotation();     
@@ -318,10 +313,8 @@ useEffect(() => {
   const handleResize = () => setIsMobile(window.innerWidth <= 768);
   handleResize(); // Set initial state
   window.addEventListener('resize', handleResize);
-
   return () => window.removeEventListener('resize', handleResize);
 }, []);
-
 
   // const handleAddToCart = () => {
   //   alert("Item added to cart!");
@@ -330,7 +323,6 @@ useEffect(() => {
    const handleSubmit = (e) => {
      e.preventDefault();
    };
-
 
   // // Handle adding a new address
   // const handleAddAddress = () => {
@@ -544,7 +536,6 @@ useEffect(() => {
     //     };
     //   }, [uploadedFiles]);
 
-
   return (
     <>
     <div className="d-flex flex-row justify-content-start align-items-start">
@@ -581,7 +572,6 @@ useEffect(() => {
                 <div className="text-center">
                 <strong className="mt-2">Order Number:<span>{buyProductTicketId}</span></strong>
                 </div>
-
                 <div className="form-group">
               <label>
                 Customer Name <span className="req_star">*</span>
@@ -595,7 +585,6 @@ useEffect(() => {
                 readOnly
               />
             </div>
-
               <div className="form-group">
                 <label>Customer Address <span className="req_star">*</span></label>
                 <input
@@ -608,11 +597,6 @@ useEffect(() => {
                 readOnly
               />
               </div>
-
-            
-
-              
-
 {/* <div className="p-3 border rounded bg-light">
   {addresses
     .filter((addr) => addr.type === 'primary')
@@ -634,7 +618,6 @@ useEffect(() => {
         </div>
       </div>
     ))} */}
-
                 {/* {showSecondaryAddresses && (
                   <>
                     <div className="list-group">
@@ -684,7 +667,6 @@ useEffect(() => {
                   </>
                 )} */}
               {/* </div> */}
-
             {/* <Modal show={showModal} onHide={() => setShowModal(false)}>
   <Modal.Header closeButton>
     <Modal.Title>{newAddress ? 'Edit Address' : 'Add Address'}</Modal.Title>
@@ -699,7 +681,6 @@ useEffect(() => {
         placeholder="Enter address"
       />
     </Form.Group>
-
     <Form.Group controlId="addressType">
       <Form.Label>Address Type</Form.Label>
       <Form.Control
@@ -712,7 +693,6 @@ useEffect(() => {
         <option value="secondary">Secondary</option>
       </Form.Control>
     </Form.Group>
-
     <Form.Group controlId="state">
       <Form.Label>State</Form.Label>
       <Form.Control
@@ -728,7 +708,6 @@ useEffect(() => {
         ))}
       </Form.Control>
     </Form.Group>
-
     <Form.Group controlId="district">
       <Form.Label>District</Form.Label>
       <Form.Control
@@ -744,7 +723,6 @@ useEffect(() => {
         ))}
       </Form.Control>
     </Form.Group>
-
     <Form.Group controlId="pincode">
       <Form.Label>Pincode</Form.Label>
       <Form.Control
@@ -754,14 +732,11 @@ useEffect(() => {
         placeholder="Enter pincode"
       />
     </Form.Group>
-
     <Button type="button" variant="primary" onClick={handleAddAddress}>
       {newAddress ? 'Save Address' : 'Add Address'}
     </Button>
   </Modal.Body>
 </Modal> */}
-
-  
             <div className="form-group">
               <label>Category <span className="req_star">*</span></label>
               <input
@@ -773,7 +748,6 @@ useEffect(() => {
                 readOnly
               />
             </div>
-
             <div className="form-group">
               <label>Product Name <span className="req_star">*</span></label>
               <input
@@ -798,7 +772,6 @@ useEffect(() => {
                 </ul>
               )} */}
             </div>
-
             <div className="form-group">
               <label>
                 Product Catalogue <span className="req_star">*</span>
@@ -812,7 +785,6 @@ useEffect(() => {
                 readOnly
               />
             </div>
-
             <div className="row">
             <div className="col-md-6">
               <label>Product Size <span className="req_star">*</span></label>
@@ -825,7 +797,6 @@ useEffect(() => {
                 readOnly
               />
             </div>
-
             <div className="col-md-6">
                 <label>Rate <span className="req_star">*</span></label>
                 <input
@@ -860,8 +831,6 @@ useEffect(() => {
                 />
               </div>
               </div>
-
-
             {/* <div className="form-group">
               <label>Color (Optional)</label>
               <input
@@ -872,7 +841,6 @@ useEffect(() => {
                 placeholder="Enter Color"
               />
             </div> */}
-
             {/* <button
               type="button"
               className="btn btn-warning text-white w-50 mt-2"
@@ -893,8 +861,6 @@ useEffect(() => {
             >
               View Product
             </button> */}
-
-
             {/* <div className="form-group mb-3">
               <label>Other Than Product</label>
               <input
@@ -905,7 +871,6 @@ useEffect(() => {
                 placeholder="Enter Product Name"
               />
             </div> */}
-
             <div className="row">
             {/* <div className="col-md-6">
                 <label>Rate <span className="req_star">*</span></label>
@@ -924,7 +889,6 @@ useEffect(() => {
               <p><strong className="me-2"> Required Quantity:</strong>{requiredQuantity}</p>
               <p><strong className="me-2"> Total Amount:</strong>{`Rs ${totalAmount}/-`}</p>
               </div>
-
               <div className="col-md-6">
               <p><strong className="me-2"> Delivery Charges:</strong>{deliveryCharges}</p>
               <p><strong className="me-2"> Service Charges:</strong>{serviceCharges}</p>
@@ -964,7 +928,6 @@ useEffect(() => {
                 readOnly
               />
             </div>
-
             <div className="form-group">
               <label>Technician Details <span className="req_star">*</span></label>
               <input
@@ -976,7 +939,6 @@ useEffect(() => {
                 readOnly
               />
             </div>
-
             <div className="form-group">
               <label>Invoice Details <span className="req_star">*</span></label>
               <input
@@ -1019,7 +981,6 @@ useEffect(() => {
               {/* <button className='btn btn-warning m-1' onClick={handleUploadInvoice}
               >Save</button>
           </div> */}
-
           <button className='btn btn-warning fs-5 m-2' onClick={handleDownloadAllAttachments}>Download Invoice</button>
           </div> 
           <div className="form-group">
@@ -1033,7 +994,6 @@ useEffect(() => {
                 readOnly
               />
             </div>
-
             <div className="col-md-6">
               <label>Order Confirmation Code <span className="req_star">*</span></label>
               <input
@@ -1052,7 +1012,6 @@ useEffect(() => {
                   <ArrowBack /> 
                 </Button>
             </div> 
-
             {/* <div className="col-md-6">
               <label>Assigned To <span className="req_star">*</span></label>
               <select
@@ -1064,19 +1023,14 @@ useEffect(() => {
               >
                 <option value="">Select AssignedTo</option>
                 <option>Customer Care</option>
-
               </select>
             </div> */}
-
             {/* <div className="mt-4 text-end">
                 <Button type="submit" className="btn btn-warning text-white mx-2"
                 onClick={handleButtonClick}  disabled={status === "Closed"} title="Forward">
                 Closed Order
                 </Button>
-    
             </div> */}
-            
-              
               {/* <div className="col-md-6">
                 <label>
                   Required Quantity <span className="req_star">*</span>
@@ -1089,7 +1043,6 @@ useEffect(() => {
                   placeholder="Enter Required Quantity"
                 />
               </div> */}
-
               {/* <div className="col-md-6">
                 <label>
                   Total Amount<span className="req_star">*</span>
@@ -1103,7 +1056,6 @@ useEffect(() => {
                   readOnly
                 />
               </div>
-
               <div className="col-md-6">
                 <label>
                   Delivery Charges <span className="req_star">*</span>
@@ -1117,7 +1069,6 @@ useEffect(() => {
                   readOnly
                 />
               </div>
-
               <div className="col-md-6">
                 <label>
                   Service Charges <span className="req_star">*</span>
@@ -1131,7 +1082,6 @@ useEffect(() => {
                   readOnly
                 />
               </div>
-
               <div className="col-md-6">
                 <label>
                   Total Payment Amount <span className="req_star">*</span>
@@ -1145,8 +1095,6 @@ useEffect(() => {
                   readOnly
                 />
               </div> */}
-
-              
               {/* <div className="col-md-6">
                 <label>
                   Units <span className="req_star">*</span>
@@ -1160,7 +1108,6 @@ useEffect(() => {
                 />
               </div> */}
             </div>
-
             {/* <div className="d-flex gap-5 mt-3">
               <button
                 type="button"
@@ -1180,7 +1127,6 @@ useEffect(() => {
           </form>
         </div>
       </div>
-
       {/* Styles for floating menu */}
 <style jsx>{`
         .menu-popup {
