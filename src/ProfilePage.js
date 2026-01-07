@@ -35,7 +35,7 @@ import BannerVideo from './img/PongalOffers.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
 // import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 // import Banner3 from './img/banner-4.jpg';  
-import { useNavigate, useParams } from "react-router-dom"; 
+import { useNavigate, useParams } from "react-router-dom";   
 import Logo from "./img/Hm_Logo 1.png";
 import SearchIcon from "@mui/icons-material/Search";
 // import ArticleIcon from '@mui/icons-material/Article';
@@ -91,7 +91,7 @@ import Banner2Img from './img/100Cashback.jpeg';
 import Banner3Img from './img/300Cashback.jpeg';
 import UnbeatableImg from './img/Unbeatable.jpeg';
 import Above45Img from './img/Above45.jpeg';       
-import DeliveryImg from './img/DeliveryPoster.jpeg';
+// import DeliveryImg from './img/DeliveryPoster.jpeg';
   
 // import DeliveryImg from './img/DeliveryPoster.jpeg';      
 // import BathImg from './img/bathImg.jpeg';
@@ -953,7 +953,7 @@ const [messageCounts, setMessageCounts] = useState({
 const [grocery, setGrocery] = useState([]);
 const [cartSummary, setCartSummary] = useState({
   items: 0,
-  total: 0,
+  total: 0,  
   products: [],
 }); 
 // const [dress] = useState([]);
@@ -3699,15 +3699,15 @@ const updateLocalStorageCart = (product, qty) => {
               </div>
               </div>  
               </div>  */}
-              <div style={{ cursor: "pointer"}}>
+              {/* <div style={{ cursor: "pointer"}}>
                         <img
                           src={DeliveryImg}
                           className="d-block w-100 img-fluid rounded mb-2"
                           style={{ objectFit: "contain" }}
                           alt="Poster"
                         /> 
-                      </div>
-                      {/* <div className="carousel-item active">
+                      </div> */}
+                      <div className="carousel-item active">
                           <video
                             ref={videoRef}
                             className="d-block w-100 rounded"     
@@ -3735,7 +3735,7 @@ const updateLocalStorageCart = (product, qty) => {
                           >
                             <source src={BannerVideo} type="video/mp4" />
                           </video>
-                        </div> */}
+                        </div>
               {/* Top Carousel Section */}
                 {/* <div className="container">
                   <div>
@@ -3997,10 +3997,10 @@ const updateLocalStorageCart = (product, qty) => {
     <p className="text-center text-muted mt-4">
       No products found
     </p>
-)} */}
+)} */}   
 
-  <div className="shadow-lg p-2 rounded-5 text-center bg-transparent border-0">
-    <h5 className="fw-bold mb-2" style={{color: "#ff5722", fontSize: "20px"}}>
+  <div className="shadow-lg p-2 mt-5 rounded-5 text-center bg-transparent border-0">
+    <h5 className="fw-bold mt-2 mb-1" style={{color: "#ff5722", fontSize: "20px"}}>
       Lakshmi Mart  
     </h5>
     {/* <div className="row row-cols-3 row-cols-md-5 g-1">
