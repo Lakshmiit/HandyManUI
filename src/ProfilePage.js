@@ -994,9 +994,9 @@ const [deliveryPartnerUserId, setDeliveryPartnerUserId] = useState('');
 const [totalItemsSelected, setTotalItemsSelected] = useState('');
 const [transactionNumber, setTransactionNumber] = useState('');
 const [city, setCity] = useState('');
-const HEADER_H = 0;          
-const MOBILE_ICONS_H = 0; 
-const MOBILE_EXTRA =0;     
+const HEADER_H = 20;          
+const MOBILE_ICONS_H = 20; 
+const MOBILE_EXTRA =20;     
 const MOBILE_PADDING_TOP = HEADER_H + MOBILE_ICONS_H + MOBILE_EXTRA;
 const [cartImages, setCartImages] = useState({});
 const [showCashbackModal, setShowCashbackModal] = useState(false);
@@ -3431,7 +3431,7 @@ const updateLocalStorageCart = (product, qty) => {
         >
           &times;
         </button>
-        <Modal.Body className="text-center">
+        <Modal.Body className="text-center">     
           <div className="zoom-container">
             <img src={zoomImage} alt={zoomProduct?.name || "Zoomed Product"} className="zoom-image" />
           </div>
@@ -3999,10 +3999,10 @@ const updateLocalStorageCart = (product, qty) => {
     </p>
 )} */}   
 
-  <div className="shadow-lg p-2 mt-5 rounded-5 text-center bg-transparent border-0">
-    <h5 className="fw-bold mt-2 mb-1" style={{color: "#ff5722", fontSize: "20px"}}>
+  <div className="shadow-lg p-2 rounded-5 text-center bg-transparent border-0">
+    <h5 className="fw-bold mb-1" style={{color: "#ff5722", fontSize: "20px"}}>
       Lakshmi Mart  
-    </h5>
+    </h5> 
     {/* <div className="row row-cols-3 row-cols-md-5 g-1">
   {groceryCategories.map((cat) => {
     //  const isBlockedCategory  = cat.value === "Vegetables & Fruits";
