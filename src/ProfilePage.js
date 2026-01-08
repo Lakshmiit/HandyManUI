@@ -89,7 +89,7 @@ import DwakraProducts from './img/DwakraLogo.jpeg';
 import Banner1Img from './img/50Cashback.jpeg';
 import Banner2Img from './img/100Cashback.jpeg';
 import Banner3Img from './img/300Cashback.jpeg';
-import UnbeatableImg from './img/Unbeatable.jpeg';
+import UnbeatableImg from './img/unbeatable.jpeg';
 import Above45Img from './img/Above45.jpeg';       
 // import DeliveryImg from './img/DeliveryPoster.jpeg';
   
@@ -868,8 +868,8 @@ const categories = [
 { label: 'Electronics Appliances', value: 'Electronics appliances', image: Electronics },   
 { label: 'Plumbing & Sanitary', value: 'Sanitary items', image: Plumbing },         
 { label: 'Hardware Items', value: 'Hardware items', image: Hardware },      
-];
-    
+]; 
+       
 const groceryCategories = [
   { label: 'Unbeatable 10 Offers', value: 'Grocery Offers', image: UnbeatableImg },
   { label: 'Above 45% Offers', value: 'Offers', image: Above45Img },
@@ -994,9 +994,9 @@ const [deliveryPartnerUserId, setDeliveryPartnerUserId] = useState('');
 const [totalItemsSelected, setTotalItemsSelected] = useState('');
 const [transactionNumber, setTransactionNumber] = useState('');
 const [city, setCity] = useState('');
-const HEADER_H = 20;          
-const MOBILE_ICONS_H = 20; 
-const MOBILE_EXTRA =20;     
+const HEADER_H = 0;          
+const MOBILE_ICONS_H = 0; 
+const MOBILE_EXTRA =0;     
 const MOBILE_PADDING_TOP = HEADER_H + MOBILE_ICONS_H + MOBILE_EXTRA;
 const [cartImages, setCartImages] = useState({});
 const [showCashbackModal, setShowCashbackModal] = useState(false);
@@ -1016,27 +1016,12 @@ searchQuery.trim().length > 0 ? filteredProducts : products;
 const [imageLoading, setImageLoading] = useState(true);
 const [placeholderIndex, setPlaceholderIndex] = useState(0);
 const carouselRef = useRef(null);
-const carouselInstance = useRef(null);
+// const carouselInstance = useRef(null);
 const firstCategories = groceryCategories.slice(0, 6);
-const secondCategories = groceryCategories.slice(6, 15);
-const thirdCategories = groceryCategories.slice(15, 24);
-const fourthCategories = groceryCategories.slice(24, 30);
-
-useEffect(() => {
-  if (!carouselRef.current || carouselInstance.current) return;
-  carouselInstance.current = new BsCarousel(carouselRef.current, {
-    interval: 3000,
-    ride: "carousel",
-    pause: false,
-    wrap: true,
-    touch: true,
-  });
-  carouselInstance.current.cycle();
-  return () => {
-    carouselInstance.current?.dispose();
-    carouselInstance.current = null;
-  };
-}, []);
+const secondCategories = groceryCategories.slice(6, 30);
+// const thirdCategories = groceryCategories.slice(15, 24);
+// const fourthCategories = groceryCategories.slice(24, 30);
+const HEADER_HEIGHT = window.innerWidth <= 768 ? 55 : 170;
 
 const placeholderSuggestions = [
   'Search "Milk"',
@@ -3874,6 +3859,7 @@ const updateLocalStorageCart = (product, qty) => {
     // padding: isMobile ? "2px" : "0px",
     // borderRadius: "5px",
     minHeight: "100vh",
+    marginTop: `${HEADER_HEIGHT}px`,
     // paddingTop: isMobile ? "70px" : "0px"
     paddingTop: isMobile ? `${MOBILE_PADDING_TOP}px` : "0px",
   }}>
@@ -4218,14 +4204,70 @@ const updateLocalStorageCart = (product, qty) => {
     </div>
   ))}
 </div>
-                     <div style={{ cursor: "pointer"}}>
+                     {/* <div style={{ cursor: "pointer"}}>
                         <img
                           src={Banner1Img}
                           className="d-block w-100 img-fluid rounded"
                           style={{ objectFit: "contain" }}
                           alt="Cashback"
                         />
+                      </div> */}
+                      <div
+                      id="mainCarousel"
+                      className="carousel slide"
+                      data-bs-ride="carousel"
+                      data-bs-interval="2000"
+                      data-bs-pause="false"
+                    >
+                      <div className="carousel-inner">
+
+                        {/* 🔹 VIDEO SLIDE */}
+                        {/* <div className="carousel-item active">
+                          <video
+                            className="d-block w-100 rounded"
+                            autoPlay
+                            muted
+                            loop
+                            playsInline
+                            style={{ maxHeight: "350px", objectFit: "cover" }}
+                          >
+                            <source src={BannerVideo} type="video/mp4" />
+                          </video>
+                        </div> */}
+
+                        {/* 🔹 IMAGE SLIDE 1 */}
+                        <div className="carousel-item active">
+                          <img
+                            src={Banner1Img}
+                            className="d-block w-100 rounded"
+                            style={{ maxHeight: "350px", objectFit: "cover" }}
+                            alt="Banner 1"
+                          />
+                        </div>
+
+                        {/* 🔹 IMAGE SLIDE 2 */}
+                        <div className="carousel-item">
+                          <img
+                            src={Banner2Img}
+                            className="d-block w-100 rounded"
+                            style={{ maxHeight: "350px", objectFit: "cover" }}
+                            alt="Banner 2"
+                          />
+                        </div>
+
+                        {/* 🔹 IMAGE SLIDE 3 */}
+                        <div className="carousel-item">
+                          <img
+                            src={Banner3Img}
+                            className="d-block w-100 rounded"
+                            style={{ maxHeight: "350px", objectFit: "cover" }}
+                            alt="Banner 3"
+                          />
+                        </div>
+
                       </div>
+                    </div>
+
 <div className="row row-cols-3 row-cols-md-5 g-1">
   {secondCategories.map((cat) => (
     <div
@@ -4276,15 +4318,15 @@ const updateLocalStorageCart = (product, qty) => {
     </div>
   ))}
 </div>
-                      <div style={{ cursor: "pointer"}}>
+                      {/* <div style={{ cursor: "pointer"}}>
                         <img
                           src={Banner2Img}
                           className="d-block w-100 img-fluid rounded"
                           style={{ objectFit: "contain" }}
                           alt="Cashback"
                         />
-                      </div>
-<div className="row row-cols-3 row-cols-md-5 g-1">
+                      </div> */}
+{/* <div className="row row-cols-3 row-cols-md-5 g-1">
   {thirdCategories.map((cat) => (
     <div
        className="col"
@@ -4333,16 +4375,16 @@ const updateLocalStorageCart = (product, qty) => {
         </div>
     </div>
   ))}
-</div>
- <div style={{ cursor: "pointer"}}>
+</div> */}
+ {/* <div style={{ cursor: "pointer"}}>
                         <img
                           src={Banner3Img}
                           className="d-block w-100 img-fluid rounded"
                           style={{ objectFit: "contain" }}
                           alt="Cashback"
                         />
-                      </div>
-                      <div className="row row-cols-3 row-cols-md-5 g-1">
+                      </div> */}
+                      {/* <div className="row row-cols-3 row-cols-md-5 g-1">
   {fourthCategories.map((cat) => (
     <div
        className="col"
@@ -4391,7 +4433,7 @@ const updateLocalStorageCart = (product, qty) => {
         </div>
     </div>
   ))}
-</div>
+</div> */}
   </div>
   
   {/* Home Products Section */}
