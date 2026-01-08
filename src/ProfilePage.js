@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef} from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { Carousel as BsCarousel } from "bootstrap";
+import Carousel from "react-bootstrap/Carousel";
 import './App.css';
 import { Modal, Button} from 'react-bootstrap';
 import Confetti from "react-confetti";
@@ -1021,7 +1022,7 @@ const firstCategories = groceryCategories.slice(0, 6);
 const secondCategories = groceryCategories.slice(6, 30);
 // const thirdCategories = groceryCategories.slice(15, 24);
 // const fourthCategories = groceryCategories.slice(24, 30);
-const HEADER_HEIGHT = window.innerWidth <= 768 ? 55 : 170;
+const HEADER_HEIGHT = window.innerWidth <= 768 ? 65 : 170;
 
 const placeholderSuggestions = [
   'Search "Milk"',
@@ -4212,61 +4213,17 @@ const updateLocalStorageCart = (product, qty) => {
                           alt="Cashback"
                         />
                       </div> */}
-                      <div
-                      id="mainCarousel"
-                      className="carousel slide"
-                      data-bs-ride="carousel"
-                      data-bs-interval="2000"
-                      data-bs-pause="false"
-                    >
-                      <div className="carousel-inner">
-
-                        {/* 🔹 VIDEO SLIDE */}
-                        {/* <div className="carousel-item active">
-                          <video
-                            className="d-block w-100 rounded"
-                            autoPlay
-                            muted
-                            loop
-                            playsInline
-                            style={{ maxHeight: "350px", objectFit: "cover" }}
-                          >
-                            <source src={BannerVideo} type="video/mp4" />
-                          </video>
-                        </div> */}
-
-                        {/* 🔹 IMAGE SLIDE 1 */}
-                        <div className="carousel-item active">
-                          <img
-                            src={Banner1Img}
-                            className="d-block w-100 rounded"
-                            style={{ maxHeight: "350px", objectFit: "cover" }}
-                            alt="Banner 1"
-                          />
-                        </div>
-
-                        {/* 🔹 IMAGE SLIDE 2 */}
-                        <div className="carousel-item">
-                          <img
-                            src={Banner2Img}
-                            className="d-block w-100 rounded"
-                            style={{ maxHeight: "350px", objectFit: "cover" }}
-                            alt="Banner 2"
-                          />
-                        </div>
-
-                        {/* 🔹 IMAGE SLIDE 3 */}
-                        <div className="carousel-item">
-                          <img
-                            src={Banner3Img}
-                            className="d-block w-100 rounded"
-                            style={{ maxHeight: "350px", objectFit: "cover" }}
-                            alt="Banner 3"
-                          />
-                        </div>
-
-                      </div>
-                    </div>
+                      <Carousel interval={2000} touch={true} controls={false}>
+                        <Carousel.Item>
+                          <img src={Banner1Img} className="d-block w-100" />
+                        </Carousel.Item>
+                        <Carousel.Item>
+                          <img src={Banner2Img} className="d-block w-100" />
+                        </Carousel.Item>
+                        <Carousel.Item>
+                          <img src={Banner3Img} className="d-block w-100" />
+                        </Carousel.Item>
+                      </Carousel>
 
 <div className="row row-cols-3 row-cols-md-5 g-1">
   {secondCategories.map((cat) => (
