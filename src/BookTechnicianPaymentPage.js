@@ -326,7 +326,7 @@ const handleCheckboxChange = (value) => {
           checked={selectedPayment === 'online'}
           onChange={() => handleCheckboxChange('online')}
         />
-        Pay Through Online
+        Pay Through Online 
       </label> */}
           {/* {paymenterror && <p className="text-danger" style={{fontSize: "14px"}}>{paymenterror}</p>} */}
       <label>

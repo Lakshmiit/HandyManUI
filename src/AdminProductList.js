@@ -14,21 +14,17 @@ const AdminProductList = () => {
   const [catalogue, setCatalogue] = useState("");
   const [loading, setLoading] = useState(true); // Loading state
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
   const rowsPerPage = 15;
   const navigate = useNavigate();
-
-  // Define dynamic parameters for the URL
- 
-
-  //const { productownedby } = useParams(); 
-
+  // const {userType} = useParams();
+  // const {ProductOwnedBy} = useParams();
+  
   // Fetch product data, categories, and catalogues
   useEffect(() => {
     setLoading(true);
     const url = `https://handymanapiv2.azurewebsites.net/api/Product/GetAdminProductList?ProductOwnedBy=Admin`;
-  
-    axios
-      .get(url)
+    axios.get(url)
       .then((response) => {
         const products = response.data.map((product) => ({
           ...product,
@@ -36,6 +32,7 @@ const AdminProductList = () => {
             ? product.rate - (product.rate * product.discount) / 100
             : product.rate,
         }));
+        // products.sort((a, b) => a.productName.localeCompare(b.productName));
         setProductData(products);
         setFilteredData(products);
   
@@ -72,44 +69,58 @@ const AdminProductList = () => {
 
   // Filter data based on selected category and catalogue
   useEffect(() => {
-    let filtered = productData;
+  let filtered = productData;
 
-    if (category) {
-      filtered = filtered.filter(product => product.category === category);
-    }
+  if (category) {
+    filtered = filtered.filter(product => product.category === category);
+  }
 
-    if (catalogue) {
-      filtered = filtered.filter(product => product.catalogue === catalogue);
-    }
+  if (catalogue) {
+    filtered = filtered.filter(product => product.catalogue === catalogue);
+  }
 
-    if (productstatus) {
-      filtered = filtered.filter(product => product.productStatus === productstatus);
-    }
+  if (productstatus) {
+    filtered = filtered.filter(product => product.productStatus === productstatus);
+  }
 
-    setFilteredData(filtered);
-    setCurrentPage(1); // Reset to first page when filter changes
-  }, [category, catalogue, productstatus, productData]);
+  if (searchTerm) {
+    filtered = filtered.filter(product =>
+      product.productName.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }
+  setFilteredData(filtered);
+  setCurrentPage(1); 
+}, [category, catalogue, productstatus, searchTerm, productData]);
 
   // Handle page change
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-
-  // Get paginated data
+  // const handlePageChange = (pageNumber) => {
+  //   setCurrentPage(pageNumber);
+  // };
   const indexOfLastProduct = currentPage * rowsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - rowsPerPage;
   const currentProducts = filteredData.slice(indexOfFirstProduct, indexOfLastProduct);
 
-  if (loading) {
-    return <div>Loading...</div>; // Show loading message while data is fetching
+  if (loading) {    
+    return <div>Loading...</div>; 
   }
 
   return (
-    <div className="container my-5">
-      <h2 className="text-center mb-4">All Products</h2>
+    <div className="container mt-mob-50">
+      <h2 className="text-center">All Products</h2>
+       {/* Search Bar */}
+        <div className="form-group col-md-3">
+        <label>Search Products Here</label>
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Search by product name..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
       <div className="d-flex align-items-center justify-content-between">
         {/* Category */}
-        <div className="form-group text-start col-md-2 ml-2 m-5 mb-2">
+        <div className="form-group text-start col-md-2 m-2 ml-2 mb-3">
           <label>Category</label>
           <select
             className="form-control"
@@ -126,7 +137,7 @@ const AdminProductList = () => {
         </div>
 
         {/* Catalogue */}
-        <div className="form-group col-md-2 m-5 mb-2">
+        <div className="form-group col-md-2 m-2 mb-3">
           <label>Catalogues</label>
           <select
             className="form-control"
@@ -143,7 +154,7 @@ const AdminProductList = () => {
         </div>
 
         {/* Status */}
-        <div className="form-group col-md-2 m-5 mb-2">
+        <div className="form-group col-md-2 m-2 mb-3">
           <label>Product Status</label>
           <select
             className="form-control"
@@ -159,19 +170,17 @@ const AdminProductList = () => {
           </select>
         </div>
 
-
-
-
         {/* Add New Product Button */}
-        <div className="text-end col-md-3 mb-1">
+        <div className="d-flex justify-content-end col-md-6 mb-1 gap-2">
   <button
     className="btn btn-success"
-    onClick={() => navigate(`/product/Admin`)}
+    onClick={() => navigate(`/adminUploadForm/Admin`)}
   >
     Add New Product
-  </button>
+  </button> 
 </div>
-      </div>
+
+      </div> 
 
       {filteredData.length === 0 ? (
         <div className="text-center my-5">
@@ -186,23 +195,38 @@ const AdminProductList = () => {
                 <th>Price</th>
                 <th>Discount</th>
                 <th>After Discount Price</th>
+                <th>Requested By</th>
+                <th>Stock Left</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {currentProducts.map((product, index) => (
                 <tr key={index}>
-                  <td>{product.productName}</td>
+                  <td className="product-name-cell">{product.productName}</td>
                   <td>₹{product.rate}</td>
-                  <td>{product.discount ? `${product.discount}%` : "No discount"}</td>
-                  <td>₹{product.afterDiscountPrice || 'N/A'}</td>
+                  <td>{product.discount ? `${Math.round(product.discount)}%` : "No discount"}</td>
+                  <td>₹{product.afterDiscountPrice.toFixed(0) || 'N/A'}</td>
                   <td>
-                    <Link to={`/adminUpdateProduct/${product.id}`} className="btn btn-warning mx-2" title="Edit">
+                    {product.productOwnedBy ? (
+                      <span
+                        style={{ textDecoration: 'underline', color: 'blue', cursor: 'pointer' }}
+                        title={product.productOwnedBy}
+                      >
+                        {product.productOwnedBy}
+                      </span>
+                    ) : (
+                      'N/A'
+                    )}
+                  </td>
+                  <td>{product.numberOfStockAvailable <= 0 ? 'No Stock' : product.numberOfStockAvailable}</td>
+                  <td className="actions-cell">
+                    <Link to={`/adminUpdateProduct/${product.id}/Admin`} className="btn btn-warning" title="Edit">
                       <FaEdit />
                     </Link>
-                    <Link to={`/adminProductApproval/${product.id}`} className="btn btn-info mx-2" title="View">
+                    <Link to={`/adminProductApproval/${product.id}/Admin`} className="btn btn-info mx-2" title="View">
                       <FaEye />
-                    </Link>
+                    </Link>       
                     <button
                       onClick={() => handleDelete(product.id)}
                       className="btn btn-danger" title="Delete"
@@ -217,21 +241,73 @@ const AdminProductList = () => {
 
           {/* Pagination */}
           <div className="d-flex justify-content-center mt-3">
-            <nav aria-label="Page navigation">
-              <ul className="pagination">
-                {[...Array(Math.ceil(filteredData.length / rowsPerPage))].map((_, index) => (
-                  <li key={index} className={`page-item ${index + 1 === currentPage ? 'active' : ''}`}>
-                    <button
-                      className="page-link"
-                      onClick={() => handlePageChange(index + 1)}
-                    >
-                      {index + 1}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          </div>
+                    <nav aria-label="Page navigation">
+                      <ul className="pagination">
+                        <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                          <button
+                            className="page-link"
+                            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                          >
+                            &laquo;
+                          </button>
+                        </li>
+                        {Array.from({ length: Math.ceil(filteredData.length / rowsPerPage) }, (_, i) => i + 1)
+                          .filter(
+                            (page) =>
+                              page === 1 ||
+                              page === Math.ceil(filteredData.length / rowsPerPage) ||
+                              (page >= currentPage - 2 && page <= currentPage + 2)
+                          )
+                          .map((page, i, arr) => {
+                            const prevPage = arr[i - 1];
+                            if (prevPage && page - prevPage > 1) {
+                              return (
+                                <React.Fragment key={page}>
+                                  <li className="page-item disabled">
+                                    <span className="page-link">...</span>
+                                  </li>
+                                  <li
+                                    className={`page-item ${page === currentPage ? "active" : ""}`}
+                                  >
+                                    <button className="page-link" onClick={() => setCurrentPage(page)}>
+                                      {page}
+                                    </button>
+                                  </li>
+                                </React.Fragment>
+                              );
+                            }
+                            return (
+                              <li
+                                key={page}
+                                className={`page-item ${page === currentPage ? "active" : ""}`}
+                              >
+                                <button className="page-link" onClick={() => setCurrentPage(page)}>
+                                  {page}
+                                </button>
+                              </li>
+                            );
+                          })}
+                        <li
+                          className={`page-item ${
+                            currentPage === Math.ceil(filteredData.length / rowsPerPage)
+                              ? "disabled"
+                              : ""
+                          }`}
+                        >
+                          <button
+                            className="page-link"
+                            onClick={() =>
+                              setCurrentPage((p) =>
+                                Math.min(p + 1, Math.ceil(filteredData.length / rowsPerPage))
+                              )
+                            }
+                          >
+                            &raquo;
+                          </button>
+                        </li>
+                      </ul>
+                    </nav>
+                  </div>
         </>
       )}
     </div>

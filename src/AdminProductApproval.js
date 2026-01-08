@@ -1,40 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import './App.css';
+import {  Button } from 'react-bootstrap'; // Import Bootstrap components for modal
+import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
-// import VisibilityIcon from '@mui/icons-material/Visibility';
-import {
-  Dashboard as DashboardIcon,
-  SupportAgent as SupportAgentIcon,
-  PersonAdd as PersonAddIcon,
-  Route as RouteIcon,
-  Notifications as NotificationsIcon,
-  ShoppingCart as ShoppingCartIcon,
-  Payments as PaymentsIcon,
-  // AccountCircle,
-  Inventory as InventoryIcon,
-} from '@mui/icons-material';
+import AdminSidebar from './AdminSidebar';
 
 const ProductAdmin = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const {selectedUserType} = useParams();
   const [productData, setProductData] = useState(null);
   const [imageUrls, setImageUrls] = useState([]);
   const [productType, setProductType] = useState("Approved");
   const [comments, setComments] = useState("");
   const { id } = useParams();
   const navigate = useNavigate(); // Hook to programmatically navigate
-  const { productownedby } = useParams(); 
+  //const {userType} = useParams();
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/${id}`);
         const data = await response.json();
         setProductData(data);
-
         const imageRequests =
           data.productPhotos?.map((photo) =>
             fetch(
-              `https://handymanapiservices.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+              `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
             )
               .then((res) => res.json())
               .then((data) => ({
@@ -51,18 +44,26 @@ const ProductAdmin = () => {
     fetchData();
   }, [id]);
 
+  // Detect screen size for responsiveness
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    handleResize(); // Set initial state
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []); 
+
   const handleSubmit = async () => {
     if (!productData) {
       console.error("No product data to submit.");
       return;
     }
-
     const payload = {
       ...productData,
       productStatus: productType,
       comments,
+      deliveryInDays,
+      numberOfStockAvailable,
     };
-
     try {
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/${id}`, {
         method: "PUT",
@@ -71,9 +72,9 @@ const ProductAdmin = () => {
         },
         body: JSON.stringify(payload),
       });
-
       if (response.ok) {
         alert("Product status updated successfully.");
+        navigate(`/adminProductList/Admin`);
       } else {
         const errorData = await response.json();
         console.error("Error updating product:", errorData);
@@ -101,39 +102,49 @@ const ProductAdmin = () => {
     catalogue,
     productSize,
     color,
+    units,
     rate,
     discount,
     specifications,
+    specificationDesc,
     warranty,
     additionalInformation,
+    deliveryInDays,
+    numberOfStockAvailable,
   } = productData;
 
   const afterDiscountPrice = rate - (rate * discount) / 100;
 
   return (
-    <div className="wrapper bg-light">
-      <div className="container-fluid mt-4 h-100 d-flex flex-column">
-        <div className="row">
+        <div className="d-flex flex-row justify-content-start align-items-start mt-mob-50">
           {/* Sidebar */}
-          <div className="col-md-3 p-3 bg-dark text-white border-end rounded">
-            <h5 className="text-center mb-4">Admin Panel</h5>
-            <ul className="list-unstyled">
-              <li className="mb-3"><DashboardIcon /> Dashboard</li>
-              <li className="mb-3"><SupportAgentIcon /> Support</li>
-              <li className="mb-3"><PersonAddIcon /> Add User</li>
-              <li className="mb-3"><RouteIcon /> Routes</li>
-              <li className="mb-3"><NotificationsIcon /> Notifications</li>
-              <li className="mb-3"><ShoppingCartIcon /> Orders</li>
-              <li className="mb-3"><PaymentsIcon /> Payments</li>
-              <li className="mb-3"><InventoryIcon /> Inventory</li>
-            </ul>
-          </div>
-
+          {!isMobile && (
+          <div className="ml-0 m-4 p-0 adm_mnu">
+          <AdminSidebar userType={selectedUserType}/>
+         </div>
+          )}
+          {/* Floating menu for mobile */}
+      {isMobile && (
+        <div className="floating-menu">
+          <Button
+            variant="primary"
+            className="rounded-circle shadow"
+            onClick={() => setShowMenu(!showMenu)}
+          >
+            <MoreVertIcon />
+          </Button>
+          {showMenu && (
+              <div className="sidebar-container">
+                <AdminSidebar userType={selectedUserType} />
+              </div>
+          )}
+        </div>
+      )}
           {/* Main Content */}
-          <div className="col-md-9">
+          <div className={`container m-3 ${isMobile ? 'w-100' : 'w-75'}`}>
+          <div className=" col-md-11">
             <div className="bg-white p-4 rounded shadow-sm">
               <h3 className="mb-4 text-primary">Product Details</h3>
-
               {/* Carousel */}
               <div
                 id="productCarousel"
@@ -154,7 +165,6 @@ const ProductAdmin = () => {
                     ></button>
                   ))}
                 </div>
-
                 {/* Carousel items */}
                 <div className="carousel-inner">
                   {imageUrls.map((img, index) => (
@@ -164,35 +174,43 @@ const ProductAdmin = () => {
                     >
                       <img
                         src={`data:image/jpeg;base64,${img.imageData}`}
-                        className="d-block w-100 rounded"
-                        style={{ maxHeight: '400px', objectFit: 'cover' }}
+                        className="d-block mx-auto rounded"
+                        style={{ maxHeight: '500px', width: '50%', objectFit: 'cover' }}
                         alt={`Slide ${index + 1}`}
                       />
                     </div>
                   ))}
                 </div>
-
                 {/* Controls */}
                 <button
-                  className="carousel-control-prev"
-                  type="button"
-                  data-bs-target="#productCarousel"
-                  data-bs-slide="prev"
-                >
-                  <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                  <span className="visually-hidden">Previous</span>
-                </button>
-                <button
-                  className="carousel-control-next"
-                  type="button"
-                  data-bs-target="#productCarousel"
-                  data-bs-slide="next"
-                >
-                  <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                  <span className="visually-hidden">Next</span>
-                </button>
-              </div>
+                className="carousel-control-prev"
+                type="button"
+                data-bs-target="#productCarousel"
+                data-bs-slide="prev"
+              >
+                <span
+                  className="carousel-control-prev-icon"
+                  aria-hidden="true"
+                  style={{ filter: "invert(27%) sepia(98%) saturate(2000%) hue-rotate(200deg) brightness(95%) contrast(90%)" }}
+                ></span>
+                <span className="visually-hidden">Previous</span>
+              </button>
 
+              <button
+                className="carousel-control-next"
+                type="button"
+                data-bs-target="#productCarousel"
+                data-bs-slide="next"
+              >
+                <span
+                  className="carousel-control-next-icon"
+                  aria-hidden="true"
+                  style={{ filter: "invert(27%) sepia(98%) saturate(2000%) hue-rotate(200deg) brightness(95%) contrast(90%)" }}
+                ></span>
+                <span className="visually-hidden">Next</span>
+              </button>
+
+              </div>
               {/* Product Details */}
               <div className="row">
                 <div className="col-md-6">
@@ -201,10 +219,14 @@ const ProductAdmin = () => {
                   <p><strong>Catalogue:</strong> {catalogue}</p>
                   <p><strong>Size:</strong> {productSize}</p>
                   <p><strong>Color:</strong> {color}</p>
-                  <p><strong>Rate:</strong> ${rate}</p>
+                  <p><strong>Units:</strong> {units}</p>
+                  <p><strong>Rate:</strong> Rs {rate}</p>
                   <p><strong>Discount:</strong> {discount}%</p>
-                  <p><strong>Price After Discount:</strong> ${afterDiscountPrice.toFixed(2)}</p>
-                </div>
+                  <p><strong>Price After Discount:</strong> Rs {afterDiscountPrice.toFixed(0)}</p>
+                 <p><strong>Warranty:</strong> {warranty}</p>
+                  <p><strong>Additional Information:</strong> {additionalInformation}</p>
+                  <p><strong>Delivery In Days:</strong> {deliveryInDays}</p>
+                  <p><strong>Stock Left:</strong> {numberOfStockAvailable}</p></div>
                 <div className="col-md-6">
                   <h5>Specifications</h5>
                   <ul>
@@ -213,15 +235,13 @@ const ProductAdmin = () => {
                         {spec.label}: {spec.value}
                       </li>
                     ))}
+                    <li>{specificationDesc}</li>
                   </ul>
-                  <h5>Warranty</h5>
-                  <p>{warranty} months</p>
-                  <h5>Additional Information</h5>
-                  <p>{additionalInformation}</p>
-                </div>
-              </div>
+                 
+                </div> 
+              </div>    
                {/* Approval Section */}
-               <div className="mt-4">
+               <div className="">
                   <h5>Approval</h5>
                   <div className="form-check">
                     <input
@@ -248,39 +268,29 @@ const ProductAdmin = () => {
                     <label className="form-check-label" htmlFor="reject">Reject</label>
                   </div>
                   <textarea
-                    className="form-control mt-3"
+                    className="form-control"
                     placeholder="Comments"
                     value={comments}
                     onChange={(e) => setComments(e.target.value)}
                   />
                 </div>
-  
                 {/* Submit Button */}
-                <div className="mt-3">
-                  <button className="btn btn-primary" onClick={handleSubmit}>
+                <div>
+                  <button className="btn btn-primary m-1" onClick={handleSubmit}>
                     Submit
                   </button>
-                </div>
-
-           
-              {/* Submit Button */}
-              <div className="mt-3">
-                {/* View Single Product Button */}
-      <button
+                  <button
         type="button"
-       
-       
-          onClick={() => navigate(`/product-list/${productownedby}`)}
+        className='btn btn-warning text-white'
+          onClick={() => navigate(`/adminProductList/Admin`)}
       >
-      
         <span>Back</span>
       </button>
-              </div>
+                </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
   );
 };
 

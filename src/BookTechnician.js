@@ -66,7 +66,7 @@ zipCode: '',
 });
 const [serviceUnavailable, setServiceUnavailable] = useState(false);
 const isGuestName = (name) => (name ?? '').trim().toLowerCase() === 'guest';
-
+ 
 // const [response, setResponse] = useState(null);
 
   useEffect(() => {
@@ -751,8 +751,7 @@ const handleUpdateJobDescription = async (e) => {
                 value={category}
                 onChange={handleCategoryChange}    
                 disabled={isAddressInvalid || serviceUnavailable}
-                required
-              >
+                required >
                 <option value="">Select Category</option>
                 <option>Plumbing and Sanitary</option>
                 <option>Electrical</option>

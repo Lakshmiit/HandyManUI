@@ -29,7 +29,7 @@ state: '',
 district: '',
 zipCode: '',
 });
-const [serviceUnavailable, setServiceUnavailable] = useState(false);
+// const [serviceUnavailable, setServiceUnavailable] = useState(false);
  const [addresses, setAddresses] = useState([]);
 const [newAddress, setNewAddress] = useState('');
 const [state, setState] = useState('');
@@ -162,15 +162,15 @@ const getUploadItemByProductName = useCallback(async (productName) => {
       }
   }, [userId]);
 
-  useEffect(() => {
-  const primary = addresses.find(addr => addr.type === "primary");
-  const district = primary?.district?.toLowerCase();
-  if (district && district !== "visakhapatnam") {
-    setServiceUnavailable(true);  
-  } else {
-    setServiceUnavailable(false);
-  }
-}, [addresses]);
+//   useEffect(() => {
+//   const primary = addresses.find(addr => addr.type === "primary");
+//   const district = primary?.district?.toLowerCase();
+//   if (district && district !== "visakhapatnam") {
+//     setServiceUnavailable(true);  
+//   } else {
+//     setServiceUnavailable(false);
+//   }
+// }, [addresses]);
 
   useEffect(() => {
     fetchCustomerData();
@@ -497,7 +497,7 @@ const handleUpdatePaymentMethod = async (e) => {
                             <Modal.Header closeButton
                             style={{ backgroundColor: isEditing ? "#ec3b83" : "#de6fa1",color: "white"}}>
                             <Modal.Title className="w-100">
-                                  {isGuestName(fullName) ? "Edit Address" : "Add Address"}
+                                  {isGuestName(fullName) ? "Add Address" : "Edit Address"}
                             </Modal.Title>
                             </Modal.Header>
                         <Modal.Body>
@@ -615,10 +615,10 @@ const handleUpdatePaymentMethod = async (e) => {
                                 color: "white"
                             }}
                             >
-                            {isGuestName(fullName) ? "Edit Address" : "Add Address"}
+                            {isGuestName(fullName) ? "Add Address" : "Edit Address"}
                             </Button>
                           </Form>
-                        </Modal.Body>
+                        </Modal.Body>   
                       </Modal>
                       </div>
                 
@@ -678,13 +678,13 @@ const handleUpdatePaymentMethod = async (e) => {
                                 Note: Please enter your address to Order a Collection.
                               </p>
                             )}
-                     {serviceUnavailable && (
+                     {/* {serviceUnavailable && (
                         <div className="alert alert-danger">
                           <strong>Note:</strong> Currently, the options to Raise a Ticket, Book Technician, Lakshmi Mart or Lakshmi Collections services are unavailable in your district.
                             You can still purchase products through the "Buy Product" section.
                             For further assistance, please contact our customer support at 6281198953.
                         </div>
-                      )}    
+                      )}     */}
     
     <div className="collection-confirmation">
     <p className='text-center' style={{ fontSize: "13px" }}><span className='name'>{fullName}</span> Thank you for Choosing the Lakshmi Collections</p>
@@ -1070,9 +1070,9 @@ const handleUpdatePaymentMethod = async (e) => {
 <div className="button">
   <button
     className={`btn-collection m-2 ${
-      isAddressInvalid || serviceUnavailable ? "btn-invalid" : "btn-valid"
+      isAddressInvalid ? "btn-invalid" : "btn-valid"
     }`}
-    disabled={isAddressInvalid || serviceUnavailable}
+    disabled={isAddressInvalid}
     onClick={(e) => handleUpdatePaymentMethod(e)}
   >
     Order Now

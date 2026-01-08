@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import "./App.css"; // Add necessary styles or include a CSS framework like Bootstrap
+import "./App.css"; 
 
 const OTPInput = () => {
   const otpInputs = useRef([]);

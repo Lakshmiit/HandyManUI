@@ -562,7 +562,7 @@ if (loading) {
           required
         />
         Pay Through Online
-      </label> */}
+      </label> */} 
           {/* {paymenterror && <p className="text-danger" style={{fontSize: "14px"}}>{paymenterror}</p>} */}
       <label>
         <input   

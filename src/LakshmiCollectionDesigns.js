@@ -781,7 +781,7 @@ const allOutOfStock = sizes.length > 0 && sizes.every(s => (s.stock ?? 0) <= 0);
                             </div>
                           );
                         })}
-                      </div>
+                      </div> 
                     )}
                     {/* Validation error */}
                     <div className="mt-1">

@@ -794,7 +794,7 @@ function getItemTime(p) {
         color: "white",
         padding: "12px",
         display: "flex",
-        justifyContent: "space-between",
+        justifyContent: "space-between", 
         alignItems: "center",
         fontWeight: "bold",
         zIndex: 2000,
