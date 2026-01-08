@@ -4215,13 +4215,13 @@ const updateLocalStorageCart = (product, qty) => {
                       </div> */}
                       <Carousel interval={2000} touch={true} controls={false}>
                         <Carousel.Item>
-                          <img src={Banner1Img} className="d-block w-100" />
+                          <img src={Banner1Img} alt="50 Cashback" className="d-block w-100" />
                         </Carousel.Item>
                         <Carousel.Item>
-                          <img src={Banner2Img} className="d-block w-100" />
+                          <img src={Banner2Img} alt="100 Cashback" className="d-block w-100" />
                         </Carousel.Item>
                         <Carousel.Item>
-                          <img src={Banner3Img} className="d-block w-100" />
+                          <img src={Banner3Img} alt="300 Cashback" className="d-block w-100" />
                         </Carousel.Item>
                       </Carousel>
 
