@@ -91,8 +91,9 @@ function getCustomLimit(name) {
     n === "banana 4 pcs" ||
     n === "fresh orange imported (narinja) 2 pcs (400-450 g)" ||
     n === "freedom refined sunflower oil bottle 1 l"  ||
-    n === "guava 2 pcs (600-700 g)"
-    
+    n === "guava 2 pcs (600-700 g)" ||
+    n === "tomato 500 g" ||
+    n === "heritage total curd 400 g"
   ) return 1;
   if (
     n === "visakha dairy ganga toned milk 500 ml" ||
