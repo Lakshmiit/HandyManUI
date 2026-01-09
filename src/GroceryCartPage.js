@@ -96,9 +96,14 @@ function getCustomLimit(name) {
     n === "heritage total curd 400 g" || 
     n === "mosambi (batthayi) 4 pcs" ||
     n === "pomegranate 3 pcs (300-400 g)" ||
-    n === "fresh orange imported (narinja) 3 pcs (400-450 g)"
+    n === "fresh orange imported (narinja) 3 pcs (400-450 g)" ||
+    n === "onion (ulligadda) 1kg"
     ) return 1;
   if (
+    n === "coriander leaves (kottimeera) 70-80 g" ||
+  n === "curry leaves (karivepaku) 100 g" ||
+  n === "mint Leaves (pudina) 70-80 g" ||
+    n === "radish (mulangi) 250-300 g" ||
     n === "visakha dairy ganga toned milk 500 ml" ||
     n === "onion (ulligadda) 500 g" || 
     n === "potato (bangala dumpa) 500 g" ||

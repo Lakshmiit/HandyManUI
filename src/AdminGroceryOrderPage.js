@@ -1,6 +1,9 @@
 import React, { useState, useEffect} from "react";
-import * as XLSX from "xlsx";
+// import * as XLSX from "xlsx";
 import "./App.css";
+// npm install jspdf jspdf-autotable
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import AdminSidebar from './AdminSidebar';
 import Footer from './Footer.js';
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -485,34 +488,116 @@ useEffect(() => {
      e.preventDefault();
    };
 
-    const handleDownloadExcel = () => {
-  const worksheetData = items.map((item, idx) => ({
-    "Sl. No": idx + 1,
-    "Item Name": item.name,
-    "Category": item.category,
-    "MRP": item.mrp,
-    "Discount (%)": item.discount,
-    "After Discount Price": item.afterDiscountPrice,
-    "Required Quantity": item.quantity,
-    "Total": item.total,
-  }));
-
-  worksheetData.push({
-    "Sl. No": "",
-    "Item Name": "",
-    "Category": "",
-    "MRP": "",
-    "Discount (%)": "",
-    "After Discount Price": "",
-    "Required Quantity": "Grand Total",
-    "Total": items.reduce((sum, item) => sum + item.total, 0),
+  const handleDownloadPDF = () => {
+  const doc = new jsPDF("p", "mm", "a4");
+  doc.setFontSize(14);
+  doc.text(`Order Number: ${martId}`, 105, 12, { align: "center" });
+  doc.setFontSize(10);
+  doc.text(`Customer Name: ${customerName}`, 14, 22);
+  doc.text(
+    `Customer Address: ${[address, district, state, pincode, mobileNumber]
+      .filter(Boolean)
+      .join(", ")}`,
+    14,
+    28
+  );
+  doc.text(`Date: ${date ? date.split("T")[0] : ""}`, 14, 34);
+  const tableHead = [[
+    "Sl.No",
+    "Item Name",
+    "Category",
+    "MRP",
+    "Discount (%)",
+    "Discount Price",
+    "Quantity",
+    "Total",
+  ]];
+  const tableBody = items.map((item, index) => [
+    index + 1,
+    item.name,
+    item.category,
+    `Rs. ${Number(item.mrp).toFixed(0)}`,
+    `${item.discount}%`,
+    `Rs. ${Number(item.afterDiscountPrice).toFixed(0)}`,
+    item.quantity,
+    `Rs. ${Number(item.total).toFixed(0)}`,
+  ]);
+  const uiGrandTotal = items.reduce(
+    (sum, item) => sum + Number(item.total),
+    0
+  );
+  tableBody.push([
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "Grand Total",
+    `Rs. ${uiGrandTotal.toFixed(0)}`,
+  ]);
+  autoTable(doc, {
+    startY: 42,
+    head: tableHead,
+    body: tableBody,
+    theme: "grid",
+    styles: {
+      fontSize: 9,
+      cellPadding: 3,
+      textColor: [0, 0, 0]
+    },
+    headStyles: {
+      fillColor: [0, 128, 0],
+      textColor: 255,
+      halign: "center",
+    },
+    columnStyles: {
+      0: { halign: "center", cellWidth: 10 },   
+      1: { cellWidth: 50 },                   
+      2: { cellWidth: 25 },                   
+      3: { halign: "right", cellWidth: 20 },   
+      4: { halign: "right", cellWidth: 22 },  
+      5: { halign: "right", cellWidth: 20 },    
+      6: { halign: "center", cellWidth: 15 },  
+      7: { halign: "right", cellWidth: 22 },   
+    },       
+    didParseCell(data) {
+      if (data.row.index === tableBody.length - 1) {
+        data.cell.styles.fontStyle = "bold";
+      }
+    },
   });
-
-  const worksheet = XLSX.utils.json_to_sheet(worksheetData);
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Grocery Items");
-  XLSX.writeFile(workbook, `Grocery_Order_${martId}.xlsx`);
+  doc.save(`Grocery_Order_${martId}.pdf`);
 };
+
+//     const handleDownloadExcel = () => {
+//   const worksheetData = items.map((item, idx) => ({
+//     "Sl. No": idx + 1,
+//     "Item Name": item.name,
+//     "Category": item.category,
+//     "MRP": item.mrp,
+//     "Discount (%)": item.discount,
+//     "After Discount Price": item.afterDiscountPrice,
+//     "Required Quantity": item.quantity,
+//     "Total": item.total,
+//   }));
+
+//   worksheetData.push({
+//     "Sl. No": "",
+//     "Item Name": "",
+//     "Category": "",
+//     "MRP": "",
+//     "Discount (%)": "",
+//     "After Discount Price": "",
+//     "Required Quantity": "Grand Total",
+//     "Total": items.reduce((sum, item) => sum + item.total, 0),
+//   });
+
+//   const worksheet = XLSX.utils.json_to_sheet(worksheetData);
+//   const workbook = XLSX.utils.book_new();
+//   XLSX.utils.book_append_sheet(workbook, worksheet, "Grocery Items");
+//   XLSX.writeFile(workbook, `Grocery_Order_${martId}.xlsx`);
+// };
 
 useEffect(() => {
   if (!items.length) return;
@@ -722,7 +807,7 @@ const handleImageClick = (imageSrc, product) => {
     </tr>
   )}
     <tr>
-      <td colSpan="8" className="text-end fw-bold">
+      <td colSpan="9" className="text-end fw-bold">
         Grand Total:
       </td>
       <td className="fw-bold">     
@@ -732,9 +817,20 @@ const handleImageClick = (imageSrc, product) => {
   </tfoot>  
 </table>
 <div className="text-end mt-1">
-  <button style={{ background: "green", color: "white", borderRadius: "20px"}} onClick={handleDownloadExcel}>
+  {/*<button style={{ background: "green", color: "white", borderRadius: "20px"}} onClick={handleDownloadExcel}>
     Download Excel
-  </button>
+  </button> */}
+  <button
+          style={{
+            background: "red",
+            color: "white",
+            borderRadius: "20px",
+            padding: "6px 14px",
+          }}
+          onClick={handleDownloadPDF}
+        >
+          Download PDF
+        </button>
   {/* <button
                   style={{
                     background: "red",

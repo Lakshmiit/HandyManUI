@@ -27,7 +27,7 @@ import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-// import Banner from './img/ChristmasVideo.mp4';
+import Banner from './img/Saturday.jpeg';
 // import Banner2 from './img/MilkOffers.jpeg';   
 // import Banner2 from './img/ChickenOffers.jpeg';
 // import Banner2 from './img/DrinkOffers.jpeg';   F
@@ -1019,10 +1019,10 @@ const [placeholderIndex, setPlaceholderIndex] = useState(0);
 const carouselRef = useRef(null);
 // const carouselInstance = useRef(null);
 const firstCategories = groceryCategories.slice(0, 6);
-const secondCategories = groceryCategories.slice(6, 30);
+const secondCategories = groceryCategories.slice(6, 31);
 // const thirdCategories = groceryCategories.slice(15, 24);
 // const fourthCategories = groceryCategories.slice(24, 30);
-const HEADER_HEIGHT = window.innerWidth <= 768 ? 65 : 170;
+const HEADER_HEIGHT = window.innerWidth <= 768 ? 120 : 350;
 
 const placeholderSuggestions = [
   'Search "Milk"',
@@ -1926,13 +1926,13 @@ const handleAddClick = (product) => {
 // }, []);
 
 // // cashback logic
-useEffect(() => {
-  if (!showCashbackModal) return; 
-  const timer = setTimeout(() => {
-    setShowCashbackModal(false);
-  }, 5000);
-  return () => clearTimeout(timer); 
-}, [showCashbackModal]);
+// useEffect(() => {
+//   if (!showCashbackModal) return; 
+//   const timer = setTimeout(() => {
+//     setShowCashbackModal(false);
+//   }, 5000);
+//   return () => clearTimeout(timer); 
+// }, [showCashbackModal]);
 
 useEffect(() => {
   // Cricket logic 
@@ -1961,7 +1961,7 @@ useEffect(() => {
       const text = (rawText || "").trim().toLowerCase();
       if (text.includes("firstorder can not be found")) {
         console.log("Match found -> opening cashback modal");
-         setShowCashbackModal(true);
+        //  setShowCashbackModal(true);
        } else {
         console.log("No match in response text, not showing modal");
       }
@@ -3696,7 +3696,7 @@ const updateLocalStorageCart = (product, qty) => {
                       <div className="carousel-item active">
                           <video
                             ref={videoRef}
-                            className="d-block w-100 rounded"     
+                            className="d-block w-100 rounded mb-2"     
                             style={{ objectFit: "cover" }}
                             autoPlay
                             playsInline
@@ -3721,7 +3721,16 @@ const updateLocalStorageCart = (product, qty) => {
                           >
                             <source src={BannerVideo} type="video/mp4" />
                           </video>
+                          <img
+                          src={Banner}
+                          className="d-block w-100 img-fluid rounded mb-2"
+                          style={{ objectFit: "contain" }}
+                          alt="Poster"
+                        /> 
                         </div>
+                         {/* <div style={{ cursor: "pointer"}}>
+                        
+                      </div>  */}
               {/* Top Carousel Section */}
                 {/* <div className="container">
                   <div>
@@ -4213,7 +4222,7 @@ const updateLocalStorageCart = (product, qty) => {
                           alt="Cashback"
                         />
                       </div> */}
-                      <Carousel interval={2000} touch={true} controls={false}>
+                      <Carousel interval={2000} touch={true}>
                         <Carousel.Item>
                           <img src={Banner1Img} alt="50 Cashback" className="d-block w-100" />
                         </Carousel.Item>

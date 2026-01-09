@@ -81,14 +81,13 @@ select.form-control {
   -webkit-appearance: auto;
 }
 
-
 textarea.form-control{
   background-color: #F6F6F6;
 }
 
 .lft_prep .input-group-text {
   border-radius: 6px 0 0 6px;
-  border-right: 0;
+  border-right: 0; 
 }
 
 .rgt_appnd .input-group-text {
