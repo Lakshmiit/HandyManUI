@@ -1022,7 +1022,7 @@ const firstCategories = groceryCategories.slice(0, 6);
 const secondCategories = groceryCategories.slice(6, 31);
 // const thirdCategories = groceryCategories.slice(15, 24);
 // const fourthCategories = groceryCategories.slice(24, 30);
-const HEADER_HEIGHT = window.innerWidth <= 768 ? 120 : 350;
+const HEADER_HEIGHT = window.innerWidth <= 768 ? 130 : 365;
 
 const placeholderSuggestions = [
   'Search "Milk"',
