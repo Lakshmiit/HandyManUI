@@ -25,6 +25,9 @@ const CATEGORY_VEG_FRUITS_OFFERS = [
 ];
        
 const LIMIT_RULES = [
+  {match: normalizeName ("Mosambi (Batthayi) 4 Pcs"), limit : 1},
+  { match: normalizeName("Pomegranate 3 Pcs (300-400 g)"), limit: 1 },
+  { match: normalizeName("Fresh Orange Imported (Narinja) 3 Pcs (400-450 g)"), limit: 1 },
   {match: normalizeName("Heritage Total Curd 400 g"), limit: 1},
   { match: normalizeName("Tomato 500 g"), limit: 1 },
   { match: normalizeName("Guava 2 Pcs (600-700 g)"), limit: 1 },

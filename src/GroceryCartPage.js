@@ -93,8 +93,11 @@ function getCustomLimit(name) {
     n === "freedom refined sunflower oil bottle 1 l"  ||
     n === "guava 2 pcs (600-700 g)" ||
     n === "tomato 500 g" ||
-    n === "heritage total curd 400 g"
-  ) return 1;
+    n === "heritage total curd 400 g" || 
+    n === "mosambi (batthayi) 4 pcs" ||
+    n === "pomegranate 3 pcs (300-400 g)" ||
+    n === "fresh orange imported (narinja) 3 pcs (400-450 g)"
+    ) return 1;
   if (
     n === "visakha dairy ganga toned milk 500 ml" ||
     n === "onion (ulligadda) 500 g" || 
