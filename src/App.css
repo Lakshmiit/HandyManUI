@@ -60,7 +60,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: "Source Sans 3", sans-serif;
-  /* background-image: url(./img/tools_bg.png); */
+  background-image: url(./img/tools_bg.png);
 }
 
 input[type=text],
@@ -81,13 +81,14 @@ select.form-control {
   -webkit-appearance: auto;
 }
 
+
 textarea.form-control{
   background-color: #F6F6F6;
 }
 
 .lft_prep .input-group-text {
   border-radius: 6px 0 0 6px;
-  border-right: 0; 
+  border-right: 0;
 }
 
 .rgt_appnd .input-group-text {

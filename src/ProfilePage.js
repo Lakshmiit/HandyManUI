@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef} from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import { Carousel as BsCarousel } from "bootstrap";
-import Carousel from "react-bootstrap/Carousel";
+import { Carousel } from "bootstrap";
 import './App.css';
 import { Modal, Button} from 'react-bootstrap';
 import Confetti from "react-confetti";
@@ -27,16 +26,16 @@ import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-// import Banner from './img/Saturday.jpeg';
+// import Banner from './img/ChristmasVideo.mp4';
 // import Banner2 from './img/MilkOffers.jpeg';   
 import Banner2 from './img/ChickenOffers.jpeg';
 // import Banner2 from './img/DrinkOffers.jpeg';   F
-// import Banner3 from './img/Above45.jpeg'; 
-import BannerVideo from './img/PongalOffers.mp4';
+import Banner3 from './img/45AboveOffers.jpeg'; 
+// import BannerVideo from './img/ChristmasVideo.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
 // import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 // import Banner3 from './img/banner-4.jpg';  
-import { useNavigate, useParams } from "react-router-dom";   
+import { useNavigate, useParams } from "react-router-dom"; 
 import Logo from "./img/Hm_Logo 1.png";
 import SearchIcon from "@mui/icons-material/Search";
 // import ArticleIcon from '@mui/icons-material/Article';
@@ -90,11 +89,9 @@ import DwakraProducts from './img/DwakraLogo.jpeg';
 import Banner1Img from './img/50Cashback.jpeg';
 import Banner2Img from './img/100Cashback.jpeg';
 import Banner3Img from './img/300Cashback.jpeg';
-import UnbeatableImg from './img/unbeatable.jpeg';
-import Above45Img from './img/Above45.jpeg';       
+import DeliveryImg from './img/DeliveryPoster.jpeg';
+
 // import DeliveryImg from './img/DeliveryPoster.jpeg';
-  
-// import DeliveryImg from './img/DeliveryPoster.jpeg';      
 // import BathImg from './img/bathImg.jpeg';
 // import FlourImg from './img/FlourImg.jpeg';
 // import FaceImg from './img/FaceImg.jpeg';  
@@ -869,28 +866,16 @@ const categories = [
 { label: 'Electronics Appliances', value: 'Electronics appliances', image: Electronics },   
 { label: 'Plumbing & Sanitary', value: 'Sanitary items', image: Plumbing },         
 { label: 'Hardware Items', value: 'Hardware items', image: Hardware },      
-]; 
-       
+];
+    
 const groceryCategories = [
-  { label: 'Unbeatable 10 Offers', value: 'Grocery Offers', image: UnbeatableImg },
   { label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
-  {label: (
-    <>
-      Chicken<br />
-      Pre-Booking
-    </>
-  ),
-  value: 'Chicken',image: ChickenImg
-},
-  // { label: 'Chicken', value: 'Chicken', image: ChickenImg },
    { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
   { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
-  { label: 'Ice Creams', value: 'Ice Creams', image: IcecreamImg },
-  { label: 'Above 45% Offers', value: 'Offers', image: Above45Img },
-  // { label: 'Home Appliances', image: KitchenImg },
   { label: 'Kitchenware Appliances', value: 'Kitchenware Appliances', image: KitchenImg },
+  { label: 'Ice Creams', value: 'Ice Creams', image: IcecreamImg },
   { label: 'Atta & Flours', value: 'Atta & Flours', image: AttaImg },
-  { label: 'Rice & Ravva', value: 'Rice & Ravva', image: RavvaImg },    
+  { label: 'Rice & Ravva', value: 'Rice & Ravva', image: RavvaImg }, 
    { label: 'Oils & Dals', value: 'Oils & Dals', image: OilsImg },
   { label: 'Sugar, Salt & Jaggery', value: 'Sugar, Salt & Jaggery', image: SugarImg }, 
   { label: 'Masala, Spices & Pickles', value: 'Masala, Spices & Pickles', image: MasalaImg },
@@ -912,6 +897,7 @@ const groceryCategories = [
   { label: 'Kids Zone', value: 'Kids Zone', image: KidsImg },
   { label: 'Health Care', value: 'Health Care', image: HealthImg },
   { label: 'DWCRA Products', value: 'DWCRA', image: DwakraProducts },
+  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
 ];
 
 const collectionsCategories = [
@@ -951,7 +937,7 @@ const ProfilePage = () => {
    const [error, setError] = useState('');
     const [products, setProducts] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
-     const videoRef = useRef(null);
+    //  const videoRef = useRef(null);
 // const [isMuted] = useState(true);
 // const [isMuted, setIsMuted] = useState(true);
 const [unreadCount, setUnreadCount] = useState(0);
@@ -963,7 +949,7 @@ const [messageCounts, setMessageCounts] = useState({
 const [grocery, setGrocery] = useState([]);
 const [cartSummary, setCartSummary] = useState({
   items: 0,
-  total: 0,  
+  total: 0,
   products: [],
 }); 
 // const [dress] = useState([]);
@@ -1026,12 +1012,26 @@ searchQuery.trim().length > 0 ? filteredProducts : products;
 const [imageLoading, setImageLoading] = useState(true);
 const [placeholderIndex, setPlaceholderIndex] = useState(0);
 const carouselRef = useRef(null);
-// const carouselInstance = useRef(null);
 const firstCategories = groceryCategories.slice(0, 6);
-const secondCategories = groceryCategories.slice(6, 31);
-// const thirdCategories = groceryCategories.slice(15, 24);
-// const fourthCategories = groceryCategories.slice(24, 30);
-const HEADER_HEIGHT = window.innerWidth <= 768 ? 135 : 360;
+const secondCategories = groceryCategories.slice(6, 15);
+const thirdCategories = groceryCategories.slice(15, 24);
+const fourthCategories = groceryCategories.slice(24, 30);
+
+ useEffect(() => {
+  if (!carouselRef.current) return;
+  Carousel.getInstance(carouselRef.current)?.dispose();
+  const carousel = new Carousel(carouselRef.current, {
+    interval: 5000,      
+    ride: "carousel",   
+    pause: false,       
+    wrap: true,         
+    touch: true,       
+  });
+  carousel.cycle();
+  return () => {
+    carousel.dispose();
+  };
+}, []);
 
 const placeholderSuggestions = [
   'Search "Milk"',
@@ -2330,10 +2330,10 @@ const handleGroceryCategoryClick = async (category) => {
     setError("");
     const encodedCategory = encodeURIComponent(value);
     localStorage.setItem("encodedCategory", encodedCategory);
-    if (value === "Grocery Offers") {
-      navigate(`/groceryOffers/${userType}/${userId}`);
-      return;  
-    }
+    // if (value === "Chirstmas Offers") {
+    //   navigate(`/groceryChristmasOffers/${userType}/${userId}`);
+    //   return;
+    // }
     navigate(`/grocery/${userType}/${userId}`);
   } catch (error) {
     console.error("Error fetching products:", error);
@@ -2343,11 +2343,11 @@ const handleGroceryCategoryClick = async (category) => {
 };
 
 
-//  const goToCategory = (categoryValue, route = "groceryOffers") => {
-//     const encodedCategory = encodeURIComponent(categoryValue);
-//     localStorage.setItem("encodedCategory", encodedCategory);
-//     navigate(`/${route}/${userType}/${userId}`, { state: { encodedCategory } });
-//   };
+ const goToCategory = (categoryValue, route = "groceryOffers") => {
+    const encodedCategory = encodeURIComponent(categoryValue);
+    localStorage.setItem("encodedCategory", encodedCategory);
+    navigate(`/${route}/${userType}/${userId}`, { state: { encodedCategory } });
+  };
 
 const handleDressCategoryClick = async (category) => {
   const { value } = category;
@@ -3337,7 +3337,7 @@ const updateLocalStorageCart = (product, qty) => {
 </div>
     );
   })}
-{/* Cart Bar */}               
+{/* Cart Bar */}
 {(() => {
   // Safe reader that ALWAYS returns an array of categories
   const readAllCategories = () => {
@@ -3426,7 +3426,7 @@ const updateLocalStorageCart = (product, qty) => {
         >
           &times;
         </button>
-        <Modal.Body className="text-center">     
+        <Modal.Body className="text-center">
           <div className="zoom-container">
             <img src={zoomImage} alt={zoomProduct?.name || "Zoomed Product"} className="zoom-image" />
           </div>
@@ -3694,76 +3694,39 @@ const updateLocalStorageCart = (product, qty) => {
               </div>
               </div>  
               </div>  */}
-              {/* <div style={{ cursor: "pointer"}}>
+              <div style={{ cursor: "pointer"}}>
                         <img
                           src={DeliveryImg}
                           className="d-block w-100 img-fluid rounded mb-2"
                           style={{ objectFit: "contain" }}
                           alt="Poster"
                         /> 
-                      </div> */}
-                      <div className="carousel-item active mt-0">
-                          <video
-                            ref={videoRef}
-                            className="d-block w-100 rounded mb-2"     
-                            style={{ objectFit: "cover" }}
-                            autoPlay
-                            playsInline
-                            muted
-                            loop
-                            // onClick={(e) => {
-                            //   e.stopPropagation();
-                            //   e.preventDefault();
-                            //   const encodedCategory = encodeURIComponent("Christmas Offers");
-                            //   localStorage.setItem("encodedCategory", encodedCategory);
-                            //   navigate(`/groceryChristmasOffers/${userType}/${userId}`, {
-                            //     state: { encodedCategory },
-                            //   });
-                            // }}
-                          onEnded={() => {
-                            if (!carouselRef.current) return;
-                            const carousel =
-                              BsCarousel.getOrCreateInstance(carouselRef.current);
-                            carousel.next();
-                            carousel.cycle(); 
-                          }}
-                          >
-                            <source src={BannerVideo} type="video/mp4" />
-                          </video>
-                          <img
-                          src={Banner2} 
-                          className="d-block w-100 img-fluid rounded mb-2"
-                          style={{ objectFit: "contain" }}
-                          alt="Poster"
-                        /> 
-                        </div>
-                         {/* <div style={{ cursor: "pointer"}}>
-                        
-                      </div>  */}
+                      </div>
               {/* Top Carousel Section */}
-                {/* <div className="container">
+                <div className="container">
                   <div>
+                    {/* PRODUCT CAROUSEL */}
                     <div
                     ref={carouselRef}
                       id="productCarousel"
-                      className="carousel slide mb-2 rounded" */}
-                      {/* // data-bs-ride="carousel"
+                      className="carousel slide mb-2 rounded"
+                      // data-bs-ride="carousel"
                       // data-bs-interval="3000"
                       // data-bs-pause="false"
                       // data-bs-wrap="true"
                       // data-bs-touch="true"
-                    // > */}
+                    >
                       {/* Indicators */}
-                      {/* <div className="carousel-indicators">
+                      <div className="carousel-indicators">
                         <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="0" className="active" aria-current="true"></button>
-                        <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="1"></button> */}
+                        <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="1"></button>
                         {/* <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="2"></button> */}
                         {/* <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="3"></button> */}
-                      {/* </div> */}
+                      </div>
                       {/* Carousel Items */}
-                      {/* <div className="carousel-inner"> */}
+                      <div className="carousel-inner">
                         {/* Slide 1 */}
-                        {/* <div
+                        <div
                         className="carousel-item active"
                         onClick={() => goToCategory("Grocery Offers", "groceryOffers")}
                         style={{ cursor: "pointer"}}
@@ -3774,7 +3737,7 @@ const updateLocalStorageCart = (product, qty) => {
                           style={{ objectFit: "contain" }}
                           alt="Slide 1"
                         />
-                      </div> */}
+                      </div>
                         {/* <div 
                           className="carousel-item active"
                           onClick={() => goToCategory("Chicken Offers", "groceryOffers")}
@@ -3818,7 +3781,7 @@ const updateLocalStorageCart = (product, qty) => {
                         </div> */}
 
                         {/* Slide 3 */}
-                        {/* <div className="carousel-item">
+                        <div className="carousel-item">
                           <img
                             src={Banner3}
                             className="d-block w-100 img-fluid rounded"
@@ -3827,9 +3790,9 @@ const updateLocalStorageCart = (product, qty) => {
                             alt="Slide 3"
                           />
                         </div>
-                      </div> */}
+                      </div>
                       {/* Controls */}
-                      {/* <button
+                      <button
                         className="carousel-control-prev"
                         type="button"
                         data-bs-target="#productCarousel"
@@ -3847,9 +3810,10 @@ const updateLocalStorageCart = (product, qty) => {
                         <span className="carousel-control-next-icon custom-carousel-icon"></span>
                         <span className="visually-hidden">Next</span>
                       </button>
+
                     </div>  
                   </div>
-                </div> */}
+                </div>
 
               {/* <div className="d-flex flex-column align-items-center gap-3 mb-3">
               // {/* Refer & Earn Strip 
@@ -3878,7 +3842,6 @@ const updateLocalStorageCart = (product, qty) => {
     // padding: isMobile ? "2px" : "0px",
     // borderRadius: "5px",
     minHeight: "100vh",
-    marginTop: `${HEADER_HEIGHT}px`,
     // paddingTop: isMobile ? "70px" : "0px"
     paddingTop: isMobile ? `${MOBILE_PADDING_TOP}px` : "0px",
   }}>
@@ -4002,12 +3965,12 @@ const updateLocalStorageCart = (product, qty) => {
     <p className="text-center text-muted mt-4">
       No products found
     </p>
-)} */}   
+)} */}
 
-  <div className="shadow-lg p-2 rounded-5 text-center bg-transparent border-0">
-    <h5 className="fw-bold mb-1" style={{color: "#ff5722", fontSize: "20px"}}>
+  <div className="shadow-lg p-2 rounded-5 mb-1 text-center bg-transparent border-0">
+    <h5 className="fw-bold mb-3" style={{color: "#ff5722", fontSize: "20px"}}>
       Lakshmi Mart  
-    </h5> 
+    </h5>
     {/* <div className="row row-cols-3 row-cols-md-5 g-1">
   {groceryCategories.map((cat) => {
     //  const isBlockedCategory  = cat.value === "Vegetables & Fruits";
@@ -4223,26 +4186,14 @@ const updateLocalStorageCart = (product, qty) => {
     </div>
   ))}
 </div>
-                     {/* <div style={{ cursor: "pointer"}}>
+                     <div style={{ cursor: "pointer"}}>
                         <img
                           src={Banner1Img}
                           className="d-block w-100 img-fluid rounded"
                           style={{ objectFit: "contain" }}
                           alt="Cashback"
                         />
-                      </div> */}
-                      <Carousel interval={2000} touch={true}>
-                        <Carousel.Item>
-                          <img src={Banner1Img} alt="50 Cashback" className="d-block w-100" />
-                        </Carousel.Item>
-                        <Carousel.Item>
-                          <img src={Banner2Img} alt="100 Cashback" className="d-block w-100" />
-                        </Carousel.Item>
-                        <Carousel.Item>
-                          <img src={Banner3Img} alt="300 Cashback" className="d-block w-100" />
-                        </Carousel.Item>
-                      </Carousel>
-
+                      </div>
 <div className="row row-cols-3 row-cols-md-5 g-1">
   {secondCategories.map((cat) => (
     <div
@@ -4293,15 +4244,15 @@ const updateLocalStorageCart = (product, qty) => {
     </div>
   ))}
 </div>
-                      {/* <div style={{ cursor: "pointer"}}>
+                      <div style={{ cursor: "pointer"}}>
                         <img
                           src={Banner2Img}
                           className="d-block w-100 img-fluid rounded"
                           style={{ objectFit: "contain" }}
                           alt="Cashback"
                         />
-                      </div> */}
-{/* <div className="row row-cols-3 row-cols-md-5 g-1">
+                      </div>
+<div className="row row-cols-3 row-cols-md-5 g-1">
   {thirdCategories.map((cat) => (
     <div
        className="col"
@@ -4350,16 +4301,16 @@ const updateLocalStorageCart = (product, qty) => {
         </div>
     </div>
   ))}
-</div> */}
- {/* <div style={{ cursor: "pointer"}}>
+</div>
+ <div style={{ cursor: "pointer"}}>
                         <img
                           src={Banner3Img}
                           className="d-block w-100 img-fluid rounded"
                           style={{ objectFit: "contain" }}
                           alt="Cashback"
                         />
-                      </div> */}
-                      {/* <div className="row row-cols-3 row-cols-md-5 g-1">
+                      </div>
+                      <div className="row row-cols-3 row-cols-md-5 g-1">
   {fourthCategories.map((cat) => (
     <div
        className="col"
@@ -4408,7 +4359,7 @@ const updateLocalStorageCart = (product, qty) => {
         </div>
     </div>
   ))}
-</div> */}
+</div>
   </div>
   
   {/* Home Products Section */}

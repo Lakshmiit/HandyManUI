@@ -269,7 +269,8 @@ const LoginPage = () => {
     }
   };
 
-  // useEffect(() => {
+  // handymanapiv2.azurewebsites.net
+  //  useEffect(() => {
   //   (async () => {
   //     try {
   //       const res = await axios.get(
@@ -511,8 +512,7 @@ const handleOTP = async (e) => {
       </option>
     ))}
   </select>
-</div>*/}
-
+</div> */}
 {/* {districtError && <div className="text-danger mt-1">{districtError}</div>} */}
 
 {/* {String(selectedDistrict) === "104" && (

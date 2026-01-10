@@ -28,21 +28,10 @@ const CATEGORY_VF_OFFERS = [
 ];
 
 const LIMIT_RULES = [
-  {match:norm("Onion (Ulligadda) 1Kg"), limit: 1},
-  {match:norm("Coriander leaves (Kottimeera) 70-80 g"), limit: 2},
-  {match:norm("Curry Leaves (Karivepaku) 100 g"), limit: 2},
-  {match:norm("Mint Leaves (Pudina) 70-80 g"), limit: 2},
-  {match:norm("Radish (Mulangi) 250-300 g"), limit: 2},
-  {match: norm("Heritage Total Curd 400 g"), limit: 1},
-  {match: norm("Tomato 500 g"), limit: 1},
-  { match: norm("Guava 2 Pcs (600-700 g)"), limit: 1 },
   { match: norm("Aashirvaad High Fibre Atta with Multigrains 1 Kg"), limit: 3 },
   { match: norm("Aashirvaad Superior Whole Wheat MP Atta 1 Kg"), limit: 3 },
   { match: norm("Visakha Dairy Ganga Toned Milk 500 ml"), limit: 2 },
-  { match: norm("Banana 4 Pcs"), limit: 1 },
-  {match: norm ("Mosambi (Batthayi) 4 Pcs"), limit : 1},
-  { match: norm("Pomegranate 3 Pcs (300-400 g)"), limit: 1 },
-  { match: norm("Fresh Orange Imported (Narinja) 3 Pcs (400-450 g)"), limit: 1 },
+  { match: norm("Banana 4 Pcs"), limit: 1 }, 
   { match: norm("Pomegranate 2 Pcs (300-400 g)"), limit: 1 },
   { match: norm("Fresh Orange Imported (Narinja) 2 Pcs (400-450 g)"), limit: 1 },
   { match: norm("Royal Gala Apple 2 Pcs (200-300 g)"), limit: 1 },

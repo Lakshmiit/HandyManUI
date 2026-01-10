@@ -453,7 +453,8 @@ useEffect(() => {
       // alert('OTP Resend successfully.');
     } catch (error) {
       console.error("Error resend otp:", error);
-      window.alert('Failed to resend otp. Please try again later.');    }
+      // window.alert('Failed to resend otp. Please try again later.');   
+       }
   };
   
   const handleGuestAddress = async (e) => {
