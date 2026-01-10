@@ -27,7 +27,7 @@ import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-import Banner from './img/Saturday.jpeg';
+// import Banner from './img/Saturday.jpeg';
 // import Banner2 from './img/MilkOffers.jpeg';   
 // import Banner2 from './img/ChickenOffers.jpeg';
 // import Banner2 from './img/DrinkOffers.jpeg';   F
@@ -873,12 +873,21 @@ const categories = [
        
 const groceryCategories = [
   { label: 'Unbeatable 10 Offers', value: 'Grocery Offers', image: UnbeatableImg },
-  { label: 'Above 45% Offers', value: 'Offers', image: Above45Img },
-  { label: 'Kitchenware Appliances', value: 'Kitchenware Appliances', image: KitchenImg },
   { label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
+  {label: (
+    <>
+      Chicken<br />
+      Pre-Booking
+    </>
+  ),
+  value: 'Chicken',image: ChickenImg
+},
+  // { label: 'Chicken Pre-Booking', value: 'Chicken', image: ChickenImg },
    { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
   { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
   { label: 'Ice Creams', value: 'Ice Creams', image: IcecreamImg },
+  { label: 'Above 45% Offers', value: 'Offers', image: Above45Img },
+  { label: 'Kitchenware Appliances', value: 'Kitchenware Appliances', image: KitchenImg },
   { label: 'Atta & Flours', value: 'Atta & Flours', image: AttaImg },
   { label: 'Rice & Ravva', value: 'Rice & Ravva', image: RavvaImg },    
    { label: 'Oils & Dals', value: 'Oils & Dals', image: OilsImg },
@@ -902,7 +911,6 @@ const groceryCategories = [
   { label: 'Kids Zone', value: 'Kids Zone', image: KidsImg },
   { label: 'Health Care', value: 'Health Care', image: HealthImg },
   { label: 'DWCRA Products', value: 'DWCRA', image: DwakraProducts },
-  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
 ];
 
 const collectionsCategories = [
@@ -1022,7 +1030,7 @@ const firstCategories = groceryCategories.slice(0, 6);
 const secondCategories = groceryCategories.slice(6, 31);
 // const thirdCategories = groceryCategories.slice(15, 24);
 // const fourthCategories = groceryCategories.slice(24, 30);
-const HEADER_HEIGHT = window.innerWidth <= 768 ? 130 : 365;
+const HEADER_HEIGHT = window.innerWidth <= 768 ? 70 : 190;
 
 const placeholderSuggestions = [
   'Search "Milk"',
@@ -1926,13 +1934,13 @@ const handleAddClick = (product) => {
 // }, []);
 
 // // cashback logic
-// useEffect(() => {
-//   if (!showCashbackModal) return; 
-//   const timer = setTimeout(() => {
-//     setShowCashbackModal(false);
-//   }, 5000);
-//   return () => clearTimeout(timer); 
-// }, [showCashbackModal]);
+useEffect(() => {
+  if (!showCashbackModal) return; 
+  const timer = setTimeout(() => {
+    setShowCashbackModal(false);
+  }, 5000);
+  return () => clearTimeout(timer); 
+}, [showCashbackModal]);
 
 useEffect(() => {
   // Cricket logic 
@@ -1961,7 +1969,7 @@ useEffect(() => {
       const text = (rawText || "").trim().toLowerCase();
       if (text.includes("firstorder can not be found")) {
         console.log("Match found -> opening cashback modal");
-        //  setShowCashbackModal(true);
+         setShowCashbackModal(true);
        } else {
         console.log("No match in response text, not showing modal");
       }
@@ -3693,7 +3701,7 @@ const updateLocalStorageCart = (product, qty) => {
                           alt="Poster"
                         /> 
                       </div> */}
-                      <div className="carousel-item active">
+                      <div className="carousel-item active mt-0">
                           <video
                             ref={videoRef}
                             className="d-block w-100 rounded mb-2"     
@@ -3721,12 +3729,12 @@ const updateLocalStorageCart = (product, qty) => {
                           >
                             <source src={BannerVideo} type="video/mp4" />
                           </video>
-                          <img
+                          {/* <img
                           src={Banner}
                           className="d-block w-100 img-fluid rounded mb-2"
                           style={{ objectFit: "contain" }}
                           alt="Poster"
-                        /> 
+                        />  */}
                         </div>
                          {/* <div style={{ cursor: "pointer"}}>
                         

@@ -4,11 +4,12 @@ import "./App.css";
 // npm install jspdf jspdf-autotable
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import AdminSidebar from './AdminSidebar';
+// import AdminSidebar from './AdminSidebar';
 import Footer from './Footer.js';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowBack, Dashboard as MoreVertIcon} from '@mui/icons-material';
+import { ArrowBack} from '@mui/icons-material';
+  // Dashboard as MoreVertIcon
 // import ForwardIcon from '@mui/icons-material/Forward';
 import { Button, Form, Row, Col, Modal } from 'react-bootstrap';
 import axios from "axios";
@@ -17,7 +18,7 @@ const AdminGroceryOrderPage = () => {
   const {groceryItemId} = useParams();
   const [martId, setMartId] = useState('');
   const [isMobile, setIsMobile] = useState(false);
-  const [showMenu, setShowMenu] = useState(false);
+  // const [showMenu, setShowMenu] = useState(false);
   const [imageUrls, setImageUrls] = useState({});
 //   const [category, setCategory] = useState("");  
 //   const [totalAmount, setTotalAmount] = useState('');
@@ -638,13 +639,13 @@ const handleImageClick = (imageSrc, product) => {
   <>
 <div className="d-flex flex-row justify-content-start align-items-start" style={{marginTop: "130px"}}>
       {/* Sidebar menu for Larger Screens */}
-      {!isMobile && (
+      {/* {!isMobile && (
         <div className=" ml-0 p-0 adm_mnu h-90">
           <AdminSidebar />
         </div>
-      )}
+      )} */}   
 
-      {isMobile && (
+      {/* {isMobile && (
         <div className="floating-menu">
           <Button
             variant="primary"
@@ -659,7 +660,7 @@ const handleImageClick = (imageSrc, product) => {
             </div>
           )}
         </div>
-      )}
+      )} */}
 
       {/* Main Content */}
       <div className={`container ${isMobile ? 'w-100' : 'w-75'}`}>
@@ -791,7 +792,7 @@ const handleImageClick = (imageSrc, product) => {
   <tfoot>
      {cashbackAmount > 0 && (
     <tr>
-      <td colSpan="8" className="text-end fw-bold text-danger">
+      <td colSpan="9" className="text-end fw-bold text-danger">
         Cashback Applied:
       </td>
       <td className="fw-bold text-success">
@@ -801,7 +802,7 @@ const handleImageClick = (imageSrc, product) => {
   )}
    {showFreeSugar && (
     <tr>
-      <td colSpan="9" className="text-end fw-bold text-success">
+      <td colSpan="10" className="text-end fw-bold text-success">
         🎁 Give Customer <strong>500 g Sugar FREE</strong>
       </td>
     </tr>

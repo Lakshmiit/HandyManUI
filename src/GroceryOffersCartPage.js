@@ -107,7 +107,7 @@ const fileToUrl = (filenameOrUrl) => {
   return `${IMAGE_DOWNLOAD}${encodeURIComponent(String(filenameOrUrl))}`;
 };
 
-const MIN_ORDER_TOTAL = 150;
+const MIN_ORDER_TOTAL = 100;
 const isValidCartItem = (it) => {
   const hasName = Boolean(String(it.name || "").trim());
   const hasQty = Number(it.qty) > 0;
