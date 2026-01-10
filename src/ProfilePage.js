@@ -29,7 +29,7 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 // import Banner from './img/Saturday.jpeg';
 // import Banner2 from './img/MilkOffers.jpeg';   
-// import Banner2 from './img/ChickenOffers.jpeg';
+import Banner2 from './img/ChickenOffers.jpeg';
 // import Banner2 from './img/DrinkOffers.jpeg';   F
 // import Banner3 from './img/Above45.jpeg'; 
 import BannerVideo from './img/PongalOffers.mp4';
@@ -882,11 +882,12 @@ const groceryCategories = [
   ),
   value: 'Chicken',image: ChickenImg
 },
-  // { label: 'Chicken Pre-Booking', value: 'Chicken', image: ChickenImg },
+  // { label: 'Chicken', value: 'Chicken', image: ChickenImg },
    { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
   { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
   { label: 'Ice Creams', value: 'Ice Creams', image: IcecreamImg },
   { label: 'Above 45% Offers', value: 'Offers', image: Above45Img },
+  // { label: 'Home Appliances', image: KitchenImg },
   { label: 'Kitchenware Appliances', value: 'Kitchenware Appliances', image: KitchenImg },
   { label: 'Atta & Flours', value: 'Atta & Flours', image: AttaImg },
   { label: 'Rice & Ravva', value: 'Rice & Ravva', image: RavvaImg },    
@@ -1030,7 +1031,7 @@ const firstCategories = groceryCategories.slice(0, 6);
 const secondCategories = groceryCategories.slice(6, 31);
 // const thirdCategories = groceryCategories.slice(15, 24);
 // const fourthCategories = groceryCategories.slice(24, 30);
-const HEADER_HEIGHT = window.innerWidth <= 768 ? 70 : 190;
+const HEADER_HEIGHT = window.innerWidth <= 768 ? 135 : 360;
 
 const placeholderSuggestions = [
   'Search "Milk"',
@@ -3729,12 +3730,12 @@ const updateLocalStorageCart = (product, qty) => {
                           >
                             <source src={BannerVideo} type="video/mp4" />
                           </video>
-                          {/* <img
-                          src={Banner}
+                          <img
+                          src={Banner2} 
                           className="d-block w-100 img-fluid rounded mb-2"
                           style={{ objectFit: "contain" }}
                           alt="Poster"
-                        />  */}
+                        /> 
                         </div>
                          {/* <div style={{ cursor: "pointer"}}>
                         

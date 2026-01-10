@@ -417,7 +417,7 @@ function getItemTime(p) {
           </h1>
         </div>
 
-        <div className="wrapper d-flex" style={{ marginTop: isMobile ? "65px" : "230px" }}>
+        <div className="wrapper d-flex" style={{ marginTop: isMobile ? "65px" : "250px" }}>
           {/* Sidebar */}
           {!isMobile ? (
             <div className="ml-0 p-0 sde_mnu">
