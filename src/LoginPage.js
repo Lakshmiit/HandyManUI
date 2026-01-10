@@ -261,7 +261,7 @@ const LoginPage = () => {
 
 // const{mobileError,setMobileError}=useState("");
 
-console.log("Districts:", selectedDistrictName);
+console.log("Districts:", zipCodes,selectedDistrictName);
   const handleMobileChange = (e) => {
     const value = e.target.value;
     if (/^\d{0,10}$/.test(value)) {

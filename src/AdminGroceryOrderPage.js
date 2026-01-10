@@ -7,7 +7,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowBack, Dashboard as MoreVertIcon} from '@mui/icons-material';
 // import ForwardIcon from '@mui/icons-material/Forward';
-import { Button, Form, Row, Col } from 'react-bootstrap';
+import { Button, Form, Row, Col, Modal } from 'react-bootstrap';
 import axios from "axios";
 const AdminGroceryOrderPage = () => {
   const navigate = useNavigate(); 
@@ -15,6 +15,7 @@ const AdminGroceryOrderPage = () => {
   const [martId, setMartId] = useState('');
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [imageUrls, setImageUrls] = useState({});
 //   const [category, setCategory] = useState("");  
 //   const [totalAmount, setTotalAmount] = useState('');
 //   const [requiredQuantity, setRequiredQuantity] = useState("");
@@ -65,9 +66,10 @@ const [units, setUnits] = useState("");
  const [groceryData, setgroceryData] = useState();
   const [groceryId, setgroceryId] = useState();
 const [cashbackAmount, setCashbackAmount] = useState(0);
-const showFreeSugar =
-  Number(grandTotal) > 499 && Number(grandTotal) < 998;
-
+const showFreeSugar = Number(grandTotal) > 499 && Number(grandTotal) < 998;
+ const [showZoomModal, setShowZoomModal] = useState(false);
+  const [zoomImage, setZoomImage] = useState("");
+  const [zoomProduct, setZoomProduct] = useState(null);
 
 useEffect(() => {
     const fetchCart = async () => {
@@ -373,6 +375,7 @@ useEffect(() => {
           totalAmountFromApi += Number(cat.totalAmount) || 0;
           cat.products.forEach((p, idx) => {
             allProducts.push({
+                id: `${cat.categoryName}-${idx}`,
               serial: allProducts.length + 1,
               name: p.productName,
               category: cat.categoryName,
@@ -383,6 +386,7 @@ useEffect(() => {
               total: p.afterDiscountPrice * p.noOfQuantity,
               code: p.code,
               units: p.units,
+              image: p.productImage,
             });
           });
         });
@@ -510,6 +514,41 @@ useEffect(() => {
   XLSX.writeFile(workbook, `Grocery_Order_${martId}.xlsx`);
 };
 
+useEffect(() => {
+  if (!items.length) return;
+  const controller = new AbortController();
+  async function loadImages() {
+    const map = {};
+    await Promise.all(
+      items.map(async (item) => {
+        if (!item.image) return;
+        try {
+          const res = await fetch(
+            `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
+              item.image
+            )}`,
+            { signal: controller.signal }
+          );
+          const json = await res.json();
+          if (!json?.imageData) return;
+          map[item.id] = `data:image/jpeg;base64,${json.imageData}`;
+        } catch (err) {
+          console.error("Image fetch failed:", err);
+        }
+      })
+    );
+    setImageUrls(map);
+  }
+  loadImages();
+  return () => controller.abort();
+}, [items]);
+
+const handleImageClick = (imageSrc, product) => {
+    setZoomImage(imageSrc);
+    setZoomProduct(product);
+    setShowZoomModal(true);
+  };
+  
   return (
   <>
 <div className="d-flex flex-row justify-content-start align-items-start" style={{marginTop: "130px"}}>
@@ -617,6 +656,7 @@ useEffect(() => {
     <tr>
       <th style={{ background: "green", color: "white" }}>Sl. No</th>
       <th style={{ background: "green", color: "white" }}>Item Name</th>
+      <th style={{ background: "green", color: "white" }}>Photo</th>
       <th style={{ background: "green", color: "white" }}>Code</th>
       <th style={{ background: "green", color: "white" }}>Category</th>
       <th style={{ background: "green", color: "white" }}>MRP</th>
@@ -635,6 +675,24 @@ useEffect(() => {
       <tr key={idx}>
         <td>{item.serial}</td>
         <td>{item.name}</td>
+        <td>
+          {imageUrls[item.id] ? (
+            <img
+              src={imageUrls[item.id]}
+              alt={item.name}
+              onClick={() => handleImageClick(imageUrls[item.id], item)}
+              style={{
+                width: "50px",
+                height: "50px",
+                objectFit: "contain",
+                borderRadius: "6px",
+                border: "1px solid red",
+              }}
+            />
+          ) : (
+            <span className="text-muted small">Loading</span>
+          )}
+        </td>
         <td>{item.code}</td>
         <td>{item.category}</td>
         <td>₹{item.mrp}</td>
@@ -837,6 +895,39 @@ useEffect(() => {
           </form>
         </div>
       </div>
+       <Modal
+              show={showZoomModal}
+              onHide={() => {
+                setShowZoomModal(false);
+                setZoomProduct(null);
+              }}
+              centered
+            >
+              <button
+                className="close-button text-end mt-0"
+                onClick={() => {
+                  setShowZoomModal(false);
+                  setZoomProduct(null);
+                }}
+              >
+                &times;
+              </button>
+              <Modal.Body className="text-center">
+                <div className="zoom-container">
+                  <img
+                    src={zoomImage}
+                    alt={zoomProduct?.name || "Zoomed Product"}
+                    className="zoom-image"
+                  />
+                </div>
+                <h6
+                className="text-start fw-bold m-0"
+                style={{ fontSize: "20px" }}
+              >
+                {zoomProduct?.name || ""}
+              </h6>
+              </Modal.Body>
+            </Modal>
       {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {
@@ -861,7 +952,7 @@ useEffect(() => {
     </>
   );
 };
-
+ 
 export default AdminGroceryOrderPage;
 
 // import React, { useState, useEffect} from "react";
