@@ -90,8 +90,8 @@ function getCustomLimit(name) {
     n === "royal gala apple 2 pcs (200-300 g)" ||
     n === "banana 4 pcs" ||
     n === "fresh orange imported (narinja) 2 pcs (400-450 g)" ||
-    n === "freedom refined sunflower oil bottle 1 l" 
-    
+    n === "freedom refined sunflower oil bottle 1 l" ||
+    n === "onion (ulligadda) 1kg"
   ) return 1;
   if (
     n === "visakha dairy ganga toned milk 500 ml" ||
