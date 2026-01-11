@@ -324,12 +324,12 @@ const OTPVerificationPage = () => {
     localStorage.getItem("mobile") ??
     "";
 
-  const districtIdRaw =
-    state.districtId ??
-    loginMeta.districtId ??
-    (localStorage.getItem("districtId") ? Number(localStorage.getItem("districtId")) : null);
+  // const districtIdRaw =
+  //   state.districtId ??      
+  //   loginMeta.districtId ??
+  //   (localStorage.getItem("districtId") ? Number(localStorage.getItem("districtId")) : null);
 
-  const districtId = typeof districtIdRaw === "number" ? districtIdRaw : (districtIdRaw ? Number(districtIdRaw) : null);
+  // const districtId = typeof districtIdRaw === "number" ? districtIdRaw : (districtIdRaw ? Number(districtIdRaw) : null);
 
   const districtName =
     state.districtName ??
@@ -508,7 +508,8 @@ useEffect(() => {
        State: "",
        StateId: "",
        District: districtName || "",
-       DistrictId: (districtId ?? null).toString(),
+       DistrictId: 104,
+      //  DistrictId: (districtId ?? null).toString(),
        ZipCode: pinCode || "",
        CustomerPhotoId: "",
        UserId: newUserId,
