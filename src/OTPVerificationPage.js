@@ -453,7 +453,7 @@ useEffect(() => {
       // alert('OTP Resend successfully.');
     } catch (error) {
       console.error("Error resend otp:", error);
-      // window.alert('Failed to resend otp. Please try again later.');   
+      window.alert('Failed to resend otp. Please try again later.');   
        }
   };
   
@@ -583,7 +583,7 @@ useEffect(() => {
       
         } else if (verifyUserRes.status === 404) {
           const errorText = await verifyUserRes.text();
-          console.warn(" User not found (404):", errorText);
+          // console.warn(" User not found (404):", errorText);
       
           await handleGuestAddress(e);                                 
 
