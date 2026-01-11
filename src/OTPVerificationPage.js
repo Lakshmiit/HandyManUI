@@ -582,7 +582,7 @@ useEffect(() => {
           }
       
         } else if (verifyUserRes.status === 404) {
-          const errorText = await verifyUserRes.text();
+          // const errorText = await verifyUserRes.text();
           // console.warn(" User not found (404):", errorText);
       
           await handleGuestAddress(e);                                 
