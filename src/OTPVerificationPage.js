@@ -508,7 +508,7 @@ useEffect(() => {
        State: "",
        StateId: "",
        District: districtName || "",
-       DistrictId: 104,
+       DistrictId: "104",
       //  DistrictId: (districtId ?? null).toString(),
        ZipCode: pinCode || "",
        CustomerPhotoId: "",
