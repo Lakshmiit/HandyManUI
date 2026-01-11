@@ -26,9 +26,10 @@ import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
+import { Carousel as BsCarousel } from "bootstrap";
 // import Banner from './img/ChristmasVideo.mp4';
-// import Banner2 from './img/MilkOffers.jpeg';   
-import Banner2 from './img/ChickenOffers.jpeg';
+import Banner2 from './img/MilkOffers.jpeg';   
+// import Banner2 from './img/ChickenOffers.jpeg';
 // import Banner2 from './img/DrinkOffers.jpeg';   F
 import Banner3 from './img/45AboveOffers.jpeg'; 
 // import BannerVideo from './img/ChristmasVideo.mp4';
@@ -90,6 +91,7 @@ import Banner1Img from './img/50Cashback.jpeg';
 import Banner2Img from './img/100Cashback.jpeg';
 import Banner3Img from './img/300Cashback.jpeg';
 import DeliveryImg from './img/DeliveryPoster.jpeg';
+import BannerVideo from './img/PongalOffers.mp4';
 
 // import DeliveryImg from './img/DeliveryPoster.jpeg';
 // import BathImg from './img/bathImg.jpeg';
@@ -870,7 +872,6 @@ const categories = [
     
 const groceryCategories = [
   { label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
-  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
    { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
   { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
   { label: 'Kitchenware Appliances', value: 'Kitchenware Appliances', image: KitchenImg },
@@ -898,6 +899,7 @@ const groceryCategories = [
   { label: 'Kids Zone', value: 'Kids Zone', image: KidsImg },
   { label: 'Health Care', value: 'Health Care', image: HealthImg },
   { label: 'DWCRA Products', value: 'DWCRA', image: DwakraProducts },
+  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
 ];
 
 const collectionsCategories = [
@@ -937,9 +939,9 @@ const ProfilePage = () => {
    const [error, setError] = useState('');
     const [products, setProducts] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
-    //  const videoRef = useRef(null);
+     const videoRef = useRef(null);
 // const [isMuted] = useState(true);
-// const [isMuted, setIsMuted] = useState(true);
+// const [isMuted, setIsMuted] = useState(true); 
 const [unreadCount, setUnreadCount] = useState(0);
 const [messageCounts, setMessageCounts] = useState({
   news:     0,
@@ -3618,35 +3620,41 @@ const updateLocalStorageCart = (product, qty) => {
                   />
                   </div>   
                 </div>  */}
-                 {/* <div className="carousel-item ">
-                    <video
-                      ref={videoRef}
-                      className="d-block w-100 rounded"
-                      style={{ width: '90%', height: 'auto', objectFit: 'cover' }}
-                      autoPlay
-                      // loop
-                      playsInline
-                      muted
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();  
-                        const encodedCategory = encodeURIComponent("Christmas Offers");
-                        localStorage.setItem("encodedCategory", encodedCategory);
-                        navigate(`/groceryChristmasOffers/${userType}/${userId}`, {
-                          state: { encodedCategory },
-                        });
-                      }}
-                       onEnded={() => {
-                          const carousel = document.querySelector('#productCarousel');
-                          if (carousel) {
-                            const bsCarousel = window.bootstrap.Carousel.getOrCreateInstance(carousel);
-                            bsCarousel.next();
-                          }
-                        }}                     
-                           // muted={isMuted}
-                    >
-                      <source src={BannerVideo} type="video/mp4" />
-                    </video> */}
+                 <div className="carousel-item active mt-0">
+                          <video
+                            ref={videoRef}
+                            className="d-block w-100 rounded mb-2"     
+                            style={{ objectFit: "cover" }}
+                            autoPlay
+                            playsInline
+                            muted
+                            loop
+                            // onClick={(e) => {
+                            //   e.stopPropagation();
+                            //   e.preventDefault();
+                            //   const encodedCategory = encodeURIComponent("Christmas Offers");
+                            //   localStorage.setItem("encodedCategory", encodedCategory);
+                            //   navigate(`/groceryChristmasOffers/${userType}/${userId}`, {
+                            //     state: { encodedCategory },
+                            //   });
+                            // }}
+                          onEnded={() => {
+                            if (!carouselRef.current) return;
+                            const carousel =
+                              BsCarousel.getOrCreateInstance(carouselRef.current);
+                            carousel.next();
+                            carousel.cycle(); 
+                          }}
+                          >
+                            <source src={BannerVideo} type="video/mp4" />
+                          </video>
+                          <img
+                          src={Banner2} 
+                          className="d-block w-100 img-fluid rounded mb-2"
+                          style={{ objectFit: "contain" }}
+                          alt="Poster"
+                        /> 
+                        </div>
                     {/* <button
                       onClick={toggleMute}
                       style={{

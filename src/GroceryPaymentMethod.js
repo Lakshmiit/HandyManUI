@@ -145,12 +145,12 @@ const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;
         text === "null" ||
         text.includes("Firstorder Can not be found")
       ) {
-        return null; // new user
+        return null; 
       }
   let parsed;
     try {
       parsed = JSON.parse(text);
-    } catch (err) {
+    } catch (err) {     
       console.warn("Could not parse CheckFirstOrder response:", err);
       return null;
     }
