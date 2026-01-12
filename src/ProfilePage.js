@@ -3198,7 +3198,7 @@ const handleCustomerCareCall = () => {
       <span className="text-muted small">Loading Image</span>
     )}
   {/* HANDYMAN */}
-    {isOutOfStock && (
+    {isOutOfStock && (    
       <div
         className="position-absolute d-flex justify-content-center align-items-center"
         style={{
@@ -3908,7 +3908,7 @@ const handleCustomerCareCall = () => {
             cursor: "pointer",
             padding: "6px",
             margin: "5px",
-            opacity: 1, 
+            opacity: 1,                  
             pointerEvents: "auto", 
           }}
         >
