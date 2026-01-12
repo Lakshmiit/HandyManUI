@@ -139,10 +139,9 @@ const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;
       const res = await fetch(url);
       const text = await res.text();
       console.log("RAW RESPONSE:", text);
-      // Case 1: New User → Backend returns a message string
       if (
-        !text ||
-        text === "null" ||
+        // !text ||
+        // text === "null" ||
         text.includes("Firstorder Can not be found")
       ) {
         return null; 
@@ -1370,7 +1369,7 @@ const handleCheckboxChange = (value) => {
   </span>
   <h2 className="title text-success mb-0">PAYMENT CONFIRMATION</h2>
 </div>
-
+  {/* HANDYMAN */}
 <div className="d-flex justify-content-between align-items-center">
                                 <label className='mt-2 fs-6 fw-bold'>Address <span className="req_star">*</span></label>
                       {/* Modal */}
@@ -1770,7 +1769,7 @@ const handleCheckboxChange = (value) => {
     Terms & Conditions & Cancellation Policy
   </button>
 </div>
-
+  {/* HANDYMAN */}
       {/* Modal for Terms and Conditions */}
       {showModals && (
         <div className="modal-overlay">

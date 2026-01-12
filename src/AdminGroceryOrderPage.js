@@ -1,20 +1,25 @@
 import React, { useState, useEffect} from "react";
-import * as XLSX from "xlsx";
+// import * as XLSX from "xlsx";
 import "./App.css";
-import AdminSidebar from './AdminSidebar';
+// npm install jspdf jspdf-autotable
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+// import AdminSidebar from './AdminSidebar';
 import Footer from './Footer.js';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowBack, Dashboard as MoreVertIcon} from '@mui/icons-material';
+import { ArrowBack} from '@mui/icons-material';
+  // Dashboard as MoreVertIcon
 // import ForwardIcon from '@mui/icons-material/Forward';
-import { Button, Form, Row, Col } from 'react-bootstrap';
+import { Button, Form, Row, Col, Modal } from 'react-bootstrap';
 import axios from "axios";
 const AdminGroceryOrderPage = () => {
   const navigate = useNavigate(); 
   const {groceryItemId} = useParams();
   const [martId, setMartId] = useState('');
   const [isMobile, setIsMobile] = useState(false);
-  const [showMenu, setShowMenu] = useState(false);
+  // const [showMenu, setShowMenu] = useState(false);
+  const [imageUrls, setImageUrls] = useState({});
 //   const [category, setCategory] = useState("");  
 //   const [totalAmount, setTotalAmount] = useState('');
 //   const [requiredQuantity, setRequiredQuantity] = useState("");
@@ -65,10 +70,11 @@ const [units, setUnits] = useState("");
  const [groceryData, setgroceryData] = useState();
   const [groceryId, setgroceryId] = useState();
 const [cashbackAmount, setCashbackAmount] = useState(0);
-const showFreeSugar =
-  Number(grandTotal) > 499 && Number(grandTotal) < 998;
-
-
+const showFreeSugar = Number(grandTotal) > 499 && Number(grandTotal) < 998;
+ const [showZoomModal, setShowZoomModal] = useState(false);
+  const [zoomImage, setZoomImage] = useState("");
+  const [zoomProduct, setZoomProduct] = useState(null);
+// HANDYMAN
 useEffect(() => {
     const fetchCart = async () => {
       if (!groceryItemId) return;
@@ -373,6 +379,7 @@ useEffect(() => {
           totalAmountFromApi += Number(cat.totalAmount) || 0;
           cat.products.forEach((p, idx) => {
             allProducts.push({
+                id: `${cat.categoryName}-${idx}`,
               serial: allProducts.length + 1,
               name: p.productName,
               category: cat.categoryName,
@@ -383,6 +390,7 @@ useEffect(() => {
               total: p.afterDiscountPrice * p.noOfQuantity,
               code: p.code,
               units: p.units,
+              image: p.productImage,
             });
           });
         });
@@ -481,46 +489,163 @@ useEffect(() => {
      e.preventDefault();
    };
 
-    const handleDownloadExcel = () => {
-  const worksheetData = items.map((item, idx) => ({
-    "Sl. No": idx + 1,
-    "Item Name": item.name,
-    "Category": item.category,
-    "MRP": item.mrp,
-    "Discount (%)": item.discount,
-    "After Discount Price": item.afterDiscountPrice,
-    "Required Quantity": item.quantity,
-    "Total": item.total,
-  }));
-
-  worksheetData.push({
-    "Sl. No": "",
-    "Item Name": "",
-    "Category": "",
-    "MRP": "",
-    "Discount (%)": "",
-    "After Discount Price": "",
-    "Required Quantity": "Grand Total",
-    "Total": items.reduce((sum, item) => sum + item.total, 0),
+  const handleDownloadPDF = () => {
+  const doc = new jsPDF("p", "mm", "a4");
+  doc.setFontSize(14);
+  doc.text(`Order Number: ${martId}`, 105, 12, { align: "center" });
+  doc.setFontSize(10);
+  doc.text(`Customer Name: ${customerName}`, 14, 22);
+  doc.text(
+    `Customer Address: ${[address, district, state, pincode, mobileNumber]
+      .filter(Boolean)
+      .join(", ")}`,
+    14,
+    28
+  );
+  doc.text(`Date: ${date ? date.split("T")[0] : ""}`, 14, 34);
+  const tableHead = [[
+    "Sl.No",
+    "Item Name",
+    "Category",
+    "MRP",
+    "Discount (%)",
+    "Discount Price",
+    "Quantity",
+    "Total",
+  ]];
+  const tableBody = items.map((item, index) => [
+    index + 1,
+    item.name,
+    item.category,
+    `Rs. ${Number(item.mrp).toFixed(0)}`,
+    `${item.discount}%`,
+    `Rs. ${Number(item.afterDiscountPrice).toFixed(0)}`,
+    item.quantity,
+    `Rs. ${Number(item.total).toFixed(0)}`,
+  ]);
+  const uiGrandTotal = items.reduce(
+    (sum, item) => sum + Number(item.total),
+    0
+  );
+  tableBody.push([
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "Grand Total",
+    `Rs. ${uiGrandTotal.toFixed(0)}`,
+  ]);
+  autoTable(doc, {
+    startY: 42,
+    head: tableHead,
+    body: tableBody,
+    theme: "grid",
+    styles: {
+      fontSize: 9,
+      cellPadding: 3,
+      textColor: [0, 0, 0]
+    },
+    headStyles: {
+      fillColor: [0, 128, 0],
+      textColor: 255,
+      halign: "center",
+    },
+    columnStyles: {
+      0: { halign: "center", cellWidth: 10 },   
+      1: { cellWidth: 50 },                   
+      2: { cellWidth: 25 },                   
+      3: { halign: "right", cellWidth: 20 },   
+      4: { halign: "right", cellWidth: 22 },  
+      5: { halign: "right", cellWidth: 20 },    
+      6: { halign: "center", cellWidth: 15 },  
+      7: { halign: "right", cellWidth: 22 },   
+    },       
+    didParseCell(data) {
+      if (data.row.index === tableBody.length - 1) {
+        data.cell.styles.fontStyle = "bold";
+      }
+    },
   });
-
-  const worksheet = XLSX.utils.json_to_sheet(worksheetData);
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Grocery Items");
-  XLSX.writeFile(workbook, `Grocery_Order_${martId}.xlsx`);
+  doc.save(`Grocery_Order_${martId}.pdf`);
 };
 
+//     const handleDownloadExcel = () => {
+//   const worksheetData = items.map((item, idx) => ({
+//     "Sl. No": idx + 1,
+//     "Item Name": item.name,
+//     "Category": item.category,
+//     "MRP": item.mrp,
+//     "Discount (%)": item.discount,
+//     "After Discount Price": item.afterDiscountPrice,
+//     "Required Quantity": item.quantity,
+//     "Total": item.total,
+//   }));
+
+//   worksheetData.push({
+//     "Sl. No": "",
+//     "Item Name": "",
+//     "Category": "",
+//     "MRP": "",
+//     "Discount (%)": "",
+//     "After Discount Price": "",
+//     "Required Quantity": "Grand Total",
+//     "Total": items.reduce((sum, item) => sum + item.total, 0),
+//   });
+
+//   const worksheet = XLSX.utils.json_to_sheet(worksheetData);
+//   const workbook = XLSX.utils.book_new();
+//   XLSX.utils.book_append_sheet(workbook, worksheet, "Grocery Items");
+//   XLSX.writeFile(workbook, `Grocery_Order_${martId}.xlsx`);
+// };
+
+useEffect(() => {
+  if (!items.length) return;
+  const controller = new AbortController();
+  async function loadImages() {
+    const map = {};
+    await Promise.all(
+      items.map(async (item) => {
+        if (!item.image) return;
+        try {
+          const res = await fetch(
+            `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
+              item.image
+            )}`,
+            { signal: controller.signal }
+          );
+          const json = await res.json();
+          if (!json?.imageData) return;
+          map[item.id] = `data:image/jpeg;base64,${json.imageData}`;
+        } catch (err) {
+          console.error("Image fetch failed:", err);
+        }
+      })
+    );
+    setImageUrls(map);
+  }
+  loadImages();
+  return () => controller.abort();
+}, [items]);
+
+const handleImageClick = (imageSrc, product) => {
+    setZoomImage(imageSrc);
+    setZoomProduct(product);
+    setShowZoomModal(true);
+  };
+  
   return (
   <>
 <div className="d-flex flex-row justify-content-start align-items-start" style={{marginTop: "130px"}}>
       {/* Sidebar menu for Larger Screens */}
-      {!isMobile && (
+      {/* {!isMobile && (
         <div className=" ml-0 p-0 adm_mnu h-90">
           <AdminSidebar />
         </div>
-      )}
+      )} */}   
 
-      {isMobile && (
+      {/* {isMobile && (
         <div className="floating-menu">
           <Button
             variant="primary"
@@ -535,7 +660,7 @@ useEffect(() => {
             </div>
           )}
         </div>
-      )}
+      )} */}
 
       {/* Main Content */}
       <div className={`container ${isMobile ? 'w-100' : 'w-75'}`}>
@@ -617,6 +742,7 @@ useEffect(() => {
     <tr>
       <th style={{ background: "green", color: "white" }}>Sl. No</th>
       <th style={{ background: "green", color: "white" }}>Item Name</th>
+      <th style={{ background: "green", color: "white" }}>Photo</th>
       <th style={{ background: "green", color: "white" }}>Code</th>
       <th style={{ background: "green", color: "white" }}>Category</th>
       <th style={{ background: "green", color: "white" }}>MRP</th>
@@ -630,11 +756,30 @@ useEffect(() => {
       <th style={{ background: "green", color: "white" }}>Total</th>
     </tr>
   </thead>
+  {/* HANDYMAN */}
   <tbody>
     {items.map((item, idx) => (
       <tr key={idx}>
         <td>{item.serial}</td>
         <td>{item.name}</td>
+        <td>
+          {imageUrls[item.id] ? (
+            <img
+              src={imageUrls[item.id]}
+              alt={item.name}
+              onClick={() => handleImageClick(imageUrls[item.id], item)}
+              style={{
+                width: "50px",
+                height: "50px",
+                objectFit: "contain",
+                borderRadius: "6px",
+                border: "1px solid red",
+              }}
+            />
+          ) : (
+            <span className="text-muted small">Loading</span>
+          )}
+        </td>
         <td>{item.code}</td>
         <td>{item.category}</td>
         <td>₹{item.mrp}</td>
@@ -648,7 +793,7 @@ useEffect(() => {
   <tfoot>
      {cashbackAmount > 0 && (
     <tr>
-      <td colSpan="8" className="text-end fw-bold text-danger">
+      <td colSpan="9" className="text-end fw-bold text-danger">
         Cashback Applied:
       </td>
       <td className="fw-bold text-success">
@@ -658,13 +803,13 @@ useEffect(() => {
   )}
    {showFreeSugar && (
     <tr>
-      <td colSpan="9" className="text-end fw-bold text-success">
+      <td colSpan="10" className="text-end fw-bold text-success">
         🎁 Give Customer <strong>500 g Sugar FREE</strong>
       </td>
     </tr>
   )}
     <tr>
-      <td colSpan="8" className="text-end fw-bold">
+      <td colSpan="9" className="text-end fw-bold">
         Grand Total:
       </td>
       <td className="fw-bold">     
@@ -674,9 +819,20 @@ useEffect(() => {
   </tfoot>  
 </table>
 <div className="text-end mt-1">
-  <button style={{ background: "green", color: "white", borderRadius: "20px"}} onClick={handleDownloadExcel}>
+  {/*<button style={{ background: "green", color: "white", borderRadius: "20px"}} onClick={handleDownloadExcel}>
     Download Excel
-  </button>
+  </button> */}
+  <button
+          style={{
+            background: "red",
+            color: "white",
+            borderRadius: "20px",
+            padding: "6px 14px",
+          }}
+          onClick={handleDownloadPDF}
+        >
+          Download PDF
+        </button>
   {/* <button
                   style={{
                     background: "red",
@@ -837,6 +993,39 @@ useEffect(() => {
           </form>
         </div>
       </div>
+       <Modal
+              show={showZoomModal}
+              onHide={() => {
+                setShowZoomModal(false);
+                setZoomProduct(null);
+              }}
+              centered
+            >
+              <button
+                className="close-button text-end mt-0"
+                onClick={() => {
+                  setShowZoomModal(false);
+                  setZoomProduct(null);
+                }}
+              >
+                &times;
+              </button>
+              <Modal.Body className="text-center">
+                <div className="zoom-container">
+                  <img
+                    src={zoomImage}
+                    alt={zoomProduct?.name || "Zoomed Product"}
+                    className="zoom-image"
+                  />
+                </div>
+                <h6
+                className="text-start fw-bold m-0"
+                style={{ fontSize: "20px" }}
+              >
+                {zoomProduct?.name || ""}
+              </h6>
+              </Modal.Body>
+            </Modal>
       {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {
@@ -861,7 +1050,7 @@ useEffect(() => {
     </>
   );
 };
-
+ 
 export default AdminGroceryOrderPage;
 
 // import React, { useState, useEffect} from "react";
