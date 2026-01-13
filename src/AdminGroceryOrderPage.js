@@ -752,7 +752,7 @@ const handleImageClick = (imageSrc, product) => {
       </th>
       <th style={{ background: "green", color: "white" }}>
         Required <br /> Quantity
-      </th>
+      </th>   
       <th style={{ background: "green", color: "white" }}>Total</th>
     </tr>
   </thead>
