@@ -74,7 +74,7 @@ const showFreeSugar = Number(grandTotal) > 499 && Number(grandTotal) < 998;
  const [showZoomModal, setShowZoomModal] = useState(false);
   const [zoomImage, setZoomImage] = useState("");
   const [zoomProduct, setZoomProduct] = useState(null);
-
+// HANDYMAN
 useEffect(() => {
     const fetchCart = async () => {
       if (!groceryItemId) return;
@@ -752,10 +752,11 @@ const handleImageClick = (imageSrc, product) => {
       </th>
       <th style={{ background: "green", color: "white" }}>
         Required <br /> Quantity
-      </th>
+      </th>   
       <th style={{ background: "green", color: "white" }}>Total</th>
     </tr>
   </thead>
+  {/* HANDYMAN */}
   <tbody>
     {items.map((item, idx) => (
       <tr key={idx}>

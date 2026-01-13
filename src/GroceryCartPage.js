@@ -90,17 +90,19 @@ function getCustomLimit(name) {
     n === "royal gala apple 2 pcs (200-300 g)" ||
     n === "banana 4 pcs" ||
     n === "fresh orange imported (narinja) 2 pcs (400-450 g)" ||
-    n === "freedom refined sunflower oil bottle 1 l"  ||
+    n === "freedom refined sunflower oil bottle 1 l" ||
+    n === "onion (ulligadda) 1kg" ||
+    n === "tomato 500g" ||
     n === "guava 2 pcs (600-700 g)" ||
-    n === "tomato 500 g" ||
     n === "heritage total curd 400 g" || 
     n === "mosambi (batthayi) 4 pcs" ||
+    n === "mosambi (batthayi) 2 pcs" ||
     n === "pomegranate 3 pcs (300-400 g)" ||
-    n === "fresh orange imported (narinja) 3 pcs (400-450 g)" ||
-    n === "onion (ulligadda) 1kg"
-    ) return 1;
+    n === "fresh orange imported (narinja) 3 pcs (400-450 g)" 
+  ) return 1;
   if (
-    n === "coriander leaves (kottimeera) 70-80 g" ||
+    n === "cucumber (dosakaya) 250 g" ||
+     n === "coriander leaves (kottimeera) 70-80 g" ||
   n === "curry leaves (karivepaku) 100 g" ||
   n === "mint Leaves (pudina) 70-80 g" ||
     n === "radish (mulangi) 250-300 g" ||
@@ -130,7 +132,7 @@ function getCustomLimit(name) {
     if (/^https?:\/\//i.test(v)) return "";
     return v.trim();
   }
-  function fileToUrl(filenameOrUrl) {
+  function fileToUrl(filenameOrUrl) {    
     if (!filenameOrUrl) return "";
     if (/^https?:\/\//i.test(String(filenameOrUrl))) return filenameOrUrl;
     return `${IMAGE_DOWNLOAD}${encodeURIComponent(String(filenameOrUrl))}`;
@@ -300,7 +302,6 @@ function getCustomLimit(name) {
     },
     [] 
   );
-
   useEffect(() => {
   const ctrl = new AbortController();
   const tick = () => {
@@ -713,7 +714,7 @@ useEffect(() => {
         </IconButton>
       </div>
       <Divider />
-
+  {/* HANDYMAN */}
       {/* Cart Items */}
       <div
         className="cart-items flex-grow-1"
@@ -876,7 +877,7 @@ useEffect(() => {
         >
           {roundedGrandTotal < MIN_ORDER_TOTAL ? "Add More Items" : "Proceed →"}
         </div>
-
+  {/* HANDYMAN */}
         {/* <div
           style={{
             fontWeight: "500",

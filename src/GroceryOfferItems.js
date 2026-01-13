@@ -23,14 +23,15 @@ const CATEGORY_VEG_FRUITS_OFFERS = [
   normalizeName("Oils & Dals"),
   normalizeName("Atta & Flours"),
 ];
-       
 const LIMIT_RULES = [
+  {match:normalizeName("Cucumber (Dosakaya) 250 g"), limit: 2 },
   {match:normalizeName("Onion (Ulligadda) 1Kg"), limit: 1},
   {match:normalizeName("Coriander leaves (Kottimeera) 70-80 g"), limit: 2},
   {match:normalizeName("Curry Leaves (Karivepaku) 100 g"), limit: 2},
   {match:normalizeName("Mint Leaves (Pudina) 70-80 g"), limit: 2},
   {match:normalizeName("Radish (Mulangi) 250-300 g"), limit: 2},
   {match: normalizeName("Mosambi (Batthayi) 4 Pcs"), limit : 1},
+  {match: normalizeName("Mosambi (Batthayi) 2 Pcs"), limit : 1},
   { match: normalizeName("Pomegranate 3 Pcs (300-400 g)"), limit: 1 },
   { match: normalizeName("Fresh Orange Imported (Narinja) 3 Pcs (400-450 g)"), limit: 1 },
   {match: normalizeName("Heritage Total Curd 400 g"), limit: 1},
@@ -130,7 +131,7 @@ const GroceryOfferItems = () => {
     console.log(imageLoading, checked, grandSummary);
   }, [imageLoading, checked, grandSummary]);
 
-  const MIN_ORDER_TOTAL = normalizeName(selectedCategory) === normalizeName("Grocery Offers") ? 150 : 100;
+  const MIN_ORDER_TOTAL = normalizeName(selectedCategory) === normalizeName("Grocery Offers") ? 100 : 50;
   const OFFERS = "Offers";
   const encodedCategory = OFFERS;
 
@@ -460,7 +461,7 @@ const GroceryOfferItems = () => {
             </span>
           </h1>
         </div>
-
+  {/* HANDYMAN */}
         <div
           className="wrapper d-flex"
           style={{ marginTop: isMobile ? "65px" : "170px" }}
@@ -485,6 +486,7 @@ const GroceryOfferItems = () => {
               )}
             </div>
           )}
+  {/* HANDYMAN */}
 
           <div className={`container ${isMobile ? "w-100" : "w-75"} `}>
             <div
