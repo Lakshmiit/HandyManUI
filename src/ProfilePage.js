@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useRef} from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import Carousel from "react-bootstrap/Carousel";
 import { Carousel as BsCarousel } from "bootstrap";
+import Carousel from "react-bootstrap/Carousel";
 import './App.css';
-import { Modal, Button} from 'react-bootstrap';                                     
+import { Modal, Button} from 'react-bootstrap';
 import Confetti from "react-confetti";
-import AddIcCallIcon from '@mui/icons-material/AddIcCall';
 // import LocationOnIcon from '@mui/icons-material/LocationOn';
 // import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 // import NotificationBell from "./NotificationsBell";
@@ -28,18 +27,20 @@ import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-// import Banner from './img/ChristmasVideo.mp4';
-// import Banner2 from './img/ChickenOffers.jpeg';
+// import Banner from './img/Saturday.jpeg';
+// import Banner2 from './img/MilkOffers.jpeg';   
+import Banner2 from './img/ChickenOffers.jpeg';
 // import Banner2 from './img/DrinkOffers.jpeg';   F
-// import Banner3 from './img/45AboveOffers.jpeg';       
+// import Banner3 from './img/Above45.jpeg'; 
+import BannerVideo from './img/PongalOffers.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
 // import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 // import Banner3 from './img/banner-4.jpg';  
-import { useNavigate, useParams } from "react-router-dom"; 
+import { useNavigate, useParams } from "react-router-dom";   
 import Logo from "./img/Hm_Logo 1.png";
 import SearchIcon from "@mui/icons-material/Search";
 // import ArticleIcon from '@mui/icons-material/Article';
-// import AnnouncementIcon from '@mui/icons-material/Announcement';
+import AnnouncementIcon from '@mui/icons-material/Announcement';
 import LogoutIcon from "@mui/icons-material/Logout";   
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
@@ -89,12 +90,21 @@ import DwakraProducts from './img/DwakraLogo.jpeg';
 import Banner1Img from './img/50Cashback.jpeg';
 import Banner2Img from './img/100Cashback.jpeg';
 import Banner3Img from './img/300Cashback.jpeg';
-// import DeliveryImg from './img/DeliveryPoster.jpeg';
-import BannerVideo from './img/PongalOffers.mp4';
 import UnbeatableImg from './img/unbeatable.jpeg';
-import Above45Img from './img/Above45.jpeg';          
+import Above45Img from './img/Above45.jpeg';       
+// import DeliveryImg from './img/DeliveryPoster.jpeg';
+  
+// import DeliveryImg from './img/DeliveryPoster.jpeg';      
+// import BathImg from './img/bathImg.jpeg';
+// import FlourImg from './img/FlourImg.jpeg';
+// import FaceImg from './img/FaceImg.jpeg';  
+// import NeedImg from './img/NeedsImg.jpeg';
+// import RiceImg from './img/Ravva.jpeg';  
+// import CoffeeImg from './img/Coffee.jpeg';
+// import ThumsUpBottle from './img/thumsup.jpeg';
 //import ReedemCode from "./ReedemCode";     
 // import RedeemIcon from "@mui/icons-material/Redeem";
+
 // function ReedemCode({
 //   initialOpen = true,
 //   userPoints = 0,          
@@ -859,19 +869,28 @@ const categories = [
 { label: 'Electronics Appliances', value: 'Electronics appliances', image: Electronics },   
 { label: 'Plumbing & Sanitary', value: 'Sanitary items', image: Plumbing },         
 { label: 'Hardware Items', value: 'Hardware items', image: Hardware },      
-];
-    
+]; 
+       
 const groceryCategories = [
-   { label: 'Unbeatable 10 Offers', value: 'Grocery Offers', image: UnbeatableImg },
-{ label: 'Above 45% Offers', value: 'Offers', image: Above45Img },
-  { label: 'Kitchenware Appliances', value: 'Kitchenware Appliances', image: KitchenImg },
-  // {label: (<>  Chicken<br />  Pre-Booking</>),value: 'Chicken',image: ChickenImg},
-{ label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
+  { label: 'Unbeatable 10 Offers', value: 'Grocery Offers', image: UnbeatableImg },
+  { label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
+  {label: (
+    <>
+      Chicken<br />
+      Pre-Booking
+    </>
+  ),
+  value: 'Chicken',image: ChickenImg
+},
+  // { label: 'Chicken', value: 'Chicken', image: ChickenImg },
    { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
-  { label: 'Fruits', value: 'Fruits', image: FruitsImg },                    
+  { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
   { label: 'Ice Creams', value: 'Ice Creams', image: IcecreamImg },
+  { label: 'Above 45% Offers', value: 'Offers', image: Above45Img },
+  // { label: 'Home Appliances', image: KitchenImg },
+  { label: 'Kitchenware Appliances', value: 'Kitchenware Appliances', image: KitchenImg },
   { label: 'Atta & Flours', value: 'Atta & Flours', image: AttaImg },
-  { label: 'Rice & Ravva', value: 'Rice & Ravva', image: RavvaImg }, 
+  { label: 'Rice & Ravva', value: 'Rice & Ravva', image: RavvaImg },    
    { label: 'Oils & Dals', value: 'Oils & Dals', image: OilsImg },
   { label: 'Sugar, Salt & Jaggery', value: 'Sugar, Salt & Jaggery', image: SugarImg }, 
   { label: 'Masala, Spices & Pickles', value: 'Masala, Spices & Pickles', image: MasalaImg },
@@ -893,7 +912,6 @@ const groceryCategories = [
   { label: 'Kids Zone', value: 'Kids Zone', image: KidsImg },
   { label: 'Health Care', value: 'Health Care', image: HealthImg },
   { label: 'DWCRA Products', value: 'DWCRA', image: DwakraProducts },
-  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
 ];
 
 const collectionsCategories = [
@@ -935,7 +953,7 @@ const ProfilePage = () => {
     const [selectedCategory, setSelectedCategory] = useState(null);
      const videoRef = useRef(null);
 // const [isMuted] = useState(true);
-// const [isMuted, setIsMuted] = useState(true); 
+// const [isMuted, setIsMuted] = useState(true);
 const [unreadCount, setUnreadCount] = useState(0);
 const [messageCounts, setMessageCounts] = useState({
   news:     0,
@@ -945,7 +963,7 @@ const [messageCounts, setMessageCounts] = useState({
 const [grocery, setGrocery] = useState([]);
 const [cartSummary, setCartSummary] = useState({
   items: 0,
-  total: 0,
+  total: 0,  
   products: [],
 }); 
 // const [dress] = useState([]);
@@ -1008,11 +1026,13 @@ searchQuery.trim().length > 0 ? filteredProducts : products;
 const [imageLoading, setImageLoading] = useState(true);
 const [placeholderIndex, setPlaceholderIndex] = useState(0);
 const carouselRef = useRef(null);
+// const carouselInstance = useRef(null);
 const firstCategories = groceryCategories.slice(0, 6);
 const secondCategories = groceryCategories.slice(6, 31);
 // const thirdCategories = groceryCategories.slice(15, 24);
 // const fourthCategories = groceryCategories.slice(24, 30);
-const HEADER_HEIGHT = window.innerWidth <= 768 ? 70 : 200;
+const HEADER_HEIGHT = window.innerWidth <= 768 ? 135 : 360;
+
 const placeholderSuggestions = [
   'Search "Milk"',
   'Search "Freedom Refined Sunflower Oil"',
@@ -1043,12 +1063,12 @@ useEffect(() => {
 }, [placeholderSuggestions.length]);
 
 useEffect(() => {
-  console.log( messageCounts, imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery,error, unreadCount, showMenu, products, selectedCategory, dress);
-}, [messageCounts, imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery, error,unreadCount, showMenu, products, selectedCategory, dress]);
+  console.log( imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery,error, unreadCount, showMenu, products, selectedCategory, dress);
+}, [imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery, error,unreadCount, showMenu, products, selectedCategory, dress]);
  
 function getItemTime(p) {
   if (p?.date) {
-    const t = Date.parse(p.date);        
+    const t = Date.parse(p.date); 
     if (!Number.isNaN(t)) return t;
   }
 
@@ -1174,18 +1194,34 @@ useEffect(() => {
     controller.abort();
     if (pollId) clearInterval(pollId);
   };
-}, [selectedCategory]); 
+}, [selectedCategory]); // use selectedCategory only
+
+// const cartProducts = React.useMemo(() => {
+//   try {
+//     const raw = localStorage.getItem("allCategories");
+//     if (!raw) return [];
+//     const categories = JSON.parse(raw);   
+//     return categories.flatMap(cat =>
+//       (cat.products || []).filter(p => Number(p.qty) > 0)
+//     );
+//   } catch {
+//     return [];
+//   }
+// }, []);
 
 useEffect(() => {
   const categories = JSON.parse(localStorage.getItem("allCategories") || "[]");
+
   categories.forEach(cat => {
     cat.products.forEach(async (p) => {
       if (!p.imageFile || cartImages[p.id]) return;
+
       try {
         const res = await fetch(
           `${IMAGE_API}${encodeURIComponent(p.imageFile)}`
         );
         const json = await res.json();
+
         if (json?.imageData) {
           setCartImages(prev => ({
             ...prev,
@@ -2203,7 +2239,7 @@ useEffect(() => {
   }
 }, []);
 
-// const totalUnreadMessages = messageCounts.news + messageCounts.buysell + messageCounts.tolet;
+const totalUnreadMessages = messageCounts.news + messageCounts.buysell + messageCounts.tolet;
 
   // const toggleMute = () => {
   //   const video = videoRef.current;
@@ -2294,7 +2330,7 @@ const handleGroceryCategoryClick = async (category) => {
     setError("");
     const encodedCategory = encodeURIComponent(value);
     localStorage.setItem("encodedCategory", encodedCategory);
-   if (value === "Grocery Offers") {
+    if (value === "Grocery Offers") {
       navigate(`/groceryOffers/${userType}/${userId}`);
       return;  
     }
@@ -2305,6 +2341,7 @@ const handleGroceryCategoryClick = async (category) => {
     setError(`Oops! No grocery items found for ${value} category.`);
   }
 };
+
 
 //  const goToCategory = (categoryValue, route = "groceryOffers") => {
 //     const encodedCategory = encodeURIComponent(categoryValue);
@@ -2542,9 +2579,6 @@ const updateLocalStorageCart = (product, qty) => {
 
   localStorage.setItem("allCategories", JSON.stringify(stored));
 };
-const handleCustomerCareCall = () => {
-    window.location.href = "tel:6281198953";
-  };
 
   return (
     <>
@@ -2572,7 +2606,7 @@ const handleCustomerCareCall = () => {
        {/* {isMobile && ( */}
         <div className="d-flex align-items-center">
           {/* Fixed Chat Icon at bottom right */}
-            {/* <div
+            <div
           className="blinking-icon"
           style={{
             backgroundColor: '#03c03cb3',
@@ -2605,23 +2639,8 @@ const handleCustomerCareCall = () => {
               {totalUnreadMessages}
             </span>
           )}
-        </div> */}
-        {/* Customer Care Number */}
-          <div
-                className="d-flex align-items-start"
-                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: "pointer" }}
-                // style={{ cursor: "pointer", marginTop: "2px" }}
-                onClick={handleCustomerCareCall}
-              >
-                <AddIcCallIcon style={{ color: "green", fontSize: "30px" }} />
-                <small                  
-                  style={{
-                    display: "flex",      
-                    flexDirection: "column",
-                    alignItems: "center",
-                  }}
-                ></small>
-              </div>
+        </div>
+
   {/* Profile Image */}
   <div className="profile-img-wrapper">
     <img
@@ -2966,7 +2985,6 @@ const handleCustomerCareCall = () => {
                   Is Pickup
                 </label>
               </div>
-  {/* HANDYMAN */}
 
               {/* Go to Maps */}
               {t.isPickup && t.latitude && t.longitude && (
@@ -3016,7 +3034,7 @@ const handleCustomerCareCall = () => {
             openOverride={redeemOpen || showRedeem}
             onClose={() => {
               setRedeemOpen(false);
-              setShowRedeem(false);
+              setShowRedeem(false);   
             }}
             showTrigger={false}
             initialOpen={false}
@@ -3197,8 +3215,8 @@ const handleCustomerCareCall = () => {
     ) : (
       <span className="text-muted small">Loading Image</span>
     )}
-  {/* HANDYMAN */}
-    {isOutOfStock && (    
+
+    {isOutOfStock && (
       <div
         className="position-absolute d-flex justify-content-center align-items-center"
         style={{
@@ -3319,7 +3337,7 @@ const handleCustomerCareCall = () => {
 </div>
     );
   })}
-{/* Cart Bar */}
+{/* Cart Bar */}               
 {(() => {
   // Safe reader that ALWAYS returns an array of categories
   const readAllCategories = () => {
@@ -3408,7 +3426,7 @@ const handleCustomerCareCall = () => {
         >
           &times;
         </button>
-        <Modal.Body className="text-center">
+        <Modal.Body className="text-center">     
           <div className="zoom-container">
             <img src={zoomImage} alt={zoomProduct?.name || "Zoomed Product"} className="zoom-image" />
           </div>
@@ -3432,7 +3450,6 @@ const handleCustomerCareCall = () => {
             </div>
             </div>
           )}
-            {/* HANDYMAN */}
           {/* 🔍 Grocery Search */}
           {/* <div style={{ position: "relative", marginBottom: "12px" }}>
             <input
@@ -3513,7 +3530,6 @@ const handleCustomerCareCall = () => {
     </div>
   </div>
 )}
-  {/* HANDYMAN */}
                         {/* <img
                           src={ChristmasWish}
                           className="d-block w-100 img-fluid rounded mb-1"
@@ -3602,44 +3618,38 @@ const handleCustomerCareCall = () => {
                   />
                   </div>   
                 </div>  */}
-                 <div className="carousel-item active mt-0">
-                          <video
-                            ref={videoRef}
-                            className="d-block w-100 rounded"     
-                            style={{ objectFit: "cover" }}
-                            autoPlay
-                            playsInline
-                            muted
-                            loop
-                            // onClick={(e) => {
-                            //   e.stopPropagation();
-                            //   e.preventDefault();
-                            //   const encodedCategory = encodeURIComponent("Christmas Offers");
-                            //   localStorage.setItem("encodedCategory", encodedCategory);
-                            //   navigate(`/groceryChristmasOffers/${userType}/${userId}`, {
-                            //     state: { encodedCategory },
-                            //   });
-                            // }}
-                          onEnded={() => {
-                            if (!carouselRef.current) return;
-                            const carousel =
-                              BsCarousel.getOrCreateInstance(carouselRef.current);
-                            carousel.next();
-                            carousel.cycle(); 
-                          }}
-                          >
-                            <source src={BannerVideo} type="video/mp4" />
-                          </video>
-                          {/* <img
-                          src={Banner2} 
-                          className="d-block w-100 img-fluid rounded mb-2"
-                          style={{ objectFit: "contain" }}
-                          alt="Poster"
-                        />  */}
-                        </div>
+                 {/* <div className="carousel-item ">
+                    <video
+                      ref={videoRef}
+                      className="d-block w-100 rounded"
+                      style={{ width: '90%', height: 'auto', objectFit: 'cover' }}
+                      autoPlay
+                      // loop
+                      playsInline
+                      muted
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();  
+                        const encodedCategory = encodeURIComponent("Christmas Offers");
+                        localStorage.setItem("encodedCategory", encodedCategory);
+                        navigate(`/groceryChristmasOffers/${userType}/${userId}`, {
+                          state: { encodedCategory },
+                        });
+                      }}
+                       onEnded={() => {
+                          const carousel = document.querySelector('#productCarousel');
+                          if (carousel) {
+                            const bsCarousel = window.bootstrap.Carousel.getOrCreateInstance(carousel);
+                            bsCarousel.next();
+                          }
+                        }}                     
+                           // muted={isMuted}
+                    >
+                      <source src={BannerVideo} type="video/mp4" />
+                    </video> */}
                     {/* <button
                       onClick={toggleMute}
-                      style={{   
+                      style={{
                         position: 'absolute',    
                         bottom: '20px',
                         right: '20px' ,
@@ -3684,31 +3694,76 @@ const handleCustomerCareCall = () => {
               </div>
               </div>  
               </div>  */}
+              {/* <div style={{ cursor: "pointer"}}>
+                        <img
+                          src={DeliveryImg}
+                          className="d-block w-100 img-fluid rounded mb-2"
+                          style={{ objectFit: "contain" }}
+                          alt="Poster"
+                        /> 
+                      </div> */}
+                      <div className="carousel-item active mt-0">
+                          <video
+                            ref={videoRef}
+                            className="d-block w-100 rounded mb-2"     
+                            style={{ objectFit: "cover" }}
+                            autoPlay
+                            playsInline
+                            muted
+                            loop
+                            // onClick={(e) => {
+                            //   e.stopPropagation();
+                            //   e.preventDefault();
+                            //   const encodedCategory = encodeURIComponent("Christmas Offers");
+                            //   localStorage.setItem("encodedCategory", encodedCategory);
+                            //   navigate(`/groceryChristmasOffers/${userType}/${userId}`, {
+                            //     state: { encodedCategory },
+                            //   });
+                            // }}
+                          onEnded={() => {
+                            if (!carouselRef.current) return;
+                            const carousel =
+                              BsCarousel.getOrCreateInstance(carouselRef.current);
+                            carousel.next();
+                            carousel.cycle(); 
+                          }}
+                          >
+                            <source src={BannerVideo} type="video/mp4" />
+                          </video>
+                          <img
+                          src={Banner2} 
+                          className="d-block w-100 img-fluid rounded mb-2"
+                          style={{ objectFit: "contain" }}
+                          alt="Poster"
+                        /> 
+                        </div>
+                         {/* <div style={{ cursor: "pointer"}}>
+                        
+                      </div>  */}
               {/* Top Carousel Section */}
                 {/* <div className="container">
                   <div>
-                    PRODUCT CAROUSEL
                     <div
                     ref={carouselRef}
                       id="productCarousel"
-                      className="carousel slide mb-2 rounded"
-                      data-bs-ride="carousel"
-                      data-bs-interval="3000"
-                      data-bs-pause="false"
-                      data-bs-wrap="true"
-                      data-bs-touch="true"
-                    >
-                      Indicators
-                      <div className="carousel-indicators">
+                      className="carousel slide mb-2 rounded" */}
+                      {/* // data-bs-ride="carousel"
+                      // data-bs-interval="3000"
+                      // data-bs-pause="false"
+                      // data-bs-wrap="true"
+                      // data-bs-touch="true"
+                    // > */}
+                      {/* Indicators */}
+                      {/* <div className="carousel-indicators">
                         <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="0" className="active" aria-current="true"></button>
-                        <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="1"></button>
-                        <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="2"></button>
-                        <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="3"></button>
-                      </div>
-                      Carousel Items
-                      <div className="carousel-inner">
-                        Slide 1
-                        <div
+                        <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="1"></button> */}
+                        {/* <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="2"></button> */}
+                        {/* <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="3"></button> */}
+                      {/* </div> */}
+                      {/* Carousel Items */}
+                      {/* <div className="carousel-inner"> */}
+                        {/* Slide 1 */}
+                        {/* <div
                         className="carousel-item active"
                         onClick={() => goToCategory("Grocery Offers", "groceryOffers")}
                         style={{ cursor: "pointer"}}
@@ -3719,8 +3774,8 @@ const handleCustomerCareCall = () => {
                           style={{ objectFit: "contain" }}
                           alt="Slide 1"
                         />
-                      </div>
-                        <div 
+                      </div> */}
+                        {/* <div 
                           className="carousel-item active"
                           onClick={() => goToCategory("Chicken Offers", "groceryOffers")}
                           style={{ cursor: "pointer" }}
@@ -3731,9 +3786,9 @@ const handleCustomerCareCall = () => {
                             style={{ objectFit: "contain" }}
                             alt="Slide 1"
                           />
-                        </div>
-                        Slide 2 - Video
-                        <div className="carousel-item">
+                        </div> */}
+                        {/* Slide 2 - Video */}
+                        {/* <div className="carousel-item">
                           <video
                             ref={videoRef}
                             className="d-block w-100 rounded"
@@ -3760,10 +3815,10 @@ const handleCustomerCareCall = () => {
                           >
                             <source src={BannerVideo} type="video/mp4" />
                           </video>
-                        </div>
+                        </div> */}
 
-                        Slide 3
-                        <div className="carousel-item">
+                        {/* Slide 3 */}
+                        {/* <div className="carousel-item">
                           <img
                             src={Banner3}
                             className="d-block w-100 img-fluid rounded"
@@ -3771,10 +3826,10 @@ const handleCustomerCareCall = () => {
                             style={{ objectFit: "contain" }}
                             alt="Slide 3"
                           />
-                        </div> 
-                      </div>
-                      Controls
-                      <button
+                        </div>
+                      </div> */}
+                      {/* Controls */}
+                      {/* <button
                         className="carousel-control-prev"
                         type="button"
                         data-bs-target="#productCarousel"
@@ -3792,7 +3847,6 @@ const handleCustomerCareCall = () => {
                         <span className="carousel-control-next-icon custom-carousel-icon"></span>
                         <span className="visually-hidden">Next</span>
                       </button>
-
                     </div>  
                   </div>
                 </div> */}
@@ -3808,19 +3862,316 @@ const handleCustomerCareCall = () => {
                 🎁 Refer & Earn ₹100
               </button>
             </div> */}
+            {/* <div className="d-flex flex-column align-items-center gap-3">
+                {/* Big Sale Strip */}
+              {/* <button
+                type="button"
+                onClick={() => goToCategory("Offers", "groceryOffers")}
+                className="redeem-ribbon-btn mt-0 blinking-text"
+                aria-label="Open Redeem Offer"
+              >
+                🎉 30% ABOVE OFF – Nov Month Sale! 🎉
+              </button> */}
+            {/* </div> */} 
+
 <div className="container"  style={{
     // padding: isMobile ? "2px" : "0px",
     // borderRadius: "5px",
     minHeight: "100vh",
-      marginTop: `${HEADER_HEIGHT}px`,
+    marginTop: `${HEADER_HEIGHT}px`,
     // paddingTop: isMobile ? "70px" : "0px"
     paddingTop: isMobile ? `${MOBILE_PADDING_TOP}px` : "0px",
   }}>
 
-  <div className="shadow-lg p-2 rounded-5 mb-1 text-center bg-transparent border-0">
-    <h5 className="fw-bold" style={{color: "#ff5722", fontSize: "20px"}}>
+  {/* <div
+  className="shadow-lg p-2 rounded-5 mb-1 text-center border-0">
+    <h5 className="deal-3d">🎉 CRAZY DEALS 🎉</h5>
+      <div style={{color: "#ff5722", fontSize: "14px", fontWeight: "500"}}>
+        Buy Monthly Groceries 
+        <span style = {{ fontSize: "18px", fontWeight: "700"}}> ₹1999 </span> 
+        Get Extra Discount 
+        <span style = {{ fontSize: "18px", fontWeight: "700"}}> ₹250</span>
+      </div>
+     <div className="row row-cols-3 row-cols-md-5 g-1">
+      {offerCategories.map((cat) => {
+        return (  
+          <div   
+            className="col"  
+            key={cat.label}  
+            style={{ cursor: "pointer" }}  
+            onClick={() => handleCrazyDealsGroceryClick(cat)}>
+            <div
+              className="OfferIcon-card border-0 shadow-sm text-center d-flex flex-column align-items-center justify-content-between"
+              style={{
+                height: isMobile ? "120px" : "140px",
+                width: isMobile ? "90px" : "120px",
+                cursor: "pointer",
+                opacity: 1,
+                pointerEvents: "auto"
+              }}
+            >
+              <img
+                src={cat.image}
+                alt={cat.label}
+                style={{
+                  height: "80px",
+                  width: "80px",
+                  borderRadius: "8px",
+                  marginTop: "2px",
+                  objectFit: "cover",
+                }}
+              />
+            </div>
+          </div>
+        );
+      })}
+    </div>
+    <span style={{color: "#ff5722", fontSize: "14px", fontWeight: 500}}>Offer Valid Till 10th December!</span>
+</div>  */}
+  {/* Grocery Categories Section className="container my-3"*/}
+  {/* {(activeGroceryCategory || grocerySearch) && (
+  <div
+    style={{ cursor: "pointer", color: "green", marginBottom: "10px" }}
+    onClick={() => {
+      setActiveGroceryCategory(null);
+      setGrocerySearch("");
+    }}
+  >
+    ← Back to Categories
+  </div>
+)}
+{groceryLoading && <p>Loading products...</p>}
+<div className="row">
+  {filteredGroceryProducts.map((p) => (
+    <div key={p.id} className="col-6 col-md-3 mb-3">
+      <div className="border rounded p-2 h-100">
+        <img
+          src={getGroceryImage(p)}
+          alt={p.name}
+          onError={(e) => {
+            e.target.src = "/no-image.png";
+          }}
+          style={{
+            height: "80px",
+            objectFit: "contain",
+            width: "100%",
+          }}
+        />
+        <div style={{ fontSize: "12px", fontWeight: "bold", minHeight: "36px" }}>
+          {p.name}
+        </div>
+        <div style={{ fontSize: "12px" }}>
+          <b className="text-success">₹{Math.round(p.afterDiscount)}</b>{" "}
+          <s className="text-muted">₹{p.mrp}</s>
+        </div>
+       {groceryQty[p.id] ? (
+        <div className="d-flex justify-content-between align-items-center mt-2">
+          <button
+            className="btn btn-sm btn-outline-danger"
+            onClick={() => decreaseQty(p)}
+          >
+            −
+          </button>
+          <span className="fw-bold">
+            {groceryQty[p.id]}
+          </span>
+          <button
+            className="btn btn-sm btn-outline-success"
+            onClick={() => increaseQty(p)}
+            disabled={groceryQty[p.id] >= Number(p.stockLeft)}
+          >
+            +
+          </button>
+        </div>
+      ) : (
+        <button
+          className="btn btn-sm btn-outline-success w-100 mt-2"
+          onClick={() => increaseQty(p)}
+          disabled={Number(p.stockLeft) <= 0}
+        >
+          ADD
+        </button>
+      )}
+      </div>
+    </div>
+  ))}
+</div>
+{!groceryLoading &&
+  (activeGroceryCategory || grocerySearch) &&
+  filteredGroceryProducts.length === 0 && (
+    <p className="text-center text-muted mt-4">
+      No products found
+    </p>
+)} */}   
+
+  <div className="shadow-lg p-2 rounded-5 text-center bg-transparent border-0">
+    <h5 className="fw-bold mb-1" style={{color: "#ff5722", fontSize: "20px"}}>
       Lakshmi Mart  
-    </h5>
+    </h5> 
+    {/* <div className="row row-cols-3 row-cols-md-5 g-1">
+  {groceryCategories.map((cat) => {
+    //  const isBlockedCategory  = cat.value === "Vegetables & Fruits";
+    return (
+      <div
+        className="col"
+        key={cat.label}
+        onClick={() => handleGroceryCategoryClick(cat)}
+        style={{ cursor: "pointer" }}     
+        // onClick={() => !isBlockedCategory  && handleGroceryCategoryClick(cat)}
+        // style={{ cursor: isBlockedCategory  ? "not-allowed" : "pointer" }}     
+      >
+        <div
+          className="groceryIcon-card border-0 shadow-sm text-center d-flex flex-column align-items-center justify-content-between"
+          style={{
+            height: isMobile ? "120px" : "140px",
+            width: isMobile ? "90px" : "120px",
+            cursor: "pointer",
+            padding: "6px",
+            margin: "5px",
+            opacity: 1, 
+            pointerEvents: "auto", 
+          }}
+        >
+          <img
+            src={cat.image}
+            alt={cat.label}
+            style={{
+              height: "80px",
+              width: "80px",
+              borderRadius: "8px",
+              marginTop: "2px",
+              objectFit: "cover",
+            }}
+          />
+          <span
+            style={{
+              fontSize: "11px",
+              fontWeight: "500",
+              marginTop: "5px",
+              minHeight: "24px", 
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              lineHeight: "1.2",
+            }}
+          >
+            {cat.label}
+          </span>
+        </div>
+      </div>
+    );
+  })}
+</div> */}
+{/* <div className="shadow-lg p-2 rounded-5 mb-1 bg-transparent"> */}
+  {/* ---------- FIRST CATEGORIES ---------- */}
+  {/* <div className="row row-cols-3 row-cols-md-5 g-1">
+      {firstCategories.map((cat) => {
+    return (
+      <div
+        className="col"
+        key={cat.label}
+        onClick={() => handleGroceryCategoryClick(cat)}
+        style={{ cursor: "pointer" }}     
+       >
+        <div
+          className="groceryIcon-card border-0 shadow-sm text-center d-flex flex-column align-items-center justify-content-between"
+          style={{
+            height: isMobile ? "120px" : "140px",
+            width: isMobile ? "90px" : "120px",
+            cursor: "pointer",
+            padding: "6px",
+            margin: "5px",
+            opacity: 1, 
+            pointerEvents: "auto", 
+          }}
+        >
+          <img
+            src={cat.image}
+            alt={cat.label}
+            style={{
+              height: "80px",
+              width: "80px",
+              borderRadius: "8px",
+              marginTop: "2px",
+              objectFit: "cover",
+            }}
+          />
+          <span
+            style={{
+              fontSize: "11px",
+              fontWeight: "500",
+              marginTop: "5px",
+              minHeight: "24px", 
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              lineHeight: "1.2",
+            }}
+          >
+            {cat.label}
+          </span>
+        </div>
+      </div>
+    );
+  })}
+  </div> */}
+
+  {/* ---------- REMAINING CATEGORIES ---------- */}
+  {/* <div className="row row-cols-3 row-cols-md-5 g-1">
+      {remainingCategories.map((cat) => {
+    return (
+      <div
+        className="col"
+        key={cat.label}
+        onClick={() => handleGroceryCategoryClick(cat)}
+        style={{ cursor: "pointer" }}     
+       >
+        <div
+          className="groceryIcon-card border-0 shadow-sm text-center d-flex flex-column align-items-center justify-content-between"
+          style={{
+            height: isMobile ? "120px" : "140px",
+            width: isMobile ? "90px" : "120px",
+            cursor: "pointer",
+            padding: "6px",
+            margin: "5px",
+            opacity: 1, 
+            pointerEvents: "auto", 
+          }}
+        >
+          <img
+            src={cat.image}
+            alt={cat.label}
+            style={{
+              height: "80px",
+              width: "80px",
+              borderRadius: "8px",
+              marginTop: "2px",
+              objectFit: "cover",
+            }}
+          />
+          <span
+            style={{
+              fontSize: "11px",
+              fontWeight: "500",
+              marginTop: "5px",
+              minHeight: "24px", 
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              lineHeight: "1.2",
+            }}
+          >
+            {cat.label}
+          </span>
+        </div>
+      </div>
+    );
+  })}
+  </div> */}
+{/* </div> */}
 
 <div className="row row-cols-3 row-cols-md-5 g-1">
   {firstCategories.map((cat) => (
@@ -3870,9 +4221,17 @@ const handleCustomerCareCall = () => {
           </span>
         </div>
     </div>
-  ))} 
+  ))}
 </div>
-                    <Carousel interval={2000} touch={true}>
+                     {/* <div style={{ cursor: "pointer"}}>
+                        <img
+                          src={Banner1Img}
+                          className="d-block w-100 img-fluid rounded"
+                          style={{ objectFit: "contain" }}
+                          alt="Cashback"
+                        />
+                      </div> */}
+                      <Carousel interval={2000} touch={true}>
                         <Carousel.Item>
                           <img src={Banner1Img} alt="50 Cashback" className="d-block w-100" />
                         </Carousel.Item>
@@ -3882,16 +4241,9 @@ const handleCustomerCareCall = () => {
                         <Carousel.Item>
                           <img src={Banner3Img} alt="300 Cashback" className="d-block w-100" />
                         </Carousel.Item>
-                      </Carousel>
+                      </
+>
 
-                     {/* <div style={{ cursor: "pointer"}}>
-                        <img
-                          src={Banner1Img}
-                          className="d-block w-100 img-fluid rounded"
-                          style={{ objectFit: "contain" }}
-                          alt="Cashback"
-                        />
-                      </div> */}
 <div className="row row-cols-3 row-cols-md-5 g-1">
   {secondCategories.map((cat) => (
     <div
@@ -3908,7 +4260,7 @@ const handleCustomerCareCall = () => {
             cursor: "pointer",
             padding: "6px",
             margin: "5px",
-            opacity: 1,                  
+            opacity: 1, 
             pointerEvents: "auto", 
           }}
         >
@@ -3932,6 +4284,7 @@ const handleCustomerCareCall = () => {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+
               textAlign: "center",
               lineHeight: "1.2",
             }}
@@ -3949,8 +4302,8 @@ const handleCustomerCareCall = () => {
                           style={{ objectFit: "contain" }}
                           alt="Cashback"
                         />
-                      </div>
-<div className="row row-cols-3 row-cols-md-5 g-1">
+                      </div> */}
+{/* <div className="row row-cols-3 row-cols-md-5 g-1">
   {thirdCategories.map((cat) => (
     <div
        className="col"
@@ -3999,16 +4352,16 @@ const handleCustomerCareCall = () => {
         </div>
     </div>
   ))}
-</div>
- <div style={{ cursor: "pointer"}}>
+</div> */}
+ {/* <div style={{ cursor: "pointer"}}>
                         <img
                           src={Banner3Img}
                           className="d-block w-100 img-fluid rounded"
                           style={{ objectFit: "contain" }}
                           alt="Cashback"
                         />
-                      </div>
-                      <div className="row row-cols-3 row-cols-md-5 g-1">
+                      </div> */}
+                      {/* <div className="row row-cols-3 row-cols-md-5 g-1">
   {fourthCategories.map((cat) => (
     <div
        className="col"
@@ -4560,7 +4913,6 @@ const handleCustomerCareCall = () => {
     </h5>
   </div>
 </Modal.Footer>
-
 {/* <Button
             variant="success"
             onClick={() => {

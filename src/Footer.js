@@ -1,6 +1,6 @@
 import React from "react";
 
-const Footer = () => {
+const Footer = () => {      
   return (
     <footer className="footer" style={{fontSize: "12px"}}>
      <strong> Powered by</strong> <span className="text-warning strong">Lakshmi Sai Service Provider</span>
@@ -9,10 +9,10 @@ const Footer = () => {
        <span className="small">
         <strong> Office Hours :</strong> 06:00 AM-09:00 PM
       </span>
-      {/* <br />
+      {/* <br />            
       <span className="small">
         <strong>Sunday :</strong> 09:00 AM-12:30 PM
-      </span> */}
+      </span> */} 
       <br />  
       <span className="small">
         {" "}

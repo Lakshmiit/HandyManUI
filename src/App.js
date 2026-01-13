@@ -96,8 +96,6 @@ import ChatPage from './ChatPage.js';
 // New Pages  
 import GroceryOfferItems from './GroceryOfferItems.js';
 import GroceryOffersCartPage from './GroceryOffersCartPage.js';
-
-
 import GroceryItems from './GroceryItems.js';
 import AdminUploadGrocery from './AdminUploadGrocery.js';
 import AdminUpdateGrocery from './AdminUpdateGrocery.js';      
@@ -127,9 +125,7 @@ import AdminCollectionNotificationGrid from './AdminCollectionNotificationGrid.j
 import TermsAndConditions from './TermsandConditions.js';
 import PrivacyPolicy from './PrivacyPolicy.js';
 import { getLoginData } from "./utils/auth";
-// import GroceryChristmasOffers from './GroceryChristmasOffers.js';
-// import GroceryChristmasCartPage from './GroceryChristmasCartPage.js';
-
+// import CustomerLocation from "./CustomerLocation.js";
 const PreventBackNavigation = () => {
    const navigate = useNavigate();
    const location = useLocation(); 
@@ -153,12 +149,10 @@ useEffect(() => {
 
     window.history.pushState(null, null, window.location.href);
     window.addEventListener("popstate", handlePopState);
-
     return () => {
       window.removeEventListener("popstate", handlePopState);
     };
   }, []);
-
   return null;
 };
 
@@ -168,7 +162,7 @@ function App() {
        <PreventBackNavigation />   
       <div className="App"> 
         <main>
-          {/* className="mt-100" */}
+          {/* className="mt-100" */}       
           <Routes>
             <Route path="/termsandConditions" element={<TermsAndConditions />} />
             <Route path="/privacyPolicy" element={<PrivacyPolicy />} />
@@ -176,13 +170,9 @@ function App() {
             <Route path="/chatPage/:userType/:userId" element={<ChatPage />} />
             <Route path="/groceryOffers/:userType/:userId" element={<GroceryOfferItems />} />
             <Route path="/groceryOffersCart/:userType/:userId" element={<GroceryOffersCartPage />} />
-            {/* New Pages */}
-            {/* <Route path="/groceryChristmasOffers/:userType/:userId" element={<GroceryChristmasOffers />} />
-            <Route path="/groceryChristmasCart/:userType/:userId" element={<GroceryChristmasCartPage />} /> */}
-
-
+            {/* New Pages */}      
             <Route path="/deliveryPartner/:userType/:userId" element={<DeliveryPartner />} />
-            <Route path="/deliveryTracking/:id" element={<DeliveryTracking />} />
+            <Route path="/deliveryTracking/:id" element={<DeliveryTracking />} />   
             {/* <Route path="/deliveryPartnerDirectory" element={<DeliveryPartnerDirectory />} /> */}
             <Route path="/grocery/:userType/:userId" element={<GroceryItems />} />
             <Route path="/groceryCart/:userType/:userId" element={<GroceryCartPage />} />
@@ -304,6 +294,7 @@ function App() {
             <Route path="/apartmentRaiseTicketActionView/:apartmentRaiseTicketId" element={<ApartmentRaiseActionView />} />
             <Route path="/apartmentNotificationGrid" element={<ApartmentNotificationGrid />} />
             <Route path="/aboutApartmentRaiseTicket/:userType/:userId" element={<AboutApartmentRaiseTicket />} />
+            {/* <Route path="/customerLocation/:fullName/:martId/:userType/:userId/:groceryItemId" element={<CustomerLocation />} /> */}
             </Routes>
         </main>
         {/* <Footer /> */}

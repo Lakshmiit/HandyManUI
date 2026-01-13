@@ -130,46 +130,66 @@ const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;
   const mobile =
     state.mobile ?? loginMeta.mobile ?? localStorage.getItem("mobile") ?? "";
     
-  const CheckFirstOrder = async (mobile) => {
-    if (!mobile) return null;
-    const url = `https://handymanapiv2.azurewebsites.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${encodeURIComponent(
-      mobile
-    )}`;
-    try {
-      const res = await fetch(url);
-      const text = await res.text();
-      console.log("RAW RESPONSE:", text);
-      if (
-        // !text ||
-        // text === "null" ||
-        text.includes("Firstorder Can not be found")
-      ) {
-        return null; 
-      }
-  let parsed;
+//   const CheckFirstOrder = async (mobile) => {
+//     if (!mobile) return null;
+//     const url = `https://handymanapiv2.azurewebsites.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${encodeURIComponent(
+//       mobile
+//     )}`;
+//     try {
+//       const res = await fetch(url);
+//       const text = await res.text();
+//       console.log("RAW RESPONSE:", text);
+//       // Case 1: New User → Backend returns a message string
+//       if (
+//         !text ||
+//         text === "null" ||
+//         text.includes("Firstorder Can not be found")
+//       ) {
+//         return null; // new user
+//       }
+//   let parsed;
+//     try {
+//       parsed = JSON.parse(text);
+//     } catch (err) {
+//       console.warn("Could not parse CheckFirstOrder response:", err);
+//       return null;
+//     }
+//     if (parsed && !Array.isArray(parsed)) {
+//       parsed = [parsed];
+//     }
+//     return Array.isArray(parsed) ? parsed : null;
+//   } catch (error) {
+//     console.error("API ERROR:", error);
+//     return null;
+//   }
+// };
+const CheckFirstOrder = async (mobile) => {
+  if (!mobile) return { isNewUser: true, orders: [] };
+  const url = `https://handymanapiv2.azurewebsites.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${encodeURIComponent(mobile)}`;
+  try {
+    const res = await fetch(url);
+    const text = await res.text();
+    if (
+      !text ||
+      text === "null" ||
+      text.toLowerCase().includes("firstorder can not be found")
+    ) {
+      return { isNewUser: true, orders: [] };
+    }
+    let parsed;
     try {
       parsed = JSON.parse(text);
-    } catch (err) {     
-      console.warn("Could not parse CheckFirstOrder response:", err);
-      return null;
+    } catch {
+      return { isNewUser: true, orders: [] };
     }
-    if (parsed && !Array.isArray(parsed)) {
-      parsed = [parsed];
-    }
-    return Array.isArray(parsed) ? parsed : null;
-  } catch (error) {
-    console.error("API ERROR:", error);
-    return null;
+    const orders = Array.isArray(parsed) ? parsed : [parsed];
+    return { isNewUser: false, orders };
+  } catch (err) {
+    console.error("CheckFirstOrder failed:", err);
+    return { isNewUser: true, orders: [] };
   }
 };
 
-  //     // Case 2: Existing user → JSON data
-  //     return JSON.parse(text);
-  //   } catch (error) {
-  //     console.log("API ERROR:", error);
-  //     return null; // treat error as new user
-  //   }
-  // };
 
   // useEffect(() => {
   //   let cancelled = false;
@@ -347,75 +367,125 @@ const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;
 //     cancelled = true;
 //   };
 // }, [mobile, grandTotal]);
-
 useEffect(() => {
   let cancelled = false;
   (async () => {
     try {
-      const prevOrders = await CheckFirstOrder(mobile);
+      const { isNewUser, orders } = await CheckFirstOrder(mobile);
       if (cancelled) return;
-      const isNew = prevOrders === null;
-      setIsNewUser(isNew);
-      const usedCashbacks = new Set();
-      if (Array.isArray(prevOrders)) {
-        prevOrders.forEach((order) => {
-          const categoryTotal = (order.categories ?? []).reduce(
-            (sum, c) => sum + Number(c?.totalAmount ?? 0),
-            0
-          );
-          const paid = Number(order.grandTotal ?? 0);
-          const diff = Math.round(categoryTotal - paid);
-          if (diff === 50) {
-            usedCashbacks.add(50);
-          }
-          if (diff === 100) {
-            usedCashbacks.add(100);
-            usedCashbacks.add(50);
-          }
-          if (diff === 300) {
-            usedCashbacks.add(300);
-            usedCashbacks.add(50); 
-          }  
-        });
-      }
-      const currentGT = Number(grandTotal) || 0;
+      setIsNewUser(isNewUser);
+      const used = new Set();
+      orders.forEach(order => {
+        const originalTotal = (order.categories ?? []).reduce(
+          (sum, c) => sum + Number(c?.totalAmount ?? 0),
+          0
+        );
+        const paid = Number(order.grandTotal ?? 0);
+        const diff = originalTotal - paid;
+        if (diff >= 300) used.add(300);
+        else if (diff >= 100) used.add(100);
+        else if (diff >= 50) used.add(50);
+      });
+      const gt = Number(grandTotal) || 0;
       let discount = 0;
-      let msg = "";
-      if (currentGT >= 2000 && !usedCashbacks.has(300)) {
+      let message = "";
+      if (gt >= 2000 && !used.has(300)) {
         discount = 300;
-      } else if (currentGT >= 1000 && !usedCashbacks.has(100)) {
+      } 
+      else if (gt >= 1000 && !used.has(100)) {
         discount = 100;
       } 
-      else if (currentGT >= 150 && !usedCashbacks.has(50)) {
+      else if (gt >= 150 && !used.has(50)) {
         discount = 50;
-      } 
-      else {
-        discount = 0; 
-        if (isNew) {
-          msg = "Order ₹150 or more to get ₹50 cashback on your first order!";
-        }
+      }
+      if (discount === 0 && isNewUser) {
+        message = "Order ₹150 or more to get ₹50 cashback on your first order!";
       }
       setFirstOrderDiscount(discount);
-      setCashbackMessage(msg);
-      console.log("✅ Cashback FINAL CHECK:", {
-        usedCashbacks: [...usedCashbacks],
+      setCashbackMessage(message);
+      console.log("✅ Cashback Decision", {
+        isNewUser,
+        usedCashbacks: [...used],
         applied: discount,
-        currentGT,
+        grandTotal: gt
       });
-
     } catch (err) {
-      console.error("Cashback check failed:", err);
-      if (!cancelled) {
-        setFirstOrderDiscount(0);
-        setCashbackMessage("");
-      }
+      console.error("Cashback logic error:", err);
+      setFirstOrderDiscount(0);
+      setCashbackMessage("");
     }
   })();
+  return () => { cancelled = true };
+}, [mobile, grandTotal]);
 
-  return () => {
-    cancelled = true;
-  };
-}, [mobile, grandTotal]);    
+// useEffect(() => {
+//   let cancelled = false;
+//   (async () => {
+//     try {
+//       const prevOrders = await CheckFirstOrder(mobile);
+//       if (cancelled) return;
+//       const isNew = prevOrders === null;
+//       setIsNewUser(isNew);
+//       const usedCashbacks = new Set();
+//       if (Array.isArray(prevOrders)) {
+//         prevOrders.forEach((order) => {
+//           const categoryTotal = (order.categories ?? []).reduce(
+//             (sum, c) => sum + Number(c?.totalAmount ?? 0),
+//             0
+//           );
+//           const paid = Number(order.grandTotal ?? 0);
+//           const diff = Math.round(categoryTotal - paid);
+//           if (diff === 50) {
+//             usedCashbacks.add(50);
+//           }
+//           if (diff === 100) {
+//             usedCashbacks.add(100);
+//             usedCashbacks.add(50);
+//           }
+//           if (diff === 300) {
+//             usedCashbacks.add(300);
+//             usedCashbacks.add(50); 
+//           }  
+//         });
+//       }
+//       const currentGT = Number(grandTotal) || 0;
+//       let discount = 0;
+//       let msg = "";
+//       if (currentGT >= 2000 && !usedCashbacks.has(300)) {
+//         discount = 300;
+//       } else if (currentGT >= 1000 && !usedCashbacks.has(100)) {
+//         discount = 100;
+//       } 
+//       else if (currentGT >= 150 && !usedCashbacks.has(50)) {
+//         discount = 50;
+//       } 
+//       else {
+//         discount = 0; 
+//         if (isNew) {
+//           msg = "Order ₹150 or more to get ₹50 cashback on your first order!";
+//         }
+//       }
+//       setFirstOrderDiscount(discount);
+//       setCashbackMessage(msg);
+//       console.log("✅ Cashback FINAL CHECK:", {
+//         usedCashbacks: [...usedCashbacks],
+//         applied: discount,
+//         currentGT,
+//       });
+
+//     } catch (err) {
+//       console.error("Cashback check failed:", err);
+//       if (!cancelled) {
+//         setFirstOrderDiscount(0);
+//         setCashbackMessage("");
+//       }
+//     }
+//   })();
+
+//   return () => {
+//     cancelled = true;
+//   };
+// }, [mobile, grandTotal]);    
 
 
 const getReferralRecord = async (userId) => {
@@ -849,11 +919,9 @@ const goBackToCart = () => {
         body: JSON.stringify(payload),
       }
     );
-
     if (!response.ok) {
       throw new Error("Failed to update order.");
     }
-
     // If update succeeds, RESET referral points to 0 on the referral record
     if (referralAmount > 0 && referralRec?.id) {
       try {
@@ -915,9 +983,9 @@ const goBackToCart = () => {
       body: JSON.stringify(payload),
     });
 
-    if (!response.ok) {
-      throw new Error('Failed to Update Technician.');
-    }
+    // if (!response.ok) {
+    //   throw new Error('Failed to Update Technician.');
+    // }
     // const data = await response.json();
 localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
   localStorage.removeItem("activeOrderId");
@@ -943,7 +1011,9 @@ localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
   localStorage.removeItem("allCategories");
   localStorage.removeItem(`cartMeta_${groceryItemId}`);
   window.alert(`Thank You for choosing the Lakshmi Mart Services! Your reference order number is ${martId}. Delivery in 45 minutes.`);
-    window.location.href = `/profilePage/${userType}/${userId}`;
+  window.location.href = `/profilePage/${userType}/${userId}`;
+
+    // window.location.href = `/customerLocation/${fullName}/${martId}/${userType}/${userId}/${groceryItemId}`;
 //   shareLocationOnWhatsApp();    
   //   setTimeout(() => {
   //   window.location.href = `/profilePage/${userType}/${userId}`;
@@ -1369,7 +1439,7 @@ const handleCheckboxChange = (value) => {
   </span>
   <h2 className="title text-success mb-0">PAYMENT CONFIRMATION</h2>
 </div>
-  {/* HANDYMAN */}
+
 <div className="d-flex justify-content-between align-items-center">
                                 <label className='mt-2 fs-6 fw-bold'>Address <span className="req_star">*</span></label>
                       {/* Modal */}
@@ -1401,7 +1471,7 @@ const handleCheckboxChange = (value) => {
                                 maxLength="10"
                                 value={mobileNumber}
                                 onChange={(e) => setMobileNumber(e.target.value)}
-                                readOnly
+                                // readOnly
                               />
                               </Form.Group>
                             <Form.Group className="mb-3">
@@ -1769,7 +1839,7 @@ const handleCheckboxChange = (value) => {
     Terms & Conditions & Cancellation Policy
   </button>
 </div>
-  {/* HANDYMAN */}
+
       {/* Modal for Terms and Conditions */}
       {showModals && (
         <div className="modal-overlay">
