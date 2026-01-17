@@ -417,7 +417,7 @@ function getItemTime(p) {
           </h1>
         </div>
 
-        <div className="wrapper d-flex" style={{ marginTop: isMobile ? "65px" : "170px" }}>
+        <div className="wrapper d-flex" style={{ marginTop: isMobile ? "65px" : "250px" }}>
           {/* Sidebar */}
           {!isMobile ? (
             <div className="ml-0 p-0 sde_mnu">
@@ -507,8 +507,24 @@ function getItemTime(p) {
                   📝 Delivery is only for Yendada and Madhurawada.
                 </div>
               )}
+              {selectedCategory === "Chicken" && (
+      <div
+        className="mt-1 rounded-3"
+        style={{
+          backgroundColor: "#e3f2fd",
+          color: "red",
+          fontSize: "13px",
+          fontWeight: "600",
+          border: "1px solid #90caf9",
+        }}
+      > 📝 Chicken Available Pre-Booking Only. <br/>
+        🕒 Pre Booking Orders from Saturday 5:00PM to Sunday 8:00AM. <br/>
+        🛍️ Delivery Time Tomorrow Sunday Between 7:00AM to 10:00AM.
+      </div>
+    )}
             </>
           )}
+          
         </div>
 
           {/* <div className="position-relative flex-grow-1 ms-5">
@@ -531,7 +547,8 @@ function getItemTime(p) {
         onClick={() => navigate(`/profilePage/${userType}/${userId}`)}/>      
         <h4 className="font-bold ">{selectedCategory}</h4>
       </div> */}
-  <div className="d-flex justify-content-end" style={{marginTop: "120px"}}>
+  <div className="d-flex justify-content-end" style={{ marginTop: selectedCategory === "Chicken" ? "230px" : "120px"}}>  
+    {/* style={{marginTop: "120px"}} */}
   <span className="text-success text-xs">
     Selected Qty:{" "}
     <span className="text-danger fw-bold">
