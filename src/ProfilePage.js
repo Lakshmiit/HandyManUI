@@ -91,7 +91,7 @@ import Banner2Img from './img/100Cashback.jpeg';
 import Banner3Img from './img/300Cashback.jpeg';
 // import DeliveryImg from './img/DeliveryPoster.jpeg';
 import BannerVideo from './img/PongalOffers.mp4';
-import UnbeatableImg from './img/IceCreams.jpeg';
+import UnbeatableImg from './img/unbeatable.jpeg';
 import Above45Img from './img/Above45.jpeg';          
 //import ReedemCode from "./ReedemCode";     
 // import RedeemIcon from "@mui/icons-material/Redeem";
