@@ -28,12 +28,12 @@ import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 // import Banner from './img/Saturday.jpeg';
-// import Banner2 from './img/MilkOffers.jpeg';   
-import Banner2 from './img/ChickenOffers.jpeg';
+import Banner2 from './img/MilkOffers.jpeg';   
+// import Banner2 from './img/ChickenOffers.jpeg';
 // import Banner2 from './img/DrinkOffers.jpeg';   F
 // import Banner3 from './img/Above45.jpeg'; 
 // import BannerVideo from './img/PongalOffers.mp4';
-// import VolumeOffIcon from '@mui/icons-material/VolumeOff';    
+// import VolumeOffIcon from '@mui/icons-material/VolumeOff';       
 // import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 // import Banner3 from './img/banner-4.jpg';  
 import { useNavigate, useParams } from "react-router-dom";   
@@ -1031,7 +1031,7 @@ const firstCategories = groceryCategories.slice(0, 6);
 const secondCategories = groceryCategories.slice(6, 31);
 // const thirdCategories = groceryCategories.slice(15, 24);
 // const fourthCategories = groceryCategories.slice(24, 30);
-const HEADER_HEIGHT = window.innerWidth <= 768 ? 200 : 600;
+const HEADER_HEIGHT = window.innerWidth <= 768 ? 120 : 400;
 
 const placeholderSuggestions = [
   'Search "Milk"',
