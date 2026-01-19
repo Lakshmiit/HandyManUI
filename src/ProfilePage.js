@@ -28,7 +28,7 @@ import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 // import Banner from './img/Saturday.jpeg';
-import Banner2 from './img/MilkOffers.jpeg';   
+// import Banner2 from './img/MilkOffers.jpeg';   
 // import Banner2 from './img/ChickenOffers.jpeg';
 // import Banner2 from './img/DrinkOffers.jpeg';   F
 // import Banner3 from './img/Above45.jpeg'; 
@@ -90,9 +90,9 @@ import DwakraProducts from './img/DwakraLogo.jpeg';
 import Banner1Img from './img/50Cashback.jpeg';
 import Banner2Img from './img/100Cashback.jpeg';
 import Banner3Img from './img/300Cashback.jpeg';
-// import UnbeatableImg from './img/unbeatable.jpeg';
+import UnbeatableImg from './img/MilkOffers.jpeg';
 import Above45Img from './img/Above45.jpeg';       
-// import DeliveryImg from './img/DeliveryPoster.jpeg';
+import DeliveryImg from './img/DeliveryPoster.jpeg';
   
 // import DeliveryImg from './img/DeliveryPoster.jpeg';      
 // import BathImg from './img/bathImg.jpeg';
@@ -872,18 +872,17 @@ const categories = [
 ]; 
        
 const groceryCategories = [
-  // { label: 'Unbeatable 10 Offers', value: 'Grocery Offers', image: UnbeatableImg },
+  { label: 'Unbeatable 10 Offers', value: 'Grocery Offers', image: UnbeatableImg },
    { label: 'Above 45% Offers', value: 'Offers', image: Above45Img },
   { label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
-  {label: (
-    <>
-      Chicken<br />
-      Pre-Booking
-    </>
-  ),       
-  value: 'Chicken', image: ChickenImg
-},
-  // { label: 'Chicken', value: 'Chicken', image: ChickenImg },
+//   {label: (
+//     <>
+//       Chicken<br />
+//       Pre-Booking
+//     </>
+//   ),       
+//   value: 'Chicken', image: ChickenImg
+// },
    { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
   { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
   { label: 'Ice Creams', value: 'Ice Creams', image: IcecreamImg },
@@ -912,6 +911,7 @@ const groceryCategories = [
   { label: 'Kids Zone', value: 'Kids Zone', image: KidsImg },
   { label: 'Health Care', value: 'Health Care', image: HealthImg },
   { label: 'DWCRA Products', value: 'DWCRA', image: DwakraProducts },
+  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
 ];
 
 const collectionsCategories = [
@@ -1031,7 +1031,7 @@ const firstCategories = groceryCategories.slice(0, 6);
 const secondCategories = groceryCategories.slice(6, 31);
 // const thirdCategories = groceryCategories.slice(15, 24);
 // const fourthCategories = groceryCategories.slice(24, 30);
-const HEADER_HEIGHT = window.innerWidth <= 768 ? 120 : 400;
+// const HEADER_HEIGHT = window.innerWidth <= 768 ? 50 : 100;
 
 const placeholderSuggestions = [
   'Search "Milk"',
@@ -2342,12 +2342,11 @@ const handleGroceryCategoryClick = async (category) => {
   }
 };
 
-
- const goToCategory = (categoryValue, route = "groceryOffers") => {
-    const encodedCategory = encodeURIComponent(categoryValue);
-    localStorage.setItem("encodedCategory", encodedCategory);
-    navigate(`/${route}/${userType}/${userId}`, { state: { encodedCategory } });
-  };
+//  const goToCategory = (categoryValue, route = "groceryOffers") => {
+//     const encodedCategory = encodeURIComponent(categoryValue);
+//     localStorage.setItem("encodedCategory", encodedCategory);
+//     navigate(`/${route}/${userType}/${userId}`, { state: { encodedCategory } });
+//   };
 
 const handleDressCategoryClick = async (category) => {
   const { value } = category;
@@ -3694,16 +3693,16 @@ const updateLocalStorageCart = (product, qty) => {
               </div>
               </div>  
               </div>  */}
-              {/* <div style={{ cursor: "pointer"}}>
+              <div style={{ cursor: "pointer"}}>
                         <img
                           src={DeliveryImg}
                           className="d-block w-100 img-fluid rounded mb-2"
                           style={{ objectFit: "contain" }}
                           alt="Poster"
                         /> 
-                      </div> */}
-                      <div  className="carousel-item active mt-0" onClick={() => goToCategory("Grocery Offers", "groceryOffers")}
-                      style={{ cursor: "pointer" }}>
+                      </div>
+                      {/* <div  className="carousel-item active mt-0" onClick={() => goToCategory("Grocery Offers", "groceryOffers")}
+                      style={{ cursor: "pointer" }}> */}
                           {/* <video
                             ref={videoRef}
                             className="d-block w-100 rounded mb-2"     
@@ -3731,13 +3730,13 @@ const updateLocalStorageCart = (product, qty) => {
                           >
                             <source src={BannerVideo} type="video/mp4" />
                           </video> */}
-                          <img
+                          {/* <img
                           src={Banner2} 
                           className="d-block w-100 img-fluid rounded mb-2"
                           style={{ objectFit: "contain" }}
                           alt="Poster"
-                        /> 
-                        </div>
+                        />  */}
+                        {/* </div> */}
                          {/* <div style={{ cursor: "pointer"}}>
                         
                       </div>  */}
@@ -3879,7 +3878,7 @@ const updateLocalStorageCart = (product, qty) => {
     // padding: isMobile ? "2px" : "0px",
     // borderRadius: "5px",
     minHeight: "100vh",
-    marginTop: `${HEADER_HEIGHT}px`,
+    // marginTop: `${HEADER_HEIGHT}px`,
     // paddingTop: isMobile ? "70px" : "0px"
     paddingTop: isMobile ? `${MOBILE_PADDING_TOP}px` : "0px",
   }}>

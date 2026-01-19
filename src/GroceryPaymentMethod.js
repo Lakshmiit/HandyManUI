@@ -76,7 +76,10 @@ const readServerPoints = (record) => {
   const n = Number(raw);
   return Number.isFinite(n) ? n : 0;
 };
-
+const [loading, setLoading] = useState(false);
+useEffect(() => {
+  console.log( loading, isChecked, editingAddressId, customerName, groceryId);
+}, [loading, isChecked, editingAddressId, customerName, groceryId]);
 // const shareLocationOnWhatsApp = () => {
 //     if (!navigator.geolocation) {
 //       alert("Geolocation is not supported by your browser");
@@ -162,191 +165,6 @@ const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;
     return null;
   }
 };
-
-  //     // Case 2: Existing user → JSON data
-  //     return JSON.parse(text);
-  //   } catch (error) {
-  //     console.log("API ERROR:", error);
-  //     return null; // treat error as new user
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   let cancelled = false;
-  //   (async () => {
-  //     try {
-  //       const result = await CheckFirstOrder(mobile);
-
-  //       if (cancelled) return;
-
-  //       if (result === null  ) {
-  //         // New user → apply ₹50 discount
-  //         setFirstOrderDiscount(50);
-  //         setGrandTotal((prev) => prev - 50);
-  //       } else {
-  //         // Existing user → no discount
-  //         setFirstOrderDiscount(0);
-  //       }
-
-  //       if(grandTotal >=1000)
-  //       {
-  //         setFirstOrderDiscount(100);
-  //         setGrandTotal((prev) => prev -100);
-  //       }
-
-  //        else {
-  //         // Existing user → no discount
-  //         setFirstOrderDiscount(0);
-  //        }
-  //     } catch (e) {
-  //       console.error("Failed to load First Order:", e);
-  //       if (!cancelled) {
-  //         setFirstOrderDiscount(0);
-  //       }
-  //     }
-  //   })();
-
-  //   return () => {
-  //     cancelled = true;
-  //   };
-  // }, [mobile]);
-
-//   useEffect(() => {
-//     let cancelled = false;
-//     (async () => {
-//       try {
-//         const result = await CheckFirstOrder(mobile);
-//         if (cancelled) return;
-//         const newUser = result === null;
-//         setIsNewUser(newUser);
-//         const gt = Number(grandTotal) || 0;
-//         let discount = 0;
-//         let msg = "";
-
-//         if (newUser) {
-//           if (gt > 1000) {
-//             discount = 100;
-//             msg = "";
-//           } else if (gt >= 100) {
-//             discount = 50;
-//             msg = "";
-//           } else {
-//             discount = 0;
-//             msg = "Order ₹100 or more to get ₹50 cashback on your first order!";
-//           }
-//         } else {
-//           discount = gt > 1000 ? 100 : 0;
-//           msg = "";
-//         }
-//         //  if (newUser) {
-//         //   // if (gt >= 1999) {
-//         //   //   discount = 250;
-//         //   //   msg = "";
-//         //   // } 
-//         //   if (gt > 1000) {
-//         //     discount = 100;
-//         //     msg = "";
-//         //   } else if (gt >= 100) {
-//         //     discount = 50;
-//         //     msg = "";    
-//         //   } else {
-//         //     discount = 0;
-//         //     msg = "Order ₹100 or more to get ₹50 cashback on your first order!";
-//         //   }
-//         // } else {
-//         //   // if (gt >= 1999) {
-//         //   //   discount = 250;
-//         //   // }
-//         //    if (gt > 1000) {
-//         //     discount = 100;
-//         //   } else {
-//         //     discount = 0;
-//         //   }
-//         //   msg = "";
-//         // }
-//         setFirstOrderDiscount(discount);
-//         setCashbackMessage(msg);
-//         console.log("discount123456789", discount);
-//       } catch (e) {
-//         console.error("Failed:", e);
-//         if (!cancelled) {
-//           setIsNewUser(false);
-//           setFirstOrderDiscount(0);
-//           setCashbackMessage("");
-//         }
-//       }
-//     })();
-
-//     return () => {
-//       cancelled = true;
-//     };
-// }, [mobile, grandTotal]);
-
-// useEffect(() => {
-//   let cancelled = false;
-//   (async () => {
-//     try {
-//       const prevOrders = await CheckFirstOrder(mobile);
-//       if (cancelled) return;
-//       const newUser = prevOrders === null;
-//       setIsNewUser(newUser);
-//       const receivedCashbacks = new Set();
-//         if (Array.isArray(prevOrders)) {
-//           prevOrders.forEach((order) => {
-//             try {
-//               const sumTotalAmount = (order.categories ?? []).reduce(
-//                 (s, c) => s + Number(c?.totalAmount ?? 0),
-//                 0
-//               );
-//               const gt = Number(order.grandTotal ?? 0);
-//               const diff = Math.round(sumTotalAmount) - Math.round(gt);
-//               if ([50, 100, 300].includes(diff)) {
-//                 receivedCashbacks.add(diff);
-//               }
-//             } catch (e) {}
-//           });
-//         }
-//       const gt = Number(grandTotal) || 0;
-//       let discount = 0;
-//       let msg = "";
-//       if (newUser) {
-//         if (gt > 1999 && !receivedCashbacks.has(300)) {
-//           discount = 300;
-//         } else if (gt > 1000 && !receivedCashbacks.has(100)) {
-//           discount = 100;
-//         } else if (gt > 150 && !receivedCashbacks.has(50)) {
-//           discount = 50;
-//         } else {
-//           discount = 0;
-//           msg = "Order ₹150 or more to get ₹50 cashback on your first order!";
-//         }
-//       } else {
-//         // Existing user logic
-//         if (gt > 1999 && !receivedCashbacks.has(300)) {
-//           discount = 300;
-//         } else if (gt > 1000 && !receivedCashbacks.has(100)) {
-//           discount = 100;
-//         } else {
-//           discount = 0;
-//         }
-//       }
-
-//     setFirstOrderDiscount(discount);
-//     setCashbackMessage(msg);
-//       console.log("CheckFirstOrder -> newUser:", newUser, "receivedCashbacks:", receivedCashbacks, "discount:", discount);
-//     } catch (e) {
-//       console.error("Failed while checking first order:", e);
-//       if (!cancelled) {
-//         setIsNewUser(false);
-//         setFirstOrderDiscount(0);
-//         setCashbackMessage("");
-//       }
-//     }    
-//   })();
-//   return () => {
-//     cancelled = true;
-//   };
-// }, [mobile, grandTotal]);
 
 useEffect(() => {
   let cancelled = false;
@@ -481,35 +299,6 @@ useEffect(() => {
 //   if (!r.ok) throw new Error(d?.message || `PUT failed: ${r.status}`);
 //   return d || { ok: true };
 // };
-
-useEffect(() => {
-  console.log( isChecked, editingAddressId, customerName, groceryId);
-}, [isChecked, editingAddressId, customerName, groceryId]);
-
-// const getLocation = () => {
-//     return new Promise((resolve) => {
-//       if (navigator.geolocation) {
-//         navigator.geolocation.getCurrentPosition(
-//           (position) => {
-//             const coords = {
-//               latitude: position.coords.latitude,
-//               longitude: position.coords.longitude,
-//             };
-//             setLocation(coords);
-//             resolve(coords);
-//           },
-//           (err) => {
-//             setLocationError(err.message);
-//             resolve({ latitude: null, longitude: null });
-//           },
-//           { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-//         );
-//       } else {
-//         setLocationError("Geolocation not supported in this browser.");
-//         resolve({ latitude: null, longitude: null });
-//       }
-//     });
-//   };
 
 useEffect(() => {
   const fetchCart = async () => {
@@ -1250,18 +1039,31 @@ const sendLmartsms = async () => {
   }
 };
 
+// const handlePaymentAndSms = async () => {
+//   try {
+//     await handleUpdateStockLeft();
+//     await sendLmartsms();
+//     await handleUpdatePaymentMethod();
+//     console.log("Payment updated & SMS sent ✅");
+//   } catch (error) {
+//     console.error("Error in payment+sms flow:", error);
+//   }
+// };
+
 const handlePaymentAndSms = async () => {
   try {
-    await handleUpdateStockLeft();
-    await sendLmartsms();
-    await handleUpdatePaymentMethod();
-    console.log("Payment updated & SMS sent ✅");
+    setLoading(true);
+    await Promise.all([
+      handleUpdateStockLeft(),
+      sendLmartsms(),
+      handleUpdatePaymentMethod()
+    ]);
   } catch (error) {
-    console.error("Error in payment+sms flow:", error);
+    console.error(error);
+  } finally {
+    setLoading(false);
   }
 };
-
-
 
 // const handleLocationMethod = async () => {
 //   if (!navigator.geolocation) {
