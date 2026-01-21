@@ -34,7 +34,7 @@ const LIMIT_RULES = [
   { match: normalizeName("Pomegranate 3 Pcs (300-400 g)"), limit: 1 },
   { match: normalizeName("Fresh Orange Imported (Narinja) 3 Pcs (400-450 g)"), limit: 1 },
   {match: normalizeName("Heritage Total Curd 400 g"), limit: 1},
-  { match: normalizeName("Tomato 500 g"), limit: 1 },
+  { match: normalizeName("Tomato 500 g (1/2 Kg)"), limit: 2 },
   { match: normalizeName("Guava 2 Pcs (600-700 g)"), limit: 1 },
   { match: normalizeName("Aashirvaad High Fibre Atta with Multigrains 1 Kg"), limit: 3 },
   { match: normalizeName("Aashirvaad Superior Whole Wheat MP Atta 1 Kg"), limit: 3 },
@@ -50,9 +50,9 @@ const LIMIT_RULES = [
   { match: normalizeName("Green Chilli (Pachchi Mirchi) 100 g"), limit: 2 },
   { match: normalizeName("Tomato 250 g"), limit: 2 },
   { match: normalizeName("Lemon (Nimakaya) (3pcs)"), limit: 1 },
-  { match: normalizeName("Onion (Ulligadda) 500 g"), limit: 2 },
+  { match: normalizeName("Onion (Ulligadda) 500 g (1/2 Kg)"), limit: 2 },
   { match: normalizeName("Ivy Gourd (Dondakaya) 250 g"), limit: 2 },
-  { match: normalizeName("Potato (Bangala Dumpa) 500 g"), limit: 2 },
+  { match: normalizeName("Potato (Bangala Dumpa) 500 g (1/2 Kg)"), limit: 2 },
   { match: normalizeName("Raw Banana (Aratikaya) 2 Pc"), limit: 2 },
   { match: normalizeName("Freedom Refined Sunflower Oil 1 L"), limit: 2 },
   { match: normalizeName("Freedom Refined Sunflower Oil Bottle 1 L"), limit: 1 },
@@ -62,7 +62,6 @@ const LIMIT_RULES = [
   { match: normalizeName("Gold Drop Refined Sunflower Oil Can 5 L"), limit: 1 },
   { match: normalizeName("Aashirvaad Superior Whole Wheat Atta 5 Kg"), limit: 1 },
   { match: normalizeName("Aashirvaad High Fibre Atta with Multigrains 5 kg"), limit: 1 },
-  // { match: normalizeName("Aashirvaad Superior Whole Wheat MP Atta 1 Kg"), limit: 2 },
 ];
 const getLimit = (product) => {
   if (!product) return Infinity;
