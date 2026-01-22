@@ -40,7 +40,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Logo from "./img/Hm_Logo 1.png";
 import SearchIcon from "@mui/icons-material/Search";
 // import ArticleIcon from '@mui/icons-material/Article';
-import AnnouncementIcon from '@mui/icons-material/Announcement';
+// import AnnouncementIcon from '@mui/icons-material/Announcement';
 import LogoutIcon from "@mui/icons-material/Logout";   
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
@@ -93,7 +93,7 @@ import Banner3Img from './img/300Cashback.jpeg';
 import UnbeatableImg from './img/MilkOffers.jpeg';
 import Above45Img from './img/Above45.jpeg';       
 import DeliveryImg from './img/DeliveryPoster.jpeg';
-  
+import AddIcCallIcon from '@mui/icons-material/AddIcCall';
 // import DeliveryImg from './img/DeliveryPoster.jpeg';      
 // import BathImg from './img/bathImg.jpeg';
 // import FlourImg from './img/FlourImg.jpeg';
@@ -102,7 +102,7 @@ import DeliveryImg from './img/DeliveryPoster.jpeg';
 // import RiceImg from './img/Ravva.jpeg';  
 // import CoffeeImg from './img/Coffee.jpeg';
 // import ThumsUpBottle from './img/thumsup.jpeg';
-//import ReedemCode from "./ReedemCode";     
+// import ReedemCode from "./ReedemCode";     
 // import RedeemIcon from "@mui/icons-material/Redeem";
 
 // function ReedemCode({
@@ -788,7 +788,6 @@ const getMenuList = (userType, userId, category, district ,ZipCode,technicianFul
       ];
 
       const admin = [
-      // { MenuIcon: <ShoppingCartIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Lakshmi Mart", TargetUrl: `/groceryIcons/${userType}/${userId}`},
       { MenuIcon: <SupportAgentIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
       { MenuIcon: <PersonOutlineIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Book Technician", TargetUrl: `/bookTechnician/${userType}/${userId}` },
       { MenuIcon: <StorefrontIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
@@ -886,7 +885,6 @@ const groceryCategories = [
    { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
   { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
   { label: 'Ice Creams', value: 'Ice Creams', image: IcecreamImg },
-  // { label: 'Home Appliances', image: KitchenImg },
   { label: 'Kitchenware Appliances', value: 'Kitchenware Appliances', image: KitchenImg },
   { label: 'Atta & Flours', value: 'Atta & Flours', image: AttaImg },
   { label: 'Rice & Ravva', value: 'Rice & Ravva', image: RavvaImg },    
@@ -919,7 +917,6 @@ const collectionsCategories = [
   { label: 'Kurta Sets', value: 'Kurta Sets', image: kurti},
   ];
 
-  // const API_URL = "https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetAllGroceryItems";
   const IMAGE_API =
   "https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=";
 
@@ -986,7 +983,7 @@ const [paymentMode, setPaymentMode] = useState('');
 const clickLock = useRef(false);
 const [isRegistered, setIsRegistered] = useState(false);
 const [partnerStatus, setPartnerStatus] = useState("");
-const [isPickup] = useState(false);
+// const [isPickup] = useState(false);
 // const [isPickup, setIsPickup] = useState(false);
 const [cartData, setCartData] = useState(null);
 const [transactionDetails, setTransactionDetails] = useState('');
@@ -1060,11 +1057,11 @@ useEffect(() => {
     setPlaceholderIndex((prev) => (prev + 1) % placeholderSuggestions.length);
   }, 1500); 
   return () => clearInterval(interval);
-}, [placeholderSuggestions.length]);
+}, [placeholderSuggestions.length]);       
 
 useEffect(() => {
-  console.log( imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery,error, unreadCount, showMenu, products, selectedCategory, dress);
-}, [imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery, error,unreadCount, showMenu, products, selectedCategory, dress]);
+  console.log( messageCounts, imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery,error, unreadCount, showMenu, products, selectedCategory, dress);
+}, [messageCounts, imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery, error,unreadCount, showMenu, products, selectedCategory, dress]);
  
 function getItemTime(p) {
   if (p?.date) {
@@ -2205,7 +2202,7 @@ const handleUpdatePaymentMethod = async () => {
     DeliveryPartnerUserId: deliveryPartnerUserId,
     latitude: latitude,
     longitude: longitude,
-    isPickUp: isPickup,
+    isPickUp: true,
     isDelivered: false,    
   };
 
@@ -2239,7 +2236,7 @@ useEffect(() => {
   }
 }, []);
 
-const totalUnreadMessages = messageCounts.news + messageCounts.buysell + messageCounts.tolet;
+// const totalUnreadMessages = messageCounts.news + messageCounts.buysell + messageCounts.tolet;
 
   // const toggleMute = () => {
   //   const video = videoRef.current;
@@ -2418,12 +2415,15 @@ const handleDressCategoryClick = async (category) => {
 
   const grandTotalNumeric = Number(ticket.grandTotal) || 0;
   const cashback = totalAmountFromApi - grandTotalNumeric;
-  // if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101)) {
   if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101) || (cashback >= 299 && cashback <= 301)) {
     return cashback;
   }
   return 0;
 };
+
+const handleCustomerCareCall = () => {
+    window.location.href = "tel:6281198953";
+  };
 
         const handleViewDetails = (ticket) => {
           setSelectedTicket(ticket);
@@ -2605,7 +2605,7 @@ const updateLocalStorageCart = (product, qty) => {
        {/* {isMobile && ( */}
         <div className="d-flex align-items-center">
           {/* Fixed Chat Icon at bottom right */}
-            <div
+            {/* <div
           className="blinking-icon"
           style={{
             backgroundColor: '#03c03cb3',
@@ -2638,7 +2638,23 @@ const updateLocalStorageCart = (product, qty) => {
               {totalUnreadMessages}
             </span>
           )}
-        </div>
+        </div> */}
+         {/* Customer Care Number */}
+          <div
+                className="d-flex align-items-start"
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: "pointer" }}
+                // style={{ cursor: "pointer", marginTop: "2px" }}
+                onClick={handleCustomerCareCall}
+              >
+                <AddIcCallIcon style={{ color: "green", fontSize: "30px" }} />
+                <small                  
+                  style={{
+                    display: "flex",      
+                    flexDirection: "column",
+                    alignItems: "center",
+                  }}
+                ></small>
+              </div>
 
   {/* Profile Image */}
   <div className="profile-img-wrapper">

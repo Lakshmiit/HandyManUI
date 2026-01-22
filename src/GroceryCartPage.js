@@ -61,7 +61,9 @@ function getCustomLimit(name) {
     n === "mosambi (batthayi) 4 pcs" ||
     n === "pomegranate 3 pcs (300-400 g)" ||
     n === "fresh orange imported (narinja) 3 pcs (400-450 g)" ||
-    n === "onion (ulligadda) 1kg"
+    n === "onion (ulligadda) 1kg" || 
+    n === "eggs pack 2" ||
+    n === "potato (bangala dumpa) 1 kg"
     ) return 1;
   if (
     n === "coriander leaves (kottimeera) 70-80 g" ||
