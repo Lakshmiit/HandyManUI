@@ -27,7 +27,7 @@ const CATEGORY_VF_OFFERS = [
 
 const LIMIT_RULES = [ 
   {match:norm("Potato (Bangala Dumpa) 1 Kg"), limit: 1},
-  {match:norm("Eggs Pack 2"), limit: 1},
+  {match:norm("Eggs Pack 2"), limit: 2},
   {match:norm("Onion (Ulligadda) 1Kg"), limit: 1},
   {match:norm("Coriander leaves (Kottimeera) 70-80 g"), limit: 2},
   {match:norm("Curry Leaves (Karivepaku) 100 g"), limit: 2},

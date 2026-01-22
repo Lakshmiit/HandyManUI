@@ -26,7 +26,7 @@ const CATEGORY_VEG_FRUITS_OFFERS = [
        
 const LIMIT_RULES = [ 
   {match:normalizeName("Potato (Bangala Dumpa) 1 Kg"), limit: 1},
-  {match:normalizeName("Eggs Pack 2"), limit: 1},
+  {match:normalizeName("Eggs Pack 2"), limit: 2},
   {match:normalizeName("Onion (Ulligadda) 1Kg"), limit: 1},
   {match:normalizeName("Coriander leaves (Kottimeera) 70-80 g"), limit: 2},
   {match:normalizeName("Curry Leaves (Karivepaku) 100 g"), limit: 2},

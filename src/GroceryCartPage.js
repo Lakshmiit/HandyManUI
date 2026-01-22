@@ -61,8 +61,7 @@ function getCustomLimit(name) {
     n === "mosambi (batthayi) 4 pcs" ||
     n === "pomegranate 3 pcs (300-400 g)" ||
     n === "fresh orange imported (narinja) 3 pcs (400-450 g)" ||
-    n === "onion (ulligadda) 1kg" || 
-    n === "eggs pack 2" ||
+    n === "onion (ulligadda) 1kg"  ||
     n === "potato (bangala dumpa) 1 kg"
     ) return 1;
   if (
@@ -79,7 +78,8 @@ function getCustomLimit(name) {
     n === "raw banana 2 pc"  ||    
     n === "independence refined sunflower oil 1 l"  || 
     n === "freedom refined sunflower oil 1 l"  ||
-    n === "tomato 500 g (1/2 kg)" 
+    n === "tomato 500 g (1/2 kg)" || 
+    n === "eggs pack 2"
     ) return 2;
   if (   
     n === "gold drop refined sunflower oil 1 l" ||
