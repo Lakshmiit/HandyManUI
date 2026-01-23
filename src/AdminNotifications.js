@@ -378,6 +378,9 @@ const lakshmiCollectionsNotifications = notifications.filter(
             <div className="notification-date">
               <strong>Date:</strong> {new Date(notification.date).toLocaleString()}
             </div>
+            <div className="notification-date">
+              <strong>Grand Total:</strong> {`Rs ${notification.grandTotal} /-`}
+            </div>
           </div>
         ))}
       </div>

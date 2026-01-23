@@ -25,7 +25,11 @@ const CATEGORY_VF_OFFERS = [
   norm("Atta & Flours"),
 ];
 
-const LIMIT_RULES = [ 
+const LIMIT_RULES = [
+  {match: norm("Cucumber (Dosakaya) 250 g"), limit: 2},
+  {match: norm("Baby Oranges 2 Pcs"), limit: 1},
+  {match: norm("Iran Apple 2 Pcs"), limit: 1},
+  {match:norm("Royal Gala Apple 2 Pcs (200-250 g)"), limit: 1},
   {match:norm("Potato (Bangala Dumpa) 1 Kg"), limit: 1},
   {match:norm("Eggs Pack 2"), limit: 2},
   {match:norm("Onion (Ulligadda) 1Kg"), limit: 1},

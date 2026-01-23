@@ -25,6 +25,10 @@ const CATEGORY_VEG_FRUITS_OFFERS = [
 ];
        
 const LIMIT_RULES = [ 
+  {match: normalizeName("Cucumber (Dosakaya) 250 g"), limit: 2},
+  {match: normalizeName("Baby Oranges 2 Pcs"), limit: 1},
+  {match: normalizeName("Iran Apple 2 Pcs"), limit: 1},
+  {match:normalizeName("Royal Gala Apple 2 Pcs (200-250 g)"), limit: 1},
   {match:normalizeName("Potato (Bangala Dumpa) 1 Kg"), limit: 1},
   {match:normalizeName("Eggs Pack 2"), limit: 2},
   {match:normalizeName("Onion (Ulligadda) 1Kg"), limit: 1},

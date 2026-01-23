@@ -10,7 +10,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowBack} from '@mui/icons-material';
   // Dashboard as MoreVertIcon
-// import ForwardIcon from '@mui/icons-material/Forward';
+import ForwardIcon from '@mui/icons-material/Forward';
 import { Button, Form, Row, Col, Modal } from 'react-bootstrap';
 import axios from "axios";
 const AdminGroceryOrderPage = () => {
@@ -160,17 +160,6 @@ useEffect(() => {
     };
     fetchCart();
   }, [groceryItemId]);
-
-  // const handleUpdateProductDetails = async () => {
-  //   try {
-  //     await handleUpdatePaymentMethod();
-  //     await handleUpdateStockLeft();
-
-  //     console.log("Payment updated & SMS sent ✅");
-  //   } catch (error) {
-  //     console.error("Error in Update ProductDetails:", error);
-  //   }
-  // };
 
   // const handleUpdatePaymentMethod = async () => {
   //   try {
@@ -405,12 +394,11 @@ useEffect(() => {
 
       // if (cashback === 50 || cashback === 100) 
         
-      if ((cashback >= 49 && cashback <= 51) ||
-    (cashback >= 99 && cashback <= 101) || (cashback >= 299 && cashback <= 301))
+      if ((cashback >= 49 && cashback <= 51) ||(cashback >= 99 && cashback <= 101) || (cashback >= 199 && cashback <= 201)|| (cashback >= 299 && cashback <= 301))
         {
-        setCashbackAmount(cashback); 
+        setCashbackAmount(cashback);                   
       } else {
-        setCashbackAmount(0);
+        setCashbackAmount(0);     
       }
     } catch (error) {
       console.error("Error fetching grocery product data:", error);
@@ -428,54 +416,54 @@ const handleAssignedToChange = (e) => {
   setAssignedTo(selectedAssignedTo);
   setError({});
 };
-//   const handleUpdatePaymentMethod = async () => {
-//     try {   
-//       const partner = deliveryPartners.find(p => p.deliveryPartnerId === selectedPartner);
-//   const payload = {
-//     ...cartData,
-//     customerName: customerName,
-//     address: address, 
-//     state: state,
-//     district: district,
-//     zipCode: pincode,
-//     customerPhoneNumber: mobileNumber,
-//     id: groceryItemId,
-//     userId: customerId, 
-//     martId: martId,
-//     date: new Date(),
-//     grandTotal: grandTotal,
-//     totalItemsSelected: totalItemsSelected,
-//     status: "closed", 
-//     paymentMode: paymentMode,
-//     utrTransactionNumber: transactionDetails,
-//     transactionNumber: transactionNumber,
-//     transactionStatus: transactionStatus,
-//     paidAmount: paidAmount,
-//     AssignedTo: partner? partner.deliveryPartnerName: "",
-//     DeliveryPartnerUserId: partner? partner.userId: "",
-//     latitude: latitude,
-//     longitude: longitude,
-//     code: code,
-//     units: units,
-//   };
+  const handleUpdatePaymentMethod = async () => {
+    try {   
+      const partner = deliveryPartners.find(p => p.deliveryPartnerId === selectedPartner);
+  const payload = {
+    ...cartData,
+    customerName: customerName,
+    address: address, 
+    state: state,
+    district: district,
+    zipCode: pincode,
+    customerPhoneNumber: mobileNumber,
+    id: groceryItemId,
+    userId: customerId, 
+    martId: martId,
+    date: new Date(),
+    grandTotal: grandTotal,
+    totalItemsSelected: totalItemsSelected,
+    status: "In Progress", 
+    paymentMode: paymentMode,
+    utrTransactionNumber: transactionDetails,
+    transactionNumber: transactionNumber,
+    transactionStatus: transactionStatus,
+    paidAmount: paidAmount,
+    AssignedTo: partner? partner.deliveryPartnerName: "",
+    DeliveryPartnerUserId: partner? partner.userId: "",
+    latitude: latitude,
+    longitude: longitude,
+    code: code,
+    units: units,
+  };
 
-//     let response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`, {
-//       method: 'PUT',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify(payload),
-//     });
-//     if (!response.ok) {
-//       throw new Error('Failed to Update Delivery Partner.');
-//     }
-//     alert(`Ticket has been assigned to ${partner ? partner.deliveryPartnerName : ""}`);
-//     navigate(`/adminNotifications`);
-//   } catch (error) {
-//     console.error('Error:', error);
-//     window.alert('Failed to Update Delivery Partner. Please try again later.');
-//   }
-// };
+    let response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to Update Delivery Partner.');
+    }
+    alert(`Ticket has been assigned to ${partner ? partner.deliveryPartnerName : ""}`);
+    navigate(`/adminNotifications`);
+  } catch (error) {
+    console.error('Error:', error);
+    window.alert('Failed to Update Delivery Partner. Please try again later.');
+  }
+};
 
   // Detect screen size for responsiveness
 useEffect(() => {
@@ -803,7 +791,7 @@ const handleImageClick = (imageSrc, product) => {
    {showFreeSugar && (
     <tr>
       <td colSpan="10" className="text-end fw-bold text-success">
-        🎁 Give Customer <strong>500 g Sugar FREE</strong>
+        🎁 Give Customer <strong>Aashirvaad Superior Whole Wheat MP Atta 1 Kg FREE</strong>
       </td>
     </tr>
   )}
@@ -982,12 +970,12 @@ const handleImageClick = (imageSrc, product) => {
                   )} */}
                 </Row> 
             <div className="mt-2 d-flex justify-content-between">
-            <Button type="submit" className=" text-white mx-2" style={{background: 'green'}} onClick={() => navigate(`/adminNotifications`)} title="Forward">
+            <Button type="submit" className=" text-white mx-2" style={{background: 'green'}} onClick={() => navigate(`/adminNotifications`)} title="Back">
                 <ArrowBack />
                 </Button>
-                {/* <Button type="submit" className="text-white mx-2" style={{background: 'green'}} title="Forward" onClick={handleUpdatePaymentMethod}> 
+                <Button type="submit" className="text-white mx-2" style={{background: 'green'}} title="Forward" onClick={handleUpdatePaymentMethod}> 
                 <ForwardIcon />
-                </Button> */}
+                </Button>
             </div>
           </form>
         </div>

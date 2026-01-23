@@ -88,8 +88,10 @@ import { CartStorage } from "./CartStorage";
 import IcecreamImg from './img/IceCreams.jpeg';
 import DwakraProducts from './img/DwakraLogo.jpeg';
 import Banner1Img from './img/50Cashback.jpeg';
-import Banner2Img from './img/100Cashback.jpeg';
-import Banner3Img from './img/300Cashback.jpeg';
+import Banner2Img from './img/499Atta.jpeg';
+import Banner3Img from './img/100Cashback.jpeg';
+import Banner4Img from './img/200Cashback.jpeg';
+import Banner5Img from './img/300Cashback.jpeg';
 import UnbeatableImg from './img/MilkOffers.jpeg';
 import Above45Img from './img/Above45.jpeg';       
 import DeliveryImg from './img/DeliveryPoster.jpeg';
@@ -2040,7 +2042,7 @@ useEffect(() => {
       const cashback = totalAmountFromApi - grandTotalNumeric;
 
       // if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101))
-      if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101) || (cashback >= 299 && cashback <= 301))
+      if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101) || (cashback >= 199 && cashback <= 201) || (cashback >= 299 && cashback <= 301))
       // if ((cashback >= 99 && cashback <= 101))
       {
         setCashbackAmount(cashback); 
@@ -2415,7 +2417,7 @@ const handleDressCategoryClick = async (category) => {
 
   const grandTotalNumeric = Number(ticket.grandTotal) || 0;
   const cashback = totalAmountFromApi - grandTotalNumeric;
-  if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101) || (cashback >= 299 && cashback <= 301)) {
+  if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101) || (cashback >= 199 && cashback <= 201) || (cashback >= 299 && cashback <= 301)) {
     return cashback;
   }
   return 0;
@@ -4252,10 +4254,16 @@ const updateLocalStorageCart = (product, qty) => {
                           <img src={Banner1Img} alt="50 Cashback" className="d-block w-100" />
                         </Carousel.Item>
                         <Carousel.Item>
-                          <img src={Banner2Img} alt="100 Cashback" className="d-block w-100" />
+                          <img src={Banner2Img} alt="499 Cashback" className="d-block w-100" />
                         </Carousel.Item>
                         <Carousel.Item>
-                          <img src={Banner3Img} alt="300 Cashback" className="d-block w-100" />
+                          <img src={Banner3Img} alt="100 Cashback" className="d-block w-100" />
+                        </Carousel.Item>
+                        <Carousel.Item>
+                          <img src={Banner4Img} alt="200 Cashback" className="d-block w-100" />
+                        </Carousel.Item>
+                        <Carousel.Item>
+                          <img src={Banner5Img} alt="300 Cashback" className="d-block w-100" />
                         </Carousel.Item>
                       </Carousel>     
 

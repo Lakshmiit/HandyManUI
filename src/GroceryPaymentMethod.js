@@ -7,8 +7,42 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { Modal, Button, Form} from 'react-bootstrap';
 import Footer from "./Footer.js";
-import Confetti from "react-confetti";
-import SugarImg from './img/SugarOffer.jpeg';
+// import Confetti from "react-confetti";
+import AttaImg from './img/Atta.jpeg';
+const getRocketCount = (cashback) => {
+  if (cashback >= 300) return 8;
+  if (cashback >= 200) return 6;
+  if (cashback >= 100) return 4;
+  if (cashback >= 50) return 2;
+  return 0;
+};
+
+const TricolorRocket = ({ cashback }) => {
+  const rocketCount = getRocketCount(cashback);
+  if (rocketCount === 0) return null;
+
+  return (
+    <div className="rocket-container">
+      {Array.from({ length: rocketCount }).map((_, i) => (
+        <div
+          key={i}
+          className="rocket"
+          style={{
+            left: `${10 + (i * 80) / rocketCount}%`,
+            animationDelay: `${i * 0.15}s`,
+          }}
+        >
+          <div className="rocket-body saffron" />
+          <div className="rocket-body white" />
+          <div className="rocket-body green" />
+          <div className="rocket-flame" />
+        </div>
+      ))}
+    </div>
+  );
+};
+
+
 const GroceryPaymentmethod = () => {
   const navigate = useNavigate();
   // const location = useLocation();
@@ -63,7 +97,8 @@ const [netPayable, setNetPayable] = useState(0);
 const [isOffersOrder, setIsOffersOrder] = useState(false);
  const [firstOrderDiscount, setFirstOrderDiscount] = useState(0);
   const [isNewUser, setIsNewUser] = useState(false);
-    const [showConfetti, setShowConfetti] = useState(false);
+    // const [showConfetti, setShowConfetti] = useState(false);
+    const [showRocket, setShowRocket] = useState(false);
 const [cashbackMessage, setCashbackMessage] = useState("");
 // const [date, setDate] = useState("");
 const isGuestName = (name) => (name ?? '').trim().toLowerCase() === 'guest';
@@ -78,36 +113,11 @@ const readServerPoints = (record) => {
 };
 const [loading, setLoading] = useState(false);
 useEffect(() => {
-  console.log( loading, isChecked, editingAddressId, customerName, groceryId);
-}, [loading, isChecked, editingAddressId, customerName, groceryId]);
-// const shareLocationOnWhatsApp = () => {
-//     if (!navigator.geolocation) {
-//       alert("Geolocation is not supported by your browser");
-//       return;
-//     }
-
-//     navigator.geolocation.getCurrentPosition(
-//       (position) => {
-//         const latitude = position.coords.latitude;
-//         const longitude = position.coords.longitude;
-
-//         const message = `Hi I am ${fullName}. My order Id is ${martId}. I want to place an order. My location: https://www.google.com/maps?q=${latitude},${longitude}`;
-
-//         const whatsappUrl = `https://wa.me/917989328864?text=${encodeURIComponent(
-//           message
-//         )}`;
-
-//         window.open(whatsappUrl, "_blank");
-//       },
-//       (error) => {
-//         alert("Please enable location access to share your location.");
-//       }
-//     );
-//   };
+  console.log( showRocket, loading, isChecked, editingAddressId, customerName, groceryId);
+}, [showRocket, loading, isChecked, editingAddressId, customerName, groceryId]);
 
 const showSugarOffer =
   Number(grandTotal) >= 499 && Number(grandTotal) <= 998;
-
 const netPayables=  grandTotal - firstOrderDiscount
 
   const totalPayable =
@@ -125,8 +135,8 @@ const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;
 
    useEffect(() => {
     if (firstOrderDiscount > 0) {
-      setShowConfetti(true);
-      setTimeout(() => setShowConfetti(false), 5000); 
+      setShowRocket(true);
+      setTimeout(() => setShowRocket(false), 4000); 
     }
   }, [firstOrderDiscount]);
 
@@ -190,6 +200,10 @@ useEffect(() => {
             usedCashbacks.add(100);
             usedCashbacks.add(50);
           }
+          if (diff === 200) {
+            usedCashbacks.add(200);
+            usedCashbacks.add(50);
+          }
           if (diff === 300) {
             usedCashbacks.add(300);
             usedCashbacks.add(50); 
@@ -201,7 +215,10 @@ useEffect(() => {
       let msg = "";
       if (currentGT >= 2000 && !usedCashbacks.has(300)) {
         discount = 300;
-      } else if (currentGT >= 1000 && !usedCashbacks.has(100)) {
+      }  else if (currentGT >= 1499 && !usedCashbacks.has(200)) {
+        discount = 200;
+      } 
+       else if (currentGT >= 1000 && !usedCashbacks.has(100)) {
         discount = 100;
       } 
       else if (currentGT >= 150 && !usedCashbacks.has(50)) {
@@ -1139,7 +1156,9 @@ const handleCheckboxChange = (value) => {
   >
     <div>
       <strong style={{ color: "#d84315" }}>
-        🎁 Get 500 g Sugar FREE    
+        {/* 🎁 Get 500 g Sugar FREE  */}
+        🎁 Get Aashirvaad Superior Whole Wheat MP Atta 1 Kg FREE    
+
       </strong>
       <div style={{ fontSize: "13px" }}>
         On orders above ₹499
@@ -1147,8 +1166,9 @@ const handleCheckboxChange = (value) => {
     </div>
 
     <img
-      src={SugarImg}
-      alt="Free Sugar"
+    // SugarImg
+      src={AttaImg}
+      alt="Free Atta"
       style={{ width: "60px", height: "60px" }}
     />
   </div>
@@ -1163,7 +1183,8 @@ const handleCheckboxChange = (value) => {
               <td style={{ width: "40%", fontSize: "14px" }}>Number of Items selected</td>
               <td style={{ width: "40%" }}>{totalItemsSelected}</td>
             </tr>
-{showConfetti && <Confetti />}
+          {/* {showConfetti && <Confetti />} */}
+<TricolorRocket cashback={firstOrderDiscount} />
             <tr>
               <td style={{ width: "40%", fontSize: "14px" }}>Grand Total</td>
               <td style={{ width: "40%" }}>Rs {grandTotal} /-</td>
@@ -1172,12 +1193,12 @@ const handleCheckboxChange = (value) => {
             <tr>
               <td colSpan="2" style={{ textAlign: "center" }}>
                 <img
-                  src={SugarImg}
-                  alt="Free Sugar"
+                  src={AttaImg}
+                  alt="Free Atta"
                   style={{ width: "60px", height: "60px" }}
                 />
                 <div style={{ fontSize: "13px", fontWeight: 600, color: "green" }}>
-                  🎁 500 g Sugar FREE
+                  🎁 Aashirvaad Superior Whole Wheat MP Atta 1 Kg FREE
                 </div>
               </td>
             </tr>
@@ -1194,12 +1215,12 @@ const handleCheckboxChange = (value) => {
                 </td>
               </tr>
             )}
-            {Number(referralAmount) > 0 && (
+            {/* {Number(referralAmount) > 0 && (
               <tr>
                 <td style={{ width: "40%", fontSize: "14px" }}>Referral Earn Amount</td>
                 <td style={{ width: "40%", color: "red" }}>- Rs {referralAmount} /-</td>
               </tr>
-            )}
+            )} */}
              <tr>
                 <td style={{ width: "40%", fontSize: "14px", fontWeight: 600 }}>Total Payable</td>
                 <td style={{ width: "40%", fontWeight: 700 }}>Rs {totalPayable} /-</td>
