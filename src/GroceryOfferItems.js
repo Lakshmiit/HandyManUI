@@ -135,12 +135,12 @@ const GroceryOfferItems = () => {
     console.log(imageLoading, checked, grandSummary);
   }, [imageLoading, checked, grandSummary]);
 
-  const MIN_ORDER_TOTAL = normalizeName(selectedCategory) === normalizeName("Grocery Offers") ? 150 : 100;
+  const MIN_ORDER_TOTAL = normalizeName(selectedCategory) === normalizeName("Grocery Offers") ? 100 : 100;
   const OFFERS = "Offers";
   const encodedCategory = OFFERS;
 
   useEffect(() => {
-    const saved = CartStorage.getAll() || [];
+    const saved = CartStorage.getAll() || [];      
     const categories = Array.isArray(saved) ? saved : [saved];
     const exist = categories.find((c) => c.categoryName === selectedCategory);
     if (exist) {
