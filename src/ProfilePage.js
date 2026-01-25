@@ -94,7 +94,7 @@ import Banner4Img from './img/200Cashback.jpeg';
 import Banner5Img from './img/300Cashback.jpeg';
 import UnbeatableImg from './img/MilkOffers.jpeg';
 import Above45Img from './img/Above45.jpeg'; 
-import ChickenPoster from './img/ChickenBanner.jpeg';      
+import RepublicPoster from './img/RepublicSales.jpeg';      
 import DeliveryImg from './img/DeliveryPoster.jpeg';
 import AddIcCallIcon from '@mui/icons-material/AddIcCall';
 
@@ -205,9 +205,8 @@ const categories = [
 const groceryCategories = [
   { label: 'Unbeatable 10 Offers', value: 'Grocery Offers', image: UnbeatableImg },
    { label: 'Above 45% Offers', value: 'Offers', image: Above45Img },
-  {label: ( <> Chicken <br /> Pre-Booking </> ), value: 'Chicken', image: ChickenImg },
+  // {label: ( <> Chicken <br /> Pre-Booking </> ), value: 'Chicken', image: ChickenImg },
   { label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
-  // { label: 'Chicken', value: 'Chicken', image: ChickenImg },
    { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
   { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
   { label: 'Ice Creams', value: 'Ice Creams', image: IcecreamImg },
@@ -235,6 +234,7 @@ const groceryCategories = [
   { label: 'Kids Zone', value: 'Kids Zone', image: KidsImg },
   { label: 'Health Care', value: 'Health Care', image: HealthImg },
   { label: 'DWCRA Products', value: 'DWCRA', image: DwakraProducts },
+  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
 ];
 
 const collectionsCategories = [
@@ -2884,14 +2884,14 @@ const updateLocalStorageCart = (product, qty) => {
                       <div
                           // className="carousel-item active"
                           onClick={() => {
-                            const encodedCategory = encodeURIComponent("Chicken");
+                            const encodedCategory = encodeURIComponent("Offers");
                             localStorage.setItem("encodedCategory", encodedCategory);
                             navigate(`/grocery/${userType}/${userId}`, { state: { encodedCategory } });
                           }}
                           style={{ cursor: "pointer" }}
                         >
                           <img
-                            src={ChickenPoster}
+                            src={RepublicPoster}
                             className="d-block w-100 img-fluid rounded"
                             style={{ width: "50%", objectFit: "contain" }}
                             alt="Poster"
