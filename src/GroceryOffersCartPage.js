@@ -26,6 +26,7 @@ const CATEGORY_VF_OFFERS = [
 ];
 
 const LIMIT_RULES = [
+  {match:norm("Tomato 1 Kg"), limit: 1},
   {match: norm("Cucumber (Dosakaya) 250 g"), limit: 2},
   {match: norm("Baby Oranges 2 Pcs"), limit: 1},
   {match: norm("Iran Apple 2 Pcs"), limit: 1},

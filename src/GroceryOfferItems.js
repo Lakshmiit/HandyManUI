@@ -25,6 +25,7 @@ const CATEGORY_VEG_FRUITS_OFFERS = [
 ];
        
 const LIMIT_RULES = [ 
+  {match:normalizeName("Tomato 1 Kg"), limit: 1},
   {match: normalizeName("Cucumber (Dosakaya) 250 g"), limit: 2},
   {match: normalizeName("Baby Oranges 2 Pcs"), limit: 1},
   {match: normalizeName("Iran Apple 2 Pcs"), limit: 1},

@@ -65,7 +65,8 @@ function getCustomLimit(name) {
     n === "potato (bangala dumpa) 1 kg" ||
     n === "royal gala apple 2 pcs (200-250 g)" ||
      n === "iran apple 2 pcs" ||
-     n === "baby oranges 2 pcs"  
+     n === "baby oranges 2 pcs"  ||
+     n === "tomato 1 kg"
     ) return 1;
   if (
     n === "coriander leaves (kottimeera) 70-80 g" ||
