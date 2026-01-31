@@ -518,7 +518,7 @@ function getItemTime(p) {
           border: "1px solid #90caf9",
         }}
       > 📝 Chicken Available Pre-Booking Only. <br/>
-        🕒 Pre Booking Orders from Saturday 5:00PM to Sunday 8:00AM. <br/>
+        🕒 Pre Booking Orders from Saturday 5:00PM to Sunday 9:00AM. <br/>
         🛍️ Delivery Time Tomorrow Sunday Between 7:00AM to 10:00AM.
       </div>
     )}

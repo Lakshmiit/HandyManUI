@@ -6,11 +6,6 @@ import Carousel from "react-bootstrap/Carousel";
 import './App.css';
 import { Modal, Button} from 'react-bootstrap';
 import Confetti from "react-confetti";
-// import LocationOnIcon from '@mui/icons-material/LocationOn';
-// import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-// import NotificationBell from "./NotificationsBell";
-// import OrdersNotificationBell from "./OrdersBellNotifications";
-// import TrackStatusNotificationBell from "./TrackStatusBellNotifications";
 import ImageCache from "./utils/ImageCache";
 import axios from "axios";    
 import Footer from './Footer.js';
@@ -20,27 +15,18 @@ import RouteIcon from "@mui/icons-material/Route";
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import StorefrontIcon from '@mui/icons-material/Storefront'; 
 import DeliveryDiningIcon from '@mui/icons-material/DeliveryDining';
-// import AddToCartCount from "./AddToCartCount.js";
-// import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import PermIdentityIcon from '@mui/icons-material/PermIdentity';
 import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-// import Banner from './img/Saturday.jpeg';
-// import Banner2 from './img/MilkOffers.jpeg';   
 // import Banner2 from './img/ChickenOffers.jpeg';
-// import Banner2 from './img/DrinkOffers.jpeg';   F
-// import Banner3 from './img/Above45.jpeg'; 
 // import BannerVideo from './img/PongalOffers.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';       
 // import VolumeUpIcon from '@mui/icons-material/VolumeUp';
-// import Banner3 from './img/banner-4.jpg';  
 import { useNavigate, useParams } from "react-router-dom";   
 import Logo from "./img/Hm_Logo 1.png";
 import SearchIcon from "@mui/icons-material/Search";
-// import ArticleIcon from '@mui/icons-material/Article';
-// import AnnouncementIcon from '@mui/icons-material/Announcement';
 import LogoutIcon from "@mui/icons-material/Logout";   
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
@@ -55,8 +41,6 @@ import HomeDecor from './img/HomeDecor.jpeg';
 import HomeAppliances from './img/Kitchenware.jpeg';
 import BabyKidsImg from './img/BabyKids.jpeg';
 import PoojaImg from './img/Pooja.jpeg';
-// import FamilyPackImg from './img/FamilyPack.jpeg';
-// import PersonalCareImg from './img/PersonalCare.jpeg';
 import HairImg from './img/HairCare.jpeg';
 import BathBodyImg from './img/BathBody.jpeg';
 import RavvaImg from './img/RiceRavva.jpeg';
@@ -94,10 +78,9 @@ import Banner4Img from './img/200Cashback.jpeg';
 import Banner5Img from './img/300Cashback.jpeg';
 import UnbeatableImg from './img/MilkOffers.jpeg';
 import Above45Img from './img/Above45.jpeg'; 
-import RepublicPoster from './img/RepublicSales.jpeg';      
 import DeliveryImg from './img/DeliveryPoster.jpeg';
 import AddIcCallIcon from '@mui/icons-material/AddIcCall';
-
+import ChickenPoster from './img/ChickenBanner.jpeg';
 const getMenuList = (userType, userId, category, district ,ZipCode,technicianFullName, isMobile) => {
   const iconSize = isMobile ? 20  : 40;
   const customer = [
@@ -107,12 +90,6 @@ const getMenuList = (userType, userId, category, district ,ZipCode,technicianFul
       ...(!isMobile ? [{MenuIcon: <LocalOfferIcon sx={{ fontSize: iconSize }} />, MenuTitle: "Buy Product Offers", TargetUrl: `/offersIcons/${userType}/${userId}`
     }] : []),
       { MenuIcon: <ApartmentIcon sx={{ fontSize: 40 }} />,  MenuTitle: isMobile ? "Apartment AMC" : "Apartment Common Area Maintenance", TargetUrl: `/aboutApartmentRaiseTicket/${userType}/${userId}` },
-    //   ...(!isMobile ? [{MenuIcon: <TrackStatusNotificationBell sx={{ fontSize: iconSize }} />, MenuTitle: isMobile ? "Track Ticket" : "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}`
-    // }] : []),
-    //   ...(!isMobile ? [{MenuIcon: <NotificationBell sx={{ fontSize: 40 }} />, MenuTitle: "Notifications", TargetUrl: `/customerNotification/${userType}/${userId}`
-    // }] : []),
-    //  ...(!isMobile ? [{MenuIcon: <OrdersNotificationBell sx={{ fontSize: iconSize }} />, MenuTitle: "Orders", TargetUrl: `/customerOrders/${userType}/${userId}`
-    // }] : []),
     ...(!isMobile ? [{MenuIcon: <PermIdentityIcon sx={{ fontSize: iconSize }} />, MenuTitle: "Accounts"
     }] : []),
     ...(!isMobile ? [{MenuIcon: <DeliveryDiningIcon sx={{ fontSize: iconSize }} />, MenuTitle: "Delivery Partner", TargetUrl: `/deliveryPartner/${userType}/${userId}`
@@ -205,7 +182,7 @@ const categories = [
 const groceryCategories = [
   { label: 'Unbeatable 10 Offers', value: 'Grocery Offers', image: UnbeatableImg },
    { label: 'Above 45% Offers', value: 'Offers', image: Above45Img },
-  // {label: ( <> Chicken <br /> Pre-Booking </> ), value: 'Chicken', image: ChickenImg },
+  {label: ( <> Chicken <br /> Pre-Booking </> ), value: 'Chicken', image: ChickenImg },
   { label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
    { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
   { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
@@ -234,7 +211,7 @@ const groceryCategories = [
   { label: 'Kids Zone', value: 'Kids Zone', image: KidsImg },
   { label: 'Health Care', value: 'Health Care', image: HealthImg },
   { label: 'DWCRA Products', value: 'DWCRA', image: DwakraProducts },
-  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
+  // { label: 'Chicken', value: 'Chicken', image: ChickenImg },
 ];
 
 const collectionsCategories = [
@@ -259,7 +236,6 @@ const ProfilePage = () => {
     const [fullName, setFullName] = useState('');
     const [menuList, setMenuList] = useState([]);
     const [profile, setProfile] = useState({});
-    // const [loading, setLoading] = useState(true); 
     const [selectedTicket, setSelectedTicket] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [profileImage, setProfileImage] = useState(null);
@@ -288,7 +264,6 @@ const [cartSummary, setCartSummary] = useState({
   total: 0,  
   products: [],
 }); 
-// const [dress] = useState([]);
 const [dress, setDress] = useState([]);
 const [deliveryProfile, setDeliveryProfile] = useState(null);
 const [showInterestModal, setShowInterestModal] = useState(false);
@@ -420,15 +395,12 @@ useEffect(() => {
   async function fetchProductsAndFirstImages(warm = false, signal) {
     try {
       if (!warm) setImageLoading(true);
-
       // No encodeURIComponent used
       const url = `https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${category}`;
 
       const { data: items } = await axios.get(url, { signal });
       const safeItems = Array.isArray(items) ? items : [];
-
       if (cancelled) return;
-
       const sorted = [...safeItems].sort((a, b) => {
         const tb = getItemTime(b);
         const ta = getItemTime(a);
@@ -437,19 +409,15 @@ useEffect(() => {
       });
 
       setProducts(sorted);
-
       if (warm) return;
-
       const firstImages = safeItems
         .map((p) => ({
           productId: p.id,
           photo: Array.isArray(p.images) ? p.images[0] : null,
         }))
         .filter((x) => !!x.photo);
-
       const cachedMap = {};
       const misses = [];    
-
       for (const { productId, photo } of firstImages) {
         const cached = ImageCache.getBase64(photo);
         if (cached) {
@@ -458,13 +426,10 @@ useEffect(() => {
           misses.push({ productId, photo });
         }
       }
-
       if (Object.keys(cachedMap).length) {
         setImageUrls((prev) => ({ ...prev, ...cachedMap }));
       }
-
       if (cancelled) return;
-
       const fetchOne = async ({ productId, photo }) => {
         try {
           const res = await fetch(
@@ -516,34 +481,18 @@ useEffect(() => {
     controller.abort();
     if (pollId) clearInterval(pollId);
   };
-}, [selectedCategory]); // use selectedCategory only
-
-// const cartProducts = React.useMemo(() => {
-//   try {
-//     const raw = localStorage.getItem("allCategories");
-//     if (!raw) return [];
-//     const categories = JSON.parse(raw);   
-//     return categories.flatMap(cat =>
-//       (cat.products || []).filter(p => Number(p.qty) > 0)
-//     );
-//   } catch {
-//     return [];
-//   }
-// }, []);
+}, [selectedCategory]); 
 
 useEffect(() => {
   const categories = JSON.parse(localStorage.getItem("allCategories") || "[]");
-
   categories.forEach(cat => {
     cat.products.forEach(async (p) => {
       if (!p.imageFile || cartImages[p.id]) return;
-
       try {
         const res = await fetch(
           `${IMAGE_API}${encodeURIComponent(p.imageFile)}`
         );
         const json = await res.json();
-
         if (json?.imageData) {
           setCartImages(prev => ({
             ...prev,
@@ -560,9 +509,7 @@ useEffect(() => {
 useEffect(() => {
   const raw = localStorage.getItem("allCategories");
   if (!raw) return;
-
   const categories = JSON.parse(raw);
-
   categories.forEach(cat => {
     cat.products.forEach(async (item) => {
       if (!item.imageFile || cartImages[item.id]) return;
@@ -584,113 +531,6 @@ useEffect(() => {
   });
 }, [cartImages]); 
 
-// useEffect(() => {
-//   const categories = JSON.parse(localStorage.getItem("allCategories") || "[]");
-//   const products = categories.flatMap(cat => cat.products || []);
-//   products.forEach(async (p) => {
-//     if (!p.images?.[0] || cartImages[p.id]) return;
-//     try {
-//       const res = await fetch(
-//         `${IMAGE_API}${encodeURIComponent(p.images[0])}`
-//       );
-//       const json = await res.json();
-//       if (json?.imageData) {
-//         setCartImages(prev => ({
-//           ...prev,
-//           [p.id]: `data:image/jpeg;base64,${json.imageData}`,
-//         }));
-//       }
-//     } catch (e) {
-//       console.error("Cart image load failed", e);
-//     }
-//   });
-// }, [cartImages]);
-
-
-// const norm = (s) => String(s || "").trim().toLowerCase();
-// const isOffersCat = (cat) => norm(cat) === "offers";
-// function decideCartRoute(products) {
-//   const hasOffers = (products || []).some(p => isOffersCat(p.category));
-//   const hasNonOffers = (products || []).some(p => !isOffersCat(p.category));
-//   if (hasOffers && !hasNonOffers) return "groceryOffersCart";
-// if (hasNonOffers && !hasOffers) return "groceryCart";
-//   return "groceryCart";
-// }
-// const [showCashbackModal] = useState(false);
-// Grocery Search & Filter States
-// const [allGroceryProducts, setAllGroceryProducts] = useState([]);
-// const [filteredGroceryProducts, setFilteredGroceryProducts] = useState([]);
-// const [activeGroceryCategory, setActiveGroceryCategory] = useState(null);
-// const [grocerySearch, setGrocerySearch] = useState("");
-// const [groceryLoading, setGroceryLoading] = useState(false);
-// const [groceryQty, setGroceryQty] = useState({});
-
-// const increaseQty = (product) => {
-//   setGroceryQty((prev) => ({
-//     ...prev,
-//     [product.id]: (prev[product.id] || 0) + 1,
-//   }));
-// };
-
-// const decreaseQty = (product) => {
-//   setGroceryQty((prev) => {
-//     const current = prev[product.id] || 0;
-//     if (current <= 1) {
-//       const copy = { ...prev };
-//       delete copy[product.id];
-//       return copy;
-//     }
-//     return {
-//       ...prev,
-//       [product.id]: current - 1,
-//     };
-//   });
-// };
-
-// useEffect(() => {
-//   const fetchAllGroceries = async () => {
-//     setGroceryLoading(true);
-//     try {
-//       const res = await axios.get(
-//         "https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetAllGroceryItems"
-//       );
-//       setAllGroceryProducts(res.data || []);
-//     } catch (err) {
-//       console.error("Error fetching grocery items", err);
-//     } finally {
-//       setGroceryLoading(false);
-//     }
-//   };
-//   fetchAllGroceries();
-// }, []);
-
-// useEffect(() => {
-//   let result = allGroceryProducts.filter(
-//     (p) => p.status === "Approved"
-//   );
-//   if (grocerySearch.trim()) {
-//     result = result.filter((p) =>
-//       p.name.toLowerCase().includes(grocerySearch.toLowerCase())
-//     );
-//   } else if (activeGroceryCategory) {
-//     result = result.filter(
-//       (p) => p.category === activeGroceryCategory
-//     );
-//   } else {
-//     result = [];
-//   }
-//   setFilteredGroceryProducts(result);
-// }, [grocerySearch, activeGroceryCategory, allGroceryProducts]);
-
-// const getGroceryImage = (p) => {
-//   if (!p?.images || p.images.length === 0) {
-//     return "/no-image.png"; 
-//   }
-//   return `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
-//     p.images[0]
-//   )}`;
-// };
-
 useEffect(() => {
   if (showCashbackModal) {
     setShowConfetti(true);
@@ -710,407 +550,12 @@ useEffect(() => {
   return () => window.removeEventListener("resize", handleResize);
 }, []);
 
-// const [showRedeem, setShowRedeem] = useState(false);
-// const [refRecord, setRefRecord] = useState(null);
-// const [refLoading, setRefLoading] = useState(true);
-// const [shouldShowGetCoins, setShouldShowGetCoins] = useState(false);
-// const [referralPoints, setReferralPoints] = useState('');
-// const [awardedPoints, setAwardedPoints] = useState(0);
-// const [awardLoading, setAwardLoading] = useState(true);
-// const [userPoints, setUserPoints] = useState(0);        
-// const [pointsLoading, setPointsLoading] = useState(true);
-// const [claimAvailable, setClaimAvailable] = useState(false); 
-// const AWARDED_POINTS_KEY = `hm_referral_awarded_points_${userId || "guest"}`; 
-// const [isReferralUsed, setIsReferralUsed] = useState(false);
-//  const [showConfetti, setShowConfetti] = useState(false);
-//   const [showMessage, setShowMessage] = useState(false);
-//   const [redeemOpen, setRedeemOpen] = useState(false);
-//    const shouldMountRedeem = redeemOpen;
-// const [windowSize, setWindowSize] = useState({
-//   width: typeof window !== "undefined" ? window.innerWidth : 0,
-//   height: typeof window !== "undefined" ? window.innerHeight : 0,
-// });
-// const [displayNumbers, setDisplayNumbers] = useState("");
-// redeemOpen, showRedeem, awardLoading,  awardedPoints, referralPoints,
-
-// const checkNewOrExisting = useCallback(async (num) => {
-//   try {
-//     const res = await fetch(
-//       `https://handymanapiv2.azurewebsites.net/api/UserOnBoarding/GuestUserVerificationByMobileNo?mobileNo=${encodeURIComponent(
-//         num
-//       )}`
-//     );
-//     const text = await res.text();
-//     let data = null;
-//     try { data = text ? JSON.parse(text) : null; } catch { data = null; }
-//     if (data === null) return "not registered";
-//     return "registered";
-//   } catch {
-//     return "invalid";
-//   }
-// }, []);
-
-// useEffect(() => {
-//   const numbers = (refRecord?.referralNumbers || "")
-//     .split(",")
-//     .map(s => s.trim())
-//     .filter(Boolean)
-//     .filter((v, i, a) => a.indexOf(v) === i);
-
-//   if (numbers.length === 0) {
-//     setDisplayNumbers("");
-//     return;
-//   }
-
-//   const checkAllNumbers = async () => {
-//     setRefLoading(true);
-//     const results = await Promise.all(
-//       numbers.map(async (num) => {
-//         const status = await checkNewOrExisting(num);
-//         if (status === "registered") return `${num} ✅ Registered`;
-//         if (status === "not registered") return `${num} ❌ Not Registered`;
-//         return `${num} ⚠️ Invalid`;
-//       })
-//     );
-//     setDisplayNumbers(results.join(", "));
-//     setRefLoading(false);
-//   };
-
-//   checkAllNumbers();
-// }, [refRecord, checkNewOrExisting]);
-
-// useEffect(() => {
-//   const onResize = () => {
-//     setWindowSize({
-//       width: window.innerWidth,
-//       height: window.innerHeight,
-//     });
-//   };
-//   window.addEventListener("resize", onResize);
-//   return () => window.removeEventListener("resize", onResize);
-// }, []);
-
-// useEffect(() => {
-//   const checkNewUser = async () => {
-//     try {
-//       const rec = await getReferralRecord(userId);
-//       if (!rec || readServerPoints(rec) === 0) {
-//         setShowRedeem(true);   
-//       } else {
-//         setShowRedeem(false);
-//       }
-//     } catch (err) {
-//       setShowRedeem(true);
-//     }
-//   };
-//   if (userId) checkNewUser();
-// }, [userId]);
-
-// useEffect(() => {
-//   let cancelled = false;
-//   (async () => {
-//     try {
-//       // 1) Server points (authoritative UI value)
-//       const rec = await getReferralRecord(userId);
-//       const serverPts = rec ? readServerPoints(rec) : 0;
-//       // 2) Local award (pending 100 from Redeem flow)
-//       let localAward = 0;
-//       try { localAward = Number(localStorage.getItem(AWARDED_POINTS_KEY) || "0"); } catch {}
-//       if (!cancelled) {
-//         setUserPoints(serverPts);
-//         // Enable "Get Coins" ONLY when server is still 0 AND local says 100 is ready
-//         setClaimAvailable(serverPts === 0 && localAward === 100);
-//       }
-//     } catch {
-//       if (!cancelled) {
-//         setUserPoints(0);
-//         setClaimAvailable(false);
-//       }
-//     } finally {
-//       if (!cancelled) setPointsLoading(false);
-//     }
-//   })();
-//   return () => { cancelled = true; };
-// }, [userId, AWARDED_POINTS_KEY]);
-
-// useEffect(() => {
-//   const fetchReferral = async () => {
-//     try {
-//       const rec = await getReferralRecord(userId);
-//       if (rec) {
-//         const raw =
-//           rec?.referralPoints ??
-//           rec?.referralpoints ??
-//           rec?.ReferralPoints ??
-//           rec?.ReferralPoints ??
-//           0;
-//         const pointsValue = Number(raw) || 0;
-//         setReferralPoints(pointsValue);
-//         setShouldShowGetCoins(pointsValue === 0); 
-//       } else {
-//         setReferralPoints(0);
-//         setShouldShowGetCoins(true); 
-//       }
-//     } catch (e) {
-//       console.error("Failed to load referral points:", e);
-//       setShouldShowGetCoins(false);
-//     }
-//   };
-//   fetchReferral();
-// }, [userId]);
-
-// // load once
-// useEffect(() => {
-//   let cancelled = false;
-//   (async () => {
-//     try {
-//       const rec = await getReferralRecord(userId);
-//       if (!cancelled) setRefRecord(rec);
-//     } finally {
-//       if (!cancelled) setRefLoading(false);
-//     }
-//   })();
-//   return () => { cancelled = true; };
-// }, [userId]);
-
-// // formatter (optional): clean, unique, spaced
-// // const displayNumbers = (refRecord?.referralNumbers || "")
-// //   .split(",")
-// //   .map(s => s.trim())
-// //   .filter(Boolean)
-// //   .filter((v, i, a) => a.indexOf(v) === i)
-// //   .join(", ");
-
-// // ---- load once for this user ----
-// useEffect(() => {
-//   let cancelled = false;
-//   (async () => {
-//     try {
-//       const rec = await getReferralRecord(userId);
-//       const pts = rec ? readServerPoints(rec) : 0;
-//       if (!cancelled) setUserPoints(pts);
-//     } catch {
-//       if (!cancelled) setUserPoints(0);
-//     } finally {
-//       if (!cancelled) setPointsLoading(false);
-//     }
-//   })();
-//   return () => { cancelled = true; };
-// }, [userId]);
-
-// // KEY used by ReedemCode
-// const awardKeyFor = (uid) => `hm_referral_awarded_points_${uid || "guest"}`;
-
-// // Read localStorage award (100 only if all 3 registered) — doesn't change UI points
-// useEffect(() => {
-//   const KEY = awardKeyFor(userId);
-//   const readAward = () => {
-//     try {
-//       const raw = localStorage.getItem(KEY);
-//       const n = Number(raw);
-//       setAwardedPoints(Number.isFinite(n) ? n : 0);
-//     } catch {
-//       setAwardedPoints(0);
-//     } finally {
-//       setAwardLoading(false);
-//     }
-//   };
-//   readAward();
-//   const onStorage = (e) => { if (e.key === KEY) readAward(); };
-//   window.addEventListener("storage", onStorage);
-//   return () => window.removeEventListener("storage", onStorage);
-// }, [userId]);
-
-// // When clicked, PUT 100 on server, update UI, clear local award
-// useEffect(() => {
-//   const KEY = awardKeyFor(userId);
-//   const readAward = () => {
-//     try {
-//       const raw = localStorage.getItem(KEY);
-//       const n = Number(raw);
-//       setAwardedPoints(Number.isFinite(n) ? n : 0);
-//     } catch {
-//       setAwardedPoints(0);
-//     } finally {
-//       setAwardLoading(false);
-//     }
-//   };
-//   readAward(); 
-//   // keep in sync if another tab updates
-//   const onStorage = (e) => {
-//     if (e.key === KEY) readAward();
-//   };
-//   window.addEventListener("storage", onStorage);
-//   return () => window.removeEventListener("storage", onStorage);
-// }, [userId]);
-
-// // ---- helpers (keep near your other helpers) ----
-//  const getReferralRecord = async (userId) => {
-//   if (!userId) return null;
-//   const url = `https://handymanapiv2.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(
-//     userId
-//   )}`;
-//   const res = await fetch(url);
-//   const text = await res.text();
-//   let data = [];
-//   try { data = text ? JSON.parse(text) : []; } catch { data = []; }
-//   if (Array.isArray(data) && data.length > 0) {
-//     data.sort((a, b) => new Date(b.date) - new Date(a.date));
-//     const record = data[0];
-//     setReferralPoints(Number(record.referralpoints));  
-//     setIsReferralUsed(record.isReferralUsed);
-//     return record;
-//   }
-//   setReferralPoints(0);
-//   setIsReferralUsed(false);
-//   return null;
-// };
-
-// const readServerPoints = (record) => {
-//   const raw =
-//     record?.referralPoints ??
-//     record?.referralpoints ??
-//     record?.ReferralPoints ??
-//     record?.ReferralPoints ??
-//     0;
-//   const n = Number(raw);
-//   return Number.isFinite(n) ? n : 0;
-// };
-
-// const handleGetCoins = async () => {
-//   if (!claimAvailable || pointsLoading) return;
-//   try {
-//     setPointsLoading(true);
-//     setShowConfetti(true);
-//     setShowMessage(true);
-
-//     // Stop confetti after 4 seconds
-//     setTimeout(() => {
-//       setShowConfetti(false);
-//     }, 4000);
-
-//     // Hide message after 5 seconds
-//     setTimeout(() => {
-//       setShowMessage(false);
-//     }, 5000);
-//     // Re-check pending award
-//     const localAward = Number(localStorage.getItem(AWARDED_POINTS_KEY) || "0");
-//     if (localAward !== 100) {
-//       setClaimAvailable(false);
-//       return;
-//     }
-//     // Get latest referral record
-//     const rec = await getReferralRecord(userId);
-//     if (!rec?.id) {
-//       alert("No referral record found to credit coins.");
-//       return;
-//     }
-//     // PUT: set referralPoints to "100"
-//     const payload = {
-//       id: rec.id,
-//       date: rec.date,
-//       referralNumbers: rec.referralNumbers ?? "",
-//       referreId: rec.referreId ?? userId ?? "",
-//       isReferralUsed :false,
-//       referralPoints: "100", 
-//     };
-//     const putUrl = `https://handymanapiv2.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(rec.id)}`;
-//     const r = await fetch(putUrl, {
-//       method: "PUT",
-//       headers: { "Content-Type": "application/json; charset=utf-8" },
-//       body: JSON.stringify(payload),
-//     });
-//     if (!r.ok) {
-//       const t = await r.text().catch(() => "");
-//       throw new Error(`Failed to credit coins (${r.status}). ${t}`);
-//     }
-//     // Success → reflect in UI + clear local pending
-//     setUserPoints(100);
-//     setClaimAvailable(false);
-//     try { localStorage.setItem(AWARDED_POINTS_KEY, "0"); } catch {}
-//   } catch (err) {
-//     console.error("Get Coins failed:", err);
-//     alert(err.message || "Something went wrong while applying coins.");
-//   } finally {
-//     setPointsLoading(false);
-//   }
-// };
-
-// // Read silent award from localStorage and listen for changes
-// useEffect(() => {
-//   const key = awardKeyFor(userId);
-//   const readNow = () => {
-//     try {
-//       const raw = localStorage.getItem(key);
-//       const n = Number(raw);
-//       setAwardedPoints(Number.isFinite(n) ? n : 0);
-//     } catch {
-//       setAwardedPoints(0);
-//     } finally {
-//       setAwardLoading(false);
-//     }
-//   };
-//   readNow();
-//   const onStorage = (e) => {
-//     if (e.key === key) readNow();
-//   };
-//   window.addEventListener("storage", onStorage);
-//   return () => window.removeEventListener("storage", onStorage);
-// }, [userId]);
-
-// useEffect(() => {
-//   let cancelled = false;
-//   const bootstrapReferrals = async () => {
-//     if (!userId) return;
-//     const rec = await getReferralRecord(userId);
-//     if (!rec) {
-//       // brand-new user: open popup and start with 0 points
-//       if (!cancelled) {
-//         setShowRedeem(true);
-//         setUserPoints(0);
-//       }
-//       return;
-//     }
-//     // existing record: load points into UI
-//     const serverPts = Math.min(readServerPoints(rec), 150);
-//     if (!cancelled) {
-//       setUserPoints(serverPts);
-//       // if they have no numbers and 0 points -> treat as new-ish, open it
-//       const hasNumbers = Boolean((rec.referralNumbers || "").trim());
-//       if (!hasNumbers && serverPts === 0) {
-//         setShowRedeem(true);
-//       } else {
-//         setShowRedeem(false);
-//       }
-//     }
-//   };
-//   bootstrapReferrals();
-//   return () => { cancelled = true; };
-// }, [userId]);
-
-//   const handleSendRef = async (index, referralValue) => {
-//     console.log("sendRef", { index, referralValue });
-//   };
-
-//   const handleRedeemCoins = async (refsPayload) => {
-//   const earned = 50; 
-//   setUserPoints((prev) => {
-//     const next = (Number(prev) || 0) + earned;
-//     try {
-//     } catch (e) {
-//       console.error("Unable to write userPoints to localStorage on redeem:", e);
-//     }
-//     return next;
-//   });
-//   window.alert(`Coins added: ${earned}`);
-// };
-
    const handleImageClick = (imageSrc, product) => {
   setZoomImage(imageSrc);
   setZoomProduct(product);       
   setShowZoomModal(true);
 };
-  /* ================= VOICE SEARCH ================= */
+  /* ================ VOICE SEARCH ================= */
   const startVoiceSearch = () => {
     if (!("webkitSpeechRecognition" in window)) {
       alert("Voice search not supported in this browser");
@@ -1150,7 +595,6 @@ useEffect(() => {
   /* ================= FILTER ================= */
   useEffect(() => {
     let result = allProducts.filter((p) => p.status === "Approved");
-
     if (searchQuery.trim()) {
       result = result.filter((p) =>
         p.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -1158,19 +602,15 @@ useEffect(() => {
     } else {
       result = [];
     }
-
     setFilteredProducts(result);
   }, [searchQuery, allProducts]);
 
   /* ================= FETCH IMAGES ================= */
   useEffect(() => {
     if (!filteredProducts.length) return;
-
     const controller = new AbortController();
-
     filteredProducts.forEach(async (p) => {
       if (!p.images?.[0] || imageUrls[p.id]) return;
-
       try {
         const res = await fetch(
           `${IMAGE_API}${encodeURIComponent(p.images[0])}`,
@@ -1178,27 +618,16 @@ useEffect(() => {
         );
         const json = await res.json();
         if (!json?.imageData) return;
-
         setImageUrls((prev) => ({
           ...prev,
           [p.id]: `data:image/jpeg;base64,${json.imageData}`,
         }));
       } catch {}
     });
-
     return () => controller.abort();
   }, [filteredProducts, imageUrls]);
 
-  /* ================= CART HANDLERS ================= */
-//  const handleAddClick = (product) => {
-//   setCart(prev => ({ ...prev, [product.id]: 1 }));
-//   updateLocalStorageCart(product, 1);
-// };
-
 const handleAddClick = (product) => {
-  // const imageSource =
-  //   product.generatedFileName ||
-  //   (product.imageData ? base64ToBlobUrl(product.imageData) : "");
   updateLocalStorageCart(
     {
       ...product,
@@ -1237,25 +666,6 @@ const handleAddClick = (product) => {
 
   const canAddMore = (id, stockLeft) => (cart[id] || 0) < stockLeft;
 
-// useEffect(() => {
-//   const element = document.getElementById("productCarousel");
-//   if (!element) return;
-//   if (element._bsCarouselInstance) {
-//     element._bsCarouselInstance.dispose();
-//   }
-//   const carousel = new BsCarousel(element, {
-//     interval: 2000,   
-//     ride: "carousel", 
-//     pause: false,     
-//     wrap: true,       
-//   });
-//   element._bsCarouselInstance = carousel;
-//   return () => {
-//     carousel.dispose();
-//     element._bsCarouselInstance = null;
-//   };
-// }, []);
-
 // // cashback logic
 useEffect(() => {
   if (!showCashbackModal) return; 
@@ -1266,8 +676,6 @@ useEffect(() => {
 }, [showCashbackModal]);
 
 useEffect(() => {
-  // Cricket logic 
-  // if (!animationCompleted) return;  
   if (!profile.mobileNumber) {
     console.log("CheckFirstOrder: no mobileNumber yet");
     return;
@@ -1363,10 +771,8 @@ useEffect(() => {
       }
       const grandTotalNumeric = Number(data.grandTotal) || 0;
       const cashback = totalAmountFromApi - grandTotalNumeric;
-
-      // if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101))
-      if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101) || (cashback >= 199 && cashback <= 201) || (cashback >= 299 && cashback <= 301))
-      // if ((cashback >= 99 && cashback <= 101))
+      // if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101) || (cashback >= 199 && cashback <= 201) || (cashback >= 299 && cashback <= 301))
+      if ((cashback >= 49 && cashback <= 51) || (cashback >= 199 && cashback <= 201))
       {
         setCashbackAmount(cashback); 
       } else {
@@ -1459,48 +865,6 @@ useEffect(() => {
   setCartSummary(summary);
 }, []);
 
-// useEffect(() => {
-//   const updateCartSummary = () => {
-//     let savedCategories = [];
-//     try {
-//       const raw = localStorage.getItem("allCategories");
-//       if (raw) {
-//         const parsed = JSON.parse(raw);
-//         savedCategories = Array.isArray(parsed) ? parsed : [parsed];
-//       }
-//     } catch (e) {
-//       console.error("Invalid JSON in localStorage:", e);
-//     }
-//     let items = 0, total = 0, products = [];
-//     savedCategories.forEach((cat) => {
-//       (cat.products || []).forEach((p) => {
-//         if (Number(p.qty) > 0) {
-//           items += Number(p.qty);
-//           const afterDiscountPrice = Number(
-//             p.afterDiscountPrice || p.price || p.finalPrice || 0
-//           );
-//           total += afterDiscountPrice * Number(p.qty);
-//           products.push({
-//             id: p.productId || p.id,
-//             productName: p.productName || p.name || "",
-//             image: p.image || p.img || "",
-//             mrp: Number(p.mrp) || Number(p.mrpPrice) || 0,
-//             discount: Number(p.discount) || Number(p.discountPercent) || 0,
-//             afterDiscountPrice,
-//             qty: Number(p.qty),
-//             category: cat.categoryName,
-//           });
-//         }
-//       });
-//     });
-//     setCartSummary({ items, total, products });
-//     console.log("cartSummary:", { items, total, products });
-//   };
-//   updateCartSummary();
-//   window.addEventListener("storage", updateCartSummary);
-//   return () => window.removeEventListener("storage", updateCartSummary);
-// }, []);
-
 const handleUpdatePaymentMethod = async () => {
     try {
   const payload = {
@@ -1561,16 +925,6 @@ useEffect(() => {
   }
 }, []);
 
-// const totalUnreadMessages = messageCounts.news + messageCounts.buysell + messageCounts.tolet;
-
-  // const toggleMute = () => {
-  //   const video = videoRef.current;
-  //   if (video) {
-  //     video.muted = !isMuted; 
-  //     setIsMuted(!isMuted);
-  //   }
-  // };
-
   useEffect(() => {
   const fetchUnreadCount = async () => {
     try {
@@ -1609,40 +963,6 @@ const handleCategoryClick = async (category) => {
     setError(`Oops! No products found for ${value} category.`);
   }
 };
-// useEffect(() => {
-//   const autoOpenForNewUser = async () => {
-//     if (!userId) return;
-//     try {
-//       const rec = await getReferralRecord(userId);
-//       if (!rec) {
-//         // first time only
-//         setRedeemOpen(true);
-//       }
-//     } catch (e) {
-//       console.error(e);
-//     }
-//   };
-//   autoOpenForNewUser();
-// }, [userId]);
-
-// const handleCrazyDealsGroceryClick = async (category) => {
-//   const { value } = category;
-//   try {
-//     setSelectedCategory(category);
-//     setGrocery([]);
-//     setError("");
-//     const encodedCategory = encodeURIComponent(value);
-//     localStorage.setItem("encodedCategory", encodedCategory);
-//     navigate(`/groceryCrazyOffers/${userType}/${userId}`);
-//     //   {
-//     //     state: { encodedCategory, userPoints },  
-//     // });
-//   } catch (error) {
-//     console.error("Error fetching products:", error);
-//     setGrocery([]);
-//     setError(`Oops! No grocery items found for ${value} category.`);
-//   }
-// };
 
 const handleGroceryCategoryClick = async (category) => {
   const { value } = category;
@@ -1663,12 +983,6 @@ const handleGroceryCategoryClick = async (category) => {
     setError(`Oops! No grocery items found for ${value} category.`);
   }
 }; 
-
-//  const goToCategory = (categoryValue, route = "groceryOffers") => {
-//     const encodedCategory = encodeURIComponent(categoryValue);
-//     localStorage.setItem("encodedCategory", encodedCategory);
-//     navigate(`/${route}/${userType}/${userId}`, { state: { encodedCategory } });
-//   };
 
 const handleDressCategoryClick = async (category) => {
   const { value } = category;
@@ -1868,12 +1182,7 @@ const updateLocalStorageCart = (product, qty) => {
     category = { categoryName, products: [] };
     stored.push(category);
   }
-  // const imageValue =
-  //   product.image ||
-  //   product.productImage ||
-  //   product.generatedFileName ||
-  //   "";
-
+  
   const index = category.products.findIndex(
     p => (p.productId || p.id) === product.id
   );
@@ -1916,14 +1225,6 @@ const updateLocalStorageCart = (product, qty) => {
        <img src={Logo} alt="Handy Man Logo" className="logo-img" />
         <div className="spacer"></div>
         <div className="d-flex align-items-center w-100">
-      {/* {!isMobile && (
-        <div className="srch_dv flex-grow-1 position-relative">
-          <input type="text" className="form-control src_input" placeholder="Search / Ask a question" />
-          <SearchIcon
-            className="position-absolute search-icon"
-          />
-        </div>
-      )} */}
     </div>
         <div className="hdr_icns d-flex align-items-center ">
       <div id="dropdown-container" className="dropdown-container" style={{ position: "relative" }}>
@@ -1968,7 +1269,6 @@ const updateLocalStorageCart = (product, qty) => {
           <div
                 className="d-flex align-items-start"
                 style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: "pointer" }}
-                // style={{ cursor: "pointer", marginTop: "2px" }}
                 onClick={handleCustomerCareCall}
               >
                 <AddIcCallIcon style={{ color: "green", fontSize: "30px" }} />
@@ -1989,65 +1289,11 @@ const updateLocalStorageCart = (product, qty) => {
       className="profile-img"
     />
   </div>
-  {/* <div className="profile-img-wrapper"> */}
-  {/* <a href="tel:+916281198953">    */}
-    {/* <img
-      src={profileImage}
-      alt="Profile"
-      className="profile-img"
-      style={{ width: "40px", height: "40px", borderRadius: "20%", objectFit: "cover", cursor: "pointer" }}
-    /> */}
-  {/* </a> */}
-{/* </div> */}
 </div>
 {/* )} */}
 </div>
     </div>
     </header>
-  {/* <div className="d-flex align-items-center" onClick={() => navigate(`/customerNotification/${userType}/${userId}`)} style={{ cursor: "pointer" }}>
-  <NotificationBell fontSize="medium" />
-</div> */}
-{/* <div
-  className="d-flex align-items-center"
-  style={{ cursor: "pointer" }}
-  onClick={() => navigate(`/customerOrders/${userType}/${userId}`)}
->
-  <div style={{ position: "relative", display: "inline-block" }}>
-    <OrdersNotificationBell fontSize="medium" />
-  </div>
-</div> */}
-{/* <div
-  style={{backgroundColor: 'transparent',  display: 'inline-flex', 
-    alignItems: 'center', justifyContent: 'center',
-  }}
->
-  <AddToCartCount style={{ fontSize: 40, color: 'black', }} />
-</div> */}
-{/* <div
-  className="d-flex align-items-center"
-  style={{ cursor: "pointer" }}
-  // onClick={() => navigate(`/customerOrders/${userType}/${userId}`)}
->
-</div> */}
-{/* <div className="d-flex align-items-center" style={{ cursor: "pointer" }} onClick={() => navigate(`/customerOrders/${userType}/${userId}`)}>
-                      <OrdersNotificationBell sx={{ fontSize: 24, marginRight: '8px' }} />
-                      <small style={{ fontSize: "13px", fontFamily: "Poppins", lineHeight: "28px" }}>My Orders</small>
-                    </div> */}
-
-       {/* {showDropdown && (
-        <div className="dropdown-menu">                   
-          <div className="dropdown-content">
-            <div className="dropdown-item">
-              <span className="settings-title">Settings</span>
-                      <a href="/user-settings" role="button" className="settings-link">User Settings</a>
-            </div>
-            <div className="dropdown-item logout" onClick={() => console.log("Logging out...")}>
-              <span className="logout-icon"><LogoutIcon /></span>
-              <span>Logout</span>
-            </div>
-          </div>
-        </div>
-       )} */}
       <div className="pt-1 mt-100"> 
     <div
       className={`container m-1`}
@@ -2070,7 +1316,6 @@ const updateLocalStorageCart = (product, qty) => {
                <div className="webprofile-section">
                <div className="text-primary fw-bold cust-name">Welcome  <small className="text-dark" style={{fontFamily: "Poppins, sans-serif"}}>{profile.fullName}{" "}</small></div>
                    <div className="fw-bold fs-4">Lakshmi Sai Service Providers</div>
-                   {/* <div className="text-warning fs-3 mt-0">{profile.userProfileType}</div> */}
                    <div className="webprofile-img-wrapper">
                      <img src={profileImage} alt="Profile" 
                      className="webprofile-img" 
@@ -2146,66 +1391,6 @@ const updateLocalStorageCart = (product, qty) => {
                         Delivery Partner
                       </small>
                     </div>
-                    <hr style={{ margin: '4px 0' }} />
-                   {/* Reedem Coins */}
-                    {/* <div className="d-flex align-items-center" style={{ gap: 10, minHeight: 46 }}> */}
-                       {/* Coin  */}
-                      {/* <div className="coin-wrap">
-                        <span className="coin-value">{pointsLoading ? "0" : userPoints}</span>
-                      </div> */}
-                      {/* Label  */}
-                      {/* <small style={{ fontSize: 12, lineHeight: 1, cursor: "pointer", color: "#2a50a1", fontWeight: "bold" }}>
-                        Referral Offer
-                      </small> */}
-                       {/* Button (only when available and referral not used)  */}
-                      {/* {shouldShowGetCoins && !isReferralUsed && (
-                        <button
-                          onClick={handleGetCoins}
-                          disabled={!claimAvailable || pointsLoading || userPoints > 0 || isReferralUsed === true}
-                          className="bg-primary"
-                          style={{
-                            fontSize: 12,
-                            borderRadius: 6,
-                            color: "white",
-                            padding: "6px 10px",
-                            border: "none",
-                            marginLeft: 6,
-                          }}
-                        >
-                          {pointsLoading ? "Checking..." : "Get Coins"}
-                        </button>
-                      )} */}
-                    {/* </div>  */}
-                    {/* Confetti overlay */}
-                    {/* {showConfetti && (
-                      <Confetti width={windowSize.width} height={windowSize.height} />
-                    )} */}
-                    {/* Toast-like “Congrats” message */}
-                    {/* {showMessage && (
-                      <div
-                        style={{
-                          position: "fixed",
-                          top: "40%",
-                          left: "50%",
-                          transform: "translate(-50%, -50%)",
-                          backgroundColor: "#fff",
-                          color: "#000",
-                          padding: "20px 40px",
-                          borderRadius: "12px",
-                          boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
-                          fontSize: 18,
-                          fontWeight: "bold",
-                          zIndex: 9999,
-                          animation: "fadeInUp 0.5s ease",
-                        }}
-                      >
-                        🎉 Congrats! You got <span style={{ color: "#007bff" }}>100</span> points!
-                      </div>
-                    )} */}
-
-                    {/* <div style={{ fontSize: "11px", whiteSpace: "pre-wrap" }}>
-                        {refLoading ? "Loading..." : displayNumbers}
-                    </div> */}
                     <hr style={{ margin: '4px 0' }} />
                     <div className="d-flex align-items-start" style={{ cursor: "pointer" }} onClick={() => document.getElementById('myTicketsSection')?.scrollIntoView({ behavior: 'smooth' })}>
                       <ConfirmationNumberIcon sx={{ fontSize: 24, marginRight: '8px' }} />
@@ -2884,14 +2069,14 @@ const updateLocalStorageCart = (product, qty) => {
                       <div
                           // className="carousel-item active"
                           onClick={() => {
-                            const encodedCategory = encodeURIComponent("Offers");
+                            const encodedCategory = encodeURIComponent("Chicken");
                             localStorage.setItem("encodedCategory", encodedCategory);
                             navigate(`/grocery/${userType}/${userId}`, { state: { encodedCategory } });
                           }}
                           style={{ cursor: "pointer" }}
                         >
                           <img
-                            src={RepublicPoster}
+                            src={ChickenPoster}
                             className="d-block w-100 img-fluid rounded"
                             style={{ width: "50%", objectFit: "contain" }}
                             alt="Poster"
