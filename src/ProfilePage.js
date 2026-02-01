@@ -80,7 +80,7 @@ import UnbeatableImg from './img/MilkOffers.jpeg';
 import Above45Img from './img/Above45.jpeg'; 
 import DeliveryImg from './img/DeliveryPoster.jpeg';
 import AddIcCallIcon from '@mui/icons-material/AddIcCall';
-import ChickenPoster from './img/ChickenBanner.jpeg';
+// import ChickenPoster from './img/ChickenBanner.jpeg';
 const getMenuList = (userType, userId, category, district ,ZipCode,technicianFullName, isMobile) => {
   const iconSize = isMobile ? 20  : 40;
   const customer = [
@@ -182,7 +182,7 @@ const categories = [
 const groceryCategories = [
   { label: 'Unbeatable 10 Offers', value: 'Grocery Offers', image: UnbeatableImg },
    { label: 'Above 45% Offers', value: 'Offers', image: Above45Img },
-  {label: ( <> Chicken <br /> Pre-Booking </> ), value: 'Chicken', image: ChickenImg },
+  // {label: ( <> Chicken <br /> Pre-Booking </> ), value: 'Chicken', image: ChickenImg },
   { label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
    { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
   { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
@@ -211,7 +211,7 @@ const groceryCategories = [
   { label: 'Kids Zone', value: 'Kids Zone', image: KidsImg },
   { label: 'Health Care', value: 'Health Care', image: HealthImg },
   { label: 'DWCRA Products', value: 'DWCRA', image: DwakraProducts },
-  // { label: 'Chicken', value: 'Chicken', image: ChickenImg },
+  { label: 'Chicken', value: 'Chicken', image: ChickenImg },
 ];
 
 const collectionsCategories = [
@@ -2066,7 +2066,7 @@ const updateLocalStorageCart = (product, qty) => {
                           alt="Poster"
                         /> 
                       </div>
-                      <div
+                      {/* <div
                           // className="carousel-item active"
                           onClick={() => {
                             const encodedCategory = encodeURIComponent("Chicken");
@@ -2081,7 +2081,7 @@ const updateLocalStorageCart = (product, qty) => {
                             style={{ width: "50%", objectFit: "contain" }}
                             alt="Poster"
                           />
-                        </div>
+                        </div> */}
           
 <div className="container"  style={{
    minHeight: "100vh",
