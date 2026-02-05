@@ -7,41 +7,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { Modal, Button, Form} from 'react-bootstrap';
 import Footer from "./Footer.js";
-// import Confetti from "react-confetti";
-import AttaImg from './img/Atta.jpeg';
-const getRocketCount = (cashback) => {
-  if (cashback >= 300) return 8;
-  if (cashback >= 200) return 6;
-  if (cashback >= 100) return 4;
-  if (cashback >= 50) return 2;
-  return 0;
-};
-
-const TricolorRocket = ({ cashback }) => {
-  const rocketCount = getRocketCount(cashback);
-  if (rocketCount === 0) return null;
-
-  return (
-    <div className="rocket-container">
-      {Array.from({ length: rocketCount }).map((_, i) => (
-        <div
-          key={i}
-          className="rocket"
-          style={{
-            left: `${10 + (i * 80) / rocketCount}%`,
-            animationDelay: `${i * 0.15}s`,
-          }}
-        >
-          <div className="rocket-body saffron" />
-          <div className="rocket-body white" />
-          <div className="rocket-body green" />
-          <div className="rocket-flame" />
-        </div>
-      ))}
-    </div>
-  );
-};
-
+import Confetti from "react-confetti";
+import IdlyRavvaImg from './img/IdlyRavva.jpeg';
 
 const GroceryPaymentmethod = () => {
   const navigate = useNavigate();
@@ -97,8 +64,7 @@ const [netPayable, setNetPayable] = useState(0);
 const [isOffersOrder, setIsOffersOrder] = useState(false);
  const [firstOrderDiscount, setFirstOrderDiscount] = useState(0);
   const [isNewUser, setIsNewUser] = useState(false);
-    // const [showConfetti, setShowConfetti] = useState(false);
-    const [showRocket, setShowRocket] = useState(false);
+    const [showConfetti, setShowConfetti] = useState(false);
 const [cashbackMessage, setCashbackMessage] = useState("");
 // const [date, setDate] = useState("");
 const isGuestName = (name) => (name ?? '').trim().toLowerCase() === 'guest';
@@ -111,21 +77,28 @@ const readServerPoints = (record) => {
   const n = Number(raw);
   return Number.isFinite(n) ? n : 0;
 };
-const [loading, setLoading] = useState(false);
+const [loading, setLoading] = useState(false); 
+  
 useEffect(() => {
-  console.log( showRocket, loading, isChecked, editingAddressId, customerName, groceryId);
-}, [showRocket, loading, isChecked, editingAddressId, customerName, groceryId]);
+  console.log("Addresses:", addresses);
+  const primary = addresses.find(a => a.type === "primary");
+  console.log("ZipCode:", primary?.zipCode);
+}, [addresses]);
+
+useEffect(() => {
+  console.log(  cashbackMessage, loading, isChecked, editingAddressId, customerName, groceryId);
+}, [cashbackMessage, loading, isChecked, editingAddressId, customerName, groceryId]);
 
 const showSugarOffer =
   Number(grandTotal) >= 499 && Number(grandTotal) <= 998;
-const netPayables=  grandTotal - firstOrderDiscount
+const netPayables=  grandTotal - firstOrderDiscount     
 
   const totalPayable =
     isNewUser || grandTotal > 1000 ? netPayables : netPayable;
 const numericGrandTotal = Number(grandTotal) || 0;
 const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;
 
-  const loginMeta = (() => {
+  const loginMeta = (() => {   
     try {
       return JSON.parse(localStorage.getItem("loginMeta") || "null") || {};
     } catch {
@@ -135,8 +108,8 @@ const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;
 
    useEffect(() => {
     if (firstOrderDiscount > 0) {
-      setShowRocket(true);
-      setTimeout(() => setShowRocket(false), 4000); 
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 4000); 
     }
   }, [firstOrderDiscount]);
 
@@ -153,8 +126,6 @@ const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;
       const text = await res.text();
       console.log("RAW RESPONSE:", text);
       if (
-        // !text ||
-        // text === "null" ||
         text.includes("Firstorder Can not be found")
       ) {
         return null; 
@@ -213,9 +184,10 @@ useEffect(() => {
       const currentGT = Number(grandTotal) || 0;
       let discount = 0;
       let msg = "";
-      if (currentGT >= 2000 && !usedCashbacks.has(300)) {
-        discount = 300;
-      }  else if (currentGT >= 1499 && !usedCashbacks.has(200)) {
+      if (currentGT >= 1999 && !usedCashbacks.has(200)) {
+        discount = 200;
+      } 
+       else if (currentGT >= 1499 && !usedCashbacks.has(200)) {
         discount = 200;
       } 
        else if (currentGT >= 1000 && !usedCashbacks.has(100)) {
@@ -226,9 +198,9 @@ useEffect(() => {
       } 
       else {
         discount = 0; 
-        if (isNew) {
-          msg = "Order ₹150 or more to get ₹50 cashback on your first order!";
-        }
+        // if (isNew) {
+        //   msg = "Order ₹150 or more to get ₹50 cashback on your first order!";
+        // }
       }
       setFirstOrderDiscount(discount);
       setCashbackMessage(msg);
@@ -1155,50 +1127,46 @@ const handleCheckboxChange = (value) => {
     }}
   >
     <div>
-      <strong style={{ color: "#d84315" }}>
-        {/* 🎁 Get 500 g Sugar FREE  */}
-        🎁 Get Aashirvaad Superior Whole Wheat MP Atta 1 Kg FREE    
-
+      <strong style={{ color: "#d84315", fontSize: "13px" }}>
+        🎁 FREE Idly Ravva Loose 500 g    
       </strong>
-      <div style={{ fontSize: "13px" }}>
+      <div style={{ fontSize: "13px", fontWeight: "bold", textAlign: "center"}}>
         On orders above ₹499
       </div>
     </div>
 
     <img
-    // SugarImg
-      src={AttaImg}
+      src={IdlyRavvaImg}
       alt="Free Atta"
-      style={{ width: "60px", height: "60px" }}
+      style={{ width: "50px", height: "60px" }}
     />
   </div>
-
+         
   <table className="grocery-table m-2">
           <tbody>
             <tr>
               <td style={{ width: "40%", fontSize: "14px" }}>Order Id</td>
               <td style={{ width: "40%" }}>{martId}</td>
-            </tr>
+            </tr>   
             <tr>
               <td style={{ width: "40%", fontSize: "14px" }}>Number of Items selected</td>
               <td style={{ width: "40%" }}>{totalItemsSelected}</td>
             </tr>
-          {/* {showConfetti && <Confetti />} */}
-<TricolorRocket cashback={firstOrderDiscount} />
+          {showConfetti && <Confetti />}
             <tr>
               <td style={{ width: "40%", fontSize: "14px" }}>Grand Total</td>
               <td style={{ width: "40%" }}>Rs {grandTotal} /-</td>
             </tr>
            {showSugarOffer && (
-            <tr>
+            <tr>     
               <td colSpan="2" style={{ textAlign: "center" }}>
                 <img
-                  src={AttaImg}
+                  src={IdlyRavvaImg}
                   alt="Free Atta"
                   style={{ width: "60px", height: "60px" }}
-                />
+                /> 
                 <div style={{ fontSize: "13px", fontWeight: 600, color: "green" }}>
-                  🎁 Aashirvaad Superior Whole Wheat MP Atta 1 Kg FREE
+                  🎁 FREE Idly Ravva Loose 500 g
                 </div>
               </td>
             </tr>
@@ -1227,19 +1195,6 @@ const handleCheckboxChange = (value) => {
               </tr>
           </tbody>
         </table>
-         {cashbackMessage && (
-          <p style={{ color: "red", fontWeight: "500", display: "flex", alignItems: "center" }}>
-            <span
-              className="me-2 text-success"
-              role="button"
-              style={{ cursor: "pointer" }}
-              onClick={goBackToCart}
-            >
-              <ArrowBackIcon />
-            </span>
-            {cashbackMessage}
-          </p>
-        )}
 
       <div className='payment m-2'>
         <label className='text-white w-100 p-2' style={{background: "#008000",borderRadius: "15px", fontSize: "14px"}}>Pay After Delivery – No Advance Needed</label>

@@ -110,8 +110,10 @@ const GroceryOfferItems = () => {
   const [likedProducts, setLikedProducts] = useState({});
   const [zoomProduct, setZoomProduct] = useState(null);
   const [grandSummary, setGrandSummary] = useState({ items: 0, total: 0 });
-  const location = useLocation();
-
+ const location = useLocation();
+const mobileNumber = localStorage.getItem("customerMobileNumber");
+console.log("Mobile Number from localStorage:", mobileNumber);
+  
   const getInitialCategory = () => {
     const encodedFromState = location?.state?.encodedCategory;
     if (encodedFromState) {
@@ -1140,6 +1142,8 @@ export default GroceryOfferItems;
 //   const [zoomProduct, setZoomProduct] = useState(null);
 //   const [grandSummary, setGrandSummary] = useState({ items: 0, total: 0 });
 //   const location = useLocation();
+// const mobileNumber = localStorage.getItem("customerMobileNumber");
+// console.log("Mobile Number from localStorage:", mobileNumber);
 
 //   const getInitialCategory = () => {
 //     const encodedFromState = location?.state?.encodedCategory;
@@ -2032,8 +2036,9 @@ export default GroceryOfferItems;
 //                           onClick={() => {
 //                             if (total < MIN_ORDER_TOTAL) return;
 //                             navigate(
-//                               `/groceryOffersCart/${userType}/${userId}`
-//                             );
+//                               `/groceryOffersCart/${userType}/${userId}`, {
+//                               state: { mobileNumber },
+//                             });
 //                           }}
 //                         >
 //                           View Cart →

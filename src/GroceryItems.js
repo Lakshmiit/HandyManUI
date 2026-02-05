@@ -35,22 +35,18 @@ const [selectedCategory, setSelectedCategory] = useState(null);
 const [searchQuery, setSearchQuery] = useState('');
 const [likedProducts, setLikedProducts] = useState({}); 
 const [zoomProduct, setZoomProduct] = useState(null);
-// const [totalItemsCount, setTotalItemsCount] = useState(0);
 const [grandSummary, setGrandSummary] = useState({ items: 0, total: 0 });
-// const [cartSummary, setCartSummary] = useState({
-//   items: 0,
-//   total: 0,
-//   products: [],
-// });
 
-// const [groceryName, setGroceryName] = useState('');
  useEffect(() => {
 console.log(checked, imageLoading, grandSummary);
 }, [checked, imageLoading, grandSummary]);
 
+const mobileNumber = localStorage.getItem("customerMobileNumber");
+console.log("Mobile Number from localStorage:", mobileNumber);
+
 useEffect(() => {
   const saved = CartStorage.getAll() || [];
-  const categories = Array.isArray(saved) ? saved : [saved]; // ensure array
+  const categories = Array.isArray(saved) ? saved : [saved]; 
 
   const exist = categories.find(c => c.categoryName === selectedCategory);
   if (exist) {
@@ -340,7 +336,7 @@ function getItemTime(p) {
   useEffect(() => {
   let savedCategories = [];
 
-  try {
+  try {  
     const raw = localStorage.getItem("allCategories");
     if (raw) {
       const parsed = JSON.parse(raw);
@@ -836,7 +832,11 @@ function getItemTime(p) {
           background: "transparent",
           border: "none",
         }}
-        onClick={() => navigate(`/groceryCart/${userType}/${userId}`)}
+        onClick={() =>
+          navigate(`/groceryCart/${userType}/${userId}`, {
+            state: { mobileNumber },
+          })
+        }
       >
         View Cart →
       </button>

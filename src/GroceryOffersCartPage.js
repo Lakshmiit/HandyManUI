@@ -11,6 +11,8 @@ import "./App.css";
 import CartImg from "./img/Cart.jpeg";
 import { useNavigate, useParams } from "react-router-dom";
 import Footer from "./Footer.js";
+import { useLocation } from "react-router-dom";
+
 
 const IMAGE_DOWNLOAD =
   "https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=";
@@ -110,7 +112,7 @@ const fileToUrl = (filenameOrUrl) => {
   return `${IMAGE_DOWNLOAD}${encodeURIComponent(String(filenameOrUrl))}`;
 };
 
-const MIN_ORDER_TOTAL = 100;
+// const MIN_ORDER_TOTAL = 100;
 const isValidCartItem = (it) => {
   const hasName = Boolean(String(it.name || "").trim());
   const hasQty = Number(it.qty) > 0;
@@ -202,12 +204,58 @@ const writeBackToStorage = (items) => {
 const GroceryOffersCartPage = () => {
   const navigate = useNavigate();
   const { userId, userType } = useParams();
+    const location = useLocation();
   const [cartItems, setCartItems] = useState([]);
   const [imageBlobMap, setImageBlobMap] = useState({});
   const [showZoomModal, setShowZoomModal] = useState(false);
   const [zoomImage, setZoomImage] = useState("");
   const [grandSummary, setGrandSummary] = useState({ items: 0, total: 0 });
   const pollRef = useRef(null);
+ const [MIN_ORDER_TOTAL, setMinOrderTotal] = useState(100);
+  
+ const mobileNumber =
+  location.state?.mobileNumber || localStorage.getItem("customerMobileNumber");
+  useEffect(() => {
+  const checkUserOrder = async () => {
+    if (!mobileNumber) return;
+    const result = await CheckFirstOrder(mobileNumber);
+    if (result === null) {
+      setMinOrderTotal(150);
+    } else {
+      setMinOrderTotal(100);
+    }
+  };
+  checkUserOrder();
+}, [mobileNumber]);
+
+  const CheckFirstOrder = async (mobile) => {
+  if (!mobile) return null;
+  const url = `https://handymanapiv2.azurewebsites.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${encodeURIComponent(
+    mobile
+  )}`;
+  try {
+    const res = await fetch(url);
+    const text = await res.text();
+    console.log("RAW RESPONSE:", text);
+    if (text.toLowerCase().includes("firstorder can not be found")) {
+      return null;
+    }
+    let parsed;
+    try {
+      parsed = JSON.parse(text);
+    } catch (err) {
+      console.warn("Could not parse CheckFirstOrder response:", err);
+      return null;
+    }
+    if (parsed && !Array.isArray(parsed)) {
+      parsed = [parsed];
+    }
+    return Array.isArray(parsed) ? parsed : null;
+  } catch (error) {
+    console.error("API ERROR:", error);
+    return null;
+  }
+};
 
   useEffect(() => {
     const safeParse = (key) => {
@@ -884,6 +932,7 @@ export default GroceryOffersCartPage;
 // import CartImg from "./img/Cart.jpeg";
 // import { useNavigate, useParams } from "react-router-dom";
 // import Footer from "./Footer.js";
+// import { useLocation } from "react-router-dom";
 
 // const IMAGE_DOWNLOAD =
 //   "https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=";
@@ -922,7 +971,7 @@ export default GroceryOffersCartPage;
 //   return `${IMAGE_DOWNLOAD}${encodeURIComponent(String(filenameOrUrl))}`;
 // };
 
-// const MIN_ORDER_TOTAL = 100;
+// // const MIN_ORDER_TOTAL = 100;
 // const isValidCartItem = (it) => {
 //   const hasName = Boolean(String(it.name || "").trim());
 //   const hasQty = Number(it.qty) > 0;
@@ -1014,6 +1063,7 @@ export default GroceryOffersCartPage;
 
 // const GroceryOffersCartPage = () => {
 //   const navigate = useNavigate();
+//     const location = useLocation();
 //   const { userId, userType } = useParams();
 //   const [cartItems, setCartItems] = useState([]);
 //   const [imageBlobMap, setImageBlobMap] = useState({});
@@ -1021,7 +1071,56 @@ export default GroceryOffersCartPage;
 //   const [zoomImage, setZoomImage] = useState("");
 //   const [grandSummary, setGrandSummary] = useState({ items: 0, total: 0 });
 //   const pollRef = useRef(null);
+//   const [MIN_ORDER_TOTAL, setMinOrderTotal] = useState(100);
 
+//   const mobileNumber =
+//     location.state?.mobileNumber || localStorage.getItem("customerMobileNumber");
+//     useEffect(() => {
+//     const checkUserOrder = async () => {
+//       if (!mobileNumber) return;
+//       const result = await CheckFirstOrder(mobileNumber);
+//       if (result === null) {
+//         setMinOrderTotal(150);
+//       } else {
+//         setMinOrderTotal(100);
+//       }
+//     };
+  
+//     checkUserOrder();
+//   }, [mobileNumber]);
+  
+//     const CheckFirstOrder = async (mobile) => {
+//     if (!mobile) return null;
+  
+//     const url = `https://handymanapiv2.azurewebsites.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${encodeURIComponent(
+//       mobile
+//     )}`;
+  
+//     try {
+//       const res = await fetch(url);
+//       const text = await res.text();
+//       console.log("RAW RESPONSE:", text);
+//       // ✅ First order (API returns this text)
+//       if (text.toLowerCase().includes("firstorder can not be found")) {
+//         return null;
+//       }
+//       let parsed;
+//       try {
+//         parsed = JSON.parse(text);
+//       } catch (err) {
+//         console.warn("Could not parse CheckFirstOrder response:", err);
+//         return null;
+//       }
+//       if (parsed && !Array.isArray(parsed)) {
+//         parsed = [parsed];
+//       }
+//       return Array.isArray(parsed) ? parsed : null;
+//     } catch (error) {
+//       console.error("API ERROR:", error);
+//       return null;
+//     }
+//   };
+  
 //   useEffect(() => {
 //     const safeParse = (key) => {
 //       try {

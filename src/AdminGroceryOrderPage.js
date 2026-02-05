@@ -416,6 +416,8 @@ const handleAssignedToChange = (e) => {
   setAssignedTo(selectedAssignedTo);
   setError({});
 };
+
+// ForwardIcon 
 //   const handleUpdatePaymentMethod = async () => {
 //     try {   
 //       const partner = deliveryPartners.find(p => p.deliveryPartnerId === selectedPartner);
@@ -791,10 +793,10 @@ const handleImageClick = (imageSrc, product) => {
    {showFreeSugar && (
     <tr>
       <td colSpan="10" className="text-end fw-bold text-success">
-        🎁 Give Customer <strong>Aashirvaad Superior Whole Wheat MP Atta 1 Kg FREE</strong>
-      </td>
+        🎁 Give Customer <strong>Idly Ravva Loose 500 g FREE</strong>
+      </td>    
     </tr>
-  )}
+  )}    
     <tr>
       <td colSpan="9" className="text-end fw-bold">
         Grand Total:
