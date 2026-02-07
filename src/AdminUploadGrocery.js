@@ -28,6 +28,7 @@ const AdminUploadGrocery = () => {
   const [units, setUnits] = useState('');
   const [manufactureDate,setManufactureDate] =useState('');
   const [expireDate,setExpireDate]=useState('');
+  const [limit, setLimit] = useState('');
   const handleFileChange = (event) => {
     const selectedFiles = Array.from(event.target.files);
     if (selectedFiles.length + groceryPhotos.length > 1) {
@@ -114,7 +115,6 @@ useEffect(() => {
   if (discount === "" || isNaN(discount)) return "Valid Discount is required";
   if (!deliveryInDays.trim()) return "Delivery In Minutes is required";
   if (!stockLeft.trim()) return "Stock Left is required";
-
   if (uploadedFiles.length === 0) {
     return "Please upload product photo";
   }
@@ -146,8 +146,9 @@ useEffect(() => {
       Units: units,
       ManufactureDate: manufactureDate,
       ExpireDate : expireDate,
+      Limit: limit,
     };
-
+// handymanapiv2.azurewebsites.net
     try {
       const response = await fetch("https://handymanapiv2.azurewebsites.net/api/UploadGrocery/UploadGrocery", {
         method: "POST",
@@ -221,39 +222,42 @@ useEffect(() => {
                 required
                 onChange={(e) => setCategory(e.target.value)}>
                 <option>Choose Category</option>
+                <option>LMart Special</option>
                 <option>Offers</option>
                 <option>DWCRA</option>
                 <option>Christmas Offers</option>
                 <option>Grocery Offers</option>
                 <option>Chicken Offers</option>
                 <option>Vegetables</option>
-                  <option>Fruits</option>
-                  <option>Rice & Ravva</option>
-                  <option>Atta & Flours</option>
-                  <option>Oils & Dals</option>
-                  <option>Sugar, Salt & Jaggery</option>
-                  <option>Milk, Curd & Ghee</option>
-                  <option>Bread & Eggs</option>
-                  <option>Masala, Spices & Pickles</option>
-                  <option>Instant Food, Chips & Namkeen</option>
-                  <option>Biscuits & Chocolates</option>
-                  <option>Drinks & Juices</option>
-                  <option>Ice Creams</option>   
-                  <option>Sweets & Snacks</option>
-                  <option>Dry Fruits & Bakery</option>
-                  <option>Soups & Sauces</option>
-                  <option>Tea & Coffee</option>
-                  <option>Chicken</option>
-                  <option>Home Needs</option>
-                  <option>Puja Essentials</option>
-                  <option>Skin & Face Care</option>
-                  <option>Bath & Body Care</option>
-                  <option>Hair Care</option>
-                  <option>Baby Products</option>
-                  <option>Kids Zone</option>
-                  <option>Health Care</option>
-                  <option>Kitchenware Appliances</option>
-                  <option>Stationary</option>
+                <option>Fruits</option>
+                <option>Rice & Ravva</option>
+                <option>Atta & Flours</option>
+                <option>Oils & Dals</option>
+                <option>Sugar, Salt & Jaggery</option>
+                <option>Milk, Curd & Ghee</option>
+                <option>Bread & Eggs</option>
+                <option>Masala, Spices & Pickles</option>
+                <option>Instant Food, Chips & Namkeen</option>
+                <option>Biscuits & Chocolates</option>
+                <option>Drinks & Juices</option>
+                <option>Ice Creams</option>   
+                <option>Sweets & Snacks</option>
+                <option>Dry Fruits & Bakery</option>
+                <option>Soups & Sauces</option>
+                <option>Tea & Coffee</option>
+                <option>Chicken</option>
+                <option>Home Needs</option>
+                <option>Puja Essentials</option>
+                <option>Skin & Face Care</option>
+                <option>Bath & Body Care</option>
+                <option>Hair Care</option>
+                <option>Baby Products</option>
+                <option>Kids Zone</option>
+                <option>Health Care</option>
+                <option>Kitchenware Appliances</option>
+                <option>Electrical</option>
+                <option>Sanitary</option>
+                <option>Home Decors</option>
                 {/* <option>Family Pack </option> */}
                 {/* <option>Staples & Grains</option> */}
               </select>
@@ -384,6 +388,18 @@ useEffect(() => {
                 value={expireDate}
                 onChange={(e) => setExpireDate(e.target.value)}
                 placeholder="Expire Date"
+              />  
+            </div>
+            
+             {/* Limit */}
+            <div className="form-group">
+              <label>Limit <span className="req_star">*</span></label>
+              <input
+                type="text"
+                className="form-control"
+                value={limit}
+                onChange={(e) => setLimit(e.target.value)}
+                placeholder="Limit"
               />  
             </div>
 

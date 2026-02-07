@@ -655,16 +655,21 @@ localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
 
     if (!response.ok) {
     }
-    localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
+     localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
   localStorage.removeItem("activeOrderId");
   localStorage.removeItem("allCategories");
   localStorage.removeItem(`cartMeta_${groceryItemId}`);
-  window.alert(`Thank You for choosing the Lakshmi Mart Services! Your reference order number is ${martId}. Delivery in 45 minutes.`);
-    window.location.href = `/profilePage/${userType}/${userId}`;
+    const primary = addresses.find(a => a.type === "primary");
+  console.log("ZipCode:", primary?.zipCode);
+if (primary?.zipCode === "530048" || primary?.zipCode === "530045") {
+ window.alert(`Thank You for Choosing the Lakshmi Mart Services! Your Reference Order Number is ${martId}. Delivery in 45 Minutes.`);
+    } else {
+       window.alert(`Thank You for Choosing the Lakshmi Mart Services! Your Reference Order Number is ${martId}. Delivery in Between 45 to 120 Minutes.`);
+    }
+   window.location.href = `/profilePage/${userType}/${userId}`;   
    }    
   } catch (error) {
     console.error('Error:', error);
-    // window.alert('Failed to Update Technician. Please try again later.');
   }
 };         
 
@@ -1128,7 +1133,7 @@ const handleCheckboxChange = (value) => {
   >
     <div>
       <strong style={{ color: "#d84315", fontSize: "13px" }}>
-        🎁 FREE Idly Ravva Loose 500 g    
+        🎁 FREE Idly Ravva 500 g    
       </strong>
       <div style={{ fontSize: "13px", fontWeight: "bold", textAlign: "center"}}>
         On orders above ₹499
@@ -1166,7 +1171,7 @@ const handleCheckboxChange = (value) => {
                   style={{ width: "60px", height: "60px" }}
                 /> 
                 <div style={{ fontSize: "13px", fontWeight: 600, color: "green" }}>
-                  🎁 FREE Idly Ravva Loose 500 g
+                  🎁 FREE Idly Ravva 500 g
                 </div>
               </td>
             </tr>

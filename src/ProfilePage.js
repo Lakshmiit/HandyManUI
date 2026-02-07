@@ -88,15 +88,17 @@ import { CartStorage } from "./CartStorage";
 import IcecreamImg from './img/IceCreams.jpeg';
 import DwakraProducts from './img/DwakraLogo.jpeg';
 import Banner1Img from './img/50Cashback.jpeg';
-import Banner2Img from './img/499Atta.jpeg';
+import Banner2Img from './img/499Ravva.jpeg';
 import Banner3Img from './img/100Cashback.jpeg';
 import Banner4Img from './img/200Cashback.jpeg';
 import Banner5Img from './img/300Cashback.jpeg';
 import UnbeatableImg from './img/MilkOffers.jpeg';
-import Above45Img from './img/Above45.jpeg'; 
-import DeliveryImg from './img/DeliveryPoster.jpeg';
+// import Above45Img from './img/Above45.jpeg'; 
+import SaleImg from './img/SaleOffer.jpeg'; 
+
+import DeliveryImg from './img/FreeDelivery.jpeg';
 import AddIcCallIcon from '@mui/icons-material/AddIcCall';
-   
+import RoyalImg from './img/RoyalUpma.jpeg';
 const getMenuList = (userType, userId, category, district ,ZipCode,technicianFullName, isMobile) => {
   const iconSize = isMobile ? 20  : 40;
   const customer = [
@@ -202,8 +204,10 @@ const categories = [
 ]; 
        
 const groceryCategories = [
+  {label: 'LMart Special Royal Pesara Upma Mix', value: 'LMart Special', image: RoyalImg},
   { label: 'Unbeatable 10 Offers', value: 'Grocery Offers', image: UnbeatableImg },
-   { label: 'Above 45% Offers', value: 'Offers', image: Above45Img },
+  // { label: 'Above 45 % Offers', value: 'Offers', image: Above45Img },
+   { label: 'Buy 1 Get 1 Sale', value: 'Offers', image: SaleImg },
   { label: 'Kitchenware Appliances', value: 'Kitchenware Appliances', image: KitchenImg },
   // {label: ( <> Chicken <br /> Pre-Booking </> ), value: 'Chicken', image: ChickenImg },
   { label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
@@ -346,7 +350,7 @@ const [placeholderIndex, setPlaceholderIndex] = useState(0);
 // const carouselRef = useRef(null);
 // const carouselInstance = useRef(null);
 const firstCategories = groceryCategories.slice(0, 6);
-const secondCategories = groceryCategories.slice(6, 31);
+const secondCategories = groceryCategories.slice(6, 32);
 // const thirdCategories = groceryCategories.slice(15, 24);
 // const fourthCategories = groceryCategories.slice(24, 30);
 // const HEADER_HEIGHT = window.innerWidth <= 768 ? 50 : 100;
@@ -1954,7 +1958,7 @@ const updateLocalStorageCart = (product, qty) => {
       <div
           className="groceryIcon-card border-0 shadow-sm text-center d-flex flex-column align-items-center justify-content-between"
           style={{
-            height: isMobile ? "120px" : "140px",
+            height: isMobile ? "130px" : "140px",
             width: isMobile ? "90px" : "120px",
             cursor: "pointer",
             padding: "6px",
@@ -1978,7 +1982,7 @@ const updateLocalStorageCart = (product, qty) => {
             style={{
               fontSize: "11px",
               fontWeight: "500",
-              marginTop: "5px",
+              marginTop: "6px",
               minHeight: "24px", 
               display: "flex",
               alignItems: "center",
