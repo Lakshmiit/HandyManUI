@@ -1141,7 +1141,7 @@ const handleCheckboxChange = (value) => {
     </div>
 
     <img
-      src={RoyalRavvaImg}
+      src={RoyalRavvaImg}       
       alt="Free Upma Mix"
       style={{ width: "50px", height: "60px" }}
     />
