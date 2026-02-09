@@ -8,7 +8,7 @@ import axios from 'axios';
 import { Modal, Button, Form} from 'react-bootstrap';
 import Footer from "./Footer.js";
 import Confetti from "react-confetti";
-import RoyalRavvaImg from './img/RoyalRavva.jpeg';
+// import RoyalRavvaImg from './img/RoyalRavva.jpeg';
 
 const GroceryPaymentmethod = () => {
   const navigate = useNavigate();
@@ -1140,11 +1140,11 @@ const handleCheckboxChange = (value) => {
       </div>
     </div>
 
-    <img
+    {/* <img
       src={RoyalRavvaImg}       
       alt="Free Upma Mix"
       style={{ width: "50px", height: "60px" }}
-    />
+    /> */}
   </div>
          
   <table className="grocery-table m-2">
@@ -1165,11 +1165,11 @@ const handleCheckboxChange = (value) => {
            {showSugarOffer && (
             <tr>     
               <td colSpan="2" style={{ textAlign: "center" }}>
-                <img
+                {/* <img
                   src={RoyalRavvaImg}
                   alt="Free Atta"
                   style={{ width: "60px", height: "60px" }}
-                /> 
+                />  */}
                 <div style={{ fontSize: "13px", fontWeight: 600, color: "green" }}>
                   🎁 FREE Royal Pesara Upma Mix 250 g
                 </div>
