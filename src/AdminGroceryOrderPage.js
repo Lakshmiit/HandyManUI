@@ -482,13 +482,13 @@ useEffect(() => {
 const addHeader = (doc, martId) => {
   doc.setTextColor(0, 0, 0); 
   doc.setFontSize(12);
-  doc.setFont(undefined, "bold");
+  doc.setFont("Roboto", "bold");
   doc.text("Handyman", 14, 12);
   doc.text("Lakshmi Mart", 195, 12, { align: "right" });
   doc.setLineWidth(0.5);
   doc.line(14, 15, 195, 15);
   doc.setFontSize(11);
-  doc.setFont(undefined, "normal");
+  doc.setFont("Roboto", "bold");
   doc.text(`Order Number: ${martId}`, 105, 22, { align: "center" });
 };
 
@@ -503,7 +503,7 @@ const addFooter = (doc) => {
   );
   doc.setTextColor(0, 0, 0);
   doc.setFontSize(9);
-  doc.setFont(undefined, "normal");
+  doc.setFont("Roboto", "bold");
   doc.text(
     "For Support : Call / WhatsApp 6281198953 | Mon–Sun : 7:00 AM – 9:00 PM",
     105,
@@ -512,13 +512,16 @@ const addFooter = (doc) => {
   );
 };
 
-  const handleDownloadPDF = () => {
+const handleDownloadPDF = () => {
   const doc = new jsPDF("p", "mm", "a4");
+  const PAGE_HEIGHT = doc.internal.pageSize.height;
+  const FOOTER_SPACE = 25;
+  const TOP_MARGIN = 30;
   addHeader(doc, martId);
   addFooter(doc);
-  doc.setTextColor(0, 0, 0);
+  doc.setFont("Roboto", "normal");
   doc.setFontSize(10);
-
+  doc.setTextColor(0, 0, 0);
   doc.text(`Customer Name: ${customerName}`, 14, 28);
   const addressText = `Customer Address: ${[
     address,
@@ -527,9 +530,9 @@ const addFooter = (doc) => {
     pincode,
     mobileNumber,
   ].filter(Boolean).join(", ")}`;
+
   doc.text(addressText, 14, 32, { maxWidth: 180 });
   doc.text(`Date: ${date ? date.split("T")[0] : ""}`, 14, 42);
-
   autoTable(doc, {
     startY: 48,
     head: [[
@@ -556,8 +559,8 @@ const addFooter = (doc) => {
     ]),
     styles: {
       fontSize: 9,
-      textColor: [0, 0, 0],
       cellPadding: 3,
+      textColor: [0, 0, 0],
     },
     headStyles: {
       fillColor: [0, 128, 0],
@@ -575,13 +578,10 @@ const addFooter = (doc) => {
       7: { cellWidth: 12, halign: "center" },
       8: { cellWidth: 23, halign: "right" },
     },
-
     didDrawCell(data) {
       if (data.column.index === 1 && data.cell.section === "body") {
         const item = items[data.row.index];
-        if (!item) return;
-
-        const imgData = imageUrls[item.id];
+        const imgData = imageUrls[item?.id];
         if (!imgData) return;
 
         const size = 14;
@@ -591,200 +591,82 @@ const addFooter = (doc) => {
         doc.addImage(imgData, "JPEG", x, y, size, size);
       }
     },
-
     didDrawPage() {
       addHeader(doc, martId);
       addFooter(doc);
     },
   });
 
-  const uiGrandTotal = Math.round(
+  doc.setFont("Roboto", "normal");
+  doc.setTextColor(0, 0, 0);
+
+  const uiGrandTotal = Math.round(    
     items.reduce((sum, item) => sum + Number(item.total), 0)
   );
 
+  let pdfCashback = 0;
+  if (
+    (cashbackAmount >= 49 && cashbackAmount <= 51) ||
+    (cashbackAmount >= 99 && cashbackAmount <= 101) ||
+    (cashbackAmount >= 199 && cashbackAmount <= 201) ||
+    (cashbackAmount >= 299 && cashbackAmount <= 301)
+  ) {
+    pdfCashback = cashbackAmount;
+  }
 
-  const finalY = doc.lastAutoTable.finalY + 8;
+  const pdfShowFreeSugar =
+    Number(grandTotal) > 499 && Number(grandTotal) < 998;
 
-  doc.setFont(undefined, "bold");
+  let currentY = doc.lastAutoTable.finalY + 10;
+
+  let requiredHeight = 12;
+  if (pdfCashback > 0) requiredHeight += 6;
+  if (pdfShowFreeSugar) requiredHeight += 6;
+  if (currentY + requiredHeight > PAGE_HEIGHT - FOOTER_SPACE) {
+    doc.addPage();
+    addHeader(doc, martId);
+    addFooter(doc);
+    currentY = TOP_MARGIN + 10;
+  }
+  if (pdfCashback > 0) {
+    doc.setFontSize(10);
+    doc.setTextColor(0, 0, 0);
+    doc.text(
+      `Cashback Applied : Rs. ${pdfCashback}`,
+      195,
+      currentY,
+      { align: "right" }
+    );
+    currentY += 6;
+  }
+
+  if (pdfShowFreeSugar) {
+    doc.setFontSize(10);
+    doc.setTextColor(0, 128, 0); 
+    doc.setFont("Roboto", "bold");
+    doc.text(
+      `FREE ITEM : Royal Pesara Upma Mix 250 g`,
+      195,
+      currentY,
+      { align: "right" }
+    );
+    currentY += 8;
+  }
+
+  doc.setFont("Roboto", "bold");
   doc.setFontSize(11);
+  doc.setTextColor(200, 0, 0); 
   doc.text(
     `Grand Total : Rs. ${uiGrandTotal}`,
     195,
-    finalY,
+    currentY,
     { align: "right" }
   );
-
   doc.save(`Grocery_Order_${martId}.pdf`);
 };
 
-//   const handleDownloadPDF = () => {
-//   const doc = new jsPDF("p", "mm", "a4");
-//   doc.setFontSize(14);
-//   doc.text(`Order Number: ${martId}`, 105, 12, { align: "center" });
-//   doc.setFontSize(10);
-//   doc.text(`Customer Name: ${customerName}`, 14, 22);
-//   const addressText = `Customer Address: ${[
-//   address,
-//   district,
-//   state,
-//   pincode,
-//   mobileNumber,
-// ].filter(Boolean).join(", ")}`;
-
-// doc.text(addressText, 14, 25, {
-//   maxWidth: 180,   
-// });             
-
-//   doc.text(`Date: ${date ? date.split("T")[0] : ""}`, 14, 34);
-//   const tableHead = [[
-//     "Sl.No",
-//     "Photo",
-//     "Item Name",
-//     "Category",
-//     "MRP",
-//     "Discount (%)",
-//     "Price",
-//     "Qty",
-//     "Total",
-//   ]];    
-//   const tableBody = items.map((item, index) => [
-//     index + 1,
-//     item.id, 
-//     item.name,
-//     item.category,
-//     `Rs. ${Number(item.mrp).toFixed(0)}`,
-//     `${item.discount}%`,
-//     `Rs. ${Number(item.afterDiscountPrice).toFixed(0)}`,
-//     item.quantity,
-//     `Rs. ${Number(item.total).toFixed(0)}`,
-//   ]);
-//   const uiGrandTotal = items.reduce(
-//     (sum, item) => sum + Number(item.total),
-//     0
-//   );
-//   // tableBody.push([
-//   //   "",
-//   //   "",
-//   //   "",
-//   //   "",
-//   //   "",
-//   //   "",
-//   //   "",
-//   //   "Grand Total",
-//   //   `Rs. ${uiGrandTotal.toFixed(0)}`,
-//   // ]);
-//   let finalY = doc.lastAutoTable.finalY + 10;
-// const pageHeight = doc.internal.pageSize.height;
-
-// if (finalY + 15 > pageHeight) {
-//   doc.addPage();
-//   finalY = 20;
-// }
-
-// doc.setFont(undefined, "bold");
-// doc.setFontSize(11);
-// doc.text(
-//   `Grand Total : Rs. ${uiGrandTotal.toFixed(0)}`,
-//   195,
-//   finalY,
-//   { align: "right" }
-// );
-// doc.setFontSize(11);
-//   autoTable(doc, {
-//     startY: 42,
-//     head: tableHead,
-//     body: tableBody,
-//     theme: "grid",
-//     styles: {
-//       fontSize: 9,
-//       cellPadding: 3,
-//       textColor: [0, 0, 0]
-//     },
-//     headStyles: {
-//       fillColor: [0, 128, 0],
-//       textColor: 255,
-//       halign: "center",
-//     },
-//     columnStyles: {
-//     0: { cellWidth: 10, halign: "center" },
-//     1: { cellWidth: 25 },  
-//     2: { cellWidth: 40 },
-//     3: { cellWidth: 25 },
-//     4: { cellWidth: 15, halign: "right" },
-//     5: { cellWidth: 20, halign: "right" },
-//     6: { cellWidth: 20, halign: "right" },
-//     7: { cellWidth: 12, halign: "center" },
-//     8: { cellWidth: 20, halign: "right" },
-//       // 0: { halign: "center", cellWidth: 10 },   
-//       // 1: { cellWidth: 50 },                   
-//       // 2: { cellWidth: 25 },                   
-//       // 3: { halign: "right", cellWidth: 20 },   
-//       // 4: { halign: "right", cellWidth: 22 },  
-//       // 5: { halign: "right", cellWidth: 20 },    
-//       // 6: { halign: "center", cellWidth: 15 },  
-//       // 7: { halign: "right", cellWidth: 22 },   
-//     },       
-//     didDrawCell: function (data) {
-//   if (
-//     data.column.index === 1 && 
-//     data.cell.section === "body"
-//   ) {
-//     const productId = data.cell.raw;
-//     const imgData = imageUrls[productId];
-
-//     if (imgData) {
-//       const imgWidth = 14;
-//       const imgHeight = 14;
-
-//       const x = data.cell.x + (data.cell.width - imgWidth) / 2;
-//       const y = data.cell.y + (data.cell.height - imgHeight) / 2;
-
-//       doc.addImage(
-//         imgData,
-//         "JPEG",
-//         x,
-//         y,
-//         imgWidth,
-//         imgHeight
-//       );
-//     }
-//   }
-// }
-//   });
-//   doc.save(`Grocery_Order_${martId}.pdf`);
-// };
-
-//     const handleDownloadExcel = () => {
-//   const worksheetData = items.map((item, idx) => ({
-//     "Sl. No": idx + 1,
-//     "Item Name": item.name,
-//     "Category": item.category,
-//     "MRP": item.mrp,
-//     "Discount (%)": item.discount,
-//     "After Discount Price": item.afterDiscountPrice,
-//     "Required Quantity": item.quantity,
-//     "Total": item.total,
-//   }));
-
-//   worksheetData.push({
-//     "Sl. No": "",
-//     "Item Name": "",
-//     "Category": "",
-//     "MRP": "",
-//     "Discount (%)": "",
-//     "After Discount Price": "",
-//     "Required Quantity": "Grand Total",
-//     "Total": items.reduce((sum, item) => sum + item.total, 0),
-//   });
-
-//   const worksheet = XLSX.utils.json_to_sheet(worksheetData);
-//   const workbook = XLSX.utils.book_new();
-//   XLSX.utils.book_append_sheet(workbook, worksheet, "Grocery Items");
-//   XLSX.writeFile(workbook, `Grocery_Order_${martId}.xlsx`);
-// };
-
 useEffect(() => {
-  if (!items.length) return;
+  if (!items.length) return;        
   const controller = new AbortController();
   async function loadImages() {
     const map = {};
@@ -986,7 +868,7 @@ const handleImageClick = (imageSrc, product) => {
    {showFreeSugar && (
     <tr>
       <td colSpan="10" className="text-end fw-bold text-success">
-        🎁 Give Customer <strong>Idly Ravva Loose 500 g FREE</strong>
+        🎁 Give Customer <strong>Royal Pesara Upma Mix 250 g FREE</strong>
       </td>    
     </tr>
   )}    

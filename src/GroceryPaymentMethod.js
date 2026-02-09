@@ -8,12 +8,12 @@ import axios from 'axios';
 import { Modal, Button, Form} from 'react-bootstrap';
 import Footer from "./Footer.js";
 import Confetti from "react-confetti";
-import IdlyRavvaImg from './img/IdlyRavva.jpeg';
+import RoyalRavvaImg from './img/RoyalRavva.jpeg';
 
 const GroceryPaymentmethod = () => {
   const navigate = useNavigate();
   // const location = useLocation();
- const {userType} = useParams();
+ const {userType} = useParams();    
   const {userId} = useParams();
   const {groceryItemId} = useParams();
    const [isMobile, setIsMobile] = useState(false);
@@ -1133,7 +1133,7 @@ const handleCheckboxChange = (value) => {
   >
     <div>
       <strong style={{ color: "#d84315", fontSize: "13px" }}>
-        🎁 FREE Idly Ravva 500 g    
+        🎁 FREE Royal Pesara Upma Mix 250 g   
       </strong>
       <div style={{ fontSize: "13px", fontWeight: "bold", textAlign: "center"}}>
         On orders above ₹499
@@ -1141,8 +1141,8 @@ const handleCheckboxChange = (value) => {
     </div>
 
     <img
-      src={IdlyRavvaImg}
-      alt="Free Atta"
+      src={RoyalRavvaImg}
+      alt="Free Upma Mix"
       style={{ width: "50px", height: "60px" }}
     />
   </div>
@@ -1166,12 +1166,12 @@ const handleCheckboxChange = (value) => {
             <tr>     
               <td colSpan="2" style={{ textAlign: "center" }}>
                 <img
-                  src={IdlyRavvaImg}
+                  src={RoyalRavvaImg}
                   alt="Free Atta"
                   style={{ width: "60px", height: "60px" }}
                 /> 
                 <div style={{ fontSize: "13px", fontWeight: 600, color: "green" }}>
-                  🎁 FREE Idly Ravva 500 g
+                  🎁 FREE Royal Pesara Upma Mix 250 g
                 </div>
               </td>
             </tr>
