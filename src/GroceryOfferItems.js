@@ -25,7 +25,7 @@ const CATEGORY_VEG_FRUITS_OFFERS = [
 ];
        
 const LIMIT_RULES = [ 
-  
+  {match:normalizeName("Kiwi 4 Pcs"), limit: 1},
   {match:normalizeName("Cabbage (700-800 g) 1 Pc"), limit: 1},
   {match:normalizeName("Tomato 1 Kg"), limit: 1},
   {match: normalizeName("Cucumber (Dosakaya) 250 g"), limit: 2},

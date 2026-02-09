@@ -28,6 +28,7 @@ const CATEGORY_VF_OFFERS = [
 ];
 
 const LIMIT_RULES = [
+  {match:norm("Kiwi 4 Pcs"), limit: 1},
   {match:norm("Cabbage (700-800 g) 1 Pc"), limit: 1},
   {match:norm("Tomato 1 Kg"), limit: 1},
   {match: norm("Cucumber (Dosakaya) 250 g"), limit: 2},

@@ -116,7 +116,8 @@ function getCustomLimit(name) {
      n === "iran apple 2 pcs" ||
      n === "baby oranges 2 pcs"  ||
      n === "tomato 1 kg" ||
-     n === "cabbage (700-800 g) 1 pc"
+     n === "cabbage (700-800 g) 1 pc" ||
+     n === "kiwi 4 pcs"
     ) return 1;
   if (
     n === "coriander leaves (kottimeera) 70-80 g" ||
