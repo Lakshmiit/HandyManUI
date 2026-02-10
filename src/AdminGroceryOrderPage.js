@@ -506,9 +506,9 @@ const addFooter = (doc) => {
   doc.setFont("Roboto", "bold");
   doc.text(
     "For Support : Call / WhatsApp 6281198953 | Mon–Sun : 7:00 AM – 9:00 PM",
-    105,
+    105,    
     pageHeight - 10,
-    { align: "center" }
+    { align: "center" }            
   );
 };
 

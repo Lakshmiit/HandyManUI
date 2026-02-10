@@ -95,7 +95,7 @@ import Banner5Img from './img/300Cashback.jpeg';
 import UnbeatableImg from './img/MilkOffers.jpeg';
 // import Above45Img from './img/Above45.jpeg'; 
 import SaleImg from './img/SaleOffer.jpeg'; 
-import { initPushNotifications } from "./NotificationService.js";
+// import { initPushNotifications } from "./NotificationService.js";
 import DeliveryImg from './img/FreeDelivery.jpeg';
 import AddIcCallIcon from '@mui/icons-material/AddIcCall';
 import RoyalImg from './img/RoyalUpma.jpeg';
@@ -596,11 +596,11 @@ useEffect(() => {
       } catch (err) {
         console.error("Error fetching grocery items", err);
       } finally {
-        setLoading(false);
+        setLoading(false);      
       }
     };
     fetchProducts();
-    initPushNotifications();
+    // initPushNotifications();
   }, []);
 
   /* ================= FILTER ================= */
