@@ -1332,7 +1332,7 @@ console.log("Mobile Number from localStorage:", mobileNumber);
     async function fetchProductsAndFirstImages(warm = false, signal) {
       try {
         if (!warm) setImageLoading(true);
-        const url = `https://4ff3c2db-d2c6-4d03-b3e9-34c082c51313/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(
+        const url = `https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(
           selectedCategory
         )}`;
         const { data: items } = await axios.get(url, { signal });
