@@ -81,16 +81,17 @@ useEffect(() => {
   setGrandSummary(CartStorage.grandSummary());
 }, [cart, selectedCategory, products]);
 
-const handleAdd = (productId) => setCart(prev => ({ ...prev, [productId]: 1 }));
-// const handleIncrement = (productId) =>
-//   setCart(prev => ({ ...prev, [productId]: (prev[productId] || 0) + 1 }));
+// const handleAdd = (productId) => setCart(prev => ({ ...prev, [productId]: 1 }));
+
 const handleIncrement = (productId) =>
   setCart(prev => {
     const product = products.find(p => String(p.id) === String(productId));
     const stock = Number(product?.stockLeft || 0);
-    const cur = Number(prev[productId] || 0);
-    if (cur >= stock) return prev;
-    return { ...prev, [productId]: cur + 1 };
+   const limit = getLimit(product);
+    const currentQty = Number(prev[productId] || 0);
+    if (currentQty >= stock) return prev;
+    if(currentQty >= limit) return prev;
+    return { ...prev, [productId]: currentQty + 1 };
   });
 
 const handleDecrementClick = (productId) =>
@@ -117,27 +118,36 @@ const toggleLike = (productId) => {
   setZoomImage(imageSrc);
   setZoomProduct(product);       
   setShowZoomModal(true);
-};
-  
-// const handleAddClick = (id) => {
-//     handleAdd(id);
-//     setChecked(true);
-//   };          
+};         
 
 const getQty = (id) => Number(cart?.[id] || 0);
 
 const canAddMore = (id) => {
   const product = products.find(p => String(p.id) === String(id));
   const stock = Number(product?.stockLeft || 0);
-  return getQty(id) < stock;
+  const limit = getLimit(product);
+  const currentQty = getQty(id);
+  return currentQty < stock && currentQty < limit;
 };
 
 const handleAddClick = (id) => {
   const product = products.find(p => String(p.id) === String(id));
   const stock = Number(product?.stockLeft || 0);
+  const limit = getLimit(product);
   if (stock <= 0) return; 
-  handleAdd(id);
+  if(limit <= 0) return;
+  // handleAdd(id);
+  setCart(prev => ({ ...prev, [id]: 1}));
   setChecked(true);
+};
+
+const getLimit = (product) => {
+  if (!product) return Infinity;
+   const apiLimit = Number(product.limit);
+     if (Number.isFinite(apiLimit) && apiLimit > 0) {
+    return apiLimit;
+  }
+  return Infinity;
 };
 
 function getItemTime(p) {
@@ -685,6 +695,22 @@ function getItemTime(p) {
       )}
     </div>
   )}
+  {(() => {
+                                const limit = getLimit(product);
+                                return Number.isFinite(limit) && limit > 0 ? (
+                                  <div
+                                    style={{
+                                      color: "#db1818",
+                                      paddingBottom: "2px",
+                                      fontSize: "10px",
+                                      fontWeight: 600,
+                                      marginBottom: "28px",
+                                    }}
+                                  >
+                                    Max {limit} per customer
+                                  </div>
+                                ) : null;
+                              })()}
 
   {/* Checkbox */}
   {!isOutOfStock && (
@@ -727,7 +753,9 @@ function getItemTime(p) {
             cursor: canAddMore(product.id) ? "pointer" : "not-allowed" }}
             onClick={() => canAddMore(product.id) && handleIncrement(product.id)}
             disabled={!canAddMore(product.id)} 
-            title={!canAddMore(product.id) ? "No more stock" : "Add one"}
+            title={getQty(product.id) >= getLimit(product) ? "Maximum limit reached"
+              : !canAddMore(product.id) ? "No more stock" : "Add one"
+            }
                 >
             +
           </button>
