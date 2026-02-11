@@ -28,7 +28,10 @@ const CATEGORY_VF_OFFERS = [
 ];
 
 const LIMIT_RULES = [
-  {match:norm("Kiwi 4 Pcs"), limit: 1},
+  {match:norm("Dragon (400-450 g) 1Pc"), limit: 1},
+  {match:norm("Cintu Dark Magic layered soft cake Pack 3"), limit: 1},
+  {match:norm("Unibic Fruit & Nut Cookies 67.5 g"), limit: 1},
+  {match:norm("Kiwi 4Pcs"), limit: 1},
   {match:norm("Cabbage (700-800 g) 1 Pc"), limit: 1},
   {match:norm("Tomato 1 Kg"), limit: 1},
   {match: norm("Cucumber (Dosakaya) 250 g"), limit: 2},

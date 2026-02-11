@@ -25,7 +25,10 @@ const CATEGORY_VEG_FRUITS_OFFERS = [
 ];
        
 const LIMIT_RULES = [ 
-  {match:normalizeName("Kiwi 4 Pcs"), limit: 1},
+  {match:normalizeName("Dragon (400-450 g) 1Pc"), limit: 1},
+  {match:normalizeName("Cintu Dark Magic layered soft cake Pack 3"), limit: 1},
+  {match:normalizeName("Unibic Fruit & Nut Cookies 67.5 g"), limit: 1},
+  {match:normalizeName("Kiwi 4Pcs"), limit: 1},
   {match:normalizeName("Cabbage (700-800 g) 1 Pc"), limit: 1},
   {match:normalizeName("Tomato 1 Kg"), limit: 1},
   {match: normalizeName("Cucumber (Dosakaya) 250 g"), limit: 2},
