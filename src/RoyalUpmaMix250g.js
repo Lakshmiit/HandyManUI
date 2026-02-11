@@ -13,7 +13,6 @@ const RoyalUpmaMix250g = () => {
       <div className="page-center">
         <div className="product-card">
           <div className="image-wrapper">
-            <span className="image-badge">16% </span>
             <img
               src={RoyalUpmaImg}
               alt="Lakshmi Mart Royal Pesara Upma Mix"

@@ -35,6 +35,8 @@ const [code, setCode] = useState('');
 const [units, setUnits] = useState('');
 const [manufactureDate,setManufactureDate] =useState('');
 const [expireDate,setExpireDate]=useState('');
+const [limit, setLimit] = useState();
+
 // const [gst, setGST] = useState('');
 useEffect(() => {
     console.log(grocery);
@@ -67,6 +69,7 @@ useEffect(() => {
                   setUnits(groceryData.units);
                   setManufactureDate(groceryData.manufactureDate);
                   setExpireDate(groceryData.expireDate);
+                  setLimit(groceryData.limit);
                 } catch (error) {
                   setError(error.message);
               } finally {
@@ -192,6 +195,7 @@ const handleRemoveFile = (index) => {
         RequestedBy: "Admin",
         manufactureDate: manufactureDate,
         expireDate: expireDate,
+        Limit: limit,
     };
     try {
       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${uniqueId}`, {
@@ -437,6 +441,17 @@ if (error) {
                 value={expireDate}
                 onChange={(e) => setExpireDate(e.target.value)}
                 placeholder="Expiry Date"
+              />
+            </div>    
+
+            <div className="form-group">
+              <label>Limit <span className="req_star">*</span></label>
+              <input
+                type="text"      
+                className="form-control" 
+                value={limit}
+                onChange={(e) => setLimit(e.target.value)}
+                placeholder="Limit"
               />
             </div>
 

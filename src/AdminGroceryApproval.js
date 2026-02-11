@@ -15,7 +15,7 @@ const AdminGroceryApproval = () => {
   const [comments, setComments] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {    
+  useEffect(() => {         
     const fetchData = async () => {
       try {
         const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetGroceryItems/${id}`);
@@ -60,6 +60,7 @@ const AdminGroceryApproval = () => {
       RequestedBy: "Admin",
       Code: code,
       Units: units,
+      Limit: limit,
     };
 
     try {   
@@ -91,7 +92,7 @@ const AdminGroceryApproval = () => {
     );
   }
 
-  const { name, category, mrp, discount, stockLeft, deliveryIn, requestedBy, afterDiscount, code, units, manufactureDate, expireDate } = groceryData;
+  const { name, category, mrp, discount, stockLeft, deliveryIn, requestedBy, afterDiscount, code, units, limit, manufactureDate, expireDate } = groceryData;
 
   return (
     <div className="d-flex flex-row mt-100">
@@ -166,6 +167,7 @@ const AdminGroceryApproval = () => {
         <p><strong>Code:</strong> {code}</p>
         <p><strong>Manufacture Date:</strong> {manufactureDate}</p>
         <p><strong>Expiry Date:</strong> {expireDate}</p>
+        <p><strong>Limit: </strong> {limit} </p>
       </div>
     </div>
   </div>

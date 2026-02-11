@@ -146,8 +146,8 @@ useEffect(() => {
       Units: units,
       ManufactureDate: manufactureDate,
       ExpireDate : expireDate,
-      Limit: limit,
-    };
+      Limit: limit,    
+    };   
 // handymanapiv2.azurewebsites.net
     try {
       const response = await fetch("https://handymanapiv2.azurewebsites.net/api/UploadGrocery/UploadGrocery", {

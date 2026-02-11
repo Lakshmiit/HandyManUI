@@ -267,7 +267,7 @@ function getItemTime(p) {
           .filter(x => !!x.photo);
 
         const cachedMap = {};
-        const misses = [];
+        const misses = [];   
         for (const { productId, photo } of firstImages) {
           const cached = ImageCache.getBase64(photo);
           if (cached) {
