@@ -743,7 +743,7 @@ const handleUpdateStockLeft = async () => {
         Status: item.status,
         Code: item.code,
         Units: item.units,
-        Limit: item.limit
+        Limit: item.limit || "string",
       };
       const res = await fetch(
         `https://handymanapiv2.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${encodeURIComponent(item.id)}`,
