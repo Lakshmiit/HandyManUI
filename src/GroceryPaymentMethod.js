@@ -668,7 +668,7 @@ if (primary?.zipCode === "530048" || primary?.zipCode === "530045") {
     } else {
        window.alert(`Thank You for Choosing the Lakshmi Mart Services! Your Reference Order Number is ${martId}. Delivery in Between 45 to 120 Minutes.`);
     }
-  //  window.location.href = `/profilePage/${userType}/${userId}`;   
+   window.location.href = `/profilePage/${userType}/${userId}`;   
    }    
   } catch (error) {
     console.error('Error:', error);
