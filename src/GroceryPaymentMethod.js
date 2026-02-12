@@ -23,6 +23,7 @@ const [selectedPayment, setSelectedPayment] = useState("cash");
 const [error, setError] = useState("");
   const [martId, setMartId] = useState('');
   const [totalItemsSelected, setTotalItemsSelected] = useState('');
+  const [limit, setLimit] = useState('');
   const [grandTotal, setGrandTotal] = useState('');
   const [customerName, setCustomerName] = useState('');
   const [cartData, setCartData] = useState(null);
@@ -86,8 +87,8 @@ useEffect(() => {
 }, [addresses]);
 
 useEffect(() => {
-  console.log(  cashbackMessage, loading, isChecked, editingAddressId, customerName, groceryId);
-}, [cashbackMessage, loading, isChecked, editingAddressId, customerName, groceryId]);
+  console.log(  limit,cashbackMessage, loading, isChecked, editingAddressId, customerName, groceryId);
+}, [limit,cashbackMessage, loading, isChecked, editingAddressId, customerName, groceryId]);
 
 const showSugarOffer =
   Number(grandTotal) >= 499 && Number(grandTotal) <= 998;
@@ -287,6 +288,7 @@ useEffect(() => {
       setGrandTotal(data.grandTotal);
       setTotalItemsSelected(data.totalItemsSelected);
       setCustomerName(data.customerName);
+      setLimit(data.limit);
       // setDate(data.date);
       const products = (data?.categories ?? []).flatMap(c => c?.products ?? []);
       const selected = products.filter(
@@ -666,7 +668,7 @@ if (primary?.zipCode === "530048" || primary?.zipCode === "530045") {
     } else {
        window.alert(`Thank You for Choosing the Lakshmi Mart Services! Your Reference Order Number is ${martId}. Delivery in Between 45 to 120 Minutes.`);
     }
-   window.location.href = `/profilePage/${userType}/${userId}`;   
+  //  window.location.href = `/profilePage/${userType}/${userId}`;   
    }    
   } catch (error) {
     console.error('Error:', error);
@@ -741,6 +743,7 @@ const handleUpdateStockLeft = async () => {
         Status: item.status,
         Code: item.code,
         Units: item.units,
+        Limit: item.limit
       };
       const res = await fetch(
         `https://handymanapiv2.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${encodeURIComponent(item.id)}`,
