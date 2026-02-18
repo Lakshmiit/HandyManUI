@@ -747,6 +747,11 @@ const handleUpdateStockLeft = async () => {
         Units: item.units,
         Limit: item.limit || "string",
       };
+
+
+
+
+      
       const res = await fetch(
         `https://handymanapiv2.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${encodeURIComponent(item.id)}`,
         {
@@ -763,7 +768,7 @@ const handleUpdateStockLeft = async () => {
       return true;
     });
     await Promise.allSettled(requests);
-    console.log("Stock updated (unchanged).");
+    console.log("Stock updated (unchanged).");      
   } catch (error) {
     console.error("Error updating stock:", error);
     alert("Failed to update grocery stock.");
