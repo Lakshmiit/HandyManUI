@@ -64,7 +64,7 @@ const [referralAmount, setReferralAmount] = useState(0);
 const [netPayable, setNetPayable] = useState(0);     
 const [isOffersOrder, setIsOffersOrder] = useState(false);
  const [firstOrderDiscount, setFirstOrderDiscount] = useState(0);
-  const [isNewUser, setIsNewUser] = useState(false);
+  const [isNewUser, setIsNewUser] = useState(true);
     const [showConfetti, setShowConfetti] = useState(false);
 const [cashbackMessage, setCashbackMessage] = useState("");
 // const [date, setDate] = useState("");
@@ -199,9 +199,6 @@ useEffect(() => {
       } 
       else {
         discount = 0; 
-        // if (isNew) {
-        //   msg = "Order ₹150 or more to get ₹50 cashback on your first order!";
-        // }
       }
       setFirstOrderDiscount(discount);
       setCashbackMessage(msg);
@@ -373,8 +370,14 @@ const goBackToCart = () => {
           fullName: addr.fullName,
         }));
         setAddresses(formattedAddresses);
-        const customerName = Array.isArray(data) ? data[0]?.fullName || '' : data.fullName || '';
-        setFullName(customerName);
+
+        const apiFullName = addresses[0]?.fullName ?? '';
+        setFullName(apiFullName);
+        if (!apiFullName || isGuestName(apiFullName)) {
+          setIsNewUser(true);   
+        } else {
+          setIsNewUser(false); 
+        }
       } catch (error) {
         console.error('Error fetching customer data:', error);
       }
@@ -580,7 +583,6 @@ const goBackToCart = () => {
       throw new Error("Failed to update order.");
     }
 
-    // If update succeeds, RESET referral points to 0 on the referral record
     if (referralAmount > 0 && referralRec?.id) {
       try {
         const id = String(referralRec.id).trim();
@@ -811,60 +813,6 @@ const handlePaymentAndSms = async () => {
   }
 };
 
-// const handleLocationMethod = async () => {
-//   if (!navigator.geolocation) {
-//     setLocationError("Geolocation not supported in this browser.");
-//     return;
-//   }
-
-//   navigator.geolocation.getCurrentPosition(
-//     async (position) => {
-//       const latitude = position.coords.latitude;
-//       const longitude = position.coords.longitude;
-
-//       setLocation({ latitude, longitude }); 
-//       const payload = {
-//         id: "string",
-//         date: new Date().toISOString(), 
-//         latitude,
-//         longitude,
-//       };
-//       try {
-//         const response = await fetch(
-//           `https://handymanapiv2.azurewebsites.net/api/Location/UploadLocation`,
-//           {
-//             method: "POST",
-//             headers: { "Content-Type": "application/json" },
-//             body: JSON.stringify(payload),
-//           }
-//         );
-//         if (!response.ok) throw new Error("Failed to update location details");
-//         const result = await response.json();
-//         console.log("Update success:", result);
-//         // alert("Location updated successfully!");
-//       } catch (error) {
-//         console.error("Error updating location:", error);
-//         alert("Update failed!");
-//       }
-//     },
-//     (err) => {
-//       setLocationError(err.message);
-//       alert("Failed to get location: " + err.message);
-//     },
-//     { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-//   );
-// };
-  
-//   const BothHandlePaymentandLocation = async (e) => {
-//       e.preventDefault();
-//       try {
-//         // await handleLocationMethod();
-//         await handleUpdatePaymentMethod();
-//       } catch (error) {
-//         console.log("error:", error);
-//       }
-//     };
-
 const handleCheckboxChange = (value) => {
   const newValue = selectedPayment === value ? null : value;
   setSelectedPayment(newValue);
@@ -923,7 +871,7 @@ const handleCheckboxChange = (value) => {
                             <Modal show={showModal} onHide={() => setShowModal(false)}>
                         <Modal.Header closeButton style={{ backgroundColor: isEditing ? "#008000" : "#008000",color: "white"}}>
                           <Modal.Title className='w-100'>
-                            {isGuestName(fullName) ? 'Add Address' : 'Edit Address'}
+                            {isNewUser ? 'Add Address' : 'Edit Address'}
                           </Modal.Title>
                           </Modal.Header>
                         <Modal.Body>
@@ -1038,7 +986,7 @@ const handleCheckboxChange = (value) => {
                                             borderColor: isAddressInvalid ? "#008000" : "#008000",
                                             color: "white"
                                         }} onClick={handleAddressEdit}>
-                              {isGuestName(fullName) ? 'Add Address' : 'Edit Address'}
+                              {isNewUser ? 'Add Address' : 'Edit Address'}
                             </Button>
                           </Form>
                         </Modal.Body>
@@ -1209,15 +1157,7 @@ const handleCheckboxChange = (value) => {
         <div className='d-flex flex-column m-1'>
         {isMobile ? (
         <div className='d-flex flex-column'>
-        {/* <label style={{fontSize: "13px"}}>
-            <input 
-            type="radio" 
-            className="form-check-input border-dark m-1"
-            checked={selectedPayment === 'online'}
-            onChange={() => handleCheckboxChange('online')}/>
-            Pay Through Online
-          </label> */}
-          <label style={{fontSize: "18px"}}>
+        <label style={{fontSize: "18px"}}>
             <input 
             type="radio" 
             className="form-check-input border-dark m-1"
@@ -1229,15 +1169,6 @@ const handleCheckboxChange = (value) => {
           </div>
         ) : (
           <div className="desktop-view d-flex flex-column ">
-      {/* <label className="me-4" style={{fontSize: "12px"}}>
-        <input 
-        type="radio" 
-        className="form-check-input border-dark me-2"
-        checked={selectedPayment === 'online'}
-        onChange={() => handleCheckboxChange('online')}
-        />
-        Pay Through Online
-      </label> */}
       <label style={{fontSize: "20px"}}>
         <input 
           type="radio" 
@@ -1374,17 +1305,19 @@ const handleCheckboxChange = (value) => {
     </div>
 
 <div className="button">
-  {/* <button onClick={getLocation}>Get Location</button>
-      {location && (
-        <p>
-          Latitude: {location.latitude}, Longitude: {location.longitude}
-        </p>
-      )}
-      {locationError && <p style={{ color: "red" }}>{locationError}</p>} */}
-    {/* <button className="btn-back m-2">Back</button> */}
-      <button
+  {loading && (
+  <div className="text-center mt-3">
+    <div className="spinner-border text-success" role="status">
+      <span className="visually-hidden">Loading...</span>
+    </div>
+    <p className="mt-2 text-success fw-bold">
+      Your order is being confirmed. Please wait....
+    </p>
+  </div>
+)}
+  <button
         className="btn-grocery"
-  disabled={isOrderDisabled}
+  disabled={loading || isOrderDisabled}
   onClick={handlePaymentAndSms}
   title={
     isAddressInvalid
@@ -1396,7 +1329,7 @@ const handleCheckboxChange = (value) => {
       : ""
   }
 >
-  Order Now
+  {loading ? "Confirming Order..." : "Order Now"}
 </button>
 </div>
     </div>

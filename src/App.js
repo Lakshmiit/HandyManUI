@@ -125,7 +125,7 @@ import TermsAndConditions from './TermsandConditions.js';
 import PrivacyPolicy from './PrivacyPolicy.js';
 import { getLoginData } from "./utils/auth";
 import RoyalUpmaMix250g from './RoyalUpmaMix250g.js';
-// import MartHomeAppliances from './MartHomeAppliances.js';
+import MartHomeAppliances from './MartHomeAppliances.js';
 // import CustomerLocation from "./CustomerLocation.js";
 const PreventBackNavigation = () => {
    const navigate = useNavigate();
@@ -165,7 +165,7 @@ function App() {
         <main>
           {/* className="mt-100" */}       
           <Routes>
-            {/* <Route path="/martHomeAppliances/:userType/:userId" element={<MartHomeAppliances />} />  */}
+            <Route path="/martHomeAppliances/:userType/:userId" element={<MartHomeAppliances />} /> 
             <Route path="/RoyalUpmaMix" element={<RoyalUpmaMix250g />} />
             <Route path="/termsandConditions" element={<TermsAndConditions />} />
             <Route path="/privacyPolicy" element={<PrivacyPolicy />} />

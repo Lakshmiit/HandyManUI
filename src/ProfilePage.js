@@ -6,11 +6,6 @@ import Carousel from "react-bootstrap/Carousel";
 import './App.css';
 import { Modal, Button} from 'react-bootstrap';
 import Confetti from "react-confetti";
-// import LocationOnIcon from '@mui/icons-material/LocationOn';
-// import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-// import NotificationBell from "./NotificationsBell";
-// import OrdersNotificationBell from "./OrdersBellNotifications";
-// import TrackStatusNotificationBell from "./TrackStatusBellNotifications";
 import ImageCache from "./utils/ImageCache";
 import axios from "axios";    
 import Footer from './Footer.js';
@@ -20,27 +15,18 @@ import RouteIcon from "@mui/icons-material/Route";
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import StorefrontIcon from '@mui/icons-material/Storefront'; 
 import DeliveryDiningIcon from '@mui/icons-material/DeliveryDining';
-// import AddToCartCount from "./AddToCartCount.js";
-// import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import PermIdentityIcon from '@mui/icons-material/PermIdentity';
 import UploadIcon from '@mui/icons-material/Upload';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
-// import Banner from './img/Saturday.jpeg';
-// import Banner2 from './img/MilkOffers.jpeg';   
-// import Banner2 from './img/ChickenOffers.jpeg';
-// import Banner2 from './img/DrinkOffers.jpeg';   F
 // import Banner3 from './img/Above45.jpeg'; 
 // import BannerVideo from './img/PongalOffers.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';       
 // import VolumeUpIcon from '@mui/icons-material/VolumeUp';
-// import Banner3 from './img/banner-4.jpg';  
 import { useNavigate, useParams } from "react-router-dom";   
 import Logo from "./img/Hm_Logo 1.png";
 import SearchIcon from "@mui/icons-material/Search";
-// import ArticleIcon from '@mui/icons-material/Article';
-// import AnnouncementIcon from '@mui/icons-material/Announcement';
 import LogoutIcon from "@mui/icons-material/Logout";   
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
@@ -55,8 +41,6 @@ import HomeDecor from './img/HomeDecor.jpeg';
 import HomeAppliances from './img/Kitchenware.jpeg';
 import BabyKidsImg from './img/BabyKids.jpeg';
 import PoojaImg from './img/Pooja.jpeg';
-// import FamilyPackImg from './img/FamilyPack.jpeg';
-// import PersonalCareImg from './img/PersonalCare.jpeg';
 import HairImg from './img/HairCare.jpeg';
 import BathBodyImg from './img/BathBody.jpeg';
 import RavvaImg from './img/RiceRavva.jpeg';
@@ -93,12 +77,14 @@ import Banner3Img from './img/100Cashback.jpeg';
 import Banner4Img from './img/200Cashback.jpeg';
 import Banner5Img from './img/300Cashback.jpeg';
 import UnbeatableImg from './img/MilkOffers.jpeg';
-// import Above45Img from './img/Above45.jpeg'; 
-import SaleImg from './img/SaleOffer.jpeg'; 
+import Above45Img from './img/Above45.jpeg'; 
+// import SaleImg from './img/SaleOffer.jpeg'; 
 // import { initPushNotifications } from "./NotificationService.js";
 import DeliveryImg from './img/FreeDelivery.jpeg';
 import AddIcCallIcon from '@mui/icons-material/AddIcCall';
 import RoyalImg from './img/RoyalUpma.jpeg';
+import HomeElectricalImg from './img/HomeElectrical.jpeg';
+import HomePlumbingImg from './img/HomePlumbing.jpeg';
 const getMenuList = (userType, userId, category, district ,ZipCode,technicianFullName, isMobile) => {
   const iconSize = isMobile ? 20  : 40;
   const customer = [
@@ -108,18 +94,11 @@ const getMenuList = (userType, userId, category, district ,ZipCode,technicianFul
       ...(!isMobile ? [{MenuIcon: <LocalOfferIcon sx={{ fontSize: iconSize }} />, MenuTitle: "Buy Product Offers", TargetUrl: `/offersIcons/${userType}/${userId}`
     }] : []),
       { MenuIcon: <ApartmentIcon sx={{ fontSize: 40 }} />,  MenuTitle: isMobile ? "Apartment AMC" : "Apartment Common Area Maintenance", TargetUrl: `/aboutApartmentRaiseTicket/${userType}/${userId}` },
-    //   ...(!isMobile ? [{MenuIcon: <TrackStatusNotificationBell sx={{ fontSize: iconSize }} />, MenuTitle: isMobile ? "Track Ticket" : "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}`
-    // }] : []),
-    //   ...(!isMobile ? [{MenuIcon: <NotificationBell sx={{ fontSize: 40 }} />, MenuTitle: "Notifications", TargetUrl: `/customerNotification/${userType}/${userId}`
-    // }] : []),
-    //  ...(!isMobile ? [{MenuIcon: <OrdersNotificationBell sx={{ fontSize: iconSize }} />, MenuTitle: "Orders", TargetUrl: `/customerOrders/${userType}/${userId}`
-    // }] : []),
     ...(!isMobile ? [{MenuIcon: <PermIdentityIcon sx={{ fontSize: iconSize }} />, MenuTitle: "Accounts"
     }] : []),
     ...(!isMobile ? [{MenuIcon: <DeliveryDiningIcon sx={{ fontSize: iconSize }} />, MenuTitle: "Delivery Partner", TargetUrl: `/deliveryPartner/${userType}/${userId}`
     }] : []),
       ];
-
       const admin = [
       { MenuIcon: <SupportAgentIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
       { MenuIcon: <PersonOutlineIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Book Technician", TargetUrl: `/bookTechnician/${userType}/${userId}` },
@@ -143,7 +122,6 @@ const getMenuList = (userType, userId, category, district ,ZipCode,technicianFul
       { MenuIcon: <SupportAgentIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise Ticket", TargetUrl: "/TicketRaise" },
       { MenuIcon: <RouteIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Track Ticket Status" }
   ];
- 
   const dealer = [
       { MenuIcon: <UploadIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Upload Products" },
       { MenuIcon: <RequestQuoteIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise a Quote" },
@@ -154,7 +132,6 @@ const getMenuList = (userType, userId, category, district ,ZipCode,technicianFul
       { MenuIcon: <SupportAgentIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
       { MenuIcon: <RouteIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}` }
   ];
-
   const trader = [
     { MenuIcon: <UploadIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Upload Products" },
     { MenuIcon: <RequestQuoteIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise a Quote"},
@@ -165,7 +142,6 @@ const getMenuList = (userType, userId, category, district ,ZipCode,technicianFul
     { MenuIcon: <SupportAgentIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
     { MenuIcon: <RouteIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}` }
 ];
-
   const technician = [
       { MenuIcon: <PersonAddAltIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Add Technician"},
       { MenuIcon: <RequestQuoteIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise a Quote", TargetUrl: `/notificationTechnician/${userType}/${userId}/${category}/${district}` },
@@ -205,16 +181,15 @@ const categories = [
        
 const groceryCategories = [
   {label: 'LMart Special Royal Pesara Upma Mix', value: 'LMart Special', image: RoyalImg},
-  { label: 'Unbeatable 10 Offers', value: 'Grocery Offers', image: UnbeatableImg },
-  // { label: 'Above 45 % Offers', value: 'Offers', image: Above45Img },
-   { label: 'Buy 1 Get 1 Sale', value: 'Offers', image: SaleImg },
-  { label: 'Kitchenware Appliances', value: 'Kitchenware Appliances', image: KitchenImg },
+  // { label: 'Kitchenware Appliances', value: 'Kitchenware Appliances', image: KitchenImg },
+  { label: 'Unbeatable 10 Offers', value: 'Unbeatable Offers', image: UnbeatableImg },
+  { label: 'Above 45 % Offers', value: 'Offers', image: Above45Img },
+  //  { label: 'Buy 1 Get 1 Sale', value: 'Offers', image: SaleImg },
   // {label: ( <> Chicken <br /> Pre-Booking </> ), value: 'Chicken', image: ChickenImg },
   { label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
    { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
   { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
   { label: 'Ice Creams', value: 'Ice Creams', image: IcecreamImg },
-  // { label: 'Kitchenware Appliances', value: 'Kitchenware Appliances', image: KitchenImg },
   { label: 'Atta & Flours', value: 'Atta & Flours', image: AttaImg },
   { label: 'Rice & Ravva', value: 'Rice & Ravva', image: RavvaImg },    
    { label: 'Oils & Dals', value: 'Oils & Dals', image: OilsImg },
@@ -252,7 +227,7 @@ const collectionsCategories = [
 const ProfilePage = () => {
    const [allProducts, setAllProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
-  const [imageUrls, setImageUrls] = useState({});
+  const [imageUrls, setImageUrls] = useState({});    
   const [searchQuery, setSearchQuery] = useState("");
    const [listening, setListening] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -278,13 +253,7 @@ const ProfilePage = () => {
     const [selectedCategory, setSelectedCategory] = useState("");
     //  const videoRef = useRef(null);
 // const [isMuted] = useState(true);
-// const [isMuted, setIsMuted] = useState(true);
-const [unreadCount, setUnreadCount] = useState(0);
-const [messageCounts, setMessageCounts] = useState({
-  news:     0,
-  buysell:  0,
-  tolet:    0  
-});    
+// const [isMuted, setIsMuted] = useState(true);  
 const [grocery, setGrocery] = useState([]);
 const [cartSummary, setCartSummary] = useState({
   items: 0,
@@ -310,7 +279,6 @@ const [paymentMode, setPaymentMode] = useState('');
 const clickLock = useRef(false);
 const [isRegistered, setIsRegistered] = useState(false);
 const [partnerStatus, setPartnerStatus] = useState("");
-// const [isPickup] = useState(false);
 // const [isPickup, setIsPickup] = useState(false);
 const [cartData, setCartData] = useState(null);
 const [transactionDetails, setTransactionDetails] = useState('');
@@ -350,7 +318,7 @@ const [placeholderIndex, setPlaceholderIndex] = useState(0);
 // const carouselRef = useRef(null);
 // const carouselInstance = useRef(null);
 const firstCategories = groceryCategories.slice(0, 6);
-const secondCategories = groceryCategories.slice(6, 32);
+const secondCategories = groceryCategories.slice(6, 31);
 // const thirdCategories = groceryCategories.slice(15, 24);
 // const fourthCategories = groceryCategories.slice(24, 30);
 // const HEADER_HEIGHT = window.innerWidth <= 768 ? 50 : 100;
@@ -371,30 +339,9 @@ useEffect(() => {
 }, [placeholderSuggestions.length]);       
 
 useEffect(() => {
-  console.log( messageCounts, imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery,error, unreadCount, showMenu, products, selectedCategory, dress);
-}, [messageCounts, imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery, error,unreadCount, showMenu, products, selectedCategory, dress]);
+  console.log( imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery,error, showMenu, products, selectedCategory, dress);
+}, [imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery, error,showMenu, products, selectedCategory, dress]);
  
-function getItemTime(p) {
-  if (p?.date) {
-    const t = Date.parse(p.date); 
-    if (!Number.isNaN(t)) return t;
-  }
-
-  const candidates = [
-    p.createdAt, p.created_on, p.createdDate, p.createDate,
-    p.updatedAt, p.updated_on, p.modifiedAt, p.modified_on,
-    p.addedDate, p.added_at, p.timestamp, p.timeStamp,
-  ];
-  for (const c of candidates) {
-    const t = Date.parse(c);
-    if (!Number.isNaN(t)) return t;
-  }
-
-  if (typeof p.id === "number") return p.id;
-  const idNum = Number(String(p.id || "").replace(/\D/g, "")) || 0;
-  return idNum;
-}
-
 useEffect(() => {
   if (!selectedCategory) return;
   let cancelled = false;
@@ -409,16 +356,10 @@ useEffect(() => {
       const url = `https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${category}`;
 
       const { data: items } = await axios.get(url, { signal });
-      const safeItems = Array.isArray(items) ? items : [];
+      const safeItems = (Array.isArray(items) ? items : []).map(normalizeProduct);
       if (cancelled) return;
-      const sorted = [...safeItems].sort((a, b) => {
-        const tb = getItemTime(b);
-        const ta = getItemTime(a);
-        if (tb !== ta) return tb - ta;
-        return String(b.id).localeCompare(String(a.id));
-      });
-
-      setProducts(sorted);
+      
+      setProducts(safeItems);
       if (warm) return;
       const firstImages = safeItems
         .map((p) => ({
@@ -492,6 +433,11 @@ useEffect(() => {
     if (pollId) clearInterval(pollId);
   };
 }, [selectedCategory]); 
+
+const getMaxAllowedQty = (product) => {
+  if (!product) return 0;
+  return Math.min(product.stockLeft, product.limit  > 0 ? product.limit : Infinity);
+};
 
 useEffect(() => {
   const categories = JSON.parse(localStorage.getItem("allCategories") || "[]");
@@ -586,22 +532,56 @@ useEffect(() => {
     recognition.start();
   };
 
-  /* ================= FETCH PRODUCTS ================= */
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      try {
-        const res = await axios.get(`https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetAllGroceryItems`);
-        setAllProducts(Array.isArray(res.data) ? res.data : []);
-      } catch (err) {
-        console.error("Error fetching grocery items", err);
-      } finally {
-        setLoading(false);      
-      }
-    };
-    fetchProducts();
-    // initPushNotifications();
-  }, []);
+  const normalizeProduct = (p) => ({
+  ...p,
+  stockLeft: Number(p.stockLeft || 0),
+  limit: Number(p.limit || 0),
+  afterDiscount: Number(p.afterDiscount || 0),
+  mrp: Number(p.mrp || 0),
+});
+
+/* ================= FETCH PRODUCTS ================= */
+useEffect(() => {
+  let cancelled = false;
+  const POLL_MS = 5000
+  const fetchProducts = async (showLoader = false) => {
+    if (showLoader) setLoading(true);
+    try {
+      const res = await axios.get(
+        "https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetAllGroceryItems"
+      );
+      if (cancelled) return;
+      const normalized = (Array.isArray(res.data) ? res.data : [])
+        .map(normalizeProduct)
+        .filter(p => p.status === "Approved");
+      setAllProducts(prev => {
+        if (
+          prev.length === normalized.length &&
+          prev.every((p, i) =>
+            p.id === normalized[i].id &&
+            p.stockLeft === normalized[i].stockLeft &&
+            p.limit === normalized[i].limit
+          )
+        ) {
+          return prev; 
+        }
+        return normalized;
+      });
+    } catch (err) {
+      console.error("Fetching grocery items failed", err);
+    } finally {
+      if (showLoader && !cancelled) setLoading(false);
+    }
+  };
+  fetchProducts(true);
+  const intervalId = setInterval(() => {
+    fetchProducts(false);
+  }, POLL_MS);
+  return () => {
+    cancelled = true;
+    clearInterval(intervalId);
+  };
+}, []);
 
   /* ================= FILTER ================= */
   useEffect(() => {
@@ -639,23 +619,27 @@ useEffect(() => {
   }, [filteredProducts, imageUrls]);
 
 const handleAddClick = (product) => {
+  const maxQty = getMaxAllowedQty(product);
+  if (maxQty <= 0) return;
+
   updateLocalStorageCart(
-    {
-      ...product,
-     imageFile: product.images?.[0] || ""
-    },
+    { ...product, imageFile: product.images?.[0] || "" },
     1
   );
+
   setCart(prev => ({ ...prev, [product.id]: 1 }));
 };
 
- const handleIncrement = (product, stockLeft) => {
+ const handleIncrement = (product) => {
+  const maxQty = getMaxAllowedQty(product);
+
   setCart(prev => {
-    const qty = prev[product.id] || 0;
-    if (qty >= stockLeft) return prev;
-    const newQty = qty + 1;
-    updateLocalStorageCart(product, newQty);
-    return { ...prev, [product.id]: newQty };
+    const current = prev[product.id] || 0;
+    if (current >= maxQty) return prev;
+
+    const next = current + 1;
+    updateLocalStorageCart(product, next);
+    return { ...prev, [product.id]: next };
   });
 };
 
@@ -674,8 +658,6 @@ const handleAddClick = (product) => {
     return { ...prev, [product.id]: newQty };
   });
 };
-
-  const canAddMore = (id, stockLeft) => (cart[id] || 0) < stockLeft;
 
   // cashback logic
 useEffect(() => {
@@ -923,39 +905,6 @@ const handleUpdatePaymentMethod = async () => {
   }
 };
 
-useEffect(() => {    
-  const storedCounts = localStorage.getItem("chatCounts");
-  if (storedCounts) {
-    try { 
-      const parsedCounts = JSON.parse(storedCounts);
-      setMessageCounts(parsedCounts); 
-    } catch (err) {
-      console.error("Error parsing stored counts:", err);
-    }
-  }
-}, []);
-
-  useEffect(() => {
-  const fetchUnreadCount = async () => {
-    try {
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/ChatBot/GetChatMessages`);
-      const data = await response.json();
-      const lastReadTime = localStorage.getItem('lastReadTime');
-      const unreadMessages = data.filter(msg => {
-        return !lastReadTime || new Date(msg.dateTime) > new Date(lastReadTime);
-      });
-      setUnreadCount(unreadMessages.length);         
-    } catch (error) {
-      console.error("Failed to fetch unread message count:", error);
-    }
-  };
-  if (userId && userType) {
-    fetchUnreadCount();
-    const interval = setInterval(fetchUnreadCount, 30000);
-    return () => clearInterval(interval);
-  }
-}, [userId, userType]);
-
 const handleCategoryClick = async (category) => {
   const { value } = category; 
   try {
@@ -974,30 +923,59 @@ const handleCategoryClick = async (category) => {
   }
 };
 
-const handleGroceryCategoryClick = async (category) => {
+const handleGroceryCategoryClick = (category) => {
   const { value } = category;
-  try {
-    setSelectedCategory(category);
-    setGrocery([]);
-    setError("");
-    const encodedCategory = encodeURIComponent(value);
-    localStorage.setItem("encodedCategory", encodedCategory);
-    const mobileNumber = profile?.mobileNumber || "";
-    if (value === "Grocery Offers") {
-      navigate(`/groceryOffers/${userType}/${userId}`,{
-        state: { mobileNumber },
-      });
-      return;  
-    }
+  const mobileNumber = profile?.mobileNumber || "";
+  const encodedCategory = encodeURIComponent(value);
+  localStorage.setItem("encodedCategory", encodedCategory);
+  if (value === "Kitchenware Appliances") {
     navigate(`/grocery/${userType}/${userId}`, {
-        state: { mobileNumber },
-      });
-  } catch (error) {
-    console.error("Error fetching products:", error);
-    setGrocery([]);
-    setError(`Oops! No grocery items found for ${value} category.`);
+      state: { mobileNumber },
+    });
+    return;
   }
-}; 
+  if (value === "Electrical Products" || value === "Plumbing Products") {
+    navigate(`/martHomeAppliances/${userType}/${userId}`, {
+      state: { applianceType: value }, 
+    });
+    return;
+  }
+  
+  if (value === "Grocery Offers") {
+    navigate(`/groceryOffers/${userType}/${userId}`, {
+      state: { mobileNumber },
+    });
+  } else {
+    navigate(`/grocery/${userType}/${userId}`, {
+      state: { mobileNumber },
+    });
+  }
+};
+
+// const handleGroceryCategoryClick = async (category) => {
+//   const { value } = category;
+//   try {
+//     setSelectedCategory(category);
+//     setGrocery([]);
+//     setError("");
+//     const encodedCategory = encodeURIComponent(value);
+//     localStorage.setItem("encodedCategory", encodedCategory);
+//     const mobileNumber = profile?.mobileNumber || "";
+//     if (value === "Grocery Offers") {
+//       navigate(`/groceryOffers/${userType}/${userId}`,{
+//         state: { mobileNumber },
+//       });
+//       return;  
+//     }
+//     navigate(`/grocery/${userType}/${userId}`, {
+//         state: { mobileNumber },
+//       });
+//   } catch (error) {
+//     console.error("Error fetching products:", error);
+//     setGrocery([]);
+//     setError(`Oops! No grocery items found for ${value} category.`);
+//   }
+// }; 
 
 const handleDressCategoryClick = async (category) => {
   const { value } = category;
@@ -1220,7 +1198,7 @@ const updateLocalStorageCart = (product, qty) => {
 
     if (index === -1) {
       category.products.push(item);
-    } else {
+    } else {       
       category.products[index] = item;
     }
   }
@@ -1380,7 +1358,7 @@ const updateLocalStorageCart = (product, qty) => {
                     <span>Logout</span>
                   </div>
                 </div>
-              </div>
+              </div>                         
             )}
          </div> 
        {/* Interest Modal */}
@@ -1575,13 +1553,14 @@ const updateLocalStorageCart = (product, qty) => {
       {loading && <p>Loading products...</p>}
       <div className="grocery-row flex flex-wrap gap-1" style={{marginBottom: "5px"}}>
        {displayProducts.map((product) => {
-        const stock = Number(product.stockLeft);
-        const isOutOfStock = isNaN(stock) || stock <= 0;
+        // const stock = Number(product.stockLeft);
+        const maxQty = getMaxAllowedQty(product);   
+        const isOutOfStock = maxQty <= 0;
           return (
             <div
         key={product.id}
         className="w-[200px] flex flex-col p-2 bg-white rounded shadow-sm border position-relative"
-        style={{ minHeight: "230px", opacity: isOutOfStock ? 0.6 : 1 }}
+        style={{ minHeight: "250px", opacity: isOutOfStock ? 0.6 : 1 }}
       >
         <div className="d-flex flex-row justify-content-between absolute top-0 left-0 w-full">
           {Number(product.discount) > 0 && !isOutOfStock && (
@@ -1671,6 +1650,18 @@ const updateLocalStorageCart = (product, qty) => {
     </div>
   )}
 
+  {Number(product.limit) > 0 && (
+  <div
+    style={{
+      fontSize: "10px",
+      marginBottom: "5px",
+      color: "#d32f2f",
+    }}
+  >
+    Max {Number(product.limit)} Per User
+  </div>
+)}
+
   {/* Checkbox */}
   {!isOutOfStock && (
     <div style={{ position: "absolute", bottom: "8px", left: "8px" }}>
@@ -1704,20 +1695,17 @@ const updateLocalStorageCart = (product, qty) => {
         >
           –
         </button>
-
         <span className="fw-bold">{cart[product.id]}</span>
-
         {/* ➕ INCREMENT */}
         <button
           className="btn btn-sm p-0 text-white"
-          disabled={!canAddMore(product.id, stock)}
-          onClick={() => handleIncrement(product, stock)}
+          disabled={(cart[product.id] || 0) >= maxQty}
+          onClick={() => handleIncrement(product)}
         >
           +
         </button>
       </div>
     ) : (
-      /* ADD */
       <button
         className="btn fw-bold"
         style={{
@@ -1740,9 +1728,8 @@ const updateLocalStorageCart = (product, qty) => {
   })}
 {/* Cart Bar */}               
 {(() => {
-  // Safe reader that ALWAYS returns an array of categories
   const readAllCategories = () => {
-    if (typeof window === "undefined") return []; // SSR guard
+    if (typeof window === "undefined") return []; 
     try {
       const raw = localStorage.getItem("allCategories");
       if (!raw) return [];
@@ -1910,7 +1897,7 @@ const updateLocalStorageCart = (product, qty) => {
     </div>
   </div>
 )}
-        
+  
         {/* Address with Location */}
         <div className="col-md-9">
           <div style={{ cursor: "pointer"}}>
@@ -1921,22 +1908,64 @@ const updateLocalStorageCart = (product, qty) => {
                           alt="Poster"
                         /> 
                       </div>
-                      {/* <div
-                          onClick={() => {
-                            const encodedCategory = encodeURIComponent("Chicken");
-                            localStorage.setItem("encodedCategory", encodedCategory);
-                            navigate(`/grocery/${userType}/${userId}`, { state: { encodedCategory } });
-                          }}
-                          style={{ cursor: "pointer" }}
-                        >
-                          <img
-                            src={ChickenPoster}
-                            className="d-block w-100 img-fluid rounded"
-                            style={{ width: "50%", objectFit: "contain" }}
-                            alt="Poster"
-                          />
-                        </div> */}
-          
+          {/* HOME APPLIANCES */}
+    <div
+      className="shadow-lg rounded-4 p-3 mb-2"
+      style={{
+      // background: "linear-gradient(90deg, #FFB300 0%, #FFC107 50%, #FF9800 100%)",
+      color: "#000",
+      }}
+    >
+      <h6 className="fw-bold text-center mb-2" style={{ letterSpacing: "1px" }}>
+        Home Appliances
+      </h6>
+      <div className="d-flex justify-content-around align-items-center">
+        {[
+          {
+            label: "Electrical",
+            value: "Electrical Products",
+            image: HomeElectricalImg,
+          },
+          {
+            label: "Plumbing",
+            value: "Plumbing Products",
+            image: HomePlumbingImg,
+          },
+          {
+            label: "Kitchenware",
+            value: "Kitchenware Appliances",
+            image: KitchenImg,
+          },
+        ].map((item) => (
+          <div
+            key={item.value}
+            onClick={() => handleGroceryCategoryClick(item)}
+            style={{
+              cursor: "pointer",
+              textAlign: "center",
+              width: "90px",
+            }}
+          >
+              <img
+                src={item.image}
+                alt={item.label}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "contain",
+                }}
+              />
+            <small
+              className="d-block mt-2 fw-semibold"
+              style={{ fontSize: "12px" }}
+            >
+              {item.label}
+            </small>
+          </div>
+        ))}
+      </div>
+    </div>
+
 <div className="container"  style={{
    minHeight: "100vh",
   //  marginTop: `${HEADER_HEIGHT}px`,
@@ -1948,7 +1977,7 @@ const updateLocalStorageCart = (product, qty) => {
       Lakshmi Mart  
     </h5> 
 
-<div className="row row-cols-3 row-cols-md-5 g-1">
+<div className="row row-cols-3 row-cols-md-6 g-1">
   {firstCategories.map((cat) => (
     <div
        className="col"

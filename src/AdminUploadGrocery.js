@@ -28,7 +28,7 @@ const AdminUploadGrocery = () => {
   const [units, setUnits] = useState('');
   const [manufactureDate,setManufactureDate] =useState('');
   const [expireDate,setExpireDate]=useState('');
-  const [limit, setLimit] = useState('');
+  const [limit, setLimit] = useState(0);
   const handleFileChange = (event) => {
     const selectedFiles = Array.from(event.target.files);
     if (selectedFiles.length + groceryPhotos.length > 1) {
@@ -226,7 +226,7 @@ useEffect(() => {
                 <option>Offers</option>
                 <option>DWCRA</option>
                 <option>Christmas Offers</option>
-                <option>Grocery Offers</option>
+                <option>Unbeatable Offers</option>
                 <option>Chicken Offers</option>
                 <option>Vegetables</option>
                 <option>Fruits</option>
@@ -255,8 +255,6 @@ useEffect(() => {
                 <option>Kids Zone</option>
                 <option>Health Care</option>
                 <option>Kitchenware Appliances</option>
-                <option>Electrical</option>
-                <option>Sanitary</option>
                 <option>Home Decors</option>
                 {/* <option>Family Pack </option> */}
                 {/* <option>Staples & Grains</option> */}
