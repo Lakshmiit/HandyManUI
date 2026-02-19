@@ -114,7 +114,7 @@ const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;
     }
   }, [firstOrderDiscount]);
 
-  const mobile =
+  const mobile =       
     state.mobile ?? loginMeta.mobile ?? localStorage.getItem("mobile") ?? "";
     
   const CheckFirstOrder = async (mobile) => {
@@ -745,13 +745,8 @@ const handleUpdateStockLeft = async () => {
         Status: item.status,
         Code: item.code,
         Units: item.units,
-        Limit: item.limit || "string",
+        Limit: item.limit || 0,
       };
-
-
-
-
-      
       const res = await fetch(
         `https://handymanapiv2.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${encodeURIComponent(item.id)}`,
         {
