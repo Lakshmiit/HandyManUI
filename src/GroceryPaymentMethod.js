@@ -110,7 +110,7 @@ const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;
    useEffect(() => {
     if (firstOrderDiscount > 0) {
       setShowConfetti(true);
-      setTimeout(() => setShowConfetti(false), 4000); 
+      setTimeout(() => setShowConfetti(false), 4000);     
     }
   }, [firstOrderDiscount]);
 
