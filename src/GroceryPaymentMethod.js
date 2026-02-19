@@ -112,8 +112,8 @@ const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 4000);     
     }
-  }, [firstOrderDiscount]);
-
+  }, [firstOrderDiscount]);        
+      
   const mobile =       
     state.mobile ?? loginMeta.mobile ?? localStorage.getItem("mobile") ?? "";
     
