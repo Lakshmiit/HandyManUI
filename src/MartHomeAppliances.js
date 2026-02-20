@@ -131,10 +131,9 @@ const handleAddClick = (id) => {
 };
 
 function getItemTime(p) {
-  if (p?.date) {
-    const t = Date.parse(p.date); 
-    if (!Number.isNaN(t)) return t;
-  }
+  if (!p?.date || p.date.startsWith("0001")) return 0;
+  const t = Date.parse(p.date);
+  if (!Number.isNaN(t)) return t;
 
   const candidates = [
     p.createdAt, p.created_on, p.createdDate, p.createDate,
@@ -142,10 +141,9 @@ function getItemTime(p) {
     p.addedDate, p.added_at, p.timestamp, p.timeStamp,
   ];
   for (const c of candidates) {
-    const t = Date.parse(c);
-    if (!Number.isNaN(t)) return t;
+    const time = Date.parse(c);
+    if (!Number.isNaN(time)) return time;
   }
-
   if (typeof p.id === "number") return p.id;
   const idNum = Number(String(p.id || "").replace(/\D/g, "")) || 0;
   return idNum;
@@ -164,7 +162,7 @@ const mapApiProductToUI = (p) => {
     afterDiscount: Math.round(rate - (rate * discount) / 100),
     stockLeft: Number(p.numberOfStockAvailable || 0),
     units: p.units || "",
-    status: p.productStatus,
+    status: (p.productStatus || p.status || "Approved").trim(),
     code: p.productId,
     date: p.date,
     catalogue: p.catalogue,
@@ -203,26 +201,36 @@ const mapApiProductToUI = (p) => {
         });
         setProducts(sorted);
         if (warm) return;
-        const firstImages = safeItems
-         .map(p => ({
-  productId: p.id,
-  photo: Array.isArray(p.images) ? p.images[0] : null
-}))
+        const allImages = safeItems.flatMap(p =>
+          (p.images || []).map(photo => ({
+            productId: p.id,
+            photo
+          }))
+        )
           .filter(x => !!x.photo);
         const cachedMap = {};
-        const misses = [];
-        for (const { productId, photo } of firstImages) {
-          const cached = ImageCache.getBase64(photo);
-          if (cached) {
-            cachedMap[productId] = [`data:image/jpeg;base64,${cached}`];
-          } else {
-            misses.push({ productId, photo });
-          }
-        }
+const misses = [];
 
-        if (Object.keys(cachedMap).length) {
-          setImageUrls(prev => ({ ...prev, ...cachedMap }));
-        }
+for (const { productId, photo } of allImages) {
+  const cached = ImageCache.getBase64(photo);
+  if (cached) {
+    if (!cachedMap[productId]) cachedMap[productId] = [];
+    cachedMap[productId].push(`data:image/jpeg;base64,${cached}`);
+  } else {
+    misses.push({ productId, photo });
+  }
+}
+
+if (Object.keys(cachedMap).length) {
+  setImageUrls(prev => {
+    const merged = { ...prev };
+    for (const id in cachedMap) {
+      merged[id] = [...(merged[id] || []), ...cachedMap[id]];
+    }
+    return merged;
+  });
+}
+
         if (cancelled) return;
         const fetchOne = async ({ productId, photo }) => {
           try {
@@ -237,9 +245,13 @@ const mapApiProductToUI = (p) => {
             const dataUrl = `data:image/jpeg;base64,${b64}`;
             if (!cancelled) {
               setImageUrls(prev => {
-                if (prev[productId]?.[0] === dataUrl) return prev;
-                return { ...prev, [productId]: [dataUrl] };
-              });
+              const existing = prev[productId] || [];
+              if (existing.includes(dataUrl)) return prev;
+              return {
+                ...prev,
+                [productId]: [...existing, dataUrl]
+              };
+            });
             }
           } catch {}
         };
@@ -809,9 +821,7 @@ const mapApiProductToUI = (p) => {
     )}
   </Modal.Body>
 </Modal>
-    </>
-  );
-};
+
 <style jsx>{`
        .zoomable-image {
           transition: transform 0.3s ease-in-out;
@@ -845,5 +855,8 @@ const mapApiProductToUI = (p) => {
         border-radius: 5px;
         }
       `}</style>
+      </>
+);
+};
 
 export default MartHomeAppliances;
