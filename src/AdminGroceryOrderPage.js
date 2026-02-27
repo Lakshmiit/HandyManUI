@@ -70,7 +70,7 @@ const [units, setUnits] = useState("");
  const [groceryData, setgroceryData] = useState();
   const [groceryId, setgroceryId] = useState();
 const [cashbackAmount, setCashbackAmount] = useState(0);
-const showFreeSugar = Number(grandTotal) > 499 && Number(grandTotal) < 998;
+// const showFreeSugar = Number(grandTotal) > 499 && Number(grandTotal) < 998;
  const [showZoomModal, setShowZoomModal] = useState(false);
   const [zoomImage, setZoomImage] = useState("");
   const [zoomProduct, setZoomProduct] = useState(null);
@@ -643,7 +643,7 @@ const handleDownloadPDF = () => {
     doc.setTextColor(0, 128, 0); 
     doc.setFont("Roboto", "bold");
     doc.text(
-      `FREE ITEM : Royal Pesara Upma Mix 250 g`,
+      // `FREE ITEM : Royal Pesara Upma Mix 250 g`,
       195,
       currentY,
       { align: "right" }
@@ -863,13 +863,13 @@ const handleImageClick = (imageSrc, product) => {
       </td>
     </tr>
   )}
-   {showFreeSugar && (
+   {/* {showFreeSugar && (
     <tr>
       <td colSpan="10" className="text-end fw-bold text-success">
         🎁 Give Customer <strong>Royal Pesara Upma Mix 250 g FREE</strong>
       </td>    
     </tr>
-  )}    
+  )}     */}
     <tr>
       <td colSpan="9" className="text-end fw-bold">
         Grand Total:

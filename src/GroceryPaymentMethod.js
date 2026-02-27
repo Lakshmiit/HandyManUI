@@ -154,7 +154,9 @@ useEffect(() => {
     try {
       const prevOrders = await CheckFirstOrder(mobile);
       if (cancelled) return;
-      const isNewUser = !Array.isArray(prevOrders) || prevOrders.length === 0;
+
+      const isNewUser =
+        !Array.isArray(prevOrders) || prevOrders.length === 0;
       setIsNewUser(isNewUser);
       const usedCashbacks = new Set();
       if (Array.isArray(prevOrders)) {
@@ -165,6 +167,7 @@ useEffect(() => {
           );
           const paid = Number(order.grandTotal ?? 0);
           const diff = Math.round(totalAmount - paid);
+
           if (diff > 0) {
             usedCashbacks.add(diff);
           }
@@ -172,20 +175,22 @@ useEffect(() => {
       }
       const currentGT = Number(grandTotal) || 0;
       let discount = 0;
-      if (isNewUser && !usedCashbacks.has(50)) {
-        discount = 50;
-      }
       const slabs = [
-        { min: 1999, amount: 300 },
-        { min: 1499, amount: 250 },
-        { min: 999, amount: 200 },
-        { min: 499, amount: 150 },
-        { min: 299, amount: 100 },
+        { min: 1999, newUser: 250},
+        { min: 1499, newUser: 200 },
+        { min: 999,  newUser: 150},
+        { min: 499,  newUser: 100 },
+        { min: 299,  newUser: 50  },
       ];
       for (let slab of slabs) {
-        if (currentGT >= slab.min && !usedCashbacks.has(slab.amount)) {
-          discount = slab.amount;
-          break;         }
+        if (currentGT >= slab.min) {
+          const slabAmount = slab.newUser;
+
+          if (!usedCashbacks.has(slabAmount)) {
+            discount = slabAmount;
+            break;
+          }
+        }
       }
       setFirstOrderDiscount(discount);
       console.log("✅ FINAL CASHBACK:", {
@@ -194,7 +199,6 @@ useEffect(() => {
         appliedDiscount: discount,
         currentGT,
       });
-
     } catch (err) {
       console.error("Cashback check failed:", err);
       if (!cancelled) {
@@ -206,7 +210,6 @@ useEffect(() => {
     cancelled = true;
   };
 }, [mobile, grandTotal]);
-
 
 const getReferralRecord = async (userId) => {
   if (!userId) return null;
