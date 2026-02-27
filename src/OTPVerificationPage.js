@@ -87,7 +87,7 @@
 
 //       const payload = { senderValue: mobile, type: "sms" }; // fixed key
 //       const res = await fetch(
-//         "https://handymanapiv2.azurewebsites.net/api/Auth/bhashsmssendotp",
+//         "https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Auth/bhashsmssendotp",
 //         {
 //           method: "POST",
 //           headers: { "Content-Type": "application/json" },
@@ -117,7 +117,7 @@
 //     };
 
 //     const r1 = await fetch(
-//       "https://handymanapiv2.azurewebsites.net/api/UserOnBoarding/GuestUserUpload",
+//       "https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UserOnBoarding/GuestUserUpload",
 //       {
 //         method: "POST",
 //         headers: { "Content-Type": "application/json" },
@@ -157,7 +157,7 @@
 //     };
 
 //     const r2 = await fetch(
-//       "https://handymanapiv2.azurewebsites.net/api/Customer/GuestCustomerUpload",
+//       "https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Customer/GuestCustomerUpload",
 //       {
 //         method: "POST",
 //         headers: { "Content-Type": "application/json" },
@@ -181,7 +181,7 @@
 //       // 1) validate OTP
 //       const payload = { senderValue: mobile, otp: enteredOtp };
 //       const otpRes = await fetch(
-//         "https://handymanapiv2.azurewebsites.net/api/Auth/validateotp",
+//         "https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Auth/validateotp",
 //         {
 //           method: "POST",
 //           headers: { "Content-Type": "application/json" },
@@ -192,7 +192,7 @@
 
 //       // 2) check if user already exists
 //       const verifyUserRes = await fetch(
-//         `https://handymanapiv2.azurewebsites.net/api/UserOnBoarding/GuestUserVerificationByMobileNo?mobileNo=${encodeURIComponent(
+//         `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UserOnBoarding/GuestUserVerificationByMobileNo?mobileNo=${encodeURIComponent(
 //           mobile
 //         )}`
 //       );
@@ -324,12 +324,12 @@ const OTPVerificationPage = () => {
     localStorage.getItem("mobile") ??
     "";
 
-  // const districtIdRaw =
-  //   state.districtId ??      
-  //   loginMeta.districtId ??
-  //   (localStorage.getItem("districtId") ? Number(localStorage.getItem("districtId")) : null);
+  const districtIdRaw =
+    state.districtId ??
+    loginMeta.districtId ??
+    (localStorage.getItem("districtId") ? Number(localStorage.getItem("districtId")) : null);
 
-  // const districtId = typeof districtIdRaw === "number" ? districtIdRaw : (districtIdRaw ? Number(districtIdRaw) : null);
+  const districtId = typeof districtIdRaw === "number" ? districtIdRaw : (districtIdRaw ? Number(districtIdRaw) : null);
 
   const districtName =
     state.districtName ??
@@ -405,7 +405,7 @@ useEffect(() => {
 
     // const verifyMobileNumber = async () => {
     //   try {
-    //     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/UserOnBoarding/GuestUserVerificationByMobileNo?mobileNo=${mobile}`);
+    //     const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UserOnBoarding/GuestUserVerificationByMobileNo?mobileNo=${mobile}`);
     //     const data = await response.json();
     //     console.log("Response:", data);
     //     setUserData(data);
@@ -440,7 +440,7 @@ useEffect(() => {
         setTimeLeft(90);
         setCanResend(false);
   
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Auth/bhashsmssendotp`,{
+      const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Auth/bhashsmssendotp`,{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -453,8 +453,8 @@ useEffect(() => {
       // alert('OTP Resend successfully.');
     } catch (error) {
       console.error("Error resend otp:", error);
-      window.alert('Failed to resend otp. Please try again later.');   
-       }
+      // window.alert('Failed to resend otp. Please try again later.');  
+      }
   };
   
   const handleGuestAddress = async (e) => {
@@ -474,7 +474,7 @@ useEffect(() => {
      };
     
      try {
-       const response1 = await fetch(`https://handymanapiv2.azurewebsites.net/api/UserOnBoarding/GuestUserUpload`, {
+       const response1 = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UserOnBoarding/GuestUserUpload`, {
          method: 'POST',
          headers: {
            'Content-Type': 'application/json',
@@ -508,8 +508,7 @@ useEffect(() => {
        State: "",
        StateId: "",
        District: districtName || "",
-       DistrictId: "104",
-      //  DistrictId: (districtId ?? null).toString(),
+       DistrictId: (districtId ?? null).toString(),
        ZipCode: pinCode || "",
        CustomerPhotoId: "",
        UserId: newUserId,
@@ -517,7 +516,7 @@ useEffect(() => {
        Status: "Open", 
      };
     
-       const response2 = await fetch(`https://handymanapiv2.azurewebsites.net/api/Customer/GuestCustomerUpload`, {
+       const response2 = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Customer/GuestCustomerUpload`, {
          method: 'POST',
          headers: {
            'Content-Type': 'application/json',
@@ -552,7 +551,7 @@ useEffect(() => {
       };
       try {
    
-        const otpResponse = await fetch(`https://handymanapiv2.azurewebsites.net/api/Auth/validateotp`, {
+        const otpResponse = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Auth/validateotp`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -565,7 +564,7 @@ useEffect(() => {
         }
 
       //  window.alert("OTP Valid Successfully!");
-        const verifyUserRes = await fetch(`https://handymanapiv2.azurewebsites.net/api/UserOnBoarding/GuestUserVerificationByMobileNo?mobileNo=${mobile}`);
+        const verifyUserRes = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UserOnBoarding/GuestUserVerificationByMobileNo?mobileNo=${mobile}`);
         
         if (verifyUserRes.status === 200) {
           const userData = await verifyUserRes.json();
@@ -583,8 +582,8 @@ useEffect(() => {
           }
       
         } else if (verifyUserRes.status === 404) {
-          // const errorText = await verifyUserRes.text();
-          // console.warn(" User not found (404):", errorText);
+          const errorText = await verifyUserRes.text();
+          console.warn(" User not found (404):", errorText);
       
           await handleGuestAddress(e);                                 
 
@@ -626,7 +625,7 @@ useEffect(() => {
   //   e.preventDefault();
   
   //   try {
-  //     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/UserOnBoarding/GuestUserVerificationByMobileNo?mobileNo=${mobile}`);
+  //     const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UserOnBoarding/GuestUserVerificationByMobileNo?mobileNo=${mobile}`);
   //     const data = await response.json();
   //     console.log("Verification Response:", data);
   
@@ -697,8 +696,8 @@ const handleBothMethods = (e) => {
                             }}
                             onKeyDown={(e) => handleKeyDown(e, i)}
                             ref={(el) => (inputsRef.current[i] = el)}
-                        />
-                        ))}
+                        />       
+                        ))}      
                     </div>
 
         {error && <div className="text-danger">{error}</div>}

@@ -15,7 +15,7 @@ const BuyProductPaymentPage = () => {
 
   // ✅ Step 1: Fetch booking details from your API
   useEffect(() => {
-    fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsById/${id}`)
+    fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsById/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setOrderBooking(data);
@@ -113,7 +113,7 @@ export default BuyProductPaymentPage;
 //   useEffect(() => {
 //     if (!id) return;
 
-//     fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsById/${id}`)
+//     fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsById/${id}`)
 //       .then((res) => {
 //         if (!res.ok) throw new Error("Booking not found");
 //         return res.json();

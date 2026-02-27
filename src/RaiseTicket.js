@@ -62,11 +62,11 @@ const isGuestName = (name) => (name ?? '').trim().toLowerCase() === 'guest';
     console.log(ticketId, response, editingAddressId, isEditing);
   }, [ticketId, response, editingAddressId, isEditing]);
 
-  // const API_URL = 'https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/';
+  // const API_URL = 'https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Address/GetAddressById/';
   // Fetch customer profile data
     const fetchCustomerData = useCallback(async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/${userId}`);
+        const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Address/GetAddressById/${userId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch customer profile data');
         } 
@@ -108,7 +108,7 @@ const isGuestName = (name) => (name ?? '').trim().toLowerCase() === 'guest';
 // const fetchCustomerData = useCallback(async () => {
 //   try {
 //     const res = await fetch(
-//       `https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/${userId}`
+//       `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Address/GetAddressById/${userId}`
 //     );
 //     if (!res.ok) throw new Error("Failed to fetch customer profile data");
 //     const raw = await res.json();
@@ -153,7 +153,7 @@ useEffect(() => {
 }, [fetchCustomerData]);
 
 useEffect(() => {
-  axios.get('https://handymanapiv2.azurewebsites.net/api/MasterData/getStates')
+  axios.get('https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/MasterData/getStates')
     .then(response => {
       const data = response.data;
       console.log("States API Response:", data); 
@@ -168,7 +168,7 @@ useEffect(() => {
  
  useEffect(() => {
   if (stateId) {
-    axios.get(`https://handymanapiv2.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
+    axios.get(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
       .then(response => {
         setDistrictList(response.data);
       })
@@ -293,7 +293,7 @@ useEffect(() => {
       formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
       formData.append('fileName', fileName);
 
-      const response = await fetch('https://handymanapiv2.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
+      const response = await fetch('https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
         method: 'POST',
         headers: {
           'Accept': 'text/plain',
@@ -385,7 +385,7 @@ useEffect(() => {
     };
 
   try {
-    const response = await fetch('https://handymanapiv2.azurewebsites.net/api/RaiseTicket/CreateRaiseTicket', {
+    const response = await fetch('https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/CreateRaiseTicket', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -496,7 +496,7 @@ useEffect(() => {
   //   };
 
   // try {
-  //   const response = await fetch('https://handymanapiv2.azurewebsites.net/api/RaiseTicketExtention/CreateRaiseTicketExtension', {
+  //   const response = await fetch('https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicketExtention/CreateRaiseTicketExtension', {
   //     method: 'POST',
   //     headers: {
   //       'Content-Type': 'application/json',
@@ -638,7 +638,7 @@ useEffect(() => {
     };
   
     try {
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Customer/CustomerAddressEdit`, {
+      const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Customer/CustomerAddressEdit`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

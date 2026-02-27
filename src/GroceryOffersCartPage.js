@@ -14,7 +14,7 @@ import Footer from "./Footer.js";
 import { useLocation } from "react-router-dom";
 
 const IMAGE_DOWNLOAD =
-  "https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=";
+  "https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=";
 
 const norm = (s) =>
   String(s || "").toLowerCase().replace(/\s+/g, " ").replace("500ml", "500 ml").replace("1l", "1 l").trim();
@@ -50,7 +50,6 @@ const fileToUrl = (filenameOrUrl) => {
   return `${IMAGE_DOWNLOAD}${encodeURIComponent(String(filenameOrUrl))}`;
 };
 
-// const MIN_ORDER_TOTAL = 100;
 const isValidCartItem = (it) => {
   const hasName = Boolean(String(it.name || "").trim());
   const hasQty = Number(it.qty) > 0;
@@ -97,7 +96,7 @@ const mapSavedToItems = (saved) => {
     })
   )
   .filter(isValidCartItem);
-};
+};     
 
 const computeTotals = (items) => ({
   items: items.reduce((s, it) => s + Number(it.qty || 0), 0),
@@ -107,7 +106,7 @@ const computeTotals = (items) => ({
       0
     )
   ),
-});
+});           
 
 const writeBackToStorage = (items) => {
   const grouped = items.reduce((acc, it) => {
@@ -154,32 +153,30 @@ const GroceryOffersCartPage = () => {
 
   const mobileNumber =
     location.state?.mobileNumber || localStorage.getItem("customerMobileNumber");
-    useEffect(() => {
-    const checkUserOrder = async () => {
-      if (!mobileNumber) return;
-      const result = await CheckFirstOrder(mobileNumber);
-      if (result === null) {
-        setMinOrderTotal(150);
-      } else {
-        setMinOrderTotal(100);
-      }
-    };
-  
-    checkUserOrder();
-  }, [mobileNumber]);
-  
+
+  useEffect(() => {
+  const checkUserOrder = async () => {
+    if (!mobileNumber) return;
+    const result = await CheckFirstOrder(mobileNumber);
+    if (result === null) {
+      setMinOrderTotal(150);
+    } else {
+      setMinOrderTotal(100);
+    }
+  };
+  checkUserOrder();
+}, [mobileNumber]);
+
     const CheckFirstOrder = async (mobile) => {
     if (!mobile) return null;
-  
-    const url = `https://handymanapiv2.azurewebsites.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${encodeURIComponent(
+    const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${encodeURIComponent(
       mobile
     )}`;
-  
+
     try {
       const res = await fetch(url);
       const text = await res.text();
       console.log("RAW RESPONSE:", text);
-      // ✅ First order (API returns this text)
       if (text.toLowerCase().includes("firstorder can not be found")) {
         return null;
       }
@@ -405,7 +402,7 @@ const handleQtyChange = (rowId, delta) => {
     };
     try {
       const response = await fetch(
-        `https://handymanapiv2.azurewebsites.net/api/Mart/UploadProductDetails`,
+        `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/UploadProductDetails`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -462,65 +459,51 @@ useEffect(() => {
         )
       );
       if (!categories.length) return;
-
       const allProducts = [];
       for (const cat of categories) {
-        const url = `https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(
+        const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(
           cat
         )}`;
         const res = await fetch(url);
         const list = (await res.json()) || [];
         allProducts.push(...list);
       }
-
      const byId = new Map();
       const byName = new Map();
-
       allProducts.forEach((p) => {
         const stock = Number(p.stockLeft || 0);
         const limit = Number(p.limit || 0);   
         byId.set(String(p.id), { stock, limit });
         byName.set(norm(p.name), { stock, limit });
       });
-
-
       setCartItems((prev) => {
         let changed = false;
         const next = prev.map((it) => {
          const apiData =
           byId.get(String(it.productId)) ??
           byName.get(norm(it.name));
-
         const stock = apiData?.stock ?? Number(it.stockLeft || 0);
         const limit = Number(apiData?.limit || it.limit || 0);
-
         const maxAllowed = Math.min(stock, getLimit({ limit }));
         const clampedQty = Math.max(0, Math.min(Number(it.qty || 0), maxAllowed));
-
           if (stock !== it.stockLeft || limit !== it.limit || clampedQty !== it.qty) {
             changed = true;
           }
-
           return { ...it, stockLeft: stock, limit, qty: clampedQty };
         });
-
         const filtered = next.filter(isValidCartItem);
-
         if (changed) {
           writeBackToStorage(filtered);
           setGrandSummary(computeTotals(filtered));
         }
-
         return filtered;
       });
     } catch (e) {
        console.error("Stock/limit update failed:", e);
     }
   };
-
   fetchAndUpdateStock();
   pollRef.current = setInterval(fetchAndUpdateStock, 10000);
-
   return () => {
     if (pollRef.current) clearInterval(pollRef.current);
   };
@@ -625,7 +608,6 @@ useEffect(() => {
                   e.currentTarget.src = "/placeholder.png";
                 }}
               />
-
               {/* Product Details */}
               <div style={{ flex: 1, marginLeft: "8px" }}>
                 <div
@@ -655,14 +637,12 @@ useEffect(() => {
                     </span>
                   )}
                    </div>
-
                 <div
                   style={{ fontWeight: "600", fontSize: "12px" }}
                 >
                   ₹{Math.round(item.price)}
                 </div>
               </div>
-
               {/* Quantity Box */}
               <div
                 className="qty-box d-flex align-items-center justify-content-between"

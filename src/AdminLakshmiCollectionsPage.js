@@ -59,7 +59,7 @@ const AdminLakshmiCollectionsPage = () => {
     if (!fileName) return null;
 
     const res = await fetch(
-      `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
+      `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
         fileName
       )}`
     );
@@ -100,7 +100,7 @@ const AdminLakshmiCollectionsPage = () => {
         setImageLoading(true);
 
         const response = await fetch(
-          `https://handymanapiv2.azurewebsites.net/api/LakshmiCollection/GetLakshmicollectionsById?id=${collectionId}`
+          `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/LakshmiCollection/GetLakshmicollectionsById?id=${collectionId}`
         );
         if (!response.ok) throw new Error("Failed to fetch collection details");
         const data = await response.json();

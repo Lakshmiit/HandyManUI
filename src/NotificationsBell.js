@@ -20,7 +20,7 @@ const NotificationBell = () => {
     const unsubscribe = onSnapshot(notificationsRef, async () => {
       try {
         const response = await fetch(
-          `https://handymanapiv2.azurewebsites.net/api/BookTechnician/GetBookTechnicianDetailsForUserList?userId=${userId}`
+          `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/BookTechnician/GetBookTechnicianDetailsForUserList?userId=${userId}`
         );
         const data = await response.json();
 

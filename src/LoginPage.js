@@ -28,7 +28,7 @@
 //     (async () => {
 //       try {
 //         const res = await axios.get(
-//           "https://handymanapiv2.azurewebsites.net/api/MasterData/getDistricts/1"
+//           "https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/MasterData/getDistricts/1"
 //         );
 //         setDistricts(res.data || []);
 //       } catch (err) {
@@ -53,7 +53,7 @@
 //       try {
 //         if (!selectedDistrict) return;
 //         const res = await axios.get(
-//           `https://handymanapiv2.azurewebsites.net/api/MasterData/GetZipCodesByDistrictId/${selectedDistrict}`
+//           `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/MasterData/GetZipCodesByDistrictId/${selectedDistrict}`
 //         );
 //         setZipcodes(res.data || []);
 //       } catch (err) {
@@ -103,7 +103,7 @@
 
 //     try {
 //       const resp = await fetch(
-//         "https://handymanapiv2.azurewebsites.net/api/Auth/bhashsmssendotp",
+//         "https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Auth/bhashsmssendotp",
 //         {
 //           method: "POST",
 //           headers: { "Content-Type": "application/json" },
@@ -269,12 +269,11 @@ const LoginPage = () => {
     }
   };
 
-  // handymanapiv2.azurewebsites.net
-  //  useEffect(() => {
+  // useEffect(() => {
   //   (async () => {
   //     try {
   //       const res = await axios.get(
-  //         "https://handymanapiv2.azurewebsites.net/api/MasterData/getDistricts/1"
+  //         "https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/MasterData/getDistricts/1"
   //       );
   //       setDistricts(res.data || []);
   //     } catch (err) {
@@ -299,7 +298,7 @@ const LoginPage = () => {
   //     try {
   //       if (!selectedDistrict) return;
   //       const res = await axios.get(
-  //         `https://handymanapiv2.azurewebsites.net/api/MasterData/GetZipCodesByDistrictId/${selectedDistrict}`
+  //         `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/MasterData/GetZipCodesByDistrictId/${selectedDistrict}`
   //       );
   //       setZipcodes(res.data || []);
   //     } catch (err) {
@@ -359,7 +358,7 @@ const LoginPage = () => {
 //       type: "sms",
 //     };
 // try {
-//       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Auth/sendotp`,{
+//       const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Auth/sendotp`,{
 //         method: 'POST',
 //         headers: {
 //           'Content-Type': 'application/json',
@@ -405,7 +404,7 @@ const handleOTP = async (e) => {
   };
 
   try {
-    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Auth/bhashsmssendotp`, {
+    const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Auth/bhashsmssendotp`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -512,7 +511,8 @@ const handleOTP = async (e) => {
       </option>
     ))}
   </select>
-</div> */}
+</div>*/}
+
 {/* {districtError && <div className="text-danger mt-1">{districtError}</div>} */}
 
 {/* {String(selectedDistrict) === "104" && (

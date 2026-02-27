@@ -83,7 +83,7 @@ useEffect(() => {
     try {
       setSelectedCategory(encodedCategory);
       setImageLoading(true);
-      const url = `https://handymanapiv2.azurewebsites.net/api/UploadLakshmiCollection/GetAllLakshmiCollectionsByCategory?category=${encodedCategory}`;
+      const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UploadLakshmiCollection/GetAllLakshmiCollectionsByCategory?category=${encodedCategory}`;
       const response = await axios.get(url);
       const list = Array.isArray(response.data) ? response.data : [];
       const approvedList = list.filter(
@@ -96,7 +96,7 @@ useEffect(() => {
         if (!firstPhoto) return;
         try {
           const res = await fetch(
-            `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(firstPhoto)}`
+            `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(firstPhoto)}`
           );
           let blob;
           const ct = res.headers.get("content-type") || "";

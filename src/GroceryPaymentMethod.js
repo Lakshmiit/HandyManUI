@@ -8,7 +8,7 @@ import axios from 'axios';
 import { Modal, Button, Form} from 'react-bootstrap';
 import Footer from "./Footer.js";
 import Confetti from "react-confetti";
-import RoyalRavvaImg from './img/RoyalRavva.jpeg';
+// import RoyalRavvaImg from './img/RoyalRavva.jpeg';
 
 const GroceryPaymentmethod = () => {
   const navigate = useNavigate();
@@ -66,7 +66,7 @@ const [isOffersOrder, setIsOffersOrder] = useState(false);
  const [firstOrderDiscount, setFirstOrderDiscount] = useState(0);
   const [isNewUser, setIsNewUser] = useState(true);
     const [showConfetti, setShowConfetti] = useState(false);
-const [cashbackMessage, setCashbackMessage] = useState("");
+//  const [cashbackMessage, setCashbackMessage] = useState("");
 // const [date, setDate] = useState("");
 const isGuestName = (name) => (name ?? '').trim().toLowerCase() === 'guest';
 const readServerPoints = (record) => {
@@ -87,15 +87,15 @@ useEffect(() => {
 }, [addresses]);
 
 useEffect(() => {
-  console.log(  limit,cashbackMessage, loading, isChecked, editingAddressId, customerName, groceryId);
-}, [limit,cashbackMessage, loading, isChecked, editingAddressId, customerName, groceryId]);
+  console.log(  netPayable,limit, loading, isChecked, editingAddressId, customerName, groceryId);
+}, [netPayable,limit, loading, isChecked, editingAddressId, customerName, groceryId]);
 
-const showSugarOffer =
-  Number(grandTotal) >= 499 && Number(grandTotal) <= 998;
-const netPayables=  grandTotal - firstOrderDiscount     
+// const showSugarOffer =
+//   Number(grandTotal) >= 499 && Number(grandTotal) <= 998;
+const netPayables=  grandTotal - firstOrderDiscount       
 
-  const totalPayable =
-    isNewUser || grandTotal > 1000 ? netPayables : netPayable;
+  // const totalPayable =
+  //   isNewUser || grandTotal > 1000 ? netPayables : netPayable;
 const numericGrandTotal = Number(grandTotal) || 0;
 const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;
 
@@ -119,7 +119,7 @@ const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;
     
   const CheckFirstOrder = async (mobile) => {
     if (!mobile) return null;
-    const url = `https://handymanapiv2.azurewebsites.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${encodeURIComponent(
+    const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${encodeURIComponent(
       mobile
     )}`;
     try {
@@ -154,57 +154,44 @@ useEffect(() => {
     try {
       const prevOrders = await CheckFirstOrder(mobile);
       if (cancelled) return;
-      const isNew = prevOrders === null;
-      setIsNewUser(isNew);
+      const isNewUser = !Array.isArray(prevOrders) || prevOrders.length === 0;
+      setIsNewUser(isNewUser);
       const usedCashbacks = new Set();
       if (Array.isArray(prevOrders)) {
         prevOrders.forEach((order) => {
-          const categoryTotal = (order.categories ?? []).reduce(
+          const totalAmount = (order.categories ?? []).reduce(
             (sum, c) => sum + Number(c?.totalAmount ?? 0),
             0
           );
           const paid = Number(order.grandTotal ?? 0);
-          const diff = Math.round(categoryTotal - paid);
-          if (diff === 50) {
-            usedCashbacks.add(50);
+          const diff = Math.round(totalAmount - paid);
+          if (diff > 0) {
+            usedCashbacks.add(diff);
           }
-          if (diff === 100) {
-            usedCashbacks.add(100);
-            usedCashbacks.add(50);
-          }
-          if (diff === 200) {
-            usedCashbacks.add(200);
-            usedCashbacks.add(50);
-          }
-          if (diff === 300) {
-            usedCashbacks.add(300);
-            usedCashbacks.add(50); 
-          }  
         });
       }
       const currentGT = Number(grandTotal) || 0;
       let discount = 0;
-      let msg = "";
-      if (currentGT >= 1999 && !usedCashbacks.has(200)) {
-        discount = 200;
-      } 
-       else if (currentGT >= 1499 && !usedCashbacks.has(200)) {
-        discount = 200;
-      } 
-       else if (currentGT >= 1000 && !usedCashbacks.has(100)) {
-        discount = 100;
-      } 
-      else if (currentGT >= 150 && !usedCashbacks.has(50)) {
+      if (isNewUser && !usedCashbacks.has(50)) {
         discount = 50;
-      } 
-      else {
-        discount = 0; 
+      }
+      const slabs = [
+        { min: 1999, amount: 300 },
+        { min: 1499, amount: 250 },
+        { min: 999, amount: 200 },
+        { min: 499, amount: 150 },
+        { min: 299, amount: 100 },
+      ];
+      for (let slab of slabs) {
+        if (currentGT >= slab.min && !usedCashbacks.has(slab.amount)) {
+          discount = slab.amount;
+          break;         }
       }
       setFirstOrderDiscount(discount);
-      setCashbackMessage(msg);
-      console.log("✅ Cashback FINAL CHECK:", {
+      console.log("✅ FINAL CASHBACK:", {
+        isNewUser,
         usedCashbacks: [...usedCashbacks],
-        applied: discount,
+        appliedDiscount: discount,
         currentGT,
       });
 
@@ -212,20 +199,18 @@ useEffect(() => {
       console.error("Cashback check failed:", err);
       if (!cancelled) {
         setFirstOrderDiscount(0);
-        setCashbackMessage("");
       }
     }
   })();
-
   return () => {
     cancelled = true;
   };
-}, [mobile, grandTotal]);    
+}, [mobile, grandTotal]);
 
 
 const getReferralRecord = async (userId) => {
   if (!userId) return null;
-  const url = `https://handymanapiv2.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
+  const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
   const res = await fetch(url);     
   const text = await res.text();
   let data = []; 
@@ -270,7 +255,7 @@ useEffect(() => {
     const ctrl = new AbortController();
     try {
       const res1 = await fetch(
-        `https://handymanapiv2.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`,
+        `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`,
         { signal: ctrl.signal }
       );
       if (!res1.ok) throw new Error("Failed to fetch product details");
@@ -306,7 +291,7 @@ useEffect(() => {
         return;
       }
       const requests = productNames.map(async (name) => {
-        const url = `https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
+        const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
           name
         )}`;
         const res = await fetch(url, { signal: ctrl.signal });
@@ -350,7 +335,7 @@ const goBackToCart = () => {
 
  const fetchCustomerData = useCallback(async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/${userId}`);
+        const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Address/GetAddressById/${userId}`);
         if (!response.ok) {
 
           throw new Error('Failed to fetch customer profile data');
@@ -398,7 +383,7 @@ const goBackToCart = () => {
   }, [fetchCustomerData]);
 
   useEffect(() => {
-    axios.get('https://handymanapiv2.azurewebsites.net/api/MasterData/getStates')
+    axios.get('https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/MasterData/getStates')
       .then(response => {
         const data = response.data;
         console.log("States API Response:", data); 
@@ -412,7 +397,7 @@ const goBackToCart = () => {
   
    useEffect(() => {
     if (stateId) {
-      axios.get(`https://handymanapiv2.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
+      axios.get(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
         .then(response => {
           setDistrictList(response.data);
         })
@@ -479,7 +464,7 @@ const goBackToCart = () => {
       };
     
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Customer/CustomerAddressEdit`, {
+        const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Customer/CustomerAddressEdit`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -554,7 +539,7 @@ const goBackToCart = () => {
       userId: userId,
       martId: martId,
       date: new Date(),   
-      grandTotal: String(totalPayable), 
+      grandTotal: String(netPayables), 
       totalItemsSelected: totalItemsSelected,
       status: "Open",
       paymentMode: selectedPayment,
@@ -571,7 +556,7 @@ const goBackToCart = () => {
     };
 
     let response = await fetch(
-      `https://handymanapiv2.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+      `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
       {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -596,7 +581,7 @@ const goBackToCart = () => {
         };
 
         let resp = await fetch(
-          `https://handymanapiv2.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(id)}`,
+          `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(id)}`,
           {
             method: "PUT",
             headers: { "Content-Type": "application/json; charset=utf-8" },
@@ -606,7 +591,7 @@ const goBackToCart = () => {
 
         if (!resp.ok) {
           resp = await fetch(
-            `https://handymanapiv2.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints/${encodeURIComponent(id)}`,
+            `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints/${encodeURIComponent(id)}`,
             {
               method: "PUT",
               headers: { "Content-Type": "application/json; charset=utf-8" },
@@ -631,7 +616,7 @@ const goBackToCart = () => {
     localStorage.removeItem(`cartMeta_${groceryItemId}`);
 
    if (selectedPayment === 'online') {
-     response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`, {
+     response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -649,7 +634,7 @@ localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
     window.alert(`We are Redirecting to the Payment Page! Your reference number is ${martId}.`);
     window.location.href = `/groceryOnlinePayment/${groceryItemId}`;
   } else if (selectedPayment === 'cash') {
-    response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`, {
+    response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -748,7 +733,7 @@ const handleUpdateStockLeft = async () => {
         Limit: item.limit || 0,
       };
       const res = await fetch(
-        `https://handymanapiv2.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${encodeURIComponent(item.id)}`,
+        `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${encodeURIComponent(item.id)}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -774,7 +759,7 @@ const sendLmartsms = async () => {
   try {
     const primaryAddress = addresses.find((addr) => addr.type === "primary");
     const mobileNumber = primaryAddress?.mobileNumber || primaryAddress?.mobileNumber; 
-    const response = await fetch("https://handymanapiv2.azurewebsites.net/api/Auth/sendLmartsms", {
+    const response = await fetch("https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Auth/sendLmartsms", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -1074,7 +1059,7 @@ const handleCheckboxChange = (value) => {
         </span>
       )}
       </div>
-  <div
+  {/* <div
     className="d-flex align-items-center justify-content-between p-2"
     style={{
       background: "linear-gradient(90deg, #fff3cd, #ffe69c)",
@@ -1096,7 +1081,7 @@ const handleCheckboxChange = (value) => {
       alt="Free Upma Mix"
       style={{ width: "50px", height: "60px" }}
     />
-  </div>
+  </div> */}
          
   <table className="grocery-table m-2">
           <tbody>
@@ -1113,7 +1098,7 @@ const handleCheckboxChange = (value) => {
               <td style={{ width: "40%", fontSize: "14px" }}>Grand Total</td>
               <td style={{ width: "40%" }}>Rs {grandTotal} /-</td>
             </tr>
-           {showSugarOffer && (
+           {/* {showSugarOffer && (
             <tr>     
               <td colSpan="2" style={{ textAlign: "center" }}>
                 <img
@@ -1126,7 +1111,7 @@ const handleCheckboxChange = (value) => {
                 </div>
               </td>
             </tr>
-          )}
+          )} */}
 
             {firstOrderDiscount > 0 && (
               <tr>
@@ -1147,7 +1132,7 @@ const handleCheckboxChange = (value) => {
             )} */}
              <tr>
                 <td style={{ width: "40%", fontSize: "14px", fontWeight: 600 }}>Total Payable</td>
-                <td style={{ width: "40%", fontWeight: 700 }}>Rs {totalPayable} /-</td>
+                <td style={{ width: "40%", fontWeight: 700 }}>Rs {netPayables} /-</td>
               </tr>
           </tbody>
         </table>

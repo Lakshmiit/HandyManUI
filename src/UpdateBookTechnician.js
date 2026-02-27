@@ -58,7 +58,7 @@ useEffect(() => {
 useEffect(() => {
     const fetchTechnicianData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/UploadJobDescriptionBookTechnician/GetTicket/${id}`);
+        const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UploadJobDescriptionBookTechnician/GetTicket/${id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch Job Description data');
         }
@@ -107,7 +107,7 @@ useEffect(() => {
 //     };
 
 //     try {
-//       const response = await fetch("https://handymanapiv2.azurewebsites.net/api/Product/ProductUpload", {
+//       const response = await fetch("https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Product/ProductUpload", {
 //         method: "POST",
 //         headers: {
 //           "Content-Type": "application/json"
@@ -186,7 +186,7 @@ const handleUpdateJobDescription = async (e) => {
     };
   
     try {
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/UploadJobDescriptionBookTechnician/${descriptionId}`, {
+      const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UploadJobDescriptionBookTechnician/${descriptionId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
