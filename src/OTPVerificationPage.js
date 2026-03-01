@@ -117,7 +117,7 @@
 //     };
 
 //     const r1 = await fetch(
-//       "https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UserOnBoarding/GuestUserUpload",
+//       "https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UserOnBoarding/Upload",
 //       {
 //         method: "POST",
 //         headers: { "Content-Type": "application/json" },
@@ -474,6 +474,7 @@ useEffect(() => {
      };
     
      try {
+       alert(JSON.stringify(payload1));
        const response1 = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UserOnBoarding/GuestUserUpload`, {
          method: 'POST',
          headers: {
@@ -515,7 +516,7 @@ useEffect(() => {
        IsApproved: true, 
        Status: "Open", 
      };
-    
+         alert(JSON.stringify(payload2));
        const response2 = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Customer/GuestCustomerUpload`, {
          method: 'POST',
          headers: {
