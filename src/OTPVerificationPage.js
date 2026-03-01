@@ -757,4 +757,4 @@ const handleBothMethods = (e) => {
     </div>
  )
 };
-export default OTPVerificationPage;
+export default OTPVerificationPage;  
