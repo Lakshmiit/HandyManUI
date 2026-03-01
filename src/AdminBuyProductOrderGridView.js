@@ -1,18 +1,24 @@
 import React, { useState, useEffect} from "react";
 import "./App.css";
+// import { v4 as uuidv4 } from 'uuid'; 
 import AdminSidebar from './AdminSidebar';
+// import Header from './Header.js';
 import Footer from './Footer.js';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { ArrowBack, Dashboard as MoreVertIcon} from '@mui/icons-material';
+// import ForwardIcon from '@mui/icons-material/Forward';
 import { Button } from 'react-bootstrap'; 
+// import axios from 'axios';
 
 const AdminBuyProductOrdersView = () => {
   const navigate = useNavigate();  
+  // const {userType} = useParams();
   const {buyProductId} = useParams();
   const [buyProductTicketId, setBuyProductTicketId] = useState('');
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  // const { selectedUserType } = useParams();
   const [productData, setProductData] = useState("");
   const [category, setCategory] = useState("");
   const [productSize, setProductSize] = useState("");
@@ -20,17 +26,27 @@ const AdminBuyProductOrdersView = () => {
   const [color, setColor] = useState("");
   const [selectedColors, setSelectedColors] = useState("");
   const [totalAmount, setTotalAmount] = useState('');
+  // const [otherThanProduct, setOtherThanProduct] = useState("");
   const [requiredQuantity, setRequiredQuantity] = useState("");
+  // const [units, setUnits] = useState("");
   const [rate, setRate] = useState("");
   const [discount, setDiscount] = useState("");
  const [afterDiscount, setAfterDiscount] = useState("");
   const [productName, setProductName] = useState("");
+  // const [showSecondaryAddresses, setShowSecondaryAddresses] = useState(false);
+  // const [newAddress, setNewAddress] = useState('');
+  // const [addresses, setAddresses] = useState([]);
 const [addressType, setAddressType] = useState('');
   const [state, setState] = useState('');
   const [district, setDistrict] = useState('');
   const [pincode, setPincode] = useState('');
   const [address, setAddress] = useState('');
+  // const [showModal, setShowModal] = useState(false);
+  // const [productSuggestions, setProductSuggestions] = useState([]);
+  // const [filteredSuggestions, setFilteredSuggestions] = useState([]);
+  // const [allProducts, setAllProducts] = useState([]);
   const [id, setId] = useState("");
+  // const { userId } = useParams(); 
   const [deliveryCharges, setDeliveryCharges] = useState(0);
 const [serviceCharges, setServiceCharges] = useState(0);
 const [totalPaymentAmount, setTotalPaymentAmount] = useState(0);
@@ -52,6 +68,7 @@ const [date, setDate] = useState('');
 const [emailAddress, setEmailAddress] = useState("");
 
   const location = useLocation();
+ // Check if there's state passed from ViewProduct page
  useEffect(() => {
   if (location.state) {
     const {
@@ -81,18 +98,55 @@ useEffect(() => {
   console.log( productData,addressType, id, customerId, date, emailAddress);
 }, [productData,addressType, id, customerId, date, emailAddress]);
 
+  // // Fetch customer profile data
+  // useEffect(() => {
+  //   const fetchProfileType = async () => {
+  //     try {
+  //       const API_URL = "https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/";
+  //       const response = await fetch(`${API_URL}${userId}`);
+  //       if (!response.ok) {
+  //         throw new Error("Failed to fetch customer profile data");
+  //       }
+  //       const data = await response.json();
+  //       console.log(data);
+  //       const addresses = Array.isArray(data) ? data : [data];
+  //       const formattedAddresses = addresses.map((addr) => ({
+  //         id: addr.addressId,
+  //         type: addr.isPrimaryAddress ? "primary" : "secondary",
+  //         address: addr.address,
+  //         state: addr.state,
+  //         district: addr.district,
+  //         zipCode: addr.zipCode,
+  //         mobileNumber: addr.mobileNumber,
+  //         customerName: addr.customerName,
+  //       }));
+  //       setAddresses(formattedAddresses);
+  //       const customerName = Array.isArray(data) ? data[0]?.fullName || '' : data.fullName || '';
+  //       setFullName(customerName);
+  //     } catch (error) {
+  //       console.error("Error fetching customer data:", error);
+  //     }
+  //   };
+
+  //   if (userId) {
+  //     fetchProfileType();
+  //   }
+  // }, [userId]);
+
 useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsById/${buyProductId}`);
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsById/${buyProductId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch product data');
         }
         const data = await response.json();
         setProductData(data);
+    //  alert(JSON.stringify(data));
         setDate(data.date);
          setId(data.id);
         setBuyProductTicketId(data.buyProductId);
+        // alert(buyProductTicketId);
         setAddress(data.address);
         setCategory(data.category);
         setProductName(data.productName);
@@ -131,10 +185,95 @@ useEffect(() => {
     fetchProductData();
   }, [buyProductId]);
 
+  // const validRate = Number(rate) || 0;
+  // const validDiscount = Number(discount) || 0;
+  // const afterDiscountPrice = parseFloat((validRate - (validRate * validDiscount) / 100).toFixed(2));
+  // const totalAmount = parseFloat((requiredQuantity * afterDiscountPrice).toFixed(2));
+
+  
+  // // Generate ticket ID in the format VSKPAKP002
+  // const ticketIdPrefix = "VSKPAKP";
+  // const ticketIdSuffix = String(Math.floor(Math.random() * 999) + 1).padStart(3, "0");
+  // const ticketId = `${ticketIdPrefix}${ticketIdSuffix}`;
+
+  // const handleGetQuotation = async (e) => {
+  //   e.preventDefault();
+   
+  //   // const primaryAddress = addresses.find((addr) => addr.type === "primary");
+  //   // const state = primaryAddress?.state || "";
+  //   // const district = primaryAddress?.district || "";
+  //   // const pincode = primaryAddress?.zipCode || "";
+  //   // const mobileNumber = primaryAddress?.mobileNumber || "";
+  
+  //   const payload = {
+  //     BuyProductId: buyProductTicketId,
+  //     id: id,
+  //     date: date,
+  //     Address: address,
+  //     CustomerPhoneNumber: mobileNumber,
+  //     category: category,
+  //     status: "Closed",
+  //     productName: productName,
+  //     ProductCatalogue: productCatalogue,
+  //     productSize: productSize,
+  //     rate: rate.toString(),
+  //     discount: discount.toString(),
+  //     afterDiscountPrice: afterDiscount.toString(),
+  //     color: color,
+  //     selectedColors: selectedColors,
+  //     requiredQuantity: requiredQuantity.toString(),
+  //     totalAmount: totalAmount.toString(),
+  //     AssignedTo: "Customer",
+  //     DeliveryCharges: deliveryCharges,
+  //     ServiceCharges: serviceCharges,
+  //     TotalPaymentAmount: totalPaymentAmount,
+  //     AddressType: addressType,
+  //     State: state,
+  //     District: district,
+  //     ZipCode: pincode,
+  //     CustomerId: customerId,
+  //     CustomerName: customerName,
+  //     RequestedBy: customerName,
+  //     PaymentMode: paymentMode,
+  //     UTRTransactionNumber: transactionDetails,
+  //     TechnicianConfirmationCode: technicianConfirmationCode,
+  //     DeliveryDate: deliveryDate,
+  //     TechnicianDetils: technicianDetails,
+  //     ProductView: "Assigned",
+  //     InvoiceDetails: invoiceDetails,
+  //     UploadInvoice: uploadedFiles.map((file) => file.src),
+  //     CustomerEmail: emailAddress,
+  //     OrderId: "",
+  //     OrderDate: "",
+  //     PaidAmount: "",
+  //     TransactionStatus: "",
+  //     TransactionType: "",
+  //     InvoiceId: "",
+  //     InvoiceURL: "",
+  //   };
+   
+  //   try {
+  //     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/${buyProductId}`,{
+  //       method: 'PUT',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(payload),
+  //     });
+  //     if (!response.ok) {
+  //      throw new Error("Failed to update Buy Product Invoice Details.");
+  //     }
+  //     alert('Product Order Forwarded to Customer Successfully!');
+  //     navigate("/adminNotifications");
+  //   } catch (error) {
+  //     console.error("Error update Buy Product Invoice Details:", error);
+  //     window.alert('Failed to update Buy Product Invoice Details. Please try again later.');    }
+  // };
+  
   // Detect screen size for responsiveness
 useEffect(() => {
   const handleResize = () => setIsMobile(window.innerWidth <= 768);
-  handleResize(); 
+  handleResize(); // Set initial state
   window.addEventListener('resize', handleResize);
   return () => window.removeEventListener('resize', handleResize);
 }, []);
@@ -143,6 +282,7 @@ useEffect(() => {
      e.preventDefault();
    };
 
+    // Handle file upload
     const handleFileChange = (e) => {
       const files = Array.from(e.target.files);
       if (files.length + productInvoice.length > 1) {
@@ -193,7 +333,7 @@ useEffect(() => {
           const formData = new FormData();
           formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
           formData.append('fileName', fileName);
-          const response = await fetch('https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
+          const response = await fetch('https://handymanapiv2.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
             method: 'POST',
             headers: {
               'Accept': 'text/plain',
@@ -295,7 +435,19 @@ useEffect(() => {
                 placeholder="Product Name"
                 readOnly
               />
-             
+              {/* {filteredSuggestions.length > 0 && (
+                <ul className="list-group mt-2">
+                  {filteredSuggestions.map((suggestion, index) => (
+                    <li
+                      key={index}
+                      className="list-group-item list-group-item-action"
+                      onClick={() => handleProductSelect(suggestion)}
+                    >
+                      {suggestion}
+                    </li>
+                  ))}
+                </ul>
+              )} */}
             </div>
             <div className="form-group">
               <label>
@@ -350,6 +502,7 @@ useEffect(() => {
                   type="text"
                   className="form-control"
                   value={afterDiscount}
+                  // onChange={(e) => setAfterDiscount(e.target.value)}
                   placeholder="After Discount"
                   readOnly
                 />
@@ -402,7 +555,17 @@ useEffect(() => {
                 readOnly
               />
             </div>
-    
+    {/* <div className="form-group">
+              <label>Delivery Date <span className="req_star">*</span></label>
+              <input
+                // type="date"
+                className="form-control "
+                value={deliveryDate}
+                onChange={(e) => setDeliveryDate(e.target.value)}
+                placeholder="dd-mm-yyyy"
+                required
+              />
+            </div>  */}
             <div className="form-group">
               <label>Technician Details <span className="req_star">*</span></label>
               <input
@@ -453,7 +616,8 @@ useEffect(() => {
               >
                 {loading ? 'Uploading...' : 'Upload Invoice'}
               </button>
-             
+              {/* <button className='btn btn-warning m-1' onClick={handleUploadInvoice}
+              >Save</button> */}
           </div>
           </div> 
             <div className="col-md-6">
@@ -462,6 +626,7 @@ useEffect(() => {
                 type="text"
                 className="form-control"
                 value={technicianConfirmationCode}
+                // onChange={(e) => setChooseColors(e.target.value)}
                 placeholder="Order Confirmation Code"
                 readOnly
               />

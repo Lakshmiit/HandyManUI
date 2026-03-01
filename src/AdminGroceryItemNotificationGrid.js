@@ -23,7 +23,6 @@ const AdminGroceryItemNotificationGrid = () => {
   const [districts, setDistricts] = useState([]); 
   const [pinCodes, setPinCodes] = useState([]);
   const rowsPerPage = 15;
-const [activeTab, setActiveTab] = useState("Open");
 
   const sortNewestFirst = (a, b) => {
     const aDate =
@@ -43,13 +42,13 @@ const [activeTab, setActiveTab] = useState("Open");
 
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/GetAllMartItems`;
+    const url = `https://handymanapiv2.azurewebsites.net/api/Mart/GetAllMartItems`;
 
     axios.get(url)
       .then(response => {
         const groceries = response.data.map(g => ({ ...g }));
-        // const groceriesStatus = groceries.filter((g) =>  (g.status === "Open" || g.status === "Closed"));
-        const sorted = [...groceries].sort(sortNewestFirst);
+        const groceriesStatus = groceries.filter((g) =>  (g.status === "Open" || g.status === "Closed"));
+        const sorted = [...groceriesStatus].sort(sortNewestFirst);
         setGroceryData(sorted);
         setFilteredData(sorted);
         const uniqueStates = [...new Set(sorted.map(g => g.state).filter(Boolean))];
@@ -72,7 +71,7 @@ const [activeTab, setActiveTab] = useState("Open");
   const handleDelete = (groceryId) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this grocery?');
     if (confirmDelete) {
-      axios.delete(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/${groceryId}`)
+      axios.delete(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${groceryId}`)
         .then(() => {
           setGroceryData(prev => prev.filter(g => g.id !== groceryId));
           setFilteredData(prev => prev.filter(g => g.id !== groceryId));
@@ -84,17 +83,10 @@ const [activeTab, setActiveTab] = useState("Open");
     } 
   };
 
+  // Re-filter + keep newest-first order, then jump to page 1
   useEffect(() => {
     let filtered = groceryData;
-    if (activeTab === "Open") {
-    filtered = filtered.filter(g => g.status === "Open");
-  } 
-  else if (activeTab === "Closed") {
-    filtered = filtered.filter(g => g.status === "Closed");
-  } 
-  else if (activeTab === "Delivered") {
-    filtered = filtered.filter(g => g.isDeliver === true);
-  }
+
     if (state) {
       filtered = filtered.filter(g => g.state === state);
     }
@@ -108,7 +100,7 @@ const [activeTab, setActiveTab] = useState("Open");
     const resorted = [...filtered].sort(sortNewestFirst);
     setFilteredData(resorted);
     setCurrentPage(1);
-  }, [activeTab,state, district, zipCode, groceryData]);
+  }, [state, district, zipCode, groceryData]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -161,28 +153,6 @@ const [activeTab, setActiveTab] = useState("Open");
 
         <div className={`container ${isMobile ? "w-100" : "w-75"}`}>
           <h2 className="text-center">Grocery Item Notifications</h2>
-          <div className="d-flex mb-3">
-            <button
-              className={`btn mx-2 ${activeTab === "Open" ? "btn-warning" : "btn-outline-warning"}`}
-              onClick={() => setActiveTab("Open")}
-            >
-              Open Tickets
-            </button>
-
-            <button
-              className={`btn mx-2 ${activeTab === "Closed" ? "btn-danger" : "btn-outline-danger"}`}
-              onClick={() => setActiveTab("Closed")}
-            >
-              Closed Tickets
-            </button>
-
-            <button
-              className={`btn mx-2 ${activeTab === "Delivered" ? "btn-success" : "btn-outline-success"}`}
-              onClick={() => setActiveTab("Delivered")}
-            >
-              Delivered Tickets
-            </button>
-          </div>
           <div className={`d-flex ${isMobile ? "flex-column" : "flex-wrap"} align-items-center justify-content-between`}>
             <div className={`form-group ${isMobile ? "col-12" : "col-12 col-md-2"} m-2`}>
               <label>State</label>

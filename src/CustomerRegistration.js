@@ -76,7 +76,7 @@ useEffect(() => {
   useEffect(() => {
     const fetchStates = async () => {
       try {
-        const res = await fetch('https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/MasterData/getStates');
+        const res = await fetch('https://handymanapiv2.azurewebsites.net/api/MasterData/getStates');
         const data = await res.json();
         setStates(data);
       } catch (err) {
@@ -90,7 +90,7 @@ useEffect(() => {
     const fetchDistricts = async () => {
       if (!selectedStateId) return;
       try {
-        const res = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/MasterData/getDistricts?stateId=${selectedStateId}`);
+        const res = await fetch(`https://handymanapiv2.azurewebsites.net/api/MasterData/getDistricts?stateId=${selectedStateId}`);
         const data = await res.json();
         setDistricts(data);
       } catch (err) {
@@ -135,7 +135,7 @@ useEffect(() => {
     };
    
     try {
-      const response1 = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UserOnBoarding/UserUpload`, {
+      const response1 = await fetch(`https://handymanapiv2.azurewebsites.net/api/UserOnBoarding/UserUpload`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -173,7 +173,7 @@ useEffect(() => {
       Status: "Open", 
     };
    
-      const response2 = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Customer/CustomerUpload`, {
+      const response2 = await fetch(`https://handymanapiv2.azurewebsites.net/api/Customer/CustomerUpload`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -212,7 +212,7 @@ useEffect(() => {
   //   };
    
   //   try {
-  //     const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UserOnBoarding/UserUpload`, {
+  //     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/UserOnBoarding/UserUpload`, {
   //       method: 'POST',
   //       headers: {
   //         'Content-Type': 'application/json',
@@ -261,7 +261,7 @@ useEffect(() => {
   //   };
    
   //   try {
-  //     const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Customer/CustomerUpload`, {
+  //     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Customer/CustomerUpload`, {
   //       method: 'POST',
   //       headers: {
   //         'Content-Type': 'application/json',

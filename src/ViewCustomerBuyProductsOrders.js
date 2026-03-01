@@ -111,7 +111,7 @@ useEffect(() => {
   // useEffect(() => {
   //   const fetchProfileType = async () => {
   //     try {
-  //       const API_URL = "https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Address/GetAddressById/";
+  //       const API_URL = "https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/";
   //       const response = await fetch(`${API_URL}${userId}`);
   //       if (!response.ok) {
   //         throw new Error("Failed to fetch customer profile data");
@@ -145,7 +145,7 @@ useEffect(() => {
 useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsById/${buyProductId}`);
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsById/${buyProductId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch product data');
         }
@@ -188,7 +188,7 @@ useEffect(() => {
        setWarrantyPeriod(data.warrentyPeriod);
        const imageRequests =
         data.uploadInvoice?.map((photo) => fetch(
-            `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+            `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
           )
           .then((res) => res.json())
             .then((data) => ({
@@ -334,7 +334,7 @@ useEffect(() => {
     try {
       let response; 
       if (paymentMode === "technician" && (paymentType === "Cash" || paymentType === "Pay Online")) {
-       response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/BuyProduct/${buyProductId}`,{
+       response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/${buyProductId}`,{
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -352,7 +352,7 @@ useEffect(() => {
       navigate(`/customerOrders/${userType}/${userId}`);
     }
   } else if (paymentMode === "online") {
-      response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/BuyProduct/${buyProductId}`,{
+      response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/${buyProductId}`,{
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

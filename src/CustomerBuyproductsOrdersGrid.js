@@ -40,7 +40,7 @@ const CustomerBuyProductNotificationGrid = () => {
   }, [productData])
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForUserList?UserID=${userId}`
+    const url = `https://handymanapiv2.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForUserList?UserID=${userId}`
     axios.get(url)
       .then(response => {
         const products = response.data.map((product) => ({
@@ -73,7 +73,7 @@ const CustomerBuyProductNotificationGrid = () => {
   // const handleDelete = (productId) => {
   //   const confirmDelete = window.confirm('Are you sure you want to delete this product?');
   //   if (confirmDelete) {
-  //     axios.delete(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/${productId}`)
+  //     axios.delete(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${productId}`)
   //       .then(() => {
   //         setProductData(prevData => prevData.filter(product => product.id !== productId));
   //         setFilteredData(prevData => prevData.filter(product => product.id !== productId));

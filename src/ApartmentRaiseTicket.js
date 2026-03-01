@@ -82,7 +82,7 @@ useEffect(() => {
 }, [isSubscription, isRegisterDisabled]);
 
     useEffect(() => {
-      axios.get('https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/MasterData/getStates')
+      axios.get('https://handymanapiv2.azurewebsites.net/api/MasterData/getStates')
         .then(response => {
           const data = response.data;
           console.log("States API Response:", data); 
@@ -96,7 +96,7 @@ useEffect(() => {
     
      useEffect(() => {
       if (stateId) {
-        axios.get(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
+        axios.get(`https://handymanapiv2.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
           .then(response => {
             setDistrictList(response.data);
           })
@@ -224,7 +224,7 @@ useEffect(() => {
 const fetchApartmentData = useCallback(async () => {
   setLoading(true);
   try {
-    const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/ApartmentMaintenance/GetAddressMaintenanceDataByMobileNo?mobileNo=${mobileNumber}`);
+    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/ApartmentMaintenance/GetAddressMaintenanceDataByMobileNo?mobileNo=${mobileNumber}`);
     if (!response.ok) throw new Error('Failed to fetch Apartment data');
     
     const data = await response.json();
@@ -263,7 +263,7 @@ const fetchApartmentData = useCallback(async () => {
 // const fetchApartmentData = useCallback(async () => {
 //   setLoading(true);
 //   try {
-//     const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/ApartmentMaintenance/GetAddressMaintenanceDataByMobileNo?mobileNo=${mobileNumber}`);
+//     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/ApartmentMaintenance/GetAddressMaintenanceDataByMobileNo?mobileNo=${mobileNumber}`);
 //     if (!response.ok) throw new Error('Failed to fetch Apartment data');
 //     const data = await response.json();
 //     const addressArray = Array.isArray(data) ? data : [data];
@@ -398,7 +398,7 @@ useEffect(() => {
       formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
       formData.append('fileName', fileName);
 
-      const response = await fetch('https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
+      const response = await fetch('https://handymanapiv2.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
         method: 'POST',
         headers: {
           'Accept': 'text/plain',
@@ -454,7 +454,7 @@ useEffect(() => {
     };
 
   try {
-    const response = await fetch('https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/ApartmentRaiseTicket/CreateApartmentRaiseTicket', {
+    const response = await fetch('https://handymanapiv2.azurewebsites.net/api/ApartmentRaiseTicket/CreateApartmentRaiseTicket', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -537,7 +537,7 @@ useEffect(() => {
   };
 
   try {
-    const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/ApartmentMaintenance/CreateApartmentMaintence`, {
+    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/ApartmentMaintenance/CreateApartmentMaintence`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload3),
@@ -598,7 +598,7 @@ useEffect(() => {
 //     };
   
 //     try {
-//       const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/ApartmentMaintenance/CreateApartmentMaintence`, {
+//       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/ApartmentMaintenance/CreateApartmentMaintence`, {
 //         method: 'POST',
 //         headers: {
 //           'Content-Type': 'application/json',
@@ -665,7 +665,7 @@ useEffect(() => {
       };
     
       try {
-        const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/ApartmentMaintenance/${id}`, {
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/ApartmentMaintenance/${id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',

@@ -23,7 +23,7 @@ useEffect(() => {
 
 const fetchOrderDetails = useCallback(async () => {
   try {
-      const res = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/LakshmiCollection/GetLakshmiCollectionDetails/${id}`);
+      const res = await fetch(`https://handymanapiv2.azurewebsites.net/api/LakshmiCollection/GetLakshmiCollectionDetails/${id}`);
       const data = await res.json();
       setOrderBooking(data);
       setTotalAmount(data.grandTotal);

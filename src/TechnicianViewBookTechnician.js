@@ -62,7 +62,7 @@ const {technicianName} = useParams();
   useEffect(() => {
     const fetchtechnicianData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/BookTechnician/GetBookTechnician/${raiseTicketId}`);
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/GetBookTechnician/${raiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch technician data');
         }
@@ -106,7 +106,7 @@ useEffect(() => {
               try {
                 let apiUrl = "";
              
-                  apiUrl = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/technician/technicianProfileData?profileType=${userType}&UserId=${userId}`;
+                  apiUrl = `https://handymanapiv2.azurewebsites.net/api/technician/technicianProfileData?profileType=${userType}&UserId=${userId}`;
                 
                 if (!apiUrl) return;
                 const response = await axios.get(apiUrl);
@@ -230,7 +230,7 @@ const handleUpdateJobDescription = async (e) => {
   };
 
   try {
-    const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
+    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -261,7 +261,7 @@ const handleUpdateJobDescription = async (e) => {
      navigate(`/technicianGridDetails/${userType}/${userId}/${category}/${zipCode}/${technicianName}`);
 
     //  navigate(`/profilePage/${userType}/${userId}`);
-  // window.location.href = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/CustomerProfilePage?ReactToken=${customerId}$${userType}`;
+  // window.location.href = `https://handymanapiv2.azurewebsites.net/CustomerProfilePage?ReactToken=${customerId}$${userType}`;
   } catch (error) {
     console.error('Error:', error);
     window.alert('Failed to forward Customer. Please try again later.');

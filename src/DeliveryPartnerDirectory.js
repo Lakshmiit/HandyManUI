@@ -55,7 +55,7 @@ const [detailsError, setDetailsError] = useState("");
 };
 
   useEffect(() => {
-    axios.get("https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/MasterData/getStates")
+    axios.get("https://handymanapiv2.azurewebsites.net/api/MasterData/getStates")
       .then((res) => {
         setStateList(res.data || []);
         setStateId("");
@@ -65,7 +65,7 @@ const [detailsError, setDetailsError] = useState("");
 
   useEffect(() => {
     if (!stateId) { setDistrictList([]); return; }
-    axios.get(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
+    axios.get(`https://handymanapiv2.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
       .then((res) => setDistrictList(res.data || []))
       .catch((err) => console.error("Error fetching districts:", err));
   }, [stateId]);
@@ -103,7 +103,7 @@ const [detailsError, setDetailsError] = useState("");
   const handleDelete = (technicianId) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this ticket?');
     if (confirmDelete) {
-      axios.delete(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/${technicianId}`)
+      axios.delete(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${technicianId}`)
         .then(() => {
           setDeliveryData(prevData => prevData.filter(technician => technician.id !== technicianId));
           setFilteredData(prevData => prevData.filter(technician => technician.id !== technicianId));

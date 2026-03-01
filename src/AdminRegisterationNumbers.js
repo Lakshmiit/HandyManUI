@@ -40,7 +40,7 @@ useEffect(() => {
   setLoading(true);
 
   try {
-    const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Customer/GuestUserExistingVerification/${mobileNumber}`);
+    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Customer/GuestUserExistingVerification/${mobileNumber}`);
     if (!response.ok) {
       throw new Error('Failed to fetch user data');
     }

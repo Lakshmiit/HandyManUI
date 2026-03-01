@@ -90,7 +90,7 @@ useEffect(() => {
       formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
       formData.append('fileName', fileName);
      
-      const response = await fetch('https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
+      const response = await fetch('https://handymanapiv2.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
         method: 'POST',
         headers: {
           'Accept': 'text/plain',
@@ -148,9 +148,9 @@ useEffect(() => {
       ExpireDate : expireDate,
       Limit: limit,    
     };   
-// handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net
+// handymanapiv2.azurewebsites.net
     try {
-      const response = await fetch("https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UploadGrocery/UploadGrocery", {
+      const response = await fetch("https://handymanapiv2.azurewebsites.net/api/UploadGrocery/UploadGrocery", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

@@ -17,9 +17,11 @@ const AdminCollectionsList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const rowsPerPage = 15;
   const navigate = useNavigate();
+
+  // Fetch collections data, categories, and catalogues
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UploadLakshmiCollection/GetAllLakshmiCollections`;
+    const url = `https://handymanapiv2.azurewebsites.net/api/UploadLakshmiCollection/GetAllLakshmiCollections`;
     axios.get(url)
       .then((response) => {
         const collections = response.data.map((collection) => ({
@@ -28,9 +30,11 @@ const AdminCollectionsList = () => {
             ? collection.rate - (collection.rate * collection.discount) / 100
             : collection.rate,
         }));
+        // products.sort((a, b) => a.productName.localeCompare(b.productName));
         setCollectionData(collections);
         setFilteredData(collections);
   
+        // Extract unique categories, catalogues, and status
         const uniqueCategories = [...new Set(collections.map((collection) => collection.category))];
         const uniqueCatalogues = [...new Set(collections.map((collection) => collection.catalogue))];
         const uniqueStatus = [...new Set(collections.map((collection) => collection.status))];
@@ -46,10 +50,11 @@ const AdminCollectionsList = () => {
       });
   }, []); 
 
+  // Handle delete functionality
   const handleDelete = (collectionId) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this product?');
     if (confirmDelete) {
-      axios.delete(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Product/${collectionId}`)
+      axios.delete(`https://handymanapiv2.azurewebsites.net/api/Product/${collectionId}`)
         .then(() => {
           setCollectionData(prevData => prevData.filter(collection => collection.id !== collectionId));
           setFilteredData(prevData => prevData.filter(collection => collection.id !== collectionId));
@@ -60,26 +65,38 @@ const AdminCollectionsList = () => {
     }
   };
 
+  // Filter data based on selected category and catalogue
   useEffect(() => {
   let filtered = collectionData;
+
   if (category) {
     filtered = filtered.filter(collection => collection.category === category);
   }
+
   if (catalogue) {
     filtered = filtered.filter(collection => collection.catalogue === catalogue);
   }
+
   if (collectionstatus) {
     filtered = filtered.filter(collection => collection.status === collectionstatus);
   }
+
   if (searchTerm) {
     filtered = filtered.filter(collection =>
       collection.productName.toLowerCase().includes(searchTerm.toLowerCase())
     );          
   }
+
   setFilteredData(filtered);
   setCurrentPage(1); 
 }, [category, catalogue, collectionstatus, searchTerm, collectionData]);
 
+  // Handle page change
+  // const handlePageChange = (pageNumber) => {
+  //   setCurrentPage(pageNumber);
+  // };
+
+  // Get paginated data
   const indexOfLastCollection = currentPage * rowsPerPage;
   const indexOfFirstCollection = indexOfLastCollection - rowsPerPage;
   const currentCollections = filteredData.slice(indexOfFirstCollection, indexOfLastCollection);

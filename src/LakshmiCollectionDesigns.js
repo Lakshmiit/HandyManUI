@@ -92,7 +92,7 @@ const extractBase64 = (payload) =>
 //       setErr("");
 //       try {
 //         const res = await fetch(
-//           `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UploadLakshmiCollection/GetLakshmiCollections?id=${id}`
+//           `https://handymanapiv2.azurewebsites.net/api/UploadLakshmiCollection/GetLakshmiCollections?id=${id}`
 //         );
 //         if (!res.ok) throw new Error("Failed to fetch product");
 //         const data = await res.json();
@@ -102,7 +102,7 @@ const extractBase64 = (payload) =>
 //         const imageRequests =
 //           imgFiles.map((fileName) =>
 //             fetch(
-//               `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
+//               `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
 //                 fileName
 //               )}`
 //             )
@@ -162,7 +162,7 @@ useEffect(() => {
     try {
       // 1) product
       const res = await fetch(
-        `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UploadLakshmiCollection/GetLakshmiCollections?id=${id}`
+        `https://handymanapiv2.azurewebsites.net/api/UploadLakshmiCollection/GetLakshmiCollections?id=${id}`
       );
       if (!res.ok) throw new Error("Failed to fetch product");
       const data = await res.json();
@@ -174,7 +174,7 @@ useEffect(() => {
 
       const buildRequest = async (fileName) => {
         const r = await fetch(
-          `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
+          `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
             fileName
           )}`
         );
@@ -394,7 +394,7 @@ const allOutOfStock = sizes.length > 0 && sizes.every(s => (s.stock ?? 0) <= 0);
     setPosting(true);
     setPostMsg(null);
     const res = await fetch(
-      "https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/LakshmiCollection/UploadColectionsDetails",
+      "https://handymanapiv2.azurewebsites.net/api/LakshmiCollection/UploadColectionsDetails",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

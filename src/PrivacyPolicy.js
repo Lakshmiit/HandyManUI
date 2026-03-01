@@ -196,7 +196,7 @@ export default function PrivacyPolicy() {
         </span>
         <br />
         <span className="small">
-          © 2026 Lakshmi software development center. All rights reserved.
+          © 2025 Lakshmi software development center. All rights reserved.
         </span>
       </div>
     </body>

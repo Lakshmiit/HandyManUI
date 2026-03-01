@@ -61,7 +61,7 @@ const BookTechnicianActionView = () => {
   useEffect(() => {
     const fetchtechnicianData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/BookTechnician/GetBookTechnician/${raiseTicketId}`);
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/GetBookTechnician/${raiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch technician data');
         }
@@ -117,7 +117,7 @@ const fetchPincodesByCategory = async (category) => {
   try {
     setLoading(true);
     const response = await fetch(
-      `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Technician/GetTechnicianPincodesBycategory?Category=${category}`
+      `https://handymanapiv2.azurewebsites.net/api/Technician/GetTechnicianPincodesBycategory?Category=${category}`
     );
     if (!response.ok) {
       throw new Error("Failed to fetch pincodes");
@@ -136,7 +136,7 @@ const fetchTechniciansByPincode = useCallback(async (pincode) => {
   try {
     setLoading(true);
     const response = await fetch(
-      `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Technician/GetTechniciannamesByPincodeAndCategory?pincode=${pincode}&category=${category}`
+      `https://handymanapiv2.azurewebsites.net/api/Technician/GetTechniciannamesByPincodeAndCategory?pincode=${pincode}&category=${category}`
     );
     if (!response.ok) {
       throw new Error("Failed to fetch technicians");
@@ -250,7 +250,7 @@ const handleTechnicianChange = (e) => {
   //   if (category) {
   //     try {
   //       const response = await axios.get(
-  //         `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Technician/GetTechnicianPincodesBycategory?Category=${category}`
+  //         `https://handymanapiv2.azurewebsites.net/api/Technician/GetTechnicianPincodesBycategory?Category=${category}`
   //       );
   //       console.log("API Response:", response.data);
   //     alert(JSON.stringify(response.data));
@@ -321,7 +321,7 @@ const handleUpdateJobDescription = async (e) => {
   }; 
  
   try {
-    const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
+    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

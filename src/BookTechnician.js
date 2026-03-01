@@ -73,11 +73,11 @@ const isGuestName = (name) => (name ?? '').trim().toLowerCase() === 'guest';
     console.log(ticketId, loading, fullName, mobileNumber, raiseTicketId, editingAddressId, isEditing);
   }, [ticketId, loading, fullName,  mobileNumber, raiseTicketId, editingAddressId, isEditing]);
 
-  // const API_URL = 'https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Address/GetAddressById/';
+  // const API_URL = 'https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/';
   // Fetch customer profile data
     const fetchCustomerData = useCallback(async () => {
       try {
-        const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Address/GetAddressById/${userId}`);
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/${userId}`);
         if (!response.ok) {
 
           throw new Error('Failed to fetch customer profile data');
@@ -121,7 +121,7 @@ const isGuestName = (name) => (name ?? '').trim().toLowerCase() === 'guest';
   }, [fetchCustomerData]);
 
   useEffect(() => {
-    axios.get('https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/MasterData/getStates')
+    axios.get('https://handymanapiv2.azurewebsites.net/api/MasterData/getStates')
       .then(response => {
         const data = response.data;
         console.log("States API Response:", data); 
@@ -135,7 +135,7 @@ const isGuestName = (name) => (name ?? '').trim().toLowerCase() === 'guest';
   
    useEffect(() => {
     if (stateId) {
-      axios.get(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
+      axios.get(`https://handymanapiv2.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
         .then(response => {
           setDistrictList(response.data);
         })
@@ -251,7 +251,7 @@ useEffect(() => {
   const fetchJobsByCategory = async (selectedCategory) => {
     try {
       setLoading(true);
-      const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UploadJobDescriptionBookTechnician/GetSelctedJobsByCategory?Category=${selectedCategory}`);
+      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/UploadJobDescriptionBookTechnician/GetSelctedJobsByCategory?Category=${selectedCategory}`);
       if (!response.ok) {
         throw new Error("Failed to fetch jobs");
       }
@@ -388,7 +388,7 @@ const handleUpdateJobDescription = async (e) => {
     TechnicianFullName: "",
   };
   try {
-    const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/BookTechnician/CreateBookTechnician`, {
+    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/CreateBookTechnician`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -453,7 +453,7 @@ const handleUpdateJobDescription = async (e) => {
       };
     
       try {
-        const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Customer/CustomerAddressEdit`, {
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Customer/CustomerAddressEdit`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

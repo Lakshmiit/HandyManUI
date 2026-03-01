@@ -80,7 +80,7 @@ const CustomerRaiseTicketGridView = () => {
   useEffect(() => {
     const fetchticketData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
@@ -120,7 +120,7 @@ const CustomerRaiseTicketGridView = () => {
 
     // Fetch data from API on component mount
     useEffect(() => {
-      const apiUrl = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
+      const apiUrl = `https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
       // Fetching the data from the API
       const fetchData = async () => {
         try {
@@ -195,7 +195,7 @@ const CustomerRaiseTicketGridView = () => {
       useEffect(() => {
         const fetchDealerData = async () => {
           try {
-            const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseAQuoteByDealer/GetRaiseAQuoteLowestDealerByid?raiseAQuotetDealerId=${raiseTicketId}`);
+            const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuoteByDealer/GetRaiseAQuoteLowestDealerByid?raiseAQuotetDealerId=${raiseTicketId}`);
             if (!response.ok) {
               throw new Error('Failed to fetch ticket data');
             }
@@ -340,7 +340,7 @@ const CustomerRaiseTicketGridView = () => {
 // UTRTransactionNumber: "",
 //     };
 //     try {
-//       const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+//       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
 //         method: 'PUT',
 //         headers: {
 //           'Content-Type': 'application/json',
@@ -406,7 +406,7 @@ const CustomerRaiseTicketGridView = () => {
 //     })),
 //   };
 //   try {
-//     const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseAQuote/id?id=03dd6bbc-36ba-4795-b39c-b40d58991d87`, {
+//     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/id?id=03dd6bbc-36ba-4795-b39c-b40d58991d87`, {
 //       method: 'PUT',
 //       headers: {
 //         'Content-Type': 'application/json',

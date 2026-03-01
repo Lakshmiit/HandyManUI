@@ -148,7 +148,7 @@ const Notification = () => {
       try {
         let apiUrl = "";
      
-          apiUrl = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/dealer/dealerProfileData?profileType=${userType}&UserId=${userId}`;
+          apiUrl = `https://handymanapiv2.azurewebsites.net/api/dealer/dealerProfileData?profileType=${userType}&UserId=${userId}`;
         
         if (!apiUrl) return;
         const response = await axios.get(apiUrl);
@@ -175,9 +175,9 @@ const Notification = () => {
       try {
         const [getQuoteResponse, orderResponse] = await Promise.all([
         fetch(
-          `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistDealerId?category=${category1}&district=${district1}&dealerId=${userId}`
+          `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistDealerId?category=${category1}&district=${district1}&dealerId=${userId}`
         ),
-        fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingDealerId?category=${category1}&district=${district1}&dealerId=${userId}`),
+        fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingDealerId?category=${category1}&district=${district1}&dealerId=${userId}`),
       ]);
         const getQuoteData = await getQuoteResponse.json();
         const tickets = getQuoteData.tickets || [];
@@ -221,7 +221,7 @@ const Notification = () => {
   //   const fetchNotifications = async () => {
   //     try {
   //       const response = await fetch(
-  //         `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistDealerId?category=${category}&district=${district}&dealerId=${dealerId}`,
+  //         `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistDealerId?category=${category}&district=${district}&dealerId=${dealerId}`,
   //         {
   //           method: "GET",
   //           mode: "cors", // Ensure CORS mode is enabled

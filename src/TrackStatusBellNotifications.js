@@ -16,7 +16,7 @@
 //     const unsubscribe = onSnapshot(notificationsRef, async (snapshot) => {
 //       try {
 //         const response = await fetch(
-//           `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/GetTrackTicketsByCustomerId?customerId=${userId}`
+//           `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTrackTicketsByCustomerId?customerId=${userId}`
 //         );
 //         const data = await response.json();
 //         const getTrackNotifications = data.filter(

@@ -94,7 +94,7 @@ const TechnicianDetailsNotification = () => {
   const fetchTechnicianNotifications = async () => {
     try {
       const technicianTicketResponse = await fetch(
-        `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/BookTechnician/GetBookTechnicianNotifications?category=${category}&pincode=${pincode}&technicianName=${technicianName}`
+        `https://handymanapiv2.azurewebsites.net/api/BookTechnician/GetBookTechnicianNotifications?category=${category}&pincode=${pincode}&technicianName=${technicianName}`
       );
       const technicianData = await technicianTicketResponse.json();
       const getTechnicianNotifications = technicianData.filter(
