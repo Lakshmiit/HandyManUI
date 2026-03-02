@@ -14,7 +14,7 @@ import Footer from "./Footer.js";
 import { useLocation } from "react-router-dom";
 
 const IMAGE_DOWNLOAD =
-  "https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=";
+  "https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=";
 
 const norm = (s) =>
   String(s || "").toLowerCase().replace(/\s+/g, " ").replace("500ml", "500 ml").replace("1l", "1 l").trim();
@@ -171,7 +171,7 @@ const GroceryOffersCartPage = () => {
     const CheckFirstOrder = async (mobile) => {
     if (!mobile) return null;
   
-    const url = `https://handymanapiv2.azurewebsites.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${encodeURIComponent(
+    const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${encodeURIComponent(
       mobile
     )}`;
   
@@ -405,7 +405,7 @@ const handleQtyChange = (rowId, delta) => {
     };
     try {
       const response = await fetch(
-        `https://handymanapiv2.azurewebsites.net/api/Mart/UploadProductDetails`,
+        `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/UploadProductDetails`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -465,7 +465,7 @@ useEffect(() => {
 
       const allProducts = [];
       for (const cat of categories) {
-        const url = `https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(
+        const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(
           cat
         )}`;
         const res = await fetch(url);

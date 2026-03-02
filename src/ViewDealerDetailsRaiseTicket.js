@@ -86,7 +86,7 @@ const [rateQuotedBy, setRateQuotedBy] = useState('');
   useEffect(() => {
         const fetchticketData = async () => {
           try {
-            const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+            const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
             if (!response.ok) {
               throw new Error('Failed to fetch ticket data');
             }
@@ -110,7 +110,7 @@ const [rateQuotedBy, setRateQuotedBy] = useState('');
             const imageRequests =
               data.attachments?.map((photo) => 
                fetch(
-                  `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+                  `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
                 )
                 .then((res) => res.json())
                 .then((data) => ({
@@ -132,7 +132,7 @@ const [rateQuotedBy, setRateQuotedBy] = useState('');
       useEffect(() => {
         const fetchDealerData = async () => {
           try {
-            const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseAQuoteByDealer/GetRaiseAQuoteDealerDetailsByid?raiseTicketId=${raiseTicketId}&dealerId=${userId}`);
+            const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseAQuoteByDealer/GetRaiseAQuoteDealerDetailsByid?raiseTicketId=${raiseTicketId}&dealerId=${userId}`);
             if (!response.ok) {
               throw new Error('Failed to fetch ticket data');
             }
@@ -198,7 +198,7 @@ const [rateQuotedBy, setRateQuotedBy] = useState('');
       RateQuotedBy: rateQuotedBy,
     };
     try { 
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

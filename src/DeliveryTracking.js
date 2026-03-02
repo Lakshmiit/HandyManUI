@@ -40,7 +40,7 @@ const [deliveryPartnerUserId, setDeliveryPartnerUserId] = useState('');
     const fetchGroceryData = async () => {     
       try {
         const response = await fetch(
-          `https://handymanapiv2.azurewebsites.net/api/Mart/GetProductDetails?id=${id}`
+          `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/GetProductDetails?id=${id}`
         );
         if (!response.ok) throw new Error("Failed to fetch ticket data");
         const data = await response.json();

@@ -42,7 +42,7 @@ const AdminGroceryItemNotificationGrid = () => {
 
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv2.azurewebsites.net/api/Mart/GetAllMartItems`;
+    const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/GetAllMartItems`;
 
     axios.get(url)
       .then(response => {
@@ -71,7 +71,7 @@ const AdminGroceryItemNotificationGrid = () => {
   const handleDelete = (groceryId) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this grocery?');
     if (confirmDelete) {
-      axios.delete(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${groceryId}`)
+      axios.delete(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/${groceryId}`)
         .then(() => {
           setGroceryData(prev => prev.filter(g => g.id !== groceryId));
           setFilteredData(prev => prev.filter(g => g.id !== groceryId));

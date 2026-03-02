@@ -488,21 +488,21 @@ const Notification = () => {
       // const [raiseTicketResponse, getQuoteResponse, getDealerResponse, getOrderResponse, BookTechnicianResponse, collectionsResponse, buyProductResponse, productClosedResponse, apartmentRaiseTicketResponse, groceryItemResponse] = await Promise.all([
       const [raiseTicketResponse, BookTechnicianResponse, buyProductResponse, groceryItemResponse, collectionsResponse] = await Promise.all([
         fetch(
-          "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications"
+          "https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications"
         ),
         // fetch(
-        //   "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotificationsForTechnician"
+        //   "https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/GetTicketsNotificationsForTechnician"
         // ),
         // fetch(
-        //   "https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetRaiseTicketsForDealers"
+        //   "https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/GetRaiseTicketsForDealers"
         // ),
-        // fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications`),
-        fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/GetBookTechnicianForAdminList`),
-        fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForAdminList`),
-        // fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForAdminList`),
-        // fetch(`https://handymanapiv2.azurewebsites.net/api/ApartmentRaiseTicket/GetGetApartmentMaintenanceForAdminList`),
-        fetch(`https://handymanapiv2.azurewebsites.net/api/Mart/GetAllMartItems`),
-        fetch(`https://handymanapiv2.azurewebsites.net/api/LakshmiCollection/GetAllLakshmiCollectionsOpen`),
+        // fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications`),
+        fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/BookTechnician/GetBookTechnicianForAdminList`),
+        fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForAdminList`),
+        // fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForAdminList`),
+        // fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/ApartmentRaiseTicket/GetGetApartmentMaintenanceForAdminList`),
+        fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/GetAllMartItems`),
+        fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/LakshmiCollection/GetAllLakshmiCollectionsOpen`),
         // fetch(``),
       ]);
 

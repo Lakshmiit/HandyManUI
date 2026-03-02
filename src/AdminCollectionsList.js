@@ -21,7 +21,7 @@ const AdminCollectionsList = () => {
   // Fetch collections data, categories, and catalogues
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv2.azurewebsites.net/api/UploadLakshmiCollection/GetAllLakshmiCollections`;
+    const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UploadLakshmiCollection/GetAllLakshmiCollections`;
     axios.get(url)
       .then((response) => {
         const collections = response.data.map((collection) => ({
@@ -54,7 +54,7 @@ const AdminCollectionsList = () => {
   const handleDelete = (collectionId) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this product?');
     if (confirmDelete) {
-      axios.delete(`https://handymanapiv2.azurewebsites.net/api/Product/${collectionId}`)
+      axios.delete(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Product/${collectionId}`)
         .then(() => {
           setCollectionData(prevData => prevData.filter(collection => collection.id !== collectionId));
           setFilteredData(prevData => prevData.filter(collection => collection.id !== collectionId));

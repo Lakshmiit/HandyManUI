@@ -112,7 +112,7 @@ useEffect(() => {
   // useEffect(() => {
   //   const fetchProfileType = async () => {
   //     try {
-  //       const API_URL = "https://handymanapiv2.azurewebsites.net/api/Address/GetAddressById/";
+  //       const API_URL = "https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Address/GetAddressById/";
   //       const response = await fetch(`${API_URL}${userId}`);
   //       if (!response.ok) {
   //         throw new Error("Failed to fetch customer profile data");
@@ -147,7 +147,7 @@ useEffect(() => {
   //             const fetchProductData = async () => {
   //                 try {
   //                     setLoading(true);
-  //                     const productResponse = await fetch(`https://handymanapiv2.azurewebsites.net/api/Product/${productId}`);
+  //                     const productResponse = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Product/${productId}`);
   //                     if (!productResponse.ok) {
   //                         throw new Error('Product not found');
   //                     }
@@ -187,7 +187,7 @@ useEffect(() => {
 useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsById/${buyProductId}`);
+        const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsById/${buyProductId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch product data');
         }
@@ -455,7 +455,7 @@ const handleAssignedToChange = (e) => {
     };
    
     try {
-      const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BuyProduct/${buyProductId}`,{
+      const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/BuyProduct/${buyProductId}`,{
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -601,7 +601,7 @@ useEffect(() => {
   //   const fetchProducts = async () => {
   //     try {
   //       const response = await axios.get(
-  //         `https://handymanapiv2.azurewebsites.net/api/Product/GetProductsByCategory?category=${category}`
+  //         `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Product/GetProductsByCategory?category=${category}`
   //       );
   //       setAllProducts(response.data);
   //       // alert(JSON.stringify(allProducts));
@@ -677,7 +677,7 @@ useEffect(() => {
           const formData = new FormData();
           formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
           formData.append('fileName', fileName);
-          const response = await fetch('https://handymanapiv2.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
+          const response = await fetch('https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
             method: 'POST',
             headers: {
               'Accept': 'text/plain',

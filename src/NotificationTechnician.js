@@ -158,7 +158,7 @@ const [loading, setLoading] = useState(true);
 //     try {
 //       const getQuoteResponse = await fetch(
         
-//         `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistTechnicianId?district=${district}&category=${category}&technicianId=${technicianId}`
+//         `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistTechnicianId?district=${district}&category=${category}&technicianId=${technicianId}`
 //       );
 //       const getQuoteData = await getQuoteResponse.json();
 //         const getQuoteCount = getQuoteData.length;
@@ -184,7 +184,7 @@ const [loading, setLoading] = useState(true);
               try {
                 let apiUrl = "";
              
-                  apiUrl = `https://handymanapiv2.azurewebsites.net/api/technician/technicianProfileData?profileType=${userType}&UserId=${userId}`;
+                  apiUrl = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/technician/technicianProfileData?profileType=${userType}&UserId=${userId}`;
                 
                 if (!apiUrl) return;
                 const response = await axios.get(apiUrl);
@@ -224,9 +224,9 @@ useEffect(() => {
     try {
       const [getQuoteResponse, orderResponse] = await Promise.all([
       fetch(
-        `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistTechnicianId?category=${category1}&district=${district1}&technicianId=${userId}`
+        `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistTechnicianId?category=${category1}&district=${district1}&technicianId=${userId}`
       ),
-      fetch(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingTechnicianId?category=${category1}&district=${district1}&technicianId=${userId}`),
+      fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingTechnicianId?category=${category1}&district=${district1}&technicianId=${userId}`),
 
     ]);
 
@@ -280,10 +280,10 @@ useEffect(() => {
 //     try {
 //       const [getQuoteResponse, orderResponse] = await Promise.all([
 //         fetch(
-//           `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistTechnicianId?category=${category}&district=${district}&technicianId=${technicianId}`
+//           `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistTechnicianId?category=${category}&district=${district}&technicianId=${technicianId}`
 //         ),
 //         fetch(
-//           `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingTechnicianId?category=${category}&district=${district}&technicianId=${technicianId}`
+//           `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingTechnicianId?category=${category}&district=${district}&technicianId=${technicianId}`
 //         ),
 //       ]);
 

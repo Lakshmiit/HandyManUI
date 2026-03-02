@@ -32,7 +32,7 @@ const AdminCollectionNotificationGrid = () => {
  
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv2.azurewebsites.net/api/LakshmiCollection/GetAllLakshmiCollectionsOpen`
+    const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/LakshmiCollection/GetAllLakshmiCollectionsOpen`
     axios.get(url)
       .then(response => {
         const collections = response.data.map((collection) => ({
@@ -62,7 +62,7 @@ const AdminCollectionNotificationGrid = () => {
   const handleDelete = (collectionId) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this collection?');
     if (confirmDelete) {
-      axios.delete(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${collectionId}`)
+      axios.delete(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/${collectionId}`)
         .then(() => {
           setCollectionData(prevData => prevData.filter(collection => collection.id !== collectionId));
           setFilteredData(prevData => prevData.filter(collection => collection.id !== collectionId));

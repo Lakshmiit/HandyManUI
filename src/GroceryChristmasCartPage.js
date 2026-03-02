@@ -27,7 +27,7 @@ const GroceryChristmasCartPage = () => {
   const [imageBlobMap, setImageBlobMap] = useState({}); 
 
   const IMAGE_DOWNLOAD =
-    "https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=";
+    "https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=";
 
   function toNum(v, f = 0) {
     const n = Number(v);
@@ -133,7 +133,7 @@ function getCustomLimit(name) {
 
       const lookups = await Promise.allSettled(
         uniqueNames.map(async (name) => {
-          const url = `https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
+          const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
             name
           )}`;
           const res = await fetch(url, { signal });
@@ -520,7 +520,7 @@ function getCustomLimit(name) {
 
     try {
       const response = await fetch(
-        `https://handymanapiv2.azurewebsites.net/api/Mart/UploadProductDetails`,
+        `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/UploadProductDetails`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

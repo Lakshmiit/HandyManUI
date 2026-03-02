@@ -144,9 +144,9 @@ const Notification = () => {
       try {
         const [raiseTicketResponse, getTechnicianResponse] = await Promise.all([
           fetch(
-          `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetRaiseTicketNotificationsByCustomerId?customerId=${userId}`
+          `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/GetRaiseTicketNotificationsByCustomerId?customerId=${userId}`
         ),
-        fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/GetBookTechnicianDetailsForUserList?userId=${userId}`),
+        fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/BookTechnician/GetBookTechnicianDetailsForUserList?userId=${userId}`),
       ]);
         const raiseTicketData = await raiseTicketResponse.json();
 
@@ -183,7 +183,7 @@ const Notification = () => {
         }
  
         // const getQuoteResponse = await fetch(
-        //   "https://handymanapiv2.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetails"
+        //   "https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetails"
         // );
         // const getQuoteData = await getQuoteResponse.json();
         // const getQuoteCount = getQuoteData.length;

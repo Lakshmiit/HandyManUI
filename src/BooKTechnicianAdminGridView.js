@@ -57,7 +57,7 @@ const BookTechnicianActionView = () => {
   useEffect(() => {
     const fetchtechnicianData = async () => {
       try { 
-        const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/GetBookTechnician/${raiseTicketId}`);
+        const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/BookTechnician/GetBookTechnician/${raiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch technician data');
         }
@@ -160,7 +160,7 @@ const BookTechnicianActionView = () => {
 //   };
  
 //   try {
-//     const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
+//     const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
 //       method: 'PUT',
 //       headers: {
 //         'Content-Type': 'application/json',

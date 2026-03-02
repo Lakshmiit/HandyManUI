@@ -178,7 +178,7 @@ function getItemTime(p) {
 //   async function fetchProductsAndFirstImages() {
 //     try {
 //       setImageLoading(true);
-//       const url = `https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
+//       const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
 //       const { data: items } = await axios.get(url, { signal: controller.signal });
 //       const safeItems = Array.isArray(items) ? items : [];
 //       if (cancelled) return;
@@ -207,7 +207,7 @@ function getItemTime(p) {
 //       const fetchOne = async ({ productId, photo }) => {
 //         try {
 //           const res = await fetch(
-//             `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
+//             `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
 //             { signal: controller.signal }
 //           );
 //           const json = await res.json();
@@ -254,7 +254,7 @@ function getItemTime(p) {
     async function fetchProductsAndFirstImages(warm = false, signal) {
       try {
         if (!warm) setImageLoading(true);
-        const url = `https://handymanapiv2.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
+        const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
         const { data: items } = await axios.get(url, { signal });
         const safeItems = Array.isArray(items) ? items : [];
         if (cancelled) return;
@@ -292,7 +292,7 @@ function getItemTime(p) {
         const fetchOne = async ({ productId, photo }) => {
           try {
             const res = await fetch(
-              `https://handymanapiv2.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
+              `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
               { signal }
             );
             const json = await res.json();

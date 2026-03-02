@@ -43,7 +43,7 @@ useEffect(() => {
       try {
         let apiUrl = "";
      
-          apiUrl = `https://handymanapiv2.azurewebsites.net/api/dealer/dealerProfileData?profileType=${userType}&UserId=${userId}`;
+          apiUrl = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/dealer/dealerProfileData?profileType=${userType}&UserId=${userId}`;
         
         if (!apiUrl) return;
         const response = await axios.get(apiUrl);
@@ -68,7 +68,7 @@ useEffect(() => {
 
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingDealerId?category=${category1}&district=${district1}&dealerId=${userId}`;
+    const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingDealerId?category=${category1}&district=${district1}&dealerId=${userId}`;
     // alert(category);
     // alert(district);
     // alert(userId);
@@ -103,7 +103,7 @@ useEffect(() => {
     );
     if (confirmDelete) {
       axios
-        .delete(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${ticketId}`)
+        .delete(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/${ticketId}`)
         .then(() => {
           setTicketData((prevData) =>
             prevData.filter((ticket) => ticket.id !== ticketId)

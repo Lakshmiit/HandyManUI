@@ -129,7 +129,7 @@ const TechnicianRegistration = () => {
       useEffect(() => {
     const fetchStates = async () => {
       try {
-        const res = await fetch('https://handymanapiv2.azurewebsites.net/api/MasterData/getStates');
+        const res = await fetch('https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/MasterData/getStates');
         const data = await res.json();
         setStates(data);
       } catch (err) {
@@ -143,7 +143,7 @@ const TechnicianRegistration = () => {
     const fetchDistricts = async () => {
       if (!selectedStateId) return;
       try {
-        const res = await fetch(`https://handymanapiv2.azurewebsites.net/api/MasterData/getDistricts?stateId=${selectedStateId}`);
+        const res = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/MasterData/getDistricts?stateId=${selectedStateId}`);
         const data = await res.json();
         setDistricts(data);
       } catch (err) {
@@ -179,7 +179,7 @@ const TechnicianRegistration = () => {
         };
    
     try {
-      const response1 = await fetch(`https://handymanapiv2.azurewebsites.net/api/UserOnBoarding/UserUpload`, {
+      const response1 = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UserOnBoarding/UserUpload`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -223,7 +223,7 @@ const TechnicianRegistration = () => {
           Landmark: landmark,
         };
        
-          const response2 = await fetch(`https://handymanapiv2.azurewebsites.net/api/Technician/TechnicianUpload`, {
+          const response2 = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Technician/TechnicianUpload`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -262,7 +262,7 @@ const TechnicianRegistration = () => {
     //     };
        
     //     try {
-    //       const response1 = await fetch(`https://handymanapiv2.azurewebsites.net/api/UserOnBoarding/UserUpload`, {
+    //       const response1 = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UserOnBoarding/UserUpload`, {
     //         method: 'POST',
     //         headers: {
     //           'Content-Type': 'application/json',
@@ -306,7 +306,7 @@ const TechnicianRegistration = () => {
     //       Landmark: landmark,
     //     };
        
-    //       const response2 = await fetch(`https://handymanapiv2.azurewebsites.net/api/Technician/TechnicianUpload`, {
+    //       const response2 = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Technician/TechnicianUpload`, {
     //         method: 'POST',
     //         headers: {
     //           'Content-Type': 'application/json',

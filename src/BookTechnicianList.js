@@ -32,7 +32,7 @@ const BookTechnicianList = () => {
   // Fetch product data, categories, and catalogues
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv2.azurewebsites.net/api/UploadJobDescriptionBookTechnician/GetUploadJobDescriptionDetails`
+    const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UploadJobDescriptionBookTechnician/GetUploadJobDescriptionDetails`
     axios.get(url)
       .then(response => {
         const technicians = response.data.map(technician => {
@@ -67,7 +67,7 @@ const BookTechnicianList = () => {
   const handleDelete = (technicianId) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this Job Description?');
     if (confirmDelete) {
-      axios.delete(`https://handymanapiv2.azurewebsites.net/api/UploadJobDescriptionBookTechnician/${technicianId}`)
+      axios.delete(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UploadJobDescriptionBookTechnician/${technicianId}`)
         .then(() => {
           setTechnicianData(prevData => prevData.filter(technician => technician.id !== technicianId));
           setFilteredData(prevData => prevData.filter(technician => technician.id !== technicianId));

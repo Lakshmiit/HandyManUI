@@ -35,7 +35,7 @@ useEffect(() => {
   }, [ticketData, states,districts,pinCodes,assigned]);
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv2.azurewebsites.net/api/RaiseTicket/GetTrackTicketsByCustomerId?customerId=${userId}`;
+    const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/GetTrackTicketsByCustomerId?customerId=${userId}`;
     axios
       .get(url)
       .then((response) => {
@@ -83,7 +83,7 @@ useEffect(() => {
   //   );
   //   if (confirmDelete) {
   //     axios
-  //       .delete(`https://handymanapiv2.azurewebsites.net/api/RaiseTicket/${ticketId}`)
+  //       .delete(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/${ticketId}`)
   //       .then(() => {
   //         setTicketData((prevData) =>
   //           prevData.filter((ticket) => ticket.id !== ticketId)
