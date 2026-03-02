@@ -1,235 +1,9 @@
-// import React, { useState, useEffect } from "react";
-// import "bootstrap/dist/css/bootstrap.min.css";
-// import "./App.css";
-// import { useNavigate } from "react-router-dom";
-// import axios from "axios";
-// import HandyManCharacter from "./img/hm_char.png";
-// import HandyManLogo from "./img/Hm_Logo 1.png";
-
-// const LoginPage = () => {
-//   const navigate = useNavigate();
-
-//   const [mobile, setMobile] = useState("");
-//   const [error, setError] = useState("");
-//   const [submitted, setSubmitted] = useState(false);
-
-//   const [districts, setDistricts] = useState([]);
-//   const [zipCodes, setZipcodes] = useState([]);
-//   const [selectedDistrict, setSelectedDistrict] = useState(null); // number|null
-//   const [selectedDistrictName, setSelectedDistrictName] = useState("");
-//   const [selectedPin, setSelectedPin] = useState(""); // string
-
-//   const handleMobileChange = (e) => {
-//     const value = e.target.value;
-//     if (/^\d{0,10}$/.test(value)) setMobile(value);
-//   };
-
-//   useEffect(() => {
-//     (async () => {
-//       try {
-//         const res = await axios.get(
-//           "https://handymanapiv2.azurewebsites.net/api/MasterData/getDistricts/1"
-//         );
-//         setDistricts(res.data || []);
-//       } catch (err) {
-//         console.error("Error fetching districts:", err);
-//       }
-//     })();
-//   }, []);
-
-//   const handleDistrictChange = (e) => {
-//     const districtIdNum = e.target.value ? Number(e.target.value) : null;
-//     setSelectedDistrict(districtIdNum);
-
-//     const selected = districts.find((d) => d.districtId === districtIdNum);
-//     const name = selected ? selected.districtName : "";
-//     setSelectedDistrictName(name);
-//     // optional: reset pin when changing district
-//     setSelectedPin("");
-//   };
-
-//   useEffect(() => {
-//     (async () => {
-//       try {
-//         if (!selectedDistrict) return;
-//         const res = await axios.get(
-//           `https://handymanapiv2.azurewebsites.net/api/MasterData/GetZipCodesByDistrictId/${selectedDistrict}`
-//         );
-//         setZipcodes(res.data || []);
-//       } catch (err) {
-//         console.error("Error fetching zipcodes:", err);
-//       }
-//     })();
-//   }, [selectedDistrict]);
-
-//   useEffect(() => {
-//     const input = document.getElementById("mobileInput");
-//     if (!input) return;
-//     const prevent = (e) => e.preventDefault();
-//     ["copy", "paste", "cut", "drop", "contextmenu"].forEach((ev) =>
-//       input.addEventListener(ev, prevent)
-//     );
-//     return () => {
-//       ["copy", "paste", "cut", "drop", "contextmenu"].forEach((ev) =>
-//         input.removeEventListener(ev, prevent)
-//       );
-//     };
-//   }, []);
-
-//   const handleOTP = async (e) => {
-//     e.preventDefault();
-
-//     if (!mobile) {
-//       setError("Please enter a mobile number");
-//       return;
-//     }
-//     if (!selectedDistrict) {
-//       setError("Please select a district");
-//       return;
-//     }
-//     // If 104 requires pin code, enforce it
-//     if (String(selectedDistrict) === "104" && !selectedPin) {
-//       setError("Please select a pin code");
-//       return;
-//     }
-
-//     setError("");
-//     setSubmitted(true);
-
-//     const payload = {
-//       senderValue: mobile, // keep key lower-case everywhere
-//       type: "sms",
-//     };
-
-//     try {
-//       const resp = await fetch(
-//         "https://handymanapiv2.azurewebsites.net/api/Auth/bhashsmssendotp",
-//         {
-//           method: "POST",
-//           headers: { "Content-Type": "application/json" },
-//           body: JSON.stringify(payload),
-//         }
-//       );
-//       if (!resp.ok) throw new Error("Failed to send sms.");
-
-//       // Save one object; also keep the simple keys for backward-compat if you want.
-//       const loginMeta = {
-//         mobile,
-//         districtId: selectedDistrict,
-//         districtName: selectedDistrictName,
-//         pinCode: selectedPin,
-//       };
-//       localStorage.setItem("loginMeta", JSON.stringify(loginMeta));
-//       localStorage.setItem("mobile", mobile);
-//       localStorage.setItem("districtId", String(selectedDistrict));
-//       localStorage.setItem("districtName", selectedDistrictName || "");
-//       localStorage.setItem("pinCode", selectedPin || "");
-
-//       navigate("/otpVerification", {
-//         state: loginMeta,
-//       });
-//     } catch (err) {
-//       console.error("Error sending sms:", err);
-//       setError("Failed to send sms. Please try again later.");
-//     } finally {
-//       setSubmitted(false);
-//     }
-//   };
-
-//   return (
-//     <div className="h-100 mt-3 d-flex align-items-center py-2 flex-column">
-//       <div className="login_section rounded-5 p-3">
-//         <div className="d-flex align-items-center justify-content-center mb-3">
-//           <img src={HandyManCharacter} alt="Character" width="200" height="200" className="img-fluid" />
-//         </div>
-
-//         <form className="d-flex gap-3 flex-column" onSubmit={handleOTP} autoComplete="off">
-//           <div className="row">
-//             <div className="col d-flex justify-content-center">
-//               <img src={HandyManLogo} alt="Logo" width="190" height="90" className="img-fluid" />
-//             </div>
-//           </div>
-
-//           <h4 style={{ fontSize: "15px", marginBottom: 0 }}>Sign into your account</h4>
-
-//           <label>Mobile Number <span className="req_star mt-0">*</span></label>
-//           <div style={{ display: "flex", gap: "0.5rem" }}>
-//             <input
-//               id="mobileInput"
-//               type="text"
-//               inputMode="numeric"
-//               pattern="[0-9]*"
-//               className="form-control mt-0"
-//               placeholder="Enter Mobile Number"
-//               value={mobile}
-//               onChange={handleMobileChange}
-//               autoComplete="off"
-//               required
-//               style={{ width: "80%" }}
-//             />
-//           </div>
-
-//           <label className="block text-gray-700 font-medium mb-2">
-//             District <span className="req_star mt-0">*</span>
-//           </label>
-//           <select
-//             className="border rounded-lg p-1 w-full"
-//             value={selectedDistrict ?? ""}
-//             onChange={handleDistrictChange}
-//           >
-//             <option value="">Select District</option>
-//             {districts.map((d) => (
-//               <option key={d.districtId} value={d.districtId}>{d.districtName}</option>
-//             ))}
-//           </select>
-
-//           {String(selectedDistrict) === "104" && (
-//             <>
-//               <label className="block text-gray-700 font-medium mb-2">
-//                 PinCode <span className="req_star mt-0">*</span>
-//               </label>
-//               <select
-//                 className="border rounded-lg p-1 w-full"
-//                 value={selectedPin}
-//                 onChange={(e) => setSelectedPin(e.target.value)}
-//               >
-//                 <option value="">Select Pin Code</option>
-//                 {zipCodes.map((pin) => (
-//                   <option key={pin.pinId} value={pin.pinName}>{pin.pinName}</option>
-//                 ))}
-//               </select>
-//             </>
-//           )}
-
-//           {error && <div className="text-danger mt-1">{error}</div>}
-
-//           <a className="link" href="/userIdLogin" style={{ fontSize: "14px" }}>
-//             Login With User ID
-//           </a>
-
-//           <button disabled={submitted} className="btn btn-dark mt-2" type="submit">
-//             {submitted ? "Sending..." : "Get OTP"}
-//           </button>
-//         </form>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default LoginPage;
-
-
-
 import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import './App.css';
 import {useNavigate } from "react-router-dom";
-// import Modal from 'react-bootstrap/Modal';
 import HandyManCharacter from "./img/hm_char.png";
 import HandyManLogo from "./img/Hm_Logo 1.png";
-// import axios from "axios";
-// import WhatsAppIcon from '@mui/icons-material/WhatsApp';
-// import { getLoginData } from "./utils/auth";
 
 const LoginPage = () => {
   const Navigate = useNavigate();
@@ -237,101 +11,13 @@ const LoginPage = () => {
   const [error, setError] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [isChecked, setIsChecked] = useState('');
-  // const [districts, setDistricts] = useState([]);  
-  // const [zipCodes, setZipcodes] = useState([]);
-  // const [selectedDistrict, setSelectedDistrict] = useState(null); 
-  // const [selectedDistrictName, setSelectedDistrictName] = useState("");
-  // const [selectedPin, setSelectedPin] = useState(""); 
   const [showModal, setShowModal] = useState(false);
-
-  // const [districtError, setDistrictError] = useState('');
-  // const [pincodeError, setPinCodeError] = useState('');
-  // const [districtList, setDistrictList] = useState([]); 
-  // const [pincodeList, setPincodeList] = useState([]);  
-  // const [districtId, setDistrictId] = useState('');  
-// const [consent, setConsent] = useState(false);
-// const [showTerms, setShowTerms] = useState(false);
-  // const [showPrivacy, setShowPrivacy] = useState(false);
-  // const {userType} = useParams();
-    // const {userId} = useParams(); 
-  // const [countryCode, setCountryCode] = useState("+91"); 
-  // const fullMobileNumber = `${countryCode}${mobile}`;
-//   const mobileNumber = "9885803193";
-// const [mobileNumber] = useState('');
-
-// const{mobileError,setMobileError}=useState("");
-
-// console.log("Districts:", zipCodes,selectedDistrictName);
   const handleMobileChange = (e) => {
     const value = e.target.value;
     if (/^\d{0,10}$/.test(value)) {
         setMobile(value);   
     }
   };
-
-  // handymanapiv2.azurewebsites.net
-  //  useEffect(() => {
-  //   (async () => {
-  //     try {
-  //       const res = await axios.get(
-  //         "https://handymanapiv2.azurewebsites.net/api/MasterData/getDistricts/1"
-  //       );
-  //       setDistricts(res.data || []);
-  //     } catch (err) {
-  //       console.error("Error fetching districts:", err);
-  //     }
-  //   })();
-  // }, []);
-
-  // const handleDistrictChange = (e) => {
-  //   const districtIdNum = e.target.value ? Number(e.target.value) : null;
-  //   setSelectedDistrict(districtIdNum);
-
-  //   const selected = districts.find((d) => d.districtId === districtIdNum);
-  //   const name = selected ? selected.districtName : "";
-  //   setSelectedDistrictName(name);
-  //   // optional: reset pin when changing district
-  //   setSelectedPin("");
-  // };
-
-  // useEffect(() => {
-  //   (async () => {
-  //     try {
-  //       if (!selectedDistrict) return;
-  //       const res = await axios.get(
-  //         `https://handymanapiv2.azurewebsites.net/api/MasterData/GetZipCodesByDistrictId/${selectedDistrict}`
-  //       );
-  //       setZipcodes(res.data || []);
-  //     } catch (err) {
-  //       console.error("Error fetching zipcodes:", err);
-  //     }
-  //   })();
-  // }, [selectedDistrict]);
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-
-  //   // if (mobile !== mobileNumber) {
-  //   //     setError(<span>This Number is not Registered, Please contact Customer care <WhatsAppIcon style={{color: 'green'}}/> 8498892222.</span>);
-  //   //     return;
-  //   // }
-
-  //   if (!isChecked) {
-  //       alert("You must accept the terms and conditions.");
-  //       return; 
-  //     } 
-  
-  //   setError('');
-  //   setSubmitted(true);
-  
-  //   setTimeout(() => {
-  //   //   alert('Login submitted!');
-  //     setSubmitted(false);
-  //     // Navigate('/otpVerification', {
-  //     //   state: { mobile }
-  //     // });
-  //   }, 2000);
-  // };
 
   useEffect(() => {
     const input = document.getElementById('mobileInput');
@@ -346,66 +32,21 @@ const LoginPage = () => {
     };
   }, []);
 
-  
-//   const handleOTP = async (e) => {
-//     e.preventDefault();
-//     if(!mobile)
-//     {setError("Please Enter mobile Number");
-//     };
-//   setError("");
-//  setSubmitted(true);
-//     const payload = {
-//       senderValue: mobile,
-//       type: "sms",
-//     };
-// try {
-//       const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Auth/sendotp`,{
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify(payload),
-//       });
-//       if (!response.ok) {
-//        throw new Error("Failed to send sms.");
-//       }
-//       localStorage.setItem('mobile', mobile);
-//       Navigate('/otpVerification', {
-//         state: { mobile }
-//       });
-//     } catch (error) {
-//       console.error("Error sending sms:", error);
-//       window.alert('Failed to send sms. Please try again later.');    }
-//   };
-
 const handleOTP = async (e) => {
   e.preventDefault();
-
   if (!mobile) {  
     setError("Please enter a mobile number");
     return;
   }
-  
-//  if (!selectedDistrict) {  
-//     setError("Please select a district from dropdown.");
-//     return;
-//   }
-
-  // if (String(selectedDistrict) === "104" && !selectedPin) {
-  //     setError("Please select a pin code");
-  //     return;
-  //   }
-
   setError("");
   setSubmitted(true);
-
   const payload = {
     senderValue: mobile,
     type: "sms",
   };
 
   try {
-    const response = await fetch(`https://handymanapiv2.azurewebsites.net/api/Auth/bhashsmssendotp`, {
+    const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Auth/bhashsmssendotp`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -419,15 +60,9 @@ const handleOTP = async (e) => {
   
     const loginMeta = {
         mobile,
-        // districtId: selectedDistrict,
-        // districtName: selectedDistrictName,
-        // pinCode: selectedPin,
-      };
+        };
       localStorage.setItem("loginMeta", JSON.stringify(loginMeta));
       localStorage.setItem("mobile", mobile);
-      // localStorage.setItem("districtId", String(selectedDistrict));
-      // localStorage.setItem("districtName", selectedDistrictName || "");
-      // localStorage.setItem("pinCode", selectedPin || "");
       Navigate("/otpVerification", {
         state: loginMeta,
       });
@@ -466,21 +101,9 @@ const handleOTP = async (e) => {
   </div>
 
   <h4 style={{fontSize: "15px", marginBottom: '0px'}}>Sign into your account</h4>
-  {/* <div> */}
     <label>Mobile Number <span className="req_star mt-0">*</span></label>
     <div style={{ display: 'flex', gap: '0.5rem' }}>
-    {/* <select
-      value={countryCode}
-      onChange={(e) => setCountryCode(e.target.value)}
-      className="form-control"
-      style={{ width: '40%' }}
-    >
-      <option value="+91">🇮🇳 +91 (India)</option>
-      <option value="+1">🇺🇸 +1 (USA)</option>
-      <option value="+44">🇬🇧 +44 (UK)</option>
-      <option value="+971">🇦🇪 +971 (UAE)</option>
-    </select> */}
-    <input
+   <input
     id="mobileInput"
     type="text"
     inputMode="numeric"
@@ -495,50 +118,7 @@ const handleOTP = async (e) => {
   />
   </div>
     {error && <div className="text-danger mt-1">{error}</div>}
-
-   {/* <div className="mb-2">
-  <label>District <span className="req_star">*</span></label>
-  <select
-    style={{ display: "block", marginTop: "6px", width: "100%" }}
-    value={selectedDistrict ?? ""}
-    className="form-control mt-0"
-    onChange={handleDistrictChange}
-    required
-  >
-    <option value="">Select District</option>
-    {districts.map((d) => (
-      <option key={d.districtId} value={d.districtId}>
-        {d.districtName}
-      </option>
-    ))}
-  </select>
-</div> */}
-{/* {districtError && <div className="text-danger mt-1">{districtError}</div>} */}
-
-{/* {String(selectedDistrict) === "104" && (
-<>
-<div className="mb-2">
-  <label>Pincode <span className="req_star">*</span></label>
-  <select
-    style={{ display: "block", marginTop: "6px", width: "100%" }}
-    value={selectedPin}
-    className="form-control mt-0"
-    onChange={(e) => setSelectedPin(e.target.value)}
-    required
-  >
-    <option value="">Select Pincode</option>
-    {zipCodes.map((p) => (
-      <option key={p.pinId} value={p.pinName}>
-        {p.pinName}
-      </option>
-    ))}
-  </select>
-</div>
-</>
-  )} */}
-{/* {pincodeError && <div className="text-danger mt-1">{pincodeError}</div>} */}
-  {/* </div> */}
-          <a className="link" href="/userIdLogin" style={{fontSize: "14px"}}>Login With User ID</a>
+   <a className="link" href="/userIdLogin" style={{fontSize: "14px"}}>Login With User ID</a>
           <div className="d-flex align-items-center flex-wrap">
   <input 
     type="checkbox" 
