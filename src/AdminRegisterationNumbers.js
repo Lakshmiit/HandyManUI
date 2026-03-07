@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import "./App.css"; // Add this for the required CSS.
-// import { useNavigate } from 'react-router-dom';
+import "./App.css";
 import AdminSidebar from './AdminSidebar';
 import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import {  Button } from 'react-bootstrap';
@@ -14,9 +13,7 @@ const AdminRegistrationNumbers = () => {
   const [loading, setLoading] = useState(true);
   const { selectedUserType} = useParams();
   const [errorMessage, setErrorMessage] = useState('');
-//   const [date, setDate] = useState('');
   const [userData, setUserData] = useState(null);
-//   const [firstName, setFirstName] = useState();
 
  useEffect(() => {
     console.log(loading);
@@ -133,15 +130,6 @@ useEffect(() => {
         <div style={{ color: 'red', marginTop: '5px' }}>{errorMessage}</div>
       )}
             </div>
-
-            {/* Submit Button */}
-            {/* <div className="d-flex justify-content-between gap-3 mt-3">
-      <button
-        type="submit"
-        className="btn btn-success w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
-      >
-      </button>
-    </div> */}
           </form>
         </div>
       </div>

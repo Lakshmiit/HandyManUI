@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button } from 'react-bootstrap';
-import "./App.css"; // Add this for the required CSS.
+import "./App.css";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import UpdateIcon from '@mui/icons-material/Update';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -37,7 +37,6 @@ const [manufactureDate,setManufactureDate] =useState('');
 const [expireDate,setExpireDate]=useState('');
 const [limit, setLimit] = useState();
 
-// const [gst, setGST] = useState('');
 useEffect(() => {
     console.log(grocery);
 }, [grocery]);
@@ -52,7 +51,6 @@ useEffect(() => {
                   }
                   const groceryData = await groceryResponse.json();
                   console.log("groceryData:", groceryData);
-                  // alert(JSON.stringify(productData));
                   setGrocery(groceryData);
                   setUniqueId(groceryData.id);
                   setGroceryName(groceryData.name);
@@ -225,10 +223,6 @@ if (error) {
     return <div>{error}</div>;
 }
 
-// if (!product) {
-//     return <div>No data available for the selected product.</div>;
-// }
-
   return (
     <div className="d-flex flex-row justify-content-start align-items-start mt-mob-50">
       {/* Sidebar */}
@@ -397,19 +391,7 @@ if (error) {
                 placeholder="If any Discount Enter Percentage"
               />
             </div>
-
-              {/* GST */}
-            {/* <div className="form-group">
-              <label>GST</label>
-              <input
-                type="text"
-                className="form-control"
-                value={gst}
-                onChange={(e) => setGST(e.target.value)}
-                placeholder="Enter GST Percentage"
-              />
-            </div> */}
-
+            
             {/* After Discount Price*/}
             <div className="form-group">
               <label>After Discount Price</label>

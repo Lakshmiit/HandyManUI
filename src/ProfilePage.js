@@ -1801,9 +1801,9 @@ const updateLocalStorageCart = (product, qty) => {
                 <small className="text-dark">
                   {profile.fullName}
                 </small>
-                <div className="text-danger fw-bold mt-2" style={{ fontSize: "14px" }}>
+                {/* <div className="text-danger fw-bold mt-2" style={{ fontSize: "14px" }}>
                   Handyman Service Provider will be under Maintenance Today (Saturday) from 6:00 PM to Tomorrow (Sunday) 5:00 AM.
-                </div>
+                </div> */}
               </div>
             </div>
             </div>

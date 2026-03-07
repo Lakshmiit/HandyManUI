@@ -747,6 +747,7 @@ const handleImageClick = (imageSrc, product) => {
                       </Form.Control>
                     </Form.Group>
                   </Col>
+
                 </Row> 
             <div className="mt-2 d-flex justify-content-between">
             <Button type="submit" className=" text-white mx-2" style={{background: 'green'}} onClick={() => navigate(`/adminNotifications`)} title="Back">

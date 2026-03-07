@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button } from 'react-bootstrap';
-import "./App.css"; // Add this for the required CSS.
+import "./App.css"; 
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import UpdateIcon from '@mui/icons-material/Update';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -20,16 +20,16 @@ const AdminUpdate = () => {
   const [catalogue, setCatalogue] = useState("");
   const [productSize, setProductSize] = useState("");
   const [units, setUnits] = useState("");
-  const [productPhotos, setProductPhotos] = useState([]); // For storing multiple product photos
+  const [productPhotos, setProductPhotos] = useState([]); 
   const [rate, setRate] = useState("");
   const [discount, setDiscount] = useState("");
-  const [specifications, setSpecifications] = useState([{ label: "", value: "" }]); // Initial specification with empty fields
+  const [specifications, setSpecifications] = useState([{ label: "", value: "" }]); 
   const [warranty, setWarranty] = useState("");
   const [moreInfo, setMoreInfo] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [product, setProduct] = useState(null);
-  const [uploadedFiles, setUploadedFiles] = useState([]); // To store the uploaded files (URLs or file names)
+  const [uploadedFiles, setUploadedFiles] = useState([]); 
   const [color, setColor] = useState("");
   const [specificationDesc, setSpecificationDesc] = useState("");
   const [deliveryInDays,setDeliveryInDays] =useState("");
@@ -48,7 +48,6 @@ const [stockLeft, setStockLeft] = useState('');
                   }
                   const productData = await productResponse.json();
                   console.log("productData:", productData);
-                  // alert(JSON.stringify(productData));
                   setProduct(productData);
                   setUniqueId(productData.id);
                   setProductName(productData.productName);
@@ -116,22 +115,19 @@ const handleRemoveFile = (index) => {
     setLoading(true);
     setShowAlert(false);
     const uploadedFilesList = [];
-
     // Loop through selected files and upload each one
     for (let i = 0; i < productPhotos.length; i++) {
       const file = productPhotos[i];
       const fileName = file.name;
       const mimeType = file.type;
-
       // Convert the file to a byte array (use FileReader)
       const byteArray = await getFileByteArray(file);
-
       // Upload the file and get the response (filename or URL)
       const response = await uploadFile(byteArray, fileName, mimeType, file);
       if (response) {
         uploadedFilesList.push({
-          src: response, // Assuming the response contains the file URL or filename
-          alt: fileName  // Using the file name as the alt text
+          src: response, 
+          alt: fileName  
         });
         alert("Image Updated Sucessfully"); 
       }
@@ -139,8 +135,6 @@ const handleRemoveFile = (index) => {
         alert("Failed Upload Image");
       }
     }
-
-    // Once all files are uploaded, update the state with the uploaded files
     setUploadedFiles(uploadedFilesList);
     setLoading(false);
   };
@@ -173,7 +167,7 @@ const handleRemoveFile = (index) => {
       });
 
       const responseData = await response.text();
-      return responseData || ''; // Assuming the response contains the file URL or filename
+      return responseData || ''; 
     } catch (error) {
       console.error('Error uploading file:', error);
       return '';
@@ -183,7 +177,6 @@ const handleRemoveFile = (index) => {
   // Handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     const allProductPhotos = [
     ...existingFiles, 
     ...uploadedFiles.map(file => file.src), 
@@ -227,7 +220,6 @@ const handleRemoveFile = (index) => {
       if (response.ok) {
         alert("Product updated successfully!");
         navigate(`/adminProductList/Admin`);
-        // Reset the form or perform other actions as needed
       } else {
         alert("Failed to update product.");
       }
@@ -422,44 +414,7 @@ if (!product) {
     </div>
   )}
 </div>
-
-                        {/* <div className="form-group">
-                            <label>Product Photos <span className="req_star">*</span></label>
-                            <input
-                                type="file"
-                                className="form-control"
-                                multiple
-                                onChange={handleFileChange}
-                            />
-                            <div className="mt-2">
-                                    {productPhotos.map((file, index) => (
-                                        <div key={index} className="d-flex align-items-center gap-2 mb-2">
-                                            <p>{file}</p>
-                                            <button
-                                                type="button"
-                                                onClick={() => handleRemoveFile(index)}
-                                                className="btn btn-danger btn-sm px-2 py-1 gap-5"
-                                            >
-                                                X
-                                            </button>
-                                        </div>
-                                    ))}
-                            </div>
-                        </div> */}
-                                {/* Other inputs */}
                                 <div>
-                                    {/* {uploadedFiles.map((file, index) => (
-                                        <div key={index} className="d-flex align-items-center gap-2 mb-2">
-                                            <img src={file.src} alt={file.alt} width="100" />
-                                            <button
-                                                type="button"
-                                                onClick={() => handleRemoveFile(index)}
-                                                className="btn btn-danger btn-sm px-2 py-1 gap-5"
-                                            >
-                                                X
-                                            </button>
-                                        </div>
-                                    ))} */}
                                     {/* Alert for uploading files */}
                                     {showAlert && (
                                         <div className="alert alert-danger  mt-2">
@@ -509,7 +464,6 @@ if (!product) {
                 placeholder="If any Discount Enter Percentage"
               />
             </div>
-
 
             {/* Product Specifications */}
             <div className="form-group">
@@ -622,35 +576,6 @@ if (!product) {
           </form>
         </div>
       </div>
-      {/* Styles for floating menu */}
-{/* <style jsx>{`
-        .floating-menu {
-          position: fixed;
-          top: 80px; 
-          left: 20px; 
-          z-index: 1000;
-        }
-        .menu-popup {
-          position: absolute;
-          top: 50px; 
-          left: 0; 
-          background: white;
-          border: 1px solid #ddd;
-          border-radius: 5px;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-          width: 200px;
-        }
-        .menu-item {
-          padding: 10px;
-          border-bottom: 1px solid #ddd;
-          display: flex;
-          align-items: center;
-          justify-content: flex-start;
-        }
-        .menu-item:last-child {
-          border-bottom: none;
-        }
-      `}</style>  */}
     </div>
   );
 };

@@ -39,7 +39,7 @@ const LakshmiCollectionsOnlinePayment = () => {
 
     const options = {
       key: "rzp_live_RQiggcAf80YY99",
-      amount: (orderBooking.grandTotal || 1) * 100, 
+      amount: (orderBooking.grandTotal || 1) * 100,      
       currency: "INR",
       name: "HandyMan Service Providers",
       handler: function (response) {

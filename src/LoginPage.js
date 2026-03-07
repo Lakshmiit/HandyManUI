@@ -119,9 +119,9 @@ const handleOTP = async (e) => {
   </div>
     {error && <div className="text-danger mt-1">{error}</div>}
    <a className="link" href="/userIdLogin" style={{fontSize: "14px"}}>Login With User ID</a>
-   <div className="text-danger fw-bold mt-1" style={{ fontSize: "14px" }}>
+   {/* <div className="text-danger fw-bold mt-1" style={{ fontSize: "14px" }}>
         Handyman Service Provider will be under Maintenance Today (Saturday) from 6:00 PM to Tomorrow (Sunday) 5:00 AM.
-    </div>
+    </div> */}
           <div className="d-flex align-items-center flex-wrap">
   <input 
     type="checkbox" 

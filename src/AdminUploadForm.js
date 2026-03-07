@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import "./App.css"; // Add this for the required CSS.
+import "./App.css"; 
 import { useNavigate } from 'react-router-dom';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import UploadIcon from '@mui/icons-material/Upload';
@@ -12,30 +12,26 @@ import { useParams } from 'react-router-dom';
 const AdminProductUpload = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
- // const [ProductStatus] = useState("Draft");
   const [productName, setProductName] = useState("");
   const [category, setCategory] = useState("");
   const [catalogue, setCatalogue] = useState("");
   const [productSize, setProductSize] = useState("");
   const [units, setUnits] = useState("");
-  const [productPhotos, setProductPhotos] = useState([]); // For storing multiple product photos
+  const [productPhotos, setProductPhotos] = useState([]);
   const [rate, setRate] = useState("");
   const [discount, setDiscount] = useState("");
-  const [specifications, setSpecifications] = useState([{ label: "", value: "" }]); // Initial specification with empty fields
+  const [specifications, setSpecifications] = useState([{ label: "", value: "" }]); 
   const [warranty, setWarranty] = useState("");
   const [moreInfo, setMoreInfo] = useState("");
   const [deliveryInDays,setDeliveryInDays] =useState("");
-  const [loading, setLoading] = useState(false); // Loading state for file upload
-  const [uploadedFiles, setUploadedFiles] = useState([]); // To store the uploaded files (URLs or file names)
+  const [loading, setLoading] = useState(false); 
+  const [uploadedFiles, setUploadedFiles] = useState([]); 
   const [color, setColor] = useState("");
   const [specificationDesc, setSpecificationDesc] = useState("");
   const [showAlert, setShowAlert] = useState(false);
-  // const [alertMessage, setAlertMessage] = useState("");
   const navigate = useNavigate(); // Hook to programmatically navigate
   const { selectedUserType} = useParams();
   const [stockLeft, setStockLeft] = useState('');
-  //const { productstatus } = useState("Pending Approval");
-  // Handle file input change (multiple files)
 
   const handleFileChange = (event) => {
     const selectedFiles = Array.from(event.target.files);
@@ -50,9 +46,8 @@ const AdminProductUpload = () => {
   // Detect screen size for responsiveness
 useEffect(() => {
   const handleResize = () => setIsMobile(window.innerWidth <= 768);
-  handleResize(); // Set initial state
+  handleResize(); 
   window.addEventListener('resize', handleResize);
-
   return () => window.removeEventListener('resize', handleResize);
 }, []);
 
@@ -75,8 +70,8 @@ useEffect(() => {
       const response = await uploadFile(byteArray, fileName, mimeType, file);
       if (response) {
         uploadedFilesList.push({
-          src: response, // Assuming the response contains the file URL or filename
-          alt: fileName  // Using the file name as the alt text
+          src: response, 
+          alt: fileName  
         });
         alert("Image Uploaded Sucessfully"); 
       }
@@ -84,7 +79,6 @@ useEffect(() => {
         alert("Failed Upload Image");
       }
     }
-
     // Once all files are uploaded, update the state with the uploaded files
     setUploadedFiles(uploadedFilesList);
     setLoading(false);
@@ -108,7 +102,6 @@ useEffect(() => {
       const formData = new FormData();
       formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
       formData.append('fileName', fileName);
-
       const response = await fetch('https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
         method: 'POST',
         headers: {
@@ -256,7 +249,6 @@ useEffect(() => {
                 <option>Electrical items</option>
                 <option>Electronics appliances</option>
                 <option>Hardware items</option>
-                {/* <option>Health Care</option> */} 
                 <option>Home Appliances</option>
                 <option>Home Decors</option>
                 <option>Paints</option>
@@ -468,7 +460,6 @@ useEffect(() => {
       <button
         type="submit"
         className="btn btn-success w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
-       // onClick={() => navigate('/product')}
       >
         <UploadIcon className="me-2" />
         <span>Upload Product</span>
@@ -485,7 +476,6 @@ useEffect(() => {
         <span>View Product</span>
       </button>
     </div>
-
           </form>
         </div>
       </div>

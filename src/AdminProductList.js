@@ -6,19 +6,17 @@ import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
 const AdminProductList = () => {
   const [productData, setProductData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const [categories, setCategories] = useState([]); // State for categories
-  const [catalogues, setCatalogues] = useState([]); // State for catalogues
+  const [categories, setCategories] = useState([]);
+  const [catalogues, setCatalogues] = useState([]); 
   const [status, setStatus] = useState([]);
   const [category, setCategory] = useState("");
   const [productstatus, setproductstatus] = useState("");
   const [catalogue, setCatalogue] = useState("");
-  const [loading, setLoading] = useState(true); // Loading state
+  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const rowsPerPage = 15;
   const navigate = useNavigate();
-  // const {userType} = useParams();
-  // const {ProductOwnedBy} = useParams();
   
   // Fetch product data, categories, and catalogues
   useEffect(() => {
@@ -32,7 +30,6 @@ const AdminProductList = () => {
             ? product.rate - (product.rate * product.discount) / 100
             : product.rate,
         }));
-        // products.sort((a, b) => a.productName.localeCompare(b.productName));
         setProductData(products);
         setFilteredData(products);
   

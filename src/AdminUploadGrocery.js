@@ -148,7 +148,6 @@ useEffect(() => {
       ExpireDate : expireDate,
       Limit: limit,    
     };   
-// handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net
     try {
       const response = await fetch("https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UploadGrocery/UploadGrocery", {
         method: "POST",

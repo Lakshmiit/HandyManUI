@@ -54,38 +54,37 @@ const RaiseQuote = () => {
   }, []);
 
   const calculateTotalPrice = (quote, discountPercentage, otherCharges, serviceChargePercentage, gstPercentage) => {
-    const discountAmount = quote * (discountPercentage / 100); // Discount calculated as percentage of quote
-    const priceAfterDiscount = quote - discountAmount; // Price after discount
-    const priceAfterOtherCharges = priceAfterDiscount + otherCharges; // Add other charges to the discounted price
-    const serviceCharge = priceAfterDiscount * (serviceChargePercentage / 100); // Service charge calculated on discounted price
-    const priceAfterServiceCharge = priceAfterOtherCharges + serviceCharge; // Price after service charge
-    const gst = priceAfterServiceCharge * (gstPercentage / 100); // GST calculated on price after service charge
-    const total = priceAfterServiceCharge + gst; // Total price after GST
-    return { total, gst }; // Return total and gst amount
+    const discountAmount = quote * (discountPercentage / 100); 
+    const priceAfterDiscount = quote - discountAmount; 
+    const priceAfterOtherCharges = priceAfterDiscount + otherCharges; 
+    const serviceCharge = priceAfterDiscount * (serviceChargePercentage / 100); 
+    const priceAfterServiceCharge = priceAfterOtherCharges + serviceCharge; 
+    const gst = priceAfterServiceCharge * (gstPercentage / 100); 
+    const total = priceAfterServiceCharge + gst; 
+    return { total, gst }; 
 };
-
 
 const handleFixedChange = (setter, fixedSetter) => (e) => {
   const value = parseFloat(e.target.value);
   setter(value); 
 
   if (setter === setDiscount) {
-    fixedSetter((quote * value) / 100); // Set discount amount
-    setFixedDiscount((quote * value) / 100); // Set fixed discount
+    fixedSetter((quote * value) / 100); 
+    setFixedDiscount((quote * value) / 100); 
   } else if (setter === setGST) {
-    setFixedGST(gst); // Set only the GST portion
+    setFixedGST(gst); 
     const { total } = calculateTotalPrice(quote, value, otherCharge, serviceCharge, gst);
-    setTotalAmount(total); // Update totalAmount state
+    setTotalAmount(total); 
   } else if (setter === setOtherCharge) {
-    setFixedOtherCharge(value); // Set fixed other charges
+    setFixedOtherCharge(value); 
     const { total } = calculateTotalPrice(quote, discount, value, serviceCharge, gst);
-    setTotalAmount(total); // Update totalAmount state
+    setTotalAmount(total); 
   } else if (setter === setServiceCharge) {
-    setFixedServiceCharge(value); // Set fixed service charge
+    setFixedServiceCharge(value); 
     const { total } = calculateTotalPrice(quote, discount, otherCharge, value, gst);
-    setTotalAmount(total); // Update totalAmount state
+    setTotalAmount(total); 
   } else {
-    fixedSetter(value); // For other fields
+    fixedSetter(value); 
   }
 };
 
@@ -133,8 +132,6 @@ const handleFixedChange = (setter, fixedSetter) => (e) => {
   // Handle preview and confirmation on ticket submission
   const handleSaveTicket = (e) => {
     e.preventDefault();
-
-    // Ensure all fields are filled before submitting
     if (
       !formData.customerId ||
       !formData.subject ||
