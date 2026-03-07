@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import "./App.css"; // Add this for the required CSS.
-// import { useNavigate } from 'react-router-dom';
+import "./App.css"; 
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import UploadIcon from '@mui/icons-material/Upload';
 import AdminSidebar from './AdminSidebar';
@@ -17,23 +16,18 @@ const AdminLakshmiCollectionsUpload = () => {
   const [category, setCategory] = useState("");    
   const [catalogue, setCatalogue] = useState("");
   const [productSize, setProductSize] = useState("");
-//   const [units, setUnits] = useState("");
   const [productPhotos, setProductPhotos] = useState([]); 
   const [rate, setRate] = useState("");
   const [discount, setDiscount] = useState("");
   const [specifications, setSpecifications] = useState([{ label: "", value: "" }]); 
-//   const [warranty, setWarranty] = useState("");
   const [moreInfo, setMoreInfo] = useState("");    
   const [deliveryInDays,setDeliveryInDays] =useState("");
   const [loading, setLoading] = useState(false); 
   const [uploadedFiles, setUploadedFiles] = useState([]); 
   const [color, setColor] = useState("");
   const [specificationDesc, setSpecificationDesc] = useState("");
-  // const [showAlert, setShowAlert] = useState(false);
-//   const navigate = useNavigate(); 
   const { selectedUserType} = useParams();
   const [stockLeft, setStockLeft] = useState('');
-// Add this in your state
 const [productVideos, setProductVideos] = useState([]);
 const [uploadedVideos, setUploadedVideos] = useState([]);
 const [showPhotoAlert, setShowPhotoAlert] = useState(false);
@@ -88,22 +82,11 @@ const handleFileChange = (event) => {
   setShowPhotoAlert(true);
 };
 
-//   const handleFileChange = (event) => {
-//     const selectedFiles = Array.from(event.target.files);
-//     if (selectedFiles.length + productPhotos.length > 5) {
-//       alert("You can only upload up to 5 files.");
-//       return;
-//     }
-//     setProductPhotos([...productPhotos, ...selectedFiles]);
-//     setShowAlert(true);
-//   };
-
   // Detect screen size for responsiveness
 useEffect(() => {
   const handleResize = () => setIsMobile(window.innerWidth <= 768);
   handleResize(); 
   window.addEventListener('resize', handleResize);
-
   return () => window.removeEventListener('resize', handleResize);
 }, []);
 
@@ -126,8 +109,8 @@ useEffect(() => {
       const response = await uploadFile(byteArray, fileName, mimeType, file);
       if (response) {
         uploadedFilesList.push({
-          src: response, // Assuming the response contains the file URL or filename
-          alt: fileName  // Using the file name as the alt text
+          src: response, 
+          alt: fileName  
         });
         alert("Image Uploaded Sucessfully"); 
       }
@@ -135,7 +118,6 @@ useEffect(() => {
         alert("Failed Upload Image");
       }
     }
-
     // Once all files are uploaded, update the state with the uploaded files
     setUploadedFiles(uploadedFilesList);
     setLoading(false);
@@ -303,12 +285,6 @@ useEffect(() => {
                 <option>Choose Category</option>
                 <option>Kurta Sets</option>
                 <option>Dupatta Sets</option>
-                {/* <option>Electronics appliances</option>
-                <option>Hardware items</option>
-                {/* <option>Health Care</option> 
-                <option>Home Decors</option>
-                <option>Paints</option>
-                <option>Sanitary items</option> */}
               </select>
             </div>
 
@@ -525,7 +501,6 @@ useEffect(() => {
       <button
         type="submit"
         className="btn btn-success w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
-       // onClick={() => navigate('/product')}
       >
         <UploadIcon className="me-2" />
         <span>Upload Collection</span>
@@ -541,7 +516,6 @@ useEffect(() => {
         <span>View Collection</span>
       </button>
     </div>
-
           </form>
         </div>
       </div>

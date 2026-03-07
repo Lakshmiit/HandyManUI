@@ -776,24 +776,10 @@ if (Object.keys(cachedMap).length) {
       )}
       {zoomProduct?.discount > 0 && (
         <span className="text-danger">
-          ({zoomProduct.discount}%)
+          {zoomProduct.discount}%
         </span>
       )}
     </div>
-    {/* <div style={{ fontSize: "13px", lineHeight: "1.6" }}>
-      {zoomProduct?.catalogue && (
-        <div><b>Catalogue:</b> {zoomProduct.catalogue}</div>
-      )}
-      {zoomProduct?.productSize && (
-        <div><b>Product Size:</b> {zoomProduct.productSize}</div>
-      )}
-      {zoomProduct?.color && (
-        <div><b>Color:</b> {zoomProduct.color}</div>
-      )}
-       {zoomProduct?.units && (
-        <div><b>Units:</b> {zoomProduct.units}</div>
-      )} 
-    </div> */}
     {zoomProduct?.specifications?.length > 0 && (
       <>
         <div>

@@ -17,7 +17,6 @@ const AboutApartmentRaiseTicket = () => {
   const {selectedUserType} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-    // Detect screen size for responsiveness
     useEffect(() => {
       const handleResize = () => setIsMobile(window.innerWidth <= 768);
       handleResize(); 

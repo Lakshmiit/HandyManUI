@@ -13,8 +13,6 @@ const AdminGroceryList = () => {
   const [grocerystatus, setGrocerystatus] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-// const [showLowStockModal, setShowLowStockModal] = useState(false);
-// const [lowStockItems, setLowStockItems] = useState([]);
 
   const rowsPerPage = 15;
   const navigate = useNavigate(); 
@@ -58,15 +56,6 @@ const AdminGroceryList = () => {
     return () => { cancelled = true; };
   }, []);
 
-//  useEffect(() => {
-//   if (!finalGroceries.length) return;
-
-//   const lowItems = finalGroceries.filter(
-//     (g) => (Number(g.stockLeft) || 0) <= 1
-//   );
-//   setLowStockItems(lowItems);
-// }, [finalGroceries]);
-
   const handleDelete = async (groceryId) => {
     if (!window.confirm("Are you sure you want to delete this grocery?")) return;
     try {
@@ -107,51 +96,6 @@ const AdminGroceryList = () => {
   return (
     <div className="container my-2 ">
       <h2 className="text-center mb-2 mt-mob-50">All Grocery</h2>
-{/* {showLowStockModal && (
-  <>
-    <div className="modal fade show d-block">
-      <div className="modal-dialog modal-lg" role="document">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title">Low Stock Products</h5>
-            <button
-              type="button"
-              className="btn-close"
-              onClick={() => setShowLowStockModal(false)}
-            />
-          </div>
-          <div className="modal-body">
-
-            <ul className="list-group">
-              {lowStockItems
-                .filter(
-                  (item, index, self) =>
-                    index === self.findIndex((t) => t.id === item.id) 
-                )
-                .map((item) => (
-                  <li key={item.id} className="list-group-item d-flex justify-content-between">
-                    <span>{item.name}</span>
-                    <span className="fw-bold">Stock: {Number(item.stockLeft) || 0}</span>
-                  </li>
-                ))}
-            </ul>
-
-          </div>
-          <div className="modal-footer">
-            <button
-              type="button"
-              className="btn btn-danger"
-              onClick={() => setShowLowStockModal(false)}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </>
-)} */}
-
       {/* Search Bar */}
       <div className="form-group col-md-3">
         <label>Search Products Here</label>
@@ -202,13 +146,6 @@ const AdminGroceryList = () => {
 
         {/* Add New Product */}
         <div className="d-flex justify-content-end align-items-center col-md-6">
-          {/* <button
-            className="btn btn-outline-danger me-2"
-            disabled={lowStockItems.length === 0}
-            onClick={() => setShowLowStockModal(true)}
-          >
-            Low Stock ({lowStockItems.length})
-          </button> */}
           <button
             className="btn btn-success"
             onClick={() => navigate(`/adminUploadGrocery/Admin`)}
@@ -279,20 +216,6 @@ const AdminGroceryList = () => {
             </tbody>
           </table>
 
-          {/* Pagination */}
-          {/* <div className="d-flex justify-content-center mt-3">
-            <nav aria-label="Page navigation">
-              <ul className="pagination">
-                {[...Array(Math.ceil(filteredData.length / rowsPerPage))].map((_, i) => (
-                  <li key={i} className={`page-item ${i + 1 === currentPage ? "active" : ""}`}>
-                    <button className="page-link" onClick={() => setCurrentPage(i + 1)}>
-                      {i + 1}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          </div> */}
           {/* Pagination */}
         <div className="d-flex justify-content-center mt-3">
           <nav aria-label="Page navigation">

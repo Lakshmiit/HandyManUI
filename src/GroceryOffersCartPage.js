@@ -11,7 +11,7 @@ import "./App.css";
 import CartImg from "./img/Cart.jpeg";
 import { useNavigate, useParams } from "react-router-dom";
 import Footer from "./Footer.js";
-// import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 const IMAGE_DOWNLOAD =
   "https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=";
@@ -141,7 +141,7 @@ const writeBackToStorage = (items) => {
 
 const GroceryOffersCartPage = () => {
   const navigate = useNavigate();
-    // const location = useLocation();
+    const location = useLocation();
   const { userId, userType } = useParams();
   const [cartItems, setCartItems] = useState([]);
   const [imageBlobMap, setImageBlobMap] = useState({});
@@ -149,54 +149,53 @@ const GroceryOffersCartPage = () => {
   const [zoomImage, setZoomImage] = useState("");
   const [grandSummary, setGrandSummary] = useState({ items: 0, total: 0 });
   const pollRef = useRef(null);
-  const [MIN_ORDER_TOTAL] = useState(100);
-  // const [MIN_ORDER_TOTAL, setMinOrderTotal] = useState(100);
+  const [MIN_ORDER_TOTAL, setMinOrderTotal] = useState(100);
 
-  // const mobileNumber =
-  //   location.state?.mobileNumber || localStorage.getItem("customerMobileNumber");
+  const mobileNumber =
+    location.state?.mobileNumber || localStorage.getItem("customerMobileNumber");
 
-//   useEffect(() => {
-//   const checkUserOrder = async () => {
-//     if (!mobileNumber) return;
-//     const result = await CheckFirstOrder(mobileNumber);
-//     if (result === null) {
-//       setMinOrderTotal(150);
-//     } else {
-//       setMinOrderTotal(100);
-//     }
-//   };
-//   checkUserOrder();
-// }, [mobileNumber]);
+  useEffect(() => {
+  const checkUserOrder = async () => {
+    if (!mobileNumber) return;
+    const result = await CheckFirstOrder(mobileNumber);
+    if (result === null) {
+      setMinOrderTotal(150);
+    } else {
+      setMinOrderTotal(100);
+    }
+  };
+  checkUserOrder();
+}, [mobileNumber]);
 
-  //   const CheckFirstOrder = async (mobile) => {
-  //   if (!mobile) return null;
-  //   const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${encodeURIComponent(
-  //     mobile
-  //   )}`;
+    const CheckFirstOrder = async (mobile) => {
+    if (!mobile) return null;
+    const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${encodeURIComponent(
+      mobile
+    )}`;
 
-  //   try {
-  //     const res = await fetch(url);
-  //     const text = await res.text();
-  //     console.log("RAW RESPONSE:", text);
-  //     if (text.toLowerCase().includes("firstorder can not be found")) {
-  //       return null;
-  //     }
-  //     let parsed;
-  //     try {
-  //       parsed = JSON.parse(text);
-  //     } catch (err) {
-  //       console.warn("Could not parse CheckFirstOrder response:", err);
-  //       return null;
-  //     }
-  //     if (parsed && !Array.isArray(parsed)) {
-  //       parsed = [parsed];
-  //     }
-  //     return Array.isArray(parsed) ? parsed : null;
-  //   } catch (error) {
-  //     console.error("API ERROR:", error);
-  //     return null;
-  //   }
-  // };
+    try {
+      const res = await fetch(url);
+      const text = await res.text();
+      console.log("RAW RESPONSE:", text);
+      if (text.toLowerCase().includes("firstorder can not be found")) {
+        return null;
+      }
+      let parsed;
+      try {
+        parsed = JSON.parse(text);
+      } catch (err) {
+        console.warn("Could not parse CheckFirstOrder response:", err);
+        return null;
+      }
+      if (parsed && !Array.isArray(parsed)) {
+        parsed = [parsed];
+      }
+      return Array.isArray(parsed) ? parsed : null;
+    } catch (error) {
+      console.error("API ERROR:", error);
+      return null;
+    }
+  };
   
   useEffect(() => {
     const safeParse = (key) => {
@@ -319,14 +318,20 @@ const handleQtyChange = (rowId, delta) => {
   const handleGroceryProceed = async (event) => {
     event.preventDefault();
     const allCategories =
-      JSON.parse(localStorage.getItem("allCategories") || "[]") || [];
+          JSON.parse(localStorage.getItem("allCategories")) || [];
+     const firstOrderData = await CheckFirstOrder(mobileNumber);
+      // If null → new user
+      const isNewUser = !firstOrderData;
+      // ✅ SIMPLE WALLET LOGIC
+      const walletValue = isNewUser ? "50" : "0";
+    
     const payload = {
       id: "string",
       martId: "string",
       date: "string",
       customerId: userId,
       status: "Draft",
-      walletAmount: "walletValue",
+      walletAmount: walletValue,
       paymentMode: "",
       utrTransactionNumber: "",
       transactionNumber: "",

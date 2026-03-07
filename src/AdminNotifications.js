@@ -6,7 +6,6 @@ import {
   ArrowBack as ArrowBackIcon,
   NotificationsNone as NotificationsNoneIcon,
 } from "@mui/icons-material";
-// import Header from './Header.js';
 import Footer from './Footer.js';
 import { Button } from "react-bootstrap";    
 import "./App.css";
@@ -16,27 +15,13 @@ const NotificationsList = ({ notifications, highlightedItem }) => {
   const raiseTicketNotifications = notifications.filter(
     (item) => item.internalStatus === "Open" && item.assignedTo === "Customer Care" 
   );
-//   const getQuoteNotifications = notifications.filter(
-//     (item) =>  item.internalStatus === "Pending" && item.assignedTo === "Technical Agency"  
-//   );
-//   const dealerQuoteNotifications = notifications.filter(
-//     (item) => item.internalStatus === "Pending" && item.assignedTo === "Dealer/Trader"
-//   );
-//  const orderTicketNotifications = notifications.filter(
-//   (item) => (item.internalStatus === "Customer Approved" || item.internalStatus === "PaymentDone" || item.internalStatus === "Closed")
-// );
+
 const bookTechnicianNotifications = notifications.filter(
   (item) => item.status === "Open" && item.assignedTo !== "Customer Care"  && item.bookTechnicianId != null
 );
 const buyProductNotifications = notifications.filter(
   (item) => item.status === "Open" && item.assignedTo === "Customer Care" && item.buyProductId != null
 );
-// const productClosedNotifications = notifications.filter(
-//   (item) => (item.assignedTo !== "Customer Care" && item.status === "Closed" && item.assignedTo === "Admin" && item.buyProductId != null) || (item.assignedTo === "Admin" && item.transactionStatus === "Success" && item.buyProductId != null)
-// );
-// const apartmentMaintenanceNotifications = notifications.filter(
-//   (item) => item.status === "Open" && item.apartmentRaiseTicketId != null
-// );
 const groceryItemNotifications = notifications.filter(
   (item) => item.status === "Open" && item.martId != null
 );
@@ -46,27 +31,13 @@ const lakshmiCollectionsNotifications = notifications.filter(
   const handleTicketClick = (ticketId) => {
     navigate(`/raiseTicketActionView/${ticketId}`, { state: { ticketId } });
   };
-  // const handleQuoteClick = (ticketId) => {
-  //   navigate(`/raiseTicketQuotation/${ticketId}`, { state: { ticketId } });
-  // };
-  // const handleDealerClick = (raiseTicketId) => {
-  //   navigate(`/bidderTicketQuotation/${raiseTicketId}`, { state: { raiseTicketId } });
-  // };
-  // const handleOrderClick = (raiseTicketId) => {
-  //   navigate(`/customerCareConfirmation/${raiseTicketId}`, { state: { raiseTicketId}});
-  // };
+  
   const handleTechnicianClick = (bookTechnicianId) => {
     navigate(`/bookTechnicianActionView/${bookTechnicianId}`, { state: { bookTechnicianId}});
   };
   const handleBuyProductClick = (buyProductId) => {
     navigate(`/adminBuyProductOrders/${buyProductId}`, { state: { buyProductId}});
   };
-  // const handleClosedClick = (buyProductId) => {
-  //   navigate(`/adminClosedBuyProductOrders/${buyProductId}`, { state: { buyProductId}});
-  // };
-  //  const handleApartmentClick = (apartmentRaiseTicketId) => {
-  //   navigate(`/apartmentRaiseTicketActionView/${apartmentRaiseTicketId}`, { state: { apartmentRaiseTicketId } });
-  // };
 
    const handleGroceryClick = (martId) => {
     navigate(`/adminGroceryOrderPage/${martId}`, { state: { martId } });
@@ -109,108 +80,6 @@ const lakshmiCollectionsNotifications = notifications.filter(
           </div>
         ))}
       </div>
-
-      {/* <div className="notification-list">
-        {getQuoteNotifications.map((notification) => (
-          <div
-            key={notification.raiseTicketId}
-            className={`notification-item ${
-              notification.raiseTicketId === highlightedItem ? "highlight" : ""
-            }`}
-          >
-            <div className="notification-header">
-              <strong>Ticket ID: </strong>
-              <span
-                onClick={() => handleQuoteClick(notification.id)}
-                style={{
-                  color: "blue",
-                  cursor: "pointer",
-                  textDecoration: "underline",
-                }}
-              >
-                {notification.raiseTicketId}
-              </span>
-            </div>
-            <div>
-              <strong>Subject:</strong> {notification.subject}
-            </div>
-            <div>
-              <strong>Details:</strong> {notification.details}
-            </div>
-            <div className="notification-date">
-              <strong>Date:</strong> {new Date(notification.date).toLocaleString()}
-            </div>
-          </div>
-        ))}
-      </div> */}
-
-      {/* <div className="notification-list">
-        {dealerQuoteNotifications.map((notification) => (
-          <div
-            key={notification.raiseTicketId}
-            className={`notification-item ${
-              notification.raiseTicketId === highlightedItem ? "highlight" : ""
-            }`}
-          >
-            <div className="notification-header">
-              <strong>Ticket ID: </strong>
-              <span
-                onClick={() => handleDealerClick(notification.id)}
-                style={{
-                  color: "blue",
-                  cursor: "pointer",
-                  textDecoration: "underline",
-                }}
-              >
-                {notification.raiseTicketId}
-              </span>
-            </div>
-            <div>
-              <strong>Subject:</strong> {notification.subject}
-            </div>
-            <div>
-              <strong>Details:</strong> {notification.details}
-            </div>
-            <div className="notification-date">
-              <strong>Date:</strong> {new Date(notification.date).toLocaleString()}
-            </div>
-          </div>
-        ))}
-      </div> */}
-
-      {/* <div className="notification-list">
-        {orderTicketNotifications.map((notification) => (
-          <div
-            key={notification.raiseTicketId}
-            className={`notification-item ${
-              notification.raiseTicketId === highlightedItem ? "highlight" : ""
-            }`}
-          >
-            <div className="notification-header">
-              <strong>Ticket ID: </strong>
-              <span
-                onClick={() => handleOrderClick(notification.id)}
-                style={{
-                  color: "blue",
-                  cursor: "pointer",
-                  textDecoration: "underline",
-                }}
-              >
-                {notification.raiseTicketId}
-              </span>
-            </div>
-            <div>
-              <strong>Subject:</strong> {notification.subject}
-            </div>
-            <div>
-              <strong>Details:</strong> {notification.details}
-            </div>
-            <div className="notification-date">
-              <strong>Date:</strong> {new Date(notification.date).toLocaleString()}
-            </div>
-          </div>
-        ))}
-      </div> */}
 
       <div className="notification-list">
         {bookTechnicianNotifications.map((notification) => (
@@ -279,74 +148,6 @@ const lakshmiCollectionsNotifications = notifications.filter(
           </div>
         ))}
       </div>
-
-      {/* <div className="notification-list">
-        {productClosedNotifications.map((notification) => (
-          <div
-            key={notification.buyProductId}
-            className={`notification-item ${
-              notification.buyProductId === highlightedItem ? "highlight" : ""
-            }`}
-          >
-            <div className="notification-header">
-              <strong>Buy Product ID: </strong>
-              <span
-                onClick={() => handleClosedClick(notification.id)}
-                style={{
-                  color: "blue",
-                  cursor: "pointer",
-                  textDecoration: "underline",
-                }}
-              >
-                {notification.buyProductId}
-              </span>
-            </div>
-            <div>
-              <strong>Product Name:</strong> {notification.productName}
-            </div>
-            <div>
-              <strong>Category:</strong> {notification.category}
-            </div>
-            <div className="notification-date">
-              <strong>Date:</strong> {new Date(notification.date).toLocaleString()}
-            </div>
-          </div>
-        ))}
-      </div> */}
-
-      {/* <div className="notification-list">
-        {apartmentMaintenanceNotifications.map((notification) => (
-          <div
-            key={notification.apartmentRaiseTicketId}
-            className={`notification-item ${
-              notification.apartmentRaiseTicketId === highlightedItem ? "highlight" : ""
-            }`}
-          >
-            <div className="notification-header">
-              <strong>Ticket ID: </strong>
-              <span
-                onClick={() => handleApartmentClick(notification.id)}
-                style={{
-                  color: "blue",
-                  cursor: "pointer",
-                  textDecoration: "underline",
-                }}
-              >
-                {notification.apartmentRaiseTicketId}
-              </span>
-            </div>
-            <div>
-              <strong>Subject:</strong> {notification.subject}
-            </div>
-            <div>
-              <strong>Details:</strong> {notification.details}
-            </div>
-            <div className="notification-date">
-              <strong>Date:</strong> {new Date(notification.date).toLocaleString()}
-            </div>
-          </div>
-        ))}
-      </div> */}
 
         <div className="notification-list">
         {groceryItemNotifications.map((notification) => (
@@ -426,16 +227,9 @@ const Notification = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [ticketNotifications, setTicketNotifications] = useState([]);
-  // const [quoteNotifications, setQuoteNotifications] = useState([]);
-  // const [dealerNotifications, setDealerNotifications] = useState([]);
-  // const [orderNotifications, setOrderNotifications] = useState([]);
  const [technicianNotifications, setTechnicianNotifications] = useState([]);
  const [productNotifications, setProductNotifications] = useState([]);
-//  const [closedProductNotifications, setClosedProductNotifications] = useState([]);
-//   const [apartmentNotifications, setApartmentTicketNotifications] = useState([]);
   const [groceryNotifications, setGroceryItemNotifications] = useState([]);
-  // const [deliveryNotifications] = useState([]);
-  // const [deliveryNotifications, setDeliveryNotifications] = useState([]);
   const [collectionNotifications, setCollectionNotifications] = useState([]);
   const [newTicketCount, setNewTicketCount] = useState(0);
   // const [newQuoteCount, setNewQuoteCount] = useState(0);

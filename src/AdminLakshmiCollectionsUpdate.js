@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import "./App.css"; // Add this for the required CSS.
-// import { useNavigate } from 'react-router-dom';
+import "./App.css"; 
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import UploadIcon from '@mui/icons-material/Upload';
 import AdminSidebar from './AdminSidebar';
@@ -31,8 +30,6 @@ const AdminLakshmiCollectionsUpdate = () => {
   const [uploadedFiles, setUploadedFiles] = useState([]); 
   const [color, setColor] = useState("");
   const [specificationDesc, setSpecificationDesc] = useState("");
-  // const [showAlert, setShowAlert] = useState(false);
-//   const navigate = useNavigate(); 
   const { selectedUserType} = useParams();
   const [stockLeft, setStockLeft] = useState('');
 const [productVideos, setProductVideos] = useState([]);
@@ -58,7 +55,6 @@ useEffect(() => {
                   }
                   const collectionData = await collectionResponse.json();
                   console.log("collectionData:", collectionData);
-                  // alert(JSON.stringify(productData));
                   setCollection(collectionData);
                   setCollectionName(collectionData.productName);
                   setLakshmiCollectionId(collectionData.lakshmicollectionId);
@@ -72,7 +68,6 @@ useEffect(() => {
                   setDiscount(collectionData.discount);
                   setSpecifications(collectionData.descriptions || [{ name: "", value: "" }]);
                   setSpecificationDesc(collectionData.optional);
-                //   setWarranty(productData.warranty);
                   setMoreInfo(collectionData.moreInfo);
                   setDeliveryInDays(collectionData.deliveryInDays);
                    setExistingFiles(collectionData.images || []);
@@ -160,16 +155,6 @@ const handleRemoveExistingVideo = (index) => {
   setExistingVideos(updated);
 };
 
-//   const handleFileChange = (event) => {
-//     const selectedFiles = Array.from(event.target.files);
-//     if (selectedFiles.length + productPhotos.length > 5) {
-//       alert("You can only upload up to 5 files.");
-//       return;
-//     }
-//     setProductPhotos([...productPhotos, ...selectedFiles]);
-//     setShowAlert(true);
-//   };
-
   // Detect screen size for responsiveness
 useEffect(() => {
   const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -184,22 +169,19 @@ useEffect(() => {
     setLoading(true);
     setShowPhotoAlert(false); 
     const uploadedFilesList = [];
-
     // Loop through selected files and upload each one
     for (let i = 0; i < collectionPhotos.length; i++) {
       const file = collectionPhotos[i];
       const fileName = file.name;
       const mimeType = file.type;
-
-      // Convert the file to a byte array (use FileReader)
+      // Covert the file to a byte array (use FileReader)
       const byteArray = await getFileByteArray(file);
-
       // Upload the file and get the response (filename or URL)
       const response = await uploadFile(byteArray, fileName, mimeType, file);
       if (response) {
         uploadedFilesList.push({
-          src: response, // Assuming the response contains the file URL or filename
-          alt: fileName  // Using the file name as the alt text
+          src: response, 
+          alt: fileName 
         });
         alert("Image Uploaded Sucessfully"); 
       }
@@ -207,8 +189,6 @@ useEffect(() => {
         alert("Failed Upload Image");
       }
     }
-
-    // Once all files are uploaded, update the state with the uploaded files
     setUploadedFiles(uploadedFilesList);
     setLoading(false);
   };
@@ -231,7 +211,6 @@ useEffect(() => {
       const formData = new FormData();
       formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
       formData.append('fileName', fileName);
-
       const response = await fetch('https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
         method: 'POST',
         headers: {
@@ -251,7 +230,7 @@ useEffect(() => {
   // Handle form submission
 const handleSubmit = async (event) => {
     event.preventDefault();
-   
+  
     const allCollectionPhotos = [
     ...existingFiles, 
     ...uploadedFiles.map(file => file.src), 
@@ -514,7 +493,6 @@ const handleSubmit = async (event) => {
       <strong>Existing Videos:</strong>
       {existingVideos.map((file, index) => (
         <div key={index} className="d-flex align-items-center gap-2 mb-2">
-          {/* <video src={file} width="220" controls className="me-2" /> */}
           <span className="text-truncate">{file}</span>
           <button
             type="button"
@@ -546,19 +524,6 @@ const handleSubmit = async (event) => {
       ))}
     </div>
   )}
-
-  {/* Newly uploaded (after upload) */}
-  {/* {uploadedVideos.length > 0 && (
-    <div className="mt-2">
-      <strong>Uploaded Videos:</strong>
-      {uploadedVideos.map((v, index) => (
-        <div key={index} className="d-flex align-items-center gap-2 mb-2">
-          {/* <video src={v.src} width="220" controls className="me-2" /> *
-          <span className="text-truncate">{v.alt}</span>
-        </div>
-      ))}
-    </div>
-  )} */}
 
   <button
     type="button"

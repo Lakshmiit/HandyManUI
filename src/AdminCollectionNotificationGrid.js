@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
-// import { Button } from "react-bootstrap";
 import axios from 'axios';
 import Footer from './Footer.js';
-// import AdminSidebar from "./AdminSidebar";
 import { Link } from "react-router-dom";
 import { FaTrash, FaEye } from "react-icons/fa";
 import {
@@ -12,12 +10,8 @@ import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import "./App.css";
  
 const AdminCollectionNotificationGrid = () => {
-  // const navigate = useNavigate();
-  //const [status, setStatus] = useState("");
-//   const {raiseTicketId} = useParams();
-  const [assignedTo, setAssignedTo] = useState("");
+   const [assignedTo, setAssignedTo] = useState("");
   const [isMobile, setIsMobile] = useState(false);
-  // const [showMenu, setShowMenu] = useState(false);
   const [collectionData, setCollectionData] = useState([]);
   const [state, setState] = useState("");
   const [district, setDistrict] = useState("");
@@ -41,7 +35,6 @@ const AdminCollectionNotificationGrid = () => {
         const collectionitems = collections.filter((collection) => collection.status === "Open");
         setFilteredData(collectionitems);
         setCollectionData(collectionitems);
-
         const uniqueStates = [...new Set(collections.map(collection => collection.state))];
         const uniqueDistricts = [...new Set(collections.map(collection => collection.district))];
         const uniquePinCode = [...new Set(collections.map(collection => collection.zipCode))];
@@ -75,15 +68,12 @@ const AdminCollectionNotificationGrid = () => {
 
   useEffect(() => {
     let filtered = collectionData;
-
     if (state) {
       filtered = filtered.filter((collection) => collection.state === state);
     }
-
     if (district) {
       filtered = filtered.filter((collection) => collection.district === district);
     }
-
     if (zipCode) {
       filtered = filtered.filter((collection) => collection.zipCode === zipCode);
     }
@@ -98,13 +88,8 @@ const AdminCollectionNotificationGrid = () => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     handleResize();
     window.addEventListener("resize", handleResize);
-
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  // const handlePageChange = (pageNumber) => {
-  //   setCurrentPage(pageNumber);
-  // };
 
  // Get paginated data
  const indexOfLastCollection = currentPage * rowsPerPage;
@@ -191,7 +176,6 @@ const AdminCollectionNotificationGrid = () => {
               <th>Size & Quantity</th>
               <th>Status</th>
               <th>Grand Total</th>
-              {/* <th>Assigned To</th> */}
               <th>Actions</th>
             </tr>
           </thead>
@@ -205,7 +189,6 @@ const AdminCollectionNotificationGrid = () => {
                 <td>{collection.categoriess?.[0]?.size} - {collection.totalItemsSelected}</td>
                 <td>{collection.status}</td>
                 <td>{collection.grandTotal}</td>
-                {/* <td>{collection.assignedTo}</td> */}
                 <td className="d-flex align-items-center">
                   <Link
                    to={`/adminLakshmiCollectionsOrders/${collection.id}`}
@@ -239,7 +222,6 @@ const AdminCollectionNotificationGrid = () => {
         <p><strong>Size & Quantity:</strong> {collection.categoriess?.[0]?.size} - {collection.totalItemsSelected}</p>
         <p><strong>Status:</strong> {collection.status}</p>
         <p><strong>Grand Total:</strong> {collection.grandTotal}</p>
-        {/* <p><strong>Assigned To:</strong> {collection.assignedTo}</p> */}
       </div>
       <div className="ticket-actions">
       <Link

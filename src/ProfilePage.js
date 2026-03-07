@@ -173,7 +173,7 @@ const categories = [
 ]; 
        
 const groceryCategories = [
-  {label: 'LMart Special Royal Pesara Upma Mix', value: 'LMart Special', image: RoyalImg},
+  {label: 'LMart Products', value: 'LMart Special', image: RoyalImg},
   // { label: 'Kitchenware Appliances', value: 'Kitchenware Appliances', image: KitchenImg },
   { label: 'Unbeatable 10 Offers', value: 'Unbeatable Offers', image: UnbeatableImg },
   { label: 'Above 45 % Offers', value: 'Offers', image: Above45Img },
@@ -757,7 +757,7 @@ useEffect(() => {
       }
       const grandTotalNumeric = Number(data.grandTotal) || 0;
       const cashback = totalAmountFromApi - grandTotalNumeric;
-      if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101) || (cashback >= 199 && cashback <= 201) || (cashback >= 299 && cashback <= 301))
+      if ((cashback >= 49 && cashback <= 51) ||(cashback >= 99 && cashback <= 101) || (cashback >= 149 && cashback <= 151) || (cashback >= 199 && cashback <= 201) || (cashback >= 249 && cashback <= 251) ||  (cashback >= 299 && cashback <= 301))
       {
         setCashbackAmount(cashback); 
       } else {
@@ -934,7 +934,7 @@ const handleGroceryCategoryClick = (category) => {
     return;
   }
   
-  if (value === "Grocery Offers") {
+  if (value === "Unbeatable Offers") {
     navigate(`/groceryOffers/${userType}/${userId}`, {
       state: { mobileNumber },
     });
@@ -1015,7 +1015,7 @@ const handleDressCategoryClick = async (category) => {
 
   const grandTotalNumeric = Number(ticket.grandTotal) || 0;
   const cashback = totalAmountFromApi - grandTotalNumeric;
-  if ((cashback >= 49 && cashback <= 51) || (cashback >= 99 && cashback <= 101) || (cashback >= 199 && cashback <= 201) || (cashback >= 299 && cashback <= 301)) {
+  if ((cashback >= 49 && cashback <= 51) ||(cashback >= 99 && cashback <= 101) || (cashback >= 149 && cashback <= 151) || (cashback >= 199 && cashback <= 201) || (cashback >= 249 && cashback <= 251) ||  (cashback >= 299 && cashback <= 301)) {
     return cashback;
   }
   return 0;

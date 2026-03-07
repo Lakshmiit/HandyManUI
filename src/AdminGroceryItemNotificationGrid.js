@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
-// import { Button } from "react-bootstrap";
 import axios from 'axios';
 import Footer from './Footer.js';
-// import AdminSidebar from "./AdminSidebar";
 import { Link } from "react-router-dom";
 import { FaTrash, FaEye } from "react-icons/fa";
 import { Forward as ForwardIcon,} from "@mui/icons-material";
@@ -11,7 +9,6 @@ import "./App.css";
 
 const AdminGroceryItemNotificationGrid = () => {
   const [isMobile, setIsMobile] = useState(false);
-  // const [showMenu, setShowMenu] = useState(false);
   const [groceryData, setGroceryData] = useState([]);
   const [state, setState] = useState("");
   const [district, setDistrict] = useState(""); 
@@ -23,6 +20,7 @@ const AdminGroceryItemNotificationGrid = () => {
   const [districts, setDistricts] = useState([]); 
   const [pinCodes, setPinCodes] = useState([]);
   const rowsPerPage = 15;
+const [activeTab, setActiveTab] = useState("Open");
 
   const sortNewestFirst = (a, b) => {
     const aDate =
@@ -47,8 +45,8 @@ const AdminGroceryItemNotificationGrid = () => {
     axios.get(url)
       .then(response => {
         const groceries = response.data.map(g => ({ ...g }));
-        const groceriesStatus = groceries.filter((g) =>  (g.status === "Open" || g.status === "Closed"));
-        const sorted = [...groceriesStatus].sort(sortNewestFirst);
+        // const groceriesStatus = groceries.filter((g) =>  (g.status === "Open" || g.status === "Closed"));
+        const sorted = [...groceries].sort(sortNewestFirst);
         setGroceryData(sorted);
         setFilteredData(sorted);
         const uniqueStates = [...new Set(sorted.map(g => g.state).filter(Boolean))];
@@ -75,7 +73,7 @@ const AdminGroceryItemNotificationGrid = () => {
         .then(() => {
           setGroceryData(prev => prev.filter(g => g.id !== groceryId));
           setFilteredData(prev => prev.filter(g => g.id !== groceryId));
-          setCurrentPage(1); // keep newest-first on first page after delete
+          setCurrentPage(1); 
         })
         .catch(error => {
           console.error("Error deleting grocery:", error);
@@ -83,10 +81,17 @@ const AdminGroceryItemNotificationGrid = () => {
     } 
   };
 
-  // Re-filter + keep newest-first order, then jump to page 1
   useEffect(() => {
     let filtered = groceryData;
-
+    if (activeTab === "Open") {
+    filtered = filtered.filter(g => g.status === "Open");
+  } 
+  else if (activeTab === "Closed") {
+    filtered = filtered.filter(g => g.status === "Closed");
+  } 
+  else if (activeTab === "Delivered") {
+    filtered = filtered.filter(g => g.isDeliver === true);
+  }
     if (state) {
       filtered = filtered.filter(g => g.state === state);
     }
@@ -100,7 +105,7 @@ const AdminGroceryItemNotificationGrid = () => {
     const resorted = [...filtered].sort(sortNewestFirst);
     setFilteredData(resorted);
     setCurrentPage(1);
-  }, [state, district, zipCode, groceryData]);
+  }, [activeTab,state, district, zipCode, groceryData]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -109,10 +114,6 @@ const AdminGroceryItemNotificationGrid = () => {
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  // const handlePageChange = (pageNumber) => {
-  //   setCurrentPage(pageNumber);
-  // };
 
   // Paginate after sorting newest-first
   const indexOfLastTicket = currentPage * rowsPerPage;
@@ -153,6 +154,28 @@ const AdminGroceryItemNotificationGrid = () => {
 
         <div className={`container ${isMobile ? "w-100" : "w-75"}`}>
           <h2 className="text-center">Grocery Item Notifications</h2>
+          <div className="d-flex mb-3">
+            <button
+              className={`btn mx-2 ${activeTab === "Open" ? "btn-warning" : "btn-outline-warning"}`}
+              onClick={() => setActiveTab("Open")}
+            >
+              Open Tickets
+            </button>
+
+            <button
+              className={`btn mx-2 ${activeTab === "Closed" ? "btn-danger" : "btn-outline-danger"}`}
+              onClick={() => setActiveTab("Closed")}
+            >
+              Closed Tickets
+            </button>
+
+            <button
+              className={`btn mx-2 ${activeTab === "Delivered" ? "btn-success" : "btn-outline-success"}`}
+              onClick={() => setActiveTab("Delivered")}
+            >
+              Delivered Tickets
+            </button>
+          </div>
           <div className={`d-flex ${isMobile ? "flex-column" : "flex-wrap"} align-items-center justify-content-between`}>
             <div className={`form-group ${isMobile ? "col-12" : "col-12 col-md-2"} m-2`}>
               <label>State</label>

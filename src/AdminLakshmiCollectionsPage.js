@@ -11,14 +11,11 @@ import { Button, Modal } from "react-bootstrap";
 const AdminLakshmiCollectionsPage = () => {
   const navigate = useNavigate();
   const { collectionId } = useParams();
-
   const [lakshmiCollectionId, setLakshmiCollectionId] = useState("");
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-
   const [grandTotal, setGrandTotal] = useState("");
   const [totalItemsSelected, setTotalItemsSelected] = useState("");
-
   const [state, setState] = useState("");
   const [district, setDistrict] = useState("");
   const [pincode, setPincode] = useState("");
@@ -27,16 +24,12 @@ const AdminLakshmiCollectionsPage = () => {
   const [utrTransactionNumber, setUTRTransactionNumber] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const [customerName, setCustomerName] = useState("");
-
   const [collectionDetails, setCollectionDetails] = useState("");
   const [collectionItems, setCollectionItems] = useState([]);
-
-  // NEW: image state & zoom state (mirrors list page)
   const [imageUrls, setImageUrls] = useState({});
   const [imageLoading, setImageLoading] = useState(true);
   const [showZoomModal, setShowZoomModal] = useState(false);
   const [zoomImage, setZoomImage] = useState("");
-
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -54,22 +47,17 @@ const AdminLakshmiCollectionsPage = () => {
     e.preventDefault();
   };
 
-  // Helper: download image (supports JSON base64 and raw blob)
   const downloadImage = async (fileName) => {
     if (!fileName) return null;
-
     const res = await fetch(
       `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
         fileName
       )}`
     );
-
     if (!res.ok) {
       throw new Error(`Image fetch failed: ${res.status} ${res.statusText}`);
     }
-
     const ct = (res.headers.get("content-type") || "").toLowerCase();
-
     if (ct.includes("application/json")) {
       const data = await res.json();
       const b64 =
@@ -77,14 +65,12 @@ const AdminLakshmiCollectionsPage = () => {
       if (!b64 || typeof b64 !== "string" || b64.trim().length === 0) {
         return null;
       }
-      // Build a blob from base64 (prefer not to use a data URL to keep parity with list page)
       const byteChars = atob(b64);
       const byteNums = new Array(byteChars.length);
       for (let i = 0; i < byteChars.length; i++) byteNums[i] = byteChars.charCodeAt(i);
       const blob = new Blob([new Uint8Array(byteNums)], { type: "image/jpeg" });
       return URL.createObjectURL(blob);
     }
-
     const blob = await res.blob();
     return URL.createObjectURL(blob);
   };
@@ -98,15 +84,12 @@ const AdminLakshmiCollectionsPage = () => {
           return;
         }
         setImageLoading(true);
-
         const response = await fetch(
           `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/LakshmiCollection/GetLakshmicollectionsById?id=${collectionId}`
         );
         if (!response.ok) throw new Error("Failed to fetch collection details");
         const data = await response.json();
-
         setCollectionDetails(data);
-
         const items = (data?.categoriess || []).map((p, index) => ({
           id: `${data.id}-${index}`,
           productName: p.productName,
@@ -120,7 +103,6 @@ const AdminLakshmiCollectionsPage = () => {
           noOfQuantity: p.noOfQuantity,
           productImage: p.productImage,
         }));
-
         setLakshmiCollectionId(data.lakshmiCollectionId);
         setCustomerName(data.customerName);
         setAddress(data.address);
@@ -134,19 +116,17 @@ const AdminLakshmiCollectionsPage = () => {
         setPaymentMode(data.paymentMode);
         setCollectionItems(items);
 
-        // Download each item's image like the list page
         const results = await Promise.allSettled(
           items.map(async (it) => {
             try {
               const url = await downloadImage(it.productImage);
-              return [it.id, url ? [url] : []]; // store as array to mirror list page shape
+              return [it.id, url ? [url] : []]; 
             } catch (e) {
               console.warn("Image fetch failed for", it.productImage, e);
               return [it.id, []];
             }
           })
         );
-
         const nextMap = {};
         for (const r of results) {
           if (r.status === "fulfilled") {
@@ -162,10 +142,7 @@ const AdminLakshmiCollectionsPage = () => {
         setImageLoading(false);
       }
     };
-
     fetchCollectionData();
-
-    // Cleanup: revoke any blob: URLs on unmount or refetch
     return () => {
       Object.values(imageUrls).forEach((arr) => {
         (arr || []).forEach((src) => {
@@ -339,10 +316,6 @@ const AdminLakshmiCollectionsPage = () => {
               <div className="row">
                 <div className="row ticket-info">
                   <div className="col-md-6">
-                    {/* <p>
-                      <strong className="me-2"> Selected Colour:</strong>
-                      {collectionItems[0]?.colour}
-                    </p> */}
                     <p>
                       <strong className="me-2"> Total Amount:</strong>
                       {`Rs ${grandTotal}/-`}

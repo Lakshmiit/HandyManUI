@@ -295,7 +295,7 @@ function getItemTime(p) {
           try {
             const res = await fetch(
               `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
-              { signal }
+              { signal }         
             );
             const json = await res.json();
             const b64 = json?.imageData || "";

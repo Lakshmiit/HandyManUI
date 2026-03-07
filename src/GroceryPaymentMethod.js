@@ -61,8 +61,7 @@ const GroceryPaymentmethod = () => {
   const [referralAmount, setReferralAmount] = useState(0);
   const [netPayable, setNetPayable] = useState(0);
   const [isOffersOrder, setIsOffersOrder] = useState(false);
-  const [firstOrderDiscount] = useState(0);
-  // const [firstOrderDiscount, setFirstOrderDiscount] = useState(0);
+  const [firstOrderDiscount, setFirstOrderDiscount] = useState(0);
   const [isNewUser, setIsNewUser] = useState(true);
   const [showConfetti, setShowConfetti] = useState(false);
   // const [cashbackMessage, setCashbackMessage] = useState("");
@@ -122,13 +121,13 @@ const GroceryPaymentmethod = () => {
   const numericGrandTotal = Number(grandTotal) || 0;
   const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;
 
-  // const loginMeta = (() => {
-  //   try {
-  //     return JSON.parse(localStorage.getItem("loginMeta") || "null") || {};
-  //   } catch {
-  //     return {};
-  //   }
-  // })();
+  const loginMeta = (() => {
+    try {
+      return JSON.parse(localStorage.getItem("loginMeta") || "null") || {};
+    } catch {
+      return {};
+    }
+  })();
 
   useEffect(() => {
     if (firstOrderDiscount > 0) {
@@ -137,107 +136,110 @@ const GroceryPaymentmethod = () => {
     }
   }, [firstOrderDiscount]);
 
-  // const mobile =
-  //   state.mobile ?? loginMeta.mobile ?? localStorage.getItem("mobile") ?? "";
+  const mobile =
+    state.mobile ?? loginMeta.mobile ?? localStorage.getItem("mobile") ?? "";
 
-  // const CheckFirstOrder = async (mobile) => {
-  //   if (!mobile) return null;
-  //   const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${encodeURIComponent(
-  //     mobile,
-  //   )}`;
-  //   try {
-  //     const res = await fetch(url);
-  //     const text = await res.text();
-  //     console.log("RAW RESPONSE:", text);
-  //     if (text.includes("Firstorder Can not be found")) {
-  //       return null;
-  //     }
-  //     let parsed;
-  //     try {
-  //       parsed = JSON.parse(text);
-  //     } catch (err) {
-  //       console.warn("Could not parse CheckFirstOrder response:", err);
-  //       return null;
-  //     }
-  //     if (parsed && !Array.isArray(parsed)) {
-  //       parsed = [parsed];
-  //     }
-  //     return Array.isArray(parsed) ? parsed : null;
-  //   } catch (error) {
-  //     console.error("API ERROR:", error);
-  //     return null;
-  //   }
-  // };
+  const CheckFirstOrder = async (mobile) => {
+    if (!mobile) return null;
+    const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${encodeURIComponent(
+      mobile,
+    )}`;
+    try {
+      const res = await fetch(url);
+      const text = await res.text();
+      console.log("RAW RESPONSE:", text);
+      if (text.includes("Firstorder Can not be found")) {
+        return null;
+      }
+      let parsed;
+      try {
+        parsed = JSON.parse(text);
+      } catch (err) {
+        console.warn("Could not parse CheckFirstOrder response:", err);
+        return null;
+      }
+      if (parsed && !Array.isArray(parsed)) {
+        parsed = [parsed];
+      }
+      return Array.isArray(parsed) ? parsed : null;
+    } catch (error) {
+      console.error("API ERROR:", error);
+      return null;
+    }
+  };
 
-  // useEffect(() => {
-  //   let cancelled = false;
-  //   (async () => {
-  //     try {
-  //       const prevOrders = await CheckFirstOrder(mobile);
-  //       if (cancelled) return;
-  //       // const campaignStart = new Date("2026-03-01T12:30:00Z");
-  //       // const campaignOrders = Array.isArray(prevOrders)  
-  //       //   ? prevOrders.filter(
-  //       //       (order) => order?.date && new Date(order.date) >= campaignStart,
-  //       //     )
-  //       //   : [];
+  useEffect(() => {
+    let cancelled = false;
 
-  //       // const usedSlabs = new Set();
-  //       // campaignOrders.forEach((order) => {
-  //       //   const originalTotal = (order.categories ?? []).reduce(
-  //       //     (sum, cat) => sum + Number(cat?.totalAmount ?? 0),
-  //       //     0,
-  //       //   );
+    (async () => {
+      try {
+        const prevOrders = await CheckFirstOrder(mobile);
+        if (cancelled) return;
 
-  //       //   console.log("Previous Order Original Total:", originalTotal);
+        const campaignStart = new Date("2026-03-01T12:30:00Z");
 
-  //       //   // if (originalTotal >= 1999) usedSlabs.add(150);
-  //       //   // else if (originalTotal >= 1499) usedSlabs.add(200);
-  //       //   // else if (originalTotal >= 999) usedSlabs.add(100);
-  //       //   // else if (originalTotal >= 499) usedSlabs.add(50);
-  //       //   // else if (originalTotal >= 299) usedSlabs.add(50);
-  //       // });
+        const campaignOrders = Array.isArray(prevOrders)  
+          ? prevOrders.filter(
+              (order) => order?.date && new Date(order.date) >= campaignStart,
+            )
+          : [];
 
-  //       console.log("🔒 Locked Slabs:", [...usedSlabs]);
+        const usedSlabs = new Set();
+        campaignOrders.forEach((order) => {
+          const originalTotal = (order.categories ?? []).reduce(
+            (sum, cat) => sum + Number(cat?.totalAmount ?? 0),
+            0,
+          );
 
-  //       const currentGT = Number(grandTotal || 0);
-  //       let discount = 0;
+          console.log("Previous Order Original Total:", originalTotal);
 
-  //       // 🎯 APPLY SLAB (STRICT RANGE CHECK)
-  //       if (currentGT >= 1999 && !usedSlabs.has(150)) {
-  //         discount = 150;
-  //       } 
-  //       // else if (
-  //       //   currentGT >= 1499 &&
-  //       //   currentGT < 1999 &&
-  //       //   !usedSlabs.has(200)
-  //       // ) {
-  //       //   discount = 200;
-  //       // }
-  //        else if (
-  //         currentGT >= 999 &&
-  //         currentGT < 1999 &&
-  //         !usedSlabs.has(100)
-  //       ) {
-  //         discount = 150;
-  //       } else if (currentGT >= 499 && currentGT < 999 && !usedSlabs.has(50)) {
-  //         discount = 100;
-  //       } 
-  //       // else if (currentGT >= 299 && currentGT < 499 && !usedSlabs.has(50)) {
-  //       //   discount = 50;
-  //       // }
+          if (originalTotal >= 1999) usedSlabs.add(150);
+          else if (originalTotal >= 1499) usedSlabs.add(200);
+          else if (originalTotal >= 999) usedSlabs.add(100);
+          else if (originalTotal >= 499) usedSlabs.add(50);
+          else if (originalTotal >= 299) usedSlabs.add(50);
+        });
 
-  //       setFirstOrderDiscount(discount);
-  //       console.log("🎁 Applied Discount:", discount);
-  //     } catch (err) {
-  //       console.error("Cashback check failed:", err);
-  //       if (!cancelled) setFirstOrderDiscount(0);
-  //     }
-  //   })();
-  //   return () => {
-  //     cancelled = true;
-  //   };
-  // }, [mobile, grandTotal]);
+        console.log("🔒 Locked Slabs:", [...usedSlabs]);
+
+        const currentGT = Number(grandTotal || 0);
+        let discount = 0;
+
+        // 🎯 APPLY SLAB (STRICT RANGE CHECK)
+        if (currentGT >= 1999 && !usedSlabs.has(150)) {
+          discount = 150;
+        } 
+        else if (
+          currentGT >= 1499 &&
+          currentGT < 1999 &&
+          !usedSlabs.has(200)
+        ) {
+          discount = 200;
+        }
+         else if (
+          currentGT >= 999 &&
+          currentGT < 1999 &&
+          !usedSlabs.has(100)
+        ) {
+          discount = 150;
+        } else if (currentGT >= 499 && currentGT < 999 && !usedSlabs.has(50)) {
+          discount = 100;
+        } 
+        else if (currentGT >= 299 && currentGT < 499 && !usedSlabs.has(50)) {
+          discount = 50;
+        }
+
+        setFirstOrderDiscount(discount);
+        console.log("🎁 Applied Discount:", discount);
+      } catch (err) {
+        console.error("Cashback check failed:", err);
+        if (!cancelled) setFirstOrderDiscount(0);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [mobile, grandTotal]);
 
   const getReferralRecord = async (userId) => {
     if (!userId) return null;
@@ -588,7 +590,7 @@ const GroceryPaymentmethod = () => {
         userId: userId,
         martId: martId,
         date: new Date(),
-        grandTotal: String(grandTotal),
+        grandTotal: String(netPayables),
         totalItemsSelected: totalItemsSelected,
         status: "Open",
         paymentMode: selectedPayment,
@@ -1227,7 +1229,7 @@ const GroceryPaymentmethod = () => {
                   </tr>
                 )}
 
-                {/* {firstOrderDiscount > 0 && (
+                {firstOrderDiscount > 0 && (
                   <tr>
                     <td style={{ width: "40%", fontSize: "14px" }}>
                       Cash Back
@@ -1237,9 +1239,9 @@ const GroceryPaymentmethod = () => {
                       {`₹${firstOrderDiscount} /-`}
                     </td>
                   </tr>
-                )} */}
+                )}
 
-                {/* {walletAmount > 0 && (
+                {walletAmount > 0 && (
                   <tr>
                     <td style={{ width: "40%", fontSize: "14px", color: 'red' }}>
                      First Order Wallet Amount
@@ -1249,14 +1251,14 @@ const GroceryPaymentmethod = () => {
                       {`₹${walletAmount} /-`}
                     </td>     
                   </tr>
-                )} */}
+                )}
                 {/* {Number(referralAmount) > 0 && (
               <tr>
                 <td style={{ width: "40%", fontSize: "14px" }}>Referral Earn Amount</td>
                 <td style={{ width: "40%", color: "red" }}>- Rs {referralAmount} /-</td>
               </tr>
             )} */}
-                {/* <tr>
+                <tr>
                   <td
                     style={{ width: "40%", fontSize: "14px", fontWeight: 600 }}
                   >
@@ -1265,7 +1267,7 @@ const GroceryPaymentmethod = () => {
                   <td style={{ width: "40%", fontWeight: 700 }}>
                     Rs {netPayables} /-
                   </td>
-                </tr> */}
+                </tr>
               </tbody>
             </table>
 
