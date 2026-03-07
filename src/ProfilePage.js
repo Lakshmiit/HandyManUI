@@ -73,7 +73,7 @@ import UnbeatableImg from './img/MilkOffers.jpeg';
 import Above45Img from './img/Above45.jpeg'; 
 // import SaleImg from './img/SaleOffer.jpeg'; 
 // import { initPushNotifications } from "./NotificationService.js";
-import DeliveryImg from './img/FreeDelivery.jpeg';
+// import DeliveryImg from './img/FreeDelivery.jpeg';
 import AddIcCallIcon from '@mui/icons-material/AddIcCall';
 import RoyalImg from './img/RoyalUpma.jpeg';
 import HomeElectricalImg from './img/HomeElectrical.jpeg';
@@ -1796,11 +1796,14 @@ const updateLocalStorageCart = (product, qty) => {
           )}
         </Modal.Body>
       </Modal>
-              <div className="text-primary fw-bold fs-5 ">
+              <div className="text-primary fw-bold fs-5">
                 Welcome{" "}
                 <small className="text-dark">
                   {profile.fullName}
                 </small>
+                <div className="text-danger fw-bold mt-2" style={{ fontSize: "14px" }}>
+                  Handyman Service Provider will be under Maintenance Today (Saturday) from 6:00 PM to Tomorrow (Sunday) 5:00 AM.
+                </div>
               </div>
             </div>
             </div>
@@ -1868,19 +1871,10 @@ const updateLocalStorageCart = (product, qty) => {
   
         {/* Address with Location */}
         <div className="col-md-9">
-          <div style={{ cursor: "pointer"}}>
-                        <img
-                          src={DeliveryImg}
-                          className="d-block w-100 img-fluid rounded mb-2"
-                          style={{ objectFit: "contain" }}
-                          alt="Poster"
-                        /> 
-                      </div>
           {/* HOME APPLIANCES */}
     <div
       className="shadow-lg rounded-4 p-3 mb-2"
       style={{
-      // background: "linear-gradient(90deg, #FFB300 0%, #FFC107 50%, #FF9800 100%)",
       color: "#000",
       }}
     >
