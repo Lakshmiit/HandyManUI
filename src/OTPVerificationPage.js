@@ -748,10 +748,10 @@ const OTPVerificationPage = () => {
     }
   }, []);
 
-  const handleBothMethods = (e) => {
-    e.preventDefault();
-    handleOTPVerification(e);
-  };
+  // const handleBothMethods = (e) => {
+  //   e.preventDefault();
+  //   handleOTPVerification(e);
+  // };
 
   return (
     <div className="h-90  mt-2 d-flex align-items-center py-2 flex-column">
