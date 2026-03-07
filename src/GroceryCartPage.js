@@ -11,11 +11,11 @@ import "./App.css";
 import CartImg from "./img/Cart.jpeg";
 import { useNavigate, useParams } from "react-router-dom";
 import Footer from "./Footer.js";
-import { useLocation } from "react-router-dom";
+// import { useLocation } from "react-router-dom";
 
 const GroceryCartPage = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  // const location = useLocation();
   const { userId } = useParams();
   const { userType } = useParams();
   const [cartItems, setCartItems] = useState([]);
@@ -25,60 +25,56 @@ const GroceryCartPage = () => {
   const [grandSummary, setGrandSummary] = useState({ items: 0, total: 0 });
   const [imageBlobMap, setImageBlobMap] = useState({});
   const [limitMap, setLimitMap] = useState({});
-  const [MIN_ORDER_TOTAL, setMinOrderTotal] = useState(100);
+  const [MIN_ORDER_TOTAL] = useState(100);
+  // const [MIN_ORDER_TOTAL, setMinOrderTotal] = useState(100);
+  // const mobileNumber = location.state?.mobileNumber || localStorage.getItem("customerMobileNumber");
 
-  const mobileNumber =
-    location.state?.mobileNumber ||
-    localStorage.getItem("customerMobileNumber");
-  useEffect(() => {
-    const checkUserOrder = async () => {
-      if (!mobileNumber) return;
-      await CheckFirstOrder(mobileNumber);
-      setMinOrderTotal(100);
-    };
-    checkUserOrder();
-  }, [mobileNumber]);
+  // useEffect(() => {
+  //   const checkUserOrder = async () => {
+  //     if (!mobileNumber) return;
+  //     const result = await CheckFirstOrder(mobileNumber);
+  //     if (result === null) {
+  //       setMinOrderTotal(150);
+  //     } else {
+  //       setMinOrderTotal(100);
+  //     }
+  //   };
+  //   checkUserOrder();
+  // }, [mobileNumber]);
 
+  // const CheckFirstOrder = async (mobile) => {
+  //   if (!mobile) return null;
+  //   const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${encodeURIComponent(
+  //     mobile,
+  //   )}`;
 
-
-  const CheckFirstOrder = async (mobile) => {
-    if (!mobile) return null;
-    const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${encodeURIComponent(
-      mobile,
-    )}`;
-
-    try {
-      const res = await fetch(url);
-      const text = await res.text();
-      console.log("RAW RESPONSE:", text);
-      // ✅ First order (API returns this text)
-      if (text.toLowerCase().includes("firstorder can not be found")) {
-        return null;
-      }
-      let parsed;
-      try {
-        parsed = JSON.parse(text);
-      } catch (err) {
-        console.warn("Could not parse CheckFirstOrder response:", err);
-        return null;
-      }
-      if (parsed && !Array.isArray(parsed)) {
-        parsed = [parsed];
-      }
-      return Array.isArray(parsed) ? parsed : null;
-    } catch (error) {
-      console.error("API ERROR:", error);
-      return null;
-    }
-  };
+  //   try {
+  //     const res = await fetch(url);
+  //     const text = await res.text();
+  //     console.log("RAW RESPONSE:", text);
+  //     // ✅ First order (API returns this text)
+  //     if (text.toLowerCase().includes("firstorder can not be found")) {
+  //       return null;
+  //     }
+  //     let parsed;
+  //     try {
+  //       parsed = JSON.parse(text);
+  //     } catch (err) {
+  //       console.warn("Could not parse CheckFirstOrder response:", err);
+  //       return null;
+  //     }
+  //     if (parsed && !Array.isArray(parsed)) {
+  //       parsed = [parsed];
+  //     }
+  //     return Array.isArray(parsed) ? parsed : null;
+  //   } catch (error) {
+  //     console.error("API ERROR:", error);
+  //     return null;
+  //   }
+  // };
 
   const IMAGE_DOWNLOAD =
     "https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=";
-
-  function toNum(v, f = 0) {
-    const n = Number(v);
-    return Number.isFinite(n) ? n : f;
-  }
 
   const getDynamicLimit = (productName) => {
     const key = String(productName || "")
@@ -89,24 +85,19 @@ const GroceryCartPage = () => {
 
   useEffect(() => {
     if (!cartItems.length) return;
-
     const uniqueNames = Array.from(
       new Set(cartItems.map((x) => x.name).filter(Boolean)),
     );
-
     let cancelled = false;
-
     (async () => {
       try {
         const results = await Promise.allSettled(
           uniqueNames.map(async (name) => {
             const res = await fetch(
-              // handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net
               `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
                 name,
               )}`,
             );
-
             const data = await res.json();
             const arr = Array.isArray(data) ? data : [];
             const best = arr
@@ -114,7 +105,6 @@ const GroceryCartPage = () => {
               .sort(
                 (a, b) => Date.parse(b?.date || 0) - Date.parse(a?.date || 0),
               )[0];
-
             const limitValue = Number(best?.limit);
             return {
               name,
@@ -150,13 +140,6 @@ const GroceryCartPage = () => {
     limitMapRef.current = limitMap;
   }, [limitMap]);
 
-  const getDynamicLimitRef = (name) => {
-    const key = String(name || "")
-      .trim()
-      .toLowerCase();
-    return limitMapRef.current[key] ?? Infinity;
-  };
-
   function getFilenameFromValue(value) {
     if (!value) return "";
     const v = String(value);
@@ -172,205 +155,6 @@ const GroceryCartPage = () => {
     return `${IMAGE_DOWNLOAD}${encodeURIComponent(String(filenameOrUrl))}`;
   }
 
-  const refreshStocksOnce = React.useCallback(async (signal) => {
-    const norm = (s) =>
-      String(s || "")
-        .toLowerCase()
-        .trim();
-    const isOffersRow = (obj) => norm(obj?.category) === "offers";
-
-    function pickBestNonOffer(items, name) {
-      const pool = (items || []).filter((it) => !isOffersRow(it));
-      if (!pool.length) return null;
-      const lname = norm(name);
-      const exact = pool.filter((it) => norm(it?.name) === lname);
-      const p = exact.length ? exact : pool;
-      return (
-        p.slice().sort((a, b) => {
-          const aStock = Number(a?.stockLeft || 0);
-          const bStock = Number(b?.stockLeft || 0);
-          if ((bStock > 0) !== (aStock > 0)) {
-  return bStock > 0 ? 1 : -1;
-}
-          return Date.parse(b?.date || 0) - Date.parse(a?.date || 0);
-        })[0] || null
-      );
-    }
-    const saved = JSON.parse(localStorage.getItem("allCategories") || "[]");
-    const flat = saved
-      .flatMap((cat) =>
-        (cat.products || []).map((p) => ({
-          categoryName: cat.categoryName,
-          productName: p.productName || p.name || "",
-          qty: Math.min(
-            toNum(p.qty, 0),
-            getDynamicLimitRef(p.productName || p.name || ""),
-          ),
-          mrp: toNum(p.mrp, 0),
-          discount: toNum(p.discount, 0),
-          price: toNum(p.afterDiscountPrice ?? p.price, 0),
-          stockLeft: toNum(p.stockLeft, 0),
-          code: p.code,
-          units: p.units,
-          image: p.image ?? p.productImage ?? null,
-        })),
-      )
-      .filter((x) => x.qty > 0 && x.productName);
-    if (!flat.length) return;
-    const uniqueNames = Array.from(
-      new Set(flat.map((x) => x.productName.trim())),
-    );
-    const lookups = await Promise.allSettled(
-      uniqueNames.map(async (name) => {
-        const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
-          name,
-        )}`;
-        const res = await fetch(url, { signal });
-        const text = await res.text();
-        let data = [];
-        try {
-          data = text ? JSON.parse(text) : [];
-        } catch {
-          data = [];
-        }
-        return { name, items: Array.isArray(data) ? data : data ? [data] : [] };
-      }),
-    );
-    const stockMap = new Map();
-    lookups.forEach((r) => {
-      if (r.status !== "fulfilled") return;
-      const { name, items } = r.value || {};
-      const best = pickBestNonOffer(items, name);
-      if (!best) return;
-      const newStock = toNum(best?.stockLeft, null);
-      if (newStock !== null) stockMap.set(name, newStock);
-    });
-
-    if (!stockMap.size) return;
-    const updated = saved.map((cat) => ({
-      ...cat,
-      products: (cat.products || [])
-        .map((p) => {
-          const pname = p.productName || p.name || "";
-          if (!pname) return p;
-          const latestStock = stockMap.get(pname);
-          if (latestStock == null) return p;
-          const limit = getDynamicLimitRef(p.productName || p.name || "");
-          const currentQty = Math.min(toNum(p.qty, 0), limit);
-          const clampedQty = Math.max(0, Math.min(currentQty, latestStock));
-          return {
-            ...p,
-            stockLeft: String(latestStock),
-            qty: clampedQty,
-          };
-        })
-        .filter((p) => toNum(p.qty, 0) > 0),
-    }));
-    localStorage.setItem("allCategories", JSON.stringify(updated));
-    const allItems = updated
-      .flatMap((cat) =>
-        (cat.products || []).map((p, idx) => {
-          const persisted = p.image ?? p.productImage ?? "";
-          const imageFilename = getFilenameFromValue(persisted);
-          const imageUrl = imageFilename
-            ? fileToUrl(imageFilename)
-            : typeof persisted === "string"
-              ? persisted
-              : "";
-          return {
-            id: `${cat.categoryName}-${p.productId ?? p.id ?? idx}`,
-            productId: p.productId ?? p.id ?? idx,
-            name: p.productName ?? p.name ?? "",
-            category: cat.categoryName,
-            qty: toNum(p.qty, 0),
-            mrp: toNum(p.mrp, 0),
-            discount: toNum(p.discount, 0),
-            price: toNum(p.afterDiscountPrice ?? p.price, 0),
-            stockLeft: toNum(p.stockLeft, 0),
-            code: p.code,
-            units: p.units,
-            imageFilename,
-            imageUrl,
-          };
-        }),
-      )
-      .filter((it) => it.qty > 0 && Number(it.stockLeft) > 0);
-    setCartItems(allItems);
-    setGrandSummary({
-      items: allItems.reduce((s, it) => s + toNum(it.qty, 0), 0),
-      total: Math.round(
-        allItems.reduce(
-          (s, it) => s + toNum(it.price, 0) * toNum(it.qty, 0),
-          0,
-        ),
-      ),
-    });
-  }, []);
-
-  useEffect(() => {
-    const ctrl = new AbortController();
-    const tick = () => {
-      if (ctrl.signal.aborted) return;
-      refreshStocksOnce(ctrl.signal).catch((e) => {
-        if (e?.name !== "AbortError") console.warn("Stock refresh failed:", e);
-      });
-    };
-
-    tick();
-    const id = setInterval(tick, 5000);
-    return () => {
-      clearInterval(id);
-      ctrl.abort();
-    };
-  }, [refreshStocksOnce]);
-
-  const buildCartFromStorage = React.useCallback(() => {
-    const saved = JSON.parse(localStorage.getItem("allCategories") || "[]");
-
-    const items = saved.flatMap((cat) =>
-      (cat.products || [])
-        .filter((p) => Number(p.qty) > 0)
-        .map((p, idx) => {
-          const persisted = p.image ?? p.productImage ?? "";
-          const imageFilename = getFilenameFromValue(persisted);
-          const imageUrl = imageFilename
-            ? fileToUrl(imageFilename)
-            : typeof persisted === "string"
-              ? persisted
-              : "";
-          const rawQty = Number(p.qty);
-          const limit = getDynamicLimitRef(p.productName ?? p.name ?? "");
-          const stock = Number(p.stockLeft || Infinity);
-          return {
-            id: `${cat.categoryName}-${p.productId ?? p.id ?? idx}`,
-            productId: p.productId ?? p.id ?? idx,
-            name: p.productName ?? p.name ?? "",
-            category: cat.categoryName,
-            qty: Math.min(rawQty, limit, stock),
-            mrp: Number(p.mrp || 0),
-            discount: Number(p.discount || 0),
-            price: Number(p.afterDiscountPrice || p.price || 0),
-            stockLeft: Number(p.stockLeft || 0),
-            code: p.code,
-            units: p.units,
-            imageFilename,
-            imageUrl,
-          };
-        }),
-    );
-
-    return items;
-  }, []);
-
-  useEffect(() => {
-    const items = buildCartFromStorage();
-    setCartItems(items);
-    setGrandSummary({
-      items: items.reduce((s, it) => s + it.qty, 0),
-      total: Math.round(items.reduce((s, it) => s + it.price * it.qty, 0)),
-    });
-  }, [buildCartFromStorage]);
-
   useEffect(() => {
     const filenames = Array.from(
       new Set(
@@ -381,7 +165,6 @@ const GroceryCartPage = () => {
       ),
     );
     if (!filenames.length) return;
-
     let cancelled = false;
     (async () => {
       try {
@@ -425,6 +208,10 @@ const GroceryCartPage = () => {
   }, [cartItems, imageBlobMap]);
 
   const writeBackToStorage = (items) => {
+  if (!items.length) {
+    localStorage.removeItem("allCategories"); 
+    return;
+  }
     const grouped = items.reduce((acc, it) => {
       (acc[it.category] ||= []).push({
         productId: it.productId,
@@ -436,11 +223,8 @@ const GroceryCartPage = () => {
         stockLeft: it.stockLeft,
         code: it.code,
         units: it.units,
-        image:
-          it.imageFilename ||
-          getFilenameFromValue(it.imageUrl) ||
-          it.imageUrl ||
-          null,
+        image: it.imageFilename || getFilenameFromValue(it.imageUrl) ||
+          it.imageUrl || null,
       });
       return acc;
     }, {});
@@ -453,58 +237,72 @@ const GroceryCartPage = () => {
     localStorage.setItem("allCategories", JSON.stringify(allCategories));
   };
 
-  const handleQtyChange = (rowId, delta) => {
-    setCartItems((prev) => {
-      const next = prev
-        .map((it) => {
-          if (it.id !== rowId) return it;
-
-          const stockMax = Number.isFinite(it.stockLeft)
-            ? it.stockLeft
-            : Infinity;
-          const limitMax = getDynamicLimit(it.name);
-          const maxAllowed = Math.min(stockMax, limitMax);
-
-          const currentQty = Number(it.qty || 0);
-          const proposed = currentQty + delta;
-          const clamped = Math.max(0, Math.min(proposed, maxAllowed));
-
-          return { ...it, qty: clamped };
-        })
-        .filter((it) => it.qty > 0);
-
-      writeBackToStorage(next);
-      setGrandSummary(computeTotals(next));
-      return next;
-    });
-  };
-
-  const computeTotals = (items) => ({
-    items: items.reduce((s, it) => s + Number(it.qty || 0), 0),
-    total: Math.round(
-      items.reduce(
-        (s, it) => s + Number(it.price || 0) * Number(it.qty || 0),
-        0,
-      ),
-    ),
+  const handleQtyChange = (id, change) => {
+  setCartItems((prev) => {
+    const updated = prev.map((item) => {
+      if (item.id !== id) return item;
+      const limit = getDynamicLimit(item.name);
+      const stock = Number(item.stockLeft || Infinity);
+      const maxAllowed = Math.min(limit, stock);
+      let newQty = item.qty + change;
+      if (newQty > maxAllowed) newQty = maxAllowed;
+      if (newQty < 0) newQty = 0;
+      return { ...item, qty: newQty };
+    }).filter(item => item.qty > 0); 
+    if (updated.length === 0) {
+      localStorage.removeItem("allCategories");
+    } else {
+      writeBackToStorage(updated);
+    }
+    setGrandSummary(computeTotals(updated));
+    return updated;
   });
+};
 
+ const computeTotals = (items) => {
+  let itemsCount = 0;
+  let total = 0;
+  items.forEach((item) => {
+    itemsCount += item.qty;
+    total += item.qty * item.price;
+  });
+  return {
+    items: itemsCount,
+    total: Math.round(total),
+  };
+};
 
+useEffect(() => {
+  const saved = JSON.parse(localStorage.getItem("allCategories") || "[]");
+
+  const items = saved.flatMap((cat) =>
+    (cat.products || []).map((p, idx) => ({
+      id: `${cat.categoryName}-${p.productId ?? idx}`,
+      name: p.productName,
+      category: cat.categoryName,
+      qty: Number(p.qty),
+      price: Number(p.afterDiscountPrice || p.price || 0),
+      mrp: Number(p.mrp || 0),
+      discount: Number(p.discount || 0),
+      stockLeft: Number(p.stockLeft || 0),
+      units: p.units,
+      code: p.code
+    }))
+  );
+
+  setCartItems(items);
+  setGrandSummary(computeTotals(items));
+}, []);
 
   const handleGroceryProceed = async (event) => {
     event.preventDefault();
     const allCategories =
       JSON.parse(localStorage.getItem("allCategories")) || [];
-
-
-
- const firstOrderData = await CheckFirstOrder(mobileNumber);
-
+//  const firstOrderData = await CheckFirstOrder(mobileNumber);
   // If null → new user
-  const isNewUser = !firstOrderData;
-
-  // ✅ SIMPLE WALLET LOGIC
-  const walletValue = isNewUser ? "50" : "0";
+  // const isNewUser = !firstOrderData;
+  // // ✅ SIMPLE WALLET LOGIC
+  // const walletValue = isNewUser ? "50" : "0";
 
     const payload = {
       id: "string",
@@ -518,7 +316,7 @@ const GroceryCartPage = () => {
       transactionStatus: "",
       TransactionType: "",
       paidAmount: "",
-      walletAmount: walletValue,
+      walletAmount: "walletValue",
       customerName: "",
       address: "",
       state: "",
@@ -568,7 +366,6 @@ const GroceryCartPage = () => {
         };
       }), 
     };
-
     try {
       const response = await fetch(
         `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/UploadProductDetails`,
@@ -592,9 +389,7 @@ const GroceryCartPage = () => {
               total: roundedGrandTotal,
             }),
           );
-          navigate(
-            `/groceryPaymentMethod/${userType}/${userId}/${extractedId}`,
-          );
+          navigate( `/groceryPaymentMethod/${userType}/${userId}/${extractedId}`, );
         }
       } else {
         const errorText = await response.text();
@@ -611,6 +406,11 @@ const GroceryCartPage = () => {
     setShowZoomModal(true);
   };
 
+ const clearCart = () => {
+  setCartItems([]);
+  setGrandSummary({ items: 0, total: 0 });
+  localStorage.removeItem("allCategories");
+};
   const handleRestore = (id) => {
     clearTimeout(removalTimers.current[id]);
     delete removalTimers.current[id];
@@ -671,11 +471,17 @@ const GroceryCartPage = () => {
           marginTop: "48px",
         }}
       >
-        {cartItems.map((item) => (
+        {cartItems.map((item) => {
+        const maxAllowed = Math.min(
+          Number(item.stockLeft || Infinity),
+          getDynamicLimit(item.name)
+        );
+
+        return (
           <div
             key={item.id}
             className="cart-item d-flex align-items-start justify-content-between mb-2"
-          >
+            >
             {/* Product Image */}
             <img
               src={
@@ -771,25 +577,23 @@ const GroceryCartPage = () => {
                   style={{
                     color: "white",
                     padding: "2px",
-                    opacity: item.qty >= item.stockLeft ? 0.5 : 1,
+                    opacity: item.qty >= maxAllowed ? 0.5 : 1,
                   }}
-                  disabled={
-                    Math.min(item.qty, getDynamicLimit(item.name)) >=
-                    Math.min(item.stockLeft, getDynamicLimit(item.name))
-                  }
-                  title={
-                    Number.isFinite(item.stockLeft) &&
-                    item.qty >= item.stockLeft
-                      ? "No more stock"
-                      : "Add one"
-                  }
+                   disabled={item.qty >= maxAllowed}
+                  // title={
+                  //   Number.isFinite(item.stockLeft) &&
+                  //   item.qty >= item.stockLeft
+                  //     ? "No more stock"
+                  //     : "Add one"
+                  // }
                 >
                   <AddIcon fontSize="small" />
                 </IconButton>
               </div>
             )}
           </div>
-        ))}
+        );
+      })}
       </div>
 
       {/* Bill Details */}
@@ -823,6 +627,7 @@ const GroceryCartPage = () => {
           <span>Grand total</span>
           <span>₹{roundedGrandTotal}</span>
         </div>
+        <button onClick={clearCart}>Clear Cart</button>
       </div>
       <Divider />
       {roundedGrandTotal < MIN_ORDER_TOTAL && (
@@ -899,3 +704,4 @@ const GroceryCartPage = () => {
 };
 
 export default GroceryCartPage;
+

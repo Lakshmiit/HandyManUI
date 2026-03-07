@@ -1227,7 +1227,7 @@ const GroceryPaymentmethod = () => {
                   </tr>
                 )}
 
-                {firstOrderDiscount > 0 && (
+                {/* {firstOrderDiscount > 0 && (
                   <tr>
                     <td style={{ width: "40%", fontSize: "14px" }}>
                       Cash Back
@@ -1237,9 +1237,9 @@ const GroceryPaymentmethod = () => {
                       {`₹${firstOrderDiscount} /-`}
                     </td>
                   </tr>
-                )}
+                )} */}
 
-                {walletAmount > 0 && (
+                {/* {walletAmount > 0 && (
                   <tr>
                     <td style={{ width: "40%", fontSize: "14px", color: 'red' }}>
                      First Order Wallet Amount
@@ -1249,14 +1249,14 @@ const GroceryPaymentmethod = () => {
                       {`₹${walletAmount} /-`}
                     </td>     
                   </tr>
-                )}
+                )} */}
                 {/* {Number(referralAmount) > 0 && (
               <tr>
                 <td style={{ width: "40%", fontSize: "14px" }}>Referral Earn Amount</td>
                 <td style={{ width: "40%", color: "red" }}>- Rs {referralAmount} /-</td>
               </tr>
             )} */}
-                <tr>
+                {/* <tr>
                   <td
                     style={{ width: "40%", fontSize: "14px", fontWeight: 600 }}
                   >
@@ -1265,7 +1265,7 @@ const GroceryPaymentmethod = () => {
                   <td style={{ width: "40%", fontWeight: 700 }}>
                     Rs {netPayables} /-
                   </td>
-                </tr>
+                </tr> */}
               </tbody>
             </table>
 
