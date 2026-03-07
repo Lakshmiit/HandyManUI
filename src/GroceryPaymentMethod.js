@@ -588,7 +588,7 @@ const GroceryPaymentmethod = () => {
         userId: userId,
         martId: martId,
         date: new Date(),
-        grandTotal: String(netPayables),
+        grandTotal: String(grandTotal),
         totalItemsSelected: totalItemsSelected,
         status: "Open",
         paymentMode: selectedPayment,
