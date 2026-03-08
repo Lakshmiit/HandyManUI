@@ -56,26 +56,28 @@ const GroceryPaymentmethod = () => {
   const [shouldBlink, setShouldBlink] = useState(false);
   const [groceryId, setgroceryId] = useState();
   const [groceryData, setgroceryData] = useState();
-  const [referralRec, setReferralRec] = useState(null);
+  const [referralRec] = useState(null);
+  // const [referralRec, setReferralRec] = useState(null);
   const [referralPoints, setReferralPoints] = useState(0);
   const [referralAmount, setReferralAmount] = useState(0);
   const [netPayable, setNetPayable] = useState(0);
   const [isOffersOrder, setIsOffersOrder] = useState(false);
-  const [firstOrderDiscount, setFirstOrderDiscount] = useState(0);
+  const [firstOrderDiscount] = useState(0);
+  // const [firstOrderDiscount, setFirstOrderDiscount] = useState(0);
   const [isNewUser, setIsNewUser] = useState(true);
   const [showConfetti, setShowConfetti] = useState(false);
   // const [cashbackMessage, setCashbackMessage] = useState("");
   // const [date, setDate] = useState("");
   const isGuestName = (name) => (name ?? "").trim().toLowerCase() === "guest";
-  const readServerPoints = (record) => {
-    const raw =
-      record?.referralPoints ??
-      record?.referralpoints ??
-      record?.ReferralPoints ??
-      0;
-    const n = Number(raw);
-    return Number.isFinite(n) ? n : 0;
-  };
+  // const readServerPoints = (record) => {
+  //   const raw =
+  //     record?.referralPoints ??
+  //     record?.referralpoints ??
+  //     record?.ReferralPoints ??
+  //     0;
+  //   const n = Number(raw);
+  //   return Number.isFinite(n) ? n : 0;
+  // };
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -121,13 +123,13 @@ const GroceryPaymentmethod = () => {
   const numericGrandTotal = Number(grandTotal) || 0;
   const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;
 
-  const loginMeta = (() => {
-    try {
-      return JSON.parse(localStorage.getItem("loginMeta") || "null") || {};
-    } catch {
-      return {};
-    }
-  })();
+  // const loginMeta = (() => {
+  //   try {
+  //     return JSON.parse(localStorage.getItem("loginMeta") || "null") || {};
+  //   } catch {
+  //     return {};
+  //   }
+  // })();
 
   useEffect(() => {
     if (firstOrderDiscount > 0) {
@@ -136,149 +138,149 @@ const GroceryPaymentmethod = () => {
     }
   }, [firstOrderDiscount]);
 
-  const mobile =
-    state.mobile ?? loginMeta.mobile ?? localStorage.getItem("mobile") ?? "";
+  // const mobile =
+  //   state.mobile ?? loginMeta.mobile ?? localStorage.getItem("mobile") ?? "";
 
-  const CheckFirstOrder = async (mobile) => {
-    if (!mobile) return null;
-    const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${encodeURIComponent(
-      mobile,
-    )}`;
-    try {
-      const res = await fetch(url);
-      const text = await res.text();
-      console.log("RAW RESPONSE:", text);
-      if (text.includes("Firstorder Can not be found")) {
-        return null;
-      }
-      let parsed;
-      try {
-        parsed = JSON.parse(text);
-      } catch (err) {
-        console.warn("Could not parse CheckFirstOrder response:", err);
-        return null;
-      }
-      if (parsed && !Array.isArray(parsed)) {
-        parsed = [parsed];
-      }
-      return Array.isArray(parsed) ? parsed : null;
-    } catch (error) {
-      console.error("API ERROR:", error);
-      return null;
-    }
-  };
+  // const CheckFirstOrder = async (mobile) => {
+  //   if (!mobile) return null;
+  //   const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${encodeURIComponent(
+  //     mobile,
+  //   )}`;
+  //   try {
+  //     const res = await fetch(url);
+  //     const text = await res.text();
+  //     console.log("RAW RESPONSE:", text);
+  //     if (text.includes("Firstorder Can not be found")) {
+  //       return null;
+  //     }
+  //     let parsed;
+  //     try {
+  //       parsed = JSON.parse(text);
+  //     } catch (err) {
+  //       console.warn("Could not parse CheckFirstOrder response:", err);
+  //       return null;
+  //     }
+  //     if (parsed && !Array.isArray(parsed)) {
+  //       parsed = [parsed];
+  //     }
+  //     return Array.isArray(parsed) ? parsed : null;
+  //   } catch (error) {
+  //     console.error("API ERROR:", error);
+  //     return null;
+  //   }
+  // };
 
-  useEffect(() => {
-    let cancelled = false;
+  // useEffect(() => {
+  //   let cancelled = false;
 
-    (async () => {
-      try {
-        const prevOrders = await CheckFirstOrder(mobile);
-        if (cancelled) return;
+  //   (async () => {
+  //     try {
+  //       const prevOrders = await CheckFirstOrder(mobile);
+  //       if (cancelled) return;
 
-        const campaignStart = new Date("2026-03-01T12:30:00Z");
+  //       const campaignStart = new Date("2026-03-01T12:30:00Z");
 
-        const campaignOrders = Array.isArray(prevOrders)  
-          ? prevOrders.filter(
-              (order) => order?.date && new Date(order.date) >= campaignStart,
-            )
-          : [];
+  //       const campaignOrders = Array.isArray(prevOrders)  
+  //         ? prevOrders.filter(
+  //             (order) => order?.date && new Date(order.date) >= campaignStart,
+  //           )
+  //         : [];
 
-        const usedSlabs = new Set();
-        campaignOrders.forEach((order) => {
-          const originalTotal = (order.categories ?? []).reduce(
-            (sum, cat) => sum + Number(cat?.totalAmount ?? 0),
-            0,
-          );
+  //       const usedSlabs = new Set();
+  //       campaignOrders.forEach((order) => {
+  //         const originalTotal = (order.categories ?? []).reduce(
+  //           (sum, cat) => sum + Number(cat?.totalAmount ?? 0),
+  //           0,
+  //         );
 
-          console.log("Previous Order Original Total:", originalTotal);
+  //         console.log("Previous Order Original Total:", originalTotal);
 
-          if (originalTotal >= 1999) usedSlabs.add(150);
-          else if (originalTotal >= 1499) usedSlabs.add(200);
-          else if (originalTotal >= 999) usedSlabs.add(100);
-          else if (originalTotal >= 499) usedSlabs.add(50);
-          else if (originalTotal >= 299) usedSlabs.add(50);
-        });
+  //         if (originalTotal >= 1999) usedSlabs.add(150);
+  //         else if (originalTotal >= 1499) usedSlabs.add(200);
+  //         else if (originalTotal >= 999) usedSlabs.add(100);
+  //         else if (originalTotal >= 499) usedSlabs.add(50);
+  //         else if (originalTotal >= 299) usedSlabs.add(50);
+  //       });
 
-        console.log("🔒 Locked Slabs:", [...usedSlabs]);
+  //       console.log("🔒 Locked Slabs:", [...usedSlabs]);
 
-        const currentGT = Number(grandTotal || 0);
-        let discount = 0;
+  //       const currentGT = Number(grandTotal || 0);
+  //       let discount = 0;
 
-        // 🎯 APPLY SLAB (STRICT RANGE CHECK)
-        if (currentGT >= 1999 && !usedSlabs.has(150)) {
-          discount = 150;
-        } 
-        else if (
-          currentGT >= 1499 &&
-          currentGT < 1999 &&
-          !usedSlabs.has(200)
-        ) {
-          discount = 200;
-        }
-         else if (
-          currentGT >= 999 &&
-          currentGT < 1999 &&
-          !usedSlabs.has(100)
-        ) {
-          discount = 150;
-        } else if (currentGT >= 499 && currentGT < 999 && !usedSlabs.has(50)) {
-          discount = 100;
-        } 
-        else if (currentGT >= 299 && currentGT < 499 && !usedSlabs.has(50)) {
-          discount = 50;
-        }
+  //       // 🎯 APPLY SLAB (STRICT RANGE CHECK)
+  //       if (currentGT >= 1999 && !usedSlabs.has(150)) {
+  //         discount = 150;
+  //       } 
+  //       else if (
+  //         currentGT >= 1499 &&
+  //         currentGT < 1999 &&
+  //         !usedSlabs.has(200)
+  //       ) {
+  //         discount = 200;
+  //       }
+  //        else if (
+  //         currentGT >= 999 &&
+  //         currentGT < 1999 &&
+  //         !usedSlabs.has(100)
+  //       ) {
+  //         discount = 150;
+  //       } else if (currentGT >= 499 && currentGT < 999 && !usedSlabs.has(50)) {
+  //         discount = 100;
+  //       } 
+  //       else if (currentGT >= 299 && currentGT < 499 && !usedSlabs.has(50)) {
+  //         discount = 50;
+  //       }
 
-        setFirstOrderDiscount(discount);
-        console.log("🎁 Applied Discount:", discount);
-      } catch (err) {
-        console.error("Cashback check failed:", err);
-        if (!cancelled) setFirstOrderDiscount(0);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [mobile, grandTotal]);
+  //       setFirstOrderDiscount(discount);
+  //       console.log("🎁 Applied Discount:", discount);
+  //     } catch (err) {
+  //       console.error("Cashback check failed:", err);
+  //       if (!cancelled) setFirstOrderDiscount(0);
+  //     }
+  //   })();
+  //   return () => {
+  //     cancelled = true;
+  //   };
+  // }, [mobile, grandTotal]);
 
-  const getReferralRecord = async (userId) => {
-    if (!userId) return null;
-    const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
-    const res = await fetch(url);
-    const text = await res.text();
-    let data = [];
-    try {
-      data = text ? JSON.parse(text) : [];
-    } catch {
-      data = [];
-    }
-    if (Array.isArray(data) && data.length > 0) {
-      data.sort((a, b) => new Date(b.date) - new Date(a.date));
-      return data[0];
-    }
-    return null;
-  };
+  // const getReferralRecord = async (userId) => {
+  //   if (!userId) return null;
+  //   const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
+  //   const res = await fetch(url);
+  //   const text = await res.text();
+  //   let data = [];
+  //   try {
+  //     data = text ? JSON.parse(text) : [];
+  //   } catch {
+  //     data = [];
+  //   }
+  //   if (Array.isArray(data) && data.length > 0) {
+  //     data.sort((a, b) => new Date(b.date) - new Date(a.date));
+  //     return data[0];
+  //   }
+  //   return null;
+  // };
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const rec = await getReferralRecord(userId);
-        if (cancelled) return;
-        setReferralRec(rec);
-        setReferralPoints(readServerPoints(rec));
-      } catch (e) {
-        console.error("Failed to load referral points:", e);
-        if (!cancelled) {
-          setReferralRec(null);
-          setReferralPoints(0);
-        }
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [userId]);
+  // useEffect(() => {
+  //   let cancelled = false;
+  //   (async () => {
+  //     try {
+  //       const rec = await getReferralRecord(userId);
+  //       if (cancelled) return;
+  //       setReferralRec(rec);
+  //       setReferralPoints(readServerPoints(rec));
+  //     } catch (e) {
+  //       console.error("Failed to load referral points:", e);
+  //       if (!cancelled) {
+  //         setReferralRec(null);
+  //         setReferralPoints(0);
+  //       }
+  //     }
+  //   })();
+  //   return () => {
+  //     cancelled = true;
+  //   };
+  // }, [userId]);
 
   useEffect(() => {
     const gt = Number(grandTotal) || 0;
