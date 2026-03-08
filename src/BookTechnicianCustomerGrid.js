@@ -29,7 +29,7 @@ const CustomerBookTechnicianGrid = () => {
   }, [technicianData]);
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/BookTechnician/GetBookTechnicianDetailsForUserList?userId=${userId}`
+    const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BookTechnician/GetBookTechnicianDetailsForUserList?userId=${userId}`
 
     axios.get(url)
       .then(response => {
@@ -53,7 +53,7 @@ const CustomerBookTechnicianGrid = () => {
   // const handleDelete = (technicianId) => {
   //   const confirmDelete = window.confirm('Are you sure you want to delete this ticket?');
   //   if (confirmDelete) {
-  //     axios.delete(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/${technicianId}`)
+  //     axios.delete(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/${technicianId}`)
   //       .then(() => {
   //         setTechncianData(prevData => prevData.filter(technician => technician.id !== technicianId));
   //         setFilteredData(prevData => prevData.filter(technician => technician.id !== technicianId));

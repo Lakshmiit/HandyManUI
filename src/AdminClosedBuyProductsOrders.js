@@ -85,7 +85,7 @@ useEffect(() => {
 useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsById/${buyProductId}`);
+        const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BuyProduct/GetBuyProductDetailsById/${buyProductId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch product data');
         }
@@ -127,7 +127,7 @@ useEffect(() => {
        setEmailAddress(data.customerEmail);
        const imageRequests =
         data.uploadInvoice?.map((photo) => fetch(
-            `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+            `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${photo}`
           )
           .then((res) => res.json()) 
             .then((data) => ({

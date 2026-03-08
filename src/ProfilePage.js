@@ -215,7 +215,7 @@ const collectionsCategories = [
   ];
 
   const IMAGE_API =
-  "https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=";
+  "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=";
 
 const ProfilePage = () => {
    const [allProducts, setAllProducts] = useState([]);
@@ -346,7 +346,7 @@ useEffect(() => {
   async function fetchProductsAndFirstImages(warm = false, signal) {
     try {
       if (!warm) setImageLoading(true);
-      const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${category}`;
+      const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${category}`;
 
       const { data: items } = await axios.get(url, { signal });
       const safeItems = (Array.isArray(items) ? items : []).map(normalizeProduct);
@@ -377,7 +377,7 @@ useEffect(() => {
       const fetchOne = async ({ productId, photo }) => {
         try {
           const res = await fetch(
-            `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`,
+            `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${photo}`,
             { signal }
           );
 
@@ -541,7 +541,7 @@ useEffect(() => {
     if (showLoader) setLoading(true);
     try {
       const res = await axios.get(
-        "https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UploadGrocery/GetAllGroceryItems"
+        "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/GetAllGroceryItems"
       );
       if (cancelled) return;
       const normalized = (Array.isArray(res.data) ? res.data : [])
@@ -678,7 +678,7 @@ useEffect(() => {
   console.log("CheckFirstOrder: starting for", profile.mobileNumber);
   const checkFirstOrder = async () => {
     try {
-      const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${profile.mobileNumber}`;
+      const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${profile.mobileNumber}`;
       const response = await fetch(url);
       const rawText = await response.text();
       console.log("CheckFirstOrder response status:", response.status);
@@ -703,7 +703,7 @@ useEffect(() => {
   const fetchDeliveryData = async () => {
     try { 
       const response = await fetch(
-        `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/GetProductDetails?id=${id}`
+        `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/GetProductDetails?id=${id}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch grocery product data");
@@ -777,7 +777,7 @@ useEffect(() => {
  useEffect(() => {
   const fetchGroceryData = async () => {
     try {
-      const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/GetMartTicketsByUserId?userId=${userId}`);
+      const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/GetMartTicketsByUserId?userId=${userId}`);
       if (!response.ok) throw new Error('Failed to fetch ticket data');
       const data = await response.json();
       const tickets = Array.isArray(data) ? data : (data && typeof data === "object" ? [data] : []);
@@ -812,7 +812,7 @@ const handleDeliveryPartnerClick = async () => {
   clickLock.current = true;
   try {
     const res = await axios.get(
-      `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/DeliveryPartner/GetDeliveryPartnerDetailsByUserId?userId=${userId}`
+      `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/DeliveryPartner/GetDeliveryPartnerDetailsByUserId?userId=${userId}`
     );
     const raw = res?.data ?? null;
     const profile = Array.isArray(raw)
@@ -880,7 +880,7 @@ const handleUpdatePaymentMethod = async () => {
     isDelivered: false,    
   };
 
-    let response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/UpdateProductDetails/${id}`, {
+    let response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/UpdateProductDetails/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -966,11 +966,11 @@ const handleDressCategoryClick = async (category) => {
           const fetchAllTickets = async () => {
             try { 
               const [ticketResponse, productResponse, technicianResponse, groceriesResponse, lakshmiResponse] = await Promise.all([
-                fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=raiseTicket`),
-                fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=buyProduct`),
-                fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=bookTechnician`),
-                fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=mart`),
-                fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=collections`),
+                fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=raiseTicket`),
+                fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=buyProduct`),
+                fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=bookTechnician`),
+                fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=mart`),
+                fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=collections`),
               ]);      
               if (!ticketResponse.ok || !productResponse.ok || !technicianResponse || !groceriesResponse || !lakshmiResponse) {
                 throw new Error("Failed to fetch ticket, product and technician data");
@@ -1073,15 +1073,15 @@ const handleCustomerCareCall = () => {
           try {
             let apiUrl = "";
             if (userType === "customer") {
-              apiUrl = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`;
+              apiUrl = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`;
             }
               else if (userType === "admin") {
-              apiUrl = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`;
+              apiUrl = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`;
             }
               else if (userType === "technician") {
-              apiUrl = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/technician/technicianProfileData?profileType=${userType}&UserId=${userId}`;
+              apiUrl = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/technician/technicianProfileData?profileType=${userType}&UserId=${userId}`;
             } else if (userType === "dealer") {
-              apiUrl = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/dealer/dealerProfileData?profileType=${userType}&UserId=${userId}`;
+              apiUrl = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/dealer/dealerProfileData?profileType=${userType}&UserId=${userId}`;
             }
             if (!apiUrl) return;
             const response = await axios.get(apiUrl);
@@ -1120,7 +1120,7 @@ const fetchImageUrl = async (photoId) => {
   try { 
     if (!photoId) return;
     const response = await axios.get(
-      `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photoId}`
+      `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${photoId}`
     );
     if (response.status === 200 && response.data.imageData) {
       const imageUrl = `data:image/jpeg;base64,${response.data.imageData}`;

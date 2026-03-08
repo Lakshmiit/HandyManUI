@@ -40,7 +40,7 @@ const [activeTab, setActiveTab] = useState("Open");
 
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/GetAllMartItems`;
+    const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/GetAllMartItems`;
 
     axios.get(url)
       .then(response => {
@@ -69,7 +69,7 @@ const [activeTab, setActiveTab] = useState("Open");
   const handleDelete = (groceryId) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this grocery?');
     if (confirmDelete) {
-      axios.delete(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/${groceryId}`)
+      axios.delete(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/${groceryId}`)
         .then(() => {
           setGroceryData(prev => prev.filter(g => g.id !== groceryId));
           setFilteredData(prev => prev.filter(g => g.id !== groceryId));

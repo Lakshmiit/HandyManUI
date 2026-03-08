@@ -56,7 +56,7 @@ const {userType} = useParams();
   useEffect(() => {
     const fetchtechnicianData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/BookTechnician/GetBookTechnician/${raiseTicketId}`);
+        const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BookTechnician/GetBookTechnician/${raiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch technician data');
         }
@@ -202,7 +202,7 @@ if (paymentMode === "technician") {
   try {
     let response
     if (paymentMode === "technician" && (paymentType === "Cash" || paymentType === "Pay Online")) {
-        response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
+        response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BookTechnician/${raiseTicketId}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -221,7 +221,7 @@ if (paymentMode === "technician") {
       navigate(`/bookTechnicianCustomerGrid/${userType}/${customerId}`);
     } 
   } else if (paymentMode === "online") {
-      response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
+      response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BookTechnician/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

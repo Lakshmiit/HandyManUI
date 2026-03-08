@@ -86,7 +86,7 @@ useLayoutEffect(() => {
     let canceled = false;
     (async () => {
       try {
-        const res = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Product/GetAllProductList`);
+        const res = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Product/GetAllProductList`);
         const list = await res.json();
         if (canceled) return;
         setProductData(Array.isArray(list) ? list : []);
@@ -112,7 +112,7 @@ useLayoutEffect(() => {
         setSelectedCategory(decoded);
         setProducts([]);
         const { data } = await axios.get(
-          `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Product/GetProductsByCategory?Category=${encodeURIComponent(decoded)}`
+          `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Product/GetProductsByCategory?Category=${encodeURIComponent(decoded)}`
         );
         setProducts(Array.isArray(data) ? data : []);
       } catch {
@@ -178,7 +178,7 @@ useLayoutEffect(() => {
     limiterRef.current(async () => {
       try {
         const res = await fetch(
-          `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(first)}`
+          `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(first)}`
         );
         const data = await res.json();
         const b64 = data?.imageData || '';
@@ -252,7 +252,7 @@ useLayoutEffect(() => {
       } else {
         try {
           const res = await fetch(
-            `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(first)}`
+            `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(first)}`
           );
           const data = await res.json();
           if (data?.imageData) {
@@ -278,7 +278,7 @@ useLayoutEffect(() => {
               url = `data:image/jpeg;base64,${c}`;
             } else {
               const res = await fetch(
-                `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`
+                `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`
               );
               const data = await res.json();
               if (!data?.imageData) return;

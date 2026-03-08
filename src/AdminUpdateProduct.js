@@ -42,7 +42,7 @@ const [stockLeft, setStockLeft] = useState('');
           const fetchProductData = async () => {
               try {
                   setLoading(true);
-                  const productResponse = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Product/${id}`);
+                  const productResponse = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Product/${id}`);
                   if (!productResponse.ok) {
                       throw new Error('Product not found');
                   }
@@ -158,7 +158,7 @@ const handleRemoveFile = (index) => {
       formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
       formData.append('fileName', fileName);
 
-      const response = await fetch('https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
+      const response = await fetch('https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/upload?filename=' + fileName, {
         method: 'POST',
         headers: {
           'Accept': 'text/plain',
@@ -209,7 +209,7 @@ const handleRemoveFile = (index) => {
     };
 
     try {
-      const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Product/${uniqueId}`, {
+      const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Product/${uniqueId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json"

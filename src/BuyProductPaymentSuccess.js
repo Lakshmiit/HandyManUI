@@ -21,7 +21,7 @@ useEffect(() => {
 }, [loading, orderBooking]);
 
 useEffect(() => {
-    fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsById/${id}`)
+    fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BuyProduct/GetBuyProductDetailsById/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setOrderBooking(data);
@@ -51,7 +51,7 @@ useEffect(() => {
         };
 
         const response = await fetch(
-          "https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/BuyProduct/buyProductEdit",
+          "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BuyProduct/buyProductEdit",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },

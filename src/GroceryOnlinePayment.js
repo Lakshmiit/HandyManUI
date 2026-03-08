@@ -17,7 +17,7 @@ const GroceryOnlinePayment = () => {
 
   // ✅ Step 1: Fetch booking details from your API
   useEffect(() => {
-    fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`)
+    fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/GetProductDetails?id=${groceryItemId}`)
       .then((res) => res.json())
       .then((data) => {
         setOrderBooking(data);

@@ -185,7 +185,7 @@ const mapApiProductToUI = (p) => {
     async function fetchProductsAndFirstImages(warm = false, signal) {
       try {   
         if (!warm) setImageLoading(true);
-        const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Product/GetProductsByCategory?Category=${encodeURIComponent(
+        const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Product/GetProductsByCategory?Category=${encodeURIComponent(
           selectedCategory
         )}`;
         const { data } = await axios.get(url, { signal });
@@ -235,7 +235,7 @@ if (Object.keys(cachedMap).length) {
         const fetchOne = async ({ productId, photo }) => {
           try {
             const res = await fetch(
-              `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
+              `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
               { signal }
             );
             const json = await res.json();

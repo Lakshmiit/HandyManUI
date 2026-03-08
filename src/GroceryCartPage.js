@@ -44,7 +44,7 @@ const GroceryCartPage = () => {
 
   const CheckFirstOrder = async (mobile) => {
     if (!mobile) return null;
-    const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${encodeURIComponent(
+    const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${encodeURIComponent(
       mobile,
     )}`;
 
@@ -74,7 +74,7 @@ const GroceryCartPage = () => {
   };
 
   const IMAGE_DOWNLOAD =
-    "https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=";
+    "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=";
 
   const getDynamicLimit = (productName) => {
     const key = String(productName || "")
@@ -94,7 +94,7 @@ const GroceryCartPage = () => {
         const results = await Promise.allSettled(
           uniqueNames.map(async (name) => {
             const res = await fetch(
-              `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
+              `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
                 name,
               )}`,
             );
@@ -368,7 +368,7 @@ useEffect(() => {
     };
     try {
       const response = await fetch(
-        `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/UploadProductDetails`,
+        `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/UploadProductDetails`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

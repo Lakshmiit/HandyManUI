@@ -62,7 +62,7 @@ const RaiseQuoteTechnicianDetails = () => {
   useEffect(() => {
     const fetchticketData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+        const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
@@ -85,7 +85,7 @@ const RaiseQuoteTechnicianDetails = () => {
         setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: ""}]);
         const imageRequests =
           data.attachments?.map((photo) => fetch(
-              `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+              `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${photo}`
             )
             .then((res) => res.json())
               .then((data) => ({
@@ -194,7 +194,7 @@ const RaiseQuoteTechnicianDetails = () => {
     };
     try {
       
-      const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -258,7 +258,7 @@ const RaiseQuoteTechnicianDetails = () => {
 //     }; 
 //     try {
 //       //imageUrls="";
-//       const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api
+//       const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api
 // /RaiseAQuote/CreateRaiseAQuote`, {
 //         method: 'POST',
 //         headers: {
@@ -283,7 +283,7 @@ const RaiseQuoteTechnicianDetails = () => {
       const fetchtechnicianData = async () => {
         try {
           const technicianResponse = await fetch(
-            `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByTechnicianId?raiseTicketId=${raiseTicketId}&TechnicianId=${userId}`
+            `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByTechnicianId?raiseTicketId=${raiseTicketId}&TechnicianId=${userId}`
           );
           if (!technicianResponse.ok) {
             throw new Error('Failed to fetch technician data');
@@ -337,7 +337,7 @@ const RaiseQuoteTechnicianDetails = () => {
 //   })), 
 //   };
 //   try {
-//     const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+//     const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/${raiseTicketId}`, {
 //       method: 'PUT',
 //       headers: {
 //         'Content-Type': 'application/json',

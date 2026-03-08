@@ -94,7 +94,7 @@
 // //     const fetchUserLikes = async () => {
 // //       try {
 // //         const response = await fetch(
-// //           `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UserLikes/GetUserLikes?UserId=${userId}`
+// //           `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UserLikes/GetUserLikes?UserId=${userId}`
 // //         );
 // //         if (!response.ok) {
 // //           throw new Error("Failed to fetch user likes");
@@ -127,7 +127,7 @@
 //     return;
 //   }
 //   try {
-//     await axios.delete(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/ChatBot?id=${messageId}`);
+//     await axios.delete(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ChatBot?id=${messageId}`);
 //     setMessages(prev => prev.filter(msg => msg.id !== messageId));
 //   } catch (error) {
 //     console.error("Error deleting message:", error);
@@ -273,7 +273,7 @@
 // //   if (['news', 'buysell', 'tolet'].includes(tabType)) {
 // //     messages.forEach(msg => {
 // //       if (!seenMessages.current.has(msg.id)) {
-// //         fetch('https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/MarkMessageSeen/UploadMessageSeenCount', {
+// //         fetch('https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/MarkMessageSeen/UploadMessageSeenCount', {
 // //           method: 'POST',
 // //           headers: { 'Content-Type': 'application/json' },
 // //           body: JSON.stringify({ id: "string", messageId: msg.id, userId })
@@ -290,7 +290,7 @@
 //   if (['news', 'buysell', 'tolet'].includes(tabType)) {
 //     messages.forEach(msg => {
 //       if (!seenMessages.current.has(msg.id)) {
-//         fetch('https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/MarkMessageSeen/UploadMessageSeenCount', {
+//         fetch('https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/MarkMessageSeen/UploadMessageSeenCount', {
 //           method: 'POST',
 //           headers: { 'Content-Type': 'application/json' },
 //           body: JSON.stringify({ id: "string", messageId: msg.id, userId })
@@ -319,7 +319,7 @@
 //   try {
 //     if (!photoId) return;
 //     const response = await axios.get(
-//       `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photoId}`
+//       `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${photoId}`
 //     );
 //     if (response.status === 200 && response.data.imageData) {
 //       const imageUrl = `data:image/jpeg;base64,${response.data.imageData}`;
@@ -334,7 +334,7 @@
 //   const fetchProfileData = async () => {
 //     try {
 //       const response = await fetch(
-//         `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`
+//         `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`
 //       );
 //       if (!response.ok) throw new Error('Failed to fetch profile data');
 //       const data = await response.json();
@@ -358,7 +358,7 @@
 //   const fetchProfileData = async () => {
 //     try {
 //       const response = await fetch(
-//         `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`
+//         `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`
 //       );
 //       if (!response.ok) throw new Error('Failed to fetch profile data');
 //       const data = await response.json();
@@ -382,7 +382,7 @@
 // //       const types = ['news', 'buysell', 'tolet'];
 // //       const counts = {};
 // //       for (const type of types) {
-// //         const res = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/ChatBot/GetChatMessagesByType?type=${type}`);
+// //         const res = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ChatBot/GetChatMessagesByType?type=${type}`);
 // //         if (!res.ok) throw new Error(`Failed to fetch ${type} messages`);
 // //         const data = await res.json();
 // //         counts[type] = data.length;
@@ -393,7 +393,7 @@
 // //       }
 // //       if (retrievedId) {
 // //         const seenRes = await fetch(
-// //           `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/ChatMessageTabSeenByUser/GetChatMessageTabSeenByUserById?id=${retrievedId}`
+// //           `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ChatMessageTabSeenByUser/GetChatMessageTabSeenByUserById?id=${retrievedId}`
 // //         );
 // //         if (!seenRes.ok) throw new Error("Failed to fetch tab seen status");
 // //         const tabData = await seenRes.json();
@@ -413,7 +413,7 @@
 //     const types = ['news', 'buysell', 'tolet'];
 //     const results = await Promise.all(
 //       types.map(type =>
-//         fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/ChatBot/GetChatMessagesByType?type=${type}`)
+//         fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ChatBot/GetChatMessagesByType?type=${type}`)
 //           .then(res => res.ok ? res.json() : [])
 //           .catch(() => [])
 //       )
@@ -428,7 +428,7 @@
 //     });
 //     // if (retrievedId) {
 //     //   const seenRes = await fetch(
-//     //     `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/ChatMessageTabSeenByUser/GetChatMessageTabSeenByUserById?id=${retrievedId}`
+//     //     `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ChatMessageTabSeenByUser/GetChatMessageTabSeenByUserById?id=${retrievedId}`
 //     //   );
 //     //   if (seenRes.ok) {
 //     //     const tabData = await seenRes.json();
@@ -456,7 +456,7 @@
 // //     // const types = ['news', 'buysell', 'tolet'];
 // //     // const counts = {};
 // //     // for (const type of types) {
-// //       const res = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/ChatBot/GetChatBotByUserId?UserId=${userId}`);
+// //       const res = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ChatBot/GetChatBotByUserId?UserId=${userId}`);
 // //       if (!res.ok) throw new Error(`Failed to fetch messages`);
 // //       const data = await res.json();
 // //      setIndividualCounts(data);
@@ -472,7 +472,7 @@
 //   // useEffect(() => {
 //   //   const fetchMessages = async () => {
 //   //     try {
-//   //       const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/ChatBot/GetChatMessagesByType?type=${tabType}`);
+//   //       const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ChatBot/GetChatMessagesByType?type=${tabType}`);
 //   //       if (!response.ok) throw new Error('Failed to fetch messages');
 //   //       const data = await response.json();
 //   //       const updatedMessages = await Promise.all(data.map(async (msg) => {
@@ -480,7 +480,7 @@
 //   //         const imageFiles = await Promise.all(
 //   //           msg.uploadFile.map(async (photo) => {
 //   //             try {
-//   //               const res = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`);
+//   //               const res = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${photo}`);
 //   //               const fileData = await res.json();
 //   //               return {
 //   //                 src: photo,
@@ -512,7 +512,7 @@
 //   useEffect(() => {
 //   const fetchMessages = async () => {
 //     try {
-//       const res = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/ChatBot/GetChatMessagesByType?type=${tabType}`);
+//       const res = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ChatBot/GetChatMessagesByType?type=${tabType}`);
 //       if (!res.ok) throw new Error('Failed to fetch messages');
 //       const data = await res.json();
 //       // Fetch all images in parallel for all messages
@@ -521,7 +521,7 @@
 //           if (!msg.uploadFile?.length) return msg;
 //           const imageFiles = await Promise.all(
 //             msg.uploadFile.map(photo =>
-//               fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`)
+//               fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${photo}`)
 //                 .then(r => r.json())
 //                 .then(fileData => ({ src: photo, imageData: fileData.imageData }))
 //                 .catch(() => null)
@@ -566,7 +566,7 @@
 //  // Fetch seen count for selected message
 // useEffect(() => {
 //   if (selectedMessage?.id) {
-//     fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/MarkMessageSeen/GetMarkMessageSeenUsers?messageId=${selectedMessage.id}`)
+//     fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/MarkMessageSeen/GetMarkMessageSeenUsers?messageId=${selectedMessage.id}`)
 //       .then(res => res.json())
 //       .then(data => {
 //         setMessageCounts(prev => ({
@@ -609,7 +609,7 @@
 //       formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
 //       formData.append('fileName', fileName);
 
-//       const response = await fetch('https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
+//       const response = await fetch('https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/upload?filename=' + fileName, {
 //         method: 'POST',
 //         headers: {
 //           'Accept': 'text/plain',
@@ -657,7 +657,7 @@
 //     NumberOfLikes: "",
 //   };
 //   try {
-//     const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/ChatBot/UploadChatBot`, {
+//     const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ChatBot/UploadChatBot`, {
 //       method: 'POST',
 //       headers: { 'Content-Type': 'application/json' },
 //       body: JSON.stringify({ ...payload, dateTime: "string" }), 
@@ -666,7 +666,7 @@
 // const uploadedImages = await Promise.all(
 //   uploadedUrls.map(async (photoId) => {
 //     try {
-//       const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photoId}`);
+//       const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${photoId}`);
 //       const data = await response.json();
 //       return {
 //         src: photoId,
@@ -712,7 +712,7 @@
 
 //   try {
 //     await axios.put(
-//       `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/ChatBot/UpdateChatBot?id=${message.id}`,
+//       `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ChatBot/UpdateChatBot?id=${message.id}`,
 //       {
 //         id: message.id,
 //         userName: message.userName,
@@ -738,7 +738,7 @@
 //     //   };
 
 //     //   await axios.put(
-//     //     `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UserLikes/UpdateUserLikes?id=${existingLike.id}&userId=${userId}`,
+//     //     `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UserLikes/UpdateUserLikes?id=${existingLike.id}&userId=${userId}`,
 //     //     updatedLike
 //     //   );
 
@@ -757,7 +757,7 @@
 //     //   };
 
 //     //   await axios.post(
-//     //     "https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UserLikes/UploadUserLikesController",
+//     //     "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UserLikes/UploadUserLikesController",
 //     //     newLike
 //     //   );
 
@@ -765,7 +765,7 @@
 //     // }
 
 //     // const res = await axios.get(
-//     //   `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UserLikes/GetUserLikes?UserId=${userId}`
+//     //   `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UserLikes/GetUserLikes?UserId=${userId}`
 //     // );
 //     // const filteredData = res.data.map((item) => ({
 //     //   id: item.id,
@@ -805,7 +805,7 @@
 // //   );
 
 // //   try {
-// //     await axios.put(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/ChatBot/UpdateChatBot?id=${message.id}`, {
+// //     await axios.put(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ChatBot/UpdateChatBot?id=${message.id}`, {
 // //       id: message.id,
 // //       userName: message.userName,
 // //       dateTime: message.dateTime,
@@ -817,7 +817,7 @@
 // //       uploadFile: message.uploadFile || [],
 // //     });
 
-// //     await axios.post("https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UserLikes/UploadUserLikesController", {
+// //     await axios.post("https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UserLikes/UploadUserLikesController", {
 // //       id: "string", 
 // //       userLikesId: "string", 
 // //       messageId: message.id,
@@ -852,7 +852,7 @@
 // // );
 
 // //   try {
-// //     await axios.put(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/ChatBot/UpdateChatBot?id=${message.id}`, {
+// //     await axios.put(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ChatBot/UpdateChatBot?id=${message.id}`, {
 // //       id: message.id,
 // //       userName: message.userName,
 // //       dateTime: message.dateTime, 
@@ -888,7 +888,7 @@
 
 // //       try {
 // //         const response = await fetch(
-// //           `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/ChatMessageTabSeenByUser/UploadChatMessageTabSeenByUser`,
+// //           `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ChatMessageTabSeenByUser/UploadChatMessageTabSeenByUser`,
 // //           {
 // //             method: 'POST',
 // //             headers: { 'Content-Type': 'application/json' },
@@ -910,7 +910,7 @@
 // //     } else if ((tabType === "buysell" || tabType === "tolet") && retrievedId) {
 // //       try {
 // //         const getResponse = await fetch(
-// //           `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/ChatMessageTabSeenByUser/GetChatMessageTabSeenByUserById?id=${retrievedId}`
+// //           `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ChatMessageTabSeenByUser/GetChatMessageTabSeenByUserById?id=${retrievedId}`
 // //         );
 // //         if (!getResponse.ok) throw new Error("Failed to fetch details by ID.");
 // //         const getData = await getResponse.json();
@@ -921,7 +921,7 @@
 // //         };
 
 // //         const putResponse = await fetch(
-// //           `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/ChatMessageTabSeenByUser/UpdateChatMessageTabSeenByUser?id=${retrievedId}`,
+// //           `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ChatMessageTabSeenByUser/UpdateChatMessageTabSeenByUser?id=${retrievedId}`,
 // //           {
 // //             method: 'PUT',
 // //             headers: { 'Content-Type': 'application/json' },

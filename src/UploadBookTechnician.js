@@ -82,7 +82,7 @@ const handleUploadJobDescription = async (e) => {
   };
   
     try {
-      const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UploadJobDescriptionBookTechnician/CreateUploadJobDescriptionBookTechnician`, {
+      const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadJobDescriptionBookTechnician/CreateUploadJobDescriptionBookTechnician`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

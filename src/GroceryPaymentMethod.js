@@ -141,7 +141,7 @@ const GroceryPaymentmethod = () => {
 
   const CheckFirstOrder = async (mobile) => {
     if (!mobile) return null;
-    const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${encodeURIComponent(
+    const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${encodeURIComponent(
       mobile,
     )}`;
     try {
@@ -243,7 +243,7 @@ const GroceryPaymentmethod = () => {
 
   const getReferralRecord = async (userId) => {
     if (!userId) return null;
-    const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
+    const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
     const res = await fetch(url);
     const text = await res.text();
     let data = [];
@@ -294,7 +294,7 @@ const GroceryPaymentmethod = () => {
       const ctrl = new AbortController();
       try {
         const res1 = await fetch(
-          `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`,
+          `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/GetProductDetails?id=${groceryItemId}`,
           { signal: ctrl.signal },
         );
         if (!res1.ok) throw new Error("Failed to fetch product details");
@@ -337,7 +337,7 @@ const GroceryPaymentmethod = () => {
           return;
         }
         const requests = productNames.map(async (name) => {
-          const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
+          const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
             name,
           )}`;
           const res = await fetch(url, { signal: ctrl.signal });
@@ -385,7 +385,7 @@ const GroceryPaymentmethod = () => {
   const fetchCustomerData = useCallback(async () => {
     try {
       const response = await fetch(
-        `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Address/GetAddressById/${userId}`,
+        `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Address/GetAddressById/${userId}`,
       );
       if (!response.ok) {
         throw new Error("Failed to fetch customer profile data");
@@ -434,7 +434,7 @@ const GroceryPaymentmethod = () => {
 
   useEffect(() => {
     axios
-      .get("https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/MasterData/getStates")
+      .get("https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/MasterData/getStates")
       .then((response) => {
         const data = response.data;
         console.log("States API Response:", data);
@@ -449,7 +449,7 @@ const GroceryPaymentmethod = () => {
   useEffect(() => {
     if (stateId) {
       axios
-        .get(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
+        .get(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/MasterData/getDistricts/${stateId}`)
         .then((response) => {
           setDistrictList(response.data);
         })
@@ -517,7 +517,7 @@ const GroceryPaymentmethod = () => {
 
     try {
       const response = await fetch(
-        `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Customer/CustomerAddressEdit`,
+        `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Customer/CustomerAddressEdit`,
         {
           method: "POST",
           headers: {
@@ -608,7 +608,7 @@ const GroceryPaymentmethod = () => {
       };
 
       let response = await fetch(
-        `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+        `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -633,7 +633,7 @@ const GroceryPaymentmethod = () => {
           };
 
           let resp = await fetch(
-            `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(id)}`,
+            `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(id)}`,
             {
               method: "PUT",
               headers: { "Content-Type": "application/json; charset=utf-8" },
@@ -643,7 +643,7 @@ const GroceryPaymentmethod = () => {
 
           if (!resp.ok) {
             resp = await fetch(
-              `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints/${encodeURIComponent(id)}`,
+              `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ReferralPoints/UpdateReferralPoints/${encodeURIComponent(id)}`,
               {
                 method: "PUT",
                 headers: { "Content-Type": "application/json; charset=utf-8" },
@@ -669,7 +669,7 @@ const GroceryPaymentmethod = () => {
 
       if (selectedPayment === "online") {
         response = await fetch(
-          `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+          `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
           {
             method: "PUT",
             headers: {
@@ -692,7 +692,7 @@ const GroceryPaymentmethod = () => {
         window.location.href = `/groceryOnlinePayment/${groceryItemId}`;
       } else if (selectedPayment === "cash") {
         response = await fetch(
-          `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+          `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
           {
             method: "PUT",
             headers: {
@@ -790,7 +790,7 @@ const GroceryPaymentmethod = () => {
           Limit: item.limit || 0,
         };
         const res = await fetch(
-          `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${encodeURIComponent(item.id)}`,
+          `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/UpdateGroceryItems?id=${encodeURIComponent(item.id)}`,
           {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
@@ -818,7 +818,7 @@ const GroceryPaymentmethod = () => {
       const mobileNumber =
         primaryAddress?.mobileNumber || primaryAddress?.mobileNumber;
       const response = await fetch(
-        "https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Auth/sendLmartsms",
+        "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Auth/sendLmartsms",
         {
           method: "POST",
           headers: {

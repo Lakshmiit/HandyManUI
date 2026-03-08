@@ -2,7 +2,7 @@ const CART_KEY = "allCategories";
 
 export const fileToUrl = (fn) =>
   fn
-    ? `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(fn)}`
+    ? `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(fn)}`
     : null;
 
 function cleanedCategories(all) {

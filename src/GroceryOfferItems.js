@@ -237,7 +237,7 @@ console.log("Mobile Number from localStorage:", mobileNumber);
     async function fetchProductsAndFirstImages(warm = false, signal) {
       try {
         if (!warm) setImageLoading(true);
-        const url = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(
+        const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(
           selectedCategory
         )}`;
         const { data: items } = await axios.get(url, { signal });
@@ -278,7 +278,7 @@ console.log("Mobile Number from localStorage:", mobileNumber);
         const fetchOne = async ({ productId, photo }) => {
           try {
             const res = await fetch(
-              `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
+              `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
                 photo
               )}`,
               { signal }

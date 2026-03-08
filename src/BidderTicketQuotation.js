@@ -78,7 +78,7 @@ const BidderTicketQuotation = () => {
     // Fetch data from API on component mount 
     useEffect(() => {
       // API URL
-      const apiUrl = `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
+      const apiUrl = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
       const fetchData = async () => {
         try {
           const response = await fetch(apiUrl);
@@ -167,7 +167,7 @@ const BidderTicketQuotation = () => {
   useEffect(() => {
         const fetchticketData = async () => {
           try {
-            const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+            const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
             if (!response.ok) {
               throw new Error('Failed to fetch ticket data');
             }
@@ -198,7 +198,7 @@ const BidderTicketQuotation = () => {
             const imageRequests =
               data.attachments?.map((photo) => 
                fetch(
-                  `https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+                  `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${photo}`
                 )
                 .then((res) => res.json())
                 .then((data) => ({
@@ -223,7 +223,7 @@ const BidderTicketQuotation = () => {
       useEffect(() => {
         const fetchDealerData = async () => {
           try {
-            const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseAQuoteByDealer/GetRaiseAQuoteLowestDealerByid?raiseAQuotetDealerId=${raiseTicketId}`);
+            const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseAQuoteByDealer/GetRaiseAQuoteLowestDealerByid?raiseAQuotetDealerId=${raiseTicketId}`);
             if (!response.ok) {
               throw new Error('Failed to fetch ticket data');
             }
@@ -459,7 +459,7 @@ const BidderTicketQuotation = () => {
 UTRTransactionNumber: "",
     };
     try {
-      const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+      const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/${raiseTicketId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -535,7 +535,7 @@ UTRTransactionNumber: "",
 //     //alert(JSON.stringify(payload3));
 //     //console.log(JSON.stringify(payload3));
 //   try {
-//     const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/RaiseAQuote/id?id=${id}`, {
+//     const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseAQuote/id?id=${id}`, {
 //       method: 'PUT',
 //       headers: {
 //         'Content-Type': 'application/json',

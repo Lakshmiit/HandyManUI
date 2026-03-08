@@ -46,7 +46,7 @@ const handleOTP = async (e) => {
   };
 
   try {
-    const response = await fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Auth/bhashsmssendotp`, {
+    const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Auth/bhashsmssendotp`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -22,7 +22,7 @@ useEffect(() => {
 }, [loading, orderBooking]);
 
 useEffect(() => {
-    fetch(`https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/GetProductDetails?id=${id}`)
+    fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/GetProductDetails?id=${id}`)
       .then((res) => res.json())
       .then((data) => {
         setOrderBooking(data);
@@ -49,7 +49,7 @@ useEffect(() => {
         status : "Open",
         };
         const response = await fetch(
-          "https://handymanapiv4-d4baa3hhdcftgabe.centralindia-01.azurewebsites.net/api/Mart/GroceryItemsEdit",
+          "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/GroceryItemsEdit",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
