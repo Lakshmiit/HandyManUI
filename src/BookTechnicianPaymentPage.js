@@ -10,14 +10,12 @@ import './App.css';
 import { useParams } from "react-router-dom";
 
 const PaymentConfirmation = () => {
-  // const Navigate = useNavigate();
   const {userType} = useParams();
   const {userId} = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
  const {raiseTicketId} = useParams();
   const [isChecked, setIsChecked] = useState('');
-  // const [id, setId] = useState('');
 const [technicianData, setTechnicianData] = useState('');
 const [bookTechnicianIds, setBookTechnicianId] = useState('');
 const [loading, setLoading] = useState(true);
@@ -25,15 +23,11 @@ const [state, setState] = useState('');
 const [district, setDistrict] = useState('') 
 const [zipCode, setZipcode] = useState('');
 const [address, setAddress] = useState('');
-// const [customerId, setCustomerId] = useState(''); 
 const [category, setCategory] = useState('');
 const [customerName, setCustomerName] = useState('');
 const [technicianConfirmationCode, setTechnicianConfirmationCode] = useState('');
-// const [showConfirmation, setShowConfirmation] = useState(false);
-// const [selectedJob, setSelectedJob] = useState([{remarks: "", discount: "", moreInfo: "", afterDiscount: "", jobDescription: ""}]);
 const [selectedPayment, setSelectedPayment] = useState(null);
 const [showModal, setShowModal] = useState(false);
-// const [status, setStatus] = useState('');
 const [rate, setRate] = useState('');
 const [discount, setDiscount] = useState('');
 const [afterDiscount, setAfterDiscount] = useState('');
@@ -45,17 +39,6 @@ const [error, setError] = useState("");
 const [emailAddress, setEmailAddress] = useState("");
 const [requiredQuatity, setRequiredQuantity] = useState('');
 const [totalAmount, setTotalAmount] = useState('');
-// const [paymenterror, setPaymentError] = useState(null);
-
-  // const paymentDataTime = new Date().toLocaleString("en-IN", {
-  //   timeZone: "Asia/Kolkata",
-  //   day: "2-digit",
-  //   month: "2-digit",
-  //   year: "numeric",
-  //   hour: "2-digit",
-  //   minute: "2-digit",
-  //   hour12: false
-  // }).replace(",", "");
 
   useEffect(() => {
       console.log( technicianData, technicianConfirmationCode);
@@ -70,13 +53,10 @@ const [totalAmount, setTotalAmount] = useState('');
         }
         const data = await response.json();
         setTechnicianData(data);
-        // alert(JSON.stringify(data));
-        // setTechnicianConfirmationCode(data.id);
         setBookTechnicianId(data.bookTechnicianId);
         setCustomerName(data.customerName);
         setAddress(data.address);
         setCategory(data.category); 
-        // setCustomerId(data.customerId);
         setState(data.state);
         setDistrict(data.district);
         setZipcode(data.zipCode);
@@ -102,20 +82,14 @@ const [totalAmount, setTotalAmount] = useState('');
   // Detect screen size for responsiveness
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
-    handleResize(); // Set initial state
+    handleResize(); 
     window.addEventListener('resize', handleResize);
-  
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
 
 const handleUpdateJobDescription = async (e) => {
   e.preventDefault();
-  // if (selectedPayment === "online") {
-  //   setPaymentError("⚠️ Online payment is not available at the moment. Only Cash On Delivery Available.");
-  //   return;
-  // }
-
   if (!selectedPayment) {
     setError("Please select at least one payment method.");
     return;
@@ -165,7 +139,6 @@ const handleUpdateJobDescription = async (e) => {
     TechnicianFullName: "",
   };
 
-
   const payload1 = {
     ...payload, 
     status: selectedPayment === "online" ? "Draft" : "Open",
@@ -181,7 +154,6 @@ const handleUpdateJobDescription = async (e) => {
       },
       body: JSON.stringify(payload1),
     });
-
     if (!response.ok) {
       throw new Error('Failed to Update Technician.');
     }
@@ -191,7 +163,6 @@ const handleUpdateJobDescription = async (e) => {
     setTechnicianConfirmationCode(data.technicianConfirmationCode);
     window.alert(`We are Redirecting to the Payment Page! Your reference number is ${bookTechnicianIds}. Technician will contact you shortly.`);
     window.location.href = `/bookTechnicianOnlinePayment/${raiseTicketId}`;
-    // window.location.href=`https://handymanserviceproviders-h2gncthtfdemdwe5.centralindia-01.azurewebsites.net/PaymentPage/${raiseTicketId}`;
   } else if (selectedPayment === 'technician') {
     response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BookTechnician/${raiseTicketId}`, {
       method: 'PUT',
@@ -200,11 +171,9 @@ const handleUpdateJobDescription = async (e) => {
       },
       body: JSON.stringify(payload1),
     });
-
     if (!response.ok) {
     }
     const data = await response.json();
-
     // Store confirmation code in state
     setTechnicianConfirmationCode(data.technicianConfirmationCode);
     window.alert(`Thank You for choosing the HandyMan Services! Your reference number is ${bookTechnicianIds}. Technician will contact you shortly.`);
@@ -216,13 +185,6 @@ const handleUpdateJobDescription = async (e) => {
   }
 };
 
-// const handleBothActions = (e) => {
-//   e.preventDefault();
-//   // handleBookTechnicianPayment(e);
-//   handleUpdateJobDescription(e);
-// };
-
-  
 if (loading) {
   return <div>Loading...</div>;
 }
@@ -231,7 +193,6 @@ const handleCheckboxChange = (value) => {
   const newValue = selectedPayment === value ? null : value;
   setSelectedPayment(newValue);
   setError("");
-
   if (newValue) {
     setIsChecked(true);
   } else {
@@ -272,7 +233,6 @@ const handleCheckboxChange = (value) => {
 <h2 className="title">PAYMENT CONFIRMATION</h2>
     <div className="booking-confirmation">
       <p className='text-center fs-4'><strong className='name'>{customerName}</strong> Thank you for Choosing the HandyMan Services</p>
-
       <table className="booking-table">
         <tbody>
           <tr>
@@ -299,16 +259,7 @@ const handleCheckboxChange = (value) => {
         <div className='d-flex flex-column m-1'>
         {isMobile ? (
         <div className='d-flex flex-column'>
-        {/* <label className='fs-5'>
-            <input 
-            type="checkbox" 
-            className="form-check-input border-dark m-1"
-            checked={selectedPayment === 'online'}
-            onChange={() => handleCheckboxChange('online')}/>
-            Pay Through Online
-          </label> */}
-          {/* {paymenterror && <p className="text-danger" style={{fontSize: "14px"}}>{paymenterror}</p>} */}
-          <label className='fs-5'>
+       <label className='fs-5'>
             <input 
             type="checkbox" 
             className="form-check-input border-dark m-1"
@@ -319,16 +270,6 @@ const handleCheckboxChange = (value) => {
           </div>
         ) : (
           <div className="desktop-view d-flex flex-column">
-      {/* <label className="me-4">
-        <input 
-          type="checkbox" 
-          className="form-check-input border-dark me-2"
-          checked={selectedPayment === 'online'}
-          onChange={() => handleCheckboxChange('online')}
-        />
-        Pay Through Online 
-      </label> */}
-          {/* {paymenterror && <p className="text-danger" style={{fontSize: "14px"}}>{paymenterror}</p>} */}
       <label>
         <input   
           type="checkbox" 
@@ -661,23 +602,9 @@ const handleCheckboxChange = (value) => {
       )} 
 
 <div className="button">
-    {/* <button className="btn-back m-2">Back</button> */}
     <button className="btn-continue m-2"  onClick={handleUpdateJobDescription}>Proceed</button>
   
 </div>
- 
-{/* {showConfirmation && (
-    <div className='text-center m-2'>
-         <label className='blinking-text fw-bold fs-2 text-success'>
-            Technician Arrived as per your time slot
-        </label> 
-        <label className='fs-2 bg-warning fw-bold w-100 p-2'>
-            Technician Confirmation Code is: {technicianConfirmationCode}
-        </label>
-        <button className='btn btn-primary m-2' onClick={handleSendSMSLowestBidder}>Send SMS</button>
-    </div> )}
-  */}
-
     </div>
     </div>
     </div>

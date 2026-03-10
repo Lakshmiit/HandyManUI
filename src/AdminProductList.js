@@ -67,19 +67,15 @@ const AdminProductList = () => {
   // Filter data based on selected category and catalogue
   useEffect(() => {
   let filtered = productData;
-
   if (category) {
     filtered = filtered.filter(product => product.category === category);
   }
-
   if (catalogue) {
     filtered = filtered.filter(product => product.catalogue === catalogue);
   }
-
   if (productstatus) {
     filtered = filtered.filter(product => product.productStatus === productstatus);
   }
-
   if (searchTerm) {
     filtered = filtered.filter(product =>
       product.productName.toLowerCase().includes(searchTerm.toLowerCase())
@@ -89,10 +85,6 @@ const AdminProductList = () => {
   setCurrentPage(1); 
 }, [category, catalogue, productstatus, searchTerm, productData]);
 
-  // Handle page change
-  // const handlePageChange = (pageNumber) => {
-  //   setCurrentPage(pageNumber);
-  // };
   const indexOfLastProduct = currentPage * rowsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - rowsPerPage;
   const currentProducts = filteredData.slice(indexOfFirstProduct, indexOfLastProduct);
@@ -176,7 +168,6 @@ const AdminProductList = () => {
     Add New Product
   </button> 
 </div>
-
       </div> 
 
       {filteredData.length === 0 ? (

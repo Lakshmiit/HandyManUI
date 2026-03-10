@@ -13,9 +13,6 @@ import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import "./App.css";
  
 const BuyProductNotificationGrid = () => {
-  // const navigate = useNavigate();
-  //const [status, setStatus] = useState("");
-//   const {raiseTicketId} = useParams();
   const [assignedTo, setAssignedTo] = useState("");
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -42,7 +39,6 @@ const BuyProductNotificationGrid = () => {
         const buyProducts = products.filter((product) =>( product.status === "Approved" || product.status === "Assigned") && (product.assignedTo === "Customer Care" || product.assignedTo==="Customer"));
         setFilteredData(buyProducts);
         setProductData(buyProducts);
-//alert(JSON.stringify(buyProducts));
 
         const uniqueStates = [...new Set(products.map(product => product.state))];
         const uniqueDistricts = [...new Set(products.map(product => product.district))];
@@ -105,17 +101,13 @@ const BuyProductNotificationGrid = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // const handlePageChange = (pageNumber) => {
-  //   setCurrentPage(pageNumber);
-  // };
-
  // Get paginated data
  const indexOfLastTicket = currentPage * rowsPerPage;
  const indexOfFirstTicket = indexOfLastTicket - rowsPerPage;
  const currentBuyProduct = filteredData.slice(indexOfFirstTicket, indexOfLastTicket);
 
  if (loading) {
-   return <div>Loading...</div>; // Show loading message while data is fetching
+   return <div>Loading...</div>; 
  }
 
   return (
@@ -216,7 +208,6 @@ const BuyProductNotificationGrid = () => {
               <th>Buy Product ID</th>
               <th>Category</th>
               <th>Product Name</th>
-              {/* <th>Status</th> */}
               <th>Assigned To</th>
               <th>Actions</th>
             </tr>
@@ -228,7 +219,6 @@ const BuyProductNotificationGrid = () => {
                 <td>{product.buyProductId}</td>
                 <td>{product.category}</td>
                 <td>{product.productName}</td>
-                {/* <td>{ticket.status}</td> */}
                 <td>{product.assignedTo}</td>
                 <td className="d-flex align-items-center">
                   <Link
@@ -260,7 +250,6 @@ const BuyProductNotificationGrid = () => {
       <strong>Buy Product ID:</strong> {product.buyProductId}
         <p><strong>Category:</strong> {product.category}</p>
         <p><strong>Product Name:</strong> {product.productName}</p>
-        {/* <p><strong>Status:</strong> {technician.status}</p> */}
         <p><strong>Assigned To:</strong> {product.assignedTo}</p>
       </div>
       <div className="ticket-actions">

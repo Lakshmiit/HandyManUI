@@ -2,23 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { Modal } from 'react-bootstrap';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-// import Sidebar from './Sidebar';
-// import Header from './Header.js';
-// import Footer from './Footer.js';
   
 const ProductViewModal = ({ show, handleClose, productId }) => {
   const [productData, setProductData] = useState(null);
   const [imageUrls, setImageUrls] = useState([]);
   const [showZoomModal, setShowZoomModal] = useState(false);
     const [zoomImage, setZoomImage] = useState("");
-//  const [isMobile, setIsMobile] = useState(false); 
-//   const [otherThanProduct] = useState("");
-//     const [requiredQuality] = useState("");
-//     const [units] = useState(""); 
   
   useEffect(() => {
     if (!productId) return;
-
     const fetchData = async () => {
       try {
         const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Product/${productId}`);
@@ -37,7 +29,6 @@ const ProductViewModal = ({ show, handleClose, productId }) => {
         console.error("Error loading product:", error);
       }
     };
-
     fetchData();
   }, [productId]);
 
@@ -72,7 +63,6 @@ const ProductViewModal = ({ show, handleClose, productId }) => {
       <Modal.Header closeButton>
         <Modal.Title>Product Details</Modal.Title>
       </Modal.Header>
-      
       <Modal.Body>
          {/* Carousel */}
          <div
@@ -159,14 +149,6 @@ const ProductViewModal = ({ show, handleClose, productId }) => {
                   <p>{additionalInformation}</p>
                 </div>
               </div>
-        {/* {imageUrls.map((img, idx) => (
-          <img
-            key={idx}
-            src={`data:image/jpeg;base64,${img.imageData}`}
-            alt="Product"
-            style={{ maxWidth: '100%', margin: '10px 0' }}
-          />
-        ))} */}
       </Modal.Body>
     </Modal>
     </>

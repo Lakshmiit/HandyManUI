@@ -10,7 +10,6 @@ import './App.css';
 import { useParams, useLocation } from "react-router-dom";
 
 const BuyProductPaymentPage = () => {
-  // const Navigate = useNavigate();
  const location = useLocation();
      const id = location.state?.id || localStorage.getItem('id');    
   const {userType} = useParams();
@@ -18,9 +17,7 @@ const BuyProductPaymentPage = () => {
   const [showMenu, setShowMenu] = useState(false);
   const {buyProductId} = useParams();
   const [isChecked, setIsChecked] = useState(false);
-  // const [id, setId] = useState('');
 const [productData, setProductData] = useState('');
-// const [bookTechnicianIds, setBookTechnicianId] = useState('');
 const [date, setDate] = useState('');
 const [loading, setLoading] = useState(true);
 const [state, setState] = useState('');
@@ -30,14 +27,10 @@ const [address, setAddress] = useState('');
 const [userId, setCustomerId] = useState(''); 
 const [customerName, setCustomerName] = useState('');
 const [technicianConfirmationCode, setTechnicianConfirmationCode] = useState('');
-// const [showConfirmation, setShowConfirmation] = useState(false);
-// const [selectedJob, setSelectedJob] = useState([{remarks: "", discount: "", moreInfo: "", afterDiscount: "", jobDescription: ""}]);
 const [selectedPayment, setSelectedPayment] = useState(null);
 const [showModal, setShowModal] = useState(false);
 const [buyProductTicketId, setBuyProductTicketId] = useState('');
-// const [buyProductId, setBuyProductId] = useState('');
 const [mobileNumber, setMobileNumber] = useState('');
-// const [afterDiscount, setAfterDiscount] = useState('');
 const [afterDiscountPrice, setAfterDiscountPrice] = useState('');
 const [colors, setColors] = useState('');
 const [requiredQuantity, setRequiredQuantity] = useState('');
@@ -53,7 +46,6 @@ const [productName, setProductName] = useState("");
   const [productCatalogue, setProductCatalogue] = useState("");
   const [productSize, setProductSize] = useState("");
   const [units, setUnits] = useState("");
-  // const [productPhotos, setProductPhotos] = useState([]); 
   const [rate, setRate] = useState("");
   const [discount, setDiscount] = useState("");
   const [specifications, setSpecifications] = useState([{ label: "", value: "" }]); 
@@ -70,7 +62,6 @@ const [productName, setProductName] = useState("");
   const [productStatus, setProductStatus] = useState('');
 const [existingFiles, setExistingFiles] = useState([]);
 const [stockLeft, setStockLeft] = useState('');
-// const [paymenterror, setPaymentError] = useState(null);
 useEffect(() => {
   if (date && deliveryInDays) {
     try {
@@ -107,8 +98,6 @@ useEffect(() => {
         }    
         const data = await response.json();
         setProductData(data);
-      //  alert(JSON.stringify(data)); 
-        // setBuyProductId(data.id);
         setBuyProductTicketId(data.buyProductId);
         setAddress(data.address);
         setCategory(data.category);
@@ -150,7 +139,6 @@ useEffect(() => {
                     }
                     const productData = await productResponse.json();
                     console.log("productData:", productData);
-                    // alert(JSON.stringify(productData));
                     setProduct(productData);
                     setUniqueId(productData.id);
                     setProductName(productData.productName);
@@ -197,15 +185,13 @@ useEffect(() => {
     // Detect screen size for responsiveness
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
-    handleResize(); // Set initial state
+    handleResize(); 
     window.addEventListener('resize', handleResize);
-  
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
 const handleGetQuotation = async (e) => {
   e.preventDefault();
-  
 
   if (!selectedPayment) {
     setError("Please select at least one payment mode.");
@@ -287,7 +273,6 @@ const handleGetQuotation = async (e) => {
   
     window.alert(`We are Redirecting to the Payment Page! Your reference number is ${buyProductTicketId}. Technician will contact you shortly.`);
        window.location.href=`/buyProductOnlinePaymentPage/${buyProductId}`;
-      // window.location.href=`https://handymanserviceproviders-h2gncthtfdemdwe5.centralindia-01.azurewebsites.net/BuyProductPaymentPage/${buyProductId}`;
     }  else if (selectedPayment === 'technician') {
       
          response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BuyProduct/${buyProductId}`,{
@@ -301,13 +286,10 @@ const handleGetQuotation = async (e) => {
          throw new Error("Failed to submit Payment.");
         }
         const data = await response.json();
-        // Store confirmation code in state
         setTechnicianConfirmationCode(data.technicianConfirmationCode);
-    
      window.alert(`Thank You for choosing the HandyMan Services! Your reference number is ${buyProductTicketId}. Technician will contact you shortly.`);
      window.location.href = `/profilePage/${userType}/${userId}`;
     } 
-  
   }  catch (error) {
     console.error("Error submitting Payment:", error);
     window.alert('Failed to submitting Payment. Please try again later.');    
@@ -358,7 +340,6 @@ const handleSubmit = async (event) => {
       }); 
 
       if (response.ok) {
-        // alert("Product updated successfully!");
       } else {
         alert("Failed to update product.");
       }
@@ -373,66 +354,6 @@ const handleSubmit = async (event) => {
   handleSubmit(e);
 };
 
-// const handleUpdateJobDescription = async (e) => {
-//   e.preventDefault();
-//   if (!isChecked) {
-//       alert("You must accept the terms and conditions.");
-//       return; 
-//     }  
-
-//   const payload2 = {
-//     id: raiseTicketId,  
-//     bookTechnicianId: bookTechnicianIds,
-//     date: new Date(),
-//     customerName: customerName,
-//     address: address,
-//     state: state,
-//     district: district,
-//     zipCode: zipCode,
-//     category: category,
-//     jobDescription: jobDescription,
-//     rate: rate,
-//     discount: discount,
-//     afterDiscount: afterDiscount,
-//     remarks: remarks,
-//     moreInfo: moreInfo,
-//     status: "Open",
-//     customerId: customerId,
-//     assignedTo: "",
-//     phoneNumber: phoneNumber,
-//     paymentMode: selectedPayment,
-//     approvedAmount: afterDiscount,
-//     utrTransactionNumber: "",
-//     technicianConfirmationCode: "",
-//   };
-
-//   try {
-//     const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BookTechnician/${raiseTicketId}`, {
-//       method: 'PUT',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify(payload2),
-//     });
-
-//     if (!response.ok) {
-//       throw new Error('Failed to Update Technician.');
-//     }
-//     const data = await response.json();
-
-//     // Store confirmation code in state
-//     setTechnicianConfirmationCode(data.technicianConfirmationCode);
-//     // setShowConfirmation(true); 
-//     // alert("Book Technician Updated Successfully!");
-//   } catch (error) {
-//     console.error('Error:', error);
-//     window.alert('Failed to Update Technician. Please try again later.');
-//   }
-// };
-
-
-
-  
 if (loading) {
   return <div>Loading...</div>;
 }
@@ -482,7 +403,6 @@ if (loading) {
 <h2 className="title mt-mob-100">BUY PRODUCT PAYMENT CONFIRMATION</h2>
     <div className="booking-confirmation">
       <p className='text-center fs-4'><strong className='name'>{customerName}</strong> Thank you for Choosing the HandyMan Services</p>
-
       <table className="booking-table">
         <tbody>
           <tr>
@@ -497,7 +417,6 @@ if (loading) {
             <td><strong>Product Catalogue</strong></td>
             <td>{productCatalogue}</td>
           </tr>
-         
           <tr>
             <td><strong>Color</strong></td>
             <td>{colors}</td>
@@ -530,17 +449,7 @@ if (loading) {
         <div className='d-flex flex-column m-1'>
         {isMobile ? (
         <div className='d-flex flex-column'>
-        {/* <label className='fs-5'>
-            <input 
-            type="radio" 
-            className="form-check-input border-dark m-1"
-            checked={selectedPayment === 'online'}
-            onChange={() => handleCheckboxChange('online')}
-            required/>
-            Pay Through Online
-          </label> */}
-          {/* {paymenterror && <p className="text-danger" style={{fontSize: "14px"}}>{paymenterror}</p>} */}
-          <label className='fs-5'>
+        <label className='fs-5'>
             <input 
             type="radio" 
             className="form-check-input border-dark m-1"
@@ -553,17 +462,6 @@ if (loading) {
           </div>
         ) : (
           <div className="desktop-view d-flex flex-column">
-      {/* <label className="me-4">
-        <input 
-          type="radio" 
-          className="form-check-input border-dark me-2"
-          checked={selectedPayment === 'online'}
-          onChange={() => handleCheckboxChange('online')}
-          required
-        />
-        Pay Through Online
-      </label> */} 
-          {/* {paymenterror && <p className="text-danger" style={{fontSize: "14px"}}>{paymenterror}</p>} */}
       <label>
         <input   
           type="radio" 
@@ -896,22 +794,9 @@ if (loading) {
       )} 
 
 <div className="button">
-    {/* <button className="btn-back m-2">Back</button> */}
     <button className="btn-continue m-2"  onClick={handleBothActions}
     >Proceed</button>
 </div>
- 
-{/* {showConfirmation && (
-    <div className='text-center m-2'>
-         <label className='blinking-text fw-bold fs-2 text-success'>
-            Technician Arrived as per your time slot
-        </label> 
-        <label className='fs-2 bg-warning fw-bold w-100 p-2'>
-            Technician Confirmation Code is: {technicianConfirmationCode}
-        </label>
-        <button className='btn btn-primary m-2' onClick={handleSendSMSLowestBidder}>Send SMS</button>
-    </div> )}
-  */}
     </div>
     </div>
     </div>

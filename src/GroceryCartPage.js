@@ -86,8 +86,17 @@ const GroceryCartPage = () => {
   useEffect(() => {
     if (!cartItems.length) return;
     const uniqueNames = Array.from(
-      new Set(cartItems.map((x) => x.name).filter(Boolean)),
+      new Set(
+        cartItems
+          .map((x) => x.name)
+          .filter(Boolean)
+          .filter((name) => {
+            const key = name.trim().toLowerCase();
+            return !(key in limitMap);
+          })
+      )
     );
+      if (!uniqueNames.length) return;
     let cancelled = false;
     (async () => {
       try {
@@ -133,7 +142,7 @@ const GroceryCartPage = () => {
     return () => {
       cancelled = true;
     };
-  }, [cartItems]);
+  }, [cartItems, limitMap]);
 
   const limitMapRef = useRef({});
   useEffect(() => {
@@ -208,54 +217,47 @@ const GroceryCartPage = () => {
   }, [cartItems, imageBlobMap]);
 
   const writeBackToStorage = (items) => {
-  if (!items.length) {
-    localStorage.removeItem("allCategories"); 
+  if (!items || items.length === 0) {
+    localStorage.setItem("allCategories", JSON.stringify([]));
     return;
   }
-    const grouped = items.reduce((acc, it) => {
-      (acc[it.category] ||= []).push({
-        productId: it.productId,
-        productName: it.name,
-        qty: it.qty,
-        mrp: it.mrp,
-        discount: it.discount,
-        afterDiscountPrice: it.price,
-        stockLeft: it.stockLeft,
-        code: it.code,
-        units: it.units,
-        image: it.imageFilename || getFilenameFromValue(it.imageUrl) ||
-          it.imageUrl || null,
-      });
-      return acc;
-    }, {});
-    const allCategories = Object.entries(grouped).map(
-      ([categoryName, products]) => ({
-        categoryName,
-        products: products.filter((p) => Number(p.qty) > 0),
-      }),
-    );
-    localStorage.setItem("allCategories", JSON.stringify(allCategories));
-  };
+  const grouped = {};
+  items.forEach((item) => {
+    if (!grouped[item.category]) grouped[item.category] = [];
+    grouped[item.category].push({
+      productId: item.productId || item.code,
+      productName: item.name,
+      qty: item.qty,
+      mrp: item.mrp,
+      discount: item.discount,
+      afterDiscountPrice: item.price,
+      stockLeft: item.stockLeft,
+      code: item.code,
+      units: item.units,
+      image: item.imageFilename || item.imageUrl || ""
+    });
+  });
+  const result = Object.keys(grouped).map((categoryName) => ({
+    categoryName,
+    products: grouped[categoryName].filter(p => p.qty > 0)
+  }));
+  localStorage.setItem("allCategories", JSON.stringify(result));
+};
 
-  const handleQtyChange = (id, change) => {
-  setCartItems((prev) => {
-    const updated = prev.map((item) => {
+const handleQtyChange = (id, change) => {
+  setCartItems(prev => {
+    const updated = prev.map(item => {
       if (item.id !== id) return item;
       const limit = getDynamicLimit(item.name);
       const stock = Number(item.stockLeft || Infinity);
       const maxAllowed = Math.min(limit, stock);
-      let newQty = item.qty + change;
-      if (newQty > maxAllowed) newQty = maxAllowed;
-      if (newQty < 0) newQty = 0;
+      const newQty = Math.max(0, Math.min(item.qty + change, maxAllowed));
       return { ...item, qty: newQty };
-    }).filter(item => item.qty > 0); 
-    if (updated.length === 0) {
-      localStorage.removeItem("allCategories");
-    } else {
-      writeBackToStorage(updated);
-    }
-    setGrandSummary(computeTotals(updated));
-    return updated;
+    });
+    const filtered = updated.filter(i => i.qty > 0);
+    writeBackToStorage(filtered);
+    setGrandSummary(computeTotals(filtered));
+    return filtered;
   });
 };
 
@@ -273,23 +275,32 @@ const GroceryCartPage = () => {
 };
 
 useEffect(() => {
-  const saved = JSON.parse(localStorage.getItem("allCategories") || "[]");
-
-  const items = saved.flatMap((cat) =>
-    (cat.products || []).map((p, idx) => ({
-      id: `${cat.categoryName}-${p.productId ?? idx}`,
+    let saved = [];
+    try {
+      saved = JSON.parse(localStorage.getItem("allCategories") || "[]");
+    } catch {
+      saved = [];
+  }
+  const items = [];
+  saved.forEach((cat) => {
+    (cat.products || []).forEach((p) => {
+      const stableId = `${cat.categoryName}-${p.code}`;
+      items.push({
+      id: stableId,
+      productId: p.productId || p.code,
       name: p.productName,
       category: cat.categoryName,
-      qty: Number(p.qty),
-      price: Number(p.afterDiscountPrice || p.price || 0),
+      qty: Number(p.qty || 1),
+      price: Number(p.afterDiscountPrice || 0),
       mrp: Number(p.mrp || 0),
       discount: Number(p.discount || 0),
       stockLeft: Number(p.stockLeft || 0),
       units: p.units,
-      code: p.code
-    }))
-  );
-
+      code: p.code,
+      imageFilename: p.image
+    });
+    });
+  });
   setCartItems(items);
   setGrandSummary(computeTotals(items));
 }, []);
@@ -406,11 +417,6 @@ useEffect(() => {
     setShowZoomModal(true);
   };
 
- const clearCart = () => {
-  setCartItems([]);
-  setGrandSummary({ items: 0, total: 0 });
-  localStorage.removeItem("allCategories");
-};
   const handleRestore = (id) => {
     clearTimeout(removalTimers.current[id]);
     delete removalTimers.current[id];
@@ -569,7 +575,8 @@ useEffect(() => {
                   <RemoveIcon fontSize="small" />
                 </IconButton>
                 <span style={{ fontWeight: "bold", fontSize: "12px" }}>
-                  {Math.min(item.qty, getDynamicLimit(item.name))}
+                  {item.qty}
+                  {/* {Math.min(item.qty, getDynamicLimit(item.name))} */}
                 </span>
                 <IconButton
                   size="small"
@@ -580,12 +587,6 @@ useEffect(() => {
                     opacity: item.qty >= maxAllowed ? 0.5 : 1,
                   }}
                    disabled={item.qty >= maxAllowed}
-                  // title={
-                  //   Number.isFinite(item.stockLeft) &&
-                  //   item.qty >= item.stockLeft
-                  //     ? "No more stock"
-                  //     : "Add one"
-                  // }
                 >
                   <AddIcon fontSize="small" />
                 </IconButton>
@@ -627,13 +628,12 @@ useEffect(() => {
           <span>Grand total</span>
           <span>₹{roundedGrandTotal}</span>
         </div>
-        <button onClick={clearCart}>Clear Cart</button>
       </div>
       <Divider />
       {roundedGrandTotal < MIN_ORDER_TOTAL && (
         <p style={{ color: "red", fontSize: "13px", marginTop: "0px" }}>
           Minimum order is ₹{MIN_ORDER_TOTAL} and above
-        </p>
+        </p>        
       )}
 
       {/* Footer */}

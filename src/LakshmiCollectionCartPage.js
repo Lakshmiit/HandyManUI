@@ -1,10 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Divider, IconButton } from "@mui/material";
 import {
-  Close as CloseIcon,
-  // Add as AddIcon,
-  // Remove as RemoveIcon,
-  Info as InfoIcon,
+  Close as CloseIcon, Info as InfoIcon,
 } from "@mui/icons-material";
 import "./App.css";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -102,57 +99,6 @@ const LakshmiCollectionCartPage = () => {
     setShowZoomModal(true);
   };
 
-  // const handleQtyChange = (id, delta) => {
-  //   setCollectionItems((prev) =>
-  //     prev.flatMap((item) => {
-  //       if (item.id !== id) return item;
-  //       const currentQty = Number(item.qty ?? 1);
-  //       const newQty = currentQty + delta;
-  //       if (newQty <= 0) {
-  //         const updatedItem = { ...item, qty: 0, removing: true };
-  //         const timer = setTimeout(() => {
-  //           setCollectionItems((latest) => latest.filter((x) => x.id !== id));
-  //         }, 2000);
-  //         removalTimers.current[id] = timer;
-  //         return [updatedItem];
-  //       }
-  //       return { ...item, qty: newQty };
-  //     })
-  //   );
-  // };
-
-//   const handleQtyChange = (id, delta) => {
-//   setCollectionItems((prev) =>
-//     prev.map((item) => {
-//       if (item.id !== id) return item;
-//       const currentQty = Number(item.qty ?? 1);
-//       const newQty = currentQty + delta;
-//       if (delta > 0 && newQty > item.stockLeft) {
-//         alert(`Only ${item.stockLeft} items available in stock.`);
-//         return item;
-//       }
-//       // 🧠 If user reduces below 1 → mark removing
-//       if (newQty <= 0) {
-//         const updatedItem = { ...item, qty: 0, removing: true };
-//         const timer = setTimeout(() => {
-//           setCollectionItems((latest) => latest.filter((x) => x.id !== id));
-//         }, 2000);
-//         removalTimers.current[id] = timer;
-//         return updatedItem;
-//       }
-//       return { ...item, qty: newQty, removing: false };
-//     })
-//   );
-// };
-
-  // const handleRestore = (id) => {
-  //   clearTimeout(removalTimers.current[id]);
-  //   delete removalTimers.current[id];
-  //   setCollectionItems((prev) =>
-  //     prev.map((item) => (item.id === id ? { ...item, qty: 1, removing: false } : item))
-  //   );
-  // };
-
   const itemsTotal = collectionItems.reduce(
     (acc, item) => acc + (Number(item.mrp) || 0) * (Number(item.qty ?? 1)),
     0
@@ -225,7 +171,6 @@ const LakshmiCollectionCartPage = () => {
      
       const result = await response.json();
       console.log("Update success:", result);
-      // alert("Collection updated successfully!");
       navigate(`/lakshmiCollectionPaymentMethod/${userType}/${userId}/${uploadedId}`)
     } catch (error) {
       console.error("Error updating collection:", error);
@@ -331,66 +276,6 @@ const LakshmiCollectionCartPage = () => {
                 )}
                 </div>
               </div>
-
-              {/* Quantity Box */}
-              {/* {item.removing ? (
-                <button
-                  onClick={() => handleRestore(item.id)}
-                  style={{
-                    backgroundColor: "white",
-                    color: "green",
-                    border: "1px solid green",
-                    borderRadius: 6,
-                    fontSize: 13,
-                    padding: "6px",
-                    height: 32,
-                    alignSelf: "center",
-                  }}
-                >
-                  Add
-                </button>
-              ) : (
-                <div
-                  className="qty-box d-flex align-items-center justify-content-between"
-                  style={{
-                    backgroundColor: "#ec3b83",
-                    borderRadius: 6,
-                    color: "white",
-                    minWidth: 70,
-                    height: 28,
-                    alignSelf: "center",
-                  }}
-                >
-                 {/* <IconButton
-                    size="small"
-                    onClick={() => handleQtyChange(item.id, 1)}
-                    style={{
-                      color: item.qty >= item.stockLeft ? "gray" : "white", 
-                      padding: 2,
-                    }}
-                    disabled={item.qty >= item.stockLeft} 
-                  >
-                    <AddIcon fontSize="small" />
-                  </IconButton> */}
- 
-                  {/* <IconButton
-                    size="small"
-                    onClick={() => handleQtyChange(item.id, -1)}
-                    style={{  color: item.qty >= item.stockLeft ? "gray" : "white",  padding: 2 }}
-                    disabled={item.qty >= item.stockLeft} 
-                  >
-                    <RemoveIcon fontSize="small" />
-                  </IconButton>
-                  <span style={{ fontWeight: "bold", fontSize: 12 }}>{qty}</span>
-                  <IconButton
-                    size="small"
-                    onClick={() => handleQtyChange(item.id, 1)}
-                    style={{ color: "white", padding: 2 }}
-                  >
-                    <AddIcon fontSize="small" />
-                  </IconButton>
-                </div>
-              )}  */}
             </div>
           );
         })}

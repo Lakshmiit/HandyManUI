@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Modal, Button, Form, Row, Col } from 'react-bootstrap'; // Import Bootstrap components for modal
-// import { v4 as uuidv4 } from 'uuid'; // To generate unique IDs for addresses
+import { Modal, Button, Form, Row, Col } from 'react-bootstrap'; 
 import { Dashboard as MoreVertIcon, } from '@mui/icons-material';
 import axios from 'axios';
-// import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import Header from './Header.js';
 import Footer from './Footer.js';
 import Sidebar from './Sidebar';
@@ -11,7 +9,6 @@ import { useParams, useNavigate} from 'react-router-dom';
 
 const AddressManager = () => {
  const Navigate = useNavigate(); 
-//  const {id} = useParams();
   const {selectedUserType} = useParams();
  const {userType} = useParams();
  const [error, setError] = useState("");
@@ -21,34 +18,26 @@ const AddressManager = () => {
   const { userId } = useParams(); 
  const [raiseTicketId, setRaiseTicketId] = useState('');
  const [addresses, setAddresses] = useState([]);
-//  const [bookTechnicianId, setBookTechnicianId] = useState('');
  const [ticketId] = useState('');
 const [newAddress, setNewAddress] = useState('');
-// const [mobileNumber, setPhoneNumber] = useState('');
-  // const [addressType, setAddressType] = useState('');
  const [state, setState] = useState('');
    const [districtList, setDistrictList] = useState([]);  
  const [stateList, setStateList] = useState([]);
    const [district, setDistrict] = useState('');  
    const [districtId, setDistrictId] = useState('');    
    const [stateId, setStateId] = useState(null);  
-  // const [pincode, setPincode] = useState('');
   const [fullName, setFullName] = useState('');
-  // const [emailAddress, setEmailAddress] = useState('');
   const [category, setCategory] = useState("");
   const [descriptionId, setDescriptionId] = useState("");
   const [selectedJobs, setSelectedJobs] = useState([{jobDescription: "",rate: "",discount: "",afterDiscount: "", remarks: "", moreInfo: ""}])
   const remarksRef = useRef(null);
   const moreInfoRef = useRef(null);
   const [showModal, setShowModal] = useState(false);
-  // const [showSecondaryAddresses, setShowSecondaryAddresses] = useState(false);
-  // const [confirmationModal, setConfirmationModal] = useState(false);
   const [jobDescriptions, setJobDescriptions] = useState([]);
   const [showModals, setShowModals] = useState(false);
  const [loading, setLoading] = useState(true);
  const [noJobsError, setNoJobsError] = useState("");
 const [mobileNumber, setMobileNumber] = useState('');
-  // const [firstName, setFirstName] = useState('');
   const [zipCode, setZipCode] = useState('');
   const [guestCustomerId, setGuestCustomerId] = useState('');
   const [isEditing, setIsEditing] = useState(false);
@@ -66,28 +55,23 @@ zipCode: '',
 });
 const [serviceUnavailable, setServiceUnavailable] = useState(false);
 const isGuestName = (name) => (name ?? '').trim().toLowerCase() === 'guest';
- 
-// const [response, setResponse] = useState(null);
-
+const [isNewUser, setIsNewUser] = useState(true);
   useEffect(() => {
     console.log(ticketId, loading, fullName, mobileNumber, raiseTicketId, editingAddressId, isEditing);
   }, [ticketId, loading, fullName,  mobileNumber, raiseTicketId, editingAddressId, isEditing]);
 
-  // const API_URL = 'https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Address/GetAddressById/';
   // Fetch customer profile data
     const fetchCustomerData = useCallback(async () => {
       try {
         const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Address/GetAddressById/${userId}`);
         if (!response.ok) {
-
           throw new Error('Failed to fetch customer profile data');
         }
         const data = await response.json();
         console.log(data);
         const addresses = Array.isArray(data) ? data : [data];
-        // Format addresses if necessary
         const formattedAddresses = addresses.map((addr) => ({
-          id: addr.addressId, // Use addressId
+          id: addr.addressId, 
           type: addr.isPrimaryAddress ? 'primary' : 'secondary',
           address: addr.address,
           state: addr.state,
@@ -98,8 +82,13 @@ const isGuestName = (name) => (name ?? '').trim().toLowerCase() === 'guest';
           fullName: addr.fullName,
         }));
         setAddresses(formattedAddresses);
-        const customerName = Array.isArray(data) ? data[0]?.fullName || '' : data.fullName || '';
-        setFullName(customerName);
+       const apiFullName = addresses[0]?.fullName ?? "";
+        setFullName(apiFullName);
+        if (!apiFullName || isGuestName(apiFullName)) {
+          setIsNewUser(true);
+        } else {
+          setIsNewUser(false);
+        }
       } catch (error) {
         console.error('Error fetching customer data:', error);
       }
@@ -184,54 +173,6 @@ useEffect(() => {
   return () => window.removeEventListener('resize', handleResize);
 }, []);
 
-  // const states = ['Andhra Pradesh', 'Telangana'];
-  // const districts = {
-  //   'Andhra Pradesh': ['Visakhapatnam', 'Vijayawada', 'Guntur'],
-  //   'Telangana': ['Hyderabad', 'Warangal', 'Khammam'],
-  // };
-
-  // Handle form data changes
-  // const handleChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     [name]: value,
-  //   }));
-  // };
-
-  // Handle adding a new address
-  // const handleAddAddress = () => {
-  //   if (
-  //     newAddress.trim() === '' ||
-  //     addressType.trim() === '' ||
-  //     state.trim() === '' ||
-  //     district.trim() === '' ||
-  //     pincode.trim() === ''
-  //   ) {
-  //     alert('Please fill in all the fields.');
-  //     return;
-  //   }
-
-  //   if (addresses.length >= 4) {
-  //     alert('You can only add up to 4 addresses.');
-  //     return;
-  //   }
-
-  //   const newAddr = {
-  //     id: uuidv4(),
-  //     type: addressType,
-  //     address: newAddress,
-  //     state,
-  //     district,
-  //     pincode,
-  //     // name,
-  //   };
-
-  //   setAddresses((prevAddresses) => [...prevAddresses, newAddr]);
-  //   resetAddressForm();
-  //   setShowModal(false);
-  // };
-
   // Reset address form fields
   const resetAddressForm = () => {
     setFullName('');
@@ -310,30 +251,12 @@ useEffect(() => {
   const afterDiscountPrice = parseFloat((validRate - (validRate * validDiscount) / 100).toFixed(0));
   const totalAmount = parseFloat((requiredQuatity * afterDiscountPrice).toFixed(0));
 
-  // const phoneNumber = '7989328864';  // Phone number
-  // Generate ticket ID in the format BTWV0002
-  // const ticketIdPrefix = "BTWV";
-  // const ticketIdSuffix = String(Math.floor(Math.random() * 9999) + 1).padStart(4, "0");
-  // const ticketIds = `${ticketIdPrefix}${ticketIdSuffix}`;
-
-  // Generate WhatsApp link with the ticket ID
-  // const generateWhatsAppLink = (ticketId, phoneNumber) => {
-  //   const message = `Hello, I'd like to continue uploading my video for ticket: ${ticketId}`;
-  //   return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-  // };
-  // const handleWhatsAppClick = () => {
-  //   // handleSaveWhatsapp();
-  //   const link = generateWhatsAppLink(ticketIds, phoneNumber);
-  //   window.open(link, '_blank');
-  // };
-
 const handleUpdateJobDescription = async (e) => {
   e.preventDefault();
   const primaryAddress = addresses.find((addr) => addr.type === "primary");
     const state = primaryAddress?.state || "";
     const district = primaryAddress?.district || "";
     const pincode = primaryAddress?.zipCode || primaryAddress?.pincode || "";
-    // const emailAddress = primaryAddress?.emailAddress || primaryAddress?.emailAddress || "";
     const mobileNumber = primaryAddress?.mobileNumber || primaryAddress?.mobileNumber || ""; 
   if (!category) {
     setError("Must select a category");
@@ -524,17 +447,21 @@ const handleUpdateJobDescription = async (e) => {
       {/* Main Content */}
       <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
       <h1 className="text-center mb-1">Book A Technician</h1>
-        {/* Display primary address with "Change Address" link */}
          <div className="d-flex justify-content-between align-items-center">
                                 <label className='mt-2'>Address <span className="req_star">*</span></label>
-                                {/* <Button variant="success m-1 text-white" onClick={() => setShowModal(true)}>
-                                  Add Address
-                                </Button> */}
                       {/* Modal */}
                             <Modal show={showModal} onHide={() => setShowModal(false)}>
-                        <Modal.Header closeButton>
-                            <Modal.Title>{isGuestName(fullName) ? 'Add Address' : 'Edit Address'}</Modal.Title>
-                          </Modal.Header>
+                            <Modal.Header
+                              closeButton
+                              style={{
+                                backgroundColor: isEditing ? "#008000" : "#008000",
+                                color: "white",
+                              }}
+                            >
+                              <Modal.Title className="w-100">
+                                {isNewUser ? "Add Address" : "Edit Address"}
+                              </Modal.Title>
+                            </Modal.Header>
                         <Modal.Body>
                           <Form>
                             <Form.Group className="mb-3">
@@ -641,8 +568,16 @@ const handleUpdateJobDescription = async (e) => {
                                  required
                               />
                             </Form.Group>
-                            <Button type="button" variant="primary" onClick={handleAddressEdit}>
-                              {isGuestName(fullName) ? 'Add Address' : 'Edit Address'}
+                             <Button
+                              type="button"
+                              style={{
+                                backgroundColor: isAddressInvalid ? "#008000" : "#008000",
+                                borderColor: isAddressInvalid ? "#008000" : "#008000",
+                                color: "white",
+                              }}
+                              onClick={handleAddressEdit}
+                            >
+                              {isNewUser ? "Add Address" : "Edit Address"}
                             </Button>
                           </Form>
                         </Modal.Body>
@@ -657,8 +592,6 @@ const handleUpdateJobDescription = async (e) => {
                                   className="list-group-item d-flex justify-content-between align-items-center bg-white text-dark"
                                 >
                                   <div>
-                                    {/* <span className="m1-2">{address.id}</span>
-                                    <br /> */}
                                     <span className="ml-2">{address.fullName}</span>
                                     <br />
                                     <span className="ml-2">{address.mobileNumber}</span>
@@ -671,7 +604,6 @@ const handleUpdateJobDescription = async (e) => {
                                     <br />
                                     <span className="ml-2">{address.zipCode}</span> 
                                     <br />
-                                    {/* <hr /> */}
                                   </div>
                                   <div className="text-end">
                                   {addresses.map((address) => (
@@ -709,37 +641,7 @@ const handleUpdateJobDescription = async (e) => {
                             For further assistance, please contact our customer support at 62811 98953.
                         </div>
                       )}   
-        {/* Subject */}
-        {/* <Row>
-          <Col md={12}>
-            <Form.Group>
-              <label>Subject</label>
-              <Form.Control
-                type="text"
-                name="subject"
-                value={formData.subject}
-                onChange={handleChange}
-                placeholder="Enter subject"
-                required
-              />
-            </Form.Group>
-          </Col>
-        </Row> */}
-
-        {/* Details */}
-        {/* <Form.Group>
-          <label>Details</label>
-          <Form.Control
-            as="textarea"
-            name="details"
-            value={formData.details}
-            onChange={handleChange}
-            rows="4"
-            placeholder="Enter details"
-            required
-          />
-        </Form.Group> */}
-
+  
         {/* Category */}
         <Row>
           <Col md={6}>
@@ -793,14 +695,6 @@ const handleUpdateJobDescription = async (e) => {
               <option key={i} value={jobOption.jobDescription}>{jobOption.jobDescription}</option>
             ))}
           </select>
-              {/* <input
-                type="text"
-                className="form-control"
-                value={job.jobDescription}
-                onChange={(e) => handleJobChange(index, "jobDescription", e.target.value)}
-                placeholder="Job Description"
-                required
-              /> */}
             </div>
 
             {/* Rate */}
@@ -1210,7 +1104,6 @@ const handleUpdateJobDescription = async (e) => {
         disabled={noJobsError || isAddressInvalid || serviceUnavailable} >
             Book A Technician
         </Button>
-        {/* <Button variant='success' className="m-1" onClick={handleWhatsAppClick}><WhatsAppIcon /> WhatsApp</Button> */}
         <Button
           type="button"
           className="back-btn"
@@ -1219,7 +1112,6 @@ const handleUpdateJobDescription = async (e) => {
           Back
         </Button>
         </div>
-      {/* </Form> */}
     </div>
     </div>
     <Footer /> 

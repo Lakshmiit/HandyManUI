@@ -15,7 +15,6 @@ const LakshmiCollectionDesigns = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [collectionData, setCollectionData] = useState(null);
   const [attachments] = useState([]);  
-  // const [attachments, setAttachments] = useState([]); 
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
   const [idx, setIdx] = useState(0);
@@ -23,12 +22,9 @@ const [posting, setPosting] = useState(false);
 const [postMsg, setPostMsg] = useState("");
 const [selectedSize, setSelectedSize] = useState(null);
 const [sizeError, setSizeError] = useState("");
-// const [selectedColor, setSelectedColor] = useState(null);
-// const [colorError, setColorError] = useState("");
 const [zoomImage, setZoomImage] = useState("");
 const [media, setMedia] = useState([]); 
 const [showZoomModal, setShowZoomModal] = useState(false);
-// const [zoomSrc, setZoomSrc] = useState("");
 const [zoomType, setZoomType] = useState("image");
  const imgRef = useRef(null);
   const [magVisible, setMagVisible] = useState(false);
@@ -39,11 +35,6 @@ const [zoomType, setZoomType] = useState("image");
 useEffect(() => {
   console.log(loading, err, postMsg);
 }, [loading, err, postMsg]);
-
-//  const handleImageClick = (imageSrc) => {
-//     setZoomImage(imageSrc); 
-//     setShowZoomModal(true);
-//   };
   
   const handleImgMouseMove = (e) => {
     if (!imgRef.current) return;
@@ -86,71 +77,6 @@ const extractBase64 = (payload) =>
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-//   useEffect(() => {
-//     const fetchTicketData = async () => {
-//       setLoading(true);
-//       setErr("");
-//       try {
-//         const res = await fetch(
-//           `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadLakshmiCollection/GetLakshmiCollections?id=${id}`
-//         );
-//         if (!res.ok) throw new Error("Failed to fetch product");
-//         const data = await res.json();
-//         setCollectionData(data);
-//         const imgFiles = Array.isArray(data.images) ? data.images : []; 
-//         const vidFiles = Array.isArray(data.videos) ? data.videos : [];
-//         const imageRequests =
-//           imgFiles.map((fileName) =>
-//             fetch(
-//               `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
-//                 fileName
-//               )}`
-//             )
-//               .then((r) => {
-//                 if (!r.ok) throw new Error("Image fetch failed");
-//                 return r.json();
-//               })
-//               .then((payload) => {
-//       const b64 = extractBase64(payload);
-//       if (!b64) return null;
-
-//       const isVid = isVideoFile(fileName);
-//       const mime = isVid ? guessVideoMime(fileName) : "image/*";
-
-//       const dataUrl = b64.startsWith("data:")
-//         ? b64
-//         : `data:${mime};base64,${b64}`;
-
-//       return {
-//         fileName,
-//         dataUrl,
-//         type: isVid ? "video" : "image",
-//       };
-//     });
-
-// const mediaRequests = [...imgFiles, ...vidFiles].map(buildRequest);
-// const mediaResults = (await Promise.all(mediaRequests)).filter(Boolean);
-
-// setMedia(mediaResults);
-//         //       .then((payload) => ({
-//         //         fileName,
-//         //         imageData: payload?.imageData || null, 
-//         //       }))
-//         //   ) || [];
-//         // const imgs = await Promise.all(imageRequests);
-//         // setAttachments(imgs.filter((i) => !!i.imageData));
-//       } catch (err) {
-//         console.error("Error fetching collection:", err);
-//         setErr(
-//           err?.message ||
-//             "Something went wrong while loading the collection. Please try again."
-//         );
-//       } finally {
-//         setLoading(false);
-//       }      
-//     };
-//     if (id) fetchTicketData();
-//   }, [id]);
 useEffect(() => {
   if (!id) return;
 
@@ -160,7 +86,6 @@ useEffect(() => {
     setLoading(true);
     setErr("");
     try {
-      // 1) product
       const res = await fetch(
         `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadLakshmiCollection/GetLakshmiCollections?id=${id}`
       );
@@ -231,20 +156,6 @@ const handleMediaClick = (src, type) => {
   setShowZoomModal(true);
 };
 
-  // Parse colors from the "colour" field
-// const parseColors = (raw) => {
-//   if (!raw) return [];
-//   if (Array.isArray(raw)) return raw.map((c) => String(c).trim()).filter(Boolean);
-//   if (typeof raw === "string")
-//     return raw
-//       .split(",")
-//       .map((c) => c.trim())
-//       .filter(Boolean);
-//   return [];
-// };
-
-// const colors = useMemo(() => parseColors(collectionData?.colour), [collectionData?.colour]);
-
 const parseSizesWithStock = (raw) => {
   if (!raw) return [];
   const toPair = (token) => {
@@ -273,28 +184,10 @@ const stockLabel = (stock) => {
 };
 
 const allOutOfStock = sizes.length > 0 && sizes.every(s => (s.stock ?? 0) <= 0);
-// const selectedSizeStock = useMemo(() => {
-//   const found = sizes.find(s => s.size === selectedSize);
-//   return found?.stock ?? null;
-// }, [sizes, selectedSize]);
-
-  // const hasImages = attachments && attachments.length > 0;
-  // const currentImg =
-  //   hasImages && attachments[idx]?.imageData
-  //     ? `data:image/*;base64,${attachments[idx].imageData}`
-  //     : null;
-  // const nextImg = () =>
-  //   setIdx((p) => (attachments.length ? (p + 1) % attachments.length : 0));
-  // const prevImg = () =>
-  //   setIdx((p) =>
-  //     attachments.length ? (p - 1 + attachments.length) % attachments.length : 0
-  //   );
 
     const onPostSelection = async (event) => {
       event.preventDefault();
   if (!collectionData) return;
-
-  //  let valid = true;
 
    if (sizes.length > 0 && !selectedSize) {
     setSizeError("Please select a size before adding to cart.");
@@ -304,48 +197,11 @@ const allOutOfStock = sizes.length > 0 && sizes.every(s => (s.stock ?? 0) <= 0);
       setSizeError("");
     }
 
-  // if (colors.length > 0 && !selectedColor) {
-  //   setColorError("Please select a color before adding to cart.");
-  //   valid = false;
-  // } else {
-  //   setColorError("");
-  // }
-
-  // if (!valid) {
-  //   const targetId = !selectedSize
-  //     ? "size-section"
-  //     : !selectedColor
-  //     ? "color-section"
-  //     : null;
-  //   if (targetId) {
-  //     const el = document.getElementById(targetId);
-  //     if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
-  //   }
-  //   return; 
-  // }
-
   const selectedImageFileName =
     attachments?.[idx]?.fileName ?? (Array.isArray(collectionData.images) && collectionData.images[0]) ?? "";
   const rate = Number(collectionData?.rate ?? 0);
   const after = Number(collectionData?.afterDiscount ?? rate);
   const qty = 1;
-
-  // const updatedSizes = sizes.map((s) => {
-  //   if (s.size === selectedSize) {
-  //     const newStock = Math.max(0, (s.stock ?? 0) - qty);
-  //     return { ...s, stock: newStock };
-  //   }
-  //   return s;
-  // });
-
-  //  const updatedSizeString = updatedSizes
-  //   .map(({ size, stock }) => `${size}-${stock}`)
-  //   .join(", ");
-
-   // Find remaining stock for the selected size
-    // const selectedSizeRemaining = updatedSizes.find(
-    //   (s) => s.size === selectedSize
-    // )?.stock ?? 0;
 
    const payload = {
     id: collectionData.id,                                       
@@ -355,7 +211,6 @@ const allOutOfStock = sizes.length > 0 && sizes.every(s => (s.stock ?? 0) <= 0);
     customerName: "",
     customerPhonenumber: "",
     stockLeft: String(collectionData.stockLeft - qty),
-    // stockLeft: `${selectedSize}-${selectedSizeRemaining}`,
     totalItemsSelected: String(qty),                                      
     address: "",
     state: "",
@@ -408,10 +263,6 @@ const allOutOfStock = sizes.length > 0 && sizes.every(s => (s.stock ?? 0) <= 0);
     const data = await res.json();
     const uploadedId = data?.id;
     localStorage.setItem("uploadedId", uploadedId);
-    //  setCollectionData((prev) => ({
-    //   ...prev,
-    //   size: updatedSizeString,
-    // }));
     navigate(`/lakshmiCollectionCart/${userType}/${userId}`);
   } catch (err) {
     console.error("Failed to add to cart:", err);
@@ -615,84 +466,6 @@ const allOutOfStock = sizes.length > 0 && sizes.every(s => (s.stock ?? 0) <= 0);
                       ))}
                     </div>
                   )}
-
-                  {/* <div className="position-relative border rounded-3 d-flex justify-content-center align-items-center" style={{ minHeight: 310 }}> */}
-                    {/* {currentImg ? (    
-                      <img
-                        src={currentImg}
-                        alt={attachments[idx]?.fileName || "Product"}
-                        className="img-fluid"
-                        style={{ maxHeight: 300, width: "60%",  cursor: "zoom-in", borderRadius: "10px"}}
-                        onClick={() => handleImageClick(currentImg)}
-                      />
-                    ) : (
-                      <div className="text-muted">image Loading</div>
-                    )} */}
-
-                    {/* Discount badge on image (top-right) */}
-                      {/* {Number(collectionData?.discount) > 0 && (
-                        <div
-                          style={{
-                            position: "absolute",
-                            top: 10,
-                            right: 10,
-                            padding: "6px",
-                            borderRadius: "50%",
-                            fontWeight: 700,
-                            fontSize: 12,
-                            background: "linear-gradient(135deg, #ff416c, #ff4b2b)",
-                            color: "#fff",
-                            boxShadow: "0 4px 10px rgba(0,0,0,0.15)",
-                            lineHeight: 1,
-                            zIndex: 2,
-                          }}
-                        >
-                          {Math.round(Number(collectionData.discount))}% 
-                        </div>
-                      )}
-
-                    {hasImages && attachments.length > 1 && (
-                      <>
-                        <Button
-                          variant="white"
-                          className="position-absolute top-50 start-0 translate-middle-y"
-                          onClick={prevImg}
-                        >
-                          ‹
-                        </Button>
-                        <Button
-                          variant="white"
-                          className="position-absolute top-50 end-0 translate-middle-y"
-                          onClick={nextImg}
-                        >
-                          ›
-                        </Button>
-                      </>
-                    )}
-                  </div> */}
-                  {/* {hasImages && attachments.length > 1 && (
-                    <div className="d-flex gap-2 mt-2 flex-wrap">
-                      {attachments.map((a, i) => (
-                        <button
-                          key={a.fileName + i}
-                          className={`border rounded ${i === idx ? "border-2" : ""}`}
-                          style={{
-                            padding: 0,
-                            background: "transparent",
-                            outline: "none",
-                          }}
-                          onClick={() => setIdx(i)}
-                          title={a.fileName}
-                        >
-                          <img
-                            src={`data:image/*;base64,${a.imageData}`}
-                            alt={a.fileName}
-                            style={{ width: 64, height: 75, objectFit: "cover", borderRadius: 6 }}
-                          />
-                        </button>
-                      ))}
-                    </div>
-                  )} */}
                 </div>
 
                 {/* Details */}
@@ -707,42 +480,7 @@ const allOutOfStock = sizes.length > 0 && sizes.every(s => (s.stock ?? 0) <= 0);
                         ₹{collectionData.rate}
                       </span>
                     )} 
-                    {/* {collectionData?.discount && (
-                      <span className="fw-bold" style={{ fontSize: "14px", color: "red"}}>₹{collectionData.discount}%</span>
-                    )} */}
-                  </div>
-
-                   {/* Color Selection */}
-                  {/* <div id="color-section" className="">
-                    <div className="fw-semibold">Select Color</div>
-                    {colors.length === 0 ? (
-                      <div className="text-muted small">No colors available</div>
-                    ) : (
-                      <div className="d-flex flex-wrap gap-3">
-                        {colors.map((color) => {
-                          const isSelected = selectedColor === color;
-                          return (
-                            <button
-                              key={color}
-                              type="button"
-                              className={`btn btn-sm ${isSelected ? "btn-danger" : "btn-outline-danger"}`}
-                              onClick={() => {
-                                setSelectedColor(isSelected ? null : color);
-                                setColorError("");
-                              }}
-                              aria-pressed={isSelected}
-                              style={{ minWidth: 60 }}
-                            >
-                              {color}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    )}
-                    <div className="mt-1">
-                      {colorError && <p className="text-danger mb-0" style={{fontSize: "12px"}}>{colorError}</p>}
-                    </div>
-                  </div> */}
+                   </div>
 
                   {/* Size Selection */}
                   <div id="size-section" className="">
@@ -772,13 +510,7 @@ const allOutOfStock = sizes.length > 0 && sizes.every(s => (s.stock ?? 0) <= 0);
                               >
                                 {size}
                               </button>
-                              {/* <div
-                                className={`small mt-1 ${outOfStock ? "text-danger" : "text-muted"}`}
-                                style={{ lineHeight: 1, fontSize: "12px" }}
-                              >
-                                {stockLabel(stock)}
-                              </div> */}
-                            </div>
+                              </div>
                           );
                         })}
                       </div> 
@@ -851,16 +583,6 @@ const allOutOfStock = sizes.length > 0 && sizes.every(s => (s.stock ?? 0) <= 0);
             </div>
           </Modal.Body>
         </Modal>
-
-         {/* <Modal show={showZoomModal} onHide={() => setShowZoomModal(false)} centered>
-          <button className="close-button text-end mt-0" onClick={() => setShowZoomModal(false)}>
-              &times; </button>
-                <Modal.Body className="text-center">
-                  <div className="zoom-container">
-                    <img src={zoomImage} alt="Zoomed Product" className="zoom-image" />
-                  </div>
-                </Modal.Body>
-              </Modal> */}
       </div>
     </>
   );

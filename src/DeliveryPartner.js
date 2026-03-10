@@ -229,7 +229,6 @@ const DeliveryPartner = () => {
       }
     } catch (err) {
       console.error("Submit error:", err);
-      // alert("Failed to submit.");
     } finally {
       setSubmitting(false);
     }
@@ -430,12 +429,6 @@ const DeliveryPartner = () => {
                 >
                   {loading[name] ? "Uploading..." : `Upload ${label}`}
                 </button>
-                {/* Show uploaded filename */}
-                {/* {uploadedNames[name] && (
-                  <div className="mt-2 small text-muted">
-                    Uploaded as: <code>{uploadedNames[name]}</code>
-                  </div>
-                )} */}
               </div>       
             ))}
           </div>

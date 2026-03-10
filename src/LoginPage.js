@@ -119,10 +119,7 @@ const handleOTP = async (e) => {
   </div>
     {error && <div className="text-danger mt-1">{error}</div>}
    <a className="link" href="/userIdLogin" style={{fontSize: "14px"}}>Login With User ID</a>
-   {/* <div className="text-danger fw-bold mt-1" style={{ fontSize: "14px" }}>
-        Handyman Service Provider will be under Maintenance Today (Saturday) from 6:00 PM to Tomorrow (Sunday) 5:00 AM.
-    </div> */}
-          <div className="d-flex align-items-center flex-wrap">
+   <div className="d-flex align-items-center flex-wrap">
   <input 
     type="checkbox" 
     className="form-check-input border-dark me-2"
@@ -451,26 +448,6 @@ const handleOTP = async (e) => {
     </div>
         </form>
       </div>
-
-      {/* Terms Modal
-      <Modal show={showTerms} onHide={() => setShowTerms(false)} size="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>Terms and Conditions</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <iframe src="/TermsAndConditions" width="100%" height="400px" title="Terms" />
-        </Modal.Body>
-      </Modal>
-
-      {/* Privacy Policy Modal 
-      <Modal show={showPrivacy} onHide={() => setShowPrivacy(false)} size="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>Privacy Policy</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <iframe src="/PrivacyPolicy" width="100%" height="400px" title="Privacy Policy" />
-        </Modal.Body>
-      </Modal> */}
       {/* Styles for floating menu */}
 <style jsx>{`
         .floating-menu {

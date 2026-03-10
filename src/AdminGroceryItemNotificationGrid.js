@@ -55,7 +55,6 @@ const [activeTab, setActiveTab] = useState("Open");
         setStates(uniqueStates);
         setDistricts(uniqueDistricts);
         setPinCodes(uniquePinCodes);
-        // Always land on page 1 after load
         setCurrentPage(1);
       })
       .catch(error => {

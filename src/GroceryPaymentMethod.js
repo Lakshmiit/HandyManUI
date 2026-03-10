@@ -8,16 +8,12 @@ import axios from "axios";
 import { Modal, Button, Form } from "react-bootstrap";
 import Footer from "./Footer.js";
 import Confetti from "react-confetti";
-// import RoyalRavvaImg from "./img/RoyalRavva.jpeg";
-
 const GroceryPaymentmethod = () => {
   const navigate = useNavigate();
-  // const location = useLocation();
   const { userType } = useParams();
   const { userId } = useParams();
   const { groceryItemId } = useParams();
   const [isMobile, setIsMobile] = useState(false);
-  // const [showMenu, setShowMenu] = useState(false);
   const [isChecked, setIsChecked] = useState(true);
   const [selectedPayment, setSelectedPayment] = useState("cash");
   const [error, setError] = useState("");
@@ -57,27 +53,15 @@ const GroceryPaymentmethod = () => {
   const [groceryId, setgroceryId] = useState();
   const [groceryData, setgroceryData] = useState();
   const [referralRec] = useState(null);
-  // const [referralRec, setReferralRec] = useState(null);
   const [referralPoints, setReferralPoints] = useState(0);
   const [referralAmount, setReferralAmount] = useState(0);
   const [netPayable, setNetPayable] = useState(0);
   const [isOffersOrder, setIsOffersOrder] = useState(false);
   const [firstOrderDiscount] = useState(0);
-  // const [firstOrderDiscount, setFirstOrderDiscount] = useState(0);
   const [isNewUser, setIsNewUser] = useState(true);
   const [showConfetti, setShowConfetti] = useState(false);
-  // const [cashbackMessage, setCashbackMessage] = useState("");
-  // const [date, setDate] = useState("");
   const isGuestName = (name) => (name ?? "").trim().toLowerCase() === "guest";
-  // const readServerPoints = (record) => {
-  //   const raw =
-  //     record?.referralPoints ??
-  //     record?.referralpoints ??
-  //     record?.ReferralPoints ??
-  //     0;
-  //   const n = Number(raw);
-  //   return Number.isFinite(n) ? n : 0;
-  // };
+  
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -87,28 +71,11 @@ const GroceryPaymentmethod = () => {
   }, [addresses]);
 
   useEffect(() => {
-    console.log(
-      limit,
-      // cashbackMessage,
-      loading,
-      isChecked, netPayable,
-      editingAddressId,
-      customerName,
-      groceryId,
-    );
-  }, [
-    limit,
-    // cashbackMessage,
-    loading, netPayable,
-    isChecked,
-    editingAddressId,
-    customerName,
-    groceryId,
-  ]);
+    console.log( limit, loading, isChecked, netPayable, editingAddressId, customerName, groceryId, );
+  }, [ limit, loading, netPayable,isChecked,editingAddressId,customerName,groceryId,]);
 
-  const showSugarOffer = Number(grandTotal) >= 499 && Number(grandTotal) <= 998;
-  //   const netPayables = ((grandTotal - firstOrderDiscount)-walletAmount);
-  // console.log("Grand Total, First Discount, Wallet Amt:", grandTotal, walletAmount,firstOrderDiscount,netPayables);
+  const showSugarOffer = Number(grandTotal) >= 299 && Number(grandTotal) <= 498;
+  const showAttaOffer = Number(grandTotal) >= 499 && Number(grandTotal) <= 999;
   const gt = Number(grandTotal || 0);
   const discount = Number(firstOrderDiscount || 0);
   const wallet = Number(walletAmount || 0);
@@ -118,18 +85,8 @@ const GroceryPaymentmethod = () => {
   console.log("Wallet:", wallet);
   console.log("Net Payable:", netPayables);
 
-  // const totalPayable =
-  //   isNewUser || grandTotal > 1000 ? netPayables : netPayable;
   const numericGrandTotal = Number(grandTotal) || 0;
   const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;
-
-  // const loginMeta = (() => {
-  //   try {
-  //     return JSON.parse(localStorage.getItem("loginMeta") || "null") || {};
-  //   } catch {
-  //     return {};
-  //   }
-  // })();
 
   useEffect(() => {
     if (firstOrderDiscount > 0) {
@@ -137,150 +94,6 @@ const GroceryPaymentmethod = () => {
       setTimeout(() => setShowConfetti(false), 4000);
     }
   }, [firstOrderDiscount]);
-
-  // const mobile =
-  //   state.mobile ?? loginMeta.mobile ?? localStorage.getItem("mobile") ?? "";
-
-  // const CheckFirstOrder = async (mobile) => {
-  //   if (!mobile) return null;
-  //   const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${encodeURIComponent(
-  //     mobile,
-  //   )}`;
-  //   try {
-  //     const res = await fetch(url);
-  //     const text = await res.text();
-  //     console.log("RAW RESPONSE:", text);
-  //     if (text.includes("Firstorder Can not be found")) {
-  //       return null;
-  //     }
-  //     let parsed;
-  //     try {
-  //       parsed = JSON.parse(text);
-  //     } catch (err) {
-  //       console.warn("Could not parse CheckFirstOrder response:", err);
-  //       return null;
-  //     }
-  //     if (parsed && !Array.isArray(parsed)) {
-  //       parsed = [parsed];
-  //     }
-  //     return Array.isArray(parsed) ? parsed : null;
-  //   } catch (error) {
-  //     console.error("API ERROR:", error);
-  //     return null;
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   let cancelled = false;
-
-  //   (async () => {
-  //     try {
-  //       const prevOrders = await CheckFirstOrder(mobile);
-  //       if (cancelled) return;
-
-  //       const campaignStart = new Date("2026-03-01T12:30:00Z");
-
-  //       const campaignOrders = Array.isArray(prevOrders)  
-  //         ? prevOrders.filter(
-  //             (order) => order?.date && new Date(order.date) >= campaignStart,
-  //           )
-  //         : [];
-
-  //       const usedSlabs = new Set();
-  //       campaignOrders.forEach((order) => {
-  //         const originalTotal = (order.categories ?? []).reduce(
-  //           (sum, cat) => sum + Number(cat?.totalAmount ?? 0),
-  //           0,
-  //         );
-
-  //         console.log("Previous Order Original Total:", originalTotal);
-
-  //         if (originalTotal >= 1999) usedSlabs.add(150);
-  //         else if (originalTotal >= 1499) usedSlabs.add(200);
-  //         else if (originalTotal >= 999) usedSlabs.add(100);
-  //         else if (originalTotal >= 499) usedSlabs.add(50);
-  //         else if (originalTotal >= 299) usedSlabs.add(50);
-  //       });
-
-  //       console.log("🔒 Locked Slabs:", [...usedSlabs]);
-
-  //       const currentGT = Number(grandTotal || 0);
-  //       let discount = 0;
-
-  //       // 🎯 APPLY SLAB (STRICT RANGE CHECK)
-  //       if (currentGT >= 1999 && !usedSlabs.has(150)) {
-  //         discount = 150;
-  //       } 
-  //       else if (
-  //         currentGT >= 1499 &&
-  //         currentGT < 1999 &&
-  //         !usedSlabs.has(200)
-  //       ) {
-  //         discount = 200;
-  //       }
-  //        else if (
-  //         currentGT >= 999 &&
-  //         currentGT < 1999 &&
-  //         !usedSlabs.has(100)
-  //       ) {
-  //         discount = 150;
-  //       } else if (currentGT >= 499 && currentGT < 999 && !usedSlabs.has(50)) {
-  //         discount = 100;
-  //       } 
-  //       else if (currentGT >= 299 && currentGT < 499 && !usedSlabs.has(50)) {
-  //         discount = 50;
-  //       }
-
-  //       setFirstOrderDiscount(discount);
-  //       console.log("🎁 Applied Discount:", discount);
-  //     } catch (err) {
-  //       console.error("Cashback check failed:", err);
-  //       if (!cancelled) setFirstOrderDiscount(0);
-  //     }
-  //   })();
-  //   return () => {
-  //     cancelled = true;
-  //   };
-  // }, [mobile, grandTotal]);
-
-  // const getReferralRecord = async (userId) => {
-  //   if (!userId) return null;
-  //   const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
-  //   const res = await fetch(url);
-  //   const text = await res.text();
-  //   let data = [];
-  //   try {
-  //     data = text ? JSON.parse(text) : [];
-  //   } catch {
-  //     data = [];
-  //   }
-  //   if (Array.isArray(data) && data.length > 0) {
-  //     data.sort((a, b) => new Date(b.date) - new Date(a.date));
-  //     return data[0];
-  //   }
-  //   return null;
-  // };
-
-  // useEffect(() => {
-  //   let cancelled = false;
-  //   (async () => {
-  //     try {
-  //       const rec = await getReferralRecord(userId);
-  //       if (cancelled) return;
-  //       setReferralRec(rec);
-  //       setReferralPoints(readServerPoints(rec));
-  //     } catch (e) {
-  //       console.error("Failed to load referral points:", e);
-  //       if (!cancelled) {
-  //         setReferralRec(null);
-  //         setReferralPoints(0);
-  //       }
-  //     }
-  //   })();
-  //   return () => {
-  //     cancelled = true;
-  //   };
-  // }, [userId]);
 
   useEffect(() => {
     const gt = Number(grandTotal) || 0;
@@ -320,7 +133,6 @@ const GroceryPaymentmethod = () => {
         setWalletAmount(data.walletAmount);
         setLimit(data.limit);
 
-        // setDate(data.date);
         const products = (data?.categories ?? []).flatMap(
           (c) => c?.products ?? [],
         );
@@ -1161,36 +973,6 @@ const GroceryPaymentmethod = () => {
                 </span>
               )}
             </div>
-            {/* <div
-              className="d-flex align-items-center justify-content-between p-2"
-              style={{
-                background: "linear-gradient(90deg, #fff3cd, #ffe69c)",
-                border: "2px dashed #ff9800",
-                borderRadius: "12px",
-              }}
-            >
-              <div>
-                <strong style={{ color: "#d84315", fontSize: "13px" }}>
-                  🎁 Royal Pesara Upma Mix 250 g
-                </strong>
-                <div
-                  style={{
-                    fontSize: "13px",
-                    fontWeight: "bold",
-                    textAlign: "center",
-                  }}
-                >
-                  FREE On orders above ₹499
-                </div>
-              </div>
-
-              <img
-                src={RoyalRavvaImg}
-                alt="Free Upma Mix"
-                style={{ width: "50px", height: "60px" }}
-              />
-            </div> */}
-
             <table className="grocery-table m-2">
               <tbody>
                 <tr>
@@ -1211,32 +993,29 @@ const GroceryPaymentmethod = () => {
                   <td style={{ width: "40%" }}>Rs {grandTotal} /-</td>
                 </tr>
                 {showSugarOffer && (
-                  <tr>
-                    {/* <td colSpan="2" style={{ textAlign: "center" }}>
-                      <img
-                        src={RoyalRavvaImg}
-                        alt="Free Atta"
-                        style={{ width: "50px", height: "55px" }}
-                      />
-                      <div
-                        style={{
-                          fontSize: "13px",
-                          fontWeight: 600,
-                          color: "green",
-                        }}
-                      >
-                        🎁 FREE Royal Pesara Upma Mix 250 g
-                      </div>
-                    </td> */}
-                  </tr>
-                )}
-
+                            <tr>     
+                              <td colSpan="2" style={{ textAlign: "center" }}>
+                                <div style={{ fontSize: "13px", fontWeight: 600, color: "red" }}>
+                                  🎁 FREE Sugar 1 Kg
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                          {showAttaOffer && (
+                            <tr>     
+                              <td colSpan="2" style={{ textAlign: "center" }}>
+                                <div style={{ fontSize: "12px", fontWeight: 600, color: "red" }}>
+                                  🎁 FREE Aashirvaad Superior Whole Wheat MP Atta 1 Kg 
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                          
                 {firstOrderDiscount > 0 && (
                   <tr>
                     <td style={{ width: "40%", fontSize: "14px" }}>
                       Cash Back
                     </td>
-
                     <td style={{ width: "40%", fontSize: "14px" }}>
                       {`₹${firstOrderDiscount} /-`}
                     </td>
@@ -1254,12 +1033,6 @@ const GroceryPaymentmethod = () => {
                     </td>     
                   </tr>
                 )}
-                {/* {Number(referralAmount) > 0 && (
-              <tr>
-                <td style={{ width: "40%", fontSize: "14px" }}>Referral Earn Amount</td>
-                <td style={{ width: "40%", color: "red" }}>- Rs {referralAmount} /-</td>
-              </tr>
-            )} */}
                 <tr>
                   <td
                     style={{ width: "40%", fontSize: "14px", fontWeight: 600 }}

@@ -17,7 +17,6 @@ const ProductAdmin = () => {
   const [comments, setComments] = useState("");
   const { id } = useParams();
   const navigate = useNavigate(); 
-  // const {userType} = useParams();
   useEffect(() => {
     const fetchData = async () => {
       try {

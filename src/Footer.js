@@ -9,10 +9,6 @@ const Footer = () => {
        <span className="small">
         <strong> Office Hours :</strong> 06:00 AM-09:00 PM
       </span>
-      {/* <br />            
-      <span className="small">
-        <strong>Sunday :</strong> 09:00 AM-12:30 PM
-      </span> */} 
       <br />  
       <span className="small">
         {" "}

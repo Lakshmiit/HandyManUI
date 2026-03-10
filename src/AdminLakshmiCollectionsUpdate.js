@@ -654,7 +654,6 @@ const handleSubmit = async (event) => {
       <button
         type="submit"
         className="btn btn-success w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
-       // onClick={() => navigate('/product')}
       >
         <UploadIcon className="me-2" />
         <span>Update Collection</span>
@@ -670,7 +669,6 @@ const handleSubmit = async (event) => {
         <span>View Collection</span>
       </button>
     </div>
-
           </form>
         </div>
       </div>

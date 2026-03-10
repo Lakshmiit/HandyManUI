@@ -255,9 +255,7 @@ useEffect(() => {
                 <option>Health Care</option>
                 <option>Kitchenware Appliances</option>
                 <option>Home Decors</option>
-                {/* <option>Family Pack </option> */}
-                {/* <option>Staples & Grains</option> */}
-              </select>
+                </select>
             </div> 
 
             {/* Units */}
@@ -341,18 +339,6 @@ useEffect(() => {
               />
             </div>
 
-             {/* GST */}
-            {/* <div className="form-group">
-              <label>GST</label>
-              <input
-                type="text"
-                className="form-control"
-                value={gst}
-                onChange={(e) => setGST(e.target.value)}
-                placeholder="Enter GST Percentage"
-              />
-            </div> */}
-
              {/* After Discount Price */}
             <div className="form-group">
               <label>After Discount Price</label>
@@ -374,7 +360,6 @@ useEffect(() => {
                 placeholder="Manufacture Date"
               />
             </div>
-
 
             {/* Expire Date Left */}
             <div className="form-group">
@@ -442,7 +427,6 @@ useEffect(() => {
       <button
         type="button"
         className="btn btn-primary w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
-       
           onClick={() => navigate(`/adminGroceryList/Admin`)}
       >
         <VisibilityIcon className="me-2" />

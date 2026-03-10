@@ -13,7 +13,8 @@ import { CartStorage } from "./CartStorage";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ImageCache from "./utils/ImageCache";
 import Footer from "./Footer.js";
-
+import Mix1 from './img/RoyalRavva.jpeg';
+import Mix2 from './img/RavvaDosa.jpeg';
 const normalizeName = (s) =>
   String(s || "").toLowerCase().replace(/\s+/g, " ").trim();
 
@@ -50,6 +51,17 @@ const GroceryOfferItems = () => {
   const [zoomProduct, setZoomProduct] = useState(null);
   const [grandSummary, setGrandSummary] = useState({ items: 0, total: 0 });
   const location = useLocation();
+  const loadingImages = [Mix1, Mix2];
+  const [loadingIndex,setLoadingIndex] = useState(0);
+
+  useEffect(() => {
+    if (!imageLoading) return;
+    const interval = setInterval(() => {
+      setLoadingIndex(prev => (prev + 1) % loadingImages.length);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [imageLoading, loadingImages.length]);
+
 const mobileNumber = localStorage.getItem("customerMobileNumber");
 console.log("Mobile Number from localStorage:", mobileNumber);
 
@@ -253,75 +265,103 @@ console.log("Mobile Number from localStorage:", mobileNumber);
         if (timeA !== timeB) return timeB - timeA;
         return String(b.id).localeCompare(String(a.id));
       });
-        setProducts(sorted);
-        if (warm) return;
-        const firstImages = safeItems
-          .map((p) => ({
-            productId: p.id,
-            photo: Array.isArray(p.images) ? p.images[0] : null,
-          }))
-          .filter((x) => !!x.photo);
-        const cachedMap = {};
-        const misses = [];
-        for (const { productId, photo } of firstImages) {
-          const cached = ImageCache.getBase64(photo);
-          if (cached) {
-            cachedMap[productId] = [`data:image/jpeg;base64,${cached}`];
-          } else {
-            misses.push({ productId, photo });
-          }
-        }
-        if (Object.keys(cachedMap).length) {
-          setImageUrls((prev) => ({ ...prev, ...cachedMap }));
-        }
-        if (cancelled) return;
-        const fetchOne = async ({ productId, photo }) => {
-          try {
-            const res = await fetch(
-              `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
-                photo
-              )}`,
-              { signal }
-            );
-            const json = await res.json();
-            const b64 = json?.imageData || "";
-            if (!b64) return;
-            ImageCache.setBase64(photo, b64);
-            const dataUrl = `data:image/jpeg;base64,${b64}`;
-            if (!cancelled) {
-              setImageUrls((prev) => {
-                if (prev[productId]?.[0] === dataUrl) return prev;
-                return { ...prev, [productId]: [dataUrl] };
-              });
+      const FIRST_LOAD = 12;
+            const firstProducts = sorted.slice(0, FIRST_LOAD);
+            const remainingProducts = sorted.slice(FIRST_LOAD);
+            const imagePromises = firstProducts.map(async (p) => {
+            const photo = Array.isArray(p.images) ? p.images[0] : null;
+      
+            if (!photo) return { id: p.id, image: null };
+      
+            const cached = ImageCache.getBase64(photo);
+      
+            if (cached) {
+              return {
+                id: p.id,
+                image: `data:image/jpeg;base64,${cached}`,
+              };
             }
-          } catch {}
-        };
-        await Promise.allSettled(misses.map(fetchOne));
-      } catch (err) {
-        if (err?.name !== "CanceledError" && err?.name !== "AbortError") {
-          console.error("Error fetching grocery products:", err);
-          if (!warm) {
-            setProducts([]);
-            setImageUrls({});
-          }
-        }
-      } finally {
-        if (!cancelled && !warm) setImageLoading(false);
-      }
-    }
-
-    fetchProductsAndFirstImages(false, controller.signal);
-    pollId = setInterval(() => {
-      const pollController = new AbortController();
-      fetchProductsAndFirstImages(true, pollController.signal);
-    }, POLL_MS);
-
-    return () => {
-      cancelled = true;
-      controller.abort();
-      if (pollId) clearInterval(pollId);
-    };
-  }, [selectedCategory]);
+      
+            const res = await fetch(
+              `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`
+            );
+      
+            const json = await res.json();
+      
+            ImageCache.setBase64(photo, json.imageData);
+      
+            return {
+              id: p.id,
+              image: `data:image/jpeg;base64,${json.imageData}`,
+            };
+          });
+            const images = await Promise.allSettled(imagePromises);
+            const imageMap = {};
+            images.forEach((img) => {
+              if (img.status === "fulfilled" && img.value.image) {
+                imageMap[img.value.id] = [img.value.image];
+              }
+            });
+        setProducts(sorted);
+        setImageUrls(imageMap);
+           remainingProducts.forEach(async (p) => {
+       
+         const photo = p.images?.[0];
+         if (!photo) return;
+       
+         const cached = ImageCache.getBase64(photo);
+       
+         if (cached) {
+           setImageUrls(prev => ({
+             ...prev,
+             [p.id]: [`data:image/jpeg;base64,${cached}`]
+           }));
+           return;
+         }
+       
+         try {
+       
+           const res = await fetch(
+             `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`
+           );
+       
+           const json = await res.json();
+       
+           ImageCache.setBase64(photo, json.imageData);
+       
+           setImageUrls(prev => ({
+             ...prev,
+             [p.id]: [`data:image/jpeg;base64,${json.imageData}`]
+           }));
+       
+         } catch {}
+       });
+       } catch (err) {
+         if (err?.name !== "CanceledError" && err?.name !== "AbortError") {
+           console.error("Error fetching grocery products:", err);
+       
+           if (!warm) {
+             setProducts([]);
+             setImageUrls({});
+           }
+         }
+       } finally {
+         if (!cancelled && !warm) setImageLoading(false);
+       }
+       }
+       fetchProductsAndFirstImages(false, controller.signal);
+       
+       pollId = setInterval(() => {
+         const pollController = new AbortController();
+         fetchProductsAndFirstImages(true, pollController.signal);
+       }, POLL_MS);
+       return () => {
+         cancelled = true;
+         controller.abort();
+         if (pollId) clearInterval(pollId);
+       };
+       }, [selectedCategory]);
+       
 
   useEffect(() => {
     let savedCategories = [];
@@ -347,6 +387,21 @@ console.log("Mobile Number from localStorage:", mobileNumber);
       setCart(restoredCart);
     }
   }, [encodedCategory]);
+
+  if (imageLoading) {
+  return (
+    <div className="loading-container">
+      <img
+        src={loadingImages[loadingIndex]}
+        alt="loading"
+        className="delivery-animation"
+      />
+      <h4 className="loading-text">
+        Loading ...  Please Wait 
+      </h4>
+    </div>
+  );
+}
 
   return (
     <>

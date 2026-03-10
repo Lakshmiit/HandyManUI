@@ -231,43 +231,24 @@ const Notification = () => {
  const [productNotifications, setProductNotifications] = useState([]);
   const [groceryNotifications, setGroceryItemNotifications] = useState([]);
   const [collectionNotifications, setCollectionNotifications] = useState([]);
-  const [newTicketCount, setNewTicketCount] = useState(0);
-  // const [newQuoteCount, setNewQuoteCount] = useState(0);
-  // const [newDealerCount, setNewDealerCount] = useState(0);
-  // const [newOrderCount, setNewOrderCount] = useState(0); 
+  const [newTicketCount, setNewTicketCount] = useState(0); 
   const [newTechnicianCount, setNewTechnicianCount] = useState(0);
   const [newProductCount, setNewProductCount] = useState(0);
-  // const [newClosedCount, setNewClosedCount] = useState(0); 
   const [newNotificationCount, setNewNotificationCount] = useState(0);
-  // const [newApartmentCount, setNewApartmentCount] = useState(0);
   const [newGroceryCount, setNewGroceryCount] = useState(0); 
-  // const [newDeliveryCount, setNewDeliveryCount] = useState(0); 
   const [newCollectionCount, setNewCollectionCount] = useState(0); 
   const [glow, setGlow] = useState(false);
   const [glowTicket, setGlowTicket] = useState(false);   
-  // const [glowQuote, setGlowQuote] = useState(false);
-  // const [glowDealer, setGlowDealer] = useState(false);
-  // const [glowOrder, setGlowOrder] = useState(false);
-  const [glowTechnician, setGlowTechnician] = useState(false);
+   const [glowTechnician, setGlowTechnician] = useState(false);
   const [glowProduct, setGlowProduct] = useState(false);
-  // const [glowClosed, setGlowClosed] = useState(false);
-  // const [glowApartment, setGlowApartment] = useState(false);
-  const [glowGrocery, setGlowGrocery] = useState(false);
-  // const [glowDelivery, setGlowDelivery] = useState(false);
+ const [glowGrocery, setGlowGrocery] = useState(false);
   const [glowCollection, setGlowCollection] = useState(false);
   const [highlightedTicket, setHighlightedTicket] = useState(null);
-  // const [highlightedQuote, setHighlightedQuote] = useState(null);
-  // const [highlightedDealer, setHighlightedDealer] = useState(null);
-  // const [highlightedOrder, setHighlightedOrder] = useState(null);
   const [highlightedTechnician, setHighlightedTechnician] = useState(null);
   const [highlightedProduct, setHighlightedProduct] = useState(null);
-  // const [highlightedClosed, setHighlightedClosed] = useState(null);
-  // const [highlightedApartment, setHighlightedApartment] = useState(null);
   const [highlightedGrocery, setHighlightedGrocery] = useState(null);
-  //  const [highlightedDelivery, setHighlightedDelivery] = useState(null);
   const [highlightedCollection, setHighlightedCollection] = useState(null);
   const [activeTab, setActiveTab] = useState("");
-  // const {raiseTicketId} = useParams();
   const navigate = useNavigate();
    
   useEffect(() => {
@@ -279,25 +260,14 @@ const Notification = () => {
 
   const fetchNotifications = useCallback(async () => {
     try { 
-      // const [raiseTicketResponse, getQuoteResponse, getDealerResponse, getOrderResponse, BookTechnicianResponse, collectionsResponse, buyProductResponse, productClosedResponse, apartmentRaiseTicketResponse, groceryItemResponse] = await Promise.all([
       const [raiseTicketResponse, BookTechnicianResponse, buyProductResponse, groceryItemResponse, collectionsResponse] = await Promise.all([
         fetch(
           "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetTicketsNotifications"
         ),
-        // fetch(
-        //   "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetTicketsNotificationsForTechnician"
-        // ),
-        // fetch(
-        //   "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetRaiseTicketsForDealers"
-        // ),
-        // fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetTicketsNotifications`),
         fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BookTechnician/GetBookTechnicianForAdminList`),
         fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BuyProduct/GetBuyProductDetailsForAdminList`),
-        // fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BuyProduct/GetBuyProductDetailsForAdminList`),
-        // fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ApartmentRaiseTicket/GetGetApartmentMaintenanceForAdminList`),
         fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/GetAllMartItems`),
         fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/LakshmiCollection/GetAllLakshmiCollectionsOpen`),
-        // fetch(``),
       ]);
 
       const raiseTicketData = await raiseTicketResponse.json();
@@ -311,41 +281,6 @@ const Notification = () => {
       if (raiseTicketCount > 0) {
         setHighlightedTicket(raiseTicketFiltered[0].raiseTicketId);
       }
-
-  //     const getQuoteData = await getQuoteResponse.json();
-  //     const quoteTicketFiltered = getQuoteData.filter(
-  //       (item) => item.assignedTo === "Technical Agency" && item.status === "Assigned" && item.assignedTo !== "Dealer/Trader")
-  //       .sort((a, b) => new Date(b.date) - new Date(a.date));
-  //     const getQuoteCount = quoteTicketFiltered.length;
-  //     setQuoteNotifications(quoteTicketFiltered);
-  //     setNewQuoteCount(getQuoteCount);
-  //     setGlowQuote(getQuoteCount > 0);
-  //     if (getQuoteCount > 0) {
-  //       setHighlightedQuote(quoteTicketFiltered[0].raiseAQuoteId);
-  //     }
-
-  //     const getDealerData = await getDealerResponse.json();
-  //     const dealerTicketFiltered = getDealerData.filter(
-  //       (item) => item.internalStatus === "Pending" && item.assignedTo === "Dealer/Trader")
-  //       .sort((a, b) => new Date(b.date) - new Date(a.date));
-  //     const getDealerCount = dealerTicketFiltered.length;
-  //     setDealerNotifications(dealerTicketFiltered);
-  //     setNewDealerCount(getDealerCount);
-  //     setGlowDealer(getDealerCount > 0);
-  //     if (getDealerCount > 0) {
-  //       setHighlightedQuote(dealerTicketFiltered[0].raiseTicketId);
-  //     }
-
-  //    const getOrderData = await getOrderResponse.json();
-  //  const orderFiltered = getOrderData.filter((item) => item.internalStatus === "Customer Approved" || item.internalStatus === "PaymentDone" || item.internalStatus === "Closed")
-  //  .sort((a, b) => new Date(b.date) - new Date(a.date));
-  //  const getOrderCount = orderFiltered.length;
-  //    setOrderNotifications(orderFiltered);
-  //    setNewOrderCount(getOrderCount);
-  //    setGlowOrder(getOrderCount > 0);
-  //    if (getOrderCount > 0) {
-  //     setHighlightedOrder(orderFiltered[0].raiseTicketId);
-  //    }
 
      const bookTechnicianData = await BookTechnicianResponse.json();
    const bookTechnicianFiltered = bookTechnicianData.filter((item) => item.status === "Open" && item.assignedTo !== "Customer Care" && item.bookTechnicianId != null)
@@ -370,30 +305,6 @@ const Notification = () => {
       setHighlightedProduct(buyProductFiltered[0].buyProductId);
      }
 
-    //  const productClosedData = await productClosedResponse.json();
-    //  const productClosedFiltered = productClosedData.filter( 
-    //   (item) => (item.assignedTo !== "Customer Care" && item.status === "Closed"  && item.assignedTo === "Admin" && item.buyProductId != null) || (item.transactionStatus === "Success" && item.buyProductId != null));
-    // //  .sort((a, b) => new Date(b.date) - new Date(a.date));
-    //  const productClosedCount = productClosedFiltered.length;
-    //  setClosedProductNotifications(productClosedFiltered);
-    //  setNewClosedCount(productClosedCount);
-    //  setGlowClosed(productClosedCount > 0);
-    //  if (productClosedCount > 0) {
-    //   setHighlightedProduct(productClosedFiltered[0].buyProductId);
-    //  }
-
-    //  const apartmentMaintenanceTicketData = await apartmentRaiseTicketResponse.json();
-    //   const apartmentRaiseTicketFiltered = apartmentMaintenanceTicketData.filter(
-    //     (item) => item.status === "Open"  && item.apartmentRaiseTicketId != null)
-    //     .sort((a, b) => new Date(b.date) - new Date(a.date));
-    //   const apartmentTicketCount = apartmentRaiseTicketFiltered.length;
-    //   setApartmentTicketNotifications(apartmentRaiseTicketFiltered);
-    //   setNewApartmentCount(apartmentTicketCount);
-    //   setGlowApartment(apartmentTicketCount > 0);
-    //   if (apartmentTicketCount > 0) {
-    //     setHighlightedApartment(apartmentRaiseTicketFiltered[0].apartmentRaiseTicketId);
-    //   }
-
       const groceryItemData = await groceryItemResponse.json();
       const groceryItemFiltered = groceryItemData.filter(
         (item) => item.status === "Open"  && item.martId != null)
@@ -417,19 +328,7 @@ const Notification = () => {
       if (collectionsCount > 0) {
         setHighlightedCollection(collectionsFiltered[0].lakshmiCollectionId);
       } 
-// const deliveryPartnerData = await deliveryPartnerResponse.json();
-//       const deliveryPartnerFiltered = deliveryPartnerData.filter(
-//         (item) => item.status === "Draft")
-//         .sort((a, b) => new Date(b.date) - new Date(a.date));
-//       const deliveryPartnerCount = deliveryPartnerFiltered.length;
-//       setDeliveryNotifications(deliveryPartnerFiltered);
-//       setNewDeliveryCount(deliveryPartnerCount);
-//       setGlowDelivery(deliveryPartnerCount > 0);
-//       if (deliveryPartnerCount > 0) {
-//         setHighlightedDelivery(deliveryPartnerFiltered[0]);
-//       }
-      // const totalNotifications = raiseTicketCount + getQuoteCount + getDealerCount + getOrderCount + bookTechnicianCount + buyProductCount + productClosedCount + apartmentTicketCount + collectionsCount+deliveryPartnerCount;
-      const totalNotifications = raiseTicketCount + bookTechnicianCount + buyProductCount + groceryItemCount + collectionsCount; 
+const totalNotifications = raiseTicketCount + bookTechnicianCount + buyProductCount + groceryItemCount + collectionsCount; 
       setNewNotificationCount(totalNotifications);        
       console.log("newNotificationCount:", newNotificationCount);
       setGlow(totalNotifications > 0);
@@ -449,21 +348,7 @@ const Notification = () => {
     setGlowTicket(false);
     setHighlightedTicket(null);
   };
-  // const handleClearQuoteNotifications = () => {
-  //   setNewQuoteCount(0);
-  //   setGlowQuote(false);
-  //   setHighlightedQuote(null);
-  // };
-  // const handleClearDealerNotifications = () => {
-  //   setNewDealerCount(0);
-  //   setGlowDealer(false);
-  //   setHighlightedDealer(null);
-  // };
-  // const handleClearOrderNotifications = () => {
-  //   setNewOrderCount(0);
-  //   setGlowOrder(false);
-  //   setHighlightedOrder(null);
-  // };
+
   const handleClearTechnicianNotifications = () => {
     setNewTechnicianCount(0);
     setGlowTechnician(false);
@@ -474,28 +359,12 @@ const Notification = () => {
     setGlowProduct(false);
     setHighlightedProduct(null);
   };
-  // const handleClearClosedNotifications = () => {
-  //   setNewClosedCount(0);
-  //   setGlowClosed(false);
-  //   setHighlightedClosed(null);
-  // };
-  // const handleClearApartmentNotifications = () => {
-  //   setNewApartmentCount(0);
-  //   setGlowApartment(false);
-  //   setHighlightedApartment(null);
-  // };
 
    const handleClearGroceryNotifications = () => {
     setNewGroceryCount(0);
     setGlowGrocery(false);
     setHighlightedGrocery(null);
   };
-
-  // const handleClearDeliveryNotifications = () => {
-  //   setNewDeliveryCount(0);
-  //   setGlowDelivery(false);
-  //   setHighlightedDelivery(null);
-  // };
 
   const handleClearCollectionNotifications = () => {
     setNewCollectionCount(0);
@@ -505,9 +374,6 @@ const Notification = () => {
 
 const handleTabClick = (tab) => {
   setActiveTab(tab);
-  // if (tab === "Delivery Partner Directory") {
-  //   navigate("/deliveryPartnerDirectory");
-  // }
 };
   return ( 
     <>
@@ -549,9 +415,7 @@ const handleTabClick = (tab) => {
 {isMobile ? (
   <div className="tabs-mobile d-flex flex-column">
     {["Raise Ticket", "Book Technician", "Buy Products", "Grocery Items", "Lakshmi Collections"
-    //  "Technician Get Quote", "Dealer Get Quote", "Raise Ticket Orders",
-      //  "Buy Product Closed Orders", "Apartment Raise Ticket", "Lakshmi Collection Orders", "Lakshmi Collections", "Delivery Partner Directory"
-      ].map((tab) => (
+    ].map((tab) => (
       <div
         key={tab}
         className={`tab-item ${activeTab === tab ? "active" : ""} 
@@ -560,15 +424,7 @@ const handleTabClick = (tab) => {
           ${tab === "Buy Products" && glowProduct ? "glow" : ""}
           ${tab === "Grocery Items" && glowGrocery ? "glow" : ""}
           ${tab === "Lakshmi Collections" && glowGrocery ? "glow" : ""}
-          
           `}
-          // ${tab === "Technician Get Quote" && glowQuote ? "glow" : ""} 
-          // ${tab === "Dealer Get Quote" && glowDealer ? "glow" : ""} 
-          // ${tab === "Raise Ticket Orders" && glowOrder ? "glow" : ""}
-          // ${tab === "Buy Product Closed Orders" && glowClosed ? "glow" : ""}
-          // ${tab === "Apartment Raise Ticket" && glowApartment ? "glow" : ""}
-          // ${tab === "Delivery Partner Directory" && glowDelivery ? "glow" : ""}
-
         onClick={() => handleTabClick(tab)}
         style={{ cursor: "pointer" }}
       >
@@ -576,33 +432,15 @@ const handleTabClick = (tab) => {
         {tab === "Raise Ticket" && newTicketCount > 0 && (
           <span className="badge bg-danger">{newTicketCount}</span>
         )}
-        {/* {tab === "Technician Get Quote" && newQuoteCount > 0 && (
-          <span className="badge bg-danger">{newQuoteCount}</span>
-        )}
-        {tab === "Dealer Get Quote" && newDealerCount > 0 && (
-          <span className="badge bg-danger">{newDealerCount}</span>
-        )}
-        {tab === "Raise Ticket Orders" && newOrderCount > 0 && (
-          <span className="badge bg-danger">{newOrderCount}</span>
-        )} */}
-        {tab === "Book Technician" && newTechnicianCount > 0 && (
+         {tab === "Book Technician" && newTechnicianCount > 0 && (
           <span className="badge bg-danger">{newTechnicianCount}</span>
         )}
         {tab === "Buy Products" && newProductCount > 0 && (
           <span className="badge bg-danger">{newProductCount}</span>
         )}
-        {/* {tab === "Buy Product Closed Orders" && newClosedCount > 0 && (
-          <span className="badge bg-danger">{newClosedCount}</span>
-        )}
-        {tab === "Apartment Raise Ticket" && newApartmentCount > 0 && (
-          <span className="badge bg-danger">{newApartmentCount}</span>
-        )} */}
         {tab === "Grocery Items" && newGroceryCount > 0 && (
           <span className="badge bg-danger">{newGroceryCount}</span>
         )}
-        {/* {tab === "Delivery Partner Directory" && newDeliveryCount > 0 && (
-          <span className="badge bg-danger">{newDeliveryCount}</span> 
-        )} */}
         {tab === "Lakshmi Collections" && newCollectionCount > 0 && (
           <span className="badge bg-danger">{newCollectionCount}</span>
         )}
@@ -612,8 +450,6 @@ const handleTabClick = (tab) => {
 ) : (
   <div className="tabs d-flex">
     {["Raise Ticket",  "Book Technician", "Buy Products", "Grocery Items", "Lakshmi Collections"
-    // "Technician Get Quote", "Dealer Get Quote", "Raise Ticket Orders", "Lakshmi Collections", "Delivery Partner Directory"
-    //  "Buy Product Closed Orders", "Apartment Raise Ticket"
     ].map((tab) => (
       <span
         key={tab}
@@ -624,13 +460,6 @@ const handleTabClick = (tab) => {
           ${tab === "Grocery Items" && glowGrocery ? "glow" : ""}
           ${tab === "Lakshmi Collections" && glowCollection? "glow" : ""}
           `}
-          // ${tab === "Technician Get Quote" && glowQuote ? "glow" : ""} 
-          // ${tab === "Dealer Get Quote" && glowDealer ? "glow" : ""} 
-          // ${tab === "Raise Ticket Orders" && glowOrder ? "glow" : ""}
-          // ${tab === "Buy Product Closed Orders" && glowClosed ? "glow" : ""} 
-          // ${tab === "Apartment Raise Ticket" && glowApartment ? "glow" : ""} 
-          // ${tab === "Delivery Partner Directory" && glowDelivery ? "glow" : ""}
-
         onClick={() => handleTabClick(tab)}
         style={{ cursor: "pointer", marginRight: "15px" }}
       >
@@ -638,16 +467,7 @@ const handleTabClick = (tab) => {
         {tab === "Raise Ticket" && newTicketCount > 0 && (
           <span className="badge bg-danger">{newTicketCount}</span>
         )}
-        {/* {tab === "Technician Get Quote" && newQuoteCount > 0 && (
-          <span className="badge bg-danger">{newQuoteCount}</span>
-        )}
-        {tab === "Dealer Get Quote" && newDealerCount > 0 && (
-          <span className="badge bg-danger">{newDealerCount}</span>
-        )}
-        {tab === "Raise Ticket Orders" && newOrderCount > 0 && (
-          <span className="badge bg-danger">{newOrderCount}</span>
-        )} */}
-        {tab === "Book Technician" && newTechnicianCount > 0 && (
+       {tab === "Book Technician" && newTechnicianCount > 0 && (
           <span className="badge bg-danger">{newTechnicianCount}</span>
         )}
         {tab === "Buy Products" && newProductCount > 0 && (
@@ -656,19 +476,10 @@ const handleTabClick = (tab) => {
          {tab === "Grocery Items" && newGroceryCount > 0 && (
           <span className="badge bg-danger">{newGroceryCount}</span>
         )}
-        {/* {tab === "Delivery Partner Directory" && newDeliveryCount > 0 && (
-          <span className="badge bg-danger">{newDeliveryCount}</span>
-        )} */}
          {tab === "Lakshmi Collections" && newCollectionCount > 0 && (
           <span className="badge bg-danger">{newCollectionCount}</span>
         )}
-         {/* {tab === "Buy Product Closed Orders" && newClosedCount > 0 && (
-          <span className="badge bg-danger">{newClosedCount}</span>
-        )}
-        {tab === "Apartment Raise Ticket" && newApartmentCount > 0 && (
-          <span className="badge bg-danger">{newApartmentCount}</span>
-        )} */}
-      </span>
+        </span>
     ))}
   </div>
 )}
@@ -692,66 +503,6 @@ const handleTabClick = (tab) => {
             </>
           )}
           </div>
-          {/* <div>
-          {activeTab === "Technician Get Quote" && (
-            <>
-              <NotificationsList
-                notifications={quoteNotifications}
-                highlightedItem={highlightedQuote}
-              />
-              <div
-                className="view-notifications text-info mx-2"
-                onClick={() => {
-                  navigate(`/quoteNotification`);
-                  handleClearQuoteNotifications();
-                }} 
-                style={{ cursor: "pointer" }}
-              >
-                View All Notifications
-              </div>
-            </>
-          )}
-          </div>
-          <div>
-{activeTab === "Dealer Get Quote" && (
-              <>
-                <NotificationsList
-                  notifications={dealerNotifications}
-                  highlightedItem={highlightedDealer}
-                />
-                <div
-                  className="view-notifications text-info mx-2"
-                  onClick={() => {
-                    navigate(`/dealerGrid`);
-                    handleClearDealerNotifications();
-                  }} 
-                  style={{ cursor: "pointer" }}
-                >
-                  View All Notifications
-                </div>
-              </>
-            )}
-            </div>
-            <div>
-{activeTab === "Raise Ticket Orders" && (
-            <>
-              <NotificationsList
-                notifications={orderNotifications}
-                highlightedItem={highlightedOrder}
-              />
-              <div
-                className="view-notifications text-info mx-2"
-                onClick={() => {
-                  navigate(`/customerCareGrid`);
-                  handleClearOrderNotifications();
-                }} 
-                style={{ cursor: "pointer" }}
-              >
-                View All Notifications
-              </div>
-            </>
-          )}
-          </div> */}
           <div>
 {activeTab === "Book Technician" && (
             <>
@@ -792,47 +543,7 @@ const handleTabClick = (tab) => {
             </>
           )}
           </div>
-          {/* <div>
-          {activeTab === "Buy Product Closed Orders" && (
-            <>
-              <NotificationsList
-                notifications={closedProductNotifications}
-                highlightedItem={highlightedClosed}
-              />
-              <div
-                className="view-notifications text-info mx-2"
-                onClick={() => {
-                  navigate(`/buyProductClosedOrdersGrid`);
-                  handleClearClosedNotifications();
-                }} 
-                style={{ cursor: "pointer" }}
-              >
-                View All Notifications
-              </div>
-            </>
-          )}
-          </div> 
-           <div>
-          {activeTab === "Apartment Raise Ticket" && (
-            <>
-              <NotificationsList
-                notifications={apartmentNotifications}  
-                highlightedItem={highlightedApartment}
-              />
-              <div
-                className="view-notifications text-info mx-2"
-                onClick={() => {
-                  navigate(`/apartmentNotificationGrid`);
-                  handleClearApartmentNotifications();
-                }}
-                style={{ cursor: "pointer" }}
-              > 
-                View All Notifications
-              </div>
-            </>
-          )}
-          </div> */}
-          <div>
+         <div>
           {activeTab === "Grocery Items" && (
             <>
               <NotificationsList
@@ -852,29 +563,7 @@ const handleTabClick = (tab) => {
             </>
           )}
           </div>
-
-          {/* <div>
-          {activeTab === "Delivery Partner Directory" && (
-            <>
-              <NotificationsList
-                notifications={deliveryNotifications}
-                highlightedItem={highlightedDelivery}
-              />
-              <div
-                className="view-notifications text-info mx-2"
-                onClick={() => {
-                  navigate(`/deliveryPartnerDirectory`);
-                  handleClearDeliveryNotifications();
-                }}
-                style={{ cursor: "pointer" }}
-              > 
-                View All Notifications
-              </div>
-            </>
-          )}
-          </div>
-           */}
-          <div>
+         <div>
           {activeTab === "Lakshmi Collections" && (
             <>
               <NotificationsList

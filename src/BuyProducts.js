@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback} from "react";
 import "./App.css";
-// import { v4 as uuidv4 } from 'uuid'; 
 import Sidebar from './Sidebar';
 import Header from './Header.js';
 import Footer from './Footer.js';
@@ -8,11 +7,10 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate, useParams } from "react-router-dom";
 import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import BuyProductView from "./BuyProductView.js";
-import { Button, Form, Modal } from 'react-bootstrap'; // Import Bootstrap components for modal
+import { Button, Form, Modal } from 'react-bootstrap'; 
 import axios from 'axios';
 const BuyProduct = () => { 
   const navigate = useNavigate();
-  // const location = useLocation();
   const [category, setCategory] = useState('');
   const [productName, setProductName] = useState('');
   const [productCatalogue, setProductCatalogue] = useState('');
@@ -21,45 +19,27 @@ const BuyProduct = () => {
   const [rate, setRate] = useState('');
   const [discount, setDiscount] = useState('');
   const [requiredQuality, setRequiredQuality] = useState('');
-  // const [units, setUnits] = useState(location.state?.units || "");
-  // const [afterDiscountPrice, setAfterDiscountPrice] = useState(location.state?.afterDiscountPrice || "");
   const {userType} = useParams();
   const [buyProductId, setBuyProductId] = useState('');
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const { selectedUserType } = useParams(); 
-  // const [category, setCategory] = useState("");
-  // const [productSize, setProductSize] = useState("");
-  // const [productCatalogue, setProductCatalogue] = useState("");
-  // const [chooseColor, setChooseColor] = useState([]);
    const [selectedColors, setSelectedColors] = useState("");
-  // const [requiredQuality, setRequiredQuality] = useState("");
-  // const [rate, setRate] = useState("");
-  // const [discount, setDiscount] = useState("");
-  // const [productName, setProductName] = useState("");
-  // const [showSecondaryAddresses, setShowSecondaryAddresses] = useState(false);
   const [newAddress, setNewAddress] = useState('');
   const [addresses, setAddresses] = useState([]);
-  // const [addressType, setAddressType] = useState('');
   const [state, setState] = useState('');
     const [districtList, setDistrictList] = useState([]);  
   const [stateList, setStateList] = useState([]);
     const [district, setDistrict] = useState('');  
     const [districtId, setDistrictId] = useState('');    
     const [stateId, setStateId] = useState(null); 
-  // const [pincode, setPincode] = useState('');
   const [fullName, setFullName] = useState('');
   const [showModal, setShowModal] = useState(false);
-  // const [productSuggestions, setProductSuggestions] = useState([]);
-  // const [filteredSuggestions, setFilteredSuggestions] = useState([]);
-  // const [showDropdown, setShowDropdown] = useState(false);
-  // const [allProducts, setAllProducts] = useState([]);
   const [quantityError, setQuantityError] = useState("");
   const [checkError, setCheckError] = useState("");
   const [isChecked, setIsChecked] = useState(true);
   const [showModals, setShowModals] = useState(false);
   const [colorError, setColorError] = useState("");
-  // const [error, setError] = useState("");
   const [productOptions, setProductOptions] = useState([]);
   const [selectedProduct] = useState({});
   const [id, setId] = useState("");
@@ -67,7 +47,6 @@ const BuyProduct = () => {
   const [noProductNameError, setNoProductNameError] = useState('');
   const [loading, setLoading] = useState(true);
 const [mobileNumber, setMobileNumber] = useState('');
-  // const [firstName, setFirstName] = useState('');
   const [zipCode, setZipCode] = useState('');
   const [guestCustomerId, setGuestCustomerId] = useState('');
   const [isEditing, setIsEditing] = useState(false);
@@ -86,76 +65,8 @@ const [deliveryInDays, setDeliveryInDays] = useState('');
 const [numberOfStockAvailable, setNumberOfStockAvailable] = useState('');
 const [disableBuy, setDisableBuy] = useState(false);
 const isGuestName = (name) => (name ?? '').trim().toLowerCase() === 'guest';
+const [isNewUser, setIsNewUser] = useState(true);
 
-
- // Check if there's state passed from ViewProduct page
-//  useEffect(() => {
-//   const storedState = sessionStorage.getItem("buyProductState");
-//   if (location.state) {
-//     const {
-//       category,
-//       productName,
-//       catalogue, 
-//       productSize,
-//       color,
-//       rate,
-//       discount, 
-//       // afterDiscount,
-//       requiredQuality,
-//       id,
-//     } = location.state;
-//     setCategory(category);
-//     setProductName(productName);
-//     setProductCatalogue(catalogue);
-//     setProductSize(productSize);
-//     setChooseColor(color);
-//     setRate(rate);
-//     setDiscount(discount);
-//     // setAfterDiscount(afterDiscount);
-//     setRequiredQuality(requiredQuality);
-//     setId(id);
-
-//     sessionStorage.setItem("buyProductState", JSON.stringify(location.state));
-//   } else if (storedState) {
-//     const parsedState = JSON.parse(storedState);
-//     setCategory(parsedState.category);
-//     setProductName(parsedState.productName);
-//     setProductCatalogue(parsedState.catalogue);
-//     setProductSize(parsedState.productSize);
-//     setChooseColor(parsedState.color);
-//     setRate(parsedState.rate);
-//     setDiscount(parsedState.discount);
-//     // setAfterDiscount(afterDiscount);
-//     setRequiredQuality(parsedState.requiredQuality);
-//     setId(parsedState.id);
-//   }
-// }, [location.state]);
-
-// const handleViewProduct = () => {
-//   const hasViewed = sessionStorage.getItem("hasViewedProduct");
-
-//   if (!productName.trim()) {
-//     setError("Please select a product name!");
-//     return;
-//   }
-
-//   setError("");
-//   sessionStorage.setItem("hasViewedProduct", "true");
-
-//   navigate(`/buyproduct-view/${id}/${userId}/${userType}`, {
-//     state: {
-//       category,
-//       productName,
-//       productCatalogue,
-//       productSize,
-//       color,
-//       rate,
-//       discount,
-//       requiredQuality,
-//     },
-//   });
-// };
- 
 useEffect(() => {
   console.log(buyProductId, loading, editingAddressId, isEditing);
 }, [buyProductId, loading, editingAddressId, isEditing]);
@@ -183,10 +94,14 @@ useEffect(() => {
           emailAddress: addr.emailAddress,
           fullName: addr.fullName,
         }));
-        
         setAddresses(formattedAddresses);
-        const customerName = Array.isArray(data) ? data[0]?.fullName || '' : data.fullName || '';
-        setFullName(customerName);
+       const apiFullName = addresses[0]?.fullName ?? "";
+        setFullName(apiFullName);
+        if (!apiFullName || isGuestName(apiFullName)) {
+          setIsNewUser(true);
+        } else {
+          setIsNewUser(false);
+        }
       } catch (error) {
         console.error("Error fetching customer data:", error);
       }
@@ -209,7 +124,6 @@ useEffect(() => {
       });
   }, []);
   
-   
    useEffect(() => {
     if (stateId) {
       axios.get(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/MasterData/getDistricts/${stateId}`)
@@ -231,23 +145,19 @@ useEffect(() => {
 
   const handleGetQuotation = async (e) => {
     e.preventDefault();
-
     if (!selectedColors) {
         setColorError("Please Enter Select Color Field!");
         return;
       }
-
     if (!requiredQuality) {
       setQuantityError("Please Enter Quantity Field!");
       return;
     }
-
     if (!isChecked) {
       setCheckError("You must accept the terms and conditions before submitting.");
       return;
     }
 
-  
     const primaryAddress = addresses.find((addr) => addr.type === "primary");
     const state = primaryAddress?.state || "";
     const district = primaryAddress?.district || "";
@@ -324,31 +234,6 @@ useEffect(() => {
     }
   };
 
-  
-//   const handleColorChange = (e) => {
-//     const inputValue = e.target.value.trim();
-
-//     if (!inputValue) {
-//       alert("Please enter a valid color.");
-//       return;
-//     }
-
-//     const inputColors = e.target.value
-//       .split(/\s*,\s*/) 
-//       .map(color => color.toLowerCase()) 
-
-//       const availableColors = Array.isArray(color) ? color.map(c => c.trim().toLowerCase()) : [];
-
-//       const isValid = inputColors.every(c => availableColors.includes(c));
-
-//   if (isValid) {
-//     setChooseColors(e.target.value);
-//   } else {
-//     alert("Please choose a color from the given options!");
-//   }
-// };
-  
-
 const handleColorChange = (e) => {
   const inputColor = e.target.value;
   if (chooseColor.includes(inputColor)) {
@@ -389,198 +274,24 @@ const handleColorChange = (e) => {
       setDisableBuy(false);
       setIsChecked(true);
     }
-
     setRequiredQuality(qty);
   } else {
     setQuantityError("Please enter a valid quantity.");
     setDisableBuy(true);
     setIsChecked(false);
   }
-};
-
-
-  // const handleAddToCart = async (e) => {
-  //   e.preventDefault();
-   
-  //   const primaryAddress = addresses.find((addr) => addr.type === "primary");
-  //   const state = primaryAddress?.state || "";
-  //   const district = primaryAddress?.district || "";
-  //   const pincode = primaryAddress?.zipCode || "";
-  //   const mobileNumber = primaryAddress?.mobileNumber || "";
-  
-  //   const payload = {
-  //     BuyProductId:"string",
-  //     id: "string",
-  //     date: new Date(),
-  //     Address: primaryAddress?.address || "",
-  //     CustomerPhoneNumber: mobileNumber,
-  //     category,
-  //     status: "Draft",
-  //     productName,
-  //     ProductCatalogue: productCatalogue,
-  //     productSize,
-  //     rate: rate.toString(),
-  //     discount: discount.toString(),
-  //     afterDiscountPrice: afterDiscountPrice.toString(),
-  //     color: color,
-  //     selectedColors: colors,
-  //     requiredQuantity: requiredQuality.toString(),
-  //     totalAmount: totalAmount.toString(),
-  //     AssignedTo: "Customer Care",
-  //     DeliveryCharges: "",
-  //     ServiceCharges: "",
-  //     TotalPaymentAmount: "",
-  //     AddressType: primaryAddress ? "primary" : "secondary",
-  //     State: state,
-  //     District: district,
-  //     ZipCode: pincode,
-  //     CustomerId: userId,
-  //     CustomerName: fullName,
-  //     RequestedBy: userId,
-  //     PaymentMode:"",
-  //     UTRTransactionNumber:"",
-  //     TechnicianConfirmationCode:"",
-  //     DeliveryDate:"",
-  //     TechnicianDetils:"",
-  //     ProductView: "Draft",
-  //     InvoiceDetails:"",
-  //     UploadInvoice: [],
-  //     WarrantyPeriod: "",
-  //   };
-  
-  //   try {
-  //     const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BuyProduct/BuyProductUpload`,{
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify(payload),
-  //     });
-  //     if (!response.ok) {
-  //      throw new Error("Failed to submit quotation.");
-  //     }
-  //     const buyProductData = await response.json();
-  //     setBuyProductId(buyProductData.buyProductId);
-  //     alert(`Add to Cart Successfully`);
-  //     // navigate(`/buyProductPaymentPage/${buyProductData.buyProductId}/${userType}`);
-  //   } catch (error) {
-  //     console.error("Error submitting quotation:", error);
-  //     window.alert('Failed to submitting quotation. Please try again later.');    }
-  // };   
-     
+}; 
   // Detect screen size for responsiveness
 useEffect(() => {
   const handleResize = () => setIsMobile(window.innerWidth <= 768);
-  handleResize(); // Set initial state
+  handleResize(); 
   window.addEventListener('resize', handleResize);
-
   return () => window.removeEventListener('resize', handleResize);
 }, []);
-
-
-  // const handleAddToCart = () => {
-  //   alert("Item added to cart!");
-  // };
 
    const handleSubmit = (e) => {
      e.preventDefault();
    };
-
-  // const states = ['Andhra Pradesh', 'Telangana'];
-  // const districts = {
-  //   'Andhra Pradesh': ['Visakhapatnam', 'Vijayawada', 'Guntur'],
-  //   'Telangana': ['Hyderabad', 'Warangal', 'Khammam'],
-  // };
-
-
-  // // Handle adding a new address
-  // const handleAddAddress = () => {
-  //   if (
-  //     newAddress.trim() === '' ||
-  //     addressType.trim() === '' ||
-  //     state.trim() === '' ||
-  //     district.trim() === '' ||
-  //     pincode.trim() === ''
-  //   ) {
-  //     alert('Please fill in all the fields.');
-  //     return;
-  //   }
-
-  //   if (addresses.length >= 4) {
-  //     alert('You can only add up to 4 addresses.');
-  //     return;
-  //   }
-
-  //   const newAddr = {
-  //     id: uuidv4(),
-  //     type: addressType,
-  //     address: newAddress,
-  //     state,
-  //     district,
-  //     pincode,
-  //   };
-
-  //   setAddresses((prevAddresses) => [...prevAddresses, newAddr]);
-  //   resetAddressForm();
-  //   setShowModal(false);
-  // };
-
-
-  // const handleAddAddress = () => {
-  //   if (
-  //     newAddress.trim() === '' ||
-  //     addressType.trim() === '' ||
-  //     state.trim() === '' ||
-  //     district.trim() === '' ||
-  //     pincode.trim() === ''
-  //   ) {
-  //     alert('Please fill in all the fields.');
-  //     return;
-  //   }
-  
-  //   if (addresses.length >= 4) {
-  //     alert('You can only add up to 4 addresses.');
-  //     return;
-  //   }
-  
-  //   const newAddr = {
-  //     id: uuidv4(),
-  //     type: addressType,
-  //     address: newAddress,
-  //     state,
-  //     district,
-  //     zipCode: pincode, // Corrected field name for consistency
-  //   };
-  
-  //   console.log('New Address:', newAddr); // Debugging
-  
-  //   setAddresses((prevAddresses) => [...prevAddresses, newAddr]);
-  //   resetAddressForm();
-  //   setShowModal(false);
-  // };
-  
-
-  // // Reset address form fields
-  // const resetAddressForm = () => {
-  //   setNewAddress('');
-  //   setAddressType('');
-  //   setState('');
-  //   setDistrict('');
-  //   setPincode('');
-  // };
-
-  // Handle secondary address selection
-  // const handleSecondaryAddressSelect = (id) => {
-  //   const updatedAddresses = addresses.map((address) =>
-  //     address.id === id
-  //       ? { ...address, type: 'primary' }
-  //       : address.type === 'primary'
-  //       ? { ...address, type: 'secondary' }
-  //       : address
-  //   );
-  //   setAddresses(updatedAddresses);
-  //   setShowSecondaryAddresses(false); // Collapse secondary addresses view
-  // };
 
   const resetAddressForm = () => {
     setFullName('');
@@ -668,19 +379,6 @@ useEffect(() => {
     }
   };
 
-  // // Handle address deletion
-  // const handleAddressDelete = (id) => {
-  //   const updatedAddresses = addresses.filter((address) => address.id !== id);
-  //   setAddresses(updatedAddresses);
-  // };
-
-//   // Fetch products when category changes
-// useEffect(() => {
-//   if (category) {
-//     fetchProductsByCategory(category);
-//   }
-// }, [category]);
-
 const fetchProductsByCategory = async (selectedCategory) => {
   try {
     setLoading(true);
@@ -693,8 +391,6 @@ const fetchProductsByCategory = async (selectedCategory) => {
     }
     const data = await response.json();
     console.log("Fetched Products:", data);
-    // alert(JSON.stringify(productOptions));
-
     const validProducts = data.filter(
       (item) => item.productName && item.productName.trim() !== ""
     );
@@ -730,7 +426,6 @@ useEffect(() => {
   }
 }, [category]);
 
-
 const handleCategoryChange = (e) => {
   setCategory(e.target.value);
   setProductName(""); 
@@ -748,10 +443,8 @@ const handleProductChange = (e) => {
     setDiscount(selectedProduct.discount || "");
     setId(selectedProduct.id || "");
     setDeliveryInDays(selectedProduct.deliveryInDays || "");
-    // setNumberOfStockAvailable(selectedProduct.numberOfStockAvailable || "");
     const stock = Number(selectedProduct.numberOfStockAvailable || 0);
     setNumberOfStockAvailable(stock);
-
     if (stock > 0) {
       setRequiredQuality(1);
       setQuantityError("");
@@ -770,71 +463,6 @@ useEffect(() => {
   }
 }, [category, selectedProduct]);
 
-
-  // useEffect(() => {
-  //   // if (!category || category === "Choose Category") {
-  //   //   setProductSuggestions([]);
-  //   //   setFilteredSuggestions([]);
-  //   //   return;
-  //   // }
-
-  //   const fetchProducts = async () => {
-  //     if (!category) return;
-  //     try {
-  //       const response = await axios.get(
-  //         `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Product/GetProductsByCategory?category=${category}`
-  //       );
-  //       setAllProducts(response.data);
-  //       // alert(JSON.stringify(allProducts));
-  //       setProductSuggestions(response.data.map((product) => product.productName));
-  //     } catch (error) {
-  //       console.error("Error fetching products by category:", error);
-  //     }
-  //   };
-  //   fetchProducts();
-  // }, [category]);
-  
-  // useEffect(() => {
-  //   if (productName) {
-  //     const filtered = productSuggestions.filter((product) =>
-  //       // name.toLowerCase().startsWith(productName.toLowerCase())
-  //     product.toLowerCase().includes(productName.toLowerCase())
-  //     );
-  //     setFilteredSuggestions(filtered);
-  //     setShowDropdown(filtered.length > 0);
-  //   } else {
-  //     setFilteredSuggestions([]);
-  //     setShowDropdown(false);
-  //   }
-  // }, [productName, productSuggestions]);
-
-  
-  // const handleProductSelect = (selectedProductName) => {
-  //   setProductName(selectedProductName); // Update the input field to reflect the selected name
-  //   setShowDropdown(false);
-
-  //   const selectedProduct = allProducts.find(
-  //     (product) => product.productName === selectedProductName
-  //   );
-  //   if (selectedProduct) {
-  //     setProductCatalogue(selectedProduct.catalogue);
-  //     setProductSize(selectedProduct.productSize);
-  //     setChooseColor(selectedProduct.color);
-  //     setRate(selectedProduct.rate);
-  //     setDiscount(selectedProduct.discount);
-  //     // setAfterDiscount(selectedProduct.afterDiscount);
-  //     setId(selectedProduct.id);
-  //   }
-    
-  //   setFilteredSuggestions([]);
-  // };
-
-  // // Handle product selection
-  // const handleProductSelect = (selectedProduct) => {
-  //   setProductName(selectedProduct);
-  //   setShowDropdown(false);
-  // };
-
   const primaryAddress = addresses.find(addr => addr.type === 'primary');
   const isAddressInvalid = !primaryAddress || !primaryAddress.address || !primaryAddress.zipCode;
   useEffect(() => {
@@ -844,7 +472,6 @@ useEffect(() => {
         setShouldBlink(false);
       }
     }, [isAddressInvalid]);
-
 
   return (
     <div>
@@ -883,18 +510,20 @@ useEffect(() => {
           <form className="form" onSubmit={handleSubmit}>
 <div className="d-flex justify-content-between align-items-center">
                     <label className="">Address <span className="req_star">*</span></label>
-                    {/* <Button variant="success m-1 text-white" onClick={() => setShowModal(true)}>
-                      Add Address
-                    </Button> */}
     
           {/* Modal */}
-                <Modal show={showModal} onHide={() => setShowModal(false)}>
-            <Modal.Header closeButton>
-              <Modal.Title className='w-100'>
-                {isGuestName(fullName) ? 'Add Address' : 'Edit Address'}
-              </Modal.Title>
-                {/* <Modal.Title>{isEditing ? 'Edit Address' : 'Add Address'}</Modal.Title> */}
-              </Modal.Header>
+               <Modal show={showModal} onHide={() => setShowModal(false)}>
+                  <Modal.Header
+                    closeButton
+                    style={{
+                      backgroundColor: isEditing ? "#008000" : "#008000",
+                      color: "white",
+                    }}
+                  >
+                    <Modal.Title className="w-100">
+                      {isNewUser ? "Add Address" : "Edit Address"}
+                    </Modal.Title>
+                  </Modal.Header>
             <Modal.Body>
               <Form>
                 <Form.Group className="mb-3">
@@ -916,7 +545,6 @@ useEffect(() => {
                     maxLength="10"
                     value={mobileNumber}
                     onChange={(e) => setMobileNumber(e.target.value)}
-                    
                   />
                   </Form.Group>
                 <Form.Group className="mb-3">
@@ -1003,9 +631,17 @@ useEffect(() => {
                       required
                   />
                 </Form.Group>
-                <Button type="button" variant="primary" onClick={handleAddressEdit}>
-                  {isGuestName(fullName) ? 'Add Address' : 'Edit Address'}
-                </Button>
+                 <Button
+                    type="button"
+                    style={{
+                      backgroundColor: isAddressInvalid ? "#008000" : "#008000",
+                      borderColor: isAddressInvalid ? "#008000" : "#008000",
+                      color: "white",
+                    }}
+                    onClick={handleAddressEdit}
+                  >
+                    {isNewUser ? "Add Address" : "Edit Address"}
+                  </Button>
               </Form>
             </Modal.Body>
           </Modal>
@@ -1019,8 +655,6 @@ useEffect(() => {
                       className="list-group-item d-flex justify-content-between align-items-center bg-white text-dark"
                     >
                       <div>
-                        {/* <span className="m1-2">{address.id}</span>
-                        <br /> */}
                         <span className="ml-2">{address.fullName}</span>
                         <br />
                         <span className="ml-2">{address.mobileNumber}</span>
@@ -1033,7 +667,6 @@ useEffect(() => {
                         <br />
                         <span className="ml-2">{address.zipCode}</span> 
                         <br />
-                        {/* <hr /> */}
                       </div>
                       <div className="text-end">
                       {addresses.map((address) => (
@@ -1083,7 +716,6 @@ useEffect(() => {
                 <option>Electrical items</option>
                 <option>Electronics appliances</option>
                 <option>Hardware items</option>
-                {/* <option>Health Care</option> */}
                 <option>Home Decors</option>
                 <option>Paints</option>
                 <option>Sanitary items</option>
@@ -1112,17 +744,6 @@ useEffect(() => {
     </option>
   ))}
 </select>
-      {/* <select
-        className="form-control"
-        value={productName}
-        onChange={handleProductChange}
-        placeholder="Choose Product Ceiling Fan, Air Conditioner"
-        >
-         <option value="">Select Product</option>
-            {productOptions.map((productOption, i) => (
-              <option key={i} value={productOption.productName}>{productOption.productName}</option>
-            ))}
-        </select> */}
         </div>
       
             <div className="form-group">
@@ -1148,7 +769,6 @@ useEffect(() => {
                 type="text"
                 className="form-control"
                 value={productSize}
-                // onChange={(e) => setProductSize(e.target.value)}
                 placeholder="Product Size"
                 disabled={isAddressInvalid}
                 readOnly
@@ -1161,7 +781,6 @@ useEffect(() => {
                   type="text"
                   className="form-control"
                   value={rate}
-                  // onChange={rate}
                   placeholder="Price"
                   disabled={isAddressInvalid}
                   readOnly
@@ -1173,7 +792,6 @@ useEffect(() => {
                   type="text"
                   className="form-control"
                   value={discount}
-                  // onChange={(e) => setDiscount(e.target.value)}
                   placeholder="Discount"
                   disabled={isAddressInvalid}
                   readOnly
@@ -1185,7 +803,6 @@ useEffect(() => {
                   type="text"
                   className="form-control"
                   value={afterDiscountPrice}
-                  // onChange={(e) => setAfterDiscount(e.target.value)}
                   placeholder="After Discount"
                   disabled={isAddressInvalid}
                   readOnly
@@ -1238,22 +855,6 @@ useEffect(() => {
   {colorError && <p style={{ color: "red" }}>{colorError}</p>}
 </div>
               
-              {/* <div className="col-md-6">
-                <label>
-                  Required Quantity <span className="req_star">*</span>
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={requiredQuality}
-                  onChange={handleQuantityChange}
-                  placeholder="Enter Required Quantity"
-                  disabled={isAddressInvalid}
-                  required
-                />
-                {quantityError && <p style={{ color: "red" }}>{quantityError}</p>}
-              </div> */}
-
              <div className="col-md-6">
   <label>
     Required Quantity <span className="req_star">*</span>
@@ -1277,7 +878,6 @@ useEffect(() => {
   </select>
   {quantityError && <p style={{ color: "red" }}>{quantityError}</p>}
 </div>
-
 
               <div className="col-md-6">
                 <label>
@@ -1635,14 +1235,6 @@ useEffect(() => {
               >
                 Buy Product
               </button>
-              {/* <button
-                type="button"
-                className="text-white btn btn-success w-30"
-                // onClick={handleGetQuotation}
-                disabled={noProductNameError || isAddressInvalid} 
-              >
-                Add to Cart
-              </button> */}
               <Button
                 type="button"
                 className="back-btn"
@@ -1699,7 +1291,6 @@ useEffect(() => {
           align-items: center;
           justify-content: flex-start;
         }
-
         .menu-item:last-child {
           border-bottom: none;
         }

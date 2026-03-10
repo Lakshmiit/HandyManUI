@@ -73,7 +73,6 @@ const [stockLeft, setStockLeft] = useState('');
                   setLoading(false);
               }
           };
-  
           if (id) {
               fetchProductData();
           }
@@ -99,9 +98,8 @@ const handleRemoveExistingFile = (index) => {
 // Detect screen size for responsiveness
 useEffect(() => {
   const handleResize = () => setIsMobile(window.innerWidth <= 768);
-  handleResize(); // Set initial state
+  handleResize(); 
   window.addEventListener('resize', handleResize);
-
   return () => window.removeEventListener('resize', handleResize);
 }, []);
 
@@ -157,7 +155,6 @@ const handleRemoveFile = (index) => {
       const formData = new FormData();
       formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
       formData.append('fileName', fileName);
-
       const response = await fetch('https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/upload?filename=' + fileName, {
         method: 'POST',
         headers: {
@@ -165,7 +162,6 @@ const handleRemoveFile = (index) => {
         },
         body: formData,
       });
-
       const responseData = await response.text();
       return responseData || ''; 
     } catch (error) {

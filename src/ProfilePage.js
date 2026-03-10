@@ -9,15 +9,9 @@ import axios from "axios";
 import Footer from './Footer.js';
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
-import RouteIcon from "@mui/icons-material/Route";
-import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import StorefrontIcon from '@mui/icons-material/Storefront'; 
 import DeliveryDiningIcon from '@mui/icons-material/DeliveryDining';
 import PermIdentityIcon from '@mui/icons-material/PermIdentity';
-import UploadIcon from '@mui/icons-material/Upload';
-import RequestQuoteIcon from '@mui/icons-material/RequestQuote';  
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
-import TransferWithinAStationIcon from '@mui/icons-material/TransferWithinAStation';
 // import Banner3 from './img/Above45.jpeg'; 
 // import BannerVideo from './img/PongalOffers.mp4';
 // import VolumeOffIcon from '@mui/icons-material/VolumeOff';       
@@ -27,7 +21,6 @@ import Logo from "./img/Hm_Logo 1.png";
 import SearchIcon from "@mui/icons-material/Search";
 import LogoutIcon from "@mui/icons-material/Logout";   
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
-import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import ApartmentIcon from '@mui/icons-material/Apartment';
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -71,11 +64,8 @@ import IcecreamImg from './img/IceCreams.jpeg';
 import DwakraProducts from './img/DwakraLogo.jpeg';
 import UnbeatableImg from './img/MilkOffers.jpeg';
 import Above45Img from './img/Above45.jpeg'; 
-// import SaleImg from './img/SaleOffer.jpeg'; 
-// import { initPushNotifications } from "./NotificationService.js";
-// import DeliveryImg from './img/FreeDelivery.jpeg';
 import AddIcCallIcon from '@mui/icons-material/AddIcCall';
-import RoyalImg from './img/RoyalUpma.jpeg';
+import RoyalImg from './img/LMartLogo.jpeg';
 import HomeElectricalImg from './img/HomeElectrical.jpeg';
 import HomePlumbingImg from './img/HomePlumbing.jpeg';
 const getMenuList = (userType, userId, category, district ,ZipCode,technicianFullName, isMobile) => {
@@ -92,74 +82,10 @@ const getMenuList = (userType, userId, category, district ,ZipCode,technicianFul
     ...(!isMobile ? [{MenuIcon: <DeliveryDiningIcon sx={{ fontSize: iconSize }} />, MenuTitle: "Delivery Partner", TargetUrl: `/deliveryPartner/${userType}/${userId}`
     }] : []),
       ];
-      const admin = [
-      { MenuIcon: <SupportAgentIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
-      { MenuIcon: <PersonOutlineIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Book Technician", TargetUrl: `/bookTechnician/${userType}/${userId}` },
-      { MenuIcon: <StorefrontIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
-      ...(!isMobile ? [{MenuIcon: <LocalOfferIcon sx={{ fontSize: iconSize }} />, MenuTitle: "Buy Product Offers", TargetUrl: `/offersIcons/${userType}/${userId}`
-    }] : []),
-      { MenuIcon: <ApartmentIcon sx={{ fontSize: 40 }} />,  MenuTitle: isMobile ? "Apartment AMC" : "Apartment Common Area Maintenance", TargetUrl: `/aboutApartmentRaiseTicket/${userType}/${userId}` },
-    ...(!isMobile ? [{MenuIcon: <PermIdentityIcon sx={{ fontSize: iconSize }} />, MenuTitle: "Accounts"
-    }] : []),
-    ...(!isMobile ? [{MenuIcon: <DeliveryDiningIcon sx={{ fontSize: iconSize }} />, MenuTitle: "Delivery Partner", TargetUrl: `/deliveryPartner/${userType}/${userId}`
-    }] : []),
-      ];
-
-  const builder = [
-      { MenuIcon: <PermIdentityIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Add Member" },
-      { MenuIcon: <RequestQuoteIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise a Quote" },
-      { MenuIcon: <NotificationsNoneIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Notifications" },
-      { MenuIcon: <StorefrontIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Buy Products", TargetUrl: "/BuyProducts" },
-      { MenuIcon: <PermIdentityIcon sx={{ fontSize: 40 }}/>, MenuTitle: "My Account" },
-      { MenuIcon: <AccountBalanceIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Add Bank Account" },
-      { MenuIcon: <SupportAgentIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise Ticket", TargetUrl: "/TicketRaise" },
-      { MenuIcon: <RouteIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Track Ticket Status" }
-  ];
-  const dealer = [
-      { MenuIcon: <UploadIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Upload Products" },
-      { MenuIcon: <RequestQuoteIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise a Quote" },
-      { MenuIcon: <NotificationsNoneIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Notifications", TargetUrl: `/dealerNotifications/${userType}/${userId}/${category}/${district}` },
-      { MenuIcon: <StorefrontIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
-      { MenuIcon: <PermIdentityIcon sx={{ fontSize: 40 }}/>, MenuTitle: "My Account" },
-      { MenuIcon: <AccountBalanceIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Add Bank Account" },
-      { MenuIcon: <SupportAgentIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
-      { MenuIcon: <RouteIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}` }
-  ];
-  const trader = [
-    { MenuIcon: <UploadIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Upload Products" },
-    { MenuIcon: <RequestQuoteIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise a Quote"},
-    { MenuIcon: <NotificationsNoneIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Notifications", TargetUrl: `/dealerNotifications/${userType}/${userId}/${category}/${district}` },
-    { MenuIcon: <StorefrontIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
-    { MenuIcon: <PermIdentityIcon sx={{ fontSize: 40 }}/>, MenuTitle: "My Account" },
-    { MenuIcon: <AccountBalanceIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Add Bank Account"},
-    { MenuIcon: <SupportAgentIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
-    { MenuIcon: <RouteIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Track Ticket Status", TargetUrl: `/trackStatusNotifications/${userType}/${userId}` }
-];
-  const technician = [
-      { MenuIcon: <PersonAddAltIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Add Technician"},
-      { MenuIcon: <RequestQuoteIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise a Quote", TargetUrl: `/notificationTechnician/${userType}/${userId}/${category}/${district}` },
-      { MenuIcon: <NotificationsNoneIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Notifications" ,TargetUrl:`/technicianDetailsNotifications/${userType}/${userId}/${category}/${ZipCode}/${technicianFullName}`},
-      { MenuIcon: <TransferWithinAStationIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Track Technician" },
-      { MenuIcon: <PermIdentityIcon sx={{ fontSize: 40 }}/>, MenuTitle: "My Account"},
-      { MenuIcon: <AccountBalanceIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Add Bank Account" },
-      { MenuIcon: <StorefrontIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Buy Products", TargetUrl: `/buyProducts/${userType}/${userId}` },
-      { MenuIcon: <SupportAgentIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Raise Ticket", TargetUrl: `/raiseTicket/${userType}/${userId}` },
-      { MenuIcon: <RouteIcon sx={{ fontSize: 40 }}/>, MenuTitle: "Track Ticket Status" }
-  ]; 
      switch (userType) {
-      case "builder":
-          return builder;
-      case "dealer":
-          return dealer;
-      case "trader":
-          return trader;
-      case "technician":
-          return technician;
       case "customer":
        return customer; 
-      case "admin":
-          return admin; 
-      default:
+     default:
           return []; 
   }
 };
@@ -174,11 +100,8 @@ const categories = [
        
 const groceryCategories = [
   {label: 'LMart Products', value: 'LMart Special', image: RoyalImg},
-  // { label: 'Kitchenware Appliances', value: 'Kitchenware Appliances', image: KitchenImg },
   { label: 'Unbeatable 10 Offers', value: 'Unbeatable Offers', image: UnbeatableImg },
   { label: 'Above 45 % Offers', value: 'Offers', image: Above45Img },
-  //  { label: 'Buy 1 Get 1 Sale', value: 'Offers', image: SaleImg },
-  // {label: ( <> Chicken <br /> Pre-Booking </> ), value: 'Chicken', image: ChickenImg },
   { label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
    { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
   { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
@@ -410,16 +333,13 @@ useEffect(() => {
       if (!cancelled && !warm) setImageLoading(false);
     }
   }
-
   // First load
   fetchProductsAndFirstImages(false, controller.signal);
-
   // Polling
   pollId = setInterval(() => {
     const pollController = new AbortController();
     fetchProductsAndFirstImages(true, pollController.signal);
   }, POLL_MS);
-
   return () => {
     cancelled = true;
     controller.abort();
@@ -614,12 +534,10 @@ useEffect(() => {
 const handleAddClick = (product) => {
   const maxQty = getMaxAllowedQty(product);
   if (maxQty <= 0) return;
-
   updateLocalStorageCart(
     { ...product, imageFile: product.images?.[0] || "" },
     1
   );
-
   setCart(prev => ({ ...prev, [product.id]: 1 }));
 };
 
@@ -1075,14 +993,6 @@ const handleCustomerCareCall = () => {
             if (userType === "customer") {
               apiUrl = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`;
             }
-              else if (userType === "admin") {
-              apiUrl = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`;
-            }
-              else if (userType === "technician") {
-              apiUrl = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/technician/technicianProfileData?profileType=${userType}&UserId=${userId}`;
-            } else if (userType === "dealer") {
-              apiUrl = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/dealer/dealerProfileData?profileType=${userType}&UserId=${userId}`;
-            }
             if (!apiUrl) return;
             const response = await axios.get(apiUrl);
             setProfile(response.data); 
@@ -1521,7 +1431,6 @@ const updateLocalStorageCart = (product, qty) => {
       {loading && <p>Loading products...</p>}
       <div className="grocery-row flex flex-wrap gap-1" style={{marginBottom: "5px"}}>
        {displayProducts.map((product) => {
-        // const stock = Number(product.stockLeft);
         const maxQty = getMaxAllowedQty(product);   
         const isOutOfStock = maxQty <= 0;
           return (
@@ -1801,9 +1710,6 @@ const updateLocalStorageCart = (product, qty) => {
                 <small className="text-dark">
                   {profile.fullName}
                 </small>
-                {/* <div className="text-danger fw-bold mt-2" style={{ fontSize: "14px" }}>
-                  Handyman Service Provider will be under Maintenance Today (Saturday) from 6:00 PM to Tomorrow (Sunday) 5:00 AM.
-                </div> */}
               </div>
             </div>
             </div>

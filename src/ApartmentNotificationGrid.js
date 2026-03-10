@@ -100,7 +100,6 @@ const AartmentRaiseTicketNotification = () => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     handleResize();
     window.addEventListener("resize", handleResize);
-
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
@@ -114,7 +113,7 @@ const AartmentRaiseTicketNotification = () => {
  const currentRaiseTicket = filteredData.slice(indexOfFirstTicket, indexOfLastTicket);
  
  if (loading) {
-   return <div>Loading...</div>; // Show loading message while data is fetching
+   return <div>Loading...</div>;
  }
 
   return (
@@ -136,7 +135,6 @@ const AartmentRaiseTicketNotification = () => {
           >
             <MoreVertIcon />
           </Button>
-
           {showMenu && (
               <div className="sidebar-container">
                 <AdminSidebar />

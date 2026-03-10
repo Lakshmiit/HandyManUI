@@ -3,10 +3,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import './App.css';
 import HandyManCharacter from "./img/hm_char.png";
 import HandyManLogo from "./img/Hm_Logo 1.png";
-// import { useNavigate } from 'react-router-dom';
 
 const LandingPage = () => {
-  // const navigate = useNavigate();
 
   const wordRefs = useRef([]);
 

@@ -46,7 +46,8 @@ const [units, setUnits] = useState("");
  const [groceryData, setgroceryData] = useState();
   const [groceryId, setgroceryId] = useState();
 const [cashbackAmount, setCashbackAmount] = useState(0);
-// const showFreeSugar = Number(grandTotal) > 499 && Number(grandTotal) < 998;
+const showFreeSugar = Number(grandTotal) > 299 && Number(grandTotal) < 498;
+const showAttaSugar = Number(grandTotal) > 499 && Number(grandTotal) < 999;
  const [showZoomModal, setShowZoomModal] = useState(false);
   const [zoomImage, setZoomImage] = useState("");
   const [zoomProduct, setZoomProduct] = useState(null);
@@ -430,13 +431,15 @@ const handleDownloadPDF = () => {
   }
 
   const pdfShowFreeSugar =
-    Number(grandTotal) > 499 && Number(grandTotal) < 998;
-
+    Number(grandTotal) > 299 && Number(grandTotal) < 498;
+    const pdfshowAttaSugar =
+    Number(grandTotal) > 499 && Number(grandTotal) < 999;
   let currentY = doc.lastAutoTable.finalY + 10;
 
   let requiredHeight = 12;
   if (pdfCashback > 0) requiredHeight += 6;
   if (pdfShowFreeSugar) requiredHeight += 6;
+  if (pdfshowAttaSugar) requiredHeight += 6;
   if (currentY + requiredHeight > PAGE_HEIGHT - FOOTER_SPACE) {
     doc.addPage();
     addHeader(doc, martId);
@@ -456,6 +459,17 @@ const handleDownloadPDF = () => {
   }
 
   if (pdfShowFreeSugar) {
+    doc.setFontSize(10);
+    doc.setTextColor(0, 128, 0); 
+    doc.setFont("Roboto", "bold");
+    doc.text(
+      195,
+      currentY,
+      { align: "right" }
+    );
+    currentY += 8;
+  }
+   if (pdfshowAttaSugar) {
     doc.setFontSize(10);
     doc.setTextColor(0, 128, 0); 
     doc.setFont("Roboto", "bold");
@@ -651,13 +665,21 @@ const handleImageClick = (imageSrc, product) => {
       </td>
     </tr>
   )}
-   {/* {showFreeSugar && (
+   {showFreeSugar && (
     <tr>
-      <td colSpan="10" className="text-end fw-bold text-success">
-        🎁 Give Customer <strong>Royal Pesara Upma Mix 250 g FREE</strong>
+      <td colSpan="10" className="text-end fw-bold text-danger">
+        🎁 Give Customer <strong> Sugar 1 Kg FREE</strong>
       </td>    
     </tr>
-  )}     */}         
+  )}           
+
+  {showAttaSugar && (
+    <tr>
+      <td colSpan="10" className="text-end fw-bold text-danger">
+        🎁 Give Customer <strong> Aashirvaad Superior Whole Wheat MP Atta 1 Kg FREE</strong>
+      </td>    
+    </tr>
+  )}  
     <tr>
       <td colSpan="9" className="text-end fw-bold">
         Grand Total:

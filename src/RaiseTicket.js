@@ -57,12 +57,12 @@ district: '',
 const [shouldBlink,setShouldBlink] = useState(false);
 const [serviceUnavailable, setServiceUnavailable] = useState(false);
 const isGuestName = (name) => (name ?? '').trim().toLowerCase() === 'guest';
+ const [isNewUser, setIsNewUser] = useState(true);
  
   useEffect(() => {
     console.log(ticketId, response, editingAddressId, isEditing);
   }, [ticketId, response, editingAddressId, isEditing]);
 
-  // const API_URL = 'https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Address/GetAddressById/';
   // Fetch customer profile data
     const fetchCustomerData = useCallback(async () => {
       try {
@@ -84,9 +84,14 @@ const isGuestName = (name) => (name ?? '').trim().toLowerCase() === 'guest';
           mobileNumber: addr.mobileNumber,
           fullName: addr.fullName,
         }));
-
-        console.log("address1", addresses);
         setAddresses(formattedAddresses);
+        const apiFullName = addresses[0]?.fullName ?? "";
+        setFullName(apiFullName);
+        if (!apiFullName || isGuestName(apiFullName)) {
+          setIsNewUser(true);
+        } else {
+          setIsNewUser(false);
+        }
         const customerName = Array.isArray(data) ? data[0]?.fullName || '' : data.fullName || '';
         setFullName(customerName);
       } catch (error) {
@@ -104,49 +109,6 @@ const isGuestName = (name) => (name ?? '').trim().toLowerCase() === 'guest';
     setServiceUnavailable(false);
   }
 }, [addresses]);
-
-// const fetchCustomerData = useCallback(async () => {
-//   try {
-//     const res = await fetch(
-//       `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Address/GetAddressById/${userId}`
-//     );
-//     if (!res.ok) throw new Error("Failed to fetch customer profile data");
-//     const raw = await res.json();
-//     const list = Array.isArray(raw) ? raw : [raw];
-//     const score = (a) =>
-//       [a?.address, a?.zipCode, a?.mobileNumber, a?.fullName]
-//         .filter((v) => (v ?? "").toString().trim() !== "").length;
-//     const nonEmpty = list.filter(
-//       (a) => (a?.address ?? "").trim() !== "" || (a?.zipCode ?? "").trim() !== ""
-//     );
-//     const keep = nonEmpty.length > 0
-//       ? nonEmpty
-//       : [list.reduce((best, a) => (score(a) > score(best) ? a : best), list[0])]; 
-//     const formatted = keep.map((addr) => ({
-//       id: addr.addressId,
-//       isPrimary: !!addr.isPrimaryAddress,
-//       address: addr.address || "",
-//       state: addr.state || "",
-//       district: addr.district || "",
-//       zipCode: addr.zipCode || "",
-//       emailAddress: addr.emailAddress || "",
-//       mobileNumber: addr.mobileNumber || "",
-//       fullName: (addr.fullName || "").trim(),
-//     }));
-//     setAddresses(formatted);
-//     const customerName =
-//       (keep[0]?.fullName || "").trim();
-//     setFullName(customerName);
-//   } catch (err) {
-//     console.error("Error fetching customer data:", err);
-//   }
-// }, [userId]);
-
-// useEffect(() => {
-//   const primary = addresses.find((a) => a.isPrimary) || addresses[0];
-//   const district = primary?.district?.toLowerCase();
-//   setServiceUnavailable(Boolean(district && district !== "visakhapatnam"));
-// }, [addresses]);
 
 useEffect(() => {
   fetchCustomerData();
@@ -185,15 +147,8 @@ useEffect(() => {
   const handleResize = () => setIsMobile(window.innerWidth <= 768);
   handleResize(); 
   window.addEventListener('resize', handleResize);
-
   return () => window.removeEventListener('resize', handleResize);
 }, []);
-
-  // const states = ['Andhra Pradesh', 'Telangana'];
-  // const districts = {
-  //   'Andhra Pradesh': ['Visakhapatnam', 'Vijayawada', 'Guntur'],
-  //   'Telangana': ['Hyderabad', 'Warangal', 'Khammam'],
-  // };
 
   // Handle form data changes
   const handleChange = (e) => {
@@ -212,23 +167,18 @@ useEffect(() => {
       // const fileSizeMB = file.size / (1024 * 1024);
       const isValidType = file.type === "image/jpeg" || file.type === "image/png";
       // const isValidSize = fileSizeMB <= 100; 
-  
       if (!isValidType) {
         alert(`Only JPG and PNG formats are allowed: ${file.name}`);
         continue;
       }
-  
       validFiles.push(file);
     }
-  
     if (validFiles.length + ticketPhotos.length > 5) {
       alert("You can upload up to 5 files.");
       return;
     }
-  
     setTicketPhotos([...ticketPhotos, ...validFiles]);
     setShowAlert(validFiles.length > 0);
-    // setSelectedFiles(Array.from(e.target.files));
   };
   
   const handleUploadFiles = async () => {
@@ -266,27 +216,7 @@ useEffect(() => {
       reader.readAsArrayBuffer(file);
     });
   };
-  const phoneNumber = '7989328864';  // Phone number
-  // Generate ticket ID in the format VSKPAKP002
-  // const ticketIdPrefix = "VSKPAPREFV";
-  // const ticketIdSuffix = String(Math.floor(Math.random() * 999) + 1).padStart(3, "0");
-  // const ticketIds = `${ticketIdPrefix}${ticketIdSuffix}`;
-
-  // Generate WhatsApp link with the ticket ID
-//   const generateWhatsAppLink = (ticketId, phoneNumber) => {
-//     const message = `Hello, I'd like to continue uploading my video for ticket: ${ticketId}`;
-//  var url =`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-//     // alert(url);
-//     //console.log(url);
-
-//     return url;
-//   };
-
-  // const handleWhatsAppClick = () => {
-  //   // handleSaveWhatsapp();
-  //   const link = generateWhatsAppLink(ticketIds, phoneNumber);
-  //   window.open(link, '_blank');
-  // };
+  const phoneNumber = '7989328864';  
   const uploadFile = async (byteArray, fileName, mimeType, file) => {
     try {
       const formData = new FormData();
@@ -311,12 +241,10 @@ useEffect(() => {
 
   const handleSaveTicket = async (e) => {
     e.preventDefault();
-  
     if (
       !formData.subject ||
       !formData.details ||
       !formData.category ||
-      // !assignedTo ||
       !requestType 
     ) {
       window.alert('Please fill in all mandatory fields.');
@@ -330,7 +258,6 @@ useEffect(() => {
     const state = primaryAddress?.state || "";
     const district = primaryAddress?.district || "";
     const pincode = primaryAddress?.zipCode || primaryAddress?.pincode || "";
-    // const emailAddress = primaryAddress?.emailAddress || primaryAddress?.emailAddress || "";
     const mobileNumber = primaryAddress?.mobileNumber || primaryAddress?.mobileNumber || "";
 
     const payload = {
@@ -423,165 +350,6 @@ useEffect(() => {
     setIsSubmitting(false);
   }
   };
-
-//   const handleSendSMSCustomerCare = async (e) => {
-//    e.preventDefault();
-  
-//   try { 
-//     const response = await fetch(``, {
-//       method: 'GET',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//     });
-//     if (!response.ok) {
-//       throw new Error('Failed to send SMS to Customer Care');
-//     }   
-//     alert('SMS to Customer Care sent Successfully!');
-
-//     window.location.href = `/profilePage/${userType}/${userId}`;
-
-//   } catch (error) {
-//     console.error('Error sending SMS to Customer Care:', error);
-//     window.alert('Failed to sending SMS to Customer Care. Please try again later.');
-//   }
-// };
-  // const handleBothActions =  (e) => {
-  //   e.preventDefault();
-  //   handleSaveTicket(e);
-  //   handleSendSMSCustomerCare(e);
-  // };
-  
-  // const handleSaveWhatsapp = async (e) => {
-  //   e.preventDefault();
-  
-  //   const payload = {
-  //     RaiseTicketId:"string",
-  //     raiseTicketIdVideoRef: "string",
-  //     date: new Date(),
-  //     address: addresses.find((addr) => addr.type === 'primary')?.address || '',
-  //     subject: formData.subject,
-  //     details: formData.details,
-  //     category: formData.category,
-  //     assignedTo: assignedTo,
-  //     state:state,
-  //     district:district,
-  //     zipcode:pincode,
-  //     requestType: requestType,
-  //     status:'open',
-  //     internalStatus:'Open',
-  //     id: uuidv4(),// Unique identifier for the API call
-  //     customerId: customerId, // Replace with actual customer ID logic
-  //     attachments: uploadedFiles.map((file) => file.src), 
-  //     comments: commentsList.map((comment) => ({
-  //       UpdatedDate : comment.updatedDate,
-  //       CommentText: comment.commentText,
-  //   })),
-  //     Materials:specifications.map(spec => ({
-  //       material : spec.material,
-  //       Quantity : spec.Quantity ,
-  //     })),
-  //     LowestBidderTechnicainId: "",
-  //     LowestBidderDealerId: "",
-  //     ApprovedAmount: "",
-  //     CustomerName: fullName, 
-  //     Option1Day: "",
-  //     Option1Time: "",
-  //     Option2Day: "",
-  //     Option2Time: "",
-  //     TechnicianList: [],
-  //     DealerList: [],
-  //     Rating: "",
-  //     isMaterialType: 0,
-  //   };
-
-  // try {
-  //   const response = await fetch('https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicketExtention/CreateRaiseTicketExtension', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify(payload),
-  //   });
-  
-  //   if (!response.ok) {
-  //     throw new Error('Failed to create a ticket.');
-  //   }
-  //   // const videoData = await response.json();
-  //   // setVideoRefId(videoData.videoRefId);
-  //   // alert(videoRefId);
-
-  // } catch (error) {
-  //   console.error('Error:', error);
-  //   window.alert('Failed to create the ticket. Please try again later.');
-  // }
-  // };
-  // Handle secondary address selection
-  // const handleSecondaryAddressSelect = (id) => {
-  //   const updatedAddresses = addresses.map((address) =>
-  //     address.id === id
-  //       ? { ...address, type: 'primary' }
-  //       : address.type === 'primary'
-  //       ? { ...address, type: 'secondary' }
-  //       : address
-  //   );
-  //   setAddresses(updatedAddresses);
-  //   setShowSecondaryAddresses(false); // Collapse secondary addresses view
-  // };
-
-  // // Handle address deletion
-  // const handleAddressDelete = (id) => {
-  //   const updatedAddresses = addresses.filter((address) => address.id !== id);
-  //   setAddresses(updatedAddresses);
-  // };
-
-// const handleSaveAddress = () => {
-//     if (
-//       !fullName?.trim() ||
-//       !mobileNumber?.trim() ||
-//       !newAddress?.trim() ||
-//       !zipCode?.trim()
-//     ) {
-//       alert('Please fill in all the fields.');
-//       return;
-//     }
-
-//   setAddressData({
-//     fullName  ,
-//   mobileNumber,
-//   address: newAddress,
-//   zipCode,
-// });
-
-//     if (isEditing) {
-//       setNewAddress(newAddress);
-//       setFullName(fullName);
-//       setMobileNumber(mobileNumber);
-//       setZipCode(zipCode);
-//       setIsEditing(null); 
-//       setShowModal(false); 
-//       resetAddressForm(); 
-//     }
-//      else {
-//         if (addresses.length >= 1) {
-//           alert('You can only add up to 1 address.');
-//           return;
-//         }
-   
-//       const newAddr = {
-//         id: uuidv4(),
-//         fullName,
-//         mobileNumber,
-//         address: newAddress,
-//         zipCode, 
-//       };
-    
-//       setAddresses(prev => [...prev, newAddr]);
-//   }    
-//       resetAddressForm();
-//       setIsEditing(false);
-//       setShowModal(false);
-//     };
 
   const resetAddressForm = () => {
     setFullName('');
@@ -718,19 +486,24 @@ useEffect(() => {
       <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
       <h1 className="text-center mb-1">Raise a Ticket</h1>
       {/* Ticket Form */}
-      {/* <Form > */}
         {/* Display primary address with "Change Address" link */}
          <div className="d-flex justify-content-between align-items-center">
                         <label className='mt-2'>Address <span className="req_star">*</span></label>
-                        {/* <Button variant="success m-1 text-white" onClick={() => setShowModal(true)}>
-                          Add Address
-                        </Button> */}
+                       
         
               {/* Modal */}
-                    <Modal show={showModal} onHide={() => setShowModal(false)}>
-                <Modal.Header closeButton>
-                    <Modal.Title>{isGuestName(fullName) ? 'Add Address' : 'Edit Address'}</Modal.Title>
-                  </Modal.Header>
+                   <Modal show={showModal} onHide={() => setShowModal(false)}>
+                      <Modal.Header
+                        closeButton
+                        style={{
+                          backgroundColor: isEditing ? "#008000" : "#008000",
+                          color: "white",
+                        }}
+                      >
+                        <Modal.Title className="w-100">
+                          {isNewUser ? "Add Address" : "Edit Address"}
+                        </Modal.Title>
+                      </Modal.Header>
                 <Modal.Body>
                   <Form>
                     <Form.Group className="mb-3">
@@ -840,8 +613,16 @@ useEffect(() => {
                          required
                       />
                     </Form.Group>
-                    <Button type="button" variant="primary" onClick={handleAddressEdit}>
-                      {isGuestName(fullName) ? 'Add Address' : 'Edit Address'}
+                    <Button
+                      type="button"
+                      style={{
+                        backgroundColor: isAddressInvalid ? "#008000" : "#008000",
+                        borderColor: isAddressInvalid ? "#008000" : "#008000",
+                        color: "white",
+                      }}
+                      onClick={handleAddressEdit}
+                    >
+                      {isNewUser ? "Add Address" : "Edit Address"}
                     </Button>
                   </Form>
                 </Modal.Body>

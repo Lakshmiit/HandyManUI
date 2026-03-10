@@ -13,20 +13,19 @@ import { CartStorage } from "./CartStorage";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ImageCache from "./utils/ImageCache";
 import Footer from "./Footer.js";
-// import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-// import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+import Mix1 from './img/RoyalRavva.jpeg';
+import Mix2 from './img/RavvaDosa.jpeg';
 const GroceryCard = () => {
   const navigate = useNavigate();
-  // const location = useLocation();
   const { userType, userId, selectedUserType } = useParams();
   const location = useLocation();
 const encodedCategory = location.state?.encodedCategory || localStorage.getItem("encodedCategory");
-// const [selectedCategory, setSelectedCategory] = useState("");
 const [selectedCategory, setSelectedCategory] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [products, setProducts] = useState([]);
   const [imageUrls, setImageUrls] = useState({});
+  // const [imageLoading] = useState(true);
   const [imageLoading, setImageLoading] = useState(true);
   const [showZoomModal, setShowZoomModal] = useState(false);
   const [zoomImage, setZoomImage] = useState("");
@@ -36,8 +35,18 @@ const [searchQuery, setSearchQuery] = useState('');
 const [likedProducts, setLikedProducts] = useState({}); 
 const [zoomProduct, setZoomProduct] = useState(null);
 const [grandSummary, setGrandSummary] = useState({ items: 0, total: 0 });
+const loadingImages = [Mix1, Mix2];
+const [loadingIndex,setLoadingIndex] = useState(0);
 
- useEffect(() => {
+useEffect(() => {
+  if (!imageLoading) return;
+  const interval = setInterval(() => {
+    setLoadingIndex(prev => (prev + 1) % loadingImages.length);
+  }, 1000);
+  return () => clearInterval(interval);
+}, [imageLoading, loadingImages.length]);
+
+ useEffect(() => {      
 console.log(checked, imageLoading, grandSummary);
 }, [checked, imageLoading, grandSummary]);
 
@@ -60,8 +69,6 @@ useEffect(() => {
 
 useEffect(() => {
   if (!selectedCategory) return;
-
-  // Convert cart state → product list
   const current = Object.entries(cart).map(([productId, qty]) => {
   const product = products.find(p => String(p.id) === String(productId));
   return {
@@ -80,8 +87,6 @@ useEffect(() => {
   CartStorage.upsertCategory(selectedCategory, current);
   setGrandSummary(CartStorage.grandSummary());
 }, [cart, selectedCategory, products]);
-
-// const handleAdd = (productId) => setCart(prev => ({ ...prev, [productId]: 1 }));
 
 const handleIncrement = (productId) =>
   setCart(prev => {
@@ -136,7 +141,6 @@ const handleAddClick = (id) => {
   const limit = getLimit(product);
   if (stock <= 0) return; 
   if(limit <= 0) return;
-  // handleAdd(id);
   setCart(prev => ({ ...prev, [id]: 1}));
   setChecked(true);
 };
@@ -171,96 +175,22 @@ function getItemTime(p) {
   return idNum;
 }
 
-// useEffect(() => {
-//   if (!encodedCategory) return;
-//   const decodedCat = decodeURIComponent(encodedCategory);
-//   setSelectedCategory(decodedCat);
-//   const controller = new AbortController();
-//   let cancelled = false;
-//   async function fetchProductsAndFirstImages() {
-//     try {
-//       setImageLoading(true);
-//       const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
-//       const { data: items } = await axios.get(url, { signal: controller.signal });
-//       const safeItems = Array.isArray(items) ? items : [];
-//       if (cancelled) return;
-//       const sorted = [...safeItems].sort((a, b) => {
-//         const tb = getItemTime(b);
-//         const ta = getItemTime(a);
-//         if (tb !== ta) return tb - ta;   
-//         return String(b.id).localeCompare(String(a.id));
-//       }); 
-//       const firstImages = safeItems
-//         .map(p => ({ productId: p.id, photo: Array.isArray(p.images) ? p.images[0] : null }))
-//         .filter(x => !!x.photo);
-//       const cachedMap = {};
-//       const misses = [];
-//       for (const { productId, photo } of firstImages) {
-//         const cached = ImageCache.getBase64(photo);
-//         if (cached) {
-//           cachedMap[productId] = [`data:image/jpeg;base64,${cached}`];
-//         } else {
-//           misses.push({ productId, photo });
-//         }
-//       }
-//       setProducts(sorted);
-//       if (Object.keys(cachedMap).length) setImageUrls(prev => ({ ...prev, ...cachedMap }));
-//       if (cancelled) return;
-//       const fetchOne = async ({ productId, photo }) => {
-//         try {
-//           const res = await fetch(
-//             `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
-//             { signal: controller.signal }
-//           );
-//           const json = await res.json();
-//           const b64 = json?.imageData || "";
-//           if (!b64) return;
-//           ImageCache.setBase64(photo, b64);
-//           const dataUrl = `data:image/jpeg;base64,${b64}`;
-//           if (!cancelled) {
-//             setImageUrls(prev => {
-//               if (prev[productId]?.[0] === dataUrl) return prev;
-//               return { ...prev, [productId]: [dataUrl] };
-//             });
-//           }
-//         } catch (e) {
-//         }
-//       };
-
-//       await Promise.allSettled(misses.map(fetchOne));
-//     } catch (err) {
-//       if (err?.name !== "CanceledError" && err?.name !== "AbortError") {
-//         console.error("Error fetching grocery products:", err);
-//         setProducts([]);
-//         setImageUrls({});
-//       }
-//     } finally {
-//       if (!cancelled) setImageLoading(false);
-//     }
-//   }
-//   fetchProductsAndFirstImages();
-//   return () => {
-//     cancelled = true;
-//     controller.abort();
-//   };
-// }, [encodedCategory]);
-
- useEffect(() => {
-    if (!encodedCategory) return;
-    const decodedCat = decodeURIComponent(encodedCategory);
-    setSelectedCategory(decodedCat);
-    let cancelled = false;
-    const controller = new AbortController();
-    const POLL_MS = 2000; 
-    let pollId = null;
-    async function fetchProductsAndFirstImages(warm = false, signal) {
-      try {
-        if (!warm) setImageLoading(true);
-        const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
-        const { data: items } = await axios.get(url, { signal });
-        const safeItems = Array.isArray(items) ? items : [];
-        if (cancelled) return;
-        const sorted = [...safeItems].sort((a, b) => {
+useEffect(() => {     
+  if (!encodedCategory) return;
+  const decodedCat = decodeURIComponent(encodedCategory);
+  setSelectedCategory(decodedCat);
+  let cancelled = false;
+  const controller = new AbortController();
+  const POLL_MS = 10000;
+  let pollId = null;
+  async function fetchProductsAndImages(warm = false, signal) {
+    try {
+      if (!warm) setImageLoading(true);
+      const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
+      const { data } = await axios.get(url, { signal });
+      const items = Array.isArray(data) ? data : [];
+      if (cancelled) return;
+     const sorted = [...items].sort((a, b) => {
         const stockA = Number(a.stockLeft || 0);
         const stockB = Number(b.stockLeft || 0);
         if (stockA <= 0 && stockB > 0) return 1;
@@ -270,71 +200,99 @@ function getItemTime(p) {
         if (timeA !== timeB) return timeB - timeA;
         return String(b.id).localeCompare(String(a.id));
       });
-        setProducts(sorted);
-        if (warm) return;
-        const firstImages = safeItems
-          .map(p => ({ productId: p.id, photo: Array.isArray(p.images) ? p.images[0] : null }))
-          .filter(x => !!x.photo);
+      const FIRST_LOAD = 60;
+      const firstProducts = sorted.slice(0, FIRST_LOAD);
+      const remainingProducts = sorted.slice(FIRST_LOAD);
+      const imagePromises = firstProducts.map(async (p) => {
+      const photo = Array.isArray(p.images) ? p.images[0] : null;
+      if (!photo) return { id: p.id, image: null };
+      const cached = ImageCache.getBase64(photo);
 
-        const cachedMap = {};
-        const misses = [];   
-        for (const { productId, photo } of firstImages) {
-          const cached = ImageCache.getBase64(photo);
-          if (cached) {
-            cachedMap[productId] = [`data:image/jpeg;base64,${cached}`];
-          } else {
-            misses.push({ productId, photo });
-          }
-        }
-
-        if (Object.keys(cachedMap).length) {
-          setImageUrls(prev => ({ ...prev, ...cachedMap }));
-        }
-        if (cancelled) return;
-        const fetchOne = async ({ productId, photo }) => {
-          try {
-            const res = await fetch(
-              `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
-              { signal }         
-            );
-            const json = await res.json();
-            const b64 = json?.imageData || "";
-            if (!b64) return;
-            ImageCache.setBase64(photo, b64);
-            const dataUrl = `data:image/jpeg;base64,${b64}`;
-            if (!cancelled) {
-              setImageUrls(prev => {
-                if (prev[productId]?.[0] === dataUrl) return prev;
-                return { ...prev, [productId]: [dataUrl] };
-              });
-            }
-          } catch {}
+      if (cached) {
+        return {
+          id: p.id,
+          image: `data:image/jpeg;base64,${cached}`,
         };
-        await Promise.allSettled(misses.map(fetchOne));
-      } catch (err) {
-        if (err?.name !== "CanceledError" && err?.name !== "AbortError") {
-          console.error("Error fetching grocery products:", err);
-          if (!warm) {
-            setProducts([]);
-            setImageUrls({});
-          }
-        }
-      } finally {
-        if (!cancelled && !warm) setImageLoading(false);
       }
-    }
-    fetchProductsAndFirstImages(false, controller.signal);
-    pollId = setInterval(() => {
-      const pollController = new AbortController();
-      fetchProductsAndFirstImages(true, pollController.signal);
-    }, POLL_MS);
+      const res = await fetch(
+        `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`
+      );
 
-    return () => {
-      cancelled = true;
-      controller.abort();
-      if (pollId) clearInterval(pollId);
-    };
-  }, [encodedCategory]);
+      const json = await res.json();
+
+      ImageCache.setBase64(photo, json.imageData);
+
+      return {
+        id: p.id,
+        image: `data:image/jpeg;base64,${json.imageData}`,
+      };
+    });
+      const images = await Promise.allSettled(imagePromises);
+      const imageMap = {};
+      images.forEach((img) => {
+        if (img.status === "fulfilled" && img.value.image) {
+          imageMap[img.value.id] = [img.value.image];
+        }
+      });
+      setProducts(sorted);
+      setImageUrls(imageMap);
+    remainingProducts.forEach(async (p) => {
+
+  const photo = p.images?.[0];
+  if (!photo) return;
+
+  const cached = ImageCache.getBase64(photo);
+
+  if (cached) {
+    setImageUrls(prev => ({
+      ...prev,
+      [p.id]: [`data:image/jpeg;base64,${cached}`]
+    }));
+    return;
+  }
+
+  try {
+
+    const res = await fetch(
+      `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`
+    );
+
+    const json = await res.json();
+
+    ImageCache.setBase64(photo, json.imageData);
+
+    setImageUrls(prev => ({
+      ...prev,
+      [p.id]: [`data:image/jpeg;base64,${json.imageData}`]
+    }));
+
+  } catch {}
+});
+} catch (err) {
+  if (err?.name !== "CanceledError" && err?.name !== "AbortError") {
+    console.error("Error fetching grocery products:", err);
+
+    if (!warm) {
+      setProducts([]);
+      setImageUrls({});
+    }
+  }
+} finally {
+  if (!cancelled && !warm) setImageLoading(false);
+}
+}
+fetchProductsAndImages(false, controller.signal);
+
+pollId = setInterval(() => {
+  const pollController = new AbortController();
+  fetchProductsAndImages(true, pollController.signal);
+}, POLL_MS);
+return () => {
+  cancelled = true;
+  controller.abort();
+  if (pollId) clearInterval(pollId);
+};
+}, [encodedCategory]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -370,6 +328,24 @@ function getItemTime(p) {
     setCart(restoredCart);
   }
 }, [encodedCategory]);
+
+if (imageLoading) {
+  return (
+    <div className="loading-container">
+       <h4 className="loading-text">
+        Loading ...  Please Wait
+      </h4>
+      <img
+        src={loadingImages[loadingIndex]}
+        alt="loading"
+        className="delivery-animation"
+      />
+      <h4 className="loading-text">
+      🚚 Free Home Delivery 🚚 
+      </h4>
+    </div>
+  );
+}
 
   return (
     <>
@@ -533,28 +509,9 @@ function getItemTime(p) {
           
         </div>
 
-          {/* <div className="position-relative flex-grow-1 ms-5">
-                    <input
-                      type="text"
-                      className="form-control w-60 mt-2 ps-5 "
-                      placeholder="Search Products"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value.trimStart())}
-                      />
-                      <SearchIcon
-                        className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"
-                        style={{ pointerEvents: 'none' }}
-                      />
-                    </div> */}
   {selectedCategory && (
     <>
-    {/* <div className="d-flex align-items-center">
-    <ArrowBackIcon className="me-2" style={{ color: "green", cursor: "pointer" }}
-        onClick={() => navigate(`/profilePage/${userType}/${userId}`)}/>      
-        <h4 className="font-bold ">{selectedCategory}</h4>
-      </div> */}
-  <div className="d-flex justify-content-end" style={{ marginTop: selectedCategory === "Chicken" ? "230px" : "120px"}}>  
-    {/* style={{marginTop: "120px"}} */}
+   <div className="d-flex justify-content-end" style={{ marginTop: selectedCategory === "Chicken" ? "230px" : "120px"}}>  
   <span className="text-success text-xs">
     Selected Qty:{" "}
     <span className="text-danger fw-bold">
@@ -592,7 +549,7 @@ function getItemTime(p) {
   .map((product) => {
     const stock = Number(product.stockLeft || 0);
     const isOutOfStock = stock <= 0;
-    return (
+    return (    
       <div
   key={product.id}
   className="w-[200px] flex flex-col p-2 bg-white rounded shadow-sm border position-relative"
@@ -619,48 +576,78 @@ function getItemTime(p) {
   </div>
   {/* Product Image */}
   <div
-    className="d-flex justify-content-center align-items-center position-relative"
-    style={{ height: "90px" }}
+  className="d-flex justify-content-center align-items-center position-relative"
+  style={{ height: "90px" }}
+>
+  <div
+    style={{
+      height: "80px",
+      width: "100%",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center"
+    }}
   >
     {imageUrls[product.id]?.[0] ? (
       <img
-        src={imageUrls[product.id]?.[0]}
-        alt={product.name}
-        decoding="async"
+        src={imageUrls[product.id][0]}
         loading="eager"
-        fetchpriority="high"
+        decoding="async"
+        alt={product.name}
         style={{
           maxHeight: "80px",
           maxWidth: "100%",
           objectFit: "contain",
-          cursor: isOutOfStock ? "not-allowed" : "pointer",
           borderRadius: "6px",
+          cursor: isOutOfStock ? "not-allowed" : "pointer"
         }}
-        onClick={() => !isOutOfStock && handleImageClick(imageUrls[product.id][0], product)}
+        onClick={() =>
+          !isOutOfStock &&
+          handleImageClick(imageUrls[product.id][0], product)
+        }
       />
     ) : (
-      <span className="text-muted small">Loading Image</span>
-    )}
-
-    {isOutOfStock && (
       <div
-        className="position-absolute d-flex justify-content-center align-items-center"
         style={{
-          top: 0, left: 0, width: "100%", height: "100%",
-          background: "rgba(255,255,255,0.75)", borderRadius: "6px", zIndex: 2,
+          width: "70px",
+          height: "70px",
+          background: "#f2f2f2",
+          borderRadius: "6px",
+          animation: "pulse 1.2s infinite"
         }}
-      >
-        <span
-          style={{
-            fontWeight: 500, backgroundColor: "grey", color: "white",
-            fontSize: "10px", borderRadius: "6px", margin: "1px", padding: "2px",
-          }}
-        >
-          Out of Stock
-        </span>
-      </div>
+      />
     )}
   </div>
+
+  {isOutOfStock && (
+    <div
+      className="position-absolute d-flex justify-content-center align-items-center"
+      style={{
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        background: "rgba(255,255,255,0.75)",
+        borderRadius: "6px",
+        zIndex: 2
+      }}
+    >
+      <span
+        style={{
+          fontWeight: 500,
+          backgroundColor: "grey",
+          color: "white",
+          fontSize: "10px",
+          borderRadius: "6px",
+          margin: "1px",
+          padding: "2px"
+        }}
+      >
+        Out of Stock
+      </span>
+    </div>
+  )}
+</div>
 
   {/* Product Name */}
   <h6
@@ -736,7 +723,6 @@ function getItemTime(p) {
             borderRadius: "8px",
             padding: "2px",
             minWidth: "60px",
-            // position: "relative",
           }}
         >
           <button
@@ -894,9 +880,6 @@ function getItemTime(p) {
     <h6 className="text-start fw-bold m-0" style={{ fontSize: "12px" }}>
       {zoomProduct?.name || ""}
     </h6>
-    {/* <p className="text-start text-muted m-0" style={{ fontSize: "12px" }}>
-      MRP: ₹{zoomProduct?.mrp ?? ""}
-    </p> */}
     {zoomProduct?.afterDiscount != null && (
       <p className="text-start m-0" style={{ fontSize: "12px" }}>
         <b className="text-success me-2">₹{Math.round(Number(zoomProduct.afterDiscount))}</b>

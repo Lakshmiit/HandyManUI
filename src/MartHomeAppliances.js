@@ -17,7 +17,6 @@ const MartHomeAppliances = () => {
   const navigate = useNavigate();
   const { userType, userId, selectedUserType } = useParams();
   const location = useLocation();
-// const encodedCategory =location.state?.encodedCategory || encodeURIComponent("Electrical items");
   const encodedCategory = location.state?.encodedCategory || localStorage.getItem("encodedCategory");
 const [selectedCategory, setSelectedCategory] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
@@ -340,20 +339,7 @@ if (Object.keys(cachedMap).length) {
             }}
           >
             Home Appliances
-            {/* <br />
             <span
-              style={{
-                fontSize: "12px",
-                fontWeight: "bold",
-                display: "block",
-                marginTop: "2px",
-                textAlign: "center",
-                fontFamily: "Roboto",
-              }}
-            >
-              FSSAI LIC Number - 20125051001066
-            </span> */}
-             <span
               style={{
                 fontSize: "14px",
                 fontWeight: "bold",

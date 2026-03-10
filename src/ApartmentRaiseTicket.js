@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Modal, Button, Form, Row, Col } from 'react-bootstrap'; // Import Bootstrap components for modal
-// import { v4 as uuidv4 } from 'uuid'; // To generate unique IDs for addresses
+import { Modal, Button, Form, Row, Col } from 'react-bootstrap'; 
 import { Dashboard as MoreVertIcon, } from '@mui/icons-material';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import Header from './Header.js';
 import Footer from './Footer.js';
 import axios from 'axios';
-// import RaiseTicketConfirmation from './RaiseTicketConfirmation.js';
 import Sidebar from './Sidebar';
 import {  useParams, useNavigate } from 'react-router-dom';
 const ApartmentRaiseTicket = () => {
@@ -107,130 +105,19 @@ useEffect(() => {
         setDistrictList([]);
       }
     }, [stateId]);
-  
-
-//  useEffect(() => {
-//     if (subscriptionDate) {
-//       const subscription = new Date(subscriptionDate);
-//       const today = new Date();
-//       const diffInDays = Math.floor((today - subscription) / (1000 * 60 * 60 * 24));
-//       setShouldBlink(diffInDays >= 30);
-//     }
-//   }, [subscriptionDate]);
-
-// useEffect(() => {
-//   if (!subscriptionDate) return;
-
-//   console.log("Raw subscription date:", subscriptionDate);
-
-//   const cleanedDateStr = subscriptionDate.split('.')[0] + 'Z'; 
-//   const subDate = new Date(cleanedDateStr);
-//   const now = new Date();
-
-//   const diffInMs = now.getTime() - subDate.getTime();
-//   const delay = Math.max(0, 2 * 60 * 1000 - diffInMs); 
-
-//   console.log("Delay set for:", delay, "ms");
-
-//   const timeout = setTimeout(() => {
-//     console.log("Triggering blink");
-//     setShouldBlink(true);
-//   }, delay);
-
-//   return () => clearTimeout(timeout); 
-// }, [subscriptionDate]);
-
-// useEffect(() => {
-//   if (!subscriptionDate) return;
-
-//   // Parse the subscriptionDate (assuming format "dd-MM-yyyy HH:mm:ss")
-//   const [datePart, timePart] = subscriptionDate.split(' ');
-//   const [day, month, year] = datePart.split('-').map(Number);
-//   const [hour, minute, second] = timePart.split(':').map(Number);
-
-//   const subDate = new Date(year, month - 1, day, hour, minute, second);
-//   const now = new Date();
-
-//   const diffMs = now.getTime() - subDate.getTime();
-//   const diffMinutes = diffMs / (1000 * 60);
-
-//   // Check if 2 minutes have passed
-//   if (diffMinutes >= 2) {
-//     setShouldBlink(true);
-//   } else {
-//     // Set a timer to trigger blinking after the remaining time
-//     const timeoutMs = (2 - diffMinutes) * 60 * 1000;
-//     const timeout = setTimeout(() => {
-//       setShouldBlink(true);
-//     }, timeoutMs);
-//     return () => clearTimeout(timeout); // Cleanup
-//   }
-// }, [subscriptionDate]);
-
-
-// useEffect(() => {
-//   if (!subscriptionDate || isSubscription === "Yes") return;
-
-//   const [datePart, timePart] = subscriptionDate.split(' ');
-//   const [day, month, year] = datePart.split('-').map(Number);
-//   const [hour, minute, second] = timePart.split(':').map(Number);
-
-//   const subDate = new Date(year, month - 1, day, hour, minute, second);
-//   const now = new Date();
-//   const diffMs = now - subDate;
-//   const diffMinutes = diffMs / (1000 * 60);
-
-//   const expired = isSubscriptionExpired();
-
-//   let timeout;
-
-//   if (expired && diffMinutes >= 2) {
-//     setShouldBlink(true);
-//   } else if (expired) {
-//     const timeoutMs = (2 - diffMinutes) * 60 * 1000;
-//     timeout = setTimeout(() => {
-//       setShouldBlink(true);
-//     }, timeoutMs);
-//   } else {
-//     setShouldBlink(false);
-//   }
-
-//   return () => {
-//     if (timeout) clearTimeout(timeout);
-//   };
-// }, [subscriptionDate, isSubscription]);
-
-// const isSubscriptionExpired = () => {
-//   if (!subscriptionDate) return true;
-
-//   const [datePart, timePart] = subscriptionDate.split(' ');
-//   const [day, month, year] = datePart.split('-').map(Number);
-//   const [hour, minute, second] = timePart.split(':').map(Number);
-
-//   const subDate = new Date(year, month - 1, day, hour, minute, second);
-  
-//   // Let's say subscription is valid for 1 year
-//   const expiryDate = new Date(subDate);
-//   expiryDate.setFullYear(expiryDate.getFullYear() + 1);
-
-//   return new Date() > expiryDate;
-// };
  
 useEffect(() => {
   console.log(selectedFiles, ticketId, response, editingAddressId, addressData, subscriptionDate);
 }, [selectedFiles, ticketId, response, editingAddressId, addressData, subscriptionDate]);
-
 
 const fetchApartmentData = useCallback(async () => {
   setLoading(true);
   try {
     const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ApartmentMaintenance/GetAddressMaintenanceDataByMobileNo?mobileNo=${mobileNumber}`);
     if (!response.ok) throw new Error('Failed to fetch Apartment data');
-    
     const data = await response.json();
     const addressArray = Array.isArray(data) ? data : [data];
     setAddresses(addressArray);
-
     if (addressArray.length > 0) {
       const address = addressArray[0];
       setId(address.id);
@@ -260,44 +147,6 @@ const fetchApartmentData = useCallback(async () => {
   }
 }, [mobileNumber]);
 
-// const fetchApartmentData = useCallback(async () => {
-//   setLoading(true);
-//   try {
-//     const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ApartmentMaintenance/GetAddressMaintenanceDataByMobileNo?mobileNo=${mobileNumber}`);
-//     if (!response.ok) throw new Error('Failed to fetch Apartment data');
-//     const data = await response.json();
-//     const addressArray = Array.isArray(data) ? data : [data];
-//     setAddresses(addressArray);
-
-//     if (addressArray.length > 0) {
-//       const address = addressArray[0];
-//       setId(address.id);
-//       setApartmentName(address.apartmentName);
-//       setApartmentAddress(address.apartmentAddress);
-//       setPinCode(address.pinCode);
-//       setConsentPersonName(address.consentPersonName);
-//       setMobileNumber(address.mobileNumber);
-//       setNumberOfFlats(address.numberOfFlats);
-//       setTotalAmount(address.totalAmount);
-//       setIsSubscription(address.isSubscription);
-//       setPaymentId(address.paymentId);
-//       setSubscriptionDate(address.subscriptionDate);
-//       setPaidAmount(address.paidAmount);
-//       setState(address.state);
-//       setDistrict(address.district);
-//       setApartmentMaintenanceId(address.apartmentMaintenanceId);
-//       setIsRegisterDisabled(true);
-//     } else {
-//       setIsRegisterDisabled(false);
-//     }
-//   } catch (error) {
-//     console.error('Error fetching Apartment data:', error);
-//     setIsRegisterDisabled(false);
-//   } finally {
-//     setLoading(false);
-//   }
-// }, [mobileNumber]);
-
 useEffect(() => {
   fetchApartmentData();
 }, [fetchApartmentData]);
@@ -307,7 +156,6 @@ useEffect(() => {
   const handleResize = () => setIsMobile(window.innerWidth <= 768);
   handleResize(); 
   window.addEventListener('resize', handleResize);
-
   return () => window.removeEventListener('resize', handleResize);
 }, []);
 
@@ -325,7 +173,6 @@ useEffect(() => {
       if (/^\d*$/.test(value)) {
       const numFlats = parseInt(value, 10);
       setNumberOfFlats(value);
-  
       if (!isNaN(numFlats)) {
         setTotalAmount(numFlats * 200);
       } else {
@@ -339,14 +186,13 @@ useEffect(() => {
     const validFiles = [];
     for (const file of files) {
       const isValidType = file.type === "image/jpeg" || file.type === "image/png";
-  
+
       if (!isValidType) {
         alert(`Only JPG and PNG formats are allowed: ${file.name}`);
         continue;
       }
       validFiles.push(file);
     }
-
     if (validFiles.length + ticketPhotos.length > 5) {
       alert("You can upload up to 5 files.");
       return;
@@ -359,7 +205,6 @@ useEffect(() => {
   const handleUploadFiles = async () => {
     setLoading(true);
     setShowAlert(false);
-    
     const uploadedFilesList=[];
     for (let i = 0; i < ticketPhotos.length; i++) {
       const file = ticketPhotos[i];
@@ -397,7 +242,6 @@ useEffect(() => {
       const formData = new FormData();
       formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
       formData.append('fileName', fileName);
-
       const response = await fetch('https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/upload?filename=' + fileName, {
         method: 'POST',
         headers: {
@@ -405,7 +249,6 @@ useEffect(() => {
         },
         body: formData,
       });
-
       const responseData = await response.text();
       return responseData || ''; 
     } catch (error) {
@@ -427,7 +270,6 @@ useEffect(() => {
     }
     if (isSubmitting) return;
     setIsSubmitting(true);
-
     const payload = {
       id:"string",
       userId: userId,
@@ -461,14 +303,12 @@ useEffect(() => {
       },
       body: JSON.stringify(payload),
     });
-  
     if (!response.ok) {
       throw new Error('Failed to create a ticket.');
     } 
 
     const data = await response.json(); 
     setTicketId(data.apartmentRaiseTicketId); 
-    // Show alert message with the correct ticketId
     window.alert(`Ticket has been submitted successfully! Your reference number is ${data.apartmentRaiseTicketId}. Get Quote will contact you shortly.`);
     const whatsappapiurl = `https://app-server.wati.io/api/v1/sendSessionMessage/918498892222?messageText=Dear Customer Care a New Ticket Requested by Customer ${data.apartmentRaiseTicketId}`;
         const headers = {
@@ -485,7 +325,6 @@ useEffect(() => {
         } catch (error) { 
           console.error('Error sending message:', error);
         }
-    // Redirect to CustomerProfilePage
      window.location.href = `/profilePage/${userType}/${userId}`;
   } catch (error) {
     console.error('Error:', error);
@@ -548,78 +387,19 @@ useEffect(() => {
       console.error("Error Response:", errorText);
       throw new Error("Failed to Register address.");
     }
-
     setShowModal(false);
-
     // ✅ Fetch updated data
     await fetchApartmentData();
-
     if (isSubscription === "No" && isRegisterDisabled) {
       setShouldBlink(true);
     } else {
       setShouldBlink(false);
     }
-
   } catch (error) {
     console.error("Error Register address:", error);
     alert("Failed to Register address. Please try again later.");
   }
 };
-
-  
-//   const handleAddressRegister = async () => {
-//   if (!apartmentName || !apartmentAddress || !pinCode || !mobileNumber || !consentPersonName || !numberOfFlats) {
-//     alert("Please fill in all required fields.");
-//     return; 
-//   }
-//   if (!/^\d{6}$/.test(pinCode)) {
-//     alert("Pincode must be exactly 6 digits.");
-//     return;
-//   }
-//     const payload3 = {
-//       id: "string",
-//       userId: userId,
-//       apartmentMaintenanceId: "string",
-//       date: new Date(),
-//       Status: "Open",
-//       apartmentName: apartmentName,
-//       apartmentAddress: apartmentAddress,
-//       state: state,
-//       district:  district,
-//       pinCode: pinCode,
-//       consentPersonName: consentPersonName,
-//       mobileNumber: mobileNumber,
-//       numberOfFlats: numberOfFlats,
-//       totalAmount: totalAmount.toString(),
-//       paymentId: "",
-//       IsSubscription: "No",
-//       paidAmount: "",
-//       SubscriptionDate: "",
-//     };
-  
-//     try {
-//       const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ApartmentMaintenance/CreateApartmentMaintence`, {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify(payload3),
-//       });
-  
-//       if (!response.ok) {
-//         const errorText = await response.text();
-//         console.error("Error Response:", errorText);
-//         throw new Error("Failed to Register address.");
-//       }
-      
-// setShowModal(false);
-// await fetchApartmentData();
-// //  window.location.reload(); 
-//     } catch (error) {
-//       console.error("Error Register address:", error);
-//       alert("Failed to Register address. Please try again later.");
-//     }
-//   };
 
   const handleAddressEdit = async () => {  
      if (!state || !district) {
@@ -630,7 +410,6 @@ useEffect(() => {
       alert("Pincode must be exactly 6 digits.");
       return;
     }
-  
       const updatedAddress = {
         id: id,
         address: apartmentAddress,
@@ -663,7 +442,6 @@ useEffect(() => {
         paidAmount: paidAmount,
         SubscriptionDate: subscriptionDate,
       };
-    
       try {
         const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ApartmentMaintenance/${id}`, {
           method: 'PUT',
@@ -672,17 +450,14 @@ useEffect(() => {
           },
           body: JSON.stringify(payload3),
         });
-    
         if (!response.ok) {
           const errorText = await response.text();
           console.error("Error Response:", errorText);
           throw new Error("Failed to edit address.");
         }
-    
         setAddresses(prev =>
           prev.map(addr => addr.id === id ? updatedAddress : addr)
         );
-    
         setAddressData(updatedAddress);
         alert("Address Updated Successfully!");
         await fetchApartmentData();
@@ -831,8 +606,6 @@ const isFormDisabled = isSubscription !== "Yes";
                           const selectedDistrict = districtList.find(d => d.districtId.toString() === selectedId);
                           if (selectedDistrict) {
                             setDistrict(selectedDistrict.districtName);
-
-                            // 👇 Check and update serviceUnavailable state
                             if (selectedDistrict.districtName?.toLowerCase() === "east godavari") {
                               setServiceUnavailable(true);
                             } else {
@@ -913,7 +686,6 @@ const isFormDisabled = isSubscription !== "Yes";
                         >
                           {isEditing ? 'Edit Address' : 'Register'}
                         </Button>
-
                   </Form>
                 </Modal.Body>
               </Modal>

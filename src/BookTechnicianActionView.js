@@ -5,14 +5,10 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { useCallback } from "react";
 import AdminSidebar from './AdminSidebar';
 import {  Dashboard as MoreVertIcon } from '@mui/icons-material';
-// import { FaEdit} from 'react-icons/fa'; // Correct icon import
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
-// import SaveAsIcon from '@mui/icons-material/SaveAs';
 import ForwardIcon from '@mui/icons-material/Forward';
-// import { FaEye } from 'react-icons/fa';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import './App.css';
-// import axios from "axios";
 
 const BookTechnicianActionView = () => {
  const Navigate = useNavigate(); 
@@ -42,10 +38,8 @@ const BookTechnicianActionView = () => {
   const [assignedTo, setAssignedTo] = useState('');
   const [utrTransactionNumber,setutrTransactionNumber]=useState('');
   const [emailAddress, setEmailAddress] = useState("");
-  // const [selectCategory, setSelectCategory] = useState("");
   const [selectPincode, setSelectPincode] = useState("");
   const [selectTechnician, setSelectTechnician] = useState("");
-  // const [categories, setCategories] = useState([]);
   const [pincodes, setPincodes] = useState([]);
   const [technicians, setTechnicians]                  = useState([]);
   const [selectedTechnicians, setSelectedTechnicians]  = useState([]);
@@ -66,7 +60,6 @@ const BookTechnicianActionView = () => {
           throw new Error('Failed to fetch technician data');
         }
         const data = await response.json();
-        //  alert(JSON.stringify(data));
         setTechnicianData(data);
         setJobDescription(data.jobDescription);
         setCategory(data.category);
@@ -106,9 +99,8 @@ const BookTechnicianActionView = () => {
   // Detect screen size for responsiveness
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
-    handleResize(); // Set initial state
+    handleResize(); 
     window.addEventListener('resize', handleResize);
-
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
@@ -201,13 +193,6 @@ const handleTechnicianChange = (e) => {
   setSelectAll(updatedSelection.length === technicians.length);
 };
 
-
-// // Handle technician selection
-// const handleTechnicianChange = (e) => {
-//   setSelectTechnician(e.target.value);
-//   setError({ ...error, selectTechnician: "" });
-// };
-
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -217,7 +202,6 @@ const handleTechnicianChange = (e) => {
     setAssignedTo(selectedAssignedTo);
     setError({});
     if (selectedAssignedTo === "Customer") {
-      // setCategory("");
       setSelectPincode("");
       setSelectTechnician("");
       setPincodes([]);
@@ -225,43 +209,6 @@ const handleTechnicianChange = (e) => {
     }
   };
   
-
-  // const validateFields = () => {
-  //   let newErrors = {};
-
-  //   if (assignedTo === "Technician") {
-  //     // if (!selectCategory) newErrors.selectCategory = "Category is required.";
-  //     if (!selectPincode) newErrors.selectPincode = "Pincode is required.";
-  //     if (!selectTechnician) newErrors.selectTechnician = "Technician is required.";
-  //   }
-
-  //   setError(newErrors);
-  //   return Object.keys(newErrors).length === 0; 
-  // };
-  
-
-  // const handleCategoryChange = async (e) => {
-  //   const category = e.target.value;
-  //   setSelectCategory(category);
-  //   setSelectPincode(""); 
-  //   setSelectTechnician("");     
-  //   setError({ ...error, selectCategory: "" }); 
-  //   console.log("Selected Category:", category);
-  //   if (category) {
-  //     try {
-  //       const response = await axios.get(
-  //         `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Technician/GetTechnicianPincodesBycategory?Category=${category}`
-  //       );
-  //       console.log("API Response:", response.data);
-  //     alert(JSON.stringify(response.data));
-  //       setPincodes(response.data || []);
-  //     } catch (error) {
-  //       console.error("Error fetching pincodes:", error);
-  //     }
-  //   }
-  // };
-
-
   // Handle form data changes
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -273,16 +220,11 @@ const handleTechnicianChange = (e) => {
  
 const handleUpdateJobDescription = async (e) => {
   e.preventDefault();
-
   if (!assignedTo ) {
     setError("You Must select AssignedTo");
     return;     
 }
 
-// if (validateFields()) {
-//   return;
-// } 
- 
   const payload2 = {
     id: raiseTicketId,  
     bookTechnicianId: bookTechnicianId,
@@ -385,28 +327,6 @@ const handleUpdateJobDescription = async (e) => {
             </Form.Group>
             </Col>
             </Row>
-      
-        {/* Status
-                  <Col md={6}>
-                    <Form.Group>
-                      <label>Status</label>
-                      <Form.Control
-                        as="select"
-                        name="status"
-                        value={ticketData.status}
-                        onChange={handleChange}
-                        required
-                      >
-                        <option value="">Select Status</option>
-                        <option>Open Tickets</option>
-                        <option>Assigned</option>
-                        <option>Pending Tickets</option>
-                        <option>Closed Tickets</option>
-                      </Form.Control>
-                    </Form.Group>
-                  </Col>
-                </Row> */}
-
 
                 {/* Category */}
         <Row>
@@ -452,14 +372,12 @@ const handleUpdateJobDescription = async (e) => {
                 type="text"
                 name="requiredQuantity"
                 value={requiredQuantity}
-                // onChange={handleChange}
                 placeholder="Required Quantity"
                 readOnly
               />
             </Form.Group>
           </Col>
         </Row>
-
 
         {/* Total Amount */}
         <Row>
@@ -470,14 +388,12 @@ const handleUpdateJobDescription = async (e) => {
                 type="text"
                 name="totalAmount"
                 value={`Rs ${totalAmount} /-`}
-                // onChange={handleChange}
                 placeholder="Total Amount"
                 readOnly
               />
             </Form.Group>
           </Col>
         </Row>
-
 
 {/* Technician Confirmation Code */}
         <Form.Group>
@@ -509,7 +425,6 @@ const handleUpdateJobDescription = async (e) => {
           </Col>
         </Row>
 
-
         {/* Payment Transaction Details */}
         <Form.Group>
           <label>Payment Transaction Details</label>
@@ -522,20 +437,6 @@ const handleUpdateJobDescription = async (e) => {
             readOnly
           />
         </Form.Group>
-
-
-        {/* Phone Number
-        <Form.Group>
-          <label>Phone Number</label>
-          <Form.Control
-            name="phoneNumber"
-            value={phoneNumber}
-            onChange={handleChange}
-            rows="4"
-            placeholder="Phone Number"
-            readOnly
-          />
-        </Form.Group> */} 
  
         {/*Customer Name*/}
           <Row>
@@ -564,7 +465,6 @@ const handleUpdateJobDescription = async (e) => {
                 as="textarea"
                 type="text"
                 name="address"
-                // value={`${address}, ${district}, ${state}, ${zipCode}, ${phoneNumber}`}
                 value={[address, district, state, zipCode, phoneNumber]
                   .filter(Boolean) 
                   .join(", ")}
@@ -609,7 +509,6 @@ const handleUpdateJobDescription = async (e) => {
             </Form.Group>
           </Col>
 
-
           {/* Select Pincodes */}
           <Col md={12}>
             <Form.Group>
@@ -625,7 +524,6 @@ const handleUpdateJobDescription = async (e) => {
           </Col>
 
           {/* Select Technician */}
-
           <Col md={12}>
       <Form.Group>
         <label>Select Technician</label>
@@ -655,18 +553,6 @@ const handleUpdateJobDescription = async (e) => {
         )}
       </Form.Group>
     </Col>
-        {/* <Col md={12}>
-          <Form.Group>
-            <label>Select Technician</label>
-            <Form.Control as="select" value={selectTechnician} onChange={handleTechnicianChange} required>
-              <option value="">Select Technician</option>
-              {technicians.map((technician, i) => (
-                <option key={i} value={technician.technicianFullName}>{technician.technicianFullName}</option>
-              ))}
-            </Form.Control>
-            {error.selectTechnician && <div style={{ color: "red", marginTop: "5px" }}>{error.selectTechnician}</div>}
-          </Form.Group>
-        </Col> */}
         </>
       )}
     </Row>
@@ -676,14 +562,7 @@ const handleUpdateJobDescription = async (e) => {
           <Link to='/bookTechnicianNotificationGrid' className="btn btn-warning text-white mx-2" title='Back'>
             <ArrowLeftIcon />
           </Link>
-          {/* <Link to='/raiseTicketActionView/{ticketId}' className="btn btn-warning text-white mx-2" title='Edit'> 
-          <FaEdit />
-          </Link> */}
-          {/* <Button onClick={handleForwardTicket} className="btn btn-warning text-white mx-2" title='Forward'
-          disabled={status === "Assigned" && assignedTo === "Technical Agency"}>
-            <SaveAsIcon />
-          </Button> */}
-          <Button className="btn btn-warning text-white mx-2" onClick={handleUpdateJobDescription} title="Forward">
+         <Button className="btn btn-warning text-white mx-2" onClick={handleUpdateJobDescription} title="Forward">
             <ForwardIcon />
           </Button>
 

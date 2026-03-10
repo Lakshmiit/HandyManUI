@@ -149,8 +149,7 @@ const AdminLakshmiCollectionsPage = () => {
           if (src && src.startsWith("blob:")) URL.revokeObjectURL(src);
         });
       });
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }; // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [collectionId]);
 
   const openZoom = (src) => {

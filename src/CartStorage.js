@@ -1,73 +1,98 @@
 const CART_KEY = "allCategories";
+/* ---------------- IMAGE URL ---------------- */
+export const fileToUrl = (fn) => {
+  if (!fn) return null;
+  if (fn.startsWith("http")) return fn;
+  return `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(fn)}`;
+};
 
-export const fileToUrl = (fn) =>
-  fn
-    ? `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(fn)}`
-    : null;
-
+/* ---------------- CLEAN DATA ---------------- */
 function cleanedCategories(all) {
   return (all || [])
     .map(c => ({
-      ...c,
-      products: (c.products || []).filter(p => Number(p?.qty) > 0),
+      categoryName: c.categoryName,
+      products: (c.products || []).filter(p => Number(p?.qty) > 0)
     }))
     .filter(c => c.products.length > 0);
 }
 
+/* ---------------- CART STORAGE ---------------- */
 export const CartStorage = {
+  /* ---------- GET ALL ---------- */
   getAll() {
-    try { return JSON.parse(localStorage.getItem(CART_KEY) || "[]"); }
-    catch { return []; }
+    try {
+      const raw = localStorage.getItem(CART_KEY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (err) {
+      console.error("Cart parse error", err);
+      return [];
+    }
   },
 
+  /* ---------- SAVE ---------- */
   save(all) {
-    localStorage.setItem(CART_KEY, JSON.stringify(cleanedCategories(all)));
+    const cleaned = cleanedCategories(all);
+    localStorage.setItem(CART_KEY, JSON.stringify(cleaned));
   },
 
+  /* ---------- UPSERT CATEGORY ---------- */
   upsertCategory(categoryName, productList) {
-  let all = this.getAll() || [];
-  if (!Array.isArray(all)) {
-    all = [all]; // normalize to array
-  }
+    let all = this.getAll();
+    const idx = all.findIndex(c => c.categoryName === categoryName);
+    const cleanedProducts = (productList || []).filter(p => Number(p.qty) > 0);
+    if (idx >= 0) {
+      all[idx] = {
+        categoryName,
+        products: cleanedProducts
+      };
+    } else {
+      all.push({
+        categoryName,
+        products: cleanedProducts
+      });
+    }
+    this.save(all);
+  },
 
-  const idx = all.findIndex(c => c.categoryName === categoryName);
-
-  // filter only products with qty > 0
-  const cleaned = (productList || []).filter(p => Number(p.qty) > 0);
-
-  if (idx >= 0) {
-    all[idx] = { categoryName, products: cleaned };
-  } else {
-    all.push({ categoryName, products: cleaned });
-  }
-
-  this.save(all);
-},
-
+  /* ---------- FLAT ITEMS FOR CART PAGE ---------- */
   flatItems() {
-    return this.getAll().flatMap(cat =>
-      (cat.products || []).map((p, i) => ({
-        id: `${cat.categoryName}-${p.productId}-${i}`,
-        category: cat.categoryName,
-        productId: p.productId,
-        name: p.productName,
-        qty: Number(p.qty || 0),
-        mrp: Number(p.mrp || 0),
-        discount: Number(p.discount || 0),
-        price: Number(p.afterDiscountPrice || 0),
-        stockLeft: Number(p.stockLeft || 0),
-        img: fileToUrl(p.image || null), // build URL only when rendering
-      }))
+    const all = this.getAll();
+    return all.flatMap(cat =>
+      (cat.products || []).map(p => {
+        const imageFile = p.image
+          ? (String(p.image).split("generatedfilename=")[1] || p.image)
+          : null;
+        return {
+          id: `${cat.categoryName}-${p.productId}`,
+          category: cat.categoryName,
+          productId: p.productId,
+          name: p.productName,
+          qty: Number(p.qty || 0),
+          mrp: Number(p.mrp || 0),
+          discount: Number(p.discount || 0),
+          price: Number(p.afterDiscountPrice || 0),
+          stockLeft: Number(p.stockLeft || 0),
+          imageFilename: imageFile,
+          img: fileToUrl(imageFile)
+        };
+      })
     );
   },
 
+  /* ---------- WRITE BACK FROM CART PAGE ---------- */
   writeBackFromFlatItems(items) {
     const grouped = {};
     (items || []).forEach(it => {
-      const imageFile = it.img
-        ? (String(it.img).split("generatedfilename=")[1] || it.img)
-        : null;
-      (grouped[it.category] ||= []).push({
+      if (!grouped[it.category]) {
+        grouped[it.category] = [];
+      }
+
+      const imageFile = it.imageFilename
+        ? it.imageFilename
+        : (it.img ? (String(it.img).split("generatedfilename=")[1] || it.img) : null);
+      grouped[it.category].push({
         productId: it.productId,
         productName: it.name,
         qty: Number(it.qty || 0),
@@ -75,30 +100,35 @@ export const CartStorage = {
         discount: Number(it.discount || 0),
         afterDiscountPrice: Number(it.price || 0),
         stockLeft: Number(it.stockLeft || 0),
-        image: imageFile, // store filename only
+        image: imageFile
       });
     });
     const all = Object.entries(grouped).map(([categoryName, products]) => ({
       categoryName,
-      products: (products || []).filter(p => Number(p.qty) > 0),
+      products: products.filter(p => Number(p.qty) > 0)
     }));
     this.save(all);
   },
 
- grandSummary() {
-  const all = this.getAll() || [];   // fallback to empty array
-  let items = 0, total = 0;
-
-  // Ensure it's always an array
-  const list = Array.isArray(all) ? all : [all];
-
-  list.forEach(cat =>
-    (cat.products || []).forEach(p => {
-      items += Number(p.qty || 0);
-      total += Number(p.afterDiscountPrice || 0) * Number(p.qty || 0);
-    })
-  );
-
-  return { items, total: Math.round(total) };
-}
+  /* ---------- GRAND SUMMARY ---------- */
+  grandSummary() {
+    const all = this.getAll();
+    let items = 0;
+    let total = 0;
+    all.forEach(cat =>
+      (cat.products || []).forEach(p => {
+        const qty = Number(p.qty || 0);
+        const price = Number(p.afterDiscountPrice || 0);
+        items += qty;
+        total += price * qty;
+      })
+    );
+    return {
+      items,
+      total: Math.round(total)
+    };
+  },
+  clear() {
+    localStorage.removeItem(CART_KEY);
+  }
 };

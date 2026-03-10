@@ -92,7 +92,6 @@ import ChatPage from './ChatPage.js';
 // import BuyProductPaymentSuccess from './BuyProductPaymentSuccess.js';
 // import BookTechnicianOnlinePayment from './BookTechnicianOnlinePayment.js'
 // import BookTechnicianPaymentSuccess from './BookTechnicianPaymentSuccess.js';
-// New Pages  
 import GroceryOfferItems from './GroceryOfferItems.js';
 import GroceryOffersCartPage from './GroceryOffersCartPage.js';
 import GroceryItems from './GroceryItems.js';
@@ -173,7 +172,6 @@ function App() {
             <Route path="/chatPage/:userType/:userId" element={<ChatPage />} />
             <Route path="/groceryOffers/:userType/:userId" element={<GroceryOfferItems />} />
             <Route path="/groceryOffersCart/:userType/:userId" element={<GroceryOffersCartPage />} />
-            {/* New Pages */}      
             <Route path="/deliveryPartner/:userType/:userId" element={<DeliveryPartner />} />
             <Route path="/deliveryTracking/:id" element={<DeliveryTracking />} />   
             {/* <Route path="/deliveryPartnerDirectory" element={<DeliveryPartnerDirectory />} /> */}
@@ -205,8 +203,6 @@ function App() {
             {/* <Route path="/lakshmiCollectionPaymentSuccess" element={<LakshmiCollectionPaymentSuccess />} /> */}
             <Route path='/adminLakshmiCollectionsOrders/:collectionId' element={<AdminLakshmiCollectionsPage />} /> 
             <Route path='/lakshmiCollectionsNotificationGrid' element={<AdminCollectionNotificationGrid />} /> 
-            
-
             {/* <Route path="/customerRegistration" element={<CustomerRegistration />} /> */}
             {/* <Route path="/technicianRegistration" element={<TechnicianRegistration />} /> */}
             <Route path="/profilePage/:userType/:userId" element={<ProfilePage />} />

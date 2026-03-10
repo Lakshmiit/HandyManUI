@@ -23,46 +23,12 @@ const [selectedCategory, setSelectedCategory] = useState(null);
    const [products, setProducts] = useState([]);
  const [imageUrls, setImageUrls] = useState({});
   const [imageLoading, setImageLoading] = useState(true);
-  // const [showZoomModal, setShowZoomModal] = useState(false);
-  // const [zoomImage, setZoomImage] = useState("");
  const [checked] = useState(false);
 const [searchQuery, setSearchQuery] = useState('');
 
  useEffect(() => {
 console.log(checked, imageLoading);
 }, [checked, imageLoading]);
-
-//  const getTotalStock = (product) => {
-//   // 1) Prefer explicit stockLeft if present
-//   if (product?.stockLeft !== undefined && product?.stockLeft !== null) {
-//     const n = Number(product.stockLeft);
-//     if (!Number.isNaN(n)) return Math.max(0, n);
-//   }
-//   const raw = product?.size;
-//   if (!raw) return null; 
-
-//   const tokens = String(raw)
-//     .split(",")
-//     .map((t) => t.trim())
-//     .filter(Boolean);
-
-//   if (tokens.length === 0) return null;
-
-//   let total = 0;
-//   let hasValid = false;
-//   for (const t of tokens) {
-//     let match = t.match(/^([A-Za-z0-9]+)\s*[:-]\s*(\d+)$/);
-//     if (!match) match = t.match(/^([A-Za-z0-9]+)\s*\((\d+)\)$/);
-//     if (match) {
-//       hasValid = true;
-//       const count = Number(match[2]);
-//       total += isNaN(count) ? 0 : count;
-//     }
-//   }
-
-//   if (!hasValid) return null;
-//   return total;
-// };
 
 const handleLike = (productId, e) => {
     if (e) e.stopPropagation();
@@ -72,11 +38,6 @@ const handleLike = (productId, e) => {
         : [...prevLiked, productId]
     );
   };
-
-  // const handleImageClick = (imageSrc) => {
-  //   setZoomImage(imageSrc); 
-  //   setShowZoomModal(true);    
-  // };
   
 useEffect(() => {
   const fetchCollectionData = async () => {
@@ -233,8 +194,6 @@ useEffect(() => {
                          const mrp = Number(product.rate ?? 0) || 0;                 
                         const after = Number(product.afterDiscount ?? mrp) || mrp; 
                         const discountPct = Number(product.discount ?? 0) || 0;     
-                        // const totalStock = getTotalStock(product);
-                        // const isOutOfStock = totalStock === 0;
                         return (
                           <div
                             key={product.id}
@@ -293,9 +252,7 @@ useEffect(() => {
                                     objectFit: "contain",
                                     cursor: "pointer",
                                     borderRadius: "6px",
-                                    // NEW: visually dim when out of stock
-                                    // filter: isOutOfStock ? "grayscale(100%) brightness(0.75)" : "none",
-                                  }}
+                                    }}
                                  onClick={(e) => {
                                   e.stopPropagation();
                                   navigate(`/lakshmiCollectionDesigns/${userType}/${userId}/${product.id}`);
@@ -305,32 +262,6 @@ useEffect(() => {
                               ) : (
                                 <span className="text-muted small">Loading Image</span>
                               )}
-
-                              {/* NEW: Out-of-stock badge overlay */}
-                              {/* {isOutOfStock && (
-                                <div
-                                  className="position-absolute"
-                                  style={{
-                                    top: "50%",
-                                    left: "50%",
-                                    transform: "translate(-50%, -50%)",   
-                                    background: "#fff",
-                                    color: "#000",
-                                    padding: "4px 8px",
-                                    borderRadius: 4,
-                                    fontSize: 12,
-                                    fontWeight: 700,
-                                    letterSpacing: 0.3,
-                                    textTransform: "uppercase",
-                                    textAlign: "center",
-                                    opacity: 0.9,                       
-                                    zIndex: 2,                             
-                                  }}
-                                >
-                                  Out of stock
-                                </div>
-                              )} */}
-
                             </div>
 
                             <h6 className="text-start fw-bold m-0" style={{ fontSize: "12px" }}>
@@ -358,15 +289,6 @@ useEffect(() => {
 </div>
         </div>
       </div>
-       {/* <Modal show={showZoomModal} onHide={() => setShowZoomModal(false)} centered>
-                <button className="close-button text-end mt-0" onClick={() => setShowZoomModal(false)}>
-                    &times; </button>
-                      <Modal.Body className="text-center">
-                        <div className="zoom-container">
-                          <img src={zoomImage} alt="Zoomed Product" className="zoom-image" />
-                        </div>
-                      </Modal.Body>
-                    </Modal> */}
     </>
   );
 };

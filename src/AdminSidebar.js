@@ -94,7 +94,6 @@ const Sidebar = () => {
   );
 };
 
-// App Component
 const App = () => {
   return (
     <div className="d-flex">
