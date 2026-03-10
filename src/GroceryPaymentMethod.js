@@ -74,19 +74,28 @@ const GroceryPaymentmethod = () => {
     console.log( limit, loading, isChecked, netPayable, editingAddressId, customerName, groceryId, );
   }, [ limit, loading, netPayable,isChecked,editingAddressId,customerName,groceryId,]);
 
+  const numericGrandTotal = Number(grandTotal) || 0;
+  let cashback = 0;
+
+if (numericGrandTotal >= 1999) {
+  cashback = 200;
+} else if (numericGrandTotal >= 1499) {
+  cashback = 150;
+} else if (numericGrandTotal >= 999) {
+  cashback = 100;
+}
+  const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;
+
   const showSugarOffer = Number(grandTotal) >= 299 && Number(grandTotal) <= 498;
   const showAttaOffer = Number(grandTotal) >= 499 && Number(grandTotal) <= 999;
   const gt = Number(grandTotal || 0);
   const discount = Number(firstOrderDiscount || 0);
   const wallet = Number(walletAmount || 0);
-  const netPayables = gt - discount - wallet;
+const netPayables = gt - discount - wallet - cashback;
   console.log("GT:", gt);
   console.log("Discount:", discount);
   console.log("Wallet:", wallet);
   console.log("Net Payable:", netPayables);
-
-  const numericGrandTotal = Number(grandTotal) || 0;
-  const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;
 
   useEffect(() => {
     if (firstOrderDiscount > 0) {
@@ -959,12 +968,12 @@ const GroceryPaymentmethod = () => {
             </p>
 
             <div style={{ textAlign: "center" }}>
-              {firstOrderDiscount > 0 && (
+              {cashback  > 0 && (
                 <span style={{ whiteSpace: "nowrap", color: "green" }}>
                   🎉 You have got
                   <span style={{ fontWeight: "bold", color: "red" }}> Rs </span>
                   <span style={{ fontWeight: "bold", color: "red" }}>
-                    {firstOrderDiscount}
+                    {cashback }
                   </span>
                   <span style={{ fontWeight: "normal", color: "green" }}>
                     {" "}
@@ -1011,13 +1020,13 @@ const GroceryPaymentmethod = () => {
                             </tr>
                           )}
                           
-                {firstOrderDiscount > 0 && (
+                {cashback  > 0 && (
                   <tr>
-                    <td style={{ width: "40%", fontSize: "14px" }}>
+                    <td style={{ width: "40%", fontSize: "14px",color: "red" }}>
                       Cash Back
                     </td>
-                    <td style={{ width: "40%", fontSize: "14px" }}>
-                      {`₹${firstOrderDiscount} /-`}
+                    <td style={{ width: "40%", fontSize: "14px", color: "red" }}>
+                      {`Rs ${cashback } /-`}
                     </td>
                   </tr>
                 )}
@@ -1029,7 +1038,7 @@ const GroceryPaymentmethod = () => {
                     </td>
 
                     <td style={{ width: "40%", fontSize: "14px", color: 'red' }}>
-                      {`₹${walletAmount} /-`}
+                      {`Rs ${walletAmount} /-`}
                     </td>     
                   </tr>
                 )}

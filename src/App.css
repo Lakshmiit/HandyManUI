@@ -8,7 +8,7 @@
   --bxsdw: 0 5px 16px -8px #b1b1b1;
   --bdr-color: #E1E1E1;
   --font-light-color: #767676;
-  --bg-white : #FFFFFF;
+  --bg-white : #FFFFFF;    
   --header-height: 200px; 
   --input-height: 60px;
 }
@@ -326,7 +326,7 @@ a{
 
 .form-check-input:focus {
   border-color: #000000;
-  box-shadow: 0 0 0 .25rem rgb(0 0 0 / 25%);
+  box-shadow: 0 0 0 .25rem rgb(0 0 0 25%);
 }
 
 footer.footer {
