@@ -79,7 +79,7 @@ const GroceryPaymentmethod = () => {
 
 if (numericGrandTotal >= 1999) {
   cashback = 200;
-} else if (numericGrandTotal >= 1499) {
+} else if (numericGrandTotal >= 1499) {   
   cashback = 150;
 } else if (numericGrandTotal >= 999) {
   cashback = 100;
