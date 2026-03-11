@@ -210,7 +210,7 @@ useEffect(() => {
       const grandTotalNumeric = Number(data.grandTotal) || 0;
       const cashback = totalAmountFromApi - grandTotalNumeric;
         
-      if ((cashback >= 49 && cashback <= 51) ||(cashback >= 99 && cashback <= 101) || (cashback >= 149 && cashback <= 151) || (cashback >= 199 && cashback <= 201) || (cashback >= 249 && cashback <= 251) ||  (cashback >= 299 && cashback <= 301))
+      if ((cashback >= 49 && cashback <= 51) ||(cashback >= 99 && cashback <= 101) || (cashback >= 149 && cashback <= 151) || (cashback >= 199 && cashback <= 201))
       {
         setCashbackAmount(cashback);                   
       } else {
@@ -424,8 +424,8 @@ const handleDownloadPDF = () => {
   if (
     (cashbackAmount >= 49 && cashbackAmount <= 51) ||
     (cashbackAmount >= 99 && cashbackAmount <= 101) ||
-    (cashbackAmount >= 199 && cashbackAmount <= 201) ||
-    (cashbackAmount >= 299 && cashbackAmount <= 301)
+    (cashbackAmount >= 149 && cashbackAmount <= 151) ||
+    (cashbackAmount >= 199 && cashbackAmount <= 201)
   ) {
     pdfCashback = cashbackAmount;
   }

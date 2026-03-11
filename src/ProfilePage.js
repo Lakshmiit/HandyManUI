@@ -675,7 +675,7 @@ useEffect(() => {
       }
       const grandTotalNumeric = Number(data.grandTotal) || 0;
       const cashback = totalAmountFromApi - grandTotalNumeric;
-      if ((cashback >= 49 && cashback <= 51) ||(cashback >= 99 && cashback <= 101) || (cashback >= 149 && cashback <= 151) || (cashback >= 199 && cashback <= 201) || (cashback >= 249 && cashback <= 251) ||  (cashback >= 299 && cashback <= 301))
+      if ((cashback >= 49 && cashback <= 51) ||(cashback >= 99 && cashback <= 101) || (cashback >= 149 && cashback <= 151) || (cashback >= 199 && cashback <= 201))
       {
         setCashbackAmount(cashback); 
       } else {
@@ -855,7 +855,7 @@ const handleGroceryCategoryClick = (category) => {
   if (value === "Unbeatable Offers") {
     navigate(`/groceryOffers/${userType}/${userId}`, {
       state: { mobileNumber },
-    });
+    });     
   } else {
     navigate(`/grocery/${userType}/${userId}`, {
       state: { mobileNumber },
@@ -933,7 +933,7 @@ const handleDressCategoryClick = async (category) => {
 
   const grandTotalNumeric = Number(ticket.grandTotal) || 0;
   const cashback = totalAmountFromApi - grandTotalNumeric;
-  if ((cashback >= 49 && cashback <= 51) ||(cashback >= 99 && cashback <= 101) || (cashback >= 149 && cashback <= 151) || (cashback >= 199 && cashback <= 201) || (cashback >= 249 && cashback <= 251) ||  (cashback >= 299 && cashback <= 301)) {
+  if ((cashback >= 49 && cashback <= 51) ||(cashback >= 99 && cashback <= 101) || (cashback >= 149 && cashback <= 151) || (cashback >= 199 && cashback <= 201)) {
     return cashback;
   }
   return 0;
