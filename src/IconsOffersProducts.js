@@ -52,7 +52,7 @@ const [error, setError] = useState('');
           setError("");
       
           const encodedCategory = encodeURIComponent(value);
-          const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Product/GetProductsByCategory?Category=${encodedCategory}`;
+          const url = `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Product/GetProductsByCategory?Category=${encodedCategory}`;
           const response = await axios.get(url);
           const productsData = response.data;
       

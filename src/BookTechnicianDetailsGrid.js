@@ -37,7 +37,7 @@
 //               try {
 //                 let apiUrl = "";
              
-//                   apiUrl = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/technician/technicianProfileData?profileType=${userType}&UserId=${userId}`;
+//                   apiUrl = `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/technician/technicianProfileData?profileType=${userType}&UserId=${userId}`;
                 
 //                 if (!apiUrl) return;
 //                 const response = await axios.get(apiUrl);
@@ -57,7 +57,7 @@
     
 //   useEffect(() => {
 //     setLoading(true);
-//     const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BookTechnician/GetBookTechnicianNotifications?category=${category}&pincode=${pincode}&technicianName=${technicianName}`;
+//     const url = `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/BookTechnician/GetBookTechnicianNotifications?category=${category}&pincode=${pincode}&technicianName=${technicianName}`;
 //     axios.get(url)
 //       .then((response) => {
 //         console.log("API Response:", response.data); 

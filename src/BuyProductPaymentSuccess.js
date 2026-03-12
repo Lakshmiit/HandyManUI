@@ -21,7 +21,7 @@
 // }, [loading, orderBooking]);
 
 // useEffect(() => {
-//     fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BuyProduct/GetBuyProductDetailsById/${id}`)
+//     fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsById/${id}`)
 //       .then((res) => res.json())
 //       .then((data) => {
 //         setOrderBooking(data);
@@ -51,7 +51,7 @@
 //         };
 
 //         const response = await fetch(
-//           "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BuyProduct/buyProductEdit",
+//           "https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/BuyProduct/buyProductEdit",
 //           {
 //             method: "POST",
 //             headers: { "Content-Type": "application/json" },

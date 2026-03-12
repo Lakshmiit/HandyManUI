@@ -93,7 +93,7 @@
 //   const checkNewOrExisting = useCallback(async (num) => {
 //     try {
 //       const res = await fetch(
-//         `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UserOnBoarding/GuestUserVerificationByMobileNo?mobileNo=${encodeURIComponent(
+//         `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/UserOnBoarding/GuestUserVerificationByMobileNo?mobileNo=${encodeURIComponent(
 //           num
 //         )}`
 //       );
@@ -115,7 +115,7 @@
 
 //   const getReferralRecord = async (userId) => {
 //     if (!userId) return null;
-//     const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(
+//     const url = `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(
 //       userId
 //     )}`;
 //     const res = await fetch(url);
@@ -303,7 +303,7 @@
 //     };
 
 //     if (record?.id) {
-//       const putUrl = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(
+//       const putUrl = `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(
 //         record.id
 //       )}`;
 //       const r = await fetch(putUrl, {
@@ -317,7 +317,7 @@
 //       if (!r.ok) throw new Error(d?.message || `PUT failed: ${r.status}`);
 //       return d || { ok: true };
 //     } else {
-//       const postUrl = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ReferralPoints/UploadReferralPoints`;
+//       const postUrl = `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/ReferralPoints/UploadReferralPoints`;
 //       const r = await fetch(postUrl, {
 //         method: "POST",
 //         headers: { "Content-Type": "application/json; charset=utf-8" },
@@ -360,7 +360,7 @@
 //       await upsertReferral({ record, numbersCsv: fixed3(numbersArr), userId: referrerId });
 
 //       // 2) Send promo SMS to all 3 new numbers
-//       const smsRes = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Auth/sendpromosms`, {
+//       const smsRes = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Auth/sendpromosms`, {
 //         method: "POST",
 //         headers: { "Content-Type": "application/json" },
 //         body: JSON.stringify({ mobile: numbersArr.join(","), name: customerName }),

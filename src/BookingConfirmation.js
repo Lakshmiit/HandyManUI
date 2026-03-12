@@ -63,7 +63,7 @@
 //   useEffect(() => {
 //     const fetchticketData = async () => {
 //       try {
-//         const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+//         const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
 //         if (!response.ok) {
 //           throw new Error('Failed to fetch ticket data');
 //         }
@@ -112,7 +112,7 @@
 //   useEffect(() => {
 //     const fetchtechnicianData = async () => {
 //       try {
-//         const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Technician/GetTechnicianDetailsForInvoice?TechnicianId=${lowestBidder}`);
+//         const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Technician/GetTechnicianDetailsForInvoice?TechnicianId=${lowestBidder}`);
 //         if (!response.ok) {
 //           throw new Error('Failed to fetch ticket data');
 //         }
@@ -195,7 +195,7 @@
 // UTRTransactionNumber: "",
 //     };
 //     try {
-//       const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/${raiseTicketId}`, {
+//       const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
 //         method: 'PUT',
 //         headers: {
 //           'Content-Type': 'application/json',
@@ -361,7 +361,7 @@
 //                     <div className="mt-20">
 //                         <h4>I. YOUR ACCEPTANCE OF THIS AGREEMENT</h4>
 //                         <p>
-//                             This is an agreement between you ("you" or "your") and Lakshmi Sai Service Providers, a Proprietorship firm incorporated under the Registration of Establishment – Sec 2(b) and Sec 4(2) The Andhra Pradesh (Insurance of integrated Registration and Furnishing of Combined returns under various labour  Laws by certain Establishments) Act, 2015  with its registered office at Dr.No.44-40-12, Nandhagirinagar, Akkayyapalem, Visakhapatnam - 530016 ("Lakshmi Sai Service Provider" "we," or "our") that governs your use of the search services offered by Lakshmi Sai Service Providers through its website https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net ("Website"), using which Lakshmi Sai Service Providers may provide the search services ("Platform"). When you access or use Platform you agree to be bound by these Terms and Conditions ("Terms").
+//                             This is an agreement between you ("you" or "your") and Lakshmi Sai Service Providers, a Proprietorship firm incorporated under the Registration of Establishment – Sec 2(b) and Sec 4(2) The Andhra Pradesh (Insurance of integrated Registration and Furnishing of Combined returns under various labour  Laws by certain Establishments) Act, 2015  with its registered office at Dr.No.44-40-12, Nandhagirinagar, Akkayyapalem, Visakhapatnam - 530016 ("Lakshmi Sai Service Provider" "we," or "our") that governs your use of the search services offered by Lakshmi Sai Service Providers through its website https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net ("Website"), using which Lakshmi Sai Service Providers may provide the search services ("Platform"). When you access or use Platform you agree to be bound by these Terms and Conditions ("Terms").
 //                         </p>
 //                     </div>
 //                     <div className="mt-20">

@@ -37,7 +37,7 @@ const LakshmiCollectionCartPage = () => {
           return;
         }   
         const response = await fetch(
-          `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/LakshmiCollection/GetLakshmiCollectionDetails/${uploadedId}`
+          `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/LakshmiCollection/GetLakshmiCollectionDetails/${uploadedId}`
         );
         if (!response.ok) throw new Error("Failed to fetch collection details");
         const data = await response.json();
@@ -49,7 +49,7 @@ const LakshmiCollectionCartPage = () => {
             if (productImageFilename) {
               try {
                 const imgRes = await fetch(
-                  `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${productImageFilename}`
+                  `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${productImageFilename}`
                 );
                 const imgData = await imgRes.json();
                 if (imgData?.imageData) {
@@ -159,7 +159,7 @@ const LakshmiCollectionCartPage = () => {
 
     try {
       const response = await fetch(
-        `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/LakshmiCollection/UpdateLakshmiCollectionDetails/${uploadedId}`,
+        `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/LakshmiCollection/UpdateLakshmiCollectionDetails/${uploadedId}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },

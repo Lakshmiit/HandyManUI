@@ -1,4 +1,7 @@
-const PREFIX = "img_b64_"; // we store base64 only, not blob URLs
+const PREFIX = "img_b64_";
+
+// memory cache for blob urls (fast access)
+const blobCache = {};
 
 const ImageCache = {
   getBase64(generatedFilename) {
@@ -8,13 +11,22 @@ const ImageCache = {
       return null;
     }
   },
+
   setBase64(generatedFilename, base64) {
     try {
       sessionStorage.setItem(PREFIX + generatedFilename, base64);
     } catch {
-      // If storage quota is exceeded, fail silently
+      // ignore storage quota errors
     }
   },
+
+  getBlobUrl(generatedFilename) {
+    return blobCache[generatedFilename] || null;
+  },
+
+  setBlobUrl(generatedFilename, blobUrl) {
+    blobCache[generatedFilename] = blobUrl;
+  }
 };
 
 export default ImageCache;

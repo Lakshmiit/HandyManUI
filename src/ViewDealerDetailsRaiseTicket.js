@@ -86,7 +86,7 @@
 //   useEffect(() => {
 //         const fetchticketData = async () => {
 //           try {
-//             const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+//             const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
 //             if (!response.ok) {
 //               throw new Error('Failed to fetch ticket data');
 //             }
@@ -110,7 +110,7 @@
 //             const imageRequests =
 //               data.attachments?.map((photo) => 
 //                fetch(
-//                   `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${photo}`
+//                   `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
 //                 )
 //                 .then((res) => res.json())
 //                 .then((data) => ({
@@ -132,7 +132,7 @@
 //       useEffect(() => {
 //         const fetchDealerData = async () => {
 //           try {
-//             const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseAQuoteByDealer/GetRaiseAQuoteDealerDetailsByid?raiseTicketId=${raiseTicketId}&dealerId=${userId}`);
+//             const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseAQuoteByDealer/GetRaiseAQuoteDealerDetailsByid?raiseTicketId=${raiseTicketId}&dealerId=${userId}`);
 //             if (!response.ok) {
 //               throw new Error('Failed to fetch ticket data');
 //             }
@@ -198,7 +198,7 @@
 //       RateQuotedBy: rateQuotedBy,
 //     };
 //     try { 
-//       const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/${raiseTicketId}`, {
+//       const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
 //         method: 'PUT',
 //         headers: {
 //           'Content-Type': 'application/json',

@@ -47,7 +47,7 @@
 //   useEffect(() => {
 //     const fetchStates = async () => {
 //       try {
-//         const res = await fetch('https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/MasterData/getStates');
+//         const res = await fetch('https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/MasterData/getStates');
 //         const data = await res.json();
 //         setStates(data);
 //       } catch (err) {
@@ -61,7 +61,7 @@
 //     const fetchDistricts = async () => {
 //       if (!selectedStateId) return;
 //       try {
-//         const res = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/MasterData/getDistricts?stateId=${selectedStateId}`);
+//         const res = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/MasterData/getDistricts?stateId=${selectedStateId}`);
 //         const data = await res.json();
 //         setDistricts(data);
 //       } catch (err) {
@@ -103,7 +103,7 @@
 //     };
    
 //     try {
-//       const response1 = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UserOnBoarding/UserUpload`, {
+//       const response1 = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/UserOnBoarding/UserUpload`, {
 //         method: 'POST',
 //         headers: {
 //           'Content-Type': 'application/json',
@@ -141,7 +141,7 @@
 //       Status: "Open", 
 //     };
    
-//       const response2 = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Customer/CustomerUpload`, {
+//       const response2 = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Customer/CustomerUpload`, {
 //         method: 'POST',
 //         headers: {
 //           'Content-Type': 'application/json',

@@ -20,7 +20,7 @@
 //     const unsubscribe = onSnapshot(notificationsRef, async (snapshot) => {
 //       try {
 //         const response = await fetch(
-//             `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetNotificationsByNotExistTechnicianId?category=${category1}&district=${district1}&technicianId=${userId}`
+//             `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistTechnicianId?category=${category1}&district=${district1}&technicianId=${userId}`
 //           );
 //         const data = await response.json();
 // // alert(getTechnicianFiltered.length);

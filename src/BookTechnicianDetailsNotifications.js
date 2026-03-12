@@ -92,7 +92,7 @@
 //   const fetchTechnicianNotifications = async () => {
 //     try {
 //       const technicianTicketResponse = await fetch(
-//         `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BookTechnician/GetBookTechnicianNotifications?category=${category}&pincode=${pincode}&technicianName=${technicianName}`
+//         `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/BookTechnician/GetBookTechnicianNotifications?category=${category}&pincode=${pincode}&technicianName=${technicianName}`
 //       );
 //       const technicianData = await technicianTicketResponse.json();
 //       const getTechnicianNotifications = technicianData.filter(

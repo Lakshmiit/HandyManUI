@@ -55,7 +55,7 @@ const BookTechnicianActionView = () => {
   useEffect(() => {
     const fetchtechnicianData = async () => {
       try {
-        const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BookTechnician/GetBookTechnician/${raiseTicketId}`);
+        const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/BookTechnician/GetBookTechnician/${raiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch technician data');
         }
@@ -109,7 +109,7 @@ const fetchPincodesByCategory = async (category) => {
   try {
     setLoading(true);
     const response = await fetch(
-      `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Technician/GetTechnicianPincodesBycategory?Category=${category}`
+      `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Technician/GetTechnicianPincodesBycategory?Category=${category}`
     );
     if (!response.ok) {
       throw new Error("Failed to fetch pincodes");
@@ -128,7 +128,7 @@ const fetchTechniciansByPincode = useCallback(async (pincode) => {
   try {
     setLoading(true);
     const response = await fetch(
-      `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Technician/GetTechniciannamesByPincodeAndCategory?pincode=${pincode}&category=${category}`
+      `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Technician/GetTechniciannamesByPincodeAndCategory?pincode=${pincode}&category=${category}`
     );
     if (!response.ok) {
       throw new Error("Failed to fetch technicians");
@@ -263,7 +263,7 @@ const handleUpdateJobDescription = async (e) => {
   }; 
  
   try {
-    const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BookTechnician/${raiseTicketId}`, {
+    const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

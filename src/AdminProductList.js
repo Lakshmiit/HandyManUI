@@ -21,7 +21,7 @@ const AdminProductList = () => {
   // Fetch product data, categories, and catalogues
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Product/GetAdminProductList?ProductOwnedBy=Admin`;
+    const url = `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Product/GetAdminProductList?ProductOwnedBy=Admin`;
     axios.get(url)
       .then((response) => {
         const products = response.data.map((product) => ({
@@ -53,7 +53,7 @@ const AdminProductList = () => {
   const handleDelete = (productId) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this product?');
     if (confirmDelete) {
-      axios.delete(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Product/${productId}`)
+      axios.delete(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Product/${productId}`)
         .then(() => {
           setProductData(prevData => prevData.filter(product => product.id !== productId));
           setFilteredData(prevData => prevData.filter(product => product.id !== productId));

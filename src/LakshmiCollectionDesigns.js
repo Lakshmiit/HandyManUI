@@ -87,7 +87,7 @@ useEffect(() => {
     setErr("");
     try {
       const res = await fetch(
-        `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadLakshmiCollection/GetLakshmiCollections?id=${id}`
+        `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/UploadLakshmiCollection/GetLakshmiCollections?id=${id}`
       );
       if (!res.ok) throw new Error("Failed to fetch product");
       const data = await res.json();
@@ -99,7 +99,7 @@ useEffect(() => {
 
       const buildRequest = async (fileName) => {
         const r = await fetch(
-          `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
+          `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
             fileName
           )}`
         );
@@ -249,7 +249,7 @@ const allOutOfStock = sizes.length > 0 && sizes.every(s => (s.stock ?? 0) <= 0);
     setPosting(true);
     setPostMsg(null);
     const res = await fetch(
-      "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/LakshmiCollection/UploadColectionsDetails",
+      "https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/LakshmiCollection/UploadColectionsDetails",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
