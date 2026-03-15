@@ -11,11 +11,11 @@ import "./App.css";
 import CartImg from "./img/Cart.jpeg";
 import { useNavigate, useParams } from "react-router-dom";
 import Footer from "./Footer.js";
-import { useLocation } from "react-router-dom";
+// import { useLocation } from "react-router-dom";
 
 const GroceryCartPage = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  // const location = useLocation();
   const { userId } = useParams();
   const { userType } = useParams();
   const [cartItems, setCartItems] = useState([]);
@@ -25,53 +25,70 @@ const GroceryCartPage = () => {
   const [grandSummary, setGrandSummary] = useState({ items: 0, total: 0 });
   const [imageBlobMap, setImageBlobMap] = useState({});
   const [limitMap, setLimitMap] = useState({});
-  const [MIN_ORDER_TOTAL, setMinOrderTotal] = useState(100);
+  const [MIN_ORDER_TOTAL] = useState(100);
 
-  const mobileNumber =
-    location.state?.mobileNumber ||
-    localStorage.getItem("customerMobileNumber");
-  useEffect(() => {
-    const checkUserOrder = async () => {
-      if (!mobileNumber) return;
-      await CheckFirstOrder(mobileNumber);
-      setMinOrderTotal(100);
-    };
-    checkUserOrder();
-  }, [mobileNumber]);
+  // const [MIN_ORDER_TOTAL, setMinOrderTotal] = useState(100);
 
-  const CheckFirstOrder = async (mobile) => {
-    if (!mobile) return null;
-    const url = `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${encodeURIComponent(
-      mobile,
-    )}`;
+  // const mobileNumber =location.state?.mobileNumber ||
+  //   localStorage.getItem("customerMobileNumber");
 
-    try {
-      const res = await fetch(url);
-      const text = await res.text();
-      console.log("RAW RESPONSE:", text);
-      // ✅ First order (API returns this text)
-      if (text.toLowerCase().includes("firstorder can not be found")) {
-        return null;
-      }
-      let parsed;
-      try {
-        parsed = JSON.parse(text);
-      } catch (err) {
-        console.warn("Could not parse CheckFirstOrder response:", err);
-        return null;
-      }
-      if (parsed && !Array.isArray(parsed)) {
-        parsed = [parsed];
-      }
-      return Array.isArray(parsed) ? parsed : null;
-    } catch (error) {
-      console.error("API ERROR:", error);
-      return null;
-    }
-  };
+//   useEffect(() => {
+//   const checkUserOrder = async () => {
+//     if (!mobileNumber) return;
+//     const result = await CheckFirstOrder(mobileNumber);
+//     if (result !== null) {
+//       setMinOrderTotal(100);
+//     }
+//   };
+//   checkUserOrder();
+// }, [mobileNumber]);
+
+  //  useEffect(() => {
+  //   const checkUserOrder = async () => {
+  //     if (!mobileNumber) return;
+  //     const result = await CheckFirstOrder(mobileNumber);
+  //     if (result === null) {
+  //       setMinOrderTotal(150);
+  //     } else {
+  //       setMinOrderTotal(100);
+  //     }
+  //   };
+  //   checkUserOrder();
+  // }, [mobileNumber]);
+
+  // const CheckFirstOrder = async (mobile) => {
+  //   if (!mobile) return null;
+  //   const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${encodeURIComponent(
+  //     mobile,
+  //   )}`;
+
+  //   try {
+  //     const res = await fetch(url);
+  //     const text = await res.text();
+  //     console.log("RAW RESPONSE:", text);
+  //     // ✅ First order (API returns this text)
+  //     if (text.toLowerCase().includes("firstorder can not be found")) {
+  //       return null;
+  //     }
+  //     let parsed;
+  //     try {
+  //       parsed = JSON.parse(text);
+  //     } catch (err) {
+  //       console.warn("Could not parse CheckFirstOrder response:", err);
+  //       return null;
+  //     }
+  //     if (parsed && !Array.isArray(parsed)) {
+  //       parsed = [parsed];
+  //     }
+  //     return Array.isArray(parsed) ? parsed : null;
+  //   } catch (error) {
+  //     console.error("API ERROR:", error);
+  //     return null;
+  //   }
+  // };
 
   const IMAGE_DOWNLOAD =
-    "https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=";
+    "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=";
 
   function toNum(v, f = 0) {
     const n = Number(v);
@@ -99,8 +116,8 @@ const GroceryCartPage = () => {
         const results = await Promise.allSettled(
           uniqueNames.map(async (name) => {
             const res = await fetch(
-              // handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net
-              `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
+              // handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net
+              `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
                 name,
               )}`,
             );
@@ -220,7 +237,7 @@ const GroceryCartPage = () => {
     );
     const lookups = await Promise.allSettled(
       uniqueNames.map(async (name) => {
-        const url = `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
+        const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
           name,
         )}`;
         const res = await fetch(url, { signal });
@@ -492,13 +509,11 @@ const GroceryCartPage = () => {
     const allCategories =
       JSON.parse(localStorage.getItem("allCategories")) || [];
 
-    const firstOrderData = await CheckFirstOrder(mobileNumber);
-
-    // If null → new user
-    const isNewUser = !firstOrderData;
-
-    // ✅ SIMPLE WALLET LOGIC
-    const walletValue = isNewUser ? "50" : "0";
+    // const firstOrderData = await CheckFirstOrder(mobileNumber);
+    // // If null → new user
+    // const isNewUser = !firstOrderData;
+    // // ✅ SIMPLE WALLET LOGIC
+    // const walletValue = isNewUser ? "50" : "0";
 
     const payload = {
       id: "string",
@@ -512,7 +527,7 @@ const GroceryCartPage = () => {
       transactionStatus: "",
       TransactionType: "",
       paidAmount: "",
-      walletAmount: walletValue,
+      walletAmount: "walletValue",
       customerName: "",
       address: "",
       state: "",
@@ -565,7 +580,7 @@ const GroceryCartPage = () => {
 
     try {
       const response = await fetch(
-        `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Mart/UploadProductDetails`,
+        `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/UploadProductDetails`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
