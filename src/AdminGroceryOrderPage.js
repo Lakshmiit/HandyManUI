@@ -46,7 +46,7 @@ const [units, setUnits] = useState("");
  const [groceryData, setgroceryData] = useState();
   const [groceryId, setgroceryId] = useState();
 const [cashbackAmount, setCashbackAmount] = useState(0);
-const showFreeSugar = Number(grandTotal) > 299 && Number(grandTotal) < 498;
+const showFreeSugar = Number(grandTotal) > 299 && Number(grandTotal) < 398;
 const showAttaSugar = Number(grandTotal) > 499 && Number(grandTotal) < 999;
  const [showZoomModal, setShowZoomModal] = useState(false);
   const [zoomImage, setZoomImage] = useState("");
@@ -671,7 +671,7 @@ const handleImageClick = (imageSrc, product) => {
         🎁 Give Customer <strong> Sugar 500 g FREE</strong>
       </td>    
     </tr>
-  )}           
+  )}            
 
   {showAttaSugar && (
     <tr>

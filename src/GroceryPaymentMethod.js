@@ -83,20 +83,23 @@ if (numericGrandTotal >= 1999) {
   cashback = 150;
 } else if (numericGrandTotal >= 999) {
   cashback = 100;
+} else if (numericGrandTotal >= 399) {
+  cashback = 50;
 }
   const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;
 
-  const showSugarOffer = Number(grandTotal) >= 299 && Number(grandTotal) <= 498;
+  const showSugarOffer = Number(grandTotal) >= 299 && Number(grandTotal) <= 398;
   const showAttaOffer = Number(grandTotal) >= 499 && Number(grandTotal) <= 999;
   const gt = Number(grandTotal || 0);
   const discount = Number(firstOrderDiscount || 0);
   const wallet = Number(walletAmount || 0);
-const netPayables = gt - discount - wallet - cashback;
+const netPayables = gt - discount - cashback;
+// const netPayables = gt - discount - wallet - cashback;
   console.log("GT:", gt);
   console.log("Discount:", discount);
   console.log("Wallet:", wallet);
   console.log("Net Payable:", netPayables);
-
+ 
   useEffect(() => {
     if (firstOrderDiscount > 0) {
       setShowConfetti(true);
@@ -413,12 +416,12 @@ const netPayables = gt - discount - wallet - cashback;
         userId: userId,
         martId: martId,
         date: new Date(),
-        grandTotal: String(grandTotal),
+        grandTotal: String(netPayables),
         totalItemsSelected: totalItemsSelected,
         status: "Open",
         paymentMode: selectedPayment,
         utrTransactionNumber: "",
-        transactionNumber: "",
+        transactionNumber: "",  
         transactionStatus: "",
         paidAmount: "",
         AssignedTo: "",
@@ -1042,7 +1045,7 @@ const netPayables = gt - discount - wallet - cashback;
                     </td>     
                   </tr>
                 )}
-                {/* <tr>
+                <tr>
                   <td
                     style={{ width: "40%", fontSize: "14px", fontWeight: 600 }}
                   >
@@ -1051,7 +1054,7 @@ const netPayables = gt - discount - wallet - cashback;
                   <td style={{ width: "40%", fontWeight: 700 }}>
                     Rs {netPayables} /-
                   </td>
-                </tr> */}
+                </tr>
               </tbody>
             </table>
 
