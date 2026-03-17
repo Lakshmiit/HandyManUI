@@ -179,6 +179,7 @@ const OTPVerificationPage = () => {
         UserId: newUserId,
         IsApproved: true,
         Status: "Open",
+        WalletAmount: "50",
       };
 
       const response2 = await fetch(

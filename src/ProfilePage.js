@@ -68,6 +68,7 @@ import AddIcCallIcon from '@mui/icons-material/AddIcCall';
 import RoyalImg from './img/LMartLogo.jpeg';
 import HomeElectricalImg from './img/HomeElectrical.jpeg';
 import HomePlumbingImg from './img/HomePlumbing.jpeg';
+
 const getMenuList = (userType, userId, category, district ,ZipCode,technicianFullName, isMobile) => {
   const iconSize = isMobile ? 20  : 40;
   const customer = [
@@ -108,11 +109,11 @@ const groceryCategories = [
   { label: 'Ice Creams', value: 'Ice Creams', image: IcecreamImg },
   { label: 'Atta & Flours', value: 'Atta & Flours', image: AttaImg },
   { label: 'Rice & Ravva', value: 'Rice & Ravva', image: RavvaImg },    
-   { label: 'Oils & Dals', value: 'Oils & Dals', image: OilsImg },
+  { label: 'Oils & Dals', value: 'Oils & Dals', image: OilsImg },
   { label: 'Sugar, Salt & Jaggery', value: 'Sugar, Salt & Jaggery', image: SugarImg }, 
   { label: 'Masala, Spices & Pickles', value: 'Masala, Spices & Pickles', image: MasalaImg },
   { label: 'Instant Food, Chips & Namkeen', value: 'Instant Food, Chips & Namkeen', image: NamkeenImg },
-{ label: 'Bread & Eggs', value: 'Bread & Eggs', image: BreadsImg },
+  { label: 'Bread & Eggs', value: 'Bread & Eggs', image: BreadsImg },
   { label: 'Biscuits & Chocolates', value: 'Biscuits & Chocolates', image: BiscuitsImg },
   { label: 'Drinks & Juices', value: 'Drinks & Juices', image: DrinkImg },
   { label: 'Sweets & Snacks', value: 'Sweets & Snacks', image: BakeryImg },
@@ -138,7 +139,7 @@ const collectionsCategories = [
   ];
 
   const IMAGE_API =
-  "https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=";
+  "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=";
 
 const ProfilePage = () => {
    const [allProducts, setAllProducts] = useState([]);
@@ -221,7 +222,6 @@ const [windowSize, setWindowSize] = useState({
   width: window.innerWidth,
   height: window.innerHeight,
 });
-const [hasCheckedFirstOrder, setHasCheckedFirstOrder] = useState(false);
 const [cashbackAmount, setCashbackAmount] = useState(0);
 const [cart, setCart] = useState({});
 const [showZoomModal, setShowZoomModal] = useState(false);
@@ -238,6 +238,18 @@ const secondCategories = groceryCategories.slice(6, 31);
 // const thirdCategories = groceryCategories.slice(15, 24);
 // const fourthCategories = groceryCategories.slice(24, 30);
 // const HEADER_HEIGHT = window.innerWidth <= 768 ? 50 : 100;
+const [showOffersModal, setShowOffersModal] = useState(false);
+// useEffect(() => {
+//   const hasSeenOffers = sessionStorage.getItem("seenOffers");
+//   if (!hasSeenOffers) {
+//     setShowOffersModal(true);
+//     sessionStorage.setItem("seenOffers", "true");
+//   }
+// }, []);
+
+useEffect(() => {
+  setShowOffersModal(true);
+}, []);
 
 const placeholderSuggestions = [
   'Search "Milk"', 'Search "Freedom Refined Sunflower Oil"', 'Search "Sona Masoori Rice"',
@@ -269,11 +281,12 @@ useEffect(() => {
   async function fetchProductsAndFirstImages(warm = false, signal) {
     try {
       if (!warm) setImageLoading(true);
-      const url = `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${category}`;
+      // handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net
+      const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${category}`;
 
       const { data: items } = await axios.get(url, { signal });
       const safeItems = (Array.isArray(items) ? items : []).map(normalizeProduct);
-      if (cancelled) return;
+      if (cancelled) return;    
       
       setProducts(safeItems);
       if (warm) return;
@@ -300,7 +313,7 @@ useEffect(() => {
       const fetchOne = async ({ productId, photo }) => {
         try {
           const res = await fetch(
-            `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`,
+            `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${photo}`,
             { signal }
           );
 
@@ -461,7 +474,7 @@ useEffect(() => {
     if (showLoader) setLoading(true);
     try {
       const res = await axios.get(
-        "https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/UploadGrocery/GetAllGroceryItems"
+        "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/GetAllGroceryItems"
       );
       if (cancelled) return;
       const normalized = (Array.isArray(res.data) ? res.data : [])
@@ -579,49 +592,47 @@ useEffect(() => {
   return () => clearTimeout(timer); 
 }, [showCashbackModal]);
 
-useEffect(() => {
-  if (!profile.mobileNumber) {
-    console.log("CheckFirstOrder: no mobileNumber yet");
-    return;
-  }
-  const alreadyShown = localStorage.getItem("handymanFirstOrderPopupShown");
-  if (alreadyShown === "true") {
-    console.log("Cashback popup shown");
-    return;
-  }
-  if (hasCheckedFirstOrder) {
-    console.log("CheckFirstOrder: already checked, skipping");
-    return;
-  }
-  console.log("CheckFirstOrder: starting for", profile.mobileNumber);
-  const checkFirstOrder = async () => {
-    try {
-      const url = `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${profile.mobileNumber}`;
-      const response = await fetch(url);
-      const rawText = await response.text();
-      console.log("CheckFirstOrder response status:", response.status);
-      console.log("CheckFirstOrder rawText:", rawText);
-      const text = (rawText || "").trim().toLowerCase();
-      if (text.includes("firstorder can not be found")) {
-        console.log("Match found -> opening cashback modal");
-         setShowCashbackModal(true);
-       } else {
-        console.log("No match in response text, not showing modal");
-      }
-    } catch (err) {
-      console.error("Error calling CheckFirstOrder:", err);
-    } finally {
-      setHasCheckedFirstOrder(true);
-    }
-  };
-  checkFirstOrder();
-}, [profile.mobileNumber, hasCheckedFirstOrder]);
+// useEffect(() => {
+//   if (!profile.mobileNumber) {
+//     console.log("CheckFirstOrder: no mobileNumber yet");
+//     return;
+//   }
+//   const alreadyShown = localStorage.getItem("handymanFirstOrderPopupShown");
+//   if (alreadyShown === "true") {
+//     console.log("Cashback popup shown");
+//     return;
+//   }
+//   if (hasCheckedFirstOrder) {
+//     console.log("CheckFirstOrder: already checked, skipping");
+//     return;
+//   }
+//   console.log("CheckFirstOrder: starting for", profile.mobileNumber);
+//   const checkFirstOrder = async () => {
+//     try {
+//       const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${profile.mobileNumber}`;
+//       const response = await fetch(url);
+//       const rawText = await response.text();
+//       const text = (rawText || "").trim().toLowerCase();
+//       if (text.includes("firstorder can not be found")) {
+//         console.log("Match found -> opening cashback modal");
+//          setShowCashbackModal(true);
+//        } else {
+//         console.log("No match in response text, not showing modal");
+//       }
+//     } catch (err) {
+//       console.error("Error calling CheckFirstOrder:", err);
+//     } finally {
+//       setHasCheckedFirstOrder(true);
+//     }
+//   };
+//   checkFirstOrder();
+// }, [profile.mobileNumber, hasCheckedFirstOrder]);
 
 useEffect(() => {
   const fetchDeliveryData = async () => {
     try { 
       const response = await fetch(
-        `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Mart/GetProductDetails?id=${id}`
+        `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/GetProductDetails?id=${id}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch grocery product data");
@@ -695,7 +706,7 @@ useEffect(() => {
  useEffect(() => {
   const fetchGroceryData = async () => {
     try {
-      const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Mart/GetMartTicketsByUserId?userId=${userId}`);
+      const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/GetMartTicketsByUserId?userId=${userId}`);
       if (!response.ok) throw new Error('Failed to fetch ticket data');
       const data = await response.json();
       const tickets = Array.isArray(data) ? data : (data && typeof data === "object" ? [data] : []);
@@ -730,7 +741,7 @@ const handleDeliveryPartnerClick = async () => {
   clickLock.current = true;
   try {
     const res = await axios.get(
-      `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/DeliveryPartner/GetDeliveryPartnerDetailsByUserId?userId=${userId}`
+      `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/DeliveryPartner/GetDeliveryPartnerDetailsByUserId?userId=${userId}`
     );
     const raw = res?.data ?? null;
     const profile = Array.isArray(raw)
@@ -798,7 +809,7 @@ const handleUpdatePaymentMethod = async () => {
     isDelivered: false,    
   };
 
-    let response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Mart/UpdateProductDetails/${id}`, {
+    let response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/UpdateProductDetails/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -884,11 +895,11 @@ const handleDressCategoryClick = async (category) => {
           const fetchAllTickets = async () => {
             try { 
               const [ticketResponse, productResponse, technicianResponse, groceriesResponse, lakshmiResponse] = await Promise.all([
-                fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=raiseTicket`),
-                fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=buyProduct`),
-                fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=bookTechnician`),
-                fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=mart`),
-                fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=collections`),
+                fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=raiseTicket`),
+                fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=buyProduct`),
+                fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=bookTechnician`),
+                fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=mart`),
+                fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=collections`),
               ]);      
               if (!ticketResponse.ok || !productResponse.ok || !technicianResponse || !groceriesResponse || !lakshmiResponse) {
                 throw new Error("Failed to fetch ticket, product and technician data");
@@ -991,7 +1002,7 @@ const handleCustomerCareCall = () => {
           try {
             let apiUrl = "";
             if (userType === "customer") {
-              apiUrl = `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`;
+              apiUrl = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`;
             }
             if (!apiUrl) return;
             const response = await axios.get(apiUrl);
@@ -1030,7 +1041,7 @@ const fetchImageUrl = async (photoId) => {
   try { 
     if (!photoId) return;
     const response = await axios.get(
-      `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photoId}`
+      `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${photoId}`
     );
     if (response.status === 200 && response.data.imageData) {
       const imageUrl = `data:image/jpeg;base64,${response.data.imageData}`;
@@ -1041,9 +1052,9 @@ const fetchImageUrl = async (photoId) => {
   }
 };
   
-  if (loading) {
-    return 
-  }
+ if (loading) {
+  return <div></div>; 
+}
 
 const updateLocalStorageCart = (product, qty) => {
   const stored = JSON.parse(localStorage.getItem("allCategories")) || [];
@@ -2290,6 +2301,50 @@ const updateLocalStorageCart = (product, qty) => {
   </div>
 </Modal.Footer>
       </Modal>
+      <Modal
+  show={showOffersModal}
+  onHide={() => setShowOffersModal(false)}
+  centered
+>
+  <Modal.Header closeButton>
+    <Modal.Title>🎉 L Mart Special Offers</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    <ul style={{ paddingLeft: "15px", lineHeight: "1.8" }}>
+     <li>🛍️ New Users Get  → {" "} 
+  <span style={{ color: "green", fontWeight: "bold" }}>₹50 in Wallet!</span> <br/>
+ Use it on your first order</li>
+ {/* <h6 style={{fontWeight:"bold", textAlign: "center", color:"red"}}>NEW/EXISTING USERS</h6> */}
+ {/* <h6 style={{fontWeight:"bold", textAlign: "center", color:"red"}}>Extra Deals</h6> */}
+ 
+      <li>🛍️ ₹299 Order → {" "} 
+  <span style={{ color: "green", fontWeight: "bold" }}>1/2 Kg Sugar Free</span></li>
+      <li>🛍️ ₹399 Order → {" "} 
+  <span style={{ color: "green", fontWeight: "bold" }}>₹50 Cashback</span></li>
+      <li>🛍️ ₹499 Order → {" "} 
+  <span style={{ color: "green", fontWeight: "bold" }}>1 Kg Sugar Free</span></li>
+      <li>🛍️ ₹999 Order → {" "} 
+  <span style={{ color: "green", fontWeight: "bold" }}>₹100 Cashback</span></li>   
+      <li>🛍️ ₹1499 Order → {" "} 
+  <span style={{ color: "green", fontWeight: "bold" }}>₹150 Cashback</span></li>
+      <li>🛍️ ₹1999 Order → {" "} 
+  <span style={{ color: "green", fontWeight: "bold" }}>₹200 Cashback</span></li>
+    </ul>
+    <div className="text-center mt-3">
+      <b style={{ color: "green" }}>
+        💥 Don’t Miss these Deals! Offers till <span style={{ color: "red", fontWeight: "bold" }}>21st March 2026</span>
+      </b> <br/>
+       <b style={{ color: "green" }}>
+        For any Queries Contact <br/>Customer Care: <span style={{color: "red"}}>6281198953</span>
+      </b>
+    </div>
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="success" onClick={() => setShowOffersModal(false)}> 
+      Shop Now 🛒
+    </Button>
+  </Modal.Footer>
+</Modal>
          <Footer />
         </>    
   );

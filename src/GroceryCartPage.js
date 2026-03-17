@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { Divider, IconButton } from "@mui/material";
 import { Modal } from "react-bootstrap";
 import {
@@ -12,7 +12,7 @@ import CartImg from "./img/Cart.jpeg";
 import { useNavigate, useParams } from "react-router-dom";
 import Footer from "./Footer.js";
 // import { useLocation } from "react-router-dom";
-
+ 
 const GroceryCartPage = () => {
   const navigate = useNavigate();
   // const location = useLocation();
@@ -25,67 +25,63 @@ const GroceryCartPage = () => {
   const [grandSummary, setGrandSummary] = useState({ items: 0, total: 0 });
   const [imageBlobMap, setImageBlobMap] = useState({});
   const [limitMap, setLimitMap] = useState({});
-  const [MIN_ORDER_TOTAL] = useState(100);
+  const [addresses, setAddresses] = useState([]);
+  const [fullName, setFullName] = useState("");
+  const [isNewUser, setIsNewUser] = useState(true);
+  const isGuestName = (name) => (name ?? "").trim().toLowerCase() === "guest";
+  const [walletAmount, setWalletAmount] = useState(0);
+const MIN_ORDER_TOTAL = walletAmount === 50 ? 150 : 100;
 
-  // const [MIN_ORDER_TOTAL, setMinOrderTotal] = useState(100);
+  useEffect(() => {
+    console.log(addresses, fullName, isNewUser);
+  }, [addresses, fullName, isNewUser]);
 
-  // const mobileNumber =location.state?.mobileNumber ||
-  //   localStorage.getItem("customerMobileNumber");
+console.log("Wallet:", walletAmount);
 
-//   useEffect(() => {
-//   const checkUserOrder = async () => {
-//     if (!mobileNumber) return;
-//     const result = await CheckFirstOrder(mobileNumber);
-//     if (result !== null) {
-//       setMinOrderTotal(100);
-//     }
-//   };
-//   checkUserOrder();
-// }, [mobileNumber]);
+  const fetchCustomerData = useCallback(async () => {
+      try {
+        const response = await fetch(
+          `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Address/GetAddressById/${userId}`,
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch customer profile data");
+        }
+        const data = await response.json();
+        console.log(data);
+        const addresses = Array.isArray(data) ? data : [data];
+        const formattedAddresses = addresses.map((addr) => ({
+          id: addr.addressId,
+          type: addr.isPrimaryAddress ? "primary" : "secondary",
+          address: addr.address, 
+          state: addr.state,
+          district: addr.district,
+          zipCode: addr.zipCode,
+          emailAddress: addr.emailAddress,
+          mobileNumber: addr.mobileNumber,
+          fullName: addr.fullName,
+          walletAmount: addr.walletAmount,
+        }));            
+        setAddresses(formattedAddresses);
+        // console.log(JSON.stringify(data));
+        const apiFullName = addresses[0]?.fullName ?? "";
+          setFullName(apiFullName);
+          const wallet = addresses[0]?.walletAmount ?? 0;
+          setWalletAmount(Number(wallet));
+        if (!apiFullName || isGuestName(apiFullName)) {
+          setIsNewUser(true);
+        } else {
+          setIsNewUser(false);
+        }
+      } catch (error) {
+        console.error("Error fetching customer data:", error);
+      }
+    }, [userId]);
 
-  //  useEffect(() => {
-  //   const checkUserOrder = async () => {
-  //     if (!mobileNumber) return;
-  //     const result = await CheckFirstOrder(mobileNumber);
-  //     if (result === null) {
-  //       setMinOrderTotal(150);
-  //     } else {
-  //       setMinOrderTotal(100);
-  //     }
-  //   };
-  //   checkUserOrder();
-  // }, [mobileNumber]);
-
-  // const CheckFirstOrder = async (mobile) => {
-  //   if (!mobile) return null;
-  //   const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${encodeURIComponent(
-  //     mobile,
-  //   )}`;
-
-  //   try {
-  //     const res = await fetch(url);
-  //     const text = await res.text();
-  //     console.log("RAW RESPONSE:", text);
-  //     // ✅ First order (API returns this text)
-  //     if (text.toLowerCase().includes("firstorder can not be found")) {
-  //       return null;
-  //     }
-  //     let parsed;
-  //     try {
-  //       parsed = JSON.parse(text);
-  //     } catch (err) {
-  //       console.warn("Could not parse CheckFirstOrder response:", err);
-  //       return null;
-  //     }
-  //     if (parsed && !Array.isArray(parsed)) {
-  //       parsed = [parsed];
-  //     }
-  //     return Array.isArray(parsed) ? parsed : null;
-  //   } catch (error) {
-  //     console.error("API ERROR:", error);
-  //     return null;
-  //   }
-  // };
+useEffect(() => {
+  if (userId) {
+    fetchCustomerData();
+  }
+}, [userId, fetchCustomerData]);
 
   const IMAGE_DOWNLOAD =
     "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=";

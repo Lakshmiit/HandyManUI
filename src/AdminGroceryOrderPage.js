@@ -160,7 +160,7 @@ useEffect(() => {
       setCartData(data);
       setCustomerId(data.userId);
       setId(data.id);
-      setMartId(data.martId);
+      setMartId(data.martId); 
       setCustomerName(data.customerName);
       setMobileNumber(data.customerPhoneNumber);
       setAddress(data.address);
@@ -338,8 +338,7 @@ const handleDownloadPDF = () => {
   doc.setFont("Roboto", "normal");
   doc.setFontSize(10);
   doc.setTextColor(0, 0, 0);
-  doc.text(`Customer Name: ${customerName}`, 14, 28);
-  const addressText = `Customer Address: ${[
+  doc.text(`Customer Name: ${customerName || ""}`, 14, 28);  const addressText = `Customer Address: ${[
     address,
     district,
     state,
@@ -347,9 +346,8 @@ const handleDownloadPDF = () => {
     mobileNumber,
   ].filter(Boolean).join(", ")}`;
 
-  doc.text(addressText, 14, 32, { maxWidth: 180 });
-  doc.text(`Date: ${date ? date.split("T")[0] : ""}`, 14, 42);
-  autoTable(doc, {
+  doc.text(addressText || "", 14, 32, { maxWidth: 180 });
+  doc.text(`Date: ${date ? date.split("T")[0] : ""}`, 14, 42);  autoTable(doc, {
     startY: 48,
     head: [[
       "S.No",
@@ -458,28 +456,31 @@ const handleDownloadPDF = () => {
     currentY += 6;
   }
 
-  if (pdfShowFreeSugar) {
-    doc.setFontSize(10);
-    doc.setTextColor(0, 128, 0); 
-    doc.setFont("Roboto", "bold");
-    doc.text(
-      195,
-      currentY,
-      { align: "right" }
-    );
-    currentY += 8;
-  }
-   if (pdfshowAttaSugar) {
-    doc.setFontSize(10);
-    doc.setTextColor(0, 128, 0); 
-    doc.setFont("Roboto", "bold");
-    doc.text(
-      195,
-      currentY,
-      { align: "right" }
-    );
-    currentY += 8;
-  }
+ if (pdfShowFreeSugar) {
+  doc.setFontSize(10);
+  doc.setTextColor(0, 128, 0);
+  doc.setFont("Roboto", "bold");
+  doc.text(
+    "🎁 Give Customer Sugar 500 g FREE",
+    195,
+    currentY,
+    { align: "right" }
+  );
+  currentY += 8;
+}
+
+  if (pdfshowAttaSugar) {
+  doc.setFontSize(10);
+  doc.setTextColor(0, 128, 0);
+  doc.setFont("Roboto", "bold");
+  doc.text(
+    "🎁 Give Customer Sugar 1 Kg FREE",
+    195,
+    currentY,
+    { align: "right" }
+  );
+  currentY += 8;
+}
 
   doc.setFont("Roboto", "bold");
   doc.setFontSize(11);

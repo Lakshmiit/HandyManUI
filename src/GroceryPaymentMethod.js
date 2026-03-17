@@ -7,7 +7,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Modal, Button, Form } from "react-bootstrap";
 import Footer from "./Footer.js";
-import Confetti from "react-confetti";
 const GroceryPaymentmethod = () => {
   const navigate = useNavigate();
   const { userType } = useParams();
@@ -22,7 +21,8 @@ const GroceryPaymentmethod = () => {
   const [limit, setLimit] = useState("");
   const [grandTotal, setGrandTotal] = useState("");
   const [customerName, setCustomerName] = useState("");
-  const [walletAmount, setWalletAmount] = useState("");
+  const [walletAmount] = useState("");
+  // const [walletAmount, setWalletAmount] = useState("");
   const [cartData, setCartData] = useState(null);
   const [addressData, setAddressData] = useState({
     fullName: "",
@@ -31,6 +31,7 @@ const GroceryPaymentmethod = () => {
     state: "",
     district: "",
     zipCode: "",
+    walletAmount: "",
   });
   const [serviceUnavailable, setServiceUnavailable] = useState(false);
   const [addresses, setAddresses] = useState([]);
@@ -57,9 +58,7 @@ const GroceryPaymentmethod = () => {
   const [referralAmount, setReferralAmount] = useState(0);
   const [netPayable, setNetPayable] = useState(0);
   const [isOffersOrder, setIsOffersOrder] = useState(false);
-  const [firstOrderDiscount] = useState(0);
   const [isNewUser, setIsNewUser] = useState(true);
-  const [showConfetti, setShowConfetti] = useState(false);
   const isGuestName = (name) => (name ?? "").trim().toLowerCase() === "guest";
   
   const [loading, setLoading] = useState(false);
@@ -91,21 +90,22 @@ if (numericGrandTotal >= 1999) {
   const showSugarOffer = Number(grandTotal) >= 299 && Number(grandTotal) <= 398;
   const showAttaOffer = Number(grandTotal) >= 499 && Number(grandTotal) <= 999;
   const gt = Number(grandTotal || 0);
-  const discount = Number(firstOrderDiscount || 0);
-  const wallet = Number(walletAmount || 0);
-const netPayables = gt - discount - cashback;
-// const netPayables = gt - discount - wallet - cashback;
+  // const discount = Number(firstOrderDiscount || 0);
+  const primaryAddress = addresses.find((addr) => addr.type === "primary");
+  const wallet = Number(primaryAddress?.walletAmount || 0);
+const netPayables = gt - wallet - cashback;     
+// const netPayables = gt - discount - wallet - cashback;    
   console.log("GT:", gt);
-  console.log("Discount:", discount);
+  // console.log("Discount:", discount);
   console.log("Wallet:", wallet);
   console.log("Net Payable:", netPayables);
  
-  useEffect(() => {
-    if (firstOrderDiscount > 0) {
-      setShowConfetti(true);
-      setTimeout(() => setShowConfetti(false), 4000);
-    }
-  }, [firstOrderDiscount]);
+  // useEffect(() => {
+  //   if (firstOrderDiscount > 0) {
+  //     setShowConfetti(true);
+  //     setTimeout(() => setShowConfetti(false), 4000);
+  //   }
+  // }, [firstOrderDiscount]);
 
   useEffect(() => {
     const gt = Number(grandTotal) || 0;
@@ -142,7 +142,7 @@ const netPayables = gt - discount - cashback;
         setTotalItemsSelected(data.totalItemsSelected);
         setCustomerName(data.customerName);
 
-        setWalletAmount(data.walletAmount);
+        // setWalletAmount(data.walletAmount);
         setLimit(data.limit);
 
         const products = (data?.categories ?? []).flatMap(
@@ -229,6 +229,7 @@ const netPayables = gt - discount - cashback;
         emailAddress: addr.emailAddress,
         mobileNumber: addr.mobileNumber,
         fullName: addr.fullName,
+        walletAmount: addr.walletAmount,
       }));
       setAddresses(formattedAddresses);
 
@@ -247,12 +248,14 @@ const netPayables = gt - discount - cashback;
   useEffect(() => {
     const primary = addresses.find((addr) => addr.type === "primary");
     const district = primary?.district?.toLowerCase();
+    const walletAmount = Number(primaryAddress?.walletAmount || 0);
+    console.log("Waller fgsdfgfds ,", walletAmount);
     if (district && district !== "visakhapatnam") {
       setServiceUnavailable(true);
     } else {
       setServiceUnavailable(false);
     }
-  }, [addresses]);
+  }, [addresses, primaryAddress?.walletAmount]);
 
   useEffect(() => {
     fetchCustomerData();
@@ -339,6 +342,7 @@ const netPayables = gt - discount - cashback;
       firstName: fullName,
       lastName: "lastName",
       fullName: fullName,
+      WalletAmount: "50",
     };
 
     try {
@@ -375,7 +379,81 @@ const netPayables = gt - discount - cashback;
     }
   };
 
-  const primaryAddress = addresses.find((addr) => addr.type === "primary");
+ console.log("Address:", primaryAddress);
+  const handleUpdateUserWalletAmount = async () => {
+    const primaryAddress = addresses.find((addr) => addr.type === "primary");
+    const state = primaryAddress?.state;
+    const district = primaryAddress?.district || "";
+    // const pincode = primaryAddress?.zipCode || primaryAddress?.pincode;
+    const mobileNumber =
+      primaryAddress?.mobileNumber || primaryAddress?.mobileNumber;
+
+    const updatedAddress = {
+      id: guestCustomerId,
+      fullName,
+      mobileNumber,
+      address: newAddress,
+      state,
+      district,
+      zipCode,
+    };
+
+    const payload3 = {
+      id: primaryAddress?.id,
+      profileType: "profileType",
+      addressId: primaryAddress?.id,
+      isPrimaryAddress: true,
+      address: primaryAddress?.address,
+      state: primaryAddress?.state,
+      district: primaryAddress?.district,
+      StateId: stateId,
+      DistrictId: districtId,
+      zipCode: primaryAddress?.zipCode,
+      mobileNumber: primaryAddress?.mobileNumber,
+      emailAddress: "emailAddress",
+      userId: userId,
+      firstName: primaryAddress?.fullName,
+      lastName: "lastName",
+      fullName: primaryAddress?.fullName,
+      WalletAmount: "0",
+    };
+
+    try {
+      const response = await fetch(
+        `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Customer/CustomerAddressEdit`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload3),
+        },
+      );
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Error Response:", errorText);
+        throw new Error("Failed to edit address.");
+      }
+      console.log("New fdsafdsf Addresass", primaryAddress?.address);
+
+      setAddresses((prev) =>
+        prev.map((addr) =>
+          addr.id === guestCustomerId ? updatedAddress : addr,
+        ),
+      );
+      setAddressData(updatedAddress);
+      await fetchCustomerData();
+
+      setShowModal(false);
+      resetAddressForm();
+      setIsEditing(false);
+      setEditingAddressId(null);
+    } catch (error) {
+      console.error("Error editing address:", error);
+      alert("Failed to edit address. Please try again later.");
+    }
+  };
+
   const isAddressInvalid =
     !primaryAddress || !primaryAddress.address || !primaryAddress.zipCode;
   const isOrderDisabled =
@@ -676,6 +754,7 @@ const netPayables = gt - discount - cashback;
       await Promise.all([
         handleUpdateStockLeft(),
         sendLmartsms(),
+        handleUpdateUserWalletAmount(),
         handleUpdatePaymentMethod(),
       ]);
     } catch (error) {
@@ -949,7 +1028,7 @@ const netPayables = gt - discount - cashback;
 
           {fullName.trim().toLowerCase() === "guest" && (
             <p className="text-danger">
-              Note: Please enter your address to Order Grocery
+              Note: Enter your Delivery Address 
             </p>
           )}
           <div className="m-2">
@@ -997,13 +1076,22 @@ const netPayables = gt - discount - cashback;
                   </td>
                   <td style={{ width: "40%" }}>{totalItemsSelected}</td>
                 </tr>
-                {showConfetti && <Confetti />}
                 <tr>
                   <td style={{ width: "40%", fontSize: "14px" }}>
                     Grand Total
                   </td>
                   <td style={{ width: "40%" }}>Rs {grandTotal} /-</td>
                 </tr>
+                {wallet  > 0 && (
+                  <tr>
+                    <td style={{ width: "40%", fontSize: "14px",color: "red" }}>
+                     Wallet Amount
+                    </td>
+                    <td style={{ width: "40%", fontSize: "14px", color: "red" }}>
+                      {`Rs ${wallet } /-`}
+                    </td>
+                  </tr>
+                )}
                 {showSugarOffer && (
                             <tr>     
                               <td colSpan="2" style={{ textAlign: "center" }}>
