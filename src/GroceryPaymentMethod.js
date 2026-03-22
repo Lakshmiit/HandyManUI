@@ -11,7 +11,7 @@ const GroceryPaymentmethod = () => {
   const navigate = useNavigate();
   const { userType } = useParams();
   const { userId } = useParams();
-  const { groceryItemId } = useParams();
+  const { groceryItemId } = useParams();  
   const [isMobile, setIsMobile] = useState(false);
   const [isChecked, setIsChecked] = useState(true);
   const [selectedPayment, setSelectedPayment] = useState("cash");
@@ -76,9 +76,7 @@ const GroceryPaymentmethod = () => {
   const numericGrandTotal = Number(grandTotal) || 0;
   let cashback = 0;  
 
-if (numericGrandTotal >= 1999) {
-  cashback = 200;
-} else if (numericGrandTotal >= 1499) {   
+if (numericGrandTotal >= 1499) {   
   cashback = 150;
 } else if (numericGrandTotal >= 999) {
   cashback = 100;
@@ -87,8 +85,8 @@ if (numericGrandTotal >= 1999) {
 }
   const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;
 
-  const showSugarOffer = Number(grandTotal) >= 299 && Number(grandTotal) <= 398;
-  const showAttaOffer = Number(grandTotal) >= 499 && Number(grandTotal) <= 999;
+  // const showSugarOffer = Number(grandTotal) >= 299 && Number(grandTotal) <= 398;
+  // const showAttaOffer = Number(grandTotal) >= 499 && Number(grandTotal) <= 999;
   const gt = Number(grandTotal || 0);
   // const discount = Number(firstOrderDiscount || 0);
   const primaryAddress = addresses.find((addr) => addr.type === "primary");
@@ -141,7 +139,6 @@ const netPayables = gt - wallet - cashback;
         setGrandTotal(data.grandTotal);
         setTotalItemsSelected(data.totalItemsSelected);
         setCustomerName(data.customerName);
-
         // setWalletAmount(data.walletAmount);
         setLimit(data.limit);
 
@@ -302,7 +299,7 @@ const netPayables = gt - wallet - cashback;
 
   // Handle address editing
   const handleAddressEdit = async () => {
-    if (!newAddress || !zipCode || !mobileNumber || !state || !district) {
+    if (!fullName || !newAddress || !zipCode || !mobileNumber || !state || !district) {
       alert("Please fill in all required fields.");
       return;
     }
@@ -510,7 +507,7 @@ const netPayables = gt - wallet - cashback;
         isDelivered: false,
         walletAmount: walletAmount,
       };
-
+ 
       let response = await fetch(
         `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
         {
@@ -858,7 +855,7 @@ const netPayables = gt - wallet - cashback;
                       maxLength="10"
                       value={mobileNumber}
                       onChange={(e) => setMobileNumber(e.target.value)}
-                      readOnly
+                      readOnly   
                     />
                   </Form.Group>
                   <Form.Group className="mb-3">
@@ -1092,7 +1089,7 @@ const netPayables = gt - wallet - cashback;
                     </td>
                   </tr>
                 )}
-                {showSugarOffer && (
+                {/* {showSugarOffer && (
                             <tr>     
                               <td colSpan="2" style={{ textAlign: "center" }}>
                                 <div style={{ fontSize: "13px", fontWeight: 600, color: "red" }}>
@@ -1109,7 +1106,7 @@ const netPayables = gt - wallet - cashback;
                                 </div>
                               </td>
                             </tr>
-                          )}
+                          )} */}
                           
                 {cashback  > 0 && (
                   <tr>

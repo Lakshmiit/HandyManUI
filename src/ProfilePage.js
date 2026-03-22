@@ -132,7 +132,7 @@ const groceryCategories = [
   { label: 'DWCRA Products', value: 'DWCRA', image: DwakraProducts },
   { label: 'Chicken', value: 'Chicken', image: ChickenImg },
 ];
-
+// https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net
 const collectionsCategories = [
   { label: 'Dupatta Sets', value: 'Dupatta Sets', image: setkurti },
   { label: 'Kurta Sets', value: 'Kurta Sets', image: kurti},
@@ -238,18 +238,11 @@ const secondCategories = groceryCategories.slice(6, 31);
 // const thirdCategories = groceryCategories.slice(15, 24);
 // const fourthCategories = groceryCategories.slice(24, 30);
 // const HEADER_HEIGHT = window.innerWidth <= 768 ? 50 : 100;
-const [showOffersModal, setShowOffersModal] = useState(false);
-// useEffect(() => {
-//   const hasSeenOffers = sessionStorage.getItem("seenOffers");
-//   if (!hasSeenOffers) {
-//     setShowOffersModal(true);
-//     sessionStorage.setItem("seenOffers", "true");
-//   }
-// }, []);
+// const [showOffersModal, setShowOffersModal] = useState(false);
 
-useEffect(() => {
-  setShowOffersModal(true);
-}, []);
+// useEffect(() => {
+//   setShowOffersModal(true);
+// }, []);
 
 const placeholderSuggestions = [
   'Search "Milk"', 'Search "Freedom Refined Sunflower Oil"', 'Search "Sona Masoori Rice"',
@@ -592,45 +585,9 @@ useEffect(() => {
   return () => clearTimeout(timer); 
 }, [showCashbackModal]);
 
-// useEffect(() => {
-//   if (!profile.mobileNumber) {
-//     console.log("CheckFirstOrder: no mobileNumber yet");
-//     return;
-//   }
-//   const alreadyShown = localStorage.getItem("handymanFirstOrderPopupShown");
-//   if (alreadyShown === "true") {
-//     console.log("Cashback popup shown");
-//     return;
-//   }
-//   if (hasCheckedFirstOrder) {
-//     console.log("CheckFirstOrder: already checked, skipping");
-//     return;
-//   }
-//   console.log("CheckFirstOrder: starting for", profile.mobileNumber);
-//   const checkFirstOrder = async () => {
-//     try {
-//       const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/CheckFirstOrder?CustomerPhoneNumber=${profile.mobileNumber}`;
-//       const response = await fetch(url);
-//       const rawText = await response.text();
-//       const text = (rawText || "").trim().toLowerCase();
-//       if (text.includes("firstorder can not be found")) {
-//         console.log("Match found -> opening cashback modal");
-//          setShowCashbackModal(true);
-//        } else {
-//         console.log("No match in response text, not showing modal");
-//       }
-//     } catch (err) {
-//       console.error("Error calling CheckFirstOrder:", err);
-//     } finally {
-//       setHasCheckedFirstOrder(true);
-//     }
-//   };
-//   checkFirstOrder();
-// }, [profile.mobileNumber, hasCheckedFirstOrder]);
-
 useEffect(() => {
   const fetchDeliveryData = async () => {
-    try { 
+    try {    
       const response = await fetch(
         `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/GetProductDetails?id=${id}`
       );
@@ -686,7 +643,7 @@ useEffect(() => {
       }
       const grandTotalNumeric = Number(data.grandTotal) || 0;
       const cashback = totalAmountFromApi - grandTotalNumeric;
-      if ((cashback >= 49 && cashback <= 51) ||(cashback >= 99 && cashback <= 101) || (cashback >= 149 && cashback <= 151) || (cashback >= 199 && cashback <= 201))
+      if ((cashback >= 49 && cashback <= 51) ||(cashback >= 99 && cashback <= 101) || (cashback >= 149 && cashback <= 151))
       {
         setCashbackAmount(cashback); 
       } else {
@@ -944,7 +901,7 @@ const handleDressCategoryClick = async (category) => {
 
   const grandTotalNumeric = Number(ticket.grandTotal) || 0;
   const cashback = totalAmountFromApi - grandTotalNumeric;
-  if ((cashback >= 49 && cashback <= 51) ||(cashback >= 99 && cashback <= 101) || (cashback >= 149 && cashback <= 151) || (cashback >= 199 && cashback <= 201)) {
+  if ((cashback >= 49 && cashback <= 51) ||(cashback >= 99 && cashback <= 101) || (cashback >= 149 && cashback <= 151)) {
     return cashback;
   }
   return 0;
@@ -2301,7 +2258,7 @@ const updateLocalStorageCart = (product, qty) => {
   </div>
 </Modal.Footer>
       </Modal>
-      <Modal
+      {/* <Modal
   show={showOffersModal}
   onHide={() => setShowOffersModal(false)}
   centered
@@ -2317,7 +2274,7 @@ const updateLocalStorageCart = (product, qty) => {
  {/* <h6 style={{fontWeight:"bold", textAlign: "center", color:"red"}}>NEW/EXISTING USERS</h6> */}
  {/* <h6 style={{fontWeight:"bold", textAlign: "center", color:"red"}}>Extra Deals</h6> */}
  
-      <li>🛍️ ₹299 Order → {" "} 
+     {/*} <li>🛍️ ₹299 Order → {" "} 
   <span style={{ color: "green", fontWeight: "bold" }}>1/2 Kg Sugar Free</span></li>
       <li>🛍️ ₹399 Order → {" "} 
   <span style={{ color: "green", fontWeight: "bold" }}>₹50 Cashback</span></li>
@@ -2344,7 +2301,7 @@ const updateLocalStorageCart = (product, qty) => {
       Shop Now 🛒
     </Button>
   </Modal.Footer>
-</Modal>
+</Modal> */}
          <Footer />
         </>    
   );

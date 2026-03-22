@@ -46,8 +46,8 @@ const [units, setUnits] = useState("");
  const [groceryData, setgroceryData] = useState();
   const [groceryId, setgroceryId] = useState();
 const [cashbackAmount, setCashbackAmount] = useState(0);
-const showFreeSugar = Number(grandTotal) > 299 && Number(grandTotal) < 398;
-const showAttaSugar = Number(grandTotal) > 499 && Number(grandTotal) < 999;
+// const showFreeSugar = Number(grandTotal) > 299 && Number(grandTotal) < 398;
+// const showAttaSugar = Number(grandTotal) > 499 && Number(grandTotal) < 999;
  const [showZoomModal, setShowZoomModal] = useState(false);
   const [zoomImage, setZoomImage] = useState("");
   const [zoomProduct, setZoomProduct] = useState(null);
@@ -210,9 +210,9 @@ useEffect(() => {
       const grandTotalNumeric = Number(data.grandTotal) || 0;
       const cashback = totalAmountFromApi - grandTotalNumeric;
         
-      if ((cashback >= 49 && cashback <= 51) ||(cashback >= 99 && cashback <= 101) || (cashback >= 149 && cashback <= 151) || (cashback >= 199 && cashback <= 201))
+      if ((cashback >= 49 && cashback <= 51) ||(cashback >= 99 && cashback <= 101) || (cashback >= 149 && cashback <= 151))
       {
-        setCashbackAmount(cashback);                   
+        setCashbackAmount(cashback);                       
       } else {
         setCashbackAmount(0);        
       }
@@ -221,7 +221,7 @@ useEffect(() => {
     } finally {
       setLoading(false);
     }
-  };
+  };   
   if (groceryItemId) {
     fetchGroceryData();
   }
@@ -422,8 +422,7 @@ const handleDownloadPDF = () => {
   if (
     (cashbackAmount >= 49 && cashbackAmount <= 51) ||
     (cashbackAmount >= 99 && cashbackAmount <= 101) ||
-    (cashbackAmount >= 149 && cashbackAmount <= 151) ||
-    (cashbackAmount >= 199 && cashbackAmount <= 201)
+    (cashbackAmount >= 149 && cashbackAmount <= 151)
   ) {
     pdfCashback = cashbackAmount;
   }
@@ -666,7 +665,7 @@ const handleImageClick = (imageSrc, product) => {
       </td>
     </tr>
   )}
-   {showFreeSugar && (
+   {/* {showFreeSugar && (
     <tr>
       <td colSpan="10" className="text-end fw-bold text-danger">
         🎁 Give Customer <strong> Sugar 500 g FREE</strong>
@@ -680,7 +679,7 @@ const handleImageClick = (imageSrc, product) => {
         🎁 Give Customer <strong> Sugar 1 Kg FREE</strong>
       </td>    
     </tr>
-  )}  
+  )} */} 
     <tr>
       <td colSpan="9" className="text-end fw-bold">
         Grand Total:
