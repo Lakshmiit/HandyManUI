@@ -7,6 +7,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Modal, Button, Form } from "react-bootstrap";
 import Footer from "./Footer.js";
+import Container1Img from './img/199.png';
+import Container2Img from './img/299.png';
+import Container3Img from './img/499.png';
+import Container4Img from './img/599.png';
+import Container5Img from './img/699.png';
 const GroceryPaymentmethod = () => {
   const navigate = useNavigate();
   const { userType } = useParams();
@@ -53,15 +58,24 @@ const GroceryPaymentmethod = () => {
   const [shouldBlink, setShouldBlink] = useState(false);
   const [groceryId, setgroceryId] = useState();
   const [groceryData, setgroceryData] = useState();
-  const [referralRec] = useState(null);
+  const [referralRec, setReferralRec] = useState(null);
   const [referralPoints, setReferralPoints] = useState(0);
   const [referralAmount, setReferralAmount] = useState(0);
   const [netPayable, setNetPayable] = useState(0);
   const [isOffersOrder, setIsOffersOrder] = useState(false);
   const [isNewUser, setIsNewUser] = useState(true);
   const isGuestName = (name) => (name ?? "").trim().toLowerCase() === "guest";
-  
   const [loading, setLoading] = useState(false);
+
+  const readServerPoints = (record) => {
+  const raw =
+    record?.referralPoints ?? 
+    record?.referralpoints ??
+    record?.ReferralPoints ??
+    0;
+  const n = Number(raw);
+  return Number.isFinite(n) ? n : 0;
+};
 
   useEffect(() => {
     console.log("Addresses:", addresses);
@@ -80,7 +94,7 @@ if (numericGrandTotal >= 1499) {
   cashback = 150;
 } else if (numericGrandTotal >= 999) {
   cashback = 100;
-} else if (numericGrandTotal >= 399) {
+} else if (numericGrandTotal >= 399 && numericGrandTotal <= 499) {
   cashback = 50;
 }
   const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;
@@ -89,14 +103,24 @@ if (numericGrandTotal >= 1499) {
   // const showAttaOffer = Number(grandTotal) >= 499 && Number(grandTotal) <= 999;
   const gt = Number(grandTotal || 0);
   // const discount = Number(firstOrderDiscount || 0);
+  // const referral = Number(referralAmount) || 0;
   const primaryAddress = addresses.find((addr) => addr.type === "primary");
   const wallet = Number(primaryAddress?.walletAmount || 0);
 const netPayables = gt - wallet - cashback;     
-// const netPayables = gt - discount - wallet - cashback;    
-  console.log("GT:", gt);
-  // console.log("Discount:", discount);
-  console.log("Wallet:", wallet);
-  console.log("Net Payable:", netPayables);
+// const netPayables = gt - discount - wallet - referral - cashback;  
+let freeItemImage = null;
+
+if (gt >= 199 && gt <= 298) {
+  freeItemImage = Container1Img;
+} else if (gt >= 299 && gt <= 498) {
+  freeItemImage = Container2Img;
+} else if (gt >= 499 && gt <= 598) {
+  freeItemImage = Container3Img;
+} else if (gt >= 599 && gt <= 698) {
+  freeItemImage = Container4Img;
+} else if (gt >= 699) {
+  freeItemImage = Container5Img;
+}  
  
   // useEffect(() => {
   //   if (firstOrderDiscount > 0) {
@@ -204,6 +228,47 @@ const netPayables = gt - wallet - cashback;
       navigate(`/groceryCart/${userType}/${userId}`);
     }
   };
+
+  const getReferralRecord = async (userId) => {
+  if (!userId) return null;
+  const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
+  const res = await fetch(url);     
+  const text = await res.text();
+  let data = []; 
+  try { data = text ? JSON.parse(text) : []; } catch { data = []; }
+  if (Array.isArray(data) && data.length > 0) {
+    data.sort((a, b) => new Date(b.date) - new Date(a.date));
+    return data[0];
+  }
+  return null; 
+};
+
+useEffect(() => {
+  let cancelled = false;
+  (async () => {
+    try {
+      const rec = await getReferralRecord(userId);
+      if (cancelled) return;
+      setReferralRec(rec);
+      setReferralPoints(readServerPoints(rec));
+    } catch (e) {
+      console.error("Failed to load referral points:", e);
+      if (!cancelled) {
+        setReferralRec(null);
+        setReferralPoints(0);
+      }
+    }
+  })();
+  return () => { cancelled = true; };
+}, [userId]);
+
+useEffect(() => {
+  const gt = Number(grandTotal) || 0;
+  const pts = Number(referralPoints) || 0;
+  const applied = Math.min(pts, gt);   
+  setReferralAmount(applied);
+  setNetPayable(Math.max(0, gt - applied));
+}, [grandTotal, referralPoints]);
 
   const fetchCustomerData = useCallback(async () => {
     try {
@@ -1073,6 +1138,43 @@ const netPayables = gt - wallet - cashback;
                   </td>
                   <td style={{ width: "40%" }}>{totalItemsSelected}</td>
                 </tr>
+                {freeItemImage && (
+                  <tr>
+                    <td colSpan="2" style={{ padding: "5px" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          width: "100%",
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: "100%",
+                            textAlign: "center",
+                            fontSize: "14px",
+                            fontWeight: "bold",
+                            color: "green",
+                            marginBottom: "2px",
+                          }}
+                        >
+                          🎁 Congratulations! You got a FREE item
+                        </div>
+
+                        <img
+                          src={freeItemImage}
+                          alt="Free Item"
+                          style={{
+                            width: "90px",
+                            height: "90px",
+                            objectFit: "contain",
+                          }}
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                )}
                 <tr>
                   <td style={{ width: "40%", fontSize: "14px" }}>
                     Grand Total
@@ -1089,16 +1191,27 @@ const netPayables = gt - wallet - cashback;
                     </td>
                   </tr>
                 )}
-                {/* {showSugarOffer && (
+                 {/* {showSugarOffer && (
                             <tr>     
                               <td colSpan="2" style={{ textAlign: "center" }}>
                                 <div style={{ fontSize: "13px", fontWeight: 600, color: "red" }}>
                                   🎁 FREE Sugar 500 g
+                                  
                                 </div>
+                                <img
+                        src={freeItemImage}
+                        alt="Free Item"
+                        style={{
+                          width: "100px",    
+                          height: "100px",
+                          objectFit: "contain",
+                          display: "block",
+                        }}
+                      />
                               </td>
                             </tr>
-                          )}
-                          {showAttaOffer && (
+                          )}  */}
+                          {/*{showAttaOffer && (
                             <tr>     
                               <td colSpan="2" style={{ textAlign: "center" }}>
                                 <div style={{ fontSize: "12px", fontWeight: 600, color: "red" }}>
@@ -1130,6 +1243,12 @@ const netPayables = gt - wallet - cashback;
                     </td>     
                   </tr>
                 )}
+                {/* {Number(referralAmount) > 0 && (     
+              <tr>
+                <td style={{ width: "40%", fontSize: "14px" }}>Referral Earn Amount</td>
+                <td style={{ width: "40%", color: "red" }}> Rs {referralAmount} /-</td>
+              </tr>
+            )} */}
                 <tr>
                   <td
                     style={{ width: "40%", fontSize: "14px", fontWeight: 600 }}

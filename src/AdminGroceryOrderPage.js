@@ -9,6 +9,11 @@ import { ArrowBack} from '@mui/icons-material';
 // import ForwardIcon from '@mui/icons-material/Forward';
 import { Button, Form, Row, Col, Modal } from 'react-bootstrap';
 import axios from "axios";
+import Container1Img from './img/199.png';
+import Container2Img from './img/299.png';
+import Container3Img from './img/499.png';
+import Container4Img from './img/599.png';
+import Container5Img from './img/699.png';
 const AdminGroceryOrderPage = () => {
   const navigate = useNavigate(); 
   const {groceryItemId} = useParams();
@@ -51,7 +56,8 @@ const [cashbackAmount, setCashbackAmount] = useState(0);
  const [showZoomModal, setShowZoomModal] = useState(false);
   const [zoomImage, setZoomImage] = useState("");
   const [zoomProduct, setZoomProduct] = useState(null);
-
+const [freeItemImage, setFreeItemImage] = useState(null);
+const [freeItemName, setFreeItemName] = useState("");
 useEffect(() => {
     const fetchCart = async () => {
       if (!groceryItemId) return;
@@ -216,6 +222,35 @@ useEffect(() => {
       } else {
         setCashbackAmount(0);        
       }
+      let offerImage = null;
+let offerName = "";
+
+if (grandTotalNumeric >= 199 && grandTotalNumeric <= 298) {
+  offerImage = Container1Img;
+  offerName = "Masti Oye Masala Noodles 60 g + Thums Up Soft Drink 250 ml";
+}
+else if (grandTotalNumeric >= 299 && grandTotalNumeric <= 398) {
+  offerImage = Container2Img;
+  offerName = "Nayasa Use Max Plastic Storage Container Pack 1";
+}
+else if (grandTotalNumeric >= 399 && grandTotalNumeric <= 498) {
+  offerName = "₹50 Cashback";
+}
+else if (grandTotalNumeric >= 499 && grandTotalNumeric <= 598) {
+  offerImage = Container3Img;
+  offerName = "Home One Plastic Container 550 ml";
+}
+else if (grandTotalNumeric >= 599 && grandTotalNumeric <= 698) {
+  offerImage = Container4Img;
+  offerName = "Max Store Food Storage Container Pack 3";
+}
+else if (grandTotalNumeric >= 699) {
+  offerImage = Container5Img;
+  offerName = "Nayasa Use Max Plastic Storage Container Pack 3";
+}
+
+setFreeItemImage(offerImage);
+setFreeItemName(offerName);
     } catch (error) {
       console.error("Error fetching grocery product data:", error);
     } finally {
@@ -427,16 +462,16 @@ const handleDownloadPDF = () => {
     pdfCashback = cashbackAmount;
   }
 
-  const pdfShowFreeSugar =
-    Number(grandTotal) > 299 && Number(grandTotal) < 498;
-    const pdfshowAttaSugar =
-    Number(grandTotal) > 499 && Number(grandTotal) < 999;
+  // const pdfShowFreeSugar =
+  //   Number(grandTotal) > 299 && Number(grandTotal) < 498;
+  //   const pdfshowAttaSugar =
+  //   Number(grandTotal) > 499 && Number(grandTotal) < 999;
   let currentY = doc.lastAutoTable.finalY + 10;
 
   let requiredHeight = 12;
   if (pdfCashback > 0) requiredHeight += 6;
-  if (pdfShowFreeSugar) requiredHeight += 6;
-  if (pdfshowAttaSugar) requiredHeight += 6;
+  // if (pdfShowFreeSugar) requiredHeight += 6;
+  // if (pdfshowAttaSugar) requiredHeight += 6;
   if (currentY + requiredHeight > PAGE_HEIGHT - FOOTER_SPACE) {
     doc.addPage();
     addHeader(doc, martId);
@@ -455,31 +490,31 @@ const handleDownloadPDF = () => {
     currentY += 6;
   }
 
- if (pdfShowFreeSugar) {
-  doc.setFontSize(10);
-  doc.setTextColor(0, 128, 0);
-  doc.setFont("Roboto", "bold");
-  doc.text(
-    "🎁 Give Customer Sugar 500 g FREE",
-    195,
-    currentY,
-    { align: "right" }
-  );
-  currentY += 8;
-}
+//  if (pdfShowFreeSugar) {
+//   doc.setFontSize(10);
+//   doc.setTextColor(0, 128, 0);
+//   doc.setFont("Roboto", "bold");
+//   doc.text(
+//     "🎁 Give Customer Sugar 500 g FREE",
+//     195,
+//     currentY,
+//     { align: "right" }
+//   );
+//   currentY += 8;
+// }
 
-  if (pdfshowAttaSugar) {
-  doc.setFontSize(10);
-  doc.setTextColor(0, 128, 0);
-  doc.setFont("Roboto", "bold");
-  doc.text(
-    "🎁 Give Customer Sugar 1 Kg FREE",
-    195,
-    currentY,
-    { align: "right" }
-  );
-  currentY += 8;
-}
+//   if (pdfshowAttaSugar) {
+//   doc.setFontSize(10);
+//   doc.setTextColor(0, 128, 0);
+//   doc.setFont("Roboto", "bold");
+//   doc.text(
+//     "🎁 Give Customer Sugar 1 Kg FREE",
+//     195,
+//     currentY,
+//     { align: "right" }
+//   );
+//   currentY += 8;
+// }
 
   doc.setFont("Roboto", "bold");
   doc.setFontSize(11);
@@ -680,6 +715,30 @@ const handleImageClick = (imageSrc, product) => {
       </td>    
     </tr>
   )} */} 
+  {freeItemName && (
+<tr>
+  <td colSpan="9" className="text-end fw-bold text-success">
+    🎁 Offer Applied:
+  </td>
+
+  <td className="text-center">
+    {freeItemImage && (
+      <img
+        src={freeItemImage}
+        alt="Offer Item"
+        style={{
+          width: "60px",
+          height: "60px",
+          objectFit: "contain"
+        }}
+      />
+    )}
+    <div style={{fontSize:"12px"}}>
+      {freeItemName}
+    </div>
+  </td>
+</tr>
+)}
     <tr>
       <td colSpan="9" className="text-end fw-bold">
         Grand Total:

@@ -67,7 +67,12 @@ import Above45Img from './img/Above45.jpeg';
 import AddIcCallIcon from '@mui/icons-material/AddIcCall';
 import RoyalImg from './img/LMartLogo.jpeg';
 import HomeElectricalImg from './img/HomeElectrical.jpeg';
-import HomePlumbingImg from './img/HomePlumbing.jpeg';
+import HomePlumbingImg from './img/HomePlumbing.jpeg';   
+import Container1Img from './img/199.png';
+import Container2Img from './img/299.png';
+import Container3Img from './img/499.png';
+import Container4Img from './img/599.png';
+import Container5Img from './img/699.png';
 
 const getMenuList = (userType, userId, category, district ,ZipCode,technicianFullName, isMobile) => {
   const iconSize = isMobile ? 20  : 40;
@@ -238,11 +243,11 @@ const secondCategories = groceryCategories.slice(6, 31);
 // const thirdCategories = groceryCategories.slice(15, 24);
 // const fourthCategories = groceryCategories.slice(24, 30);
 // const HEADER_HEIGHT = window.innerWidth <= 768 ? 50 : 100;
-// const [showOffersModal, setShowOffersModal] = useState(false);
+const [showOffersModal, setShowOffersModal] = useState(false);
 
-// useEffect(() => {
-//   setShowOffersModal(true);
-// }, []);
+useEffect(() => {
+  setShowOffersModal(true);
+}, []);
 
 const placeholderSuggestions = [
   'Search "Milk"', 'Search "Freedom Refined Sunflower Oil"', 'Search "Sona Masoori Rice"',
@@ -460,47 +465,122 @@ useEffect(() => {
 });
 
 /* ================= FETCH PRODUCTS ================= */
+// useEffect(() => {
+//   let cancelled = false;
+//   const POLL_MS = 5000
+//   const fetchProducts = async (showLoader = false) => {
+//     if (showLoader) setLoading(true);
+//     try {
+//       const res = await axios.get(
+//         "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/GetAllGroceryItems"
+//       );
+//       if (cancelled) return;
+//       const normalized = (Array.isArray(res.data) ? res.data : [])
+//         .map(normalizeProduct)
+//         .filter(p => p.status === "Approved");
+//       setAllProducts(prev => {
+//         if (
+//           prev.length === normalized.length &&
+//           prev.every((p, i) =>
+//             p.id === normalized[i].id &&
+//             p.stockLeft === normalized[i].stockLeft &&
+//             p.limit === normalized[i].limit
+//           )
+//         ) {
+//           return prev; 
+//         }
+//         return normalized;
+//       });
+//     } catch (err) {
+//       console.error("Fetching grocery items failed", err);
+//     } finally {
+//       if (showLoader && !cancelled) setLoading(false);
+//     }
+//   };
+//   fetchProducts(true);
+//   const intervalId = setInterval(() => {
+//     fetchProducts(false);
+//   }, POLL_MS);
+//   return () => {
+//     cancelled = true;
+//     clearInterval(intervalId);
+//   };
+// }, []);
+
+
 useEffect(() => {
   let cancelled = false;
-  const POLL_MS = 5000
+  const POLL_MS = 5000;
+
+  const sendLog = async () => {
+    try {
+      const payload = {
+        id: "1", 
+       
+        date: "string",
+        mobileNumber: profile.mobileNumber, 
+        message: "User fetching grocery items in profile page"
+      };
+
+      await axios.post(
+        "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/LmartLogs/UploadlogsDetails",
+        payload
+      );
+    } catch (err) {
+      console.error("Log API failed", err);
+    }
+  };
+
   const fetchProducts = async (showLoader = false) => {
+   
+    sendLog();
+
     if (showLoader) setLoading(true);
+
     try {
       const res = await axios.get(
-        "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/GetAllGroceryItems"
+        "https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/UploadGrocery/GetAllGroceryItems"
       );
+
       if (cancelled) return;
+
       const normalized = (Array.isArray(res.data) ? res.data : [])
         .map(normalizeProduct)
-        .filter(p => p.status === "Approved");
-      setAllProducts(prev => {
+        .filter((p) => p.status === "Approved");
+
+      setAllProducts((prev) => {
         if (
           prev.length === normalized.length &&
-          prev.every((p, i) =>
-            p.id === normalized[i].id &&
-            p.stockLeft === normalized[i].stockLeft &&
-            p.limit === normalized[i].limit
+          prev.every(
+            (p, i) =>
+              p.id === normalized[i].id &&
+              p.stockLeft === normalized[i].stockLeft &&
+              p.limit === normalized[i].limit
           )
         ) {
-          return prev; 
+          return prev;
         }
         return normalized;
       });
+
     } catch (err) {
       console.error("Fetching grocery items failed", err);
     } finally {
       if (showLoader && !cancelled) setLoading(false);
     }
   };
+
   fetchProducts(true);
+
   const intervalId = setInterval(() => {
     fetchProducts(false);
   }, POLL_MS);
+
   return () => {
     cancelled = true;
     clearInterval(intervalId);
   };
-}, []);
+}, [profile.mobileNumber]);
 
   /* ================= FILTER ================= */
   useEffect(() => {
@@ -1949,7 +2029,7 @@ const updateLocalStorageCart = (product, qty) => {
             />
             <span
               style={{
-                fontSize: "11px",
+                fontSize: "11px",        
                 fontWeight: "500",
                 marginTop: "5px",
                 minHeight: "24px", 
@@ -2258,40 +2338,51 @@ const updateLocalStorageCart = (product, qty) => {
   </div>
 </Modal.Footer>
       </Modal>
-      {/* <Modal
+      <Modal
   show={showOffersModal}
   onHide={() => setShowOffersModal(false)}
   centered
+  scrollable
 >
   <Modal.Header closeButton>
-    <Modal.Title>🎉 L Mart Special Offers</Modal.Title>
+   <Modal.Title style={{ fontSize: "16px", fontWeight: "bold" }}>🎉Handyman App 1ˢᵗ Anniversary Sale!</Modal.Title>
   </Modal.Header>
-  <Modal.Body>
-    <ul style={{ paddingLeft: "15px", lineHeight: "1.8" }}>
+  <Modal.Body>   
+    <ul style={{ paddingLeft: "10px", lineHeight: "1.1" }}>
      <li>🛍️ New Users Get  → {" "} 
-  <span style={{ color: "green", fontWeight: "bold" }}>₹50 in Wallet!</span> <br/>
- Use it on your first order</li>
- {/* <h6 style={{fontWeight:"bold", textAlign: "center", color:"red"}}>NEW/EXISTING USERS</h6> */}
- {/* <h6 style={{fontWeight:"bold", textAlign: "center", color:"red"}}>Extra Deals</h6> */}
- 
-     {/*} <li>🛍️ ₹299 Order → {" "} 
-  <span style={{ color: "green", fontWeight: "bold" }}>1/2 Kg Sugar Free</span></li>
-      <li>🛍️ ₹399 Order → {" "} 
+  <span style={{ color: "green", fontWeight: "bold" }}>₹50 in Wallet!</span> <br/></li>
+  <li>🛍️ ₹199 Above Order → {" "} 
+  <span style={{ color: "green", fontWeight: "bold" }}>Masti Oye Masala Noodles 60 g + Thums Up Soft Drink 250 ml
+     <img src={Container1Img} alt="container"
+    style={{ width: "40px", height: "30px", marginLeft: "5px" }} /></span></li>
+      <li>🛍️ ₹299 Above Order → {" "} 
+  <span style={{ color: "green", fontWeight: "bold" }}>Nayasa Use Max Plastic Storage Container Pack 1</span>
+   <img src={Container2Img} alt="container"
+    style={{ width: "40px", height: "30px", marginLeft: "5px" }} /></li>
+      <li>🛍️ ₹399 Above Order → {" "} 
   <span style={{ color: "green", fontWeight: "bold" }}>₹50 Cashback</span></li>
-      <li>🛍️ ₹499 Order → {" "} 
-  <span style={{ color: "green", fontWeight: "bold" }}>1 Kg Sugar Free</span></li>
-      <li>🛍️ ₹999 Order → {" "} 
-  <span style={{ color: "green", fontWeight: "bold" }}>₹100 Cashback</span></li>   
-      <li>🛍️ ₹1499 Order → {" "} 
-  <span style={{ color: "green", fontWeight: "bold" }}>₹150 Cashback</span></li>
-      <li>🛍️ ₹1999 Order → {" "} 
-  <span style={{ color: "green", fontWeight: "bold" }}>₹200 Cashback</span></li>
+      <li>🛍️ ₹499 Above Order → {" "} 
+  <span style={{ color: "green", fontWeight: "bold" }}>Home One plastic Container 550 ml</span>
+  <img src={Container3Img} alt="container"
+    style={{ width: "40px", height: "30px", marginLeft: "5px" }} />
+  </li>
+      <li>🛍️ ₹599 Above Order → {" "} 
+  <span style={{ color: "green", fontWeight: "bold" }}>Max Store Food Storage Container Pack 3</span>
+   <img src={Container4Img} alt="container"
+    style={{ width: "40px", height: "30px", marginLeft: "5px" }} /></li>   
+      <li>🛍️ ₹699 Above Order → {" "} 
+  <span style={{ color: "green", fontWeight: "bold" }}>Nayasa Use Max Plastic Storage Container Pack 3</span>
+   <img src={Container5Img} alt="container"
+    style={{ width: "50px", height: "40px", marginLeft: "5px" }} /></li>
     </ul>
-    <div className="text-center mt-3">
-      <b style={{ color: "green" }}>
-        💥 Don’t Miss these Deals! Offers till <span style={{ color: "red", fontWeight: "bold" }}>21st March 2026</span>
+    <div className="text-center">
+      <b style={{ color: "green", fontSize: "15px" }}>
+        💥 Don’t Miss these Deals! Offers till 26th March 2026.
       </b> <br/>
-       <b style={{ color: "green" }}>
+      <b style={{ color: "red", fontSize: "15px" }}>
+        Thank you for your trust, support, and love throughout our journey.💖 You are the reason behind our success!
+      </b> <br/>
+       <b style={{ color: "green",fontSize: "15px" }}>
         For any Queries Contact <br/>Customer Care: <span style={{color: "red"}}>6281198953</span>
       </b>
     </div>
@@ -2301,7 +2392,7 @@ const updateLocalStorageCart = (product, qty) => {
       Shop Now 🛒
     </Button>
   </Modal.Footer>
-</Modal> */}
+</Modal>
          <Footer />
         </>    
   );

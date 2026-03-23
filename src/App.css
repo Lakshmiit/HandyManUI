@@ -4338,3 +4338,8 @@ cursor: not-allowed;
   color:#000000;
   font-weight:500;
 }
+
+.modal-header .btn-close {
+  filter: brightness(0);
+  opacity: 1;
+}
