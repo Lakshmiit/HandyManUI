@@ -8,6 +8,7 @@ import AdminSidebar from './AdminSidebar';
 import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import {  Button } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
+// import { appConfig } from "./config";
 
 const AdminUploadGrocery = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -28,7 +29,7 @@ const AdminUploadGrocery = () => {
   const [units, setUnits] = useState('');
   const [manufactureDate,setManufactureDate] =useState('');
   const [expireDate,setExpireDate]=useState('');
-  const [limit, setLimit] = useState(0);
+  const [limit, setLimit] = useState("");
   const handleFileChange = (event) => {
     const selectedFiles = Array.from(event.target.files);
     if (selectedFiles.length + groceryPhotos.length > 1) {
@@ -90,7 +91,7 @@ useEffect(() => {
       formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
       formData.append('fileName', fileName);
      
-      const response = await fetch('https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
+      const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/upload?filename=` + fileName, {
         method: 'POST',
         headers: {
           'Accept': 'text/plain',
@@ -146,10 +147,10 @@ useEffect(() => {
       Units: units,
       ManufactureDate: manufactureDate,
       ExpireDate : expireDate,
-      Limit: limit,    
+      Limit: limit ? limit.toString() : "",    
     };   
     try {
-      const response = await fetch("https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/UploadGrocery/UploadGrocery", {
+      const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/UploadGrocery`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -375,7 +376,7 @@ useEffect(() => {
             
              {/* Limit */}
             <div className="form-group">
-              <label>Limit <span className="req_star">*</span></label>
+              <label>Limit</label>
               <input
                 type="text"
                 className="form-control"

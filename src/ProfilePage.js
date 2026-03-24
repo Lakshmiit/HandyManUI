@@ -73,6 +73,8 @@ import Container2Img from './img/299.png';
 import Container3Img from './img/499.png';
 import Container4Img from './img/599.png';
 import Container5Img from './img/699.png';
+import Container6Img from './img/399.png';
+// import { appConfig } from "./config";
 
 const getMenuList = (userType, userId, category, district ,ZipCode,technicianFullName, isMobile) => {
   const iconSize = isMobile ? 20  : 40;
@@ -144,7 +146,7 @@ const collectionsCategories = [
   ];
 
   const IMAGE_API =
-  "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=";
+  `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=`;
 
 const ProfilePage = () => {
    const [allProducts, setAllProducts] = useState([]);
@@ -244,6 +246,32 @@ const secondCategories = groceryCategories.slice(6, 31);
 // const fourthCategories = groceryCategories.slice(24, 30);
 // const HEADER_HEIGHT = window.innerWidth <= 768 ? 50 : 100;
 const [showOffersModal, setShowOffersModal] = useState(false);
+ const offers = [
+    {
+      condition: "Above ₹199 Order",
+      img: Container1Img,
+    },
+    {
+      condition: "Above ₹299 Order",
+      img: Container2Img,
+    },
+    {
+      condition: "Above ₹399 Order",
+      img: Container6Img,
+    },
+    {
+      condition: "Above ₹499 Order",
+      img: Container3Img,
+    },
+    {
+      condition: "Above ₹599 Order",
+      img: Container4Img,
+    },
+    {
+      condition: "Above ₹699 Order",
+      img: Container5Img,
+    },
+  ];
 
 useEffect(() => {
   setShowOffersModal(true);
@@ -523,7 +551,7 @@ useEffect(() => {
       };
 
       await axios.post(
-        "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/LmartLogs/UploadlogsDetails",
+        `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/LmartLogs/UploadlogsDetails`,
         payload
       );
     } catch (err) {
@@ -2348,41 +2376,39 @@ const updateLocalStorageCart = (product, qty) => {
    <Modal.Title style={{ fontSize: "16px", fontWeight: "bold" }}>🎉Handyman App 1ˢᵗ Anniversary Sale!</Modal.Title>
   </Modal.Header>
   <Modal.Body>   
-    <ul style={{ paddingLeft: "10px", lineHeight: "1.1" }}>
+     <ul style={{ paddingLeft: "10px", lineHeight: "1.1" }}>
      <li>🛍️ New Users Get  → {" "} 
   <span style={{ color: "green", fontWeight: "bold" }}>₹50 in Wallet!</span> <br/></li>
-  <li>🛍️ ₹199 Above Order → {" "} 
-  <span style={{ color: "green", fontWeight: "bold" }}>Masti Oye Masala Noodles 60 g + Thums Up Soft Drink 250 ml
-     <img src={Container1Img} alt="container"
-    style={{ width: "40px", height: "30px", marginLeft: "5px" }} /></span></li>
-      <li>🛍️ ₹299 Above Order → {" "} 
-  <span style={{ color: "green", fontWeight: "bold" }}>Nayasa Use Max Plastic Storage Container Pack 1</span>
-   <img src={Container2Img} alt="container"
-    style={{ width: "40px", height: "30px", marginLeft: "5px" }} /></li>
-      <li>🛍️ ₹399 Above Order → {" "} 
-  <span style={{ color: "green", fontWeight: "bold" }}>₹50 Cashback</span></li>
-      <li>🛍️ ₹499 Above Order → {" "} 
-  <span style={{ color: "green", fontWeight: "bold" }}>Home One plastic Container 550 ml</span>
-  <img src={Container3Img} alt="container"
-    style={{ width: "40px", height: "30px", marginLeft: "5px" }} />
-  </li>
-      <li>🛍️ ₹599 Above Order → {" "} 
-  <span style={{ color: "green", fontWeight: "bold" }}>Max Store Food Storage Container Pack 3</span>
-   <img src={Container4Img} alt="container"
-    style={{ width: "40px", height: "30px", marginLeft: "5px" }} /></li>   
-      <li>🛍️ ₹699 Above Order → {" "} 
-  <span style={{ color: "green", fontWeight: "bold" }}>Nayasa Use Max Plastic Storage Container Pack 3</span>
-   <img src={Container5Img} alt="container"
-    style={{ width: "50px", height: "40px", marginLeft: "5px" }} /></li>
-    </ul>
+      </ul>
+      <h1 style={{textAlign: "center", color: "red", fontSize: "15px", fontWeight: "bold"}}>Order Now Get Free Gift</h1>
+     {/* <div className="container"> */}
+          <div className="row">
+            {offers.map((offer, index) => (
+              <div className="col-6 mb-2" key={index}>
+                <div className="offer-card">
+                  {/* Image */}
+                  {offer.img ? (
+                    <img src={offer.img} alt="offer" className="offer-img" />
+                  ) : (
+                    <div className="offer-img-box"></div>
+                  )}
+                  {/* Text */}
+                  <div className="offer-condition">
+                    {offer.condition}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        {/* </div> */}
     <div className="text-center">
-      <b style={{ color: "green", fontSize: "15px" }}>
+      <b style={{ color: "green", fontSize: "14px" }}>
         💥 Don’t Miss these Deals! Offers till 26th March 2026.
       </b> <br/>
-      <b style={{ color: "red", fontSize: "15px" }}>
-        Thank you for your trust, support, and love throughout our journey.💖 You are the reason behind our success!
+      <b style={{ color: "red", fontSize: "11px" }}>
+        Thank you for your trust, support, and love throughout our journey.
       </b> <br/>
-       <b style={{ color: "green",fontSize: "15px" }}>
+       <b style={{ color: "green",fontSize: "14px" }}>
         For any Queries Contact <br/>Customer Care: <span style={{color: "red"}}>6281198953</span>
       </b>
     </div>
