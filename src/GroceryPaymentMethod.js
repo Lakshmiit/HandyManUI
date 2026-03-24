@@ -92,13 +92,11 @@ const GroceryPaymentmethod = () => {
   const numericGrandTotal = Number(grandTotal) || 0;
   let cashback = 0;  
 
-if (numericGrandTotal >= 1499) {   
-  cashback = 150;
-} else if (numericGrandTotal >= 999) {
-  cashback = 100;
-} else if (numericGrandTotal >= 399 && numericGrandTotal <= 498) {
-  cashback = 50;
-}
+// if (numericGrandTotal >= 1499) {   
+//   cashback = 150;
+// } else if (numericGrandTotal >= 999) {
+//   cashback = 100;
+// } 
   const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;
 
   // const showSugarOffer = Number(grandTotal) >= 299 && Number(grandTotal) <= 398;
@@ -110,20 +108,37 @@ if (numericGrandTotal >= 1499) {
   const wallet = Number(primaryAddress?.walletAmount || 0);
 const netPayables = gt - wallet - cashback;     
 // const netPayables = gt - discount - wallet - referral - cashback;  
+// let cashback = 0;   
 let freeItemImage = null;
 
-if (gt >= 199 && gt <= 298) {
-  freeItemImage = Container1Img;
-} else if (gt >= 299 && gt <= 398) {
-  freeItemImage = Container2Img;
-} else if (gt >= 499 && gt <= 598) {
-  freeItemImage = Container3Img;
-} else if (gt >= 599 && gt <= 698) {
-  freeItemImage = Container4Img;
+// const gt = Number(grandTotal || 0);
+
+// Priority 1: Highest offers first
+if (gt >= 1499) {
+  cashback = 150;
+
+} else if (gt >= 999) {
+  cashback = 100;
+
+// Priority 2: Mid-range offers
 } else if (gt >= 699) {
   freeItemImage = Container5Img;
-}  
- 
+
+} else if (gt >= 599) {
+  freeItemImage = Container4Img;
+
+} else if (gt >= 499) {
+  freeItemImage = Container3Img;
+
+} else if (gt >= 399) {
+  cashback = 50;
+
+} else if (gt >= 299) {
+  freeItemImage = Container2Img;
+
+} else if (gt >= 199) {
+  freeItemImage = Container1Img;
+}
   // useEffect(() => {
   //   if (firstOrderDiscount > 0) {
   //     setShowConfetti(true);
