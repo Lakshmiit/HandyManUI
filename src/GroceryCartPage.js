@@ -11,6 +11,8 @@ import "./App.css";
 import CartImg from "./img/Cart.jpeg";
 import { useNavigate, useParams } from "react-router-dom";
 import Footer from "./Footer.js";
+// import { appConfig } from "./config";
+
 // import { useLocation } from "react-router-dom";
  
 const GroceryCartPage = () => {
@@ -30,8 +32,8 @@ const GroceryCartPage = () => {
   const [isNewUser, setIsNewUser] = useState(true);
   const isGuestName = (name) => (name ?? "").trim().toLowerCase() === "guest";
   const [walletAmount, setWalletAmount] = useState(0);
-const MIN_ORDER_TOTAL = walletAmount === 50 ? 150 : 100;
-
+const MIN_ORDER_TOTAL = Number(walletAmount) === 50 ? 150 : 100;
+   
   useEffect(() => {
     console.log(addresses, fullName, isNewUser);
   }, [addresses, fullName, isNewUser]);
@@ -83,8 +85,8 @@ useEffect(() => {
   }
 }, [userId, fetchCustomerData]);
 
-  const IMAGE_DOWNLOAD =
-    "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=";
+  // const IMAGE_DOWNLOAD =
+  //   `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=`;
 
   function toNum(v, f = 0) {
     const n = Number(v);
@@ -180,7 +182,7 @@ useEffect(() => {
   function fileToUrl(filenameOrUrl) {
     if (!filenameOrUrl) return "";
     if (/^https?:\/\//i.test(String(filenameOrUrl))) return filenameOrUrl;
-    return `${IMAGE_DOWNLOAD}${encodeURIComponent(String(filenameOrUrl))}`;
+    return `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net${encodeURIComponent(String(filenameOrUrl))}`;
   }
 
   const refreshStocksOnce = React.useCallback(async (signal) => {
@@ -399,7 +401,7 @@ useEffect(() => {
         const results = await Promise.allSettled(
           filenames.map(async (fn) => {
             const res = await fetch(
-              `${IMAGE_DOWNLOAD}${encodeURIComponent(fn)}`,
+              `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net${encodeURIComponent(fn)}`,
             );
             const contentType = res.headers.get("content-type") || "";
             if (contentType.includes("application/json")) {
@@ -412,7 +414,7 @@ useEffect(() => {
               const blobUrl = URL.createObjectURL(blob);
               return { fn, url: blobUrl };
             } else {
-              return { fn, url: `${IMAGE_DOWNLOAD}${encodeURIComponent(fn)}` };
+              return { fn, url: `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net${encodeURIComponent(fn)}` };
             }
           }),
         );

@@ -11,10 +11,12 @@ import "./App.css";
 import CartImg from "./img/Cart.jpeg";
 import { useNavigate, useParams } from "react-router-dom";
 import Footer from "./Footer.js";
+// import { appConfig } from "./config";
+
 // import { useLocation } from "react-router-dom";
  
 const IMAGE_DOWNLOAD =
-  "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=";
+  `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=`;
 
 const norm = (s) =>
   String(s || "").toLowerCase().replace(/\s+/g, " ").replace("500ml", "500 ml").replace("1l", "1 l").trim();
@@ -150,7 +152,7 @@ const GroceryOffersCartPage = () => {
   const [grandSummary, setGrandSummary] = useState({ items: 0, total: 0 });
   const pollRef = useRef(null);
 const [walletAmount, setWalletAmount] = useState(0);
-const MIN_ORDER_TOTAL = walletAmount === 50 ? 150 : 100;
+const MIN_ORDER_TOTAL = Number(walletAmount) === 50 ? 150 : 100;
   const [addresses, setAddresses] = useState([]);
   const [fullName, setFullName] = useState("");
   const [isNewUser, setIsNewUser] = useState(true);
@@ -160,7 +162,7 @@ const MIN_ORDER_TOTAL = walletAmount === 50 ? 150 : 100;
     console.log(addresses, fullName, isNewUser);
   }, [addresses, fullName, isNewUser]);
 
-console.log("Wallet:", walletAmount);
+console.log("Wallet:", walletAmount);   
 
   const fetchCustomerData = useCallback(async () => {
       try {

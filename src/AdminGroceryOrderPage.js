@@ -9,11 +9,8 @@ import { ArrowBack} from '@mui/icons-material';
 // import ForwardIcon from '@mui/icons-material/Forward';
 import { Button, Form, Row, Col, Modal } from 'react-bootstrap';
 import axios from "axios";
-import Container1Img from './img/199.png';
-import Container2Img from './img/299.png';
-import Container3Img from './img/499.png';
-import Container4Img from './img/599.png';
-import Container5Img from './img/699.png';
+// import { appConfig } from "./config";
+
 const AdminGroceryOrderPage = () => {
   const navigate = useNavigate(); 
   const {groceryItemId} = useParams();
@@ -56,8 +53,8 @@ const [cashbackAmount, setCashbackAmount] = useState(0);
  const [showZoomModal, setShowZoomModal] = useState(false);
   const [zoomImage, setZoomImage] = useState("");
   const [zoomProduct, setZoomProduct] = useState(null);
-const [freeItemImage, setFreeItemImage] = useState(null);
-const [freeItemName, setFreeItemName] = useState("");
+// const [freeItemImage, setFreeItemImage] = useState(null);
+// const [freeItemName, setFreeItemName] = useState("");
 useEffect(() => {
     const fetchCart = async () => {
       if (!groceryItemId) return;
@@ -216,41 +213,40 @@ useEffect(() => {
       const grandTotalNumeric = Number(data.grandTotal) || 0;
       const cashback = totalAmountFromApi - grandTotalNumeric;
         
-      if ((cashback >= 49 && cashback <= 51) ||(cashback >= 99 && cashback <= 101) || (cashback >= 149 && cashback <= 151))
+      if ((cashback >= 49 && cashback <= 51) ||(cashback >= 99 && cashback <= 101) || (cashback >= 199 && cashback <= 201))
       {
         setCashbackAmount(cashback);                       
       } else {
         setCashbackAmount(0);        
       }
-      let offerImage = null;
-let offerName = "";
+//       let offerImage = null;
+// let offerName = "";
 
-if (grandTotalNumeric >= 199 && grandTotalNumeric <= 298) {
-  offerImage = Container1Img;
-  offerName = "Masti Oye Masala Noodles 60 g + Thums Up Soft Drink 250 ml";
-}
-else if (grandTotalNumeric >= 299 && grandTotalNumeric <= 398) {
-  offerImage = Container2Img;
-  offerName = "Nayasa Use Max Plastic Storage Container Pack 1";
-}
-else if (grandTotalNumeric >= 399 && grandTotalNumeric <= 498) {
-  offerName = "₹50 Cashback";
-}
-else if (grandTotalNumeric >= 499 && grandTotalNumeric <= 598) {
-  offerImage = Container3Img;
-  offerName = "Home One Plastic Container 550 ml";
-}
-else if (grandTotalNumeric >= 599 && grandTotalNumeric <= 698) {
-  offerImage = Container4Img;
-  offerName = "Max Store Food Storage Container Pack 3";
-}
-else if (grandTotalNumeric >= 699) {
-  offerImage = Container5Img;
-  offerName = "Nayasa Use Max Plastic Storage Container Pack 3";
-}
-
-setFreeItemImage(offerImage);
-setFreeItemName(offerName);
+// if (grandTotal >= 199 && grandTotal <= 298) {
+//   offerImage = Container1Img;
+//   offerName = "Masti Oye Masala Noodles 60 g + Thums Up Soft Drink 250 ml";
+// }
+// else if (grandTotal >= 299 && grandTotal <= 398) {
+//   offerImage = Container2Img;
+//   offerName = "Nayasa Use Max Plastic Storage Container Pack 1";
+// }
+// else if (grandTotal >= 399 && grandTotal <= 498) {
+//   offerName = "₹50 Cashback";
+// }
+// else if (grandTotal >= 499 && grandTotal <= 598) {
+//   offerImage = Container3Img;
+//   offerName = "Home One Plastic Container 550 ml";
+// }
+// else if (grandTotal >= 599 && grandTotal <= 698) {
+//   offerImage = Container4Img;
+//   offerName = "Max Store Food Storage Container Pack 3";
+// }
+// else if (grandTotal >= 699) {
+//   offerImage = Container5Img;
+//   offerName = "Nayasa Use Max Plastic Storage Container Pack 3";
+// }
+// setFreeItemImage(offerImage);
+// setFreeItemName(offerName);
     } catch (error) {
       console.error("Error fetching grocery product data:", error);
     } finally {
@@ -260,7 +256,7 @@ setFreeItemName(offerName);
   if (groceryItemId) {
     fetchGroceryData();
   }
-}, [groceryItemId]);
+}, [groceryItemId, grandTotal]);
    
 const handleAssignedToChange = (e) => {
   const selectedAssignedTo = e.target.value;
@@ -457,7 +453,7 @@ const handleDownloadPDF = () => {
   if (
     (cashbackAmount >= 49 && cashbackAmount <= 51) ||
     (cashbackAmount >= 99 && cashbackAmount <= 101) ||
-    (cashbackAmount >= 149 && cashbackAmount <= 151)
+    (cashbackAmount >= 199 && cashbackAmount <= 201)
   ) {
     pdfCashback = cashbackAmount;
   }
@@ -715,7 +711,7 @@ const handleImageClick = (imageSrc, product) => {
       </td>    
     </tr>
   )} */} 
-  {freeItemName && (
+  {/* {freeItemName && (
 <tr>
   <td colSpan="9" className="text-end fw-bold text-success">
     🎁 Offer Applied:
@@ -738,7 +734,7 @@ const handleImageClick = (imageSrc, product) => {
     </div>
   </td>
 </tr>
-)}
+)} */}
     <tr>
       <td colSpan="9" className="text-end fw-bold">
         Grand Total:

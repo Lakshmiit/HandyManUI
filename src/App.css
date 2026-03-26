@@ -4355,7 +4355,7 @@ cursor: not-allowed;
   border: 1px solid #000000;
   border-radius: 12px;
   background: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 8px rgba(0, 0, 0, 0.08);
   height: 100%;
   padding: 0px;
   text-align: center;
@@ -4369,8 +4369,8 @@ cursor: not-allowed;
 
 /* Image */
 .offer-img {
-  width: 140px;
-  height: 140px;
+  width: 110px;
+  height: 110px;
   object-fit: contain;
   margin-bottom: 5px;
 }
@@ -4383,8 +4383,24 @@ cursor: not-allowed;
 
 /* Condition Text */
 .offer-condition {
-  font-size: 14px;
+  font-size: 11px;
   color: green;
   font-weight: bold;
 }
 
+.gold-shine-text {
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  background: linear-gradient(
+    90deg,
+    #8B5A00,
+    #FFD700,
+    #C98A00,
+    #FFD700,
+    #8B5A00
+  );
+
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
