@@ -4383,8 +4383,8 @@ cursor: not-allowed;
 
 /* Condition Text */
 .offer-condition {
-  font-size: 11px;
-  color: green;
+  font-size: 13px;
+  color: red;
   font-weight: bold;
 }
 

@@ -85,8 +85,8 @@ useEffect(() => {
   }
 }, [userId, fetchCustomerData]);
 
-  // const IMAGE_DOWNLOAD =
-  //   `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=`;
+  const IMAGE_DOWNLOAD =
+    `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=`;
 
   function toNum(v, f = 0) {
     const n = Number(v);
@@ -179,11 +179,15 @@ useEffect(() => {
     if (/^https?:\/\//i.test(v)) return "";
     return v.trim();
   }
-  function fileToUrl(filenameOrUrl) {
-    if (!filenameOrUrl) return "";
-    if (/^https?:\/\//i.test(String(filenameOrUrl))) return filenameOrUrl;
-    return `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net${encodeURIComponent(String(filenameOrUrl))}`;
+
+ const fileToUrl = useCallback((filenameOrUrl) => {
+  if (!filenameOrUrl) return "";
+  if (/^https?:\/\//i.test(String(filenameOrUrl))) {
+    return filenameOrUrl;
   }
+  return IMAGE_DOWNLOAD + encodeURIComponent(filenameOrUrl);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, []);
 
   const refreshStocksOnce = React.useCallback(async (signal) => {
     const norm = (s) =>
@@ -318,6 +322,7 @@ useEffect(() => {
         ),
       ),
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -373,6 +378,7 @@ useEffect(() => {
     );
 
     return items;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -400,9 +406,10 @@ useEffect(() => {
       try {
         const results = await Promise.allSettled(
           filenames.map(async (fn) => {
-            const res = await fetch(
-              `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net${encodeURIComponent(fn)}`,
-            );
+            // const res = await fetch(
+            //   `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net${encodeURIComponent(fn)}`,
+            // );
+            const res = await fetch(fileToUrl(fn));
             const contentType = res.headers.get("content-type") || "";
             if (contentType.includes("application/json")) {
               const data = await res.json();
@@ -435,7 +442,7 @@ useEffect(() => {
     return () => {
       cancelled = true;
     };
-  }, [cartItems, imageBlobMap]);
+  }, [cartItems, imageBlobMap, fileToUrl]);
 
   const writeBackToStorage = (items) => {
     const grouped = items.reduce((acc, it) => {

@@ -68,12 +68,12 @@ import AddIcCallIcon from '@mui/icons-material/AddIcCall';
 import RoyalImg from './img/LMartLogo.jpeg';
 import HomeElectricalImg from './img/HomeElectrical.jpeg';
 import HomePlumbingImg from './img/HomePlumbing.jpeg';   
-import Container1Img from './img/Puja.jpeg';
-import Container2Img from './img/Upma.jpeg';
-import Container3Img from './img/1999.png';
+import Container1Img from './img/599.png';
+import Container2Img from './img/599.png';
+import Container3Img from './img/1999.png';       
 import Container4Img from './img/999.png';    
 
-// import { appConfig } from "./config";
+// import { appConfig } from "./config";        
 
 const getMenuList = (userType, userId, category, district ,ZipCode,technicianFullName, isMobile) => {
   const iconSize = isMobile ? 20  : 40;
@@ -245,24 +245,38 @@ const secondCategories = groceryCategories.slice(6, 31);
 // const fourthCategories = groceryCategories.slice(24, 30);
 // const HEADER_HEIGHT = window.innerWidth <= 768 ? 50 : 100;
 const [showOffersModal, setShowOffersModal] = useState(false);
- const offers = [
-    {
-      condition: "Above ₹999 Order",
-      img: Container4Img,
-    },
-     {
-      condition: "Above ₹1999 Order",
-      img: Container3Img,
-    },
-      {
-      condition: "30% Off Pooja Essentials",
-      img: Container1Img,
-    },
-    {
-      condition: "Pesara Upma Mix 500 g",
-      img: Container2Img,
-    },
-  ];
+const offers = [
+  {
+    condition: "New Users Get - ₹50 in Wallet!",
+    img: Container1Img,
+  },
+  {
+    condition: "Cashback|Above ₹599 Order",
+    img: Container2Img,
+  },
+  {
+    condition: "Cashback|Above ₹999 Order",
+    img: Container4Img,
+  },
+  {
+    condition: "Cashback|Above ₹1999 Order",
+    img: Container3Img,
+  },
+];
+
+ const highlightText = (text) => {
+  return text.split(/(₹\d+)/g).map((part, index) =>
+    /₹\d+/.test(part) ? (
+      <span key={index} style={{ color: "red", fontWeight: "bold" }}>
+        {part}
+      </span>
+    ) : (
+      <span key={index} style={{ color: "green" }}>
+        {part}
+      </span>
+    )
+  );
+};
 
 // useEffect(() => {
 //   setShowOffersModal(true);
@@ -2396,15 +2410,14 @@ const updateLocalStorageCart = (product, qty) => {
   scrollable
 >
   <Modal.Header closeButton>
-   <Modal.Title style={{ fontSize: "15px", fontWeight: "bold" }}>🎉Sri Rama Navami Special Sale!</Modal.Title>
+   <Modal.Title style={{ fontSize: "15px", fontWeight: "bold" }}>🎉Handyman Special Offer Sale!</Modal.Title>
   </Modal.Header>
   <Modal.Body>   
-     <ul style={{ paddingLeft: "10px" }}>
+     {/* <ul style={{ paddingLeft: "10px" }}>
      <li>🛍️ New Users Get  → {" "} 
   <span style={{ color: "green", fontWeight: "bold" }}>₹50 in Wallet!</span> <br/></li>
-      </ul>
-      <h1 style={{textAlign: "center", color: "red", fontSize: "14px", fontWeight: "bold"}}>Happy Sri Rama Navami! 
-Celebrate this auspicious day with exciting offers and blessings!</h1>
+      </ul> */}
+     
      {/* <div className="container"> */}
           <div className="row">
             {offers.map((offer, index) => (
@@ -2417,9 +2430,11 @@ Celebrate this auspicious day with exciting offers and blessings!</h1>
                     <div className="offer-img-box"></div>
                   )}
                   {/* Text */}
-                  <div className="offer-condition">
-                    {offer.condition}
-                  </div>
+                 <div className="offer-condition">
+                  {offer.condition.split("|").map((line, i) => (
+                    <div key={i}>{highlightText(line)}</div>
+                  ))}
+                </div>
                 </div>
               </div>
             ))}
@@ -2938,7 +2953,17 @@ export default ProfilePage;
 //         })
 //       );
 //       if (isActive) {
-//         setDisplayNumbers(results.join(", "));
+//          const joined = results.join(", ");
+//           setDisplayNumbers(joined);
+//         // setDisplayNumbers(results.join(", "));
+//         const allRegistered = results.every(r => r.includes("✅"));
+
+//       if (allRegistered) {
+//         // ✅ store award immediately
+//         localStorage.setItem(AWARDED_POINTS_KEY, "100");
+//         // ✅ enable button immediately
+//         setClaimAvailable(true);
+//       }
 //       }
 //     } catch (error) {
 //       console.error(error);
@@ -2946,15 +2971,16 @@ export default ProfilePage;
 //   };
 //   checkAllNumbers();
 //   // ✅ Auto refresh every 1 seconds
-//   const intervalId = setInterval(() => {
-//     checkAllNumbers();
-//   }, 1000); 
+//   // const intervalId = setInterval(() => {
+//   //   checkAllNumbers();
+//   // }, 1000); 
+//     const intervalId = setInterval(checkAllNumbers, 1000);
 
 //   return () => {
 //     isActive = false;
 //     clearInterval(intervalId); 
 //   };
-// }, [refRecord?.referralNumbers, checkNewOrExisting]);
+// }, [refRecord?.referralNumbers, checkNewOrExisting, AWARDED_POINTS_KEY]);
 
 // // useEffect(() => {
 // //   const numbers = (refRecord?.referralNumbers || "")
@@ -3180,6 +3206,16 @@ export default ProfilePage;
 //   return null;
 // };
 
+// useEffect(() => {
+//   const localAward = Number(localStorage.getItem(AWARDED_POINTS_KEY) || "0");
+
+//   if (userPoints === 0 && localAward === 100) {
+//     setClaimAvailable(true);
+//   } else {
+//     setClaimAvailable(false);
+//   }
+// }, [userPoints, AWARDED_POINTS_KEY]);
+
 // const readServerPoints = (record) => {
 //   const raw =
 //     record?.referralPoints ??
@@ -3194,9 +3230,9 @@ export default ProfilePage;
 // const handleGetCoins = async () => {
 //   if (pointsLoading) return;
 //   const localAward = Number(localStorage.getItem(AWARDED_POINTS_KEY) || "0");
-//   const isAllRegistered = displayNumbers
-//     ?.split(",")
-//     .every(item => item.includes("✅"));
+//   // const isAllRegistered = displayNumbers
+//   //   ?.split(",")
+//   //   .every(item => item.includes("✅"));
 //   // ❌ Already claimed
 //   if (userPoints >= 100) {
 //     alert("Coins already claimed");

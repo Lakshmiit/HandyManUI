@@ -96,6 +96,8 @@ if (numericGrandTotal >= 1999) {
   cashback = 200;
 } else if (numericGrandTotal >= 999) {
   cashback = 100;
+} else if (numericGrandTotal >= 599) {
+  cashback = 50;
 } 
   const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;
 
@@ -1597,7 +1599,7 @@ export default GroceryPaymentmethod;
 // }, [loading, isChecked, editingAddressId, customerName, groceryId]);
 
 // const numericGrandTotal = Number(grandTotal) || 0;
-// const gt = Number(grandTotal) || 0;
+// // const gt = Number(grandTotal) || 0;
 // const referral = Number(referralAmount) || 0;
 // // const cashback = Number(firstOrderDiscount) || 0;
 // const totalPayable = Math.max( 0,  numericGrandTotal - referral);
@@ -1710,7 +1712,6 @@ export default GroceryPaymentmethod;
 //         applied: discount,
 //         currentGT,
 //       });
-
 //     } catch (err) {
 //       console.error("Cashback check failed:", err);
 //       if (!cancelled) {
@@ -1719,12 +1720,10 @@ export default GroceryPaymentmethod;
 //       }
 //     }
 //   })();
-
 //   return () => {
 //     cancelled = true;
 //   };
 // }, [mobile, grandTotal]);    
-
 
 // const getReferralRecord = async (userId) => {
 //   if (!userId) return null;
