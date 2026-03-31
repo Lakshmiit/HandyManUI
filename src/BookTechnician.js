@@ -6,6 +6,7 @@ import Header from './Header.js';
 import Footer from './Footer.js';
 import Sidebar from './Sidebar';
 import { useParams, useNavigate} from 'react-router-dom';
+// import { appConfig } from "./config";
 
 const AddressManager = () => {
  const Navigate = useNavigate(); 
@@ -63,7 +64,7 @@ const [isNewUser, setIsNewUser] = useState(true);
   // Fetch customer profile data
     const fetchCustomerData = useCallback(async () => {
       try {
-        const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Address/GetAddressById/${userId}`);
+        const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Address/GetAddressById/${userId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch customer profile data');
         }
@@ -84,7 +85,7 @@ const [isNewUser, setIsNewUser] = useState(true);
         setAddresses(formattedAddresses);
        const apiFullName = addresses[0]?.fullName ?? "";
         setFullName(apiFullName);
-        if (!apiFullName || isGuestName(apiFullName)) {
+        if (!apiFullName || isGuestName(apiFullName)) { 
           setIsNewUser(true);
         } else {
           setIsNewUser(false);
@@ -110,7 +111,7 @@ const [isNewUser, setIsNewUser] = useState(true);
   }, [fetchCustomerData]);
 
   useEffect(() => {
-    axios.get('https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/MasterData/getStates')
+    axios.get(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/MasterData/getStates`)
       .then(response => {
         const data = response.data;
         console.log("States API Response:", data); 
@@ -124,7 +125,7 @@ const [isNewUser, setIsNewUser] = useState(true);
   
    useEffect(() => {
     if (stateId) {
-      axios.get(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
+      axios.get(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/MasterData/getDistricts/${stateId}`)
         .then(response => {
           setDistrictList(response.data);
         })
@@ -192,7 +193,7 @@ useEffect(() => {
   const fetchJobsByCategory = async (selectedCategory) => {
     try {
       setLoading(true);
-      const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/UploadJobDescriptionBookTechnician/GetSelctedJobsByCategory?Category=${selectedCategory}`);
+      const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadJobDescriptionBookTechnician/GetSelctedJobsByCategory?Category=${selectedCategory}`);
       if (!response.ok) {
         throw new Error("Failed to fetch jobs");
       }
@@ -311,7 +312,7 @@ const handleUpdateJobDescription = async (e) => {
     TechnicianFullName: "",
   };
   try {
-    const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/BookTechnician/CreateBookTechnician`, {
+    const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BookTechnician/CreateBookTechnician`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -333,7 +334,7 @@ const handleUpdateJobDescription = async (e) => {
   // Handle address editing
   const handleAddressEdit = async () => {
 
-    if (!newAddress || !zipCode || !mobileNumber || !state || !district) {
+    if (!fullName || !newAddress || !zipCode || !mobileNumber || !state || !district) {
       alert("Please fill in all required fields.");
       return; 
     }
@@ -373,10 +374,11 @@ const handleUpdateJobDescription = async (e) => {
         firstName: fullName,
         lastName: "lastName",
         fullName: fullName,
+        walletAmount: "0",
       };
     
       try {
-        const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Customer/CustomerAddressEdit`, {
+        const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Customer/CustomerAddressEdit`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -483,6 +485,7 @@ const handleUpdateJobDescription = async (e) => {
                                 maxLength="10"
                                 value={mobileNumber}
                                 onChange={(e) => setMobileNumber(e.target.value)}
+                                readOnly
                               />
                               </Form.Group>
                             <Form.Group className="mb-3">

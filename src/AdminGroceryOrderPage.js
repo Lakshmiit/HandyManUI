@@ -53,6 +53,7 @@ const [cashbackAmount, setCashbackAmount] = useState(0);
  const [showZoomModal, setShowZoomModal] = useState(false);
   const [zoomImage, setZoomImage] = useState("");
   const [zoomProduct, setZoomProduct] = useState(null);
+  const [giftName, setGiftName] = useState("");
 // const [freeItemImage, setFreeItemImage] = useState(null);
 // const [freeItemName, setFreeItemName] = useState("");
 useEffect(() => {
@@ -219,6 +220,17 @@ useEffect(() => {
       } else {
         setCashbackAmount(0);        
       }
+
+      const numericGrandTotal = Number(data.grandTotal) || 0;
+      let gift = "";
+      if (numericGrandTotal >= 1699 && numericGrandTotal <= 1998) {
+        gift = "Paras Miracle Pedal Dustbin";
+      } 
+      else if (numericGrandTotal >= 2499) {
+        gift = "Oliveware Easy Meal Lunch Box";
+      }
+      setGiftName(gift);
+
 //       let offerImage = null;
 // let offerName = "";
 
@@ -696,45 +708,24 @@ const handleImageClick = (imageSrc, product) => {
       </td>
     </tr>
   )}
-   {/* {showFreeSugar && (
-    <tr>
-      <td colSpan="10" className="text-end fw-bold text-danger">
-        🎁 Give Customer <strong> Sugar 500 g FREE</strong>
-      </td>    
-    </tr>
-  )}            
-
-  {showAttaSugar && (
+  {/*{showAttaSugar && (
     <tr>
       <td colSpan="10" className="text-end fw-bold text-danger">
         🎁 Give Customer <strong> Sugar 1 Kg FREE</strong>
       </td>    
     </tr>
   )} */} 
-  {/* {freeItemName && (
+  
+{giftName && (
 <tr>
   <td colSpan="9" className="text-end fw-bold text-success">
-    🎁 Offer Applied:
+    🎁 Free Gift:
   </td>
-
-  <td className="text-center">
-    {freeItemImage && (
-      <img
-        src={freeItemImage}
-        alt="Offer Item"
-        style={{
-          width: "60px",
-          height: "60px",
-          objectFit: "contain"
-        }}
-      />
-    )}
-    <div style={{fontSize:"12px"}}>
-      {freeItemName}
-    </div>
+  <td className="fw-bold text-danger">
+    {giftName}
   </td>
 </tr>
-)} */}
+)}
     <tr>
       <td colSpan="9" className="text-end fw-bold">
         Grand Total:

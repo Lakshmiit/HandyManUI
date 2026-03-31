@@ -1283,7 +1283,7 @@ textarea {
 .sidebar-container {
   background-color: #FAFAFA;
   width: 200px;
-  height: 420px;
+  /* height: 420px; */
   max-height: 100vh;
   padding: 5px;
   margin: 10px;

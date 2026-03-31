@@ -8,6 +8,8 @@ import Header from './Header.js';
 import Footer from './Footer.js';
 import Sidebar from './Sidebar';
 import {  useParams, useNavigate} from 'react-router-dom';
+// import { appConfig } from "./config";
+
 const AddressManager = () => { 
   const navigate = useNavigate();
   const {selectedUserType} = useParams();
@@ -115,7 +117,7 @@ useEffect(() => {
 }, [fetchCustomerData]);
 
 useEffect(() => {
-  axios.get('https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/MasterData/getStates')
+  axios.get(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/MasterData/getStates`)
     .then(response => {
       const data = response.data;
       console.log("States API Response:", data); 
@@ -223,7 +225,7 @@ useEffect(() => {
       formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
       formData.append('fileName', fileName);
 
-      const response = await fetch('https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/upload?filename=' + fileName, {
+      const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/upload?filename=` + fileName, {
         method: 'POST',
         headers: {
           'Accept': 'text/plain',
@@ -312,7 +314,7 @@ useEffect(() => {
     };
 
   try {
-    const response = await fetch('https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/CreateRaiseTicket', {
+    const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/CreateRaiseTicket`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -403,6 +405,7 @@ useEffect(() => {
       firstName: fullName,
       lastName: "lastName",
       fullName: fullName,
+      walletAmount: "0",
     };
   
     try {
