@@ -48,12 +48,12 @@ const [units, setUnits] = useState("");
  const [groceryData, setgroceryData] = useState();
   const [groceryId, setgroceryId] = useState();
 const [cashbackAmount, setCashbackAmount] = useState(0);
-// const showFreeSugar = Number(grandTotal) > 299 && Number(grandTotal) < 398;
+const showFreeSugar = Number(grandTotal) > 599 && Number(grandTotal) < 998;
 // const showAttaSugar = Number(grandTotal) > 499 && Number(grandTotal) < 999;
  const [showZoomModal, setShowZoomModal] = useState(false);
   const [zoomImage, setZoomImage] = useState("");
   const [zoomProduct, setZoomProduct] = useState(null);
-  const [giftName, setGiftName] = useState("");
+  // const [giftName, setGiftName] = useState("");
 // const [freeItemImage, setFreeItemImage] = useState(null);
 // const [freeItemName, setFreeItemName] = useState("");
 useEffect(() => {
@@ -214,22 +214,22 @@ useEffect(() => {
       const grandTotalNumeric = Number(data.grandTotal) || 0;
       const cashback = totalAmountFromApi - grandTotalNumeric;
         
-      if ((cashback >= 49 && cashback <= 51) ||(cashback >= 99 && cashback <= 101) || (cashback >= 199 && cashback <= 201))
+      if ((cashback >= 49 && cashback <= 51) ||(cashback >= 29 && cashback <= 31) || (cashback >= 99 && cashback <= 101) || (cashback >= 149 && cashback <= 151) || (cashback >= 199 && cashback <= 201))
       {
         setCashbackAmount(cashback);                       
       } else {
         setCashbackAmount(0);        
       }
 
-      const numericGrandTotal = Number(data.grandTotal) || 0;
-      let gift = "";
-      if (numericGrandTotal >= 1699 && numericGrandTotal <= 1998) {
-        gift = "Paras Miracle Pedal Dustbin";
-      } 
-      else if (numericGrandTotal >= 2499) {
-        gift = "Oliveware Easy Meal Lunch Box";
-      }
-      setGiftName(gift);
+      // const numericGrandTotal = Number(data.grandTotal) || 0;
+      // let gift = "";
+      // if (numericGrandTotal >= 1699 && numericGrandTotal <= 1998) {
+      //   gift = "Paras Miracle Pedal Dustbin";
+      // } 
+      // else if (numericGrandTotal >= 2499) {
+      //   gift = "Oliveware Easy Meal Lunch Box";
+      // }
+      // setGiftName(gift);
 
 //       let offerImage = null;
 // let offerName = "";
@@ -464,21 +464,23 @@ const handleDownloadPDF = () => {
   let pdfCashback = 0;
   if (
     (cashbackAmount >= 49 && cashbackAmount <= 51) ||
+    (cashbackAmount >= 29 && cashbackAmount <= 31) ||
     (cashbackAmount >= 99 && cashbackAmount <= 101) ||
+    (cashbackAmount >= 149 && cashbackAmount <= 151)||
     (cashbackAmount >= 199 && cashbackAmount <= 201)
   ) {
     pdfCashback = cashbackAmount;
   }
 
-  // const pdfShowFreeSugar =
-  //   Number(grandTotal) > 299 && Number(grandTotal) < 498;
+  const pdfShowFreeSugar =
+    Number(grandTotal) > 599 && Number(grandTotal) < 998;
   //   const pdfshowAttaSugar =
   //   Number(grandTotal) > 499 && Number(grandTotal) < 999;
   let currentY = doc.lastAutoTable.finalY + 10;
 
   let requiredHeight = 12;
   if (pdfCashback > 0) requiredHeight += 6;
-  // if (pdfShowFreeSugar) requiredHeight += 6;
+  if (pdfShowFreeSugar) requiredHeight += 6;
   // if (pdfshowAttaSugar) requiredHeight += 6;
   if (currentY + requiredHeight > PAGE_HEIGHT - FOOTER_SPACE) {
     doc.addPage();
@@ -498,18 +500,18 @@ const handleDownloadPDF = () => {
     currentY += 6;
   }
 
-//  if (pdfShowFreeSugar) {
-//   doc.setFontSize(10);
-//   doc.setTextColor(0, 128, 0);
-//   doc.setFont("Roboto", "bold");
-//   doc.text(
-//     "🎁 Give Customer Sugar 500 g FREE",
-//     195,
-//     currentY,
-//     { align: "right" }
-//   );
-//   currentY += 8;
-// }
+ if (pdfShowFreeSugar) {
+  doc.setFontSize(10);
+  doc.setTextColor(0, 128, 0);
+  doc.setFont("Roboto", "bold");
+  doc.text(
+    "🎁 Give Customer Sugar 1 Kg FREE",
+    195,
+    currentY,
+    { align: "right" }
+  );
+  currentY += 8;
+}
 
 //   if (pdfshowAttaSugar) {
 //   doc.setFontSize(10);
@@ -706,17 +708,17 @@ const handleImageClick = (imageSrc, product) => {
       <td className="fw-bold text-success">
         ₹{cashbackAmount}
       </td>
-    </tr>
+    </tr> 
   )}
-  {/*{showAttaSugar && (
+  {showFreeSugar && (
     <tr>
       <td colSpan="10" className="text-end fw-bold text-danger">
         🎁 Give Customer <strong> Sugar 1 Kg FREE</strong>
       </td>    
     </tr>
-  )} */} 
+  )} 
   
-{giftName && (
+{/* {giftName && (
 <tr>
   <td colSpan="9" className="text-end fw-bold text-success">
     🎁 Free Gift:
@@ -725,7 +727,7 @@ const handleImageClick = (imageSrc, product) => {
     {giftName}
   </td>
 </tr>
-)}
+)} */}
     <tr>
       <td colSpan="9" className="text-end fw-bold">
         Grand Total:

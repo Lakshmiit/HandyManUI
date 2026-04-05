@@ -107,34 +107,34 @@
        
 // const groceryCategories = [
 //   {label: 'LMart Products', value: 'LMart Special', image: RoyalImg},
-//   { label: 'Unbeatable 10 Offers', value: 'Unbeatable Offers', image: UnbeatableImg },
-//   { label: 'Above 45 % Offers', value: 'Offers', image: Above45Img },
-//   { label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
-//    { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
-//   { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
-//   { label: 'Ice Creams', value: 'Ice Creams', image: IcecreamImg },
-//   { label: 'Atta & Flours', value: 'Atta & Flours', image: AttaImg },
 //   { label: 'Rice & Ravva', value: 'Rice & Ravva', image: RavvaImg },    
+//   { label: 'Atta & Flours', value: 'Atta & Flours', image: AttaImg },
 //   { label: 'Oils & Dals', value: 'Oils & Dals', image: OilsImg },
-//   { label: 'Sugar, Salt & Jaggery', value: 'Sugar, Salt & Jaggery', image: SugarImg }, 
 //   { label: 'Masala, Spices & Pickles', value: 'Masala, Spices & Pickles', image: MasalaImg },
 //   { label: 'Instant Food, Chips & Namkeen', value: 'Instant Food, Chips & Namkeen', image: NamkeenImg },
-//   { label: 'Bread & Eggs', value: 'Bread & Eggs', image: BreadsImg },
-//   { label: 'Biscuits & Chocolates', value: 'Biscuits & Chocolates', image: BiscuitsImg },
-//   { label: 'Drinks & Juices', value: 'Drinks & Juices', image: DrinkImg },
-//   { label: 'Sweets & Snacks', value: 'Sweets & Snacks', image: BakeryImg },
-//   { label: 'Dry Fruits & Bakery', value: 'Dry Fruits & Bakery', image: DryfruitsImg },
-//   { label: 'Soups & Sauces', value: 'Soups & Sauces', image: SoupsImg},
-//   { label: 'Tea & Coffee', value: 'Tea & Coffee', image: TeaImg },   
-//   { label: 'Stationary', value: 'Stationary', image: StationaryImg },
-//   { label: 'Home Needs', value: 'Home Needs', image: HouseHoldImg },
-//   { label: 'Pooja Essentials', value: 'Puja Essentials', image: PoojaImg },
 //   { label: 'Skin & Face Care', value: 'Skin & Face Care', image: SkinImg },
 //   { label: 'Bath & Body Care', value: 'Bath & Body Care', image: BathBodyImg },
 //   { label: 'Hair Care', value: 'Hair Care', image: HairImg },
+//   { label: 'Soups & Sauces', value: 'Soups & Sauces', image: SoupsImg},
+//   { label: 'Tea & Coffee', value: 'Tea & Coffee', image: TeaImg },   
+//   { label: 'Biscuits & Chocolates', value: 'Biscuits & Chocolates', image: BiscuitsImg },
+//   { label: 'Unbeatable 10 Offers', value: 'Unbeatable Offers', image: UnbeatableImg },
+//   { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
+//   { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
+//   { label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
+//   { label: 'Sugar, Salt & Jaggery', value: 'Sugar, Salt & Jaggery', image: SugarImg }, 
+//   { label: 'Dry Fruits & Bakery', value: 'Dry Fruits & Bakery', image: DryfruitsImg },
+//   { label: 'Pooja Essentials', value: 'Puja Essentials', image: PoojaImg },
+//   { label: 'Health Care', value: 'Health Care', image: HealthImg },
+//   { label: 'Drinks & Juices', value: 'Drinks & Juices', image: DrinkImg },
+//   { label: 'Bread & Eggs', value: 'Bread & Eggs', image: BreadsImg },
+//   { label: 'Home Needs', value: 'Home Needs', image: HouseHoldImg },
+//   { label: 'Above 45 % Offers', value: 'Offers', image: Above45Img },
+//   { label: 'Ice Creams', value: 'Ice Creams', image: IcecreamImg },
+//   { label: 'Sweets & Snacks', value: 'Sweets & Snacks', image: BakeryImg },
+//   { label: 'Stationary', value: 'Stationary', image: StationaryImg },
 //   { label: 'Baby Products', value: 'Baby Products', image: BabyKidsImg },
 //   { label: 'Kids Zone', value: 'Kids Zone', image: KidsImg },
-//   { label: 'Health Care', value: 'Health Care', image: HealthImg },
 //   { label: 'DWCRA Products', value: 'DWCRA', image: DwakraProducts },
 //   { label: 'Chicken', value: 'Chicken', image: ChickenImg },
 // ];
@@ -2526,12 +2526,15 @@ import AddIcCallIcon from '@mui/icons-material/AddIcCall';
 import RoyalImg from './img/LMartLogo.jpeg';
 import HomeElectricalImg from './img/HomeElectrical.jpeg';
 import HomePlumbingImg from './img/HomePlumbing.jpeg'; 
-import Poster from './img/Poster.jpeg';  
+// import Poster from './img/Poster.jpeg';  
 // import ReedemCode from "./ReedemCode.js";
-// import Container1Img from './img/599.png';
-// import Container2Img from './img/599.png';
-// import Container3Img from './img/1999.png';       
-// import Container4Img from './img/999.png';    
+import Container1Img from './img/599.jpg';
+import Container2Img from './img/299.jpg';
+import Container3Img from './img/Sugar.jpg';
+import Container4Img from './img/999.jpg';       
+import Container5Img from './img/1499.jpg'; 
+import Container6Img from './img/1999.jpg';      
+
 // import { appConfig } from "./config";                     
 
 const getMenuList = (userType, userId, category, district ,ZipCode,technicianFullName, isMobile) => {
@@ -2566,34 +2569,34 @@ const categories = [
        
 const groceryCategories = [
   {label: 'LMart Products', value: 'LMart Special', image: RoyalImg},
-  { label: 'Unbeatable 10 Offers', value: 'Unbeatable Offers', image: UnbeatableImg },
-  { label: 'Above 45 % Offers', value: 'Offers', image: Above45Img },
-  { label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
-   { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
-  { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
-  { label: 'Ice Creams', value: 'Ice Creams', image: IcecreamImg },
-  { label: 'Atta & Flours', value: 'Atta & Flours', image: AttaImg },
   { label: 'Rice & Ravva', value: 'Rice & Ravva', image: RavvaImg },    
+  { label: 'Atta & Flours', value: 'Atta & Flours', image: AttaImg },
   { label: 'Oils & Dals', value: 'Oils & Dals', image: OilsImg },
-  { label: 'Sugar, Salt & Jaggery', value: 'Sugar, Salt & Jaggery', image: SugarImg }, 
   { label: 'Masala, Spices & Pickles', value: 'Masala, Spices & Pickles', image: MasalaImg },
   { label: 'Instant Food, Chips & Namkeen', value: 'Instant Food, Chips & Namkeen', image: NamkeenImg },
-  { label: 'Bread & Eggs', value: 'Bread & Eggs', image: BreadsImg },
-  { label: 'Biscuits & Chocolates', value: 'Biscuits & Chocolates', image: BiscuitsImg },
-  { label: 'Drinks & Juices', value: 'Drinks & Juices', image: DrinkImg },
-  { label: 'Sweets & Snacks', value: 'Sweets & Snacks', image: BakeryImg },
-  { label: 'Dry Fruits & Bakery', value: 'Dry Fruits & Bakery', image: DryfruitsImg },
-  { label: 'Soups & Sauces', value: 'Soups & Sauces', image: SoupsImg},
-  { label: 'Tea & Coffee', value: 'Tea & Coffee', image: TeaImg },   
-  { label: 'Stationary', value: 'Stationary', image: StationaryImg },
-  { label: 'Home Needs', value: 'Home Needs', image: HouseHoldImg },
-  { label: 'Pooja Essentials', value: 'Puja Essentials', image: PoojaImg },
   { label: 'Skin & Face Care', value: 'Skin & Face Care', image: SkinImg },
   { label: 'Bath & Body Care', value: 'Bath & Body Care', image: BathBodyImg },
   { label: 'Hair Care', value: 'Hair Care', image: HairImg },
+  { label: 'Soups & Sauces', value: 'Soups & Sauces', image: SoupsImg},
+  { label: 'Tea & Coffee', value: 'Tea & Coffee', image: TeaImg },   
+  { label: 'Biscuits & Chocolates', value: 'Biscuits & Chocolates', image: BiscuitsImg },
+  { label: 'Unbeatable 10 Offers', value: 'Unbeatable Offers', image: UnbeatableImg },
+  { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
+  { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
+  { label: 'Milk, Curd & Ghee', value: 'Milk, Curd & Ghee', image: MilkImg },
+  { label: 'Sugar, Salt & Jaggery', value: 'Sugar, Salt & Jaggery', image: SugarImg }, 
+  { label: 'Dry Fruits & Bakery', value: 'Dry Fruits & Bakery', image: DryfruitsImg },
+  { label: 'Pooja Essentials', value: 'Puja Essentials', image: PoojaImg },
+  { label: 'Health Care', value: 'Health Care', image: HealthImg },
+  { label: 'Drinks & Juices', value: 'Drinks & Juices', image: DrinkImg },
+  { label: 'Bread & Eggs', value: 'Bread & Eggs', image: BreadsImg },
+  { label: 'Home Needs', value: 'Home Needs', image: HouseHoldImg },
+  { label: 'Above 45 % Offers', value: 'Offers', image: Above45Img },
+  { label: 'Ice Creams', value: 'Ice Creams', image: IcecreamImg },
+  { label: 'Sweets & Snacks', value: 'Sweets & Snacks', image: BakeryImg },
+  { label: 'Stationary', value: 'Stationary', image: StationaryImg },
   { label: 'Baby Products', value: 'Baby Products', image: BabyKidsImg },
   { label: 'Kids Zone', value: 'Kids Zone', image: KidsImg },
-  { label: 'Health Care', value: 'Health Care', image: HealthImg },
   { label: 'DWCRA Products', value: 'DWCRA', image: DwakraProducts },
   { label: 'Chicken', value: 'Chicken', image: ChickenImg },
 ];
@@ -2704,77 +2707,86 @@ const secondCategories = groceryCategories.slice(6, 31);
 // const fourthCategories = groceryCategories.slice(24, 30);
 // const HEADER_HEIGHT = window.innerWidth <= 768 ? 50 : 100;
 const [showOffersModal, setShowOffersModal] = useState(false);
+// const [offersData, setOffersData] = useState([]);
+// const [offerImages, setOfferImages] = useState({});
 const [showCoinsModal, setShowCoinsModal] = useState(false);
-// const offers = [
-//   {
-//     condition: "New Users Get - ₹50 in Wallet!",
-//     img: Container1Img,
-//   },
-//   {
-//     condition: "Cashback|Above ₹599 Order",
-//     img: Container2Img,
-//   },
-//   {
-//     condition: "Cashback|Above ₹999 Order",
-//     img: Container4Img,
-//   },
-//   {
-//     condition: "Cashback|Above ₹1999 Order",
-//     img: Container3Img,
-//   },
-// ];
+const offers = [
+  {
+    condition: "New Users Get - ₹50 in Wallet!",
+    img: Container1Img,
+  },
+  {
+    condition: "Cashback|Above ₹299",
+    img: Container2Img,
+  },
+  {
+    condition: "Free Sugar 1Kg|Above ₹599",
+    img: Container3Img,
+  },
+  {
+    condition: "Cashback|Above ₹999",
+    img: Container4Img,
+  },
+  {
+    condition: "Cashback|Above ₹1499",
+    img: Container5Img,
+  },
+  {
+    condition: "Cashback|Above ₹1999",
+    img: Container6Img,
+  },
+];
 
-//  const highlightText = (text) => {
-//   return text.split(/(₹\d+)/g).map((part, index) =>
-//     /₹\d+/.test(part) ? (
-//       <span key={index} style={{ color: "red", fontWeight: "bold" }}>
-//         {part}
-//       </span>
-//     ) : (
-//       <span key={index} style={{ color: "green" }}>
-//         {part}
-//       </span>
-//     )
-//   );
-// };
-
-// useEffect(() => {
-//   setShowOffersModal(true);
-// }, []);
-
-const hasRun = useRef(false);
+ const highlightText = (text) => {
+  return text.split(/(₹\d+)/g).map((part, index) =>
+    /₹\d+/.test(part) ? (
+      <span key={index} style={{ color: "red", fontWeight: "bold" }}>
+        {part}
+      </span>
+    ) : (
+      <span key={index} style={{ color: "green" }}>
+        {part}
+      </span>
+    )
+  );
+};
 
 useEffect(() => {
-  if (hasRun.current) return; 
-  hasRun.current = true;
-  const today = new Date().toDateString();
-  const storedData = JSON.parse(
-    localStorage.getItem("offersModalData") || "{}"
-  );
-  if (storedData.date === today) {
-    if (storedData.count < 10) {
-      setShowOffersModal(true);
-      localStorage.setItem(
-        "offersModalData",
-        JSON.stringify({
-          date: today,
-          count: storedData.count + 1,
-        })
-      );
-    }
-  } else {
-    setShowOffersModal(true);
-    localStorage.setItem(
-      "offersModalData",
-      JSON.stringify({
-        date: today,
-        count: 1,
-      })
-    );
-  }
+  setShowOffersModal(true);
 }, []);
 
-const placeholderSuggestions = [
+// const hasRun = useRef(false);
+
+// useEffect(() => {
+//   if (hasRun.current) return; 
+//   hasRun.current = true;
+//   const today = new Date().toDateString();
+//   const storedData = JSON.parse(
+//     localStorage.getItem("offersModalData") || "{}"
+//   );
+//   if (storedData.date === today) {
+//     if (storedData.count < 10) {
+//       setShowOffersModal(true);
+//       localStorage.setItem(
+//         "offersModalData",
+//         JSON.stringify({
+//           date: today,
+//           count: storedData.count + 1,
+//         })
+//       );
+//     }
+//   } else {
+//     setShowOffersModal(true);
+//     localStorage.setItem(
+//       "offersModalData",
+//       JSON.stringify({
+//         date: today,
+//         count: 1,
+//       })
+//     );
+//   }
+// }, []);
+ const placeholderSuggestions = [
   'Search "Milk"', 'Search "Freedom Refined Sunflower Oil"', 'Search "Sona Masoori Rice"',
   'Search "Paneer"', 'Search "Red Label"', 'Search "Coffee"', 'Search "Aashirvaad"',
   'Search "Surf Excel"', 'Search "Toothpaste"', 'Search "Lizol"', 'Search "Maggi"',
@@ -2875,32 +2887,60 @@ useEffect(() => {
 }, [refRecord?.referralNumbers, checkNewOrExisting, AWARDED_POINTS_KEY]);
 
 // useEffect(() => {
-//   const numbers = (refRecord?.referralNumbers || "")
-//     .split(",")
-//     .map(s => s.trim())
-//     .filter(Boolean)
-//     .filter((v, i, a) => a.indexOf(v) === i);
-
-//   if (numbers.length === 0) {
-//     setDisplayNumbers("");
-//     return;
-//   }
-
-//   const checkAllNumbers = async () => {
-//     setRefLoading(true);
-//     const results = await Promise.all(
-//       numbers.map(async (num) => {
-//         const status = await checkNewOrExisting(num);
-//         if (status === "registered") return `${num} ✅ Registered`;
-//         if (status === "not registered") return `${num} ❌ Not Registered`;
-//         return `${num} ⚠️ Invalid`;
-//       })
-//     );
-//     setDisplayNumbers(results.join(", "));
-//     setRefLoading(false);
+//   const fetchOffers = async () => {
+//     try {
+//       const res = await axios.get(
+//         "https://localhost:7091/api/UpLoadBannners/GetBanners"
+//       );
+//       setOffersData(res.data);
+//       console.log("Offers Data:", res.data);
+//     } catch (err) {
+//       console.error("Error fetching offers:", err);
+//     }
 //   };
-//   checkAllNumbers();
-// }, [refRecord, checkNewOrExisting]);
+//   fetchOffers();
+// }, []);
+
+// const now = new Date();
+
+// const activeOffers = offersData.filter((offer) => {
+//   const start = new Date(offer.startDate);
+//   const end = new Date(offer.endDate);
+//   return now >= start && now <= end;
+// });
+
+// useEffect(() => {
+//   if (activeOffers.length > 0) {
+//     setShowOffersModal(true);
+//   }
+// }, [offersData, activeOffers.length]);
+    
+// useEffect(() => {
+//   if (!offersData.length) return;
+//   const fetchImages = async () => {
+//     const imagesMap = {};
+//     for (const offer of offersData) {
+//       imagesMap[offer.id] = [];
+//       for (const img of offer.image || []) {
+//         try {
+//           const res = await fetch(
+//             `${IMAGE_API}${encodeURIComponent(img.images)}`
+//           );
+//           const data = await res.json();
+//           if (data?.imageData) {
+//             imagesMap[offer.id].push(
+//               `data:image/jpeg;base64,${data.imageData}`
+//             );
+//           }
+//         } catch (err) {
+//           console.error("Image load failed:", err);
+//         }
+//       }
+//     }
+//     setOfferImages(imagesMap);
+//   };
+//   fetchImages();
+// }, [offersData]);
 
 useEffect(() => {
   const onResize = () => {
@@ -3234,7 +3274,7 @@ useEffect(() => {
   console.log( imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery,error, showMenu, products, selectedCategory, dress);
 }, [imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery, error,showMenu, products, selectedCategory, dress]);
  
-useEffect(() => {
+useEffect(() => {  
   if (!selectedCategory) return;
   let cancelled = false;
   const controller = new AbortController();
@@ -4153,7 +4193,7 @@ const updateLocalStorageCart = (product, qty) => {
               </div>
                <div className="d-flex align-items-center">
             {/* Coins (Clickable) */}
-            {/* <div 
+            <div 
               className="coin-wrap"
               style={{ marginLeft: 10, cursor: "pointer" }}
               onClick={() => setShowCoinsModal(true)}
@@ -4161,7 +4201,7 @@ const updateLocalStorageCart = (product, qty) => {
               <span className="coin-value">
                 {pointsLoading ? "0" : userPoints}
               </span>
-            </div> */}
+            </div>
           </div>
  
   {/* Profile Image */}
@@ -5437,6 +5477,78 @@ const updateLocalStorageCart = (product, qty) => {
   <Modal.Header closeButton>
    <Modal.Title style={{ fontSize: "15px", fontWeight: "bold" }}>🎉Handyman Special Offer Sale!</Modal.Title>
   </Modal.Header>
+  {/* <Modal.Body>
+     {activeOffers.map((offer, index) => {
+      const images = offerImages[offer.id] || [];
+      return (
+        <div key={offer.id} className="p-0">
+          {/* <h5 className= "fw-bold text-center"  style={{ fontFamily: "Roboto, sans-serif", color: "red" }}>{offer.title}</h5> */}
+          {/* ✅ SINGLE IMAGE 
+          {images.length === 1 && (
+            <img
+              src={images[0]}
+              alt="offer"
+              style={{
+                width: "100%",
+                maxHeight: "500px",
+                objectFit: "contain",
+                display: "block"
+              }}
+            />
+          )}
+          {/* ✅ MULTIPLE IMAGES CAROUSEL 
+            {images.length > 1 && (
+              <div
+                id={`carousel-${index}`}
+                className="carousel slide carousel-fade"
+                data-bs-ride="carousel"
+                data-bs-interval="2000"   
+              >
+                <div className="carousel-inner">
+                  {images.map((img, i) => (
+                    <div
+                      key={i}
+                      className={`carousel-item ${i === 0 ? "active" : ""}`}
+                    >
+                      <img
+                        src={img}
+                        className="d-block w-100"
+                        alt="offer"
+                        style={{
+                          maxHeight: "500px",
+                          objectFit: "contain",
+                          borderRadius: "8px",
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                {/* Controls 
+                <button
+                  className="carousel-control-prev"
+                  type="button"
+                  data-bs-target={`#carousel-${index}`}
+                  data-bs-slide="prev"
+                >
+                  <span className="carousel-control-prev-icon"></span>
+                </button>
+
+                <button
+                  className="carousel-control-next"
+                  type="button"
+                  data-bs-target={`#carousel-${index}`}
+                  data-bs-slide="next"
+                >
+                  <span className="carousel-control-next-icon"></span>
+                </button>
+              </div>
+            )}
+            {/* <p className= "fw-bold"  style={{ fontFamily: "Roboto, sans-serif", color: "red" }}>{offer.description}</p>
+   </div>
+      );
+    })}
+  </Modal.Body> */}
   <Modal.Body>   
      {/* <ul style={{ paddingLeft: "10px" }}>
      <li>🛍️ New Users Get  → {" "} 
@@ -5444,17 +5556,17 @@ const updateLocalStorageCart = (product, qty) => {
       </ul> */}
      
      {/* <div className="container"> */}
-          {/* <div className="row">
+          <div className="row">
             {offers.map((offer, index) => (
               <div className="col-6 mb-1" key={index}>
                 <div className="offer-card">
-                  {/* Image 
+                  {/*  Image */}
                   {offer.img ? (
                     <img src={offer.img} alt="offer" className="offer-img" />
                   ) : (
                     <div className="offer-img-box"></div>
                   )}
-                  {/* Text *
+                  {/* Text */}
                  <div className="offer-condition">
                   {offer.condition.split("|").map((line, i) => (
                     <div key={i}>{highlightText(line)}</div>
@@ -5463,19 +5575,19 @@ const updateLocalStorageCart = (product, qty) => {
                 </div>
               </div>
             ))}
-          </div> */}
+          </div>
         {/* </div> */}
-        <div className="text-center">
+         {/* <div className="text-center">
         <img  
           src={Poster} 
           alt="Grocery Offer Poster"
           style={{ width: "100%", maxWidth: "500px", height: "50%" }}
         />
-      </div>
+      </div> */}
     <div className="text-center">
-      {/* <b style={{ color: "red", fontSize: "14px" }}>
+       <b style={{ color: "red", fontSize: "14px" }}>
         💥 Handyman App – No Extra Charges. Pay Only Product Cost After Free Home Delivery.
-      </b> <br/> */}
+      </b> <br/> 
        <b style={{ color: "green",fontSize: "13px" }}>
         For any Queries Contact Customer Care: <span style={{color: "red", fontSize: "15px"}}>6281198953</span>
       </b>

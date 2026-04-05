@@ -98,36 +98,51 @@ console.log( limit, loading, isChecked, netPayable, editingAddressId, customerNa
 // } 
 const numericGrandTotal = Number(grandTotal) || 0;
 let cashback = 0;
-let giftName = "";
+// let giftName = "";
 
 // Cashback logic
-if (numericGrandTotal >= 599 && numericGrandTotal <= 998) {
-  cashback = 50;
+if (numericGrandTotal >= 299 && numericGrandTotal <= 599) {
+  cashback = 30;
 } 
-else if (numericGrandTotal >= 999 && numericGrandTotal <= 1698) {
+else if (numericGrandTotal >= 999 && numericGrandTotal <= 1498) {
   cashback = 100;
 }
-else if (numericGrandTotal >= 1999 && numericGrandTotal <= 2498) {
+else if (numericGrandTotal >= 1499 && numericGrandTotal <= 1998) {
+  cashback = 150;
+}
+else if (numericGrandTotal >= 1999) {
   cashback = 200;
 }
 
-// Gift logic
-if (numericGrandTotal >= 1699 && numericGrandTotal <= 1998) {
-  giftName = "Paras Miracle Unbreakable Pedal Dustbin";
-}
-else if (numericGrandTotal >= 2499) {
-  giftName = "Oliveware Easy Meal Lunch Box Set";
-}
+// // Gift logic
+// if (numericGrandTotal >= 1699 && numericGrandTotal <= 1998) {
+//   giftName = "Paras Miracle Unbreakable Pedal Dustbin";
+// }
+// else if (numericGrandTotal >= 2499) {
+//   giftName = "Oliveware Easy Meal Lunch Box Set";
+// }
+
+// let extraItem = null;
+// let updatedGrandTotal = numericGrandTotal;
+
+// if (numericGrandTotal >= 299) {
+//   extraItem = {
+//     name: "Visakha Dairy Happy Full Cream Milk 500 ml",
+//     price: 1,
+//   };
+
+//   updatedGrandTotal = numericGrandTotal + 1;
+// }
 const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;
 
-// const showSugarOffer = Number(grandTotal) >= 299 && Number(grandTotal) <= 398;
+const showSugarOffer = Number(grandTotal) >= 599 && Number(grandTotal) <= 998;
 // const showAttaOffer = Number(grandTotal) >= 499 && Number(grandTotal) <= 999;
-const gt = Number(grandTotal || 0);
 // const discount = Number(firstOrderDiscount || 0);
 // const referral = Number(referralAmount) || 0;
 const primaryAddress = addresses.find((addr) => addr.type === "primary");
 const wallet = Number(primaryAddress?.walletAmount || 0);
-const netPayables = gt - wallet - cashback;     
+const gt = Number(grandTotal || 0);
+const netPayables = gt  - wallet - cashback;     
 // const netPayables = gt - discount - wallet - referral - cashback;  
 
 // useEffect(() => {
@@ -1183,7 +1198,7 @@ Number of Items selected
                    </td>
                  </tr>
                )} */}
-               {giftName && (
+               {/* {giftName && (
                 <tr>
                 <td style={{ width: "40%", fontSize: "14px", color: "green" }}>
                 🎁 Free Gift
@@ -1192,31 +1207,41 @@ Number of Items selected
                 {giftName}
                 </td>
                 </tr>
-                )}
-<tr>
-<td style={{ width: "40%", fontSize: "14px" }}>
-Grand Total
-</td>
-<td style={{ width: "40%" }}>Rs {grandTotal} /-</td>
-</tr>
-{wallet  > 0 && (
-<tr>
-<td style={{ width: "40%", fontSize: "14px",color: "red" }}>
-Wallet Amount
-</td>
-<td style={{ width: "40%", fontSize: "14px", color: "red" }}>
-{`Rs ${wallet } /-`}
-</td>
-</tr>
-)}
-{/* {showSugarOffer && (
+                )} */}
+               {/* {extraItem && (
+                    <tr>
+                      <td style={{ color: "green", fontSize: "14px" }}>
+                        🎁 Special Offer Item
+                      </td>
+                      <td style={{ color: "green", fontWeight: "bold" }}>
+                        {extraItem.name} - ₹{extraItem.price}
+                      </td>
+                    </tr>
+                  )} */}
+
+                    <tr>
+                    <td style={{ width: "40%", fontSize: "14px" }}>
+                    Grand Total
+                    </td>
+                    <td style={{ width: "40%" }}>Rs {grandTotal} /-</td>
+                    </tr>
+                    {/* {wallet  > 0 && (    
+                    <tr>
+                    <td style={{ width: "40%", fontSize: "14px",color: "red" }}>
+                    Wallet Amount
+                    </td>
+                    <td style={{ width: "40%", fontSize: "14px", color: "red" }}>
+                    {`Rs ${wallet } /-`}
+                    </td>
+                    </tr>
+                    )} */}
+{showSugarOffer && (
                            <tr>     
                              <td colSpan="2" style={{ textAlign: "center" }}>
                                <div style={{ fontSize: "13px", fontWeight: 600, color: "red" }}>
-                                 🎁 FREE Sugar 500 g
-                                 
+                                 🎁 FREE Sugar 1 Kg
                                </div>
-                               <img
+                               {/* <img
                        src={freeItemImage}
                        alt="Free Item"
                        style={{
@@ -1225,20 +1250,10 @@ Wallet Amount
                          objectFit: "contain",
                          display: "block",
                        }}
-                     />
+                     /> */}
                              </td>
                            </tr>
-                         )}  */}
-{/*{showAttaOffer && (
-                           <tr>     
-                             <td colSpan="2" style={{ textAlign: "center" }}>
-                               <div style={{ fontSize: "12px", fontWeight: 600, color: "red" }}>
-                                 🎁 FREE Sugar 1 Kg 
-                               </div>
-                             </td>
-                           </tr>
-                         )} */}
-
+                         )} 
 {cashback  > 0 && (
 <tr>
 <td style={{ width: "40%", fontSize: "14px",color: "red" }}>
@@ -1250,14 +1265,14 @@ Cash Back
 </tr>
 )}
 
-{walletAmount > 0 && (
+{wallet > 0 && (
 <tr>
 <td style={{ width: "40%", fontSize: "14px", color: 'red' }}>
-First Order Wallet Amount
+First Order Wallet Amount 
 </td>
 
 <td style={{ width: "40%", fontSize: "14px", color: 'red' }}>
-{`Rs ${walletAmount} /-`}
+{`Rs ${wallet} /-`}
 </td>     
 </tr>
 )}
