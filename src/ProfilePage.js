@@ -4193,7 +4193,7 @@ const updateLocalStorageCart = (product, qty) => {
               </div>
                <div className="d-flex align-items-center">
             {/* Coins (Clickable) */}
-            <div 
+            {/* <div 
               className="coin-wrap"
               style={{ marginLeft: 10, cursor: "pointer" }}
               onClick={() => setShowCoinsModal(true)}
@@ -4201,7 +4201,7 @@ const updateLocalStorageCart = (product, qty) => {
               <span className="coin-value">
                 {pointsLoading ? "0" : userPoints}
               </span>
-            </div>
+            </div> */}
           </div>
  
   {/* Profile Image */}
