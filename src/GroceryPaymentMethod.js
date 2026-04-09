@@ -152,6 +152,37 @@ const netPayables = gt  - wallet - cashback;
 //   }
 // }, [firstOrderDiscount]);
 
+
+
+
+  const getUserLocation = () => {
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject("Geolocation not supported");
+      } else {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            resolve({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            });
+          },
+          (error) => {
+            if (error.code === 1) {
+              reject("User denied location access");
+            } else {
+              reject("Unable to get location");
+            }
+
+            console.log("Location error ", error.code);
+          },
+        );
+      }
+    });
+  };
+
+
+
 useEffect(() => {
 const gt = Number(grandTotal) || 0;
 const pts = Number(referralPoints) || 0;
@@ -558,8 +589,25 @@ window.addEventListener("resize", handleResize);
 return () => window.removeEventListener("resize", handleResize);
 }, []);
 
-const handleUpdatePaymentMethod = async () => {
-try {
+
+  const handleUpdatePaymentMethod = async () => {
+    try {
+      let lat = 0;
+      let lng = 0;
+
+      try {
+        const location = await getUserLocation();
+        lat = location.latitude;
+        lng = location.longitude;
+      } catch (error) {
+        if (error === "User denied location access") {
+          // showLocationPopup();
+          //return;
+        } else {
+          console.log("Location error:", error);
+          return; // also stop for other errors
+        }
+      }
 const primaryAddress = addresses.find((addr) => addr.type === "primary");
 const state = primaryAddress?.state;
 const district = primaryAddress?.district || "";
@@ -590,10 +638,11 @@ paidAmount: "",
 AssignedTo: "",
 DeliveryPartnerUserId: "",
 latitude: 0,
-longitude: 0,
+longitude: 0,                 
 isPickUp: false,
 isDelivered: false,
 walletAmount: walletAmount,
+location: `https://www.google.com/maps?q=${lat},${lng}`,
 };
 
 let response = await fetch(
@@ -708,7 +757,7 @@ window.alert(
 `Thank You for Choosing the Lakshmi Mart Services! Your Reference Order Number is ${martId}. Delivery in Between 45 to 120 Minutes.`,
 );
 }
-window.location.href = `/profilePage/${userType}/${userId}`;
+// window.location.href = `/profilePage/${userType}/${userId}`;
 }
 } catch (error) {
 console.error("Error:", error);
@@ -1247,7 +1296,7 @@ Number of Items selected
                        style={{
                          width: "100px",    
                          height: "100px",
-                         objectFit: "contain",
+                         objectFit: "contain",   
                          display: "block",
                        }}
                      /> */}

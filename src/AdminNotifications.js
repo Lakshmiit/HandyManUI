@@ -9,6 +9,7 @@ import {
 import Footer from './Footer.js';
 import { Button } from "react-bootstrap";    
 import "./App.css";
+// import { appConfig } from "./config";
 
 const NotificationsList = ({ notifications, highlightedItem }) => {
   const navigate = useNavigate();
@@ -176,6 +177,9 @@ const lakshmiCollectionsNotifications = notifications.filter(
             <div>
               <strong>Address:</strong> {notification.address}, {notification.district}, {notification.state}, {notification.zipCode}, {notification.customerPhoneNumber}
             </div>
+            <div>
+              <strong>Location:</strong> {notification.location}
+            </div>
             <div className="notification-date">
               <strong>Date:</strong> {new Date(notification.date).toLocaleString()}
             </div>
@@ -257,17 +261,17 @@ const Notification = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
+    
   const fetchNotifications = useCallback(async () => {
     try { 
       const [raiseTicketResponse, BookTechnicianResponse, buyProductResponse, groceryItemResponse, collectionsResponse] = await Promise.all([
         fetch(
-          "https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications"
+        `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetTicketsNotifications`
         ),
-        fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/BookTechnician/GetBookTechnicianForAdminList`),
-        fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForAdminList`),
-        fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Mart/GetAllMartItems`),
-        fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/LakshmiCollection/GetAllLakshmiCollectionsOpen`),
+        fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BookTechnician/GetBookTechnicianForAdminList`),
+        fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BuyProduct/GetBuyProductDetailsForAdminList`),
+        fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/GetAllMartItems`),
+        fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/LakshmiCollection/GetAllLakshmiCollectionsOpen`),
       ]);
 
       const raiseTicketData = await raiseTicketResponse.json();
@@ -423,7 +427,7 @@ const handleTabClick = (tab) => {
           ${tab === "Book Technician" && glowTechnician ? "glow" : ""}
           ${tab === "Buy Products" && glowProduct ? "glow" : ""}
           ${tab === "Grocery Items" && glowGrocery ? "glow" : ""}
-          ${tab === "Lakshmi Collections" && glowGrocery ? "glow" : ""}
+          ${tab === "Lakshmi Collections" && glowCollection ? "glow" : ""}
           `}
         onClick={() => handleTabClick(tab)}
         style={{ cursor: "pointer" }}
