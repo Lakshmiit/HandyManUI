@@ -2528,12 +2528,12 @@ import HomeElectricalImg from './img/HomeElectrical.jpeg';
 import HomePlumbingImg from './img/HomePlumbing.jpeg'; 
 // import Poster from './img/Poster.jpeg';  
 // import ReedemCode from "./ReedemCode.js";
-import Container1Img from './img/599.jpg';
-import Container2Img from './img/299.jpg';
-import Container3Img from './img/Sugar.jpg';
-import Container4Img from './img/999.jpg';       
-import Container5Img from './img/1499.jpg'; 
-import Container6Img from './img/1999.jpg';      
+// import Container1Img from './img/599.jpg';
+// import Container2Img from './img/299.jpg';
+// import Container3Img from './img/Sugar.jpg';
+// import Container4Img from './img/999.jpg';       
+// import Container5Img from './img/1499.jpg'; 
+// import Container6Img from './img/1999.jpg';      
 
 // import { appConfig } from "./config";                     
 
@@ -2569,7 +2569,8 @@ const categories = [
        
 const groceryCategories = [
   {label: 'LMart Products', value: 'LMart Special', image: RoyalImg},
-   { label: 'Unbeatable 10 Offers', value: 'Unbeatable Offers', image: UnbeatableImg },
+  { label: 'Unbeatable 10 Offers', value: 'Unbeatable Offers', image: UnbeatableImg },
+  // { label: '₹1 Store', value: '₹1 Store', image: UnbeatableImg },
   { label: 'Rice & Ravva', value: 'Rice & Ravva', image: RavvaImg },    
   { label: 'Atta & Flours', value: 'Atta & Flours', image: AttaImg },
   { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
@@ -2707,53 +2708,132 @@ const secondCategories = groceryCategories.slice(6, 31);
 // const fourthCategories = groceryCategories.slice(24, 30);
 // const HEADER_HEIGHT = window.innerWidth <= 768 ? 50 : 100;
 const [showOffersModal, setShowOffersModal] = useState(false);
-// const [offersData, setOffersData] = useState([]);
-// const [offerImages, setOfferImages] = useState({});
+const [offersData, setOffersData] = useState([]);
+const [offerImages, setOfferImages] = useState({});
 const [showCoinsModal, setShowCoinsModal] = useState(false);
-const offers = [
-  {
-    condition: "New Users Get - ₹50 in Wallet!",
-    img: Container1Img,
-  },
-  {
-    condition: "Cashback|Above ₹299",
-    img: Container2Img,
-  },
-  {
-    condition: "Free Sugar 1Kg|Above ₹599",
-    img: Container3Img,
-  },
-  {
-    condition: "Cashback|Above ₹999",
-    img: Container4Img,
-  },
-  {
-    condition: "Cashback|Above ₹1499",
-    img: Container5Img,
-  },
-  {
-    condition: "Cashback|Above ₹1999",
-    img: Container6Img,
-  },
-];
+// const offers = [
+//   {
+//     condition: "New Users Get - ₹50 in Wallet!",
+//     img: Container1Img,
+//   },
+//   {
+//     condition: "Cashback|Above ₹299",
+//     img: Container2Img,
+//   },
+//   {
+//     condition: "Free Sugar 1Kg|Above ₹599",
+//     img: Container3Img,
+//   },
+//   {
+//     condition: "Cashback|Above ₹999",
+//     img: Container4Img,
+//   },
+//   {
+//     condition: "Cashback|Above ₹1499",
+//     img: Container5Img,
+//   },
+//   {
+//     condition: "Cashback|Above ₹1999",
+//     img: Container6Img,
+//   },
+// ];
 
- const highlightText = (text) => {
-  return text.split(/(₹\d+)/g).map((part, index) =>
-    /₹\d+/.test(part) ? (
-      <span key={index} style={{ color: "red", fontWeight: "bold" }}>
-        {part}
-      </span>
-    ) : (
-      <span key={index} style={{ color: "green" }}>
-        {part}
-      </span>
-    )
-  );
-};
+//  const highlightText = (text) => {
+//   return text.split(/(₹\d+|Cashback)/g).map((part, index) => {
+//     if (/₹\d+/.test(part)) {
+//       return (
+//         <span key={index} style={{ color: "red", fontWeight: "bold" }}>
+//           {part}
+//         </span>
+//       );
+//     } else if (part === "Cashback") {
+//       return (
+//         <span
+//           key={index}
+//           style={{
+//             color: "green",
+//             fontWeight: "bold",
+//             fontSize: "15px", 
+//           }}
+//         >
+//           {part}
+//         </span>
+//       );
+//     } else {
+//       return (
+//         <span key={index} style={{ color: "green" }}>
+//           {part}
+//         </span>
+//       );
+//     }
+//   });
+// }; 
 
 useEffect(() => {
   setShowOffersModal(true);
 }, []);
+
+useEffect(() => {
+  const fetchOffers = async () => {
+    try {
+      const res = await axios.get(
+        "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UpLoadBannners/GetBanners"
+      );
+      setOffersData(res.data);
+      console.log("Offers Data:", res.data);
+    } catch (err) {
+      console.error("Error fetching offers:", err);
+    }
+  };
+  fetchOffers();
+}, []);
+
+const now = new Date();
+
+const activeOffers = offersData.filter((offer) => {
+  const start = new Date(offer.startDate);
+  const end = new Date(offer.endDate);
+  return now >= start && now <= end;
+});
+
+useEffect(() => {
+  if (offersData.length > 0) {
+    const now = new Date();
+    const hasActive = offersData.some((offer) => {
+      const start = new Date(offer.startDate);
+      const end = new Date(offer.endDate);
+      return now >= start && now <= end;
+    });
+    setShowOffersModal(hasActive || offersData.length > 0);
+  }
+}, [offersData]);
+
+useEffect(() => {
+  if (!offersData.length) return;
+  const fetchImages = async () => {
+    const imagesMap = {};
+    for (const offer of offersData) {
+      imagesMap[offer.id] = [];
+      for (const img of offer.image || []) {
+        try {
+          const res = await fetch(
+            `${IMAGE_API}${encodeURIComponent(img.images)}`
+          );
+          const data = await res.json();
+          if (data?.imageData) {
+            imagesMap[offer.id].push(
+              `data:image/jpeg;base64,${data.imageData}`
+            );
+          }
+        } catch (err) {
+          console.error("Image load failed:", err);
+        }
+      }
+    }
+    setOfferImages(imagesMap);
+  };
+  fetchImages();
+}, [offersData]);
 
 // const hasRun = useRef(false);
 
@@ -2890,7 +2970,7 @@ useEffect(() => {
 //   const fetchOffers = async () => {
 //     try {
 //       const res = await axios.get(
-//         "https://localhost:7091/api/UpLoadBannners/GetBanners"
+//         "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UpLoadBannners/GetBanners"
 //       );
 //       setOffersData(res.data);
 //       console.log("Offers Data:", res.data);
@@ -3246,9 +3326,9 @@ useEffect(() => {
   return () => { cancelled = true; };
 }, [userId]);
 
-  // const handleSendRef = async (index, referralValue) => {
-  //   console.log("sendRef", { index, referralValue });
-  // };
+//   const handleSendRef = async (index, referralValue) => {
+//     console.log("sendRef", { index, referralValue });
+//   };
 
 //   const handleRedeemCoins = async (refsPayload) => {
 //   const earned = 50; 
@@ -3268,7 +3348,7 @@ useEffect(() => {
     setPlaceholderIndex((prev) => (prev + 1) % placeholderSuggestions.length);
   }, 1500); 
   return () => clearInterval(interval);
-}, [placeholderSuggestions.length]);       
+}, [placeholderSuggestions.length]);        
 
 useEffect(() => {
   console.log( imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery,error, showMenu, products, selectedCategory, dress);
@@ -5056,8 +5136,9 @@ const updateLocalStorageCart = (product, qty) => {
           />
           <span
             style={{
-              fontSize: "11px",
-              fontWeight: "500",
+              fontSize: "12px",
+              fontWeight: "bold",
+              // fontFamily: "Roboto",
               marginTop: "6px",
               minHeight: "24px", 
               display: "flex",
@@ -5107,8 +5188,8 @@ const updateLocalStorageCart = (product, qty) => {
           />
           <span
             style={{
-              fontSize: "11px",
-              fontWeight: "500",
+              fontSize: "12px",
+              fontWeight: "bold",
               marginTop: "5px",
               minHeight: "24px", 
               display: "flex",
@@ -5159,8 +5240,8 @@ const updateLocalStorageCart = (product, qty) => {
             />
             <span
               style={{
-                fontSize: "11px",        
-                fontWeight: "500",
+                fontSize: "12px",        
+                fontWeight: "bold",
                 marginTop: "5px",
                 minHeight: "24px", 
                 display: "flex",
@@ -5223,8 +5304,8 @@ const updateLocalStorageCart = (product, qty) => {
             />
             <span
               style={{
-                fontSize: "11px",
-                fontWeight: "500",
+                fontSize: "12px",
+                fontWeight: "bold",
                 marginBottom: "3px",
                 marginTop: "5px",
                 minHeight: "24px", 
@@ -5477,6 +5558,90 @@ const updateLocalStorageCart = (product, qty) => {
   <Modal.Header closeButton>
    <Modal.Title style={{ fontSize: "15px", fontWeight: "bold" }}>🎉Handyman Special Offer Sale!</Modal.Title>
   </Modal.Header>
+  <Modal.Body>
+  {activeOffers.length === 0 ? (
+    <div
+      style={{
+        height: "250px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: "20px",
+        fontWeight: "bold",
+        color: "red",
+      }}
+    >
+      Offer has expired ⏳
+    </div>
+  ) : (
+    activeOffers.map((offer, index) => {
+      const images = Array.isArray(offerImages[offer.id])
+        ? offerImages[offer.id]
+        : [];
+      return (
+        <div key={offer.id} className="p-0">
+          {/* ✅ SINGLE IMAGE */}
+          {images.length === 1 && (
+            <img
+              src={images[0]}
+              alt="offer"
+              style={{
+                width: "100%",
+                maxHeight: "500px",
+                objectFit: "contain",
+              }}
+            />
+          )}
+        {/* <p>Offers Valid Till {endDate}</p> */}
+          {/* ✅ MULTIPLE IMAGES */}
+          {images.length > 1 && (
+            <div
+              id={`carousel-${index}`}
+              className="carousel slide carousel-fade"
+              data-bs-ride="carousel"
+              data-bs-interval="2000"
+            >
+              <div className="carousel-inner">
+                {images.map((img, i) => (
+                  <div
+                    key={i}
+                    className={`carousel-item ${i === 0 ? "active" : ""}`}
+                  >
+                    <img
+                      src={img}
+                      className="d-block w-100"
+                      alt="offer"
+                      style={{
+                        maxHeight: "500px",
+                        objectFit: "contain",
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+              <button
+                className="carousel-control-prev"
+                type="button"
+                data-bs-target={`#carousel-${index}`}
+                data-bs-slide="prev"
+              >
+                <span className="carousel-control-prev-icon"></span>
+              </button>
+              <button
+                className="carousel-control-next"
+                type="button"
+                data-bs-target={`#carousel-${index}`}
+                data-bs-slide="next"
+              >
+                <span className="carousel-control-next-icon"></span>
+              </button>
+            </div>
+          )}
+        </div>
+      );
+    })
+  )}
+</Modal.Body>
   {/* <Modal.Body>
      {activeOffers.map((offer, index) => {
       const images = offerImages[offer.id] || [];
@@ -5556,17 +5721,17 @@ const updateLocalStorageCart = (product, qty) => {
       </ul> */}
      
      {/* <div className="container"> */}
-          <div className="row">
+          {/* <div className="row">
             {offers.map((offer, index) => (
               <div className="col-6 mb-1" key={index}>
                 <div className="offer-card">
-                  {/*  Image */}
+                  {/*  Image *
                   {offer.img ? (
                     <img src={offer.img} alt="offer" className="offer-img" />
                   ) : (
                     <div className="offer-img-box"></div>
                   )}
-                  {/* Text */}
+                  {/* Text 
                  <div className="offer-condition">
                   {offer.condition.split("|").map((line, i) => (
                     <div key={i}>{highlightText(line)}</div>
@@ -5575,7 +5740,7 @@ const updateLocalStorageCart = (product, qty) => {
                 </div>
               </div>
             ))}
-          </div>
+          </div> */}
         {/* </div> */}
          {/* <div className="text-center">
         <img  
@@ -5584,14 +5749,14 @@ const updateLocalStorageCart = (product, qty) => {
           style={{ width: "100%", maxWidth: "500px", height: "50%" }}
         />
       </div> */}
-    <div className="text-center">
+    {/* <div className="text-center">
        <b style={{ color: "red", fontSize: "14px" }}>
         💥 Handyman App – No Extra Charges. Pay Only Product Cost After Free Home Delivery.
       </b> <br/> 
        <b style={{ color: "green",fontSize: "13px" }}>
         For any Queries Contact Customer Care: <span style={{color: "red", fontSize: "15px"}}>6281198953</span>
       </b>
-    </div>
+    </div> */}
   </Modal.Body>
   <Modal.Footer>
     <Button variant="success" onClick={() => setShowOffersModal(false)}> 
@@ -5603,6 +5768,4 @@ const updateLocalStorageCart = (product, qty) => {
         </>    
   );
 };
-export default ProfilePage;
-
-
+export default ProfilePage;  

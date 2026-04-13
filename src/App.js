@@ -125,6 +125,8 @@ import PrivacyPolicy from './PrivacyPolicy.js';
 import { getLoginData } from "./utils/auth";
 import RoyalUpmaMix250g from './RoyalUpmaMix250g.js';
 import MartHomeAppliances from './MartHomeAppliances.js';
+import AdminOfferForm from './AdminOfferForm.js';
+// import OneRupeeGroceryItems from './OneRupeeGroceryItems.js';
 // import CustomerLocation from "./CustomerLocation.js";
 const PreventBackNavigation = () => {
    const navigate = useNavigate();
@@ -175,9 +177,13 @@ function App() {
             <Route path="/deliveryPartner/:userType/:userId" element={<DeliveryPartner />} />
             <Route path="/deliveryTracking/:id" element={<DeliveryTracking />} />   
             {/* <Route path="/deliveryPartnerDirectory" element={<DeliveryPartnerDirectory />} /> */}
+            {/* <Route path="/groceryOneRupee/:userType/:userId" element={<OneRupeeGroceryItems />} /> */}
+
             <Route path="/grocery/:userType/:userId" element={<GroceryItems />} />
             <Route path="/groceryCart/:userType/:userId" element={<GroceryCartPage />} />
             {/* <Route path="/groceryIcons/:userType/:userId" element={<GroceryCategoryIcons />} /> */}
+            <Route path="/adminOfferModal/Admin" element={<AdminOfferForm />} /> 
+
             <Route path="/adminUploadGrocery/Admin" element={<AdminUploadGrocery />} />
             <Route path="/adminUpdateGrocery/:id/Admin" element={<AdminUpdateGrocery />} />
             <Route path="/adminGroceryApproval/:id/Admin" element={<AdminGroceryApproval />} /> 
@@ -303,3 +309,4 @@ function App() {
 
 export default App; 
  
+
