@@ -1,9 +1,11 @@
+// import { appConfig } from "./config";
+
 const CART_KEY = "allCategories";
 /* ---------------- IMAGE URL ---------------- */
 export const fileToUrl = (fn) => {
   if (!fn) return null;
   if (fn.startsWith("http")) return fn;
-  return `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(fn)}`;
+  return `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(fn)}`;
 };
 
 /* ---------------- CLEAN DATA ---------------- */

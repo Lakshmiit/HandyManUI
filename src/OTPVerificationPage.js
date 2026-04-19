@@ -3,6 +3,7 @@ import HandyManCharacter from "./img/hm_char.png";
 import HandyManLogo from "./img/Hm_Logo 1.png";
 import { useLocation, useNavigate } from "react-router-dom";
 import { setLoginData } from "./utils/auth";
+// import { appConfig } from "./config";
 
 const OTPVerificationPage = () => {
   const Navigate = useNavigate();
@@ -101,7 +102,7 @@ const OTPVerificationPage = () => {
       setCanResend(false);
 
       const response = await fetch(
-        `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Auth/bhashsmssendotp`,
+        `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Auth/bhashsmssendotp`,
         {
           method: "POST",
           headers: {
@@ -136,7 +137,7 @@ const OTPVerificationPage = () => {
 
     try {
       const response1 = await fetch(
-        `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/UserOnBoarding/GuestUserUpload`,
+        `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UserOnBoarding/GuestUserUpload`,
         {
           method: "POST",
           headers: {
@@ -183,7 +184,7 @@ const OTPVerificationPage = () => {
       };
 
       const response2 = await fetch(
-        `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Customer/GuestCustomerUpload`,
+        `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Customer/GuestCustomerUpload`,
         {
           method: "POST",
           headers: {
@@ -223,10 +224,10 @@ const OTPVerificationPage = () => {
       const payload = {
         SenderValue: mobile, 
         Otp: enteredOtp,
-      };
+      };   
 
       const otpResponse = await fetch(
-        `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Auth/validateotp`,
+        `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Auth/validateotp`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -241,7 +242,7 @@ const OTPVerificationPage = () => {
 
       // STEP 2 — Check if user exists
       const verifyUserRes = await fetch(
-        `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/UserOnBoarding/GuestUserVerificationByMobileNo?mobileNo=${mobile}`,
+        `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UserOnBoarding/GuestUserVerificationByMobileNo?mobileNo=${mobile}`,
       );
 
       if (verifyUserRes.status === 200) {

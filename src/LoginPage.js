@@ -4,6 +4,7 @@ import './App.css';
 import {useNavigate } from "react-router-dom";
 import HandyManCharacter from "./img/hm_char.png";
 import HandyManLogo from "./img/Hm_Logo 1.png";
+// import { appConfig } from "./config";
 
 const LoginPage = () => {
   const Navigate = useNavigate();
@@ -46,7 +47,7 @@ const handleOTP = async (e) => {
   };
 
   try {
-    const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Auth/bhashsmssendotp`, {
+    const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Auth/bhashsmssendotp`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

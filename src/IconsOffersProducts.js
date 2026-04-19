@@ -11,6 +11,8 @@ import Electronics from './img/Electronics.jpeg';
 import Plumbing from './img/Plumbing.jpeg';
 import Hardware from './img/Hardware.jpeg';
 import HomeDecor from './img/HomeDecor.jpeg';
+// import { appConfig } from "./config";
+
 const categories = [
 { label: 'Home Decors', value: 'Home Decors', image: HomeDecor },          
 { label: 'Electrical Items', value: 'Electrical items', image: Electrical }, 
@@ -52,7 +54,7 @@ const [error, setError] = useState('');
           setError("");
       
           const encodedCategory = encodeURIComponent(value);
-          const url = `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Product/GetProductsByCategory?Category=${encodedCategory}`;
+          const url = `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Product/GetProductsByCategory?Category=${encodedCategory}`;
           const response = await axios.get(url);
           const productsData = response.data;
       

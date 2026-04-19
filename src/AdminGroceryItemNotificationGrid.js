@@ -6,7 +6,8 @@ import { FaTrash, FaEye } from "react-icons/fa";
 import { Forward as ForwardIcon,} from "@mui/icons-material";
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import "./App.css";
-
+// import { appConfig } from "./config";
+            
 const AdminGroceryItemNotificationGrid = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [groceryData, setGroceryData] = useState([]);
@@ -40,7 +41,7 @@ const [activeTab, setActiveTab] = useState("Open");
 
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Mart/GetAllMartItems`;
+    const url = `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Mart/GetAllMartItems`;
 
     axios.get(url)
       .then(response => {
@@ -68,7 +69,7 @@ const [activeTab, setActiveTab] = useState("Open");
   const handleDelete = (groceryId) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this grocery?');
     if (confirmDelete) {
-      axios.delete(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseTicket/${groceryId}`)
+      axios.delete(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/${groceryId}`)
         .then(() => {
           setGroceryData(prev => prev.filter(g => g.id !== groceryId));
           setFilteredData(prev => prev.filter(g => g.id !== groceryId));

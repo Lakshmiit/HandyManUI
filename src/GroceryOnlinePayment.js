@@ -17,7 +17,7 @@
 
 //   // ✅ Step 1: Fetch booking details from your API
 //   useEffect(() => {
-//     fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`)
+//     fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`)
 //       .then((res) => res.json())
 //       .then((data) => {
 //         setOrderBooking(data);

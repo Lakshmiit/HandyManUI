@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
+// import { appConfig } from "./config";
 
 const AdminCollectionsList = () => {
   const [collectionData, setCollectionData] = useState([]);
@@ -19,7 +20,7 @@ const AdminCollectionsList = () => {
   const navigate = useNavigate();
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/UploadLakshmiCollection/GetAllLakshmiCollections`;
+    const url = `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UploadLakshmiCollection/GetAllLakshmiCollections`;
     axios.get(url)
       .then((response) => {
         const collections = response.data.map((collection) => ({
@@ -49,7 +50,7 @@ const AdminCollectionsList = () => {
   const handleDelete = (collectionId) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this product?');
     if (confirmDelete) {
-      axios.delete(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Product/${collectionId}`)
+      axios.delete(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Product/${collectionId}`)
         .then(() => {
           setCollectionData(prevData => prevData.filter(collection => collection.id !== collectionId));
           setFilteredData(prevData => prevData.filter(collection => collection.id !== collectionId));

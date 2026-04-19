@@ -10,6 +10,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import FavoriteIcon from "@mui/icons-material/Favorite"; 
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder"; 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+// import { appConfig } from "./config";
 
 const LakshmiCollections = () => {    
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ const [searchQuery, setSearchQuery] = useState('');
 console.log(checked, imageLoading);
 }, [checked, imageLoading]);
 
-const handleLike = (productId, e) => {
+const handleLike = (productId, e) => {   
     if (e) e.stopPropagation();
     setLikedProducts((prevLiked) =>
       prevLiked.includes(productId)
@@ -44,7 +45,7 @@ useEffect(() => {
     try {
       setSelectedCategory(encodedCategory);
       setImageLoading(true);
-      const url = `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/UploadLakshmiCollection/GetAllLakshmiCollectionsByCategory?category=${encodedCategory}`;
+      const url = `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UploadLakshmiCollection/GetAllLakshmiCollectionsByCategory?category=${encodedCategory}`;
       const response = await axios.get(url);
       const list = Array.isArray(response.data) ? response.data : [];
       const approvedList = list.filter(
@@ -57,7 +58,7 @@ useEffect(() => {
         if (!firstPhoto) return;
         try {
           const res = await fetch(
-            `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(firstPhoto)}`
+            `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(firstPhoto)}`
           );
           let blob;
           const ct = res.headers.get("content-type") || "";

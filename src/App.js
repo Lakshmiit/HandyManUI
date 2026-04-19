@@ -126,6 +126,7 @@ import { getLoginData } from "./utils/auth";
 import RoyalUpmaMix250g from './RoyalUpmaMix250g.js';
 import MartHomeAppliances from './MartHomeAppliances.js';
 import AdminOfferForm from './AdminOfferForm.js';
+
 // import OneRupeeGroceryItems from './OneRupeeGroceryItems.js';
 // import CustomerLocation from "./CustomerLocation.js";
 const PreventBackNavigation = () => {
@@ -178,7 +179,7 @@ function App() {
             <Route path="/deliveryTracking/:id" element={<DeliveryTracking />} />   
             {/* <Route path="/deliveryPartnerDirectory" element={<DeliveryPartnerDirectory />} /> */}
             {/* <Route path="/groceryOneRupee/:userType/:userId" element={<OneRupeeGroceryItems />} /> */}
-
+ 
             <Route path="/grocery/:userType/:userId" element={<GroceryItems />} />
             <Route path="/groceryCart/:userType/:userId" element={<GroceryCartPage />} />
             {/* <Route path="/groceryIcons/:userType/:userId" element={<GroceryCategoryIcons />} /> */}

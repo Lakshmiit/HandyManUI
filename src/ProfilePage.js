@@ -138,14 +138,14 @@
 //   { label: 'DWCRA Products', value: 'DWCRA', image: DwakraProducts },
 //   { label: 'Chicken', value: 'Chicken', image: ChickenImg },
 // ];
-// // https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net
+// // https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net
 // const collectionsCategories = [
 //   { label: 'Dupatta Sets', value: 'Dupatta Sets', image: setkurti },
 //   { label: 'Kurta Sets', value: 'Kurta Sets', image: kurti},
 //   ];
 
 //   const IMAGE_API =
-//   `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=`;
+//   `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
 
 // const ProfilePage = () => {
 //    const [allProducts, setAllProducts] = useState([]);
@@ -344,8 +344,8 @@
 //   async function fetchProductsAndFirstImages(warm = false, signal) {
 //     try {
 //       if (!warm) setImageLoading(true);
-//       // handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net
-//       const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${category}`;
+//       // localhost:7091
+//       const url = `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${category}`;
 
 //       const { data: items } = await axios.get(url, { signal });
 //       const safeItems = (Array.isArray(items) ? items : []).map(normalizeProduct);
@@ -376,7 +376,7 @@
 //       const fetchOne = async ({ productId, photo }) => {
 //         try {
 //           const res = await fetch(
-//             `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${photo}`,
+//             `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`,
 //             { signal }
 //           );
 
@@ -532,7 +532,7 @@
 // //     if (showLoader) setLoading(true);
 // //     try {
 // //       const res = await axios.get(
-// //         "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/GetAllGroceryItems"
+// //         "https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UploadGrocery/GetAllGroceryItems"
 // //       );
 // //       if (cancelled) return;
 // //       const normalized = (Array.isArray(res.data) ? res.data : [])
@@ -583,7 +583,7 @@
 //       };
 
 //       await axios.post(
-//         `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/LmartLogs/UploadlogsDetails`,
+//         `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/LmartLogs/UploadlogsDetails`,
 //         payload
 //       );
 //     } catch (err) {
@@ -599,7 +599,7 @@
 
 //     try {
 //       const res = await axios.get(
-//         "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/GetAllGroceryItems"
+//         "https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UploadGrocery/GetAllGroceryItems"
 //       );
 
 //       if (cancelled) return;
@@ -729,7 +729,7 @@
 //   const fetchDeliveryData = async () => {
 //     try {    
 //       const response = await fetch(
-//         `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/GetProductDetails?id=${id}`
+//         `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Mart/GetProductDetails?id=${id}`
 //       );
 //       if (!response.ok) {
 //         throw new Error("Failed to fetch grocery product data");
@@ -803,7 +803,7 @@
 //  useEffect(() => {
 //   const fetchGroceryData = async () => {
 //     try {
-//       const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/GetMartTicketsByUserId?userId=${userId}`);
+//       const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Mart/GetMartTicketsByUserId?userId=${userId}`);
 //       if (!response.ok) throw new Error('Failed to fetch ticket data');
 //       const data = await response.json();
 //       const tickets = Array.isArray(data) ? data : (data && typeof data === "object" ? [data] : []);
@@ -838,7 +838,7 @@
 //   clickLock.current = true;
 //   try {
 //     const res = await axios.get(
-//       `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/DeliveryPartner/GetDeliveryPartnerDetailsByUserId?userId=${userId}`
+//       `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/DeliveryPartner/GetDeliveryPartnerDetailsByUserId?userId=${userId}`
 //     );
 //     const raw = res?.data ?? null;
 //     const profile = Array.isArray(raw)
@@ -906,7 +906,7 @@
 //     isDelivered: false,    
 //   };
 
-//     let response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/UpdateProductDetails/${id}`, {
+//     let response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Mart/UpdateProductDetails/${id}`, {
 //       method: 'PUT',
 //       headers: {
 //         'Content-Type': 'application/json',
@@ -992,11 +992,11 @@
 //           const fetchAllTickets = async () => {
 //             try { 
 //               const [ticketResponse, productResponse, technicianResponse, groceriesResponse, lakshmiResponse] = await Promise.all([
-//                 fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=raiseTicket`),
-//                 fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=buyProduct`),
-//                 fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=bookTechnician`),
-//                 fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=mart`),
-//                 fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=collections`),
+//                 fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=raiseTicket`),
+//                 fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=buyProduct`),
+//                 fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=bookTechnician`),
+//                 fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=mart`),
+//                 fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=collections`),
 //               ]);      
 //               if (!ticketResponse.ok || !productResponse.ok || !technicianResponse || !groceriesResponse || !lakshmiResponse) {
 //                 throw new Error("Failed to fetch ticket, product and technician data");
@@ -1099,7 +1099,7 @@
 //           try {
 //             let apiUrl = "";
 //             if (userType === "customer") {
-//               apiUrl = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`;
+//               apiUrl = `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`;
 //             }
 //             if (!apiUrl) return;
 //             const response = await axios.get(apiUrl);
@@ -1138,7 +1138,7 @@
 //   try { 
 //     if (!photoId) return;
 //     const response = await axios.get(
-//       `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${photoId}`
+//       `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photoId}`
 //     );
 //     if (response.status === 200 && response.data.imageData) {
 //       const imageUrl = `data:image/jpeg;base64,${response.data.imageData}`;
@@ -2456,7 +2456,7 @@
 // };
 // export default ProfilePage;
 
-import React, { useState, useEffect, useRef, useCallback} from "react";
+import React, { useState, useEffect, useRef} from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import './App.css';
@@ -2528,13 +2528,14 @@ import HomeElectricalImg from './img/HomeElectrical.jpeg';
 import HomePlumbingImg from './img/HomePlumbing.jpeg'; 
 // import Poster from './img/Poster.jpeg';  
 // import ReedemCode from "./ReedemCode.js";
-// import Container1Img from './img/599.jpg';
-// import Container2Img from './img/299.jpg';
-// import Container3Img from './img/Sugar.jpg';
-// import Container4Img from './img/999.jpg';       
-// import Container5Img from './img/1499.jpg'; 
-// import Container6Img from './img/1999.jpg';      
-
+import Container1Img from './img/599.jpg';
+import Container2Img from './img/299.jpg';
+import Container3Img from './img/Sugar.jpg';
+import Container4Img from './img/999.jpg';       
+import Container5Img from './img/1499.jpg'; 
+import Container6Img from './img/1999.jpg'; 
+// import Image1 from './img/Image1.jpeg';     
+// import Image2 from './img/Image2.jpeg';
 // import { appConfig } from "./config";                     
 
 const getMenuList = (userType, userId, category, district ,ZipCode,technicianFullName, isMobile) => {
@@ -2608,7 +2609,7 @@ const collectionsCategories = [
   ];
 
   const IMAGE_API =
-  `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=`;
+  `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
 
 const ProfilePage = () => {
    const [allProducts, setAllProducts] = useState([]);
@@ -2708,132 +2709,141 @@ const secondCategories = groceryCategories.slice(6, 31);
 // const fourthCategories = groceryCategories.slice(24, 30);
 // const HEADER_HEIGHT = window.innerWidth <= 768 ? 50 : 100;
 const [showOffersModal, setShowOffersModal] = useState(false);
-const [offersData, setOffersData] = useState([]);
-const [offerImages, setOfferImages] = useState({});
+// const [offersData, setOffersData] = useState([]);
+// const [offerImages, setOfferImages] = useState({});
+// const [currentTime, setCurrentTime] = useState(new Date());
+// const staticImages = [Image1, Image2];
 const [showCoinsModal, setShowCoinsModal] = useState(false);
-// const offers = [
-//   {
-//     condition: "New Users Get - ₹50 in Wallet!",
-//     img: Container1Img,
-//   },
-//   {
-//     condition: "Cashback|Above ₹299",
-//     img: Container2Img,
-//   },
-//   {
-//     condition: "Free Sugar 1Kg|Above ₹599",
-//     img: Container3Img,
-//   },
-//   {
-//     condition: "Cashback|Above ₹999",
-//     img: Container4Img,
-//   },
-//   {
-//     condition: "Cashback|Above ₹1499",
-//     img: Container5Img,
-//   },
-//   {
-//     condition: "Cashback|Above ₹1999",
-//     img: Container6Img,
-//   },
-// ];
+const offers = [
+  {
+    condition: "New Users Get - ₹50 in Wallet!",
+    img: Container1Img,
+  },
+  {
+    condition: "Cashback|Above ₹299",
+    img: Container2Img,
+  },
+  {
+    condition: "Free Sugar 1Kg|Above ₹599",
+    img: Container3Img,
+  },
+  {
+    condition: "Cashback|Above ₹999",
+    img: Container4Img,
+  },
+  {
+    condition: "Cashback|Above ₹1499",
+    img: Container5Img,
+  },
+  {
+    condition: "Cashback|Above ₹1999",
+    img: Container6Img,
+  },
+];
 
-//  const highlightText = (text) => {
-//   return text.split(/(₹\d+|Cashback)/g).map((part, index) => {
-//     if (/₹\d+/.test(part)) {
-//       return (
-//         <span key={index} style={{ color: "red", fontWeight: "bold" }}>
-//           {part}
-//         </span>
-//       );
-//     } else if (part === "Cashback") {
-//       return (
-//         <span
-//           key={index}
-//           style={{
-//             color: "green",
-//             fontWeight: "bold",
-//             fontSize: "15px", 
-//           }}
-//         >
-//           {part}
-//         </span>
-//       );
-//     } else {
-//       return (
-//         <span key={index} style={{ color: "green" }}>
-//           {part}
-//         </span>
-//       );
-//     }
-//   });
-// }; 
+ const highlightText = (text) => {
+  return text.split(/(₹\d+|Cashback)/g).map((part, index) => {
+    if (/₹\d+/.test(part)) {
+      return (
+        <span key={index} style={{ color: "red", fontWeight: "bold" }}>
+          {part}
+        </span>
+      );
+    } else if (part === "Cashback") {
+      return (
+        <span
+          key={index}
+          style={{
+            color: "green",
+            fontWeight: "bold",
+            fontSize: "15px", 
+          }}
+        >
+          {part}
+        </span>
+      );
+    } else {
+      return (
+        <span key={index} style={{ color: "green" }}>
+          {part}
+        </span>
+      );
+    }
+  });
+}; 
 
 useEffect(() => {
   setShowOffersModal(true);
 }, []);
 
-useEffect(() => {
-  const fetchOffers = async () => {
-    try {
-      const res = await axios.get(
-        "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UpLoadBannners/GetBanners"
-      );
-      setOffersData(res.data);
-      console.log("Offers Data:", res.data);
-    } catch (err) {
-      console.error("Error fetching offers:", err);
-    }
-  };
-  fetchOffers();
-}, []);
+// useEffect(() => {
+//   const fetchOffers = async () => {
+//     try {
+//       const res = await axios.get(
+//         "https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UpLoadBannners/GetBanners"
+//       );
+//       setOffersData(res.data);
+//       console.log("Offers Data:", res.data);
+//     } catch (err) {
+//       console.error("Error fetching offers:", err);
+//     }
+//   };
+//   fetchOffers();
+// }, []);
 
-const now = new Date();
+// // const now = new Date();
 
-const activeOffers = offersData.filter((offer) => {
-  const start = new Date(offer.startDate);
-  const end = new Date(offer.endDate);
-  return now >= start && now <= end;
-});
+// const activeOffers = offersData.filter((offer) => {
+//   const start = new Date(offer.startDate);
+//   const end = new Date(offer.endDate);
+//   return currentTime >= start && currentTime <= end;
+// });
 
-useEffect(() => {
-  if (offersData.length > 0) {
-    const now = new Date();
-    const hasActive = offersData.some((offer) => {
-      const start = new Date(offer.startDate);
-      const end = new Date(offer.endDate);
-      return now >= start && now <= end;
-    });
-    setShowOffersModal(hasActive || offersData.length > 0);
-  }
-}, [offersData]);
+// useEffect(() => {
+//   if (offersData.length > 0) {
+//     const hasActive = offersData.some((offer) => {
+//       const start = new Date(offer.startDate);
+//       const end = new Date(offer.endDate);
+//       return currentTime >= start && currentTime <= end;
+//     });
 
-useEffect(() => {
-  if (!offersData.length) return;
-  const fetchImages = async () => {
-    const imagesMap = {};
-    for (const offer of offersData) {
-      imagesMap[offer.id] = [];
-      for (const img of offer.image || []) {
-        try {
-          const res = await fetch(
-            `${IMAGE_API}${encodeURIComponent(img.images)}`
-          );
-          const data = await res.json();
-          if (data?.imageData) {
-            imagesMap[offer.id].push(
-              `data:image/jpeg;base64,${data.imageData}`
-            );
-          }
-        } catch (err) {
-          console.error("Image load failed:", err);
-        }
-      }
-    }
-    setOfferImages(imagesMap);
-  };
-  fetchImages();
-}, [offersData]);
+//     setShowOffersModal(hasActive);
+//   }
+// }, [offersData, currentTime]);
+
+// useEffect(() => {
+//   if (!offersData.length) return;
+//   const fetchImages = async () => {
+//     const imagesMap = {};
+//     for (const offer of offersData) {
+//       imagesMap[offer.id] = [];
+//       for (const img of offer.image || []) {
+//         try {
+//           const res = await fetch(
+//             `${IMAGE_API}${encodeURIComponent(img.images)}`
+//           );
+//           const data = await res.json();
+//           if (data?.imageData) {
+//             imagesMap[offer.id].push(
+//               `data:image/jpeg;base64,${data.imageData}`
+//             );
+//           }
+//         } catch (err) {
+//           console.error("Image load failed:", err);
+//         }
+//       }
+//     }
+//     setOfferImages(imagesMap);
+//   };
+//   fetchImages();
+// }, [offersData]);
+
+// useEffect(() => {
+//   const interval = setInterval(() => {
+//     setCurrentTime(new Date());
+//   }, 5000); 
+//   return () => clearInterval(interval);
+// }, []);
 
 // const hasRun = useRef(false);
 
@@ -2874,103 +2884,103 @@ useEffect(() => {
   'Search "Bread"', 'Search "Chicken"', 'Search "Shampoo"', 'Search "Soap"',
 ];
 
-const [showRedeem, setShowRedeem] = useState(false);
-const [refRecord, setRefRecord] = useState(null);
-const [refLoading, setRefLoading] = useState(true);
-const [shouldShowGetCoins, setShouldShowGetCoins] = useState(false);
-const [referralPoints, setReferralPoints] = useState('');
-const [awardedPoints, setAwardedPoints] = useState(0);
-const [awardLoading, setAwardLoading] = useState(true);
-const [userPoints, setUserPoints] = useState(0);        
-const [pointsLoading, setPointsLoading] = useState(true);
-const [claimAvailable, setClaimAvailable] = useState(false); 
-const AWARDED_POINTS_KEY = `hm_referral_awarded_points_${userId || "guest"}`; 
-const [isReferralUsed, setIsReferralUsed] = useState(false);
-  const [showMessage, setShowMessage] = useState(false);
-  const [redeemOpen, setRedeemOpen] = useState(false);
-const [displayNumbers, setDisplayNumbers] = useState("");
-// redeemOpen, showRedeem, awardLoading,  awardedPoints, referralPoints,
-useEffect(() => {
-  console.log( redeemOpen, showRedeem, awardLoading,  awardedPoints, referralPoints);
-}, [redeemOpen, showRedeem, awardLoading,  awardedPoints, referralPoints]);
+// const [showRedeem, setShowRedeem] = useState(false);
+// const [refRecord, setRefRecord] = useState(null);
+// const [refLoading, setRefLoading] = useState(true);
+// // const [shouldShowGetCoins, setShouldShowGetCoins] = useState(false);
+// const [referralPoints, setReferralPoints] = useState('');
+// const [awardedPoints, setAwardedPoints] = useState(0);
+// const [awardLoading, setAwardLoading] = useState(true);
+// const [userPoints, setUserPoints] = useState(0);        
+// const [pointsLoading, setPointsLoading] = useState(true);
+// // const [claimAvailable, setClaimAvailable] = useState(false); 
+// const AWARDED_POINTS_KEY = `hm_referral_awarded_points_${userId || "guest"}`; 
+// // const [isReferralUsed, setIsReferralUsed] = useState(false);
+//   const [showMessage, setShowMessage] = useState(false);
+//   const [redeemOpen, setRedeemOpen] = useState(false);
+// const [displayNumbers, setDisplayNumbers] = useState("");
+// // redeemOpen, showRedeem, awardLoading,  awardedPoints, referralPoints,
+// useEffect(() => {
+//   console.log( redeemOpen, showRedeem, awardLoading,  awardedPoints, referralPoints);
+// }, [redeemOpen, showRedeem, awardLoading,  awardedPoints, referralPoints]);
 
-const checkNewOrExisting = useCallback(async (num) => {
-  try {
-    const res = await fetch(
-      `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UserOnBoarding/GuestUserVerificationByMobileNo?mobileNo=${encodeURIComponent(
-        num
-      )}`
-    ); 
-    const text = await res.text();
-    let data = null;
-    try { data = text ? JSON.parse(text) : null; } catch { data = null; }
-    if (data === null) return "not registered";
-    return "registered";
-  } catch {
-    return "invalid";
-  }
-}, []);
+// const checkNewOrExisting = useCallback(async (num) => {
+//   try {
+//     const res = await fetch(
+//       `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UserOnBoarding/GuestUserVerificationByMobileNo?mobileNo=${encodeURIComponent(
+//         num
+//       )}`
+//     ); 
+//     const text = await res.text();
+//     let data = null;
+//     try { data = text ? JSON.parse(text) : null; } catch { data = null; }
+//     if (data === null) return "not registered";
+//     return "registered";
+//   } catch {
+//     return "invalid";
+//   }
+// }, []);
 
-useEffect(() => {
-  const numbers = (refRecord?.referralNumbers || "")
-    .split(",")
-    .map(s => s.trim())
-    .filter(Boolean)
-    .filter((v, i, a) => a.indexOf(v) === i);
-  if (numbers.length === 0) {
-    setDisplayNumbers("");
-    return;
-  }
-  let isActive = true;
-  const checkAllNumbers = async () => {
-    try {
-      const results = await Promise.all(
-        numbers.map(async (num) => {
-          try {
-            const status = await checkNewOrExisting(num);
-            if (status === "registered") return `${num} ✅ Registered`;
-            if (status === "not registered") return `${num} ❌ Not Registered`;
-            return `${num} ⚠️ Invalid`;
-          } catch {
-            return `${num} ⚠️ Error`;
-          }
-        })
-      );
-      if (isActive) {
-         const joined = results.join(", ");
-          setDisplayNumbers(joined);
-        // setDisplayNumbers(results.join(", "));
-        const allRegistered = results.every(r => r.includes("✅"));
+// useEffect(() => {
+//   const numbers = (refRecord?.referralNumbers || "")
+//     .split(",")
+//     .map(s => s.trim())
+//     .filter(Boolean)
+//     .filter((v, i, a) => a.indexOf(v) === i);
+//   if (numbers.length === 0) {
+//     setDisplayNumbers("");
+//     return;
+//   }
+//   let isActive = true;
+//   const checkAllNumbers = async () => {
+//     try {
+//       const results = await Promise.all(
+//         numbers.map(async (num) => {
+//           try {
+//             const status = await checkNewOrExisting(num);
+//             if (status === "registered") return `${num} ✅ Registered`;
+//             if (status === "not registered") return `${num} ❌ Not Registered`;
+//             return `${num} ⚠️ Invalid`;
+//           } catch {
+//             return `${num} ⚠️ Error`;
+//           }
+//         })
+//       );
+//       if (isActive) {
+//          const joined = results.join(", ");
+//           setDisplayNumbers(joined);
+//         // setDisplayNumbers(results.join(", "));
+//         const allRegistered = results.every(r => r.includes("✅"));
 
-      if (allRegistered) {
-        // ✅ store award immediately
-        localStorage.setItem(AWARDED_POINTS_KEY, "100");
-        // ✅ enable button immediately
-        setClaimAvailable(true);
-      }
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  checkAllNumbers();
-  // ✅ Auto refresh every 1 seconds
-  // const intervalId = setInterval(() => {
-  //   checkAllNumbers();
-  // }, 1000); 
-    const intervalId = setInterval(checkAllNumbers, 1000);
+//       if (allRegistered) {
+//         // ✅ store award immediately
+//         localStorage.setItem(AWARDED_POINTS_KEY, "100");
+//         // ✅ enable button immediately
+//         setClaimAvailable(true);
+//       }
+//       }
+//     } catch (error) {
+//       console.error(error);
+//     }
+//   };
+//   checkAllNumbers();
+//   // ✅ Auto refresh every 1 seconds
+//   // const intervalId = setInterval(() => {
+//   //   checkAllNumbers();
+//   // }, 1000); 
+//     const intervalId = setInterval(checkAllNumbers, 1000);
 
-  return () => {
-    isActive = false;
-    clearInterval(intervalId); 
-  };
-}, [refRecord?.referralNumbers, checkNewOrExisting, AWARDED_POINTS_KEY]);
+//   return () => {
+//     isActive = false;
+//     clearInterval(intervalId); 
+//   };
+// }, [refRecord?.referralNumbers, checkNewOrExisting, AWARDED_POINTS_KEY]);
 
 // useEffect(() => {
 //   const fetchOffers = async () => {
 //     try {
 //       const res = await axios.get(
-//         "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UpLoadBannners/GetBanners"
+//         "https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UpLoadBannners/GetBanners"
 //       );
 //       setOffersData(res.data);
 //       console.log("Offers Data:", res.data);
@@ -3033,97 +3043,97 @@ useEffect(() => {
   return () => window.removeEventListener("resize", onResize);
 }, []);
 
-useEffect(() => {
-  const checkNewUser = async () => {
-    try {
-      const rec = await getReferralRecord(userId);
-      if (!rec || readServerPoints(rec) === 0) {
-        setShowRedeem(true);   
-      } else {
-        setShowRedeem(false);
-      }
-    } catch (err) {
-      setShowRedeem(true);
-    }
-  };
-  if (userId) checkNewUser();
-}, [userId]);
+// useEffect(() => {
+//   const checkNewUser = async () => {
+//     try {
+//       const rec = await getReferralRecord(userId);
+//       if (!rec || readServerPoints(rec) === 0) {
+//         setShowRedeem(true);   
+//       } else {
+//         setShowRedeem(false);
+//       }
+//     } catch (err) {
+//       setShowRedeem(true);
+//     }
+//   };
+//   if (userId) checkNewUser();
+// }, [userId]);
 
-useEffect(() => {
-  const award = Number(localStorage.getItem(AWARDED_POINTS_KEY) || "0");
-  if (award === 100 && userPoints === 0) {
-    setClaimAvailable(true);
-  } else {
-    setClaimAvailable(false);
-  }
-}, [userPoints, AWARDED_POINTS_KEY]);
+// useEffect(() => {
+//   const award = Number(localStorage.getItem(AWARDED_POINTS_KEY) || "0");
+//   if (award === 100 && userPoints === 0) {
+//     setClaimAvailable(true);
+//   } else {
+//     setClaimAvailable(false);
+//   }
+// }, [userPoints, AWARDED_POINTS_KEY]);
 
-useEffect(() => {
-  let cancelled = false;
-  (async () => {
-    try {
-      // 1) Server points (authoritative UI value)
-      const rec = await getReferralRecord(userId);
-      const serverPts = rec ? readServerPoints(rec) : 0;
-      // 2) Local award (pending 100 from Redeem flow)
-      let localAward = 0;
-      try { localAward = Number(localStorage.getItem(AWARDED_POINTS_KEY) || "0"); } catch {}
-      if (!cancelled) {
-        setUserPoints(serverPts);
-        // Enable "Get Coins" ONLY when server is still 0 AND local says 100 is ready
-        // setClaimAvailable(serverPts === 0 && localAward === 100);
-        setClaimAvailable(serverPts === 0 && localAward === 100);      }
-    } catch {
-      if (!cancelled) {
-        setUserPoints(0);
-        setClaimAvailable(false);
-      }
-    } finally {
-      if (!cancelled) setPointsLoading(false);
-    }
-  })();
-  return () => { cancelled = true; };
-}, [userId, AWARDED_POINTS_KEY]);
+// useEffect(() => {
+//   let cancelled = false;
+//   (async () => {
+//     try {
+//       // 1) Server points (authoritative UI value)
+//       const rec = await getReferralRecord(userId);
+//       const serverPts = rec ? readServerPoints(rec) : 0;
+//       // 2) Local award (pending 100 from Redeem flow)
+//       let localAward = 0;
+//       try { localAward = Number(localStorage.getItem(AWARDED_POINTS_KEY) || "0"); } catch {}
+//       if (!cancelled) {
+//         setUserPoints(serverPts);
+//         // Enable "Get Coins" ONLY when server is still 0 AND local says 100 is ready
+//         // setClaimAvailable(serverPts === 0 && localAward === 100);
+//         setClaimAvailable(serverPts === 0 && localAward === 100);      }
+//     } catch {
+//       if (!cancelled) {
+//         setUserPoints(0);
+//         setClaimAvailable(false);
+//       }
+//     } finally {
+//       if (!cancelled) setPointsLoading(false);
+//     }
+//   })();
+//   return () => { cancelled = true; };
+// }, [userId, AWARDED_POINTS_KEY]);
 
-useEffect(() => {
-  const fetchReferral = async () => {
-    try {
-      const rec = await getReferralRecord(userId);
-      if (rec) {
-        const raw =
-          rec?.referralPoints ??
-          rec?.referralpoints ??
-          rec?.ReferralPoints ??
-          rec?.ReferralPoints ??
-          0;
-        const pointsValue = Number(raw) || 0;
-        setReferralPoints(pointsValue);
-        setShouldShowGetCoins(pointsValue === 0); 
-      } else {
-        setReferralPoints(0);
-        setShouldShowGetCoins(true); 
-      }
-    } catch (e) {
-      console.error("Failed to load referral points:", e);
-      setShouldShowGetCoins(false);
-    }
-  };
-  fetchReferral();
-}, [userId]);
+// useEffect(() => {
+//   const fetchReferral = async () => {
+//     try {
+//       const rec = await getReferralRecord(userId);
+//       if (rec) {
+//         const raw =
+//           rec?.referralPoints ??
+//           rec?.referralpoints ??
+//           rec?.ReferralPoints ??
+//           rec?.ReferralPoints ??
+//           0;
+//         const pointsValue = Number(raw) || 0;
+//         setReferralPoints(pointsValue);
+//         setShouldShowGetCoins(pointsValue === 0); 
+//       } else {
+//         setReferralPoints(0);
+//         setShouldShowGetCoins(true); 
+//       }
+//     } catch (e) {
+//       console.error("Failed to load referral points:", e);
+//       setShouldShowGetCoins(false);
+//     }
+//   };
+//   fetchReferral();
+// }, [userId]);
 
 // load once
-useEffect(() => {
-  let cancelled = false;
-  (async () => {
-    try {
-      const rec = await getReferralRecord(userId);
-      if (!cancelled) setRefRecord(rec);
-    } finally {
-      if (!cancelled) setRefLoading(false);
-    }
-  })();
-  return () => { cancelled = true; };
-}, [userId]);
+// useEffect(() => {
+//   let cancelled = false;
+//   (async () => {
+//     try {
+//       const rec = await getReferralRecord(userId);
+//       if (!cancelled) setRefRecord(rec);
+//     } finally {
+//       if (!cancelled) setRefLoading(false);
+//     }
+//   })();
+//   return () => { cancelled = true; };
+// }, [userId]);
 
 // formatter (optional): clean, unique, spaced
 // const displayNumbers = (refRecord?.referralNumbers || "")
@@ -3134,197 +3144,206 @@ useEffect(() => {
 //   .join(", ");
 
 // ---- load once for this user ----
-useEffect(() => {
-  let cancelled = false;
-  (async () => {
-    try {
-      const rec = await getReferralRecord(userId);
-      const pts = rec ? readServerPoints(rec) : 0;
-      if (!cancelled) setUserPoints(pts);
-    } catch {
-      if (!cancelled) setUserPoints(0);
-    } finally {
-      if (!cancelled) setPointsLoading(false);
-    }
-  })();
-  return () => { cancelled = true; };
-}, [userId]);
+// useEffect(() => {
+//   let cancelled = false;
+//   (async () => {
+//     try {
+//       const rec = await getReferralRecord(userId);
+//       const pts = rec ? readServerPoints(rec) : 0;
+//       if (!cancelled) setUserPoints(pts);
+//     } catch {
+//       if (!cancelled) setUserPoints(0);
+//     } finally {
+//       if (!cancelled) setPointsLoading(false);
+//     }
+//   })();
+//   return () => { cancelled = true; };
+// }, [userId]);
 
 // KEY used by ReedemCode
-const awardKeyFor = (uid) => `hm_referral_awarded_points_${uid || "guest"}`;
+// const awardKeyFor = (uid) => `hm_referral_awarded_points_${uid || "guest"}`;
 
 // Read localStorage award (100 only if all 3 registered) — doesn't change UI points
-useEffect(() => {
-  const KEY = awardKeyFor(userId);
-  const readAward = () => {
-    try {
-      const raw = localStorage.getItem(KEY);
-      const n = Number(raw);
-      setAwardedPoints(Number.isFinite(n) ? n : 0);
-    } catch {
-      setAwardedPoints(0);
-    } finally {
-      setAwardLoading(false);
-    }
-  };
-  readAward();
-  const onStorage = (e) => { if (e.key === KEY) readAward(); };
-  window.addEventListener("storage", onStorage);
-  return () => window.removeEventListener("storage", onStorage);
-}, [userId]);
+// useEffect(() => {
+//   const KEY = awardKeyFor(userId);
+//   const readAward = () => {
+//     try {
+//       const raw = localStorage.getItem(KEY);
+//       const n = Number(raw);
+//       setAwardedPoints(Number.isFinite(n) ? n : 0);
+//     } catch {
+//       setAwardedPoints(0);
+//     } finally {
+//       setAwardLoading(false);
+//     }
+//   };
+//   readAward();
+//   const onStorage = (e) => { if (e.key === KEY) readAward(); };
+//   window.addEventListener("storage", onStorage);
+//   return () => window.removeEventListener("storage", onStorage);
+// }, [userId]);
 
 // When clicked, PUT 100 on server, update UI, clear local award
-useEffect(() => {
-  const KEY = awardKeyFor(userId);
-  const readAward = () => {
-    try {
-      const raw = localStorage.getItem(KEY);
-      const n = Number(raw);
-      setAwardedPoints(Number.isFinite(n) ? n : 0);
-    } catch {
-      setAwardedPoints(0);
-    } finally {
-      setAwardLoading(false);
-    }
-  };
-  readAward(); 
-  // keep in sync if another tab updates
-  const onStorage = (e) => {
-    if (e.key === KEY) readAward();
-  };
-  window.addEventListener("storage", onStorage);
-  return () => window.removeEventListener("storage", onStorage);
-}, [userId]);
+// useEffect(() => {
+//   const KEY = awardKeyFor(userId);
+//   const readAward = () => {
+//     try {
+//       const raw = localStorage.getItem(KEY);
+//       const n = Number(raw);
+//       setAwardedPoints(Number.isFinite(n) ? n : 0);
+//     } catch {
+//       setAwardedPoints(0);
+//     } finally {
+//       setAwardLoading(false);
+//     }
+//   };
+//   readAward(); 
+//   // keep in sync if another tab updates
+//   const onStorage = (e) => {
+//     if (e.key === KEY) readAward();
+//   };
+//   window.addEventListener("storage", onStorage);
+//   return () => window.removeEventListener("storage", onStorage);
+// }, [userId]);
 
 // ---- helpers (keep near your other helpers) ----
- const getReferralRecord = async (userId) => {
-  if (!userId) return null;
-  const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(
-    userId
-  )}`;
-  const res = await fetch(url);
-  const text = await res.text();
-  let data = [];
-  try { data = text ? JSON.parse(text) : []; } catch { data = []; }
-  if (Array.isArray(data) && data.length > 0) {
-    data.sort((a, b) => new Date(b.date) - new Date(a.date));
-    const record = data[0];
-    setReferralPoints(Number(record.referralpoints));  
-    setIsReferralUsed(record.isReferralUsed);
-    return record;
-  }
-  setReferralPoints(0);
-  setIsReferralUsed(false);
-  return null;
-};
+//  const getReferralRecord = async (userId) => {
+//   if (!userId) return null;
+//   const url = `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(
+//     userId
+//   )}`;
+//   const res = await fetch(url);
+//   const text = await res.text();
+//   let data = [];
+//   try { data = text ? JSON.parse(text) : []; } catch { data = []; }
+//   if (Array.isArray(data) && data.length > 0) {
+//     data.sort((a, b) => new Date(b.date) - new Date(a.date));
+//     const record = data[0];
+//     setReferralPoints(Number(record.referralpoints));  
+//     setIsReferralUsed(record.isReferralUsed);
+//     return record;
+//   }
+//   setReferralPoints(0);
+//   setIsReferralUsed(false);
+//   return null;
+// };
 
-useEffect(() => {
-  const localAward = Number(localStorage.getItem(AWARDED_POINTS_KEY) || "0");
+// useEffect(() => {
+//   const localAward = Number(localStorage.getItem(AWARDED_POINTS_KEY) || "0");
+//   if (userPoints === 0 && localAward === 100) {
+//     setClaimAvailable(true);
+//   } else {
+//     setClaimAvailable(false);
+//   }
+// }, [userPoints, AWARDED_POINTS_KEY]);
 
-  if (userPoints === 0 && localAward === 100) {
-    setClaimAvailable(true);
-  } else {
-    setClaimAvailable(false);
-  }
-}, [userPoints, AWARDED_POINTS_KEY]);
+// const formatDateTime = (dateString) => {
+//   return new Date(dateString).toLocaleString("en-IN", {
+//     day: "2-digit",
+//     month: "short",
+//     year: "numeric",
+//     hour: "2-digit",
+//     minute: "2-digit",
+//   });
+// };
 
-const readServerPoints = (record) => {
-  const raw =
-    record?.referralPoints ??
-    record?.referralpoints ??
-    record?.ReferralPoints ??
-    record?.ReferralPoints ??
-    0;
-  const n = Number(raw);
-  return Number.isFinite(n) ? n : 0;
-};   
+// const readServerPoints = (record) => {
+//   const raw =
+//     record?.referralPoints ??
+//     record?.referralpoints ??
+//     record?.ReferralPoints ??
+//     record?.ReferralPoints ??
+//     0;
+//   const n = Number(raw);
+//   return Number.isFinite(n) ? n : 0;
+// };   
 
-const handleGetCoins = async () => {
-  if (pointsLoading) return;
-  const localAward = Number(localStorage.getItem(AWARDED_POINTS_KEY) || "0");
-  // const isAllRegistered = displayNumbers
-  //   ?.split(",")
-  //   .every(item => item.includes("✅"));
-  // ❌ Already claimed
-  if (userPoints >= 100) {
-    alert("Coins already claimed");
-    return;
-  }
-  // ❌ Not completed
-  if (localAward !== 100) {
-    alert("Referral not completed yet");
-    return;
-  }
-  try {
-    setPointsLoading(true);
-    setShowConfetti(true);
-    setShowMessage(true);
-    setTimeout(() => setShowConfetti(false), 4000);
-    setTimeout(() => setShowMessage(false), 5000);
-    const rec = await getReferralRecord(userId);
-    if (!rec?.id) {
-      alert("No referral record found");
-      return;
-    }
-    const payload = {
-      id: rec.id,
-      date: rec.date,
-      referralNumbers: rec.referralNumbers ?? "",
-      referreId: rec.referreId ?? userId,
-      isReferralUsed: false,
-      referralPoints: "100",
-    };
-    const res = await fetch(
-      `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ReferralPoints/UpdateReferralPoints?id=${rec.id}`,
-      {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      }
-    );
-    if (!res.ok) throw new Error("Failed to update coins");
-    // Update UI immediately
-    setUserPoints(100);
-    localStorage.removeItem(AWARDED_POINTS_KEY);
-    // Disable button
-    setClaimAvailable(false);
-  } catch (err) {
-    console.error(err);
-    alert("Something went wrong");
-  } finally {
-    setPointsLoading(false);
-  }
-};
+// const handleGetCoins = async () => {
+//   if (pointsLoading) return;
+//   const localAward = Number(localStorage.getItem(AWARDED_POINTS_KEY) || "0");
+//   // const isAllRegistered = displayNumbers
+//   //   ?.split(",")
+//   //   .every(item => item.includes("✅"));
+//   // ❌ Already claimed
+//   if (userPoints >= 100) {
+//     alert("Coins already claimed");
+//     return;
+//   }
+//   // ❌ Not completed
+//   if (localAward !== 100) {
+//     alert("Referral not completed yet");
+//     return;
+//   }
+//   try {
+//     setPointsLoading(true);
+//     setShowConfetti(true);
+//     setShowMessage(true);
+//     setTimeout(() => setShowConfetti(false), 4000);
+//     setTimeout(() => setShowMessage(false), 5000);
+//     const rec = await getReferralRecord(userId);
+//     if (!rec?.id) {
+//       alert("No referral record found");
+//       return;
+//     }
+//     const payload = {
+//       id: rec.id,
+//       date: rec.date,
+//       referralNumbers: rec.referralNumbers ?? "",
+//       referreId: rec.referreId ?? userId,
+//       isReferralUsed: false,
+//       referralPoints: "100",
+//     };
+//     const res = await fetch(
+//       `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints?id=${rec.id}`,
+//       {
+//         method: "PUT",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify(payload),
+//       }
+//     );
+//     if (!res.ok) throw new Error("Failed to update coins");
+//     // Update UI immediately
+//     setUserPoints(100);
+//     localStorage.removeItem(AWARDED_POINTS_KEY);
+//     // Disable button
+//     setClaimAvailable(false);
+//   } catch (err) {
+//     console.error(err);
+//     alert("Something went wrong");
+//   } finally {
+//     setPointsLoading(false);
+//   }
+// };
 
-useEffect(() => {
-  let cancelled = false;
-  const bootstrapReferrals = async () => {
-    if (!userId) return;
-    const rec = await getReferralRecord(userId);
-    if (!rec) {
-      // brand-new user: open popup and start with 0 points
-      if (!cancelled) {
-        setShowRedeem(true);
-        setUserPoints(0);
-      }
-      return;
-    }
-    // existing record: load points into UI
-    const serverPts = Math.min(readServerPoints(rec), 150);
-    if (!cancelled) {
-      setUserPoints(serverPts);
-      // if they have no numbers and 0 points -> treat as new-ish, open it
-      const hasNumbers = Boolean((rec.referralNumbers || "").trim());
-      if (!hasNumbers && serverPts === 0) {
-        setShowRedeem(true);
-      } else {
-        setShowRedeem(false);
-      }
-    }
-  };
-  bootstrapReferrals();
-  return () => { cancelled = true; };
-}, [userId]);
+// useEffect(() => {
+//   let cancelled = false;
+//   const bootstrapReferrals = async () => {
+//     if (!userId) return;
+//     const rec = await getReferralRecord(userId);
+//     if (!rec) {
+//       // brand-new user: open popup and start with 0 points
+//       if (!cancelled) {
+//         setShowRedeem(true);
+//         setUserPoints(0);
+//       }
+//       return;
+//     }
+//     // existing record: load points into UI
+//     const serverPts = Math.min(readServerPoints(rec), 150);
+//     if (!cancelled) {
+//       setUserPoints(serverPts);
+//       // if they have no numbers and 0 points -> treat as new-ish, open it
+//       const hasNumbers = Boolean((rec.referralNumbers || "").trim());
+//       if (!hasNumbers && serverPts === 0) {
+//         setShowRedeem(true);
+//       } else {
+//         setShowRedeem(false);
+//       }
+//     }
+//   };
+//   bootstrapReferrals();
+//   return () => { cancelled = true; };
+// }, [userId]);
 
 //   const handleSendRef = async (index, referralValue) => {
 //     console.log("sendRef", { index, referralValue });
@@ -3365,8 +3384,8 @@ useEffect(() => {
   async function fetchProductsAndFirstImages(warm = false, signal) {
     try {
       if (!warm) setImageLoading(true);
-      // https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net
-      const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${category}`;
+      // https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net
+      const url = `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${category}`;
 
       const { data: items } = await axios.get(url, { signal });
       const safeItems = (Array.isArray(items) ? items : []).map(normalizeProduct);
@@ -3397,7 +3416,7 @@ useEffect(() => {
       const fetchOne = async ({ productId, photo }) => {
         try {
           const res = await fetch(
-            `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${photo}`,
+            `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`,
             { signal }
           );
 
@@ -3558,7 +3577,7 @@ useEffect(() => {
 //     if (showLoader) setLoading(true);
 //     try {
 //       const res = await axios.get(
-//         "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/GetAllGroceryItems"
+//         "https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UploadGrocery/GetAllGroceryItems"
 //       );
 //       if (cancelled) return;
 //       const normalized = (Array.isArray(res.data) ? res.data : [])
@@ -3596,7 +3615,7 @@ useEffect(() => {
 
 useEffect(() => {
   let cancelled = false;
-  const POLL_MS = 5000;
+  // const POLL_MS = 300000;
 
   const sendLog = async () => {
     try {
@@ -3609,7 +3628,7 @@ useEffect(() => {
       };
 
       await axios.post(
-        `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/LmartLogs/UploadlogsDetails`,
+        `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/LmartLogs/UploadlogsDetails`,
         payload
       );
     } catch (err) {
@@ -3625,7 +3644,7 @@ useEffect(() => {
 
     try {
       const res = await axios.get(
-        `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/GetAllGroceryItems`
+        `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UploadGrocery/GetAllGroceryItems`
       );
 
       if (cancelled) return;
@@ -3658,13 +3677,13 @@ useEffect(() => {
 
   fetchProducts(true);
 
-  const intervalId = setInterval(() => {
-    fetchProducts(false);
-  }, POLL_MS);
+  // const intervalId = setInterval(() => {
+  //   fetchProducts(false);
+  // }, POLL_MS);
 
   return () => {
     cancelled = true;
-    clearInterval(intervalId);
+    // clearInterval(intervalId);
   };
 }, [profile.mobileNumber]);
 
@@ -3755,7 +3774,7 @@ useEffect(() => {
   const fetchDeliveryData = async () => {
     try {    
       const response = await fetch(
-        `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/GetProductDetails?id=${id}`
+        `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Mart/GetProductDetails?id=${id}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch grocery product data");
@@ -3829,7 +3848,7 @@ useEffect(() => {
  useEffect(() => {
   const fetchGroceryData = async () => {
     try {
-      const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/GetMartTicketsByUserId?userId=${userId}`);
+      const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Mart/GetMartTicketsByUserId?userId=${userId}`);
       if (!response.ok) throw new Error('Failed to fetch ticket data');
       const data = await response.json();
       const tickets = Array.isArray(data) ? data : (data && typeof data === "object" ? [data] : []);
@@ -3864,7 +3883,7 @@ const handleDeliveryPartnerClick = async () => {
   clickLock.current = true;
   try {
     const res = await axios.get(
-      `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/DeliveryPartner/GetDeliveryPartnerDetailsByUserId?userId=${userId}`
+      `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/DeliveryPartner/GetDeliveryPartnerDetailsByUserId?userId=${userId}`
     );
     const raw = res?.data ?? null;
     const profile = Array.isArray(raw)
@@ -3932,7 +3951,7 @@ const handleUpdatePaymentMethod = async () => {
     isDelivered: false,    
   };
 
-    let response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/UpdateProductDetails/${id}`, {
+    let response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Mart/UpdateProductDetails/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -3950,27 +3969,27 @@ const handleUpdatePaymentMethod = async () => {
   }
 };
 
-useEffect(() => {
-  const autoOpenForNewUser = async () => {
-    if (!userId) return;
-    try {
-      const rec = await getReferralRecord(userId);
-      const REFERRAL_LOCK_KEY = `hm_referral_lock_${userId}`;
-      const lock = localStorage.getItem(REFERRAL_LOCK_KEY);
-      const hasNumbers = Boolean((rec?.referralNumbers || "").trim());
-      // ✅ FINAL CONDITION
-      if (!lock && !hasNumbers) {
-        setRedeemOpen(true);   
-      } else {
-        setRedeemOpen(false);  
-      }
-    } catch (e) {
-      console.error(e);
-      setRedeemOpen(true); 
-    }
-  };
-  autoOpenForNewUser();
-}, [userId]);
+// useEffect(() => {
+//   const autoOpenForNewUser = async () => {
+//     if (!userId) return;
+//     try {
+//       const rec = await getReferralRecord(userId);
+//       const REFERRAL_LOCK_KEY = `hm_referral_lock_${userId}`;
+//       const lock = localStorage.getItem(REFERRAL_LOCK_KEY);
+//       const hasNumbers = Boolean((rec?.referralNumbers || "").trim());
+//       // ✅ FINAL CONDITION
+//       if (!lock && !hasNumbers) {
+//         setRedeemOpen(true);   
+//       } else {
+//         setRedeemOpen(false);  
+//       }
+//     } catch (e) {
+//       console.error(e);
+//       setRedeemOpen(true); 
+//     }
+//   };
+//   autoOpenForNewUser();
+// }, [userId]);
 
 const handleCategoryClick = async (category) => {
   const { value } = category; 
@@ -4040,11 +4059,11 @@ const handleDressCategoryClick = async (category) => {
           const fetchAllTickets = async () => {
             try { 
               const [ticketResponse, productResponse, technicianResponse, groceriesResponse, lakshmiResponse] = await Promise.all([
-                fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=raiseTicket`),
-                fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=buyProduct`),
-                fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=bookTechnician`),
-                fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=mart`),
-                fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=collections`),
+                fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=raiseTicket`),
+                fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=buyProduct`),
+                fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=bookTechnician`),
+                fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=mart`),
+                fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=collections`),
               ]);      
               if (!ticketResponse.ok || !productResponse.ok || !technicianResponse || !groceriesResponse || !lakshmiResponse) {
                 throw new Error("Failed to fetch ticket, product and technician data");
@@ -4147,7 +4166,7 @@ const handleCustomerCareCall = () => {
           try {
             let apiUrl = "";
             if (userType === "customer") {
-              apiUrl = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`;
+              apiUrl = `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`;
             }
             if (!apiUrl) return;
             const response = await axios.get(apiUrl);
@@ -4186,7 +4205,7 @@ const fetchImageUrl = async (photoId) => {
   try { 
     if (!photoId) return;
     const response = await axios.get(
-      `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${photoId}`
+      `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photoId}`
     );
     if (response.status === 200 && response.data.imageData) {
       const imageUrl = `data:image/jpeg;base64,${response.data.imageData}`;
@@ -4281,7 +4300,7 @@ const updateLocalStorageCart = (product, qty) => {
               <span className="coin-value">
                 {pointsLoading ? "0" : userPoints}
               </span>
-            </div> */}
+            </div> */} 
           </div>
  
   {/* Profile Image */}
@@ -4308,10 +4327,10 @@ const updateLocalStorageCart = (product, qty) => {
   <Modal.Body>
     {/* Coins Display */}
     <div className="text-center mb-3">
-    <h5 className="gold-shine-text">{pointsLoading ? "0" : userPoints} Coins</h5>
+    {/* <h5 className="gold-shine-text">{pointsLoading ? "0" : userPoints} Coins</h5> */}
     </div>
     {/* Get Coins Button */}
-    {shouldShowGetCoins && !isReferralUsed && (
+   {/* {shouldShowGetCoins && !isReferralUsed && (
       <button
         onClick={handleGetCoins}
         disabled={pointsLoading || userPoints >= 100 || !claimAvailable}
@@ -4326,13 +4345,13 @@ const updateLocalStorageCart = (product, qty) => {
       >
         {pointsLoading ? "Checking..." : "Get Coins"}
       </button>
-    )}
+    )} */}
     {/* Confetti overlay */}
-                    {showConfetti && (
+                    {/* {showConfetti && (
                       <Confetti width={windowSize.width} height={windowSize.height} />
-                    )}
+                    )} */}
                     {/* Toast-like “Congrats” message */}
-                    {showMessage && (
+                    {/* {showMessage && (
                       <div
                         style={{
                           position: "fixed",
@@ -4352,9 +4371,9 @@ const updateLocalStorageCart = (product, qty) => {
                       >
                         🎉 Congrats! You got <span style={{ color: "#007bff" }}>100</span> points!
                       </div>
-                    )}
+                    )} */}
           {/* Referral Numbers */}
-          <div style={{ fontSize: "12px" }}>
+          {/* <div style={{ fontSize: "12px" }}>
           {refLoading ? (
             "Loading..."
           ) : (
@@ -4364,7 +4383,7 @@ const updateLocalStorageCart = (product, qty) => {
               </div>
             ))
           )}
-      </div>
+      </div> */}
   </Modal.Body>
 </Modal>
 
@@ -5558,7 +5577,81 @@ const updateLocalStorageCart = (product, qty) => {
   <Modal.Header closeButton>
    <Modal.Title style={{ fontSize: "15px", fontWeight: "bold" }}>🎉Handyman Special Offer Sale!</Modal.Title>
   </Modal.Header>
-  <Modal.Body>
+  {/* <Modal.Body>
+  <div className="p-0">
+
+    <div
+      id="staticCarousel"
+      className="carousel slide carousel-fade"
+      data-bs-ride="carousel"
+      data-bs-interval="2000"
+    >
+
+      // {/* ✅ Indicators 
+      <div className="carousel-indicators">
+        {staticImages.map((_, i) => (
+          <button
+            key={i}
+            type="button"
+            data-bs-target="#staticCarousel"
+            data-bs-slide-to={i}
+            className={i === 0 ? "active" : ""}
+          ></button>
+        ))}
+      </div>
+
+      // {/* ✅ Images 
+      <div className="carousel-inner">
+        {staticImages.map((img, i) => (
+          <div
+            key={i}
+            className={`carousel-item ${i === 0 ? "active" : ""}`}
+          >
+            <img
+              src={img}
+              className="d-block w-100"
+              alt={`offer-${i}`}
+              style={{
+                maxHeight: "500px",
+                objectFit: "contain",
+              }}
+            />
+          </div>
+        ))}
+      </div>
+      // {/* Prev 
+      <button
+        className="carousel-control-prev"
+        type="button"
+        data-bs-target="#staticCarousel"
+        data-bs-slide="prev"
+      >
+        <span className="carousel-control-prev-icon"></span>
+      </button>
+      // {/* ✅ Next 
+      <button
+        className="carousel-control-next"
+        type="button"
+        data-bs-target="#staticCarousel"
+        data-bs-slide="next"
+      >
+        <span className="carousel-control-next-icon"></span>
+      </button>
+    </div>
+    // {/* ✅ Offer Text 
+    <p
+      style={{
+        textAlign: "center",
+        // marginTop: "10px",
+        fontWeight: "700",
+        color: "red",
+      }}
+    >
+      Offer valid till: 30 Apr 2026, 11:59 PM
+    </p>
+  </div>
+</Modal.Body> */}
+  {/* <Modal.Body>
   {activeOffers.length === 0 ? (
     <div
       style={{
@@ -5580,7 +5673,7 @@ const updateLocalStorageCart = (product, qty) => {
         : [];
       return (
         <div key={offer.id} className="p-0">
-          {/* ✅ SINGLE IMAGE */}
+          {/* ✅ SINGLE IMAGE 
           {images.length === 1 && (
             <img
               src={images[0]}
@@ -5592,8 +5685,17 @@ const updateLocalStorageCart = (product, qty) => {
               }}
             />
           )}
-        {/* <p>Offers Valid Till {endDate}</p> */}
-          {/* ✅ MULTIPLE IMAGES */}
+         <p
+          style={{
+            textAlign: "center",
+            marginTop: "10px",
+            fontWeight: "600",
+            color: "#333",
+          }}
+        >
+          Offer valid till: {formatDateTime(offer.endDate)}
+        </p> 
+          {/* ✅ MULTIPLE IMAGES
           {images.length > 1 && (
             <div
               id={`carousel-${index}`}
@@ -5641,7 +5743,7 @@ const updateLocalStorageCart = (product, qty) => {
       );
     })
   )}
-</Modal.Body>
+</Modal.Body>  */}
   {/* <Modal.Body>
      {activeOffers.map((offer, index) => {
       const images = offerImages[offer.id] || [];
@@ -5721,17 +5823,17 @@ const updateLocalStorageCart = (product, qty) => {
       </ul> */}
      
      {/* <div className="container"> */}
-          {/* <div className="row">
+          <div className="row">
             {offers.map((offer, index) => (
               <div className="col-6 mb-1" key={index}>
                 <div className="offer-card">
-                  {/*  Image *
+                  {/*  Image * */}
                   {offer.img ? (
                     <img src={offer.img} alt="offer" className="offer-img" />
                   ) : (
                     <div className="offer-img-box"></div>
                   )}
-                  {/* Text 
+                  {/* Text */}
                  <div className="offer-condition">
                   {offer.condition.split("|").map((line, i) => (
                     <div key={i}>{highlightText(line)}</div>
@@ -5740,7 +5842,7 @@ const updateLocalStorageCart = (product, qty) => {
                 </div>
               </div>
             ))}
-          </div> */}
+          </div>
         {/* </div> */}
          {/* <div className="text-center">
         <img  

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
+// import { appConfig } from "./config";
 
 const AdminProductList = () => {
   const [productData, setProductData] = useState([]);
@@ -21,7 +22,7 @@ const AdminProductList = () => {
   // Fetch product data, categories, and catalogues
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Product/GetAdminProductList?ProductOwnedBy=Admin`;
+    const url = `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Product/GetAdminProductList?ProductOwnedBy=Admin`;
     axios.get(url)
       .then((response) => {
         const products = response.data.map((product) => ({
@@ -53,7 +54,7 @@ const AdminProductList = () => {
   const handleDelete = (productId) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this product?');
     if (confirmDelete) {
-      axios.delete(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Product/${productId}`)
+      axios.delete(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Product/${productId}`)
         .then(() => {
           setProductData(prevData => prevData.filter(product => product.id !== productId));
           setFilteredData(prevData => prevData.filter(product => product.id !== productId));

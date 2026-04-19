@@ -13,6 +13,8 @@ import { CartStorage } from "./CartStorage";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ImageCache from "./utils/ImageCache";
 import Footer from "./Footer.js";
+// import { appConfig } from "./config";
+
 const MartHomeAppliances = () => { 
   const navigate = useNavigate();
   const { userType, userId, selectedUserType } = useParams();
@@ -33,7 +35,7 @@ const [likedProducts, setLikedProducts] = useState({});
 const [zoomProduct, setZoomProduct] = useState(null);
 const [grandSummary, setGrandSummary] = useState({ items: 0, total: 0 });     
 
- useEffect(() => {
+ useEffect(() => { 
 console.log(zoomImage, checked, imageLoading, grandSummary);
 }, [zoomImage, checked, imageLoading, grandSummary]);
               
@@ -179,12 +181,12 @@ const mapApiProductToUI = (p) => {
     setSelectedCategory(decodedCat);
     let cancelled = false;
     const controller = new AbortController();
-    const POLL_MS = 2000; 
-    let pollId = null;
+    // const POLL_MS = 2000; 
+    // let pollId = null;
     async function fetchProductsAndFirstImages(warm = false, signal) {
       try {   
         if (!warm) setImageLoading(true);
-        const url = `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Product/GetProductsByCategory?Category=${encodeURIComponent(
+        const url = `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Product/GetProductsByCategory?Category=${encodeURIComponent(
           selectedCategory
         )}`;
         const { data } = await axios.get(url, { signal });
@@ -234,7 +236,7 @@ if (Object.keys(cachedMap).length) {
         const fetchOne = async ({ productId, photo }) => {
           try {
             const res = await fetch(
-              `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
+              `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
               { signal }
             );
             const json = await res.json();
@@ -268,15 +270,15 @@ if (Object.keys(cachedMap).length) {
       }
     }
     fetchProductsAndFirstImages(false, controller.signal);
-    pollId = setInterval(() => {
-      const pollController = new AbortController();
-      fetchProductsAndFirstImages(true, pollController.signal);
-    }, POLL_MS);      
+    // pollId = setInterval(() => {
+    //   const pollController = new AbortController();
+    //   fetchProductsAndFirstImages(true, pollController.signal);
+    // }, POLL_MS);      
 
     return () => {
       cancelled = true;
       controller.abort();
-      if (pollId) clearInterval(pollId);
+      // if (pollId) clearInterval(pollId);
     };
   }, [encodedCategory, selectedCategory]);
 

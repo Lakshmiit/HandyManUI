@@ -81,7 +81,7 @@
 //     // // Fetch data from API on component mount
 //     // useEffect(() => {
 //     //   // API URL 
-//     //   const apiUrl = `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
+//     //   const apiUrl = `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
 //     //   // Fetching the data from the API
 //     //   const fetchData = async () => {
 //     //     try {
@@ -217,7 +217,7 @@
 //   useEffect(() => {
 //         const fetchticketData = async () => {
 //           try {
-//             const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+//             const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
 //             // alert(raiseTicketId); 
 //             if (!response.ok) {
 //               throw new Error('Failed to fetch ticket data');
@@ -253,7 +253,7 @@
 //             const imageRequests =
 //               data.attachments?.map((photo) => 
 //                fetch(
-//                   `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api
+//                   `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api
 // /FileUpload/download?generatedfilename=${photo}`
 //                 )
 //                 .then((res) => res.json())
@@ -277,7 +277,7 @@
 //       useEffect(() => {
 //         const fetchDealerData = async () => {
 //           try {
-//             const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseAQuoteByDealer/GetRaiseAQuoteDealerDetailsByid?raiseTicketId=${raiseTicketId}&dealerId=${userId}`);
+//             const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseAQuoteByDealer/GetRaiseAQuoteDealerDetailsByid?raiseTicketId=${raiseTicketId}&dealerId=${userId}`);
 //             if (!response.ok) {
 //               throw new Error('Failed to fetch ticket data');
 //             }
@@ -381,7 +381,7 @@
 //     };
     
 //       // alert(JSON.stringify(payload));
-//       const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+//       const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
 //         method: 'PUT',
 //         headers: {
 //           'Content-Type': 'application/json',
@@ -455,7 +455,7 @@
  
 //   };  
 //   try {
-//     const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseAQuoteByDealer/CreateRaiseAQuoteByDealer`, {
+//     const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseAQuoteByDealer/CreateRaiseAQuoteByDealer`, {
 //       method: 'POST',
 //       headers: {
 //         'Content-Type': 'application/json',

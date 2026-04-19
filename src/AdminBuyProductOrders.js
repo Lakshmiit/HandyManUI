@@ -7,7 +7,7 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { ArrowBack, Dashboard as MoreVertIcon} from '@mui/icons-material';
 import ForwardIcon from '@mui/icons-material/Forward';
 import { Button, Form, Row, Col } from 'react-bootstrap';
-
+// import { appConfig } from "./config.js";
 const AdminBuyProductOrders = () => {
   const navigate = useNavigate(); 
   const {buyProductId} = useParams();
@@ -89,7 +89,7 @@ useEffect(() => {
 useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsById/${buyProductId}`);
+        const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsById/${buyProductId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch product data');
         }
@@ -232,7 +232,7 @@ const handleAssignedToChange = (e) => {
     };
    
     try {
-      const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/BuyProduct/${buyProductId}`,{
+      const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/BuyProduct/${buyProductId}`,{
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -313,7 +313,7 @@ useEffect(() => {
           const formData = new FormData();
           formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
           formData.append('fileName', fileName);
-          const response = await fetch('https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
+          const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/upload?filename=` + fileName, {
             method: 'POST',
             headers: {
               'Accept': 'text/plain',

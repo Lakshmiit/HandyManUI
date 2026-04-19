@@ -6,6 +6,7 @@ import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
 import AdminSidebar from './AdminSidebar';
+// import { appConfig } from "./config";
 
 const AdminLakshmiCollectionsApproval = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -30,12 +31,12 @@ const AdminLakshmiCollectionsApproval = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/UploadLakshmiCollection/GetLakshmiCollections?id=${id}`);
+        const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UploadLakshmiCollection/GetLakshmiCollections?id=${id}`);
         const data = await response.json();
         setCollectionData(data);
          const imagePromises = (data.images ?? []).map(async (file) => {
           const r = await fetch(
-            `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(file)}`
+            `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(file)}`
           );
           const j = await r.json();
           const b64 = j.imageData || j.fileData || j.videoData; 
@@ -48,7 +49,7 @@ const AdminLakshmiCollectionsApproval = () => {
         });
         const videoPromises = (data.videos ?? []).map(async (file) => {
           const r = await fetch(
-            `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(file)}`
+            `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(file)}`
           );
           const j = await r.json();
           const b64 = j.videoData || j.fileData || j.imageData; 
@@ -123,7 +124,7 @@ const AdminLakshmiCollectionsApproval = () => {
       stockLeft,
     };
     try {
-      const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/UploadLakshmiCollection/UpdateLakshmiCollection?id=${id}`, {
+      const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UploadLakshmiCollection/UpdateLakshmiCollection?id=${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

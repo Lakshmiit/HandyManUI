@@ -16,7 +16,7 @@ import Footer from "./Footer.js";
 // import { useLocation } from "react-router-dom";
  
 const IMAGE_DOWNLOAD =
-  `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=`;
+  `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
 
 const norm = (s) =>
   String(s || "").toLowerCase().replace(/\s+/g, " ").replace("500ml", "500 ml").replace("1l", "1 l").trim();
@@ -150,24 +150,56 @@ const GroceryOffersCartPage = () => {
   const [showZoomModal, setShowZoomModal] = useState(false);
   const [zoomImage, setZoomImage] = useState("");
   const [grandSummary, setGrandSummary] = useState({ items: 0, total: 0 });
-  const pollRef = useRef(null);
+    const pollRef = useRef(null);
 const [walletAmount, setWalletAmount] = useState(0);
-const MIN_ORDER_TOTAL = Number(walletAmount) === 50 ? 150 : 100;
   const [addresses, setAddresses] = useState([]);
   const [fullName, setFullName] = useState("");
   const [isNewUser, setIsNewUser] = useState(true);
   const isGuestName = (name) => (name ?? "").trim().toLowerCase() === "guest";
-
+const [referralAmount, setReferralAmount] = useState(0);
+const MIN_ORDER_TOTAL =
+  Number(walletAmount) === 50 || Number(referralAmount) > 0
+    ? 150
+    : 100;
  useEffect(() => {
     console.log(addresses, fullName, isNewUser);
   }, [addresses, fullName, isNewUser]);
 
-console.log("Wallet:", walletAmount);   
+console.log("Wallet:", walletAmount);
+
+const getReferralRecord = async (userId) => {
+  if (!userId) return null;
+  const url = `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
+  const res = await fetch(url);
+  const text = await res.text();
+  let data = [];
+  try {
+    data = text ? JSON.parse(text) : [];
+  } catch {
+    data = [];
+  }
+  if (Array.isArray(data) && data.length > 0) {
+    data.sort((a, b) => new Date(b.date) - new Date(a.date));
+    return data[0];
+  }
+  return null;
+};
+
+useEffect(() => {
+  const fetchReferral = async () => {
+    const rec = await getReferralRecord(userId);
+    const points = Number(rec?.points || 0);
+    setReferralAmount(points);
+  };
+  if (userId) {
+    fetchReferral();
+  }
+}, [userId]);
 
   const fetchCustomerData = useCallback(async () => {
       try {
         const response = await fetch(
-          `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Address/GetAddressById/${userId}`,
+          `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Address/GetAddressById/${userId}`,
         );
         if (!response.ok) {
           throw new Error("Failed to fetch customer profile data");
@@ -421,7 +453,7 @@ const handleQtyChange = (rowId, delta) => {
     };
     try {
       const response = await fetch(
-        `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/UploadProductDetails`,
+        `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Mart/UploadProductDetails`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -480,7 +512,7 @@ useEffect(() => {
       if (!categories.length) return;
       const allProducts = [];
       for (const cat of categories) {
-        const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(
+        const url = `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(
           cat
         )}`;
         const res = await fetch(url);
@@ -522,7 +554,7 @@ useEffect(() => {
     }
   };
   fetchAndUpdateStock();
-  pollRef.current = setInterval(fetchAndUpdateStock, 10000);
+   pollRef.current = setInterval(fetchAndUpdateStock, 5000);
   return () => {
     if (pollRef.current) clearInterval(pollRef.current);
   };
@@ -771,7 +803,9 @@ useEffect(() => {
             marginTop: "0px",
           }}
         >
-          Minimum order is ₹{MIN_ORDER_TOTAL} and above
+          Minimum order is ₹{MIN_ORDER_TOTAL} and above  
+    {walletAmount === 50 && " (Wallet applied)"}  
+    {referralAmount > 0 && " (Referral applied)"}
         </p>
       )}
 

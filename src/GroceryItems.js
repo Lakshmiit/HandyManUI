@@ -13,6 +13,8 @@ import { CartStorage } from "./CartStorage";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ImageCache from "./utils/ImageCache";
 import Footer from "./Footer.js";
+// import { appConfig } from "./config";
+
 // import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 // import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 const GroceryCard = () => {
@@ -180,7 +182,7 @@ return idNum;
 //   async function fetchProductsAndFirstImages() {
 //     try {
 //       setImageLoading(true);
-//       const url = `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
+//       const url = `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
 //       const { data: items } = await axios.get(url, { signal: controller.signal });
 //       const safeItems = Array.isArray(items) ? items : [];
 //       if (cancelled) return;
@@ -209,7 +211,7 @@ return idNum;
 //       const fetchOne = async ({ productId, photo }) => {
 //         try {
 //           const res = await fetch(
-//             `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
+//             `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
 //             { signal: controller.signal }
 //           );
 //           const json = await res.json();
@@ -251,12 +253,12 @@ const decodedCat = decodeURIComponent(encodedCategory);
 setSelectedCategory(decodedCat);
 let cancelled = false;
 const controller = new AbortController();
-const POLL_MS = 2000; 
-let pollId = null;
+// const POLL_MS = 2000; 
+// let pollId = null;
 async function fetchProductsAndFirstImages(warm = false, signal) {
 try {
 if (!warm) setImageLoading(true);
-const url = `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
+const url = `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
 const { data: items } = await axios.get(url, { signal });
 const safeItems = Array.isArray(items) ? items : [];
 if (cancelled) return;
@@ -294,7 +296,7 @@ if (cancelled) return;
 const fetchOne = async ({ productId, photo }) => {
 try {
 const res = await fetch(
-`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
+`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
               { signal }     
 );
 const json = await res.json();
@@ -324,16 +326,16 @@ if (!cancelled && !warm) setImageLoading(false);
 }
 }
 fetchProductsAndFirstImages(false, controller.signal);
-pollId = setInterval(() => {
-const pollController = new AbortController();
-fetchProductsAndFirstImages(true, pollController.signal);
-}, POLL_MS);
+// pollId = setInterval(() => {
+// const pollController = new AbortController();
+// fetchProductsAndFirstImages(true, pollController.signal);
+// }, POLL_MS);
 
 return () => {
 cancelled = true;
 controller.abort();
-if (pollId) clearInterval(pollId);
-};
+// if (pollId) clearInterval(pollId);
+ };
 }, [encodedCategory]);
 
 useEffect(() => {

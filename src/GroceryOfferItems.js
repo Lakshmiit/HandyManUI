@@ -13,6 +13,7 @@ import { CartStorage } from "./CartStorage";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ImageCache from "./utils/ImageCache";
 import Footer from "./Footer.js";
+// import { appConfig } from "./config";
 
 const normalizeName = (s) =>
   String(s || "")
@@ -237,13 +238,13 @@ const GroceryOfferItems = () => {
     if (!selectedCategory) return;
     let cancelled = false;
     const controller = new AbortController();
-    const POLL_MS = 2000;
-    let pollId = null;
+    // const POLL_MS = 50000;
+    // let pollId = null;
 
     async function fetchProductsAndFirstImages(warm = false, signal) {
       try {
         if (!warm) setImageLoading(true);
-        const url = `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(
+        const url = `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(
           selectedCategory,
         )}`;
         const { data: items } = await axios.get(url, { signal });
@@ -284,7 +285,7 @@ const GroceryOfferItems = () => {
         const fetchOne = async ({ productId, photo }) => {
           try {
             const res = await fetch(
-              `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
+              `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
                 photo,
               )}`,
               { signal },  
@@ -317,17 +318,16 @@ const GroceryOfferItems = () => {
     }
 
     fetchProductsAndFirstImages(false, controller.signal);
-    pollId = setInterval(() => {
-      const pollController = new AbortController();
-      fetchProductsAndFirstImages(true, pollController.signal);
-    }, POLL_MS);
-
+//     pollId = setInterval(() => {
+// const pollController = new AbortController();
+// fetchProductsAndFirstImages(true, pollController.signal);
+// }, POLL_MS);
     return () => {
       cancelled = true;
       controller.abort();
-      if (pollId) clearInterval(pollId);
+      // if (pollId) clearInterval(pollId);
     };
-  }, [selectedCategory]);
+  }, [selectedCategory]);         
 
   useEffect(() => {
     let savedCategories = [];

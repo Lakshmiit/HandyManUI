@@ -6,6 +6,7 @@ import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
 import AdminSidebar from './AdminSidebar';
+// import { appConfig } from "./config";
 
 const ProductAdmin = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -20,13 +21,13 @@ const ProductAdmin = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Product/${id}`);
+        const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Product/${id}`);
         const data = await response.json();
         setProductData(data);
         const imageRequests =
           data.productPhotos?.map((photo) =>
             fetch(
-              `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+              `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
             )
               .then((res) => res.json())
               .then((data) => ({
@@ -64,7 +65,7 @@ const ProductAdmin = () => {
       numberOfStockAvailable,
     };
     try {
-      const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Product/${id}`, {
+      const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Product/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

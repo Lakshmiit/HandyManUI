@@ -1,20 +1,19 @@
 import React, { useState } from "react";
 import axios from "axios";
-import {  Card,  Form,  Button,  Row,  Col,  Container,  Carousel,} from "react-bootstrap";
+import {  Modal, Card,  Form,  Button,  Row,  Col,  Container,  Carousel,} from "react-bootstrap";
 import Header from "./Header";
 import Footer from "./Footer";
-
 const AdminOfferForm = () => {
   const [formData, setFormData] = useState({
-    id: "",
-    title: "",
-    files: [],
-    startDate: "",
-    endDate: "",
-    description: "",
-    status: "",
-  });
-
+  id: "",
+  header: "",
+  footer: "",
+  files: [],
+  startDate: "",
+  endDate: "",
+  description: "",
+});
+  const [showPreview, setShowPreview] = useState(false);
   const [previews, setPreviews] = useState([]);
 
   // Handle Input Change
@@ -62,7 +61,7 @@ const uploadFile = async (byteArray, fileName, mimeType) => {
     formData.append("fileName", fileName);
 
     const response = await fetch(
-      `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/upload?filename=` +
+      `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/upload?filename=` +
         fileName,
       {
         method: "POST",
@@ -105,6 +104,8 @@ for (let file of formData.files) {
         date: "string",
         startDate: new Date(formData.startDate).toISOString(),
         endDate: new Date(formData.endDate).toISOString(),
+        header: formData.header,
+        footer: formData.footer,
         description: formData.description,
         image: uploadedImages.map(url => ({
           images: url
@@ -114,19 +115,19 @@ for (let file of formData.files) {
       console.log("Sending Payload:", payload);
 
       await axios.post(
-        "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UpLoadBannners/UploadBanners",
+        "https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UpLoadBannners/UploadBanners",
          payload
       );
       alert("Offer Uploaded Successfully!");
       // Reset Form
       setFormData({
         id: "",
-        title: "",
+        header: "",
+        footer: "",
         files: [],
         startDate: "",
         endDate: "",
         description: "",
-        status: "",
       });
       setPreviews([]);
     } catch (err) {
@@ -160,13 +161,14 @@ for (let file of formData.files) {
           </h2>
 
           <Form onSubmit={handleSubmit}>
-            {/* Title */}
+            {/* Header */}
             <Form.Group className="mb-2">
-              <Form.Label className="fw-bold">Offer Title</Form.Label>
+              <Form.Label className="fw-bold">Enter Header</Form.Label>
               <Form.Control
                 type="text"
-                name="title"
-                value={formData.title}
+                name="header"
+                placeholder="Enter Header"
+                value={formData.header}
                 onChange={handleChange}
                 required
               />
@@ -209,7 +211,7 @@ for (let file of formData.files) {
                           alt={`slide-${index}`}
                           style={{
                             width: "100%",
-                            height: "200px",
+                            height: "200px", 
                             objectFit: "cover",
                             borderRadius: "10px",
                           }}
@@ -253,7 +255,18 @@ for (let file of formData.files) {
                 </Form.Group>
               </Col>
             </Row>
-
+            {/* Footer */}
+            <Form.Group className="mb-2">
+              <Form.Label className="fw-bold">Enter Footer</Form.Label>
+              <Form.Control
+                type="text"
+                name="footer"
+                placeholder="Enter Footer"
+                value={formData.footer}
+                onChange={handleChange}
+                required
+              />
+            </Form.Group>
             {/* Description */}
             <Form.Group className="mb-2">
               <Form.Label className="fw-bold">Description</Form.Label>
@@ -267,13 +280,68 @@ for (let file of formData.files) {
             </Form.Group>
 
             {/* Submit */}
-            <Button type="submit" className="btn btn-primary w-100 mt-2">
-              Upload Offer
-            </Button>
+            <Row className="mt-2">
+            <Col>
+              <Button
+                variant="danger"
+                className="w-100"
+                onClick={() => setShowPreview(true)}
+              >
+                👁 Preview
+              </Button>
+            </Col>
+
+            <Col>
+              <Button type="submit" className="btn btn-primary w-100">
+                Upload
+              </Button>
+            </Col>
+          </Row>
           </Form>
         </Card>
       </Container>
+      <Modal
+  show={showPreview}
+  onHide={() => setShowPreview(false)}
+  centered
+>
+  <Modal.Header closeButton>
+    <Modal.Title>Banner Preview</Modal.Title>
+  </Modal.Header>
 
+  <Modal.Body>
+    <div style={{ textAlign: "center" }}>
+      
+      {/* Header */}
+      <h5>{formData.header || "Header Preview"}</h5>
+
+      {/* Image Preview */}
+      {previews.length > 0 && (
+        <img
+          src={previews[0]}
+          alt="preview"
+          style={{
+            width: "100%",
+            height: "200px",
+            objectFit: "cover",
+            borderRadius: "10px",
+          }}
+        />
+      )}
+
+      {/* Description */}
+      <p className="mt-2">
+        {formData.description || "Description preview"}
+      </p>
+
+      {/* Footer */}
+      <small>
+        {formData.footer || "Footer Preview"}
+      </small>
+
+    </div>
+  </Modal.Body>
+</Modal>
       <Footer />
     </>
   );

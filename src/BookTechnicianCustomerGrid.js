@@ -29,7 +29,7 @@
 //   }, [technicianData]);
 //   useEffect(() => {
 //     setLoading(true);
-//     const url = `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/BookTechnician/GetBookTechnicianDetailsForUserList?userId=${userId}`
+//     const url = `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/BookTechnician/GetBookTechnicianDetailsForUserList?userId=${userId}`
 
 //     axios.get(url)
 //       .then(response => {

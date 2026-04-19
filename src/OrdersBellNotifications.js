@@ -14,7 +14,7 @@
 //     const unsubscribe = onSnapshot(notificationsRef, async (snapshot) => {
 //       try {
 //         const response = await fetch(
-//           `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForUserList?UserID=${userId}`
+//           `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForUserList?UserID=${userId}`
 //         );
 //         const data = await response.json();
 //         const productOrdersFiltered = data.filter(

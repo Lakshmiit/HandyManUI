@@ -74,7 +74,7 @@
 //   useEffect(() => {
 //     const fetchticketData = async () => {
 //         try {
-//             const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+//             const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
 //             if (!response.ok) {
 //                 throw new Error('Failed to fetch ticket data');
 //             }
@@ -106,7 +106,7 @@
 //         setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: ""}]);
 //         const imageRequests =
 //           data.attachments?.map((photo) => fetch(
-//               `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+//               `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
 //             )
 //             .then((res) => res.json())
 //               .then((data) => ({
@@ -216,7 +216,7 @@
 //   //       ...ticketData, 
 //   //       TechnicianList: updatedTechnicianList,
 //   //   };
-//   //     const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+//   //     const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
 //   //       method: 'PUT',
 //   //       headers: {
 //   //         'Content-Type': 'application/json',
@@ -294,7 +294,7 @@
 // //         };
 
 // //         // Step 5: Send the PUT request
-// //         const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+// //         const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
 // //             method: "PUT",
 // //             headers: {
 // //                 "Content-Type": "application/json",
@@ -384,7 +384,7 @@
 //           UTRTransactionNumber: "",
 //       };
 
-//       const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+//       const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
 //           method: "PUT",
 //           headers: {
 //               "Content-Type": "application/json",
@@ -487,7 +487,7 @@
 //     }; 
 //     try {
 //       //imageUrls="";
-//       const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseAQuote/CreateRaiseAQuote`, {
+//       const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseAQuote/CreateRaiseAQuote`, {
 //         method: 'POST',
 //         headers: {
 //           'Content-Type': 'application/json',
@@ -500,7 +500,7 @@
 //       }
      
 //       alert('Ticket Technician saved Successfully!');
-//       // window.location.href = `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/CustomerProfilePage?ReactToken=${technicianId}$${userType}`;
+//       // window.location.href = `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/CustomerProfilePage?ReactToken=${technicianId}$${userType}`;
 //     } catch (error) {
 //       console.error('Error saving Technician ticket data:', error);
 //       window.alert('Failed to save the Technician ticket data. Please try again later.')
@@ -512,7 +512,7 @@
 //       const fetchtechnicianData = async () => {
 //         try {
 //           const technicianResponse = await fetch(
-//             `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByTechnicianId?raiseAQuotetId=${raiseTicketId}&TechnicianId=${userId}`
+//             `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByTechnicianId?raiseAQuotetId=${raiseTicketId}&TechnicianId=${userId}`
 //           );
 //           if (!technicianResponse.ok) {
 //             throw new Error('Failed to fetch technician data');
@@ -579,7 +579,7 @@
 // //   })), 
 // //   };
 // //   try {
-// //     const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+// //     const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
 // //       method: 'PUT',
 // //       headers: {
 // //         'Content-Type': 'application/json',

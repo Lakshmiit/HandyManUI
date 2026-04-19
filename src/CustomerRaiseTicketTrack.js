@@ -91,7 +91,7 @@
 // useEffect(() => {
 //     const fetchticketData = async () => {
 //       try {
-//         const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+//         const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
 //         if (!response.ok) {
 //           throw new Error('Failed to fetch ticket data');
 //         }
@@ -146,7 +146,7 @@
 
 //     const fetchDeliveryData = async () => {
 //       try {
-//         const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/DeliveryNote/GetRaiseTicketForDealer?RaiseTicketId=${ticketId}`);
+//         const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/DeliveryNote/GetRaiseTicketForDealer?RaiseTicketId=${ticketId}`);
 //         if (!response.ok) {
 //           throw new Error('Failed to fetch delivery data');
 //         }
@@ -156,7 +156,7 @@
 //         setDeliveryNoteId(data.deliveryNoteId);
 //         const imageRequests =
 //         data.uploadInvoice?.map((photo) => fetch(
-//             `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+//             `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
 //           )
 //           .then((res) => res.json())
 //             .then((data) => ({
@@ -187,7 +187,7 @@
 //   useEffect(() => {
 //     const fetchtechnicianData = async () => {
 //       try {
-//         const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Technician/GetTechnicianDetailsForInvoice?TechnicianId=${lowestBidder}`);
+//         const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Technician/GetTechnicianDetailsForInvoice?TechnicianId=${lowestBidder}`);
 //         if (!response.ok) {
 //           throw new Error('Failed to fetch ticket data');
 //         }
@@ -208,7 +208,7 @@
 //   useEffect(() => {
 //     const fetchdealerData = async () => {
 //       try {
-//         const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Dealer/GetDealerDetailsForInvoice?DealerId=${lowestDealerBidder}`);
+//         const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Dealer/GetDealerDetailsForInvoice?DealerId=${lowestDealerBidder}`);
 //         if (!response.ok) {
 //           throw new Error('Failed to fetch ticket data');
 //         }
@@ -227,7 +227,7 @@
 
 
 // useEffect(() => {
-//   const apiUrl = `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
+//   const apiUrl = `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
 //   const fetchData = async () => {
 //     try {
 //       const response = await fetch(apiUrl);
@@ -258,7 +258,7 @@
 //         useEffect(() => {
 //         const fetchPaymentData = async () => {
 //           try {
-//             const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Payment/GetPaymentDetailsByRaiseTicketId?RaiseTicketId=${ticketId}`);
+//             const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Payment/GetPaymentDetailsByRaiseTicketId?RaiseTicketId=${ticketId}`);
 //             if (!response.ok) {
 //               throw new Error('Failed to fetch ticket data');
 //             }
@@ -384,7 +384,7 @@
 //   try {
 //     let response
 //     if (paymentMode === "technician" && (paymentType === "Cash" || paymentType === "Pay Online")) {
-//         response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+//         response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
 //           method: 'PUT',
 //           headers: {
 //             'Content-Type': 'application/json',
@@ -403,7 +403,7 @@
 //           Navigate(`/profilePage/${userType}/${customerId}`);
 //         } 
 //       } else if (paymentMode === "online") {
-//           response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+//           response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
 //             method: 'PUT',
 //             headers: {
 //               'Content-Type': 'application/json',
@@ -466,7 +466,7 @@
 //   };
 
 //   try {
-//     const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/DeliveryNote/${id}`, {
+//     const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/DeliveryNote/${id}`, {
 //       method: 'PUT',
 //       headers: {
 //         'Content-Type': 'application/json',

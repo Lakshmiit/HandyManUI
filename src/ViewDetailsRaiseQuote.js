@@ -62,7 +62,7 @@
 //   useEffect(() => {
 //     const fetchticketData = async () => {
 //       try {
-//         const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+//         const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
 //         if (!response.ok) {
 //           throw new Error('Failed to fetch ticket data');
 //         }
@@ -85,7 +85,7 @@
 //         setCommentsList(data.comments || [{ updatedDate: new Date(), commentText: ""}]);
 //         const imageRequests =
 //           data.attachments?.map((photo) => fetch(
-//               `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+//               `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
 //             )
 //             .then((res) => res.json())
 //               .then((data) => ({
@@ -194,7 +194,7 @@
 //     };
 //     try {
       
-//       const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+//       const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
 //         method: 'PUT',
 //         headers: {
 //           'Content-Type': 'application/json',
@@ -258,7 +258,7 @@
 // //     }; 
 // //     try {
 // //       //imageUrls="";
-// //       const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api
+// //       const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api
 // // /RaiseAQuote/CreateRaiseAQuote`, {
 // //         method: 'POST',
 // //         headers: {
@@ -283,7 +283,7 @@
 //       const fetchtechnicianData = async () => {
 //         try {
 //           const technicianResponse = await fetch(
-//             `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByTechnicianId?raiseTicketId=${raiseTicketId}&TechnicianId=${userId}`
+//             `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByTechnicianId?raiseTicketId=${raiseTicketId}&TechnicianId=${userId}`
 //           );
 //           if (!technicianResponse.ok) {
 //             throw new Error('Failed to fetch technician data');
@@ -337,7 +337,7 @@
 // //   })), 
 // //   };
 // //   try {
-// //     const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
+// //     const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
 // //       method: 'PUT',
 // //       headers: {
 // //         'Content-Type': 'application/json',

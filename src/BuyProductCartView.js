@@ -79,7 +79,7 @@
 //   useEffect(() => {
 //     const fetchProfileType = async () => {
 //       try {
-//         const API_URL = "https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Address/GetAddressById/";
+//         const API_URL = "https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Address/GetAddressById/";
 //         //alert(userId);
 //         const response = await fetch(`${API_URL}${userId}`);
         
@@ -173,7 +173,7 @@
 //     };
   
 //     try {
-//       const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/BuyProduct/BuyProductUpload`,{
+//       const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/BuyProduct/BuyProductUpload`,{
 //         method: 'POST',
 //         headers: {
 //           'Content-Type': 'application/json',
@@ -243,7 +243,7 @@
 // //     };
   
 // //     try {
-// //       const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/BuyProduct/BuyProductUpload`,{
+// //       const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/BuyProduct/BuyProductUpload`,{
 // //         method: 'POST',
 // //         headers: {
 // //           'Content-Type': 'application/json',
@@ -400,7 +400,7 @@
 //     const fetchProducts = async () => {
 //       try {
 //         const response = await axios.get(
-//           `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Product/GetProductsByCategory?category=${category}`
+//           `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Product/GetProductsByCategory?category=${category}`
 //         );
 //         setAllProducts(response.data);
 //         // alert(JSON.stringify(allProducts));

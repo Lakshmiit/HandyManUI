@@ -177,9 +177,9 @@ const lakshmiCollectionsNotifications = notifications.filter(
             <div>
               <strong>Address:</strong> {notification.address}, {notification.district}, {notification.state}, {notification.zipCode}, {notification.customerPhoneNumber}
             </div>
-            <div>
+            {/* <div>
               <strong>Location:</strong> {notification.location}
-            </div>
+            </div> */}
             <div className="notification-date">
               <strong>Date:</strong> {new Date(notification.date).toLocaleString()}
             </div>
@@ -266,12 +266,12 @@ const Notification = () => {
     try { 
       const [raiseTicketResponse, BookTechnicianResponse, buyProductResponse, groceryItemResponse, collectionsResponse] = await Promise.all([
         fetch(
-        `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetTicketsNotifications`
+        `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications`
         ),
-        fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BookTechnician/GetBookTechnicianForAdminList`),
-        fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BuyProduct/GetBuyProductDetailsForAdminList`),
-        fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/GetAllMartItems`),
-        fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/LakshmiCollection/GetAllLakshmiCollectionsOpen`),
+        fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/BookTechnician/GetBookTechnicianForAdminList`),
+        fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForAdminList`),
+        fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Mart/GetAllMartItems`),
+        fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/LakshmiCollection/GetAllLakshmiCollectionsOpen`),
       ]);
 
       const raiseTicketData = await raiseTicketResponse.json();

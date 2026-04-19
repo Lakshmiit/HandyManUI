@@ -11,7 +11,8 @@ import {
 } from "@mui/icons-material";
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import "./App.css";
- 
+//  import { appConfig } from "./config";
+
 const BookTechnicianNotification = () => {
   const [assignedTo, setAssignedTo] = useState("");
   const [isMobile, setIsMobile] = useState(false);
@@ -30,7 +31,7 @@ const BookTechnicianNotification = () => {
 
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/BookTechnician/GetBookTechnicianForAdminList`
+    const url = `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/BookTechnician/GetBookTechnicianForAdminList`
     axios.get(url)
       .then(response => {
         const technicians = response.data.map((technician) => ({
@@ -60,7 +61,7 @@ const BookTechnicianNotification = () => {
   const handleDelete = (technicianId) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this ticket?');
     if (confirmDelete) {
-      axios.delete(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseTicket/${technicianId}`)
+      axios.delete(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/${technicianId}`)
         .then(() => {
           setTechnicianData(prevData => prevData.filter(technician => technician.id !== technicianId));
           setFilteredData(prevData => prevData.filter(technician => technician.id !== technicianId));

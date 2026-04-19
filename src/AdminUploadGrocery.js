@@ -11,7 +11,7 @@ import { useParams } from 'react-router-dom';
 // import { appConfig } from "./config";
 
 const AdminUploadGrocery = () => {
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);   
   const [showMenu, setShowMenu] = useState(false);
   const [groceryName, setGroceryName] = useState("");
   const [category, setCategory] = useState("");
@@ -91,7 +91,7 @@ useEffect(() => {
       formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
       formData.append('fileName', fileName);
      
-      const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/upload?filename=` + fileName, {
+      const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/upload?filename=` + fileName, {
         method: 'POST',
         headers: {
           'Accept': 'text/plain',
@@ -150,7 +150,7 @@ useEffect(() => {
       Limit: limit ? limit.toString() : "",    
     };   
     try {
-      const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/UploadGrocery`, {
+      const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UploadGrocery/UploadGrocery`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -223,6 +223,7 @@ useEffect(() => {
                 onChange={(e) => setCategory(e.target.value)}>
                 <option>Choose Category</option>
                 <option>LMart Special</option>
+                <option>₹1 Store</option>
                 <option>Offers</option>
                 <option>DWCRA</option>
                 <option>Christmas Offers</option>
@@ -256,6 +257,7 @@ useEffect(() => {
                 <option>Health Care</option>
                 <option>Kitchenware Appliances</option>
                 <option>Home Decors</option>
+                <option>Stationary</option>
                 </select>
             </div> 
 

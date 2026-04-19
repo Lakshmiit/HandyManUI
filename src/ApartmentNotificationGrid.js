@@ -3,7 +3,6 @@ import { Button } from "react-bootstrap";
 import axios from 'axios';
 import AdminSidebar from "./AdminSidebar";
 import Footer from './Footer.js';
-
 import { Link } from "react-router-dom";
 import { FaTrash, FaEye } from "react-icons/fa";
 import {
@@ -12,6 +11,7 @@ import {
 } from "@mui/icons-material";
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import "./App.css";
+// import { appConfig } from "./config";
 
 const AartmentRaiseTicketNotification = () => {
   const [assignedTo, setAssignedTo] = useState(""); 
@@ -32,7 +32,7 @@ const AartmentRaiseTicketNotification = () => {
 
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/ApartmentRaiseTicket/GetGetApartmentMaintenanceForAdminList`
+    const url = `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/ApartmentRaiseTicket/GetGetApartmentMaintenanceForAdminList`
  
     axios.get(url)
       .then(response => {
@@ -63,7 +63,7 @@ const AartmentRaiseTicketNotification = () => {
   const handleDelete = (ticketId) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this ticket?');
     if (confirmDelete) {
-      axios.delete(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/RaiseTicket/${ticketId}`)
+      axios.delete(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/${ticketId}`)
         .then(() => {
           setTicketData(prevData => prevData.filter(ticket => ticket.id !== ticketId));
           setFilteredData(prevData => prevData.filter(ticket => ticket.id !== ticketId));

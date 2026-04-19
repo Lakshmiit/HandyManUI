@@ -3,12 +3,13 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import "./App.css"; 
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import UploadIcon from '@mui/icons-material/Upload';
-import AdminSidebar from './AdminSidebar';
+import AdminSidebar from './AdminSidebar';    
 import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
 import {  Button } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
+// import { appConfig } from "./config";
 
-const AdminLakshmiCollectionsUpdate = () => {
+const AdminLakshmiCollectionsUpdate = () => {      
   const navigate = useNavigate();
   const {id} = useParams();    
   const [isMobile, setIsMobile] = useState(false);
@@ -49,7 +50,7 @@ useEffect(() => {
           const fetchCollectionData = async () => {
               try {
                   setLoading(true);
-                  const collectionResponse = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/UploadLakshmiCollection/GetLakshmiCollections?id=${id}`);
+                  const collectionResponse = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UploadLakshmiCollection/GetLakshmiCollections?id=${id}`);
                   if (!collectionResponse.ok) {
                       throw new Error('Product not found');
                   }
@@ -211,7 +212,7 @@ useEffect(() => {
       const formData = new FormData();
       formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
       formData.append('fileName', fileName);
-      const response = await fetch('https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/FileUpload/upload?filename=' + fileName, {
+      const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/upload?filename=` + fileName, {
         method: 'POST',
         headers: {
           'Accept': 'text/plain',
@@ -267,7 +268,7 @@ const handleSubmit = async (event) => {
     };
 
     try {
-      const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/UploadLakshmiCollection/UpdateLakshmiCollection?id=${id}`, {
+      const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UploadLakshmiCollection/UpdateLakshmiCollection?id=${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json"

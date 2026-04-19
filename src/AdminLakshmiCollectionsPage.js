@@ -7,6 +7,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ArrowBack, Dashboard as MoreVertIcon } from "@mui/icons-material";
 import ForwardIcon from "@mui/icons-material/Forward";
 import { Button, Modal } from "react-bootstrap";
+// import { appConfig } from "./config";
 
 const AdminLakshmiCollectionsPage = () => {
   const navigate = useNavigate();
@@ -50,7 +51,7 @@ const AdminLakshmiCollectionsPage = () => {
   const downloadImage = async (fileName) => {
     if (!fileName) return null;
     const res = await fetch(
-      `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
+      `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
         fileName
       )}`
     );
@@ -85,7 +86,7 @@ const AdminLakshmiCollectionsPage = () => {
         }
         setImageLoading(true);
         const response = await fetch(
-          `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/LakshmiCollection/GetLakshmicollectionsById?id=${collectionId}`
+          `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/LakshmiCollection/GetLakshmicollectionsById?id=${collectionId}`
         );
         if (!response.ok) throw new Error("Failed to fetch collection details");
         const data = await response.json();

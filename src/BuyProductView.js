@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Modal } from 'react-bootstrap';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-  
+// import { appConfig } from "./config";
+
 const ProductViewModal = ({ show, handleClose, productId }) => {
   const [productData, setProductData] = useState(null);
   const [imageUrls, setImageUrls] = useState([]);
@@ -13,12 +14,12 @@ const ProductViewModal = ({ show, handleClose, productId }) => {
     if (!productId) return;
     const fetchData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/Product/${productId}`);
+        const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Product/${productId}`);
         const data = await response.json();
         setProductData(data);
 
         const imageRequests = data.productPhotos?.map((photo) =>
-          fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`)
+          fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`)
             .then((res) => res.json())
             .then((data) => ({ src: photo, imageData: data.imageData }))
         ) || [];

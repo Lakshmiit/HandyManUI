@@ -4,7 +4,8 @@ import { Button } from 'react-bootstrap';
 import { Dashboard as MoreVertIcon } from '@mui/icons-material';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import AdminSidebar from './AdminSidebar';
- 
+// import { appConfig } from "./config";
+
 const AdminGroceryApproval = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
@@ -18,14 +19,14 @@ const AdminGroceryApproval = () => {
   useEffect(() => {         
     const fetchData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItems/${id}`);
+        const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItems/${id}`);
         const data = await response.json();
         setGroceryData(data);
 
         const imageRequests =
           data.images?.map((photo) =>
             fetch(
-              `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+              `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
             )
               .then((res) => res.json())
               .then((data) => ({
@@ -64,7 +65,7 @@ const AdminGroceryApproval = () => {
     };
 
     try {   
-      const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${id}`, {
+      const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

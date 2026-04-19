@@ -84,7 +84,7 @@
 // useEffect(() => {
 //     const fetchProductData = async () => {
 //       try {
-//         const response = await fetch(`https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsById/${buyProductId}`);
+//         const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsById/${buyProductId}`);
 //         if (!response.ok) {
 //           throw new Error('Failed to fetch product data');
 //         }
@@ -125,7 +125,7 @@
 //        setWarrantyPeriod(data.warrentyPeriod); 
 //        const imageRequests =
 //         data.uploadInvoice?.map((photo) => fetch(
-//             `https://handymanapiv6-g7dfa4fgcrd7f3h2.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+//             `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
 //           )
 //           .then((res) => res.json())
 //             .then((data) => ({
