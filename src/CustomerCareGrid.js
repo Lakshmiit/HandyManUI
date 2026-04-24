@@ -29,7 +29,7 @@
 
 //   useEffect(() => {
 //     setLoading(true);
-//     const url = `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications`
+//     const url = `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications`
 //     axios.get(url)
 //       .then(response => {
 //         const tickets = response.data.map((ticket) => ({

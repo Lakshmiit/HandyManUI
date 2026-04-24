@@ -52,7 +52,7 @@
 //   useEffect(() => {
 //     const fetchtechnicianData = async () => {
 //       try {
-//         const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/BookTechnician/GetBookTechnician/${raiseTicketId}`);
+//         const response = await fetch(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/BookTechnician/GetBookTechnician/${raiseTicketId}`);
 //         if (!response.ok) {
 //           throw new Error('Failed to fetch technician data');
 //         }
@@ -176,7 +176,7 @@
 //   try {
 //     let response
 //     if (paymentMode === "technician" && (paymentType === "Cash" || paymentType === "Pay Online")) {
-//         response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
+//         response = await fetch(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
 //           method: 'PUT',
 //           headers: {
 //             'Content-Type': 'application/json',
@@ -195,7 +195,7 @@
 //       navigate(`/bookTechnicianCustomerGrid/${userType}/${customerId}`);
 //     } 
 //   } else if (paymentMode === "online") {
-//       response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
+//       response = await fetch(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
 //         method: 'PUT',
 //         headers: {
 //           'Content-Type': 'application/json',

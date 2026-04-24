@@ -143,7 +143,7 @@
 //               try {
 //                 let apiUrl = "";
              
-//                   apiUrl = `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/technician/technicianProfileData?profileType=${userType}&UserId=${userId}`;
+//                   apiUrl = `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/technician/technicianProfileData?profileType=${userType}&UserId=${userId}`;
                 
 //                 if (!apiUrl) return;
 //                 const response = await axios.get(apiUrl);
@@ -163,9 +163,9 @@
 //     try {
 //       const [getQuoteResponse, orderResponse] = await Promise.all([
 //       fetch(
-//         `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistTechnicianId?category=${category1}&district=${district1}&technicianId=${userId}`
+//         `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/RaiseTicket/GetNotificationsByNotExistTechnicianId?category=${category1}&district=${district1}&technicianId=${userId}`
 //       ),
-//       fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingTechnicianId?category=${category1}&district=${district1}&technicianId=${userId}`),
+//       fetch(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingTechnicianId?category=${category1}&district=${district1}&technicianId=${userId}`),
 //     ]);
 
 //       const getQuoteData = await getQuoteResponse.json();

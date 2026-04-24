@@ -37,7 +37,7 @@
 //   setLoading(true);
 
 //   try {
-//     const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Customer/GuestUserExistingVerification/${mobileNumber}`);
+//     const response = await fetch(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/Customer/GuestUserExistingVerification/${mobileNumber}`);
 //     if (!response.ok) {
 //       throw new Error('Failed to fetch user data');
 //     }

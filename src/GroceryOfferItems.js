@@ -244,7 +244,7 @@ const GroceryOfferItems = () => {
     async function fetchProductsAndFirstImages(warm = false, signal) {
       try {
         if (!warm) setImageLoading(true);
-        const url = `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(
+        const url = `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(
           selectedCategory,
         )}`;
         const { data: items } = await axios.get(url, { signal });
@@ -285,7 +285,7 @@ const GroceryOfferItems = () => {
         const fetchOne = async ({ productId, photo }) => {
           try {
             const res = await fetch(
-              `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
+              `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
                 photo,
               )}`,
               { signal },  

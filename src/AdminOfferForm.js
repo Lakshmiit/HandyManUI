@@ -6,6 +6,7 @@ import Footer from "./Footer";
 const AdminOfferForm = () => {
   const [formData, setFormData] = useState({
   id: "",
+  title: "",    
   header: "",
   footer: "",
   files: [],
@@ -61,7 +62,7 @@ const uploadFile = async (byteArray, fileName, mimeType) => {
     formData.append("fileName", fileName);
 
     const response = await fetch(
-      `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/upload?filename=` +
+      `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/FileUpload/upload?filename=` +
         fileName,
       {
         method: "POST",
@@ -115,7 +116,7 @@ for (let file of formData.files) {
       console.log("Sending Payload:", payload);
 
       await axios.post(
-        "https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UpLoadBannners/UploadBanners",
+        "https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/UpLoadBannners/UploadBanners",
          payload
       );
       alert("Offer Uploaded Successfully!");
@@ -174,6 +175,17 @@ for (let file of formData.files) {
               />
             </Form.Group>
 
+            <Form.Group className="mb-2">
+              <Form.Label className="fw-bold">Enter Title</Form.Label>
+              <Form.Control
+                type="text"
+                name="title"
+                placeholder="Enter Title"
+                value={formData.title}
+                onChange={handleChange}
+                required
+              />
+            </Form.Group>
             {/* Upload Images */}
             <Form.Group className="mb-2">
               <Form.Label className="fw-bold">

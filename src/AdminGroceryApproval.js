@@ -19,14 +19,14 @@ const AdminGroceryApproval = () => {
   useEffect(() => {         
     const fetchData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItems/${id}`);
+        const response = await fetch(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItems/${id}`);
         const data = await response.json();
         setGroceryData(data);
 
         const imageRequests =
           data.images?.map((photo) =>
             fetch(
-              `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+              `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
             )
               .then((res) => res.json())
               .then((data) => ({
@@ -65,7 +65,7 @@ const AdminGroceryApproval = () => {
     };
 
     try {   
-      const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${id}`, {
+      const response = await fetch(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

@@ -48,7 +48,7 @@ const [totalAmount, setTotalAmount] = useState('');
   useEffect(() => {
     const fetchtechnicianData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/BookTechnician/GetBookTechnician/${raiseTicketId}`);
+        const response = await fetch(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/BookTechnician/GetBookTechnician/${raiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch technician data');
         }
@@ -148,7 +148,7 @@ const handleUpdateJobDescription = async (e) => {
   try {
     let response;
     if (selectedPayment === 'online') {
-     response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
+     response = await fetch(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -165,7 +165,7 @@ const handleUpdateJobDescription = async (e) => {
     window.alert(`We are Redirecting to the Payment Page! Your reference number is ${bookTechnicianIds}. Technician will contact you shortly.`);
     window.location.href = `/bookTechnicianOnlinePayment/${raiseTicketId}`;
   } else if (selectedPayment === 'technician') {
-    response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
+    response = await fetch(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

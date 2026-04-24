@@ -93,7 +93,7 @@ useEffect(() => {
   useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsById/${buyProductId}`);
+        const response = await fetch(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsById/${buyProductId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch product data');
         }    
@@ -134,7 +134,7 @@ useEffect(() => {
             const fetchProductData = async () => {
                 try {
                     setLoading(true);
-                    const productResponse = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Product/${id}`);
+                    const productResponse = await fetch(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/Product/${id}`);
                     if (!productResponse.ok) {
                         throw new Error('Product not found');
                     }
@@ -258,7 +258,7 @@ const handleGetQuotation = async (e) => {
   try {
     let response;
   if (selectedPayment === 'online') {
-       response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/BuyProduct/${buyProductId}`,{
+       response = await fetch(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/BuyProduct/${buyProductId}`,{
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -276,7 +276,7 @@ const handleGetQuotation = async (e) => {
        window.location.href=`/buyProductOnlinePaymentPage/${buyProductId}`;
     }  else if (selectedPayment === 'technician') {
       
-         response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/BuyProduct/${buyProductId}`,{
+         response = await fetch(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/BuyProduct/${buyProductId}`,{
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -332,7 +332,7 @@ const handleSubmit = async (event) => {
     };
 
     try {
-      const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Product/${uniqueId}`, {
+      const response = await fetch(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/Product/${uniqueId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json"

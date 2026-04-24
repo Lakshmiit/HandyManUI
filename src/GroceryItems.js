@@ -182,7 +182,7 @@ return idNum;
 //   async function fetchProductsAndFirstImages() {
 //     try {
 //       setImageLoading(true);
-//       const url = `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
+//       const url = `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
 //       const { data: items } = await axios.get(url, { signal: controller.signal });
 //       const safeItems = Array.isArray(items) ? items : [];
 //       if (cancelled) return;
@@ -211,13 +211,13 @@ return idNum;
 //       const fetchOne = async ({ productId, photo }) => {
 //         try {
 //           const res = await fetch(
-//             `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
+//             `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
 //             { signal: controller.signal }
 //           );
 //           const json = await res.json();
 //           const b64 = json?.imageData || "";
 //           if (!b64) return;
-//           ImageCache.setBase64(photo, b64);
+//           ImageCachehandymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net.setBase64(photo, b64);
 //           const dataUrl = `data:image/jpeg;base64,${b64}`;
 //           if (!cancelled) {
 //             setImageUrls(prev => {
@@ -258,7 +258,7 @@ const controller = new AbortController();
 async function fetchProductsAndFirstImages(warm = false, signal) {
 try {
 if (!warm) setImageLoading(true);
-const url = `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
+const url = `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
 const { data: items } = await axios.get(url, { signal });
 const safeItems = Array.isArray(items) ? items : [];
 if (cancelled) return;
@@ -296,7 +296,7 @@ if (cancelled) return;
 const fetchOne = async ({ productId, photo }) => {
 try {
 const res = await fetch(
-`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
+`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
               { signal }     
 );
 const json = await res.json();

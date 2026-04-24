@@ -266,12 +266,12 @@ const Notification = () => {
     try { 
       const [raiseTicketResponse, BookTechnicianResponse, buyProductResponse, groceryItemResponse, collectionsResponse] = await Promise.all([
         fetch(
-        `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications`
+        `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications`
         ),
-        fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/BookTechnician/GetBookTechnicianForAdminList`),
-        fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForAdminList`),
-        fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Mart/GetAllMartItems`),
-        fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/LakshmiCollection/GetAllLakshmiCollectionsOpen`),
+        fetch(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/BookTechnician/GetBookTechnicianForAdminList`),
+        fetch(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForAdminList`),
+        fetch(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/Mart/GetAllMartItems`),
+        fetch(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/LakshmiCollection/GetAllLakshmiCollectionsOpen`),
       ]);
 
       const raiseTicketData = await raiseTicketResponse.json();

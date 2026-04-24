@@ -20,7 +20,7 @@
 // }, [loading, orderBooking]);
 
 // useEffect(() => {
-//     fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/BookTechnician/GetBookTechnician/${id}`)
+//     fetch(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/BookTechnician/GetBookTechnician/${id}`)
 //       .then((res) => res.json())
 //       .then((data) => {
 //         setOrderBooking(data);
@@ -51,7 +51,7 @@
 //         };
 
 //         const response = await fetch(
-//           "https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/BookTechnician/bookTechnicianEdit",
+//           "https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/BookTechnician/bookTechnicianEdit",
 //           {
 //             method: "POST",
 //             headers: { "Content-Type": "application/json" },

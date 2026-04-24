@@ -27,7 +27,7 @@ const AdminGroceryList = () => {
     (async () => {
       setLoading(true);
       try {
-        const url = `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UploadGrocery/GetAllGroceryItemsForAdmin`;
+        const url = `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/UploadGrocery/GetAllGroceryItemsForAdmin`;
         const { data } = await axios.get(url);
         const groceries = (Array.isArray(data) ? data : []).map((g) => ({
           ...g,
@@ -60,7 +60,7 @@ const AdminGroceryList = () => {
   const handleDelete = async (groceryId) => {
     if (!window.confirm("Are you sure you want to delete this grocery?")) return;
     try {
-      await axios.delete(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UploadGrocery?id=${groceryId}`);
+      await axios.delete(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/UploadGrocery?id=${groceryId}`);
       const prune = (arr) => arr.filter((g) => g.id !== groceryId);
       setFinalGroceries((prev) => prune(prev));
       setFilteredData((prev) => prune(prev));

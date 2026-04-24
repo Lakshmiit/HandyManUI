@@ -43,7 +43,7 @@
 //       try {
 //         let apiUrl = "";
      
-//           apiUrl = `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/dealer/dealerProfileData?profileType=${userType}&UserId=${userId}`;
+//           apiUrl = `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/dealer/dealerProfileData?profileType=${userType}&UserId=${userId}`;
         
 //         if (!apiUrl) return;
 //         const response = await axios.get(apiUrl);
@@ -68,7 +68,7 @@
 
 //   useEffect(() => {
 //     setLoading(true);
-//     const url = `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingDealerId?category=${category1}&district=${district1}&dealerId=${userId}`;
+//     const url = `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/RaiseTicket/GetNotificationsByExistingDealerId?category=${category1}&district=${district1}&dealerId=${userId}`;
 //     // alert(category);
 //     // alert(district);
 //     // alert(userId);
@@ -103,7 +103,7 @@
 //     );
 //     if (confirmDelete) {
 //       axios
-//         .delete(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/RaiseTicket/${ticketId}`)
+//         .delete(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/RaiseTicket/${ticketId}`)
 //         .then(() => {
 //           setTicketData((prevData) =>
 //             prevData.filter((ticket) => ticket.id !== ticketId)

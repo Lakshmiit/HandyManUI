@@ -43,7 +43,7 @@ console.log("Wallet:", walletAmount);
   const fetchCustomerData = useCallback(async () => {
       try {
         const response = await fetch(
-          `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Address/GetAddressById/${userId}`,
+          `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/Address/GetAddressById/${userId}`,
         );
         if (!response.ok) {
           throw new Error("Failed to fetch customer profile data");
@@ -86,7 +86,7 @@ useEffect(() => {
 }, [userId, fetchCustomerData]);
 
   const IMAGE_DOWNLOAD =
-    `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
+    `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
 
   function toNum(v, f = 0) {
     const n = Number(v);
@@ -115,7 +115,7 @@ useEffect(() => {
           uniqueNames.map(async (name) => {
             const res = await fetch(
               // handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net
-              `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
+              `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
                 name,
               )}`,
             );
@@ -239,7 +239,7 @@ useEffect(() => {
     );
     const lookups = await Promise.allSettled(
       uniqueNames.map(async (name) => {
-        const url = `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
+        const url = `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
           name,
         )}`;
         const res = await fetch(url, { signal });
@@ -407,7 +407,7 @@ useEffect(() => {
         const results = await Promise.allSettled(
           filenames.map(async (fn) => {
             // const res = await fetch(
-            //   `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net${encodeURIComponent(fn)}`,
+            //   `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net${encodeURIComponent(fn)}`,
             // );
             const res = await fetch(fileToUrl(fn));
             const contentType = res.headers.get("content-type") || "";
@@ -421,7 +421,7 @@ useEffect(() => {
               const blobUrl = URL.createObjectURL(blob);
               return { fn, url: blobUrl };
             } else {
-              return { fn, url: `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net${encodeURIComponent(fn)}` };
+              return { fn, url: `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net${encodeURIComponent(fn)}` };
             }
           }),
         );
@@ -585,7 +585,7 @@ useEffect(() => {
 
     try {
       const response = await fetch(
-        `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Mart/UploadProductDetails`,
+        `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/Mart/UploadProductDetails`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

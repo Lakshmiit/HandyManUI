@@ -47,7 +47,7 @@ const ApartmentRaiseActionView = () => {
   useEffect(() => {
     const fetchapartmentData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/ApartmentRaiseTicket/GetApartmentMaintenanceRaiseTicket/${apartmentRaiseTicketId}`);
+        const response = await fetch(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/ApartmentRaiseTicket/GetApartmentMaintenanceRaiseTicket/${apartmentRaiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
@@ -72,7 +72,7 @@ const ApartmentRaiseActionView = () => {
         setIsSubscription(data.isSubscription);
         const imageRequests =
           data.attachments?.map((photo) => fetch(
-              `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+              `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
             )
             .then((res) => res.json())
               .then((data) => ({

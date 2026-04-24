@@ -18,7 +18,7 @@
 //     const unsubscribe = onSnapshot(notificationsRef, async () => {
 //       try {
 //         const response = await fetch(
-//           `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/BookTechnician/GetBookTechnicianDetailsForUserList?userId=${userId}`
+//           `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/BookTechnician/GetBookTechnicianDetailsForUserList?userId=${userId}`
 //         );
 //         const data = await response.json();
 

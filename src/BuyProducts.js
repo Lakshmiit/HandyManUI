@@ -76,7 +76,7 @@ useEffect(() => {
   // Fetch customer profile data
     const fetchProfileType = useCallback(async () => {
       try {
-        const API_URL = `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Address/GetAddressById/`;
+        const API_URL = `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/Address/GetAddressById/`;
         const response = await fetch(`${API_URL}${userId}`);
         if (!response.ok) {
           throw new Error("Failed to fetch customer profile data");
@@ -114,7 +114,7 @@ useEffect(() => {
   }, [fetchProfileType]);
 
   useEffect(() => {
-    axios.get(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/MasterData/getStates`)
+    axios.get(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/MasterData/getStates`)
       .then(response => {
         const data = response.data;
         console.log("States API Response:", data); 
@@ -128,7 +128,7 @@ useEffect(() => {
   
    useEffect(() => {
     if (stateId) {
-      axios.get(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
+      axios.get(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
         .then(response => {
           setDistrictList(response.data);
         })
@@ -216,7 +216,7 @@ useEffect(() => {
     };
   
     try {
-      const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/BuyProduct/BuyProductUpload`,{
+      const response = await fetch(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/BuyProduct/BuyProductUpload`,{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -351,7 +351,7 @@ useEffect(() => {
     };
   
     try {
-      const response = await fetch(`https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Customer/CustomerAddressEdit`, {
+      const response = await fetch(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/Customer/CustomerAddressEdit`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -387,7 +387,7 @@ const fetchProductsByCategory = async (selectedCategory) => {
     setLoading(true);
     setNoProductNameError("");
     const response = await fetch(
-      `https://handymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net/api/Product/GetProductsByCategory?Category=${selectedCategory}`
+      `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/Product/GetProductsByCategory?Category=${selectedCategory}`
     );
     if (!response.ok) {
       throw new Error("Failed to fetch products");
