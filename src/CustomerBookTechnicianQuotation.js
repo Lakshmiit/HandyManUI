@@ -52,7 +52,7 @@
 //   useEffect(() => {
 //     const fetchtechnicianData = async () => {
 //       try {
-//         const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BookTechnician/GetBookTechnician/${raiseTicketId}`);
+//         const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/BookTechnician/GetBookTechnician/${raiseTicketId}`);
 //         if (!response.ok) {
 //           throw new Error('Failed to fetch technician data');
 //         }
@@ -176,7 +176,7 @@
 //   try {
 //     let response
 //     if (paymentMode === "technician" && (paymentType === "Cash" || paymentType === "Pay Online")) {
-//         response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BookTechnician/${raiseTicketId}`, {
+//         response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
 //           method: 'PUT',
 //           headers: {
 //             'Content-Type': 'application/json',
@@ -195,7 +195,7 @@
 //       navigate(`/bookTechnicianCustomerGrid/${userType}/${customerId}`);
 //     } 
 //   } else if (paymentMode === "online") {
-//       response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BookTechnician/${raiseTicketId}`, {
+//       response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
 //         method: 'PUT',
 //         headers: {
 //           'Content-Type': 'application/json',

@@ -198,7 +198,7 @@ if (!groceryItemId) return;
 const ctrl = new AbortController();
 try {
 const res1 = await fetch(
-`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/GetProductDetails?id=${groceryItemId}`,
+`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`,
 { signal: ctrl.signal },
 );
 if (!res1.ok) throw new Error("Failed to fetch product details");
@@ -239,7 +239,7 @@ setgroceryId(null);
 return;
 }
 const requests = productNames.map(async (name) => {
-const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
+const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
            name,
          )}`;
 const res = await fetch(url, { signal: ctrl.signal });
@@ -286,7 +286,7 @@ navigate(`/groceryCart/${userType}/${userId}`);
 
 // const getReferralRecord = async (userId) => {
 // if (!userId) return null;
-// const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
+// const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
 // const res = await fetch(url);     
 // const text = await res.text();
 // let data = []; 
@@ -328,7 +328,7 @@ navigate(`/groceryCart/${userType}/${userId}`);
 const fetchCustomerData = useCallback(async () => {
 try {
 const response = await fetch(
-`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Address/GetAddressById/${userId}`,
+`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Address/GetAddressById/${userId}`,
 );
 if (!response.ok) {
 throw new Error("Failed to fetch customer profile data");
@@ -380,7 +380,7 @@ fetchCustomerData();
 
 useEffect(() => {
 axios
-.get(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/MasterData/getStates`)
+.get(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/MasterData/getStates`)
 .then((response) => {
 const data = response.data;
 console.log("States API Response:", data);
@@ -395,7 +395,7 @@ console.log("Wallet Amount:", walletAmount);
 useEffect(() => {
 if (stateId) {   
 axios
-.get(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/MasterData/getDistricts/${stateId}`)
+.get(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
 .then((response) => {
 setDistrictList(response.data);
 })
@@ -464,7 +464,7 @@ WalletAmount: String(primaryAddress?.walletAmount || 0),
 
 try {
 const response = await fetch(
-`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Customer/CustomerAddressEdit`,
+`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Customer/CustomerAddressEdit`,
 {
 method: "POST",
 headers: {
@@ -537,7 +537,7 @@ WalletAmount: "0",
 
 try {
 const response = await fetch(
-`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Customer/CustomerAddressEdit`,
+`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Customer/CustomerAddressEdit`,
 {
 method: "POST",
 headers: {
@@ -647,7 +647,7 @@ walletAmount: walletAmount,
 };
 
 let response = await fetch(
-`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
 {
 method: "PUT",
 headers: { "Content-Type": "application/json" },
@@ -672,7 +672,7 @@ throw new Error("Failed to update order.");
 // };
 
 // let resp = await fetch(
-// `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(id)}`,
+// `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(id)}`,
 // {
 // method: "PUT",
 // headers: { "Content-Type": "application/json; charset=utf-8" },
@@ -682,7 +682,7 @@ throw new Error("Failed to update order.");
 
 // if (!resp.ok) {
 // resp = await fetch(
-// `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ReferralPoints/UpdateReferralPoints/${encodeURIComponent(id)}`,
+// `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints/${encodeURIComponent(id)}`,
 // {
 // method: "PUT",
 // headers: { "Content-Type": "application/json; charset=utf-8" },
@@ -708,7 +708,7 @@ localStorage.removeItem(`cartMeta_${groceryItemId}`);
 
 if (selectedPayment === "online") {
 response = await fetch(
-`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
 {
 method: "PUT",
 headers: {
@@ -731,7 +731,7 @@ window.alert(
 window.location.href = `/groceryOnlinePayment/${groceryItemId}`;
 } else if (selectedPayment === "cash") {
 response = await fetch(
-`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
 {
 method: "PUT",
 headers: {
@@ -829,7 +829,7 @@ Units: item.units,
 Limit: item.limit || 0,
 };
 const res = await fetch(
-`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/UpdateGroceryItems?id=${encodeURIComponent(item.id)}`,
+`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${encodeURIComponent(item.id)}`,
 {
 method: "PUT",
 headers: { "Content-Type": "application/json" },
@@ -857,7 +857,7 @@ const primaryAddress = addresses.find((addr) => addr.type === "primary");
 const mobileNumber =
 primaryAddress?.mobileNumber || primaryAddress?.mobileNumber;
 const response = await fetch(
-`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Auth/sendLmartsms`,
+`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Auth/sendLmartsms`,
 {
 method: "POST",
 headers: {
@@ -1757,7 +1757,7 @@ export default GroceryPaymentmethod;
 //       const ctrl = new AbortController();
 //       try {
 //         const res1 = await fetch(
-//           `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/GetProductDetails?id=${groceryItemId}`,
+//           `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`,
 //           { signal: ctrl.signal },
 //         );
 //         if (!res1.ok) throw new Error("Failed to fetch product details");
@@ -1798,7 +1798,7 @@ export default GroceryPaymentmethod;
 //           return;
 //         }
 //         const requests = productNames.map(async (name) => {
-//           const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
+//           const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
 //             name,
 //           )}`;
 //           const res = await fetch(url, { signal: ctrl.signal });
@@ -1845,7 +1845,7 @@ export default GroceryPaymentmethod;
 
 //   const getReferralRecord = async (userId) => {
 //   if (!userId) return null;
-//   const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
+//   const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
 //   const res = await fetch(url);     
 //   const text = await res.text();
 //   let data = []; 
@@ -1887,7 +1887,7 @@ export default GroceryPaymentmethod;
 //   const fetchCustomerData = useCallback(async () => {
 //     try {
 //       const response = await fetch(
-//         `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Address/GetAddressById/${userId}`,
+//         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Address/GetAddressById/${userId}`,
 //       );
 //       if (!response.ok) {
 //         throw new Error("Failed to fetch customer profile data");
@@ -1939,7 +1939,7 @@ export default GroceryPaymentmethod;
 
 //   useEffect(() => {
 //     axios
-//       .get(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/MasterData/getStates`)
+//       .get(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/MasterData/getStates`)
 //       .then((response) => {
 //         const data = response.data;
 //         console.log("States API Response:", data);
@@ -1955,7 +1955,7 @@ export default GroceryPaymentmethod;
 //   useEffect(() => {
 //     if (stateId) {
 //       axios
-//         .get(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/MasterData/getDistricts/${stateId}`)
+//         .get(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
 //         .then((response) => {
 //           setDistrictList(response.data);
 //         })
@@ -2024,7 +2024,7 @@ export default GroceryPaymentmethod;
 
 //     try {
 //       const response = await fetch(
-//         `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Customer/CustomerAddressEdit`,
+//         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Customer/CustomerAddressEdit`,
 //         {
 //           method: "POST",
 //           headers: {
@@ -2097,7 +2097,7 @@ export default GroceryPaymentmethod;
 
 //     try {
 //       const response = await fetch(
-//         `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Customer/CustomerAddressEdit`,
+//         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Customer/CustomerAddressEdit`,
 //         {
 //           method: "POST",
 //           headers: {
@@ -2198,7 +2198,7 @@ export default GroceryPaymentmethod;
 //       };
  
 //       let response = await fetch(
-//         `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+//         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
 //         {
 //           method: "PUT",
 //           headers: { "Content-Type": "application/json" },
@@ -2224,7 +2224,7 @@ export default GroceryPaymentmethod;
 //           };
 
 //           let resp = await fetch(
-//             `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(id)}`,
+//             `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(id)}`,
 //             {
 //               method: "PUT",
 //               headers: { "Content-Type": "application/json; charset=utf-8" },
@@ -2234,7 +2234,7 @@ export default GroceryPaymentmethod;
 
 //           if (!resp.ok) {
 //             resp = await fetch(
-//               `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ReferralPoints/UpdateReferralPoints/${encodeURIComponent(id)}`,
+//               `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints/${encodeURIComponent(id)}`,
 //               {
 //                 method: "PUT",
 //                 headers: { "Content-Type": "application/json; charset=utf-8" },
@@ -2260,7 +2260,7 @@ export default GroceryPaymentmethod;
 
 //       if (selectedPayment === "online") {
 //         response = await fetch(
-//           `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+//           `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
 //           {
 //             method: "PUT",
 //             headers: {
@@ -2283,7 +2283,7 @@ export default GroceryPaymentmethod;
 //         window.location.href = `/groceryOnlinePayment/${groceryItemId}`;
 //       } else if (selectedPayment === "cash") {
 //         response = await fetch(
-//           `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+//           `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
 //           {
 //             method: "PUT",
 //             headers: {
@@ -2381,7 +2381,7 @@ export default GroceryPaymentmethod;
 //           Limit: item.limit || 0,
 //         };
 //         const res = await fetch(
-//           `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/UpdateGroceryItems?id=${encodeURIComponent(item.id)}`,
+//           `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${encodeURIComponent(item.id)}`,
 //           {
 //             method: "PUT",
 //             headers: { "Content-Type": "application/json" },
@@ -2409,7 +2409,7 @@ export default GroceryPaymentmethod;
 //       const mobileNumber =
 //         primaryAddress?.mobileNumber || primaryAddress?.mobileNumber;
 //       const response = await fetch(
-//         `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Auth/sendLmartsms`,
+//         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Auth/sendLmartsms`,
 //         {
 //           method: "POST",
 //           headers: {
@@ -3246,7 +3246,7 @@ export default GroceryPaymentmethod;
 // // final payable
 // const getReferralRecord = async (userId) => {
 //   if (!userId) return null;
-//   const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
+//   const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
 //   const res = await fetch(url);     
 //   const text = await res.text();
 //   let data = []; 
@@ -3291,7 +3291,7 @@ export default GroceryPaymentmethod;
 //     const ctrl = new AbortController();
 //     try {
 //       const res1 = await fetch(
-//         `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/GetProductDetails?id=${groceryItemId}`,
+//         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`,
 //         { signal: ctrl.signal }
 //       );
 //       if (!res1.ok) throw new Error("Failed to fetch product details");
@@ -3325,7 +3325,7 @@ export default GroceryPaymentmethod;
 //         return;
 //       }
 //       const requests = productNames.map(async (name) => {
-//         const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
+//         const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
 //           name
 //         )}`;
 //         const res = await fetch(url, { signal: ctrl.signal });
@@ -3369,7 +3369,7 @@ export default GroceryPaymentmethod;
 
 //  const fetchCustomerData = useCallback(async () => {
 //       try {
-//         const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Address/GetAddressById/${userId}`);
+//         const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Address/GetAddressById/${userId}`);
 //         if (!response.ok) {
 
 //           throw new Error('Failed to fetch customer profile data');
@@ -3412,7 +3412,7 @@ export default GroceryPaymentmethod;
 //   }, [fetchCustomerData]);
 
 //   useEffect(() => {
-//     axios.get('https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/MasterData/getStates')
+//     axios.get('https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/MasterData/getStates')
 //       .then(response => {
 //         const data = response.data;
 //         console.log("States API Response:", data); 
@@ -3426,7 +3426,7 @@ export default GroceryPaymentmethod;
   
 //    useEffect(() => {
 //     if (stateId) {
-//       axios.get(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/MasterData/getDistricts/${stateId}`)
+//       axios.get(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
 //         .then(response => {
 //           setDistrictList(response.data);
 //         })
@@ -3494,7 +3494,7 @@ export default GroceryPaymentmethod;
 //       };
     
 //       try {
-//         const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Customer/CustomerAddressEdit`, {
+//         const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Customer/CustomerAddressEdit`, {
 //           method: 'POST',
 //           headers: {
 //             'Content-Type': 'application/json',
@@ -3587,7 +3587,7 @@ export default GroceryPaymentmethod;
 //     };
 
 //     let response = await fetch(
-//       `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+//       `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
 //       {
 //         method: "PUT",
 //         headers: { "Content-Type": "application/json" },
@@ -3614,7 +3614,7 @@ export default GroceryPaymentmethod;
 //         };
 
 //         let resp = await fetch(
-//           `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(id)}`,
+//           `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(id)}`,
 //           {
 //             method: "PUT",
 //             headers: { "Content-Type": "application/json; charset=utf-8" },
@@ -3624,7 +3624,7 @@ export default GroceryPaymentmethod;
 
 //         if (!resp.ok) {
 //           resp = await fetch(
-//             `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ReferralPoints/UpdateReferralPoints/${encodeURIComponent(id)}`,
+//             `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints/${encodeURIComponent(id)}`,
 //             {
 //               method: "PUT",
 //               headers: { "Content-Type": "application/json; charset=utf-8" },
@@ -3650,7 +3650,7 @@ export default GroceryPaymentmethod;
 //     localStorage.removeItem(`cartMeta_${groceryItemId}`);
 
 //    if (selectedPayment === 'online') {
-//      response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/UpdateProductDetails/${groceryItemId}`, {
+//      response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`, {
 //       method: 'PUT',
 //       headers: {
 //         'Content-Type': 'application/json',
@@ -3668,7 +3668,7 @@ export default GroceryPaymentmethod;
 //     window.alert(`We are Redirecting to the Payment Page! Your reference number is ${martId}.`);
 //     window.location.href = `/groceryOnlinePayment/${groceryItemId}`;
 //   } else if (selectedPayment === 'cash') {
-//     response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/UpdateProductDetails/${groceryItemId}`, {
+//     response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`, {
 //       method: 'PUT',
 //       headers: {
 //         'Content-Type': 'application/json',
@@ -3731,7 +3731,7 @@ export default GroceryPaymentmethod;
 
 //     try {
 //       const response = await fetch(
-//         `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Customer/CustomerAddressEdit`,
+//         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Customer/CustomerAddressEdit`,
 //         {
 //           method: "POST",
 //           headers: {
@@ -3836,7 +3836,7 @@ export default GroceryPaymentmethod;
 //         Limit: item.limit || 0,
 //       };
 //       const res = await fetch(
-//         `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/UpdateGroceryItems?id=${encodeURIComponent(item.id)}`,
+//         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${encodeURIComponent(item.id)}`,
 //         {
 //           method: "PUT",
 //           headers: { "Content-Type": "application/json" },
@@ -3862,7 +3862,7 @@ export default GroceryPaymentmethod;
 //   try {
 //     const primaryAddress = addresses.find((addr) => addr.type === "primary");
 //     const mobileNumber = primaryAddress?.mobileNumber || primaryAddress?.mobileNumber; 
-//     const response = await fetch("https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Auth/sendLmartsms", {
+//     const response = await fetch("https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Auth/sendLmartsms", {
 //       method: "POST",
 //       headers: {
 //         "Content-Type": "application/json",

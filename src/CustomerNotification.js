@@ -138,9 +138,9 @@
 //       try {
 //         const [raiseTicketResponse, getTechnicianResponse] = await Promise.all([
 //           fetch(
-//           `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetRaiseTicketNotificationsByCustomerId?customerId=${userId}`
+//           `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/RaiseTicket/GetRaiseTicketNotificationsByCustomerId?customerId=${userId}`
 //         ),
-//         fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BookTechnician/GetBookTechnicianDetailsForUserList?userId=${userId}`),
+//         fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/BookTechnician/GetBookTechnicianDetailsForUserList?userId=${userId}`),
 //       ]);
 //         const raiseTicketData = await raiseTicketResponse.json();
 

@@ -82,7 +82,7 @@ useEffect(() => {
 }, [isSubscription, isRegisterDisabled]);
 
     useEffect(() => {
-      axios.get(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/MasterData/getStates`)
+      axios.get(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/MasterData/getStates`)
         .then(response => {
           const data = response.data;
           console.log("States API Response:", data); 
@@ -96,7 +96,7 @@ useEffect(() => {
     
      useEffect(() => {
       if (stateId) {
-        axios.get(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/MasterData/getDistricts/${stateId}`)
+        axios.get(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
           .then(response => {
             setDistrictList(response.data);
           })
@@ -115,7 +115,7 @@ useEffect(() => {
 const fetchApartmentData = useCallback(async () => {
   setLoading(true);
   try {
-    const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ApartmentMaintenance/GetAddressMaintenanceDataByMobileNo?mobileNo=${mobileNumber}`);
+    const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ApartmentMaintenance/GetAddressMaintenanceDataByMobileNo?mobileNo=${mobileNumber}`);
     if (!response.ok) throw new Error('Failed to fetch Apartment data');
     const data = await response.json();
     const addressArray = Array.isArray(data) ? data : [data];
@@ -244,7 +244,7 @@ useEffect(() => {
       const formData = new FormData();
       formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
       formData.append('fileName', fileName);
-      const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/upload?filename=` + fileName, {
+      const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/upload?filename=` + fileName, {
         method: 'POST',
         headers: {
           'Accept': 'text/plain',
@@ -298,7 +298,7 @@ useEffect(() => {
     };
 
   try {
-    const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ApartmentRaiseTicket/CreateApartmentRaiseTicket`, {
+    const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ApartmentRaiseTicket/CreateApartmentRaiseTicket`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -378,7 +378,7 @@ useEffect(() => {
   };
 
   try {
-    const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ApartmentMaintenance/CreateApartmentMaintence`, {
+    const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ApartmentMaintenance/CreateApartmentMaintence`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload3),
@@ -445,7 +445,7 @@ useEffect(() => {
         SubscriptionDate: subscriptionDate,
       };
       try {
-        const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/ApartmentMaintenance/${id}`, {
+        const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ApartmentMaintenance/${id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',

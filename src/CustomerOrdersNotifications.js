@@ -94,7 +94,7 @@
 //       try {
 //         const [buyProductResponse] = await Promise.all([
 //           fetch(
-//           `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BuyProduct/GetBuyProductDetailsForUserList?UserID=${userId}`
+//           `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForUserList?UserID=${userId}`
 //         ),
 //       ]);
 //         const productOrdersData = await buyProductResponse.json();

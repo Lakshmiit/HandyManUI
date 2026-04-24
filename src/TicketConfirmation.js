@@ -98,7 +98,7 @@
 //   // useEffect(() => {
 //   //   const fetchticketData = async () => {
 //   //     try {
-//   //       const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+//   //       const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
 //   //       if (!response.ok) {
 //   //         throw new Error('Failed to fetch ticket data');
 //   //       }
@@ -143,7 +143,7 @@
 //     if (!ticketId) return;  
 //     const fetchDeliveryData = async () => {
 //       try {
-//         const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/DeliveryNote/GetRaiseTicketForDealer?RaiseTicketId=${ticketId}`);
+//         const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/DeliveryNote/GetRaiseTicketForDealer?RaiseTicketId=${ticketId}`);
 //         if (!response.ok) {
 //           throw new Error('Failed to fetch delivery data');
 //         }
@@ -174,7 +174,7 @@
 //     useEffect(() => {
 //       const fetchticketData = async () => {
 //         try {
-//           const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
+//           const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/RaiseTicket/GetTicket/${raiseTicketId}`);
 //           if (!response.ok) {
 //             throw new Error('Failed to fetch ticket data');
 //           }
@@ -235,7 +235,7 @@
 //   //     setLoading(true); // Set loading to true before fetching
 //   //     try {
 //   //       const response = await fetch(
-//   //         `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/DeliveryNote/GetRaiseTicketForDealer?RaiseTicketId=${ticketId}`
+//   //         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/DeliveryNote/GetRaiseTicketForDealer?RaiseTicketId=${ticketId}`
 //   //       );
 //   //       if (!response.ok) {
 //   //         throw new Error("Failed to fetch delivery data");
@@ -268,7 +268,7 @@
 //   useEffect(() => {
 //     const fetchtechnicianData = async () => {
 //       try {
-//         const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Technician/GetTechnicianDetailsForInvoice?TechnicianId=${lowestBidder}`);
+//         const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Technician/GetTechnicianDetailsForInvoice?TechnicianId=${lowestBidder}`);
 //         if (!response.ok) {
 //           throw new Error('Failed to fetch ticket data');
 //         }
@@ -287,7 +287,7 @@
 //   useEffect(() => {
 //     const fetchdealerData = async () => {
 //       try {
-//         const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Dealer/GetDealerDetailsForInvoice?DealerId=${lowestDealerBidder}`);
+//         const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Dealer/GetDealerDetailsForInvoice?DealerId=${lowestDealerBidder}`);
 //         if (!response.ok) {
 //           throw new Error('Failed to fetch ticket data');
 //         }
@@ -310,7 +310,7 @@
 //   // Fetch data from API on component mount
 //       useEffect(() => {
 //         // API URL
-//         const apiUrl = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
+//         const apiUrl = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/RaiseAQuote/GetRaiseAQuoteDetailsByid?raiseAQuotetId=${raiseTicketId}`;
 //         // Fetching the data from the API
 //         const fetchData = async () => {
 //           try {
@@ -360,7 +360,7 @@
 //             useEffect(() => {
 //               const fetchPaymentData = async () => {
 //                 try {
-//                   const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Payment/GetPaymentDetailsByRaiseTicketId?RaiseTicketId=${ticketId}`);
+//                   const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Payment/GetPaymentDetailsByRaiseTicketId?RaiseTicketId=${ticketId}`);
 //                   if (!response.ok) {
 //                     throw new Error('Failed to fetch ticket data');
 //                   }
@@ -459,7 +459,7 @@
 //   //   };
   
 //   //   try {
-//   //     const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/${raiseTicketId}`, {
+//   //     const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
 //   //       method: 'PUT',
 //   //       headers: {
 //   //         'Content-Type': 'application/json',
@@ -533,7 +533,7 @@
 //     };
   
 //     try {
-//       const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/${raiseTicketId}`, {
+//       const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
 //         method: 'PUT',
 //         headers: {
 
@@ -594,7 +594,7 @@
 //   //   };
   
 //   //   try {
-//   //     const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/${raiseTicketId}`, {
+//   //     const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/RaiseTicket/${raiseTicketId}`, {
 //   //       method: 'PUT',
 //   //       headers: {
 //   //         'Content-Type': 'application/json',
@@ -671,7 +671,7 @@
 //   };
 
 //   try {
-//     const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/DeliveryNote/CreateDeliveryNote`, {
+//     const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/DeliveryNote/CreateDeliveryNote`, {
 //       method: 'POST',
 //       headers: {
 //         'Content-Type': 'application/json',
@@ -750,7 +750,7 @@
 // }; 
 // // alert(payload2);
 // try {
-//   const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/DeliveryNote/${noteId}`, {
+//   const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/DeliveryNote/${noteId}`, {
 //     method: 'PUT',
 //     headers: { 
 //       'Content-Type': 'application/json',
@@ -814,7 +814,7 @@
 // // };
 
 // // try {
-// //   const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/DeliveryNote/${deliveryId}`, {
+// //   const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/DeliveryNote/${deliveryId}`, {
 // //     method: 'PUT',
 // //     headers: {
 // //       'Content-Type': 'application/json',
@@ -852,7 +852,7 @@
 //     technicianConfirmationCode: customerCode,
 //   };
 //   try {
-//     const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Payment/${paymentId}`, {
+//     const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Payment/${paymentId}`, {
 //       method: 'PUT',
 //       headers: {
 //         'Content-Type': 'application/json',

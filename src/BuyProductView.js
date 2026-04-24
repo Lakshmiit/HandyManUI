@@ -14,12 +14,12 @@ const ProductViewModal = ({ show, handleClose, productId }) => {
     if (!productId) return;
     const fetchData = async () => {
       try {
-        const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Product/${productId}`);
+        const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Product/${productId}`);
         const data = await response.json();
         setProductData(data);
 
         const imageRequests = data.productPhotos?.map((photo) =>
-          fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${photo}`)
+          fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`)
             .then((res) => res.json())
             .then((data) => ({ src: photo, imageData: data.imageData }))
         ) || [];

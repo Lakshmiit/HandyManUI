@@ -59,7 +59,7 @@ const DeliveryPartner = () => {
   }, []);
 
   useEffect(() => {
-    axios.get(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/MasterData/getStates`)
+    axios.get(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/MasterData/getStates`)
       .then((res) => {
         setStateList(res.data || []);
         setStateId("");
@@ -69,7 +69,7 @@ const DeliveryPartner = () => {
 
   useEffect(() => {
     if (!stateId) { setDistrictList([]); return; }
-    axios.get(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/MasterData/getDistricts/${stateId}`)
+    axios.get(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
       .then((res) => setDistrictList(res.data || []))
       .catch((err) => console.error("Error fetching districts:", err));
   }, [stateId]);
@@ -163,7 +163,7 @@ const DeliveryPartner = () => {
       fd.append("file", f, f.name);
       fd.append("fileName", f.name);
       const resp = await fetch(
-        `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/upload?filename=${f.name}`,
+        `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/upload?filename=${f.name}`,
         { method: "POST", headers: { Accept: "text/plain" }, body: fd }
       );
       if (!resp.ok) {
@@ -219,7 +219,7 @@ const DeliveryPartner = () => {
         pancardAttachment: uploadedNames.panCard ? [uploadedNames.panCard] : [],
       };
 
-      const { status } = await axios.post(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/DeliveryPartner/UploadDeliveryPartnerDetails`,
+      const { status } = await axios.post(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/DeliveryPartner/UploadDeliveryPartnerDetails`,
         payload,
         { headers: { "Content-Type": "application/json" } }
       );

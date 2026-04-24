@@ -94,7 +94,7 @@
 //   const fetchNotifications = async () => {
 //     try {
 //       const trackTicketResponse = await fetch(
-//         `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetTrackTicketsByCustomerId?customerId=${userId}`
+//         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/RaiseTicket/GetTrackTicketsByCustomerId?customerId=${userId}`
 //       );
 //       const trackData = await trackTicketResponse.json();
 //       const getTrackNotifications = trackData.filter(
