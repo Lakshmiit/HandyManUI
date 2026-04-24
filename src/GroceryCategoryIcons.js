@@ -49,7 +49,7 @@
 //           setError("");
       
 //           const encodedCategory = encodeURIComponent(value);
-//           const url = `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodedCategory}`;
+//           const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodedCategory}`;
 //           const response = await axios.get(url);
 //           const groceryData = response.data;
       

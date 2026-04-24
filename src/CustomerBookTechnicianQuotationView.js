@@ -45,7 +45,7 @@
 //   useEffect(() => {
 //     const fetchtechnicianData = async () => {
 //       try {
-//         const response = await fetch(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/BookTechnician/GetBookTechnician/${raiseTicketId}`);
+//         const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BookTechnician/GetBookTechnician/${raiseTicketId}`);
 //         if (!response.ok) {
 //           throw new Error('Failed to fetch technician data');
 //         }

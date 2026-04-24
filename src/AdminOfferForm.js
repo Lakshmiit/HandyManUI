@@ -62,7 +62,7 @@ const uploadFile = async (byteArray, fileName, mimeType) => {
     formData.append("fileName", fileName);
 
     const response = await fetch(
-      `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/FileUpload/upload?filename=` +
+      `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/upload?filename=` +
         fileName,
       {
         method: "POST",
@@ -116,7 +116,7 @@ for (let file of formData.files) {
       console.log("Sending Payload:", payload);
 
       await axios.post(
-        "https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/UpLoadBannners/UploadBanners",
+        "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UpLoadBannners/UploadBanners",
          payload
       );
       alert("Offer Uploaded Successfully!");

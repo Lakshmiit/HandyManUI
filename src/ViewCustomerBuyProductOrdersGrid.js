@@ -108,7 +108,7 @@
 //   // useEffect(() => {
 //   //   const fetchProfileType = async () => {
 //   //     try {
-//   //       const API_URL = "https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/Address/GetAddressById/";
+//   //       const API_URL = "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Address/GetAddressById/";
 //   //       const response = await fetch(`${API_URL}${userId}`);
 //   //       if (!response.ok) {
 //   //         throw new Error("Failed to fetch customer profile data");
@@ -142,7 +142,7 @@
 // useEffect(() => {
 //     const fetchProductData = async () => {
 //       try {
-//         const response = await fetch(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsById/${buyProductId}`);
+//         const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BuyProduct/GetBuyProductDetailsById/${buyProductId}`);
 //         if (!response.ok) {
 //           throw new Error('Failed to fetch product data');
 //         }
@@ -184,7 +184,7 @@
 //        setWarrantyPeriod(data.warrentyPeriod);
 //        const imageRequests =
 //         data.uploadInvoice?.map((photo) => fetch(
-//             `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+//             `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${photo}`
 //           )
 //           .then((res) => res.json())
 //             .then((data) => ({
@@ -289,7 +289,7 @@
 //   //   }; 
    
 //   //   try {
-//   //     const response = await fetch(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/BuyProduct/${buyProductId}`,{
+//   //     const response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/BuyProduct/${buyProductId}`,{
 //   //       method: 'PUT',
 //   //       headers: {
 //   //         'Content-Type': 'application/json',
@@ -438,7 +438,7 @@
 //   //   const fetchProducts = async () => {
 //   //     try {
 //   //       const response = await axios.get(
-//   //         `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/Product/GetProductsByCategory?category=${category}`
+//   //         `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Product/GetProductsByCategory?category=${category}`
 //   //       );
 //   //       setAllProducts(response.data);
 //   //       // alert(JSON.stringify(allProducts));

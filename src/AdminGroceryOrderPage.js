@@ -63,7 +63,7 @@ useEffect(() => {
       const ctrl = new AbortController();
       try {
         const res1 = await fetch(
-          `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`,
+          `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/GetProductDetails?id=${groceryItemId}`,
           { signal: ctrl.signal }
         );
         if (!res1.ok) throw new Error("Failed to fetch product details");
@@ -94,7 +94,7 @@ useEffect(() => {
         }
 
         const requests = productNames.map(async (name) => {
-          const url = `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
+          const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
             name
           )}`;
           const res = await fetch(url, { signal: ctrl.signal });
@@ -140,7 +140,7 @@ useEffect(() => {
 useEffect(() => {
   const fetchDeliveryPartners = async () => {
     try {
-      const response = await axios.get(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/DeliveryPartner/GetAllDeliveryPartners`);
+      const response = await axios.get(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/DeliveryPartner/GetAllDeliveryPartners`);
       const partners = response.data.filter(partner => partner.status === "open");
       setDeliveryPartners(partners);
     } catch (error) {
@@ -154,7 +154,7 @@ useEffect(() => {
   const fetchGroceryData = async () => {
     try {
       const response = await fetch(
-        `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`
+        `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/GetProductDetails?id=${groceryItemId}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch grocery product data");
@@ -308,7 +308,7 @@ const handleAssignedToChange = (e) => {
 //     units: units,
 //   };
 
-//     let response = await fetch(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`, {
+//     let response = await fetch(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/Mart/UpdateProductDetails/${groceryItemId}`, {
 //       method: 'PUT',
 //       headers: {
 //         'Content-Type': 'application/json',
@@ -548,7 +548,7 @@ useEffect(() => {
         if (!item.image) return;
         try {
           const res = await fetch(
-            `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
+            `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
               item.image
             )}`,
             { signal: controller.signal }

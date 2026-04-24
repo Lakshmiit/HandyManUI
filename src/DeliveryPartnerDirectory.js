@@ -52,7 +52,7 @@
 // };
 
 //   useEffect(() => {
-//     axios.get("https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/MasterData/getStates")
+//     axios.get("https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/MasterData/getStates")
 //       .then((res) => {
 //         setStateList(res.data || []);
 //         setStateId("");
@@ -62,7 +62,7 @@
 
 //   useEffect(() => {
 //     if (!stateId) { setDistrictList([]); return; }
-//     axios.get(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
+//     axios.get(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/MasterData/getDistricts/${stateId}`)
 //       .then((res) => setDistrictList(res.data || []))
 //       .catch((err) => console.error("Error fetching districts:", err));
 //   }, [stateId]);
@@ -95,7 +95,7 @@
 //   const handleDelete = (technicianId) => {
 //     const confirmDelete = window.confirm('Are you sure you want to delete this ticket?');
 //     if (confirmDelete) {
-//       axios.delete(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/RaiseTicket/${technicianId}`)
+//       axios.delete(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/${technicianId}`)
 //         .then(() => {
 //           setDeliveryData(prevData => prevData.filter(technician => technician.id !== technicianId));
 //           setFilteredData(prevData => prevData.filter(technician => technician.id !== technicianId));

@@ -35,8 +35,8 @@
 //   }, [ticketData, states,districts,pinCodes,assigned]);
 //   useEffect(() => {
 //     setLoading(true);
-//     // const url = `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications`;
-//     const url = `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/RaiseTicket/GetNotificationsByDistrict?district=${district}&category=${category}`;
+//     // const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetTicketsNotifications`;
+//     const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/GetNotificationsByDistrict?district=${district}&category=${category}`;
 //     axios
 //       .get(url)
 //       .then((response) => {
@@ -82,7 +82,7 @@
 //   //   );
 //   //   if (confirmDelete) {
 //   //     axios
-//   //       .delete(`https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/RaiseTicket/${ticketId}`)
+//   //       .delete(`https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/RaiseTicket/${ticketId}`)
 //   //       .then(() => {
 //   //         setTicketData((prevData) =>
 //   //           prevData.filter((ticket) => ticket.id !== ticketId)

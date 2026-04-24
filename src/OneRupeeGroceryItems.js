@@ -15,7 +15,7 @@ export default function OneRupeeStore() {
 
   const fetchProducts = async () => {
     try {
-      const url = `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(
+      const url = `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(
         selectedCategory
       )}`;
 
@@ -31,7 +31,7 @@ export default function OneRupeeStore() {
           if (p.images?.[0]) {
             try {
               const res = await fetch(
-                `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
+                `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
                   p.images[0]
                 )}`
               );

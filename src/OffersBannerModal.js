@@ -3,7 +3,7 @@ import { Modal, Button } from "react-bootstrap";
 import axios from "axios";
 
 const IMAGE_API =
-  "https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=";
+  "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=";
 
 const OffersBannerModal = () => {
   const [showOffersModal, setShowOffersModal] = useState(false);
@@ -22,7 +22,7 @@ const OffersBannerModal = () => {
     const fetchOffers = async () => {
       try {
         const res = await axios.get(
-          "https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/UpLoadBannners/GetBanners"
+          "https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/UpLoadBannners/GetBanners"
         );
         setOffersData(res.data);
       } catch (err) {

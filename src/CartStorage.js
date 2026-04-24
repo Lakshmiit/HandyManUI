@@ -5,7 +5,7 @@ const CART_KEY = "allCategories";
 export const fileToUrl = (fn) => {
   if (!fn) return null;
   if (fn.startsWith("http")) return fn;
-  return `https://handymanapiv13-c7gjhhefa2bfgedb.centralindia-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(fn)}`;
+  return `https://handymanwebapp1-ezgyf8bxf4dtcqd2.z01.azurefd.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(fn)}`;
 };
 
 /* ---------------- CLEAN DATA ---------------- */
