@@ -21,7 +21,7 @@ const { userId } = useParams();
 const { groceryItemId } = useParams();  
 const [isMobile, setIsMobile] = useState(false);
 const [isChecked, setIsChecked] = useState(true);
-const [selectedPayment, setSelectedPayment] = useState("cash");
+// const [selectedPayment] = useState("cash");
 const [error, setError] = useState("");
 const [martId, setMartId] = useState("");
 const [totalItemsSelected, setTotalItemsSelected] = useState("");
@@ -87,8 +87,8 @@ console.log("ZipCode:", primary?.zipCode);
 }, [addresses]);
 
 useEffect(() => {
-console.log( limit, loading, isChecked, editingAddressId, customerName, groceryId, );
-}, [ limit, loading,isChecked,editingAddressId,customerName,groceryId,]);
+console.log( error, limit, loading, isChecked, editingAddressId, customerName, groceryId, );
+}, [ error, limit, loading,isChecked,editingAddressId,customerName,groceryId,]);
 
 // if (numericGrandTotal >= 1999) {   
 // cashback = 200;
@@ -630,8 +630,8 @@ martId: martId,
 date: new Date(),
 grandTotal: String(netPayables),
 totalItemsSelected: totalItemsSelected,
-status: "Open",
-paymentMode: selectedPayment,
+status:  "Open",
+paymentMode: "",
 utrTransactionNumber: "",
 transactionNumber: "",  
 transactionStatus: "",
@@ -643,6 +643,8 @@ longitude: 0,
 isPickUp: false,
 isDelivered: false,
 walletAmount: walletAmount,
+deliveryAssignedTime: "",
+deliverySubmitTime: "",
 // location: `https://www.google.com/maps?q=${lat},${lng}`,
 };
 
@@ -706,40 +708,40 @@ localStorage.removeItem("activeOrderId");
 localStorage.removeItem("allCategories");
 localStorage.removeItem(`cartMeta_${groceryItemId}`);
 
-if (selectedPayment === "online") {
-response = await fetch(
-`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
-{
-method: "PUT",
-headers: {
-"Content-Type": "application/json",
-},
-body: JSON.stringify(payload),
-},
-);
+// if (selectedPayment === "online") {
+// response = await fetch(
+// `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+// {
+// method: "PUT",
+// headers: {
+// "Content-Type": "application/json",
+// },
+// body: JSON.stringify(payload),
+// },
+// );
 
-if (!response.ok) {
-throw new Error("Failed to Update Payment.");
-}
-localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
-localStorage.removeItem("activeOrderId");
-localStorage.removeItem("allCategories");
-localStorage.removeItem(`cartMeta_${groceryItemId}`);
-window.alert(
-`We are Redirecting to the Payment Page! Your reference number is ${martId}.`,
-);
-window.location.href = `/groceryOnlinePayment/${groceryItemId}`;
-} else if (selectedPayment === "cash") {
-response = await fetch(
-`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
-{
-method: "PUT",
-headers: {
-"Content-Type": "application/json",
-},
-body: JSON.stringify(payload),
-},
-);
+// if (!response.ok) {
+// throw new Error("Failed to Update Payment.");
+// }
+// localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
+// localStorage.removeItem("activeOrderId");
+// localStorage.removeItem("allCategories");
+// localStorage.removeItem(`cartMeta_${groceryItemId}`);
+// window.alert(
+// `We are Redirecting to the Payment Page! Your reference number is ${martId}.`,
+// );
+// window.location.href = `/groceryOnlinePayment/${groceryItemId}`;
+// } else if (selectedPayment === "cash") {
+// response = await fetch(
+// `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+// {
+// method: "PUT",
+// headers: {
+// "Content-Type": "application/json",
+// },
+// body: JSON.stringify(payload),
+// },
+// );
 
 if (!response.ok) {
 }
@@ -759,7 +761,6 @@ window.alert(
 );
 }
 window.location.href = `/profilePage/${userType}/${userId}`;
-}
 } catch (error) {
 console.error("Error:", error);
 }
@@ -899,17 +900,17 @@ setLoading(false);
 }
 };
 
-const handleCheckboxChange = (value) => {
-const newValue = selectedPayment === value ? null : value;
-setSelectedPayment(newValue);
-setError("");
+// const handleCheckboxChange = (value) => {
+// const newValue = selectedPayment === value ? null : value;
+// setSelectedPayment(newValue);
+// setError("");
 
-if (newValue) {
-setIsChecked(true);
-} else {
-setIsChecked(false);
-}
-};
+// if (newValue) {
+// setIsChecked(true);
+// } else {
+// setIsChecked(false);
+// }
+// };
 
 return (
 <div>
@@ -1356,39 +1357,6 @@ fontSize: "14px",
 >
 Pay After Delivery – No Advance Needed
 </label>
-<div className="d-flex flex-column m-1">
-{isMobile ? (
-<div className="d-flex flex-column">
-<label style={{ fontSize: "18px" }}>
-<input
-type="radio"
-className="form-check-input border-dark m-1"
-checked={selectedPayment === "cash"}
-onChange={() => handleCheckboxChange("cash")}
-/>
-Cash On Delivery
-</label>
-{error && (
-<p className="text-danger" style={{ fontSize: "10px" }}>
-{error}
-</p>
-)}
-</div>
-) : (
-<div className="desktop-view d-flex flex-column ">
-<label style={{ fontSize: "20px" }}>
-<input
-type="radio"
-className="form-check-input border-dark me-2"
-checked={selectedPayment === "cash"}
-onChange={() => handleCheckboxChange("cash")}
-/>
-Cash On Delivery (COD)
-</label>
-{error && <p className="text-danger">{error}</p>}
-</div>
-)}
-</div>
 </div>
 
 <div className="note m-1">

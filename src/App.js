@@ -126,7 +126,9 @@ import { getLoginData } from "./utils/auth";
 import RoyalUpmaMix250g from './RoyalUpmaMix250g.js';
 import MartHomeAppliances from './MartHomeAppliances.js';
 import AdminOfferForm from './AdminOfferForm.js';
-
+import AdminGroceryZoneDashboard from './AdminGroceryZoneDashboard.js';
+import AdminGroceryClosedOrders from './AdminGroceryClosedOrders.js';
+import AdminGroceryDashboard from './AdminGroceryDashboard.js';
 // import OneRupeeGroceryItems from './OneRupeeGroceryItems.js';
 // import CustomerLocation from "./CustomerLocation.js";
 const PreventBackNavigation = () => {
@@ -167,6 +169,10 @@ function App() {
         <main>
           {/* className="mt-100" */}       
           <Routes>
+            <Route path="/adminGroceryZoneDashboard" element={<AdminGroceryZoneDashboard />} />
+            <Route path="/adminGroceryClosedOrders/:groceryItemId" element={<AdminGroceryClosedOrders />} /> 
+            <Route path="/adminGroceryDashboard" element={<AdminGroceryDashboard />} />
+
             <Route path="/martHomeAppliances/:userType/:userId" element={<MartHomeAppliances />} /> 
             <Route path="/RoyalUpmaMix" element={<RoyalUpmaMix250g />} />
             <Route path="/termsandConditions" element={<TermsAndConditions />} />

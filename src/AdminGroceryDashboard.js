@@ -24,7 +24,7 @@ const buyProductNotifications = notifications.filter(
   (item) => item.status === "Open" && item.assignedTo === "Customer Care" && item.buyProductId != null
 );
 const groceryItemNotifications = notifications.filter(
-  (item) => item.status === "Open" && item.martId != null
+  (item) => item.status === "Delivered" && item.martId != null
 );
 const lakshmiCollectionsNotifications = notifications.filter(
   (item) => item.status === "Open" && item.lakshmiCollectionId != null
@@ -41,7 +41,7 @@ const lakshmiCollectionsNotifications = notifications.filter(
   };
 
    const handleGroceryClick = (martId) => {
-    navigate(`/adminGroceryOrderPage/${martId}`, { state: { martId } });
+    navigate(`/adminGroceryClosedOrders/${martId}`, { state: { martId } });
   };
   const handleCollectionsClick = (lakshmiCollectionId) => {
     navigate(`/adminLakshmiCollectionsOrders/${lakshmiCollectionId}`, { state: { lakshmiCollectionId } });
@@ -177,6 +177,10 @@ const lakshmiCollectionsNotifications = notifications.filter(
             <div>
               <strong>Address:</strong> {notification.address}, {notification.district}, {notification.state}, {notification.zipCode}, {notification.customerPhoneNumber}
             </div>
+             <div><strong>Delivery Partner Name:</strong>{notification.assignedTo}</div>
+            <div><strong>Customer Paid Amount:</strong> Rs {notification.paidAmount} /-</div>
+            <div><strong>Payment Mode:</strong> {notification.paymentMode}</div>
+    
             {/* <div>
               <strong>Location:</strong> {notification.location}
             </div> */}
@@ -311,7 +315,7 @@ const Notification = () => {
 
       const groceryItemData = await groceryItemResponse.json();
       const groceryItemFiltered = groceryItemData.filter(
-        (item) => item.status === "Open"  && item.martId != null)
+        (item) => item.status === "Delivered"  && item.martId != null)
         .sort((a, b) => new Date(b.date) - new Date(a.date));
       const groceryItemCount = groceryItemFiltered.length;
       setGroceryItemNotifications(groceryItemFiltered);
@@ -429,15 +433,7 @@ const handleTabClick = (tab) => {
           ${tab === "Grocery Items" && glowGrocery ? "glow" : ""}
           ${tab === "Lakshmi Collections" && glowCollection ? "glow" : ""}
           `}
-        onClick={() => {
-        if (tab === "Grocery Items") {
-          navigate("/adminGroceryZoneDashboard", {
-            state: { groceryNotifications }
-          });
-        } else {
-          handleTabClick(tab);
-        }
-      }}
+        onClick={() => handleTabClick(tab)}
         style={{ cursor: "pointer" }}
       >
         {tab}{" "}
@@ -472,15 +468,7 @@ const handleTabClick = (tab) => {
           ${tab === "Grocery Items" && glowGrocery ? "glow" : ""}
           ${tab === "Lakshmi Collections" && glowCollection? "glow" : ""}
           `}
-        onClick={() => {
-        if (tab === "Grocery Items") {
-          navigate("/adminGroceryZoneDashboard", {
-            state: { groceryNotifications }
-          });
-        } else {
-          handleTabClick(tab);
-        }
-      }}
+        onClick={() => handleTabClick(tab)}
         style={{ cursor: "pointer", marginRight: "15px" }}
       >
         {tab}{" "}
@@ -612,3 +600,5 @@ const handleTabClick = (tab) => {
 }; 
 
 export default Notification;
+
+       

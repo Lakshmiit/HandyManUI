@@ -12,10 +12,6 @@ import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import StorefrontIcon from '@mui/icons-material/Storefront'; 
 import DeliveryDiningIcon from '@mui/icons-material/DeliveryDining';
 import PermIdentityIcon from '@mui/icons-material/PermIdentity';
-// import Banner3 from './img/Above45.jpeg'; 
-// import BannerVideo from './img/PongalOffers.mp4';
-// import VolumeOffIcon from '@mui/icons-material/VolumeOff';       
-// import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import { useNavigate, useParams } from "react-router-dom";   
 import Logo from "./img/Hm_Logo 1.png";
 import SearchIcon from "@mui/icons-material/Search";
@@ -68,16 +64,7 @@ import AddIcCallIcon from '@mui/icons-material/AddIcCall';
 import RoyalImg from './img/LMartLogo.jpeg';
 import HomeElectricalImg from './img/HomeElectrical.jpeg';
 import HomePlumbingImg from './img/HomePlumbing.jpeg'; 
-// import Poster from './img/Poster.jpeg';  
-// import ReedemCode from "./ReedemCode.js";
-import Container1Img from './img/599.jpg';
-import Container2Img from './img/299.jpg';
-import Container3Img from './img/Sugar.jpg';
-import Container4Img from './img/999.jpg';       
-import Container5Img from './img/1499.jpg'; 
-import Container6Img from './img/1999.jpg'; 
-// import Image1 from './img/Image1.jpeg';     
-// import Image2 from './img/Image2.jpeg';
+import OffersBannerModal from './OffersBannerModal.js';
 // import { appConfig } from "./config";                     
 
 const getMenuList = (userType, userId, category, district ,ZipCode,technicianFullName, isMobile) => {
@@ -167,8 +154,7 @@ const ProfilePage = () => {
     const [fullName, setFullName] = useState('');
     const [menuList, setMenuList] = useState([]);
     const [profile, setProfile] = useState({});
-    const [selectedTicket, setSelectedTicket] = useState(null);
-    const [showModal, setShowModal] = useState(false);
+   const [showModal, setShowModal] = useState(false);
     const [profileImage, setProfileImage] = useState(null);
     const fileInputRef = useRef(null);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -179,10 +165,7 @@ const ProfilePage = () => {
     const ticketScrollRef = useRef(null);  
    const [error, setError] = useState('');
     const [products, setProducts] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState("");
-    //  const videoRef = useRef(null);
-// const [isMuted] = useState(true);
-// const [isMuted, setIsMuted] = useState(true);  
+    const [selectedCategory, setSelectedCategory] = useState(""); 
 const [grocery, setGrocery] = useState([]);
 const [cartSummary, setCartSummary] = useState({
   items: 0,
@@ -220,6 +203,7 @@ const [grandTotal, setGrandTotal] = useState('');
 const [items, setItems] = useState('');
 const [assignedTo, setAssignedTo] = useState('');
 const [deliveryPartnerUserId, setDeliveryPartnerUserId] = useState('');
+const [assignedDateTime, setAssignedDateTime] = useState("");
 const [totalItemsSelected, setTotalItemsSelected] = useState('');
 const [transactionNumber, setTransactionNumber] = useState('');
 const [city, setCity] = useState('');
@@ -243,181 +227,18 @@ const displayProducts =
 searchQuery.trim().length > 0 ? filteredProducts : products;
 const [imageLoading, setImageLoading] = useState(true);
 const [placeholderIndex, setPlaceholderIndex] = useState(0);
-// const carouselRef = useRef(null);
-// const carouselInstance = useRef(null);
 const firstCategories = groceryCategories.slice(0, 6);
 const secondCategories = groceryCategories.slice(6, 31);
-// const thirdCategories = groceryCategories.slice(15, 24);
-// const fourthCategories = groceryCategories.slice(24, 30);
-// const HEADER_HEIGHT = window.innerWidth <= 768 ? 50 : 100;
 const [showOffersModal, setShowOffersModal] = useState(false);
-// const [offersData, setOffersData] = useState([]);
-// const [offerImages, setOfferImages] = useState({});
-// const [currentTime, setCurrentTime] = useState(new Date());
-// const staticImages = [Image1, Image2];
 const [showCoinsModal, setShowCoinsModal] = useState(false);
-const offers = [
-  {
-    condition: "New Users Get - ₹50 in Wallet!",
-    img: Container1Img,
-  },
-  {
-    condition: "Cashback|Above ₹299",
-    img: Container2Img,
-  },
-  {
-    condition: "Free Sugar 1Kg|Above ₹599",
-    img: Container3Img,
-  },
-  {
-    condition: "Cashback|Above ₹999",
-    img: Container4Img,
-  },
-  {
-    condition: "Cashback|Above ₹1499",
-    img: Container5Img,
-  },
-  {
-    condition: "Cashback|Above ₹1999",
-    img: Container6Img,
-  },
-];
-
- const highlightText = (text) => {
-  return text.split(/(₹\d+|Cashback)/g).map((part, index) => {
-    if (/₹\d+/.test(part)) {
-      return (
-        <span key={index} style={{ color: "red", fontWeight: "bold" }}>
-          {part}
-        </span>
-      );
-    } else if (part === "Cashback") {
-      return (
-        <span
-          key={index}
-          style={{
-            color: "green",
-            fontWeight: "bold",
-            fontSize: "15px", 
-          }}
-        >
-          {part}
-        </span>
-      );
-    } else {
-      return (
-        <span key={index} style={{ color: "green" }}>
-          {part}
-        </span>
-      );
-    }
-  });
-}; 
+const [selectedTicket, setSelectedTicket] = useState(null);
+const [selectedOrder, setSelectedOrder] = useState(null);
+const [showOrderModal, setShowOrderModal] = useState(false);
 
 useEffect(() => {
-  setShowOffersModal(true);
-}, []);
-
-// useEffect(() => {
-//   const fetchOffers = async () => {
-//     try {
-//       const res = await axios.get(
-//         "https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UpLoadBannners/GetBanners"
-//       );
-//       setOffersData(res.data);
-//       console.log("Offers Data:", res.data);
-//     } catch (err) {
-//       console.error("Error fetching offers:", err);
-//     }
-//   };
-//   fetchOffers();
-// }, []);
-
-// // const now = new Date();
-
-// const activeOffers = offersData.filter((offer) => {
-//   const start = new Date(offer.startDate);
-//   const end = new Date(offer.endDate);
-//   return currentTime >= start && currentTime <= end;
-// });
-
-// useEffect(() => {
-//   if (offersData.length > 0) {
-//     const hasActive = offersData.some((offer) => {
-//       const start = new Date(offer.startDate);
-//       const end = new Date(offer.endDate);
-//       return currentTime >= start && currentTime <= end;
-//     });
-
-//     setShowOffersModal(hasActive);
-//   }
-// }, [offersData, currentTime]);
-
-// useEffect(() => {
-//   if (!offersData.length) return;
-//   const fetchImages = async () => {
-//     const imagesMap = {};
-//     for (const offer of offersData) {
-//       imagesMap[offer.id] = [];
-//       for (const img of offer.image || []) {
-//         try {
-//           const res = await fetch(
-//             `${IMAGE_API}${encodeURIComponent(img.images)}`
-//           );
-//           const data = await res.json();
-//           if (data?.imageData) {
-//             imagesMap[offer.id].push(
-//               `data:image/jpeg;base64,${data.imageData}`
-//             );
-//           }
-//         } catch (err) {
-//           console.error("Image load failed:", err);
-//         }
-//       }
-//     }
-//     setOfferImages(imagesMap);
-//   };
-//   fetchImages();
-// }, [offersData]);
-
-// useEffect(() => {
-//   const interval = setInterval(() => {
-//     setCurrentTime(new Date());
-//   }, 5000); 
-//   return () => clearInterval(interval);
-// }, []);
-
-// const hasRun = useRef(false);
-
-// useEffect(() => {
-//   if (hasRun.current) return; 
-//   hasRun.current = true;
-//   const today = new Date().toDateString();
-//   const storedData = JSON.parse(
-//     localStorage.getItem("offersModalData") || "{}"
-//   );
-//   if (storedData.date === today) {
-//     if (storedData.count < 10) {
-//       setShowOffersModal(true);
-//       localStorage.setItem(
-//         "offersModalData",
-//         JSON.stringify({
-//           date: today,
-//           count: storedData.count + 1,
-//         })
-//       );
-//     }
-//   } else {
-//     setShowOffersModal(true);
-//     localStorage.setItem(
-//       "offersModalData",
-//       JSON.stringify({
-//         date: today,
-//         count: 1,
-//       })
-//     );
-//   }
-// }, []);
+  console.log(paidAmount,paymentMode, martId,status, imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery,error, showMenu, products, selectedCategory, dress);
+}, [paidAmount,paymentMode, martId, status, imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery, error,showMenu, products, selectedCategory, dress]);
+ 
  const placeholderSuggestions = [
   'Search "Milk"', 'Search "Freedom Refined Sunflower Oil"', 'Search "Sona Masoori Rice"',
   'Search "Paneer"', 'Search "Red Label"', 'Search "Coffee"', 'Search "Aashirvaad"',
@@ -426,7 +247,7 @@ useEffect(() => {
   'Search "Bread"', 'Search "Chicken"', 'Search "Shampoo"', 'Search "Soap"',
 ];
 
-// const [showRedeem, setShowRedeem] = useState(false);
+// const [showRedeem, setShowRedeem] = useState(false);     
 // const [refRecord, setRefRecord] = useState(null);
 // const [refLoading, setRefLoading] = useState(true);
 // // const [shouldShowGetCoins, setShouldShowGetCoins] = useState(false);
@@ -446,134 +267,6 @@ useEffect(() => {
 //   console.log( redeemOpen, showRedeem, awardLoading,  awardedPoints, referralPoints);
 // }, [redeemOpen, showRedeem, awardLoading,  awardedPoints, referralPoints]);
 
-// const checkNewOrExisting = useCallback(async (num) => {
-//   try {
-//     const res = await fetch(
-//       `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UserOnBoarding/GuestUserVerificationByMobileNo?mobileNo=${encodeURIComponent(
-//         num
-//       )}`
-//     ); 
-//     const text = await res.text();
-//     let data = null;
-//     try { data = text ? JSON.parse(text) : null; } catch { data = null; }
-//     if (data === null) return "not registered";
-//     return "registered";
-//   } catch {
-//     return "invalid";
-//   }
-// }, []);
-
-// useEffect(() => {
-//   const numbers = (refRecord?.referralNumbers || "")
-//     .split(",")
-//     .map(s => s.trim())
-//     .filter(Boolean)
-//     .filter((v, i, a) => a.indexOf(v) === i);
-//   if (numbers.length === 0) {
-//     setDisplayNumbers("");
-//     return;
-//   }
-//   let isActive = true;
-//   const checkAllNumbers = async () => {
-//     try {
-//       const results = await Promise.all(
-//         numbers.map(async (num) => {
-//           try {
-//             const status = await checkNewOrExisting(num);
-//             if (status === "registered") return `${num} ✅ Registered`;
-//             if (status === "not registered") return `${num} ❌ Not Registered`;
-//             return `${num} ⚠️ Invalid`;
-//           } catch {
-//             return `${num} ⚠️ Error`;
-//           }
-//         })
-//       );
-//       if (isActive) {
-//          const joined = results.join(", ");
-//           setDisplayNumbers(joined);
-//         // setDisplayNumbers(results.join(", "));
-//         const allRegistered = results.every(r => r.includes("✅"));
-
-//       if (allRegistered) {
-//         // ✅ store award immediately
-//         localStorage.setItem(AWARDED_POINTS_KEY, "100");
-//         // ✅ enable button immediately
-//         setClaimAvailable(true);
-//       }
-//       }
-//     } catch (error) {
-//       console.error(error);
-//     }
-//   };
-//   checkAllNumbers();
-//   // ✅ Auto refresh every 1 seconds
-//   // const intervalId = setInterval(() => {
-//   //   checkAllNumbers();
-//   // }, 1000); 
-//     const intervalId = setInterval(checkAllNumbers, 1000);
-
-//   return () => {
-//     isActive = false;
-//     clearInterval(intervalId); 
-//   };
-// }, [refRecord?.referralNumbers, checkNewOrExisting, AWARDED_POINTS_KEY]);
-
-// useEffect(() => {
-//   const fetchOffers = async () => {
-//     try {
-//       const res = await axios.get(
-//         "https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UpLoadBannners/GetBanners"
-//       );
-//       setOffersData(res.data);
-//       console.log("Offers Data:", res.data);
-//     } catch (err) {
-//       console.error("Error fetching offers:", err);
-//     }
-//   };
-//   fetchOffers();
-// }, []);
-
-// const now = new Date();
-
-// const activeOffers = offersData.filter((offer) => {
-//   const start = new Date(offer.startDate);
-//   const end = new Date(offer.endDate);
-//   return now >= start && now <= end;
-// });
-
-// useEffect(() => {
-//   if (activeOffers.length > 0) {
-//     setShowOffersModal(true);
-//   }
-// }, [offersData, activeOffers.length]);
-    
-// useEffect(() => {
-//   if (!offersData.length) return;
-//   const fetchImages = async () => {
-//     const imagesMap = {};
-//     for (const offer of offersData) {
-//       imagesMap[offer.id] = [];
-//       for (const img of offer.image || []) {
-//         try {
-//           const res = await fetch(
-//             `${IMAGE_API}${encodeURIComponent(img.images)}`
-//           );
-//           const data = await res.json();
-//           if (data?.imageData) {
-//             imagesMap[offer.id].push(
-//               `data:image/jpeg;base64,${data.imageData}`
-//             );
-//           }
-//         } catch (err) {
-//           console.error("Image load failed:", err);
-//         }
-//       }
-//     }
-//     setOfferImages(imagesMap);
-//   };
-//   fetchImages();
-// }, [offersData]);
-
 useEffect(() => {
   const onResize = () => {
     setWindowSize({
@@ -585,325 +278,6 @@ useEffect(() => {
   return () => window.removeEventListener("resize", onResize);
 }, []);
 
-// useEffect(() => {
-//   const checkNewUser = async () => {
-//     try {
-//       const rec = await getReferralRecord(userId);
-//       if (!rec || readServerPoints(rec) === 0) {
-//         setShowRedeem(true);   
-//       } else {
-//         setShowRedeem(false);
-//       }
-//     } catch (err) {
-//       setShowRedeem(true);
-//     }
-//   };
-//   if (userId) checkNewUser();
-// }, [userId]);
-
-// useEffect(() => {
-//   const award = Number(localStorage.getItem(AWARDED_POINTS_KEY) || "0");
-//   if (award === 100 && userPoints === 0) {
-//     setClaimAvailable(true);
-//   } else {
-//     setClaimAvailable(false);
-//   }
-// }, [userPoints, AWARDED_POINTS_KEY]);
-
-// useEffect(() => {
-//   let cancelled = false;
-//   (async () => {
-//     try {
-//       // 1) Server points (authoritative UI value)
-//       const rec = await getReferralRecord(userId);
-//       const serverPts = rec ? readServerPoints(rec) : 0;
-//       // 2) Local award (pending 100 from Redeem flow)
-//       let localAward = 0;
-//       try { localAward = Number(localStorage.getItem(AWARDED_POINTS_KEY) || "0"); } catch {}
-//       if (!cancelled) {
-//         setUserPoints(serverPts);
-//         // Enable "Get Coins" ONLY when server is still 0 AND local says 100 is ready
-//         // setClaimAvailable(serverPts === 0 && localAward === 100);
-//         setClaimAvailable(serverPts === 0 && localAward === 100);      }
-//     } catch {
-//       if (!cancelled) {
-//         setUserPoints(0);
-//         setClaimAvailable(false);
-//       }
-//     } finally {
-//       if (!cancelled) setPointsLoading(false);
-//     }
-//   })();
-//   return () => { cancelled = true; };
-// }, [userId, AWARDED_POINTS_KEY]);
-
-// useEffect(() => {
-//   const fetchReferral = async () => {
-//     try {
-//       const rec = await getReferralRecord(userId);
-//       if (rec) {
-//         const raw =
-//           rec?.referralPoints ??
-//           rec?.referralpoints ??
-//           rec?.ReferralPoints ??
-//           rec?.ReferralPoints ??
-//           0;
-//         const pointsValue = Number(raw) || 0;
-//         setReferralPoints(pointsValue);
-//         setShouldShowGetCoins(pointsValue === 0); 
-//       } else {
-//         setReferralPoints(0);
-//         setShouldShowGetCoins(true); 
-//       }
-//     } catch (e) {
-//       console.error("Failed to load referral points:", e);
-//       setShouldShowGetCoins(false);
-//     }
-//   };
-//   fetchReferral();
-// }, [userId]);
-
-// load once
-// useEffect(() => {
-//   let cancelled = false;
-//   (async () => {
-//     try {
-//       const rec = await getReferralRecord(userId);
-//       if (!cancelled) setRefRecord(rec);
-//     } finally {
-//       if (!cancelled) setRefLoading(false);
-//     }
-//   })();
-//   return () => { cancelled = true; };
-// }, [userId]);
-
-// formatter (optional): clean, unique, spaced
-// const displayNumbers = (refRecord?.referralNumbers || "")
-//   .split(",")
-//   .map(s => s.trim())
-//   .filter(Boolean)
-//   .filter((v, i, a) => a.indexOf(v) === i)
-//   .join(", ");
-
-// ---- load once for this user ----
-// useEffect(() => {
-//   let cancelled = false;
-//   (async () => {
-//     try {
-//       const rec = await getReferralRecord(userId);
-//       const pts = rec ? readServerPoints(rec) : 0;
-//       if (!cancelled) setUserPoints(pts);
-//     } catch {
-//       if (!cancelled) setUserPoints(0);
-//     } finally {
-//       if (!cancelled) setPointsLoading(false);
-//     }
-//   })();
-//   return () => { cancelled = true; };
-// }, [userId]);
-
-// KEY used by ReedemCode
-// const awardKeyFor = (uid) => `hm_referral_awarded_points_${uid || "guest"}`;
-
-// Read localStorage award (100 only if all 3 registered) — doesn't change UI points
-// useEffect(() => {
-//   const KEY = awardKeyFor(userId);
-//   const readAward = () => {
-//     try {
-//       const raw = localStorage.getItem(KEY);
-//       const n = Number(raw);
-//       setAwardedPoints(Number.isFinite(n) ? n : 0);
-//     } catch {
-//       setAwardedPoints(0);
-//     } finally {
-//       setAwardLoading(false);
-//     }
-//   };
-//   readAward();
-//   const onStorage = (e) => { if (e.key === KEY) readAward(); };
-//   window.addEventListener("storage", onStorage);
-//   return () => window.removeEventListener("storage", onStorage);
-// }, [userId]);
-
-// When clicked, PUT 100 on server, update UI, clear local award
-// useEffect(() => {
-//   const KEY = awardKeyFor(userId);
-//   const readAward = () => {
-//     try {
-//       const raw = localStorage.getItem(KEY);
-//       const n = Number(raw);
-//       setAwardedPoints(Number.isFinite(n) ? n : 0);
-//     } catch {
-//       setAwardedPoints(0);
-//     } finally {
-//       setAwardLoading(false);
-//     }
-//   };
-//   readAward(); 
-//   // keep in sync if another tab updates
-//   const onStorage = (e) => {
-//     if (e.key === KEY) readAward();
-//   };
-//   window.addEventListener("storage", onStorage);
-//   return () => window.removeEventListener("storage", onStorage);
-// }, [userId]);
-
-// ---- helpers (keep near your other helpers) ----
-//  const getReferralRecord = async (userId) => {
-//   if (!userId) return null;
-//   const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(
-//     userId
-//   )}`;
-//   const res = await fetch(url);
-//   const text = await res.text();
-//   let data = [];
-//   try { data = text ? JSON.parse(text) : []; } catch { data = []; }
-//   if (Array.isArray(data) && data.length > 0) {
-//     data.sort((a, b) => new Date(b.date) - new Date(a.date));
-//     const record = data[0];
-//     setReferralPoints(Number(record.referralpoints));  
-//     setIsReferralUsed(record.isReferralUsed);
-//     return record;
-//   }
-//   setReferralPoints(0);
-//   setIsReferralUsed(false);
-//   return null;
-// };
-
-// useEffect(() => {
-//   const localAward = Number(localStorage.getItem(AWARDED_POINTS_KEY) || "0");
-//   if (userPoints === 0 && localAward === 100) {
-//     setClaimAvailable(true);
-//   } else {
-//     setClaimAvailable(false);
-//   }
-// }, [userPoints, AWARDED_POINTS_KEY]);
-
-// const formatDateTime = (dateString) => {
-//   return new Date(dateString).toLocaleString("en-IN", {
-//     day: "2-digit",
-//     month: "short",
-//     year: "numeric",
-//     hour: "2-digit",
-//     minute: "2-digit",
-//   });
-// };
-
-// const readServerPoints = (record) => {
-//   const raw =
-//     record?.referralPoints ??
-//     record?.referralpoints ??
-//     record?.ReferralPoints ??
-//     record?.ReferralPoints ??
-//     0;
-//   const n = Number(raw);
-//   return Number.isFinite(n) ? n : 0;
-// };   
-
-// const handleGetCoins = async () => {
-//   if (pointsLoading) return;
-//   const localAward = Number(localStorage.getItem(AWARDED_POINTS_KEY) || "0");
-//   // const isAllRegistered = displayNumbers
-//   //   ?.split(",")
-//   //   .every(item => item.includes("✅"));
-//   // ❌ Already claimed
-//   if (userPoints >= 100) {
-//     alert("Coins already claimed");
-//     return;
-//   }
-//   // ❌ Not completed
-//   if (localAward !== 100) {
-//     alert("Referral not completed yet");
-//     return;
-//   }
-//   try {
-//     setPointsLoading(true);
-//     setShowConfetti(true);
-//     setShowMessage(true);
-//     setTimeout(() => setShowConfetti(false), 4000);
-//     setTimeout(() => setShowMessage(false), 5000);
-//     const rec = await getReferralRecord(userId);
-//     if (!rec?.id) {
-//       alert("No referral record found");
-//       return;
-//     }
-//     const payload = {
-//       id: rec.id,
-//       date: rec.date,
-//       referralNumbers: rec.referralNumbers ?? "",
-//       referreId: rec.referreId ?? userId,
-//       isReferralUsed: false,
-//       referralPoints: "100",
-//     };
-//     const res = await fetch(
-//       `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints?id=${rec.id}`,
-//       {
-//         method: "PUT",
-//         headers: { "Content-Type": "application/json" },
-//         body: JSON.stringify(payload),
-//       }
-//     );
-//     if (!res.ok) throw new Error("Failed to update coins");
-//     // Update UI immediately
-//     setUserPoints(100);
-//     localStorage.removeItem(AWARDED_POINTS_KEY);
-//     // Disable button
-//     setClaimAvailable(false);
-//   } catch (err) {
-//     console.error(err);
-//     alert("Something went wrong");
-//   } finally {
-//     setPointsLoading(false);
-//   }
-// };
-
-// useEffect(() => {
-//   let cancelled = false;
-//   const bootstrapReferrals = async () => {
-//     if (!userId) return;
-//     const rec = await getReferralRecord(userId);
-//     if (!rec) {
-//       // brand-new user: open popup and start with 0 points
-//       if (!cancelled) {
-//         setShowRedeem(true);
-//         setUserPoints(0);
-//       }
-//       return;
-//     }
-//     // existing record: load points into UI
-//     const serverPts = Math.min(readServerPoints(rec), 150);
-//     if (!cancelled) {
-//       setUserPoints(serverPts);
-//       // if they have no numbers and 0 points -> treat as new-ish, open it
-//       const hasNumbers = Boolean((rec.referralNumbers || "").trim());
-//       if (!hasNumbers && serverPts === 0) {
-//         setShowRedeem(true);
-//       } else {
-//         setShowRedeem(false);
-//       }
-//     }
-//   };
-//   bootstrapReferrals();
-//   return () => { cancelled = true; };
-// }, [userId]);
-
-//   const handleSendRef = async (index, referralValue) => {
-//     console.log("sendRef", { index, referralValue });
-//   };
-
-//   const handleRedeemCoins = async (refsPayload) => {
-//   const earned = 50; 
-//   setUserPoints((prev) => {
-//     const next = (Number(prev) || 0) + earned;
-//     try {
-//     } catch (e) {
-//       console.error("Unable to write userPoints to localStorage on redeem:", e);
-//     }
-//     return next;
-//   });
-//   window.alert(`Coins added: ${earned}`);
-// };
-
 useEffect(() => {
   const interval = setInterval(() => {
     setPlaceholderIndex((prev) => (prev + 1) % placeholderSuggestions.length);
@@ -911,10 +285,6 @@ useEffect(() => {
   return () => clearInterval(interval);
 }, [placeholderSuggestions.length]);        
 
-useEffect(() => {
-  console.log( imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery,error, showMenu, products, selectedCategory, dress);
-}, [imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery, error,showMenu, products, selectedCategory, dress]);
- 
 useEffect(() => {  
   if (!selectedCategory) return;
   let cancelled = false;
@@ -1111,64 +481,17 @@ useEffect(() => {
   mrp: Number(p.mrp || 0),
 });
 
-/* ================= FETCH PRODUCTS ================= */
-// useEffect(() => {
-//   let cancelled = false;
-//   const POLL_MS = 5000
-//   const fetchProducts = async (showLoader = false) => {
-//     if (showLoader) setLoading(true);
-//     try {
-//       const res = await axios.get(
-//         "https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetAllGroceryItems"
-//       );
-//       if (cancelled) return;
-//       const normalized = (Array.isArray(res.data) ? res.data : [])
-//         .map(normalizeProduct)
-//         .filter(p => p.status === "Approved");
-//       setAllProducts(prev => {
-//         if (
-//           prev.length === normalized.length &&
-//           prev.every((p, i) =>
-//             p.id === normalized[i].id &&
-//             p.stockLeft === normalized[i].stockLeft &&
-//             p.limit === normalized[i].limit
-//           )
-//         ) {
-//           return prev; 
-//         }
-//         return normalized;
-//       });
-//     } catch (err) {
-//       console.error("Fetching grocery items failed", err);
-//     } finally {
-//       if (showLoader && !cancelled) setLoading(false);
-//     }
-//   };
-//   fetchProducts(true);
-//   const intervalId = setInterval(() => {
-//     fetchProducts(false);
-//   }, POLL_MS);
-//   return () => {
-//     cancelled = true;
-//     clearInterval(intervalId);
-//   };
-// }, []);
-
-
 useEffect(() => {
   let cancelled = false;
   // const POLL_MS = 300000;
-
   const sendLog = async () => {
     try {
       const payload = {
         id: "1", 
-       
         date: "string",
         mobileNumber: profile.mobileNumber, 
         message: "User fetching grocery items in profile page"
       };
-
       await axios.post(
         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/LmartLogs/UploadlogsDetails`,
         payload
@@ -1177,24 +500,17 @@ useEffect(() => {
       console.error("Log API failed", err);
     }
   };
-
   const fetchProducts = async (showLoader = false) => {
-   
     sendLog();
-
     if (showLoader) setLoading(true);
-
     try {
       const res = await axios.get(
         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetAllGroceryItems`
       );
-
       if (cancelled) return;
-
       const normalized = (Array.isArray(res.data) ? res.data : [])
         .map(normalizeProduct)
         .filter((p) => p.status === "Approved");
-
       setAllProducts((prev) => {
         if (
           prev.length === normalized.length &&
@@ -1209,20 +525,16 @@ useEffect(() => {
         }
         return normalized;
       });
-
     } catch (err) {
       console.error("Fetching grocery items failed", err);
     } finally {
       if (showLoader && !cancelled) setLoading(false);
     }
   };
-
   fetchProducts(true);
-
   // const intervalId = setInterval(() => {
   //   fetchProducts(false);
   // }, POLL_MS);
-
   return () => {
     cancelled = true;
     // clearInterval(intervalId);
@@ -1346,6 +658,7 @@ useEffect(() => {
       setLongitude(data.longitude);
       setTotalItemsSelected(data.totalItemsSelected);
       setDeliveryPartnerUserId(data.deliveryPartnerUserId);
+      setAssignedDateTime(data.deliveryAssignedTime);
       setAssignedTo(data.assignedTo);
       let allProducts = [];
       let totalAmountFromApi = 0;
@@ -1394,8 +707,13 @@ useEffect(() => {
       if (!response.ok) throw new Error('Failed to fetch ticket data');
       const data = await response.json();
       const tickets = Array.isArray(data) ? data : (data && typeof data === "object" ? [data] : []);
-      setGroceryData(tickets);
-      const first = tickets[0] || {};
+      const inProgressTickets = tickets.filter(
+        (item) =>
+          item.status &&
+          item.status.toLowerCase() === "in progress"
+      );
+      setGroceryData(inProgressTickets);
+      const first = inProgressTickets[0] || {};
       setMartId(first.martId || "");
       setState(first.state || "");
       setDistrict(first.district);
@@ -1463,51 +781,85 @@ useEffect(() => {
   setCartSummary(summary);
 }, []);
 
-const handleUpdatePaymentMethod = async () => {
-    try {
-  const payload = {
-    ...cartData,
-    customerName: fullName,
-    address: address, 
-    state: state,
-    district: city,
-    zipCode: pinCode,
-    customerPhoneNumber: mobileNumber,
-    id: id,
-    userId: userId, 
-    martId: martId,
-    date: date,
-    grandTotal: grandTotal,
-    totalItemsSelected: totalItemsSelected,
-    status: status,
-    paymentMode: paymentMode,
-    utrTransactionNumber: transactionDetails,
-    transactionNumber: transactionNumber,
-    transactionStatus: transactionStatus,
-    paidAmount: paidAmount,
-    AssignedTo: assignedTo,
-    DeliveryPartnerUserId: deliveryPartnerUserId,
-    latitude: latitude,
-    longitude: longitude,
-    isPickUp: true,
-    isDelivered: false,    
-  };
-
-    let response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
-
+const handleStatusUpdate = async (ticket, newStatus) => {
+  try {
+    const payload = {
+      ...cartData,
+      id: ticket.id,
+      userId: userId,
+      martId: ticket.martId,
+      status: newStatus,
+    };
+    const response = await fetch(
+      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${ticket.id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      }
+    );
     if (!response.ok) {
-      throw new Error('Failed to Update Technician.');
+      throw new Error("Failed to update status");
     }
-    window.location.href = `/deliveryTracking/${id}`;
+    if (newStatus === "In Progress") {
+      alert("You have Accepted the Order.");
+    } else if (newStatus === "Open") {
+      alert("You declined the order.");
+    }
+  } catch (error) {
+    console.error("Status update error:", error);
+  }
+};
+
+const handleUpdatePaymentMethod = async (ticket) => {
+  try {
+    const payload = {
+      ...cartData,
+      customerName: fullName,
+      address: address,
+      state: state,
+      district: city,
+      zipCode: pinCode,
+      customerPhoneNumber: mobileNumber,
+      id: ticket.id,
+      userId: userId,
+      martId: ticket.martId,
+      date: date,
+      grandTotal: grandTotal,
+      totalItemsSelected: totalItemsSelected,
+      status: "Delivered",
+      PaymentMode: ticket.paymentType,
+      utrTransactionNumber: transactionDetails,
+      transactionNumber: transactionNumber,
+      transactionStatus: transactionStatus,
+      PaidAmount: ticket.receivedAmount.toString(), 
+      AssignedTo: assignedTo,
+      DeliveryPartnerUserId: deliveryPartnerUserId,
+      deliveryAssignedTime: assignedDateTime,
+      deliverySubmitTime: new Date().toISOString(),
+      latitude: latitude,
+      longitude: longitude,
+      isDelivered: false,
+    };
+    let response = await fetch(
+      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${ticket.id}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      }
+    );
+    if (!response.ok) {
+      throw new Error('Failed to Update.');
+    }
+     navigate(`/profilePage/${userType}/${userId}`);
   } catch (error) {
     console.error('Error:', error);
-    window.alert('Failed to Update Technician. Please try again later.');
+    window.alert('Failed to Update. Please try again later.');
   }
 };
 
@@ -1616,7 +968,7 @@ const handleDressCategoryClick = async (category) => {
               const groceryData = await groceriesResponse.json(); 
               const collectionsData = await lakshmiResponse.json(); 
               const groceryOpenTickets = Array.isArray(groceryData)
-              ? groceryData.filter(item => String(item?.status).toLowerCase() === "open")
+              ? groceryData.filter(item => String(item?.status).toLowerCase() === "open" || "in progress" || "delivered")
               : [];
               const collectionOpenTickets = Array.isArray(collectionsData)
               ? collectionsData.filter(item => String(item?.status).toLowerCase() === "open")
@@ -1803,6 +1155,7 @@ const updateLocalStorageCart = (product, qty) => {
 
   return (
     <>
+    <OffersBannerModal/>
     <header className="header d-flex align-items-center justify-content-between p-2 bg-white shadow-sm" 
       style={{ position: 'fixed', top: 0, left: 0, right: 0, width: '100%', zIndex: 1000 }}>
        {isMobile ? (
@@ -2096,81 +1449,207 @@ const updateLocalStorageCart = (product, qty) => {
       loading ? (
         <p>Loading tickets…</p>
       ) : groceryData.length === 0 ? (
-        <p>No tickets found.</p>
+        <p>No Tickets Found.</p>
       ) : (
         <div className="notification-list">
-          {groceryData.map((t) => (
-            <div key={t.id || t.martId} className="notification-item mb-3 p-2 border rounded">
-              <div className="notification-header">
-                <strong>Grocery ID: </strong> {t.martId}
-              </div>
-              <div>
-                <strong>Customer Name:</strong> {t.customerName}
-              </div>
-              <div>
-                <strong>Address:</strong>{" "}
-                {[t.address, t.district, t.state, (t.zipCode || t.pinCode), t.customerPhoneNumber]
-                  .filter(Boolean)
-                  .join(", ")}
-              </div>
-              <div className="notification-date">
-                <strong>Payment Mode:</strong> {t.paymentMode}
-              </div>
-              {t.status && (
-                <div>
-                  <strong>Status:</strong> {t.status}
-                </div>
-              )}
+  {groceryData.map((t) => (
+    <div
+      key={t.id || t.martId}
+      className="notification-item mb-3 p-2 border rounded"
+    >
+      {/* CLICKABLE HEADER */}
+      <div>
+        <strong>Order Id:</strong> {" "}
+        <span
+          style={{ color: "blue", cursor: "pointer" }}
+          onClick={() => {
+              setSelectedTicket(t);     
+              setSelectedOrder(t);      
+              setShowOrderModal(true);  
+          }}
+        >
+         {t.martId}
+        </span>
+      </div>
+          
+      {/* EXPANDED DETAILS */}
+      {selectedTicket?.id === t.id && (
+  <div className="mt-2 p-2 border-top">
+    {/* <div className="d-flex justify-content-end mb-2"> */}
+  <button
+    className="btn btn-success me-2"
+     onClick={() => {
+      const updated = groceryData.map((g) =>
+        g.id === t.id
+          ? { ...g, status: "In Progress" }
+          : g
+      );
+      setGroceryData(updated);
+      handleStatusUpdate(t, "In Progress");
+    }}
+  >
+    Accept
+  </button>
+  <button
+    className="btn btn-danger"
+    onClick={() => {
+        const updated = groceryData.map((g) =>
+          g.id === t.id
+            ? { ...g, status: "Open" }
+            : g
+        );
+        setGroceryData(updated);
+        handleStatusUpdate(t, "Open");
+      }}
+  >
+    Decline
+  </button>
+{/* </div> */}
+    <div className="mt-2">
+          <input
+            type="radio"
+            name={`pay-${t.id}`}
+            checked={t.paymentType === "cash"}
+            onChange={() => {
+              const updated = groceryData.map((g) =>
+                g.id === t.id
+                  ? { ...g, paymentType: "cash" }
+                  : g
+              );
+              setGroceryData(updated);
+            }}
+          /> Cash
 
-              {/* ✅ IsPickup checkbox for this ticket */}
-              <div className="form-check mt-2">
-                <input
-                  id={`isPickup-${t.id || t.martId}`}
-                  className="form-check-input border-dark"
-                  type="checkbox"
-                  checked={!!t.isPickup}
-                  onChange={(e) => {
-                    const updated = groceryData.map((g) =>
-                      g.id === t.id || g.martId === t.martId
-                        ? { ...g, isPickup: e.target.checked }
-                        : g
-                    );
-                    setGroceryData(updated);
-                  }}
-                />
-                <label
-                  className="form-check-label"
-                  htmlFor={`isPickup-${t.id || t.martId}`}
-                >
-                  Is Pickup
-                </label>
-              </div>
-
-              {/* Go to Maps */}
-              {t.isPickup && t.latitude && t.longitude && (
-                <div className="mt-1 text-end">
-                  <a
-                    href={`/deliveryTracking/${t.id}?lat=${t.latitude}&lng=${t.longitude}&isPickup=true`}
-                    className="link-primary"
-                    onClick={() => {
-                      setShowNotificationModal(false);
-                      handleUpdatePaymentMethod(t); 
-                    }}
-                  >
-                    Go to Maps
-                  </a>
-                </div>
-              )}
-            </div>
-          ))}
+          <input
+            type="radio"
+            name={`pay-${t.id}`}
+            className="ms-3"
+            checked={t.paymentType === "online"}
+            onChange={() => {
+              const updated = groceryData.map((g) =>
+                g.id === t.id
+                  ? { ...g, paymentType: "online" }
+                  : g
+              );
+              setGroceryData(updated);
+            }}
+          /> Online
         </div>
+        <div className="mt-2 d-flex align-items-center justify-content-between">
+     <div className="mt-2 d-flex align-items-center">
+        <label className="me-2 mb-0">Amount:</label>
+        <input
+          type="number"
+          className="form-control"
+          style={{ width: "150px" }}
+          placeholder="Enter Amount"
+          value={t.receivedAmount || ""}
+          onChange={(e) => {
+          let value = Number(e.target.value);
+          const grandTotal = t.grandTotal || 0;
+          if (value > grandTotal) {
+            value = grandTotal;
+          }
+          const updated = groceryData.map((g) =>
+            g.id === t.id
+              ? { ...g, receivedAmount: value }
+              : g
+          );
+          setGroceryData(updated);
+        }}
+        />
+      </div>
+<button
+  className="btn btn-success ms-1"
+  onClick={() => {
+    handleUpdatePaymentMethod(t);
+    setShowNotificationModal(false);
+    
+  }}
+ disabled={!t.paymentType || !t.receivedAmount || Number(t.receivedAmount) <= 0 }
+>
+  Submit
+</button>
+  </div>
+  </div>
+)}      
+    </div>
+  ))}
+</div>
       )
     ) : (
       <p>You are already registered, pending for admin approval.</p>
     )}
   </Modal.Body>
 </Modal>
+<Modal
+  show={showOrderModal}
+  onHide={() => setShowOrderModal(false)}
+  centered
+>
+  <Modal.Header closeButton
+    style={{ backgroundColor: "green", color: "white" }}
+  >
+    <Modal.Title>Order Details</Modal.Title>
+  </Modal.Header>
 
+  <Modal.Body>
+    {selectedOrder && (
+      <>
+        {/* Customer Info */}
+        <div className="mb-2">
+          <strong>Customer Name:</strong> {selectedOrder.customerName}
+        </div>
+        <div className="mb-2">
+          <strong>Address:</strong>{" "}
+          {[selectedOrder.address, selectedOrder.district, selectedOrder.state, selectedOrder.zipCode]
+            .filter(Boolean)
+            .join(", ")}
+        </div>
+        {/* Table */}
+        <div style={{ maxHeight: "300px", overflowY: "auto" }}>
+        <table className="table table-bordered text-center">
+          <thead style={{ backgroundColor: "#cfe2d9", position: "sticky", top: 0, zIndex: 1 }}>
+            <tr>
+              <th>S.No</th>
+              <th>Product Name</th>
+              <th>Quantity</th>
+              <th>Price (₹)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {selectedOrder.categories?.flatMap((cat) =>
+              cat.products.map((p, index) => (
+                <tr key={index}>
+                  <td>{index + 1}</td>
+                  <td>{p.productName}</td>
+                  <td>{p.noOfQuantity}</td>
+                  <td>{p.afterDiscountPrice.toFixed(0)}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+        {/* Totals */}
+        <div className="text-center text-danger mt-2">
+          <h6>
+            <strong>Total Amount:</strong> ₹
+            {selectedOrder.categories?.reduce(
+              (sum, cat) => sum + (cat.totalAmount || 0),
+              0
+            )}
+          </h6>
+
+          <h5>
+            <strong>Grand Total:</strong> ₹{selectedOrder.grandTotal}
+          </h5>
+        </div>
+      </>
+    )}
+  </Modal.Body>
+</Modal>
 {/* {showRedeem && (
             <ReedemCode
               openOverride={true}     
@@ -2962,7 +2441,7 @@ const updateLocalStorageCart = (product, qty) => {
 )}
 
                 <p><strong>{ticket.subject ? "Subject:" : ticket.productName ? "Product Name" : ticket?.categoriess?.[0]?.productName ? "Collection Name" : ticket.productName ? "Job Description" : ""}</strong> {ticket.subject || ticket.productName || ticket?.categoriess?.[0]?.productName || ticket.jobDescription}</p>
-                <p><strong>{ticket.category || ticket.lakshmiCollectionId ? "Category:" : "Delivery in 45 minutes"} </strong> {ticket.category || ticket?.categoriess?.[0]?.categoryName || ticket.category}</p>
+                <p><strong>{ticket.category || ticket.lakshmiCollectionId ? "Category:" : ""} </strong> {ticket.category || ticket?.categoriess?.[0]?.categoryName || ticket.category}</p>
                 <p><strong>Status:</strong> 
                 <span className={ticket.status.toLowerCase()}> {ticket.status}</span>
                 </p> 
@@ -3180,7 +2659,7 @@ const updateLocalStorageCart = (product, qty) => {
         <span className="carousel-control-next-icon"></span>
       </button>
     </div>
-    // {/* ✅ Offer Text 
+    // {/* ✅ Offer Text     
     <p
       style={{
         textAlign: "center",
@@ -3215,7 +2694,7 @@ const updateLocalStorageCart = (product, qty) => {
         : [];
       return (
         <div key={offer.id} className="p-0">
-          {/* ✅ SINGLE IMAGE 
+          {/* ✅ SINGLE IMAGE *
           {images.length === 1 && (
             <img
               src={images[0]}
@@ -3228,16 +2707,17 @@ const updateLocalStorageCart = (product, qty) => {
             />
           )}
          <p
+         className="blinking"
           style={{
             textAlign: "center",
             marginTop: "10px",
             fontWeight: "600",
-            color: "#333",
+            color: "red",
           }}
         >
           Offer valid till: {formatDateTime(offer.endDate)}
         </p> 
-          {/* ✅ MULTIPLE IMAGES
+          {/* ✅ MULTIPLE IMAGES *
           {images.length > 1 && (
             <div
               id={`carousel-${index}`}
@@ -3358,24 +2838,24 @@ const updateLocalStorageCart = (product, qty) => {
       );
     })}
   </Modal.Body> */}
-  <Modal.Body>   
+  {/* <Modal.Body>    */}
      {/* <ul style={{ paddingLeft: "10px" }}>
      <li>🛍️ New Users Get  → {" "} 
   <span style={{ color: "green", fontWeight: "bold" }}>₹50 in Wallet!</span> <br/></li>
       </ul> */}
      
      {/* <div className="container"> */}
-          <div className="row">
+          {/* <div className="row">
             {offers.map((offer, index) => (
               <div className="col-6 mb-1" key={index}>
                 <div className="offer-card">
-                  {/*  Image * */}
+                  {/*  Image * *
                   {offer.img ? (
                     <img src={offer.img} alt="offer" className="offer-img" />
                   ) : (
                     <div className="offer-img-box"></div>
                   )}
-                  {/* Text */}
+                  {/* Text *
                  <div className="offer-condition">
                   {offer.condition.split("|").map((line, i) => (
                     <div key={i}>{highlightText(line)}</div>
@@ -3384,7 +2864,7 @@ const updateLocalStorageCart = (product, qty) => {
                 </div>
               </div>
             ))}
-          </div>
+          </div> */}
         {/* </div> */}
          {/* <div className="text-center">
         <img  
@@ -3401,7 +2881,7 @@ const updateLocalStorageCart = (product, qty) => {
         For any Queries Contact Customer Care: <span style={{color: "red", fontSize: "15px"}}>6281198953</span>
       </b>
     </div> */}
-  </Modal.Body>
+  {/* </Modal.Body> */}
   <Modal.Footer>
     <Button variant="success" onClick={() => setShowOffersModal(false)}> 
       Shop Now 🛒
