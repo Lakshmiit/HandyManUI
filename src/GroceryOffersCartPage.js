@@ -394,10 +394,12 @@ const handleQtyChange = (rowId, delta) => {
       longitude: 0,
       isPickUp: false,
       isDelivered: false,
+      deliveryAssignedTime: "",
+      deliverySubmitTime: "",
       GrandTotal: String(grandSummary.total),
       TotalItemsSelected: String(grandSummary.items),
       categories: allCategories.map((cat) => {
-        const products = (cat.products || [])
+        const products = (cat.products || [])   
           .map((p) => {
             const persisted = p.image ?? p.productImage ?? "";
             const filename = getFilenameFromValue(persisted);

@@ -64,7 +64,6 @@ console.log("Wallet:", walletAmount);
           walletAmount: addr.walletAmount,
         }));            
         setAddresses(formattedAddresses);
-        // console.log(JSON.stringify(data));
         const apiFullName = addresses[0]?.fullName ?? "";
           setFullName(apiFullName);
           const wallet = addresses[0]?.walletAmount ?? 0;
@@ -102,19 +101,15 @@ useEffect(() => {
 
   useEffect(() => {
     if (!cartItems.length) return;
-
     const uniqueNames = Array.from(
       new Set(cartItems.map((x) => x.name).filter(Boolean)),
     );
-
     let cancelled = false;
-
     (async () => {
       try {
         const results = await Promise.allSettled(
           uniqueNames.map(async (name) => {
             const res = await fetch(
-              // handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net
               `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
                 name,
               )}`,
@@ -342,9 +337,26 @@ useEffect(() => {
     };
   }, [refreshStocksOnce]);
 
+  useEffect(() => {
+  const handleFocus = () => {
+    const ctrl = new AbortController();
+    refreshStocksOnce(ctrl.signal);
+  };
+
+  const handleOnline = () => {
+    const ctrl = new AbortController();
+    refreshStocksOnce(ctrl.signal);
+  };
+  window.addEventListener("focus", handleFocus);
+  window.addEventListener("online", handleOnline);
+  return () => {
+    window.removeEventListener("focus", handleFocus);
+    window.removeEventListener("online", handleOnline);
+  };
+}, [refreshStocksOnce]);
+
   const buildCartFromStorage = React.useCallback(() => {
     const saved = JSON.parse(localStorage.getItem("allCategories") || "[]");
-
     const items = saved.flatMap((cat) =>
       (cat.products || [])
         .filter((p) => Number(p.qty) > 0)
@@ -376,7 +388,6 @@ useEffect(() => {
           };
         }),
     );
-
     return items;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -406,9 +417,6 @@ useEffect(() => {
       try {
         const results = await Promise.allSettled(
           filenames.map(async (fn) => {
-            // const res = await fetch(
-            //   `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net${encodeURIComponent(fn)}`,
-            // );
             const res = await fetch(fileToUrl(fn));
             const contentType = res.headers.get("content-type") || "";
             if (contentType.includes("application/json")) {
@@ -473,31 +481,56 @@ useEffect(() => {
     localStorage.setItem("allCategories", JSON.stringify(allCategories));
   };
 
-  const handleQtyChange = (rowId, delta) => {
+  const removeItem = (rowId) => {
+  setCartItems((prev) => {
+    const updated = prev.filter((item) => item.id !== rowId);
+
+    writeBackToStorage(updated);
+    setGrandSummary(computeTotals(updated));
+
+    return updated;
+  });
+};
+
+ const handleQtyChange = async (rowId, delta) => {
+  const item = cartItems.find((i) => i.id === rowId);
+  if (!item) return;
+  try {
+    const res = await fetch(
+      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(item.name)}`
+    );
+    const data = await res.json();
+    const latest = data?.[0];
+    const latestStock = Number(latest?.stockLeft || 0);
+    if (latestStock <= 0) {
+      alert(`${item.name} is out of stock`);
+      removeItem(rowId);
+      return;
+    }
     setCartItems((prev) => {
       const next = prev
         .map((it) => {
           if (it.id !== rowId) return it;
-
-          const stockMax = Number.isFinite(it.stockLeft)
-            ? it.stockLeft
-            : Infinity;
           const limitMax = getDynamicLimit(it.name);
-          const maxAllowed = Math.min(stockMax, limitMax);
-
+          const maxAllowed = Math.min(latestStock, limitMax);
           const currentQty = Number(it.qty || 0);
           const proposed = currentQty + delta;
           const clamped = Math.max(0, Math.min(proposed, maxAllowed));
-
-          return { ...it, qty: clamped };
+          return {
+            ...it,
+            qty: clamped,
+            stockLeft: latestStock, 
+          };
         })
         .filter((it) => it.qty > 0);
-
       writeBackToStorage(next);
       setGrandSummary(computeTotals(next));
       return next;
     });
-  };
+  } catch (error) {
+    console.error("Stock check failed:", error);
+  }
+};
 
   const computeTotals = (items) => ({
     items: items.reduce((s, it) => s + Number(it.qty || 0), 0),
@@ -513,13 +546,7 @@ useEffect(() => {
     event.preventDefault();
     const allCategories =
       JSON.parse(localStorage.getItem("allCategories")) || [];
-
-    // const firstOrderData = await CheckFirstOrder(mobileNumber);
-    // // If null → new user
-    // const isNewUser = !firstOrderData;
-    // // ✅ SIMPLE WALLET LOGIC
-    // const walletValue = isNewUser ? "50" : "0";
-
+  
     const payload = {
       id: "string",
       martId: "string",
@@ -541,10 +568,12 @@ useEffect(() => {
       customerPhoneNumber: "",
       AssignedTo: "",
       DeliveryPartnerUserId: "",
-      latitude: 0,
+      latitude: 0,     
       longitude: 0,
       isPickUp: false,
       isDelivered: false,
+      DeliveryAssignedTime: "",
+      DeliverySubmitTime: "",
       GrandTotal: roundedGrandTotal.toString(),
       TotalItemsSelected: grandSummary.items.toString(),
       categories: allCategories.map((cat) => {
