@@ -11,7 +11,7 @@ const OffersBannerModal = () => {
   const [offerImages, setOfferImages] = useState({});
   const [currentTime, setCurrentTime] = useState(new Date());
   const imageCacheRef = useRef({});
-
+  const hasClosedRef = useRef(false);
   // 🔹 Show modal initially    
   useEffect(() => {
     setShowOffersModal(true);    
@@ -39,17 +39,22 @@ const OffersBannerModal = () => {
     return currentTime >= start && currentTime <= end;
   });
 
+  const handleClose = () => {
+  hasClosedRef.current = true;
+  setShowOffersModal(false);
+};
+
   // 🔹 Control modal visibility
   useEffect(() => {
-    if (offersData.length > 0) {
-      const hasActive = offersData.some((offer) => {
-        const start = new Date(offer.startDate);
-        const end = new Date(offer.endDate);
-        return currentTime >= start && currentTime <= end;
-      });
-      setShowOffersModal(hasActive);
-    }
-  }, [offersData, currentTime]);
+  if (offersData.length > 0 && !hasClosedRef.current) {
+    const hasActive = offersData.some((offer) => {
+      const start = new Date(offer.startDate);
+      const end = new Date(offer.endDate);
+      return currentTime >= start && currentTime <= end;
+    });
+    setShowOffersModal(hasActive);
+  }
+}, [offersData, currentTime]);
 
   // 🔹 Fetch images
 useEffect(() => {
@@ -62,7 +67,7 @@ useEffect(() => {
           const imagePromises = (offer.image || []).map(async (img) => {
             const key = img.images;
             if (imageCacheRef.current[key]) {
-              return imageCacheRef.current[key];
+              return imageCacheRef.current[key];   
             }
             try {
               const res = await fetch(
@@ -140,7 +145,7 @@ useEffect(() => {
   return (
     <Modal
       show={showOffersModal}
-      onHide={() => setShowOffersModal(false)}
+      onHide={handleClose}
       centered
       scrollable
     >
@@ -240,7 +245,7 @@ useEffect(() => {
       </Modal.Body>
 
       <Modal.Footer>
-        <Button variant="success" onClick={() => setShowOffersModal(false)}>
+        <Button variant="success" onClick={handleClose}>
           Shop Now 🛒
         </Button>
       </Modal.Footer>
