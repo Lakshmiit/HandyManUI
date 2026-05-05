@@ -9,7 +9,7 @@ import {
 import Footer from './Footer.js';
 import { Button } from "react-bootstrap";    
 import "./App.css";
-// import { appConfig } from "./config";
+// import { appConfig } from "./config";        
 
 const NotificationsList = ({ notifications, highlightedItem }) => {
   const navigate = useNavigate();

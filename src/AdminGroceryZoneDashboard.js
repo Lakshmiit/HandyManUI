@@ -15,7 +15,7 @@ const zoneData = {
 const AdminGroceryZoneDashboard = () => {
   const navigate = useNavigate();
   const [selectedZone, setSelectedZone] = useState(null);
-const allZones = ["A", "B", "C", "D", "E", "F", "G", "Others", "In Progress", "Delivered Tickets"];
+const allZones = ["Grocery", "A", "B", "C", "D", "E", "F", "G", "Others", "In Progress", "Delivered Tickets", "Cancel Tickets"];
   const [groceryList, setGroceryList] = useState([]);
 const [loading, setLoading] = useState(true);
 const [blinkingZones, setBlinkingZones] = useState({});
@@ -65,23 +65,42 @@ useEffect(() => {
       if (!zones[zone]) {
         zones[zone] = { count: 0, tickets: [] };
       }
-      zones[zone].count++;
       zones[zone].tickets.push(item);
+      zones[zone].count++;
+    }
+    if (status === "open") {
+      if (!zones["Grocery"]) {
+        zones["Grocery"] = { count: 0, tickets: [] };
+      }
+      zones["Grocery"].tickets.push(item);
+      zones["Grocery"].count++;
     }
     if (status === "in progress") {
       if (!zones["In Progress"]) {
         zones["In Progress"] = { count: 0, tickets: [] };
       }
-      zones["In Progress"].count++;
       zones["In Progress"].tickets.push(item);
+      zones["In Progress"].count++;
     }
     if (status === "delivered") {
       if (!zones["Delivered Tickets"]) {
         zones["Delivered Tickets"] = { count: 0, tickets: [] };
       }
-      zones["Delivered Tickets"].count++;
       zones["Delivered Tickets"].tickets.push(item);
+      zones["Delivered Tickets"].count++;
+    }    
+    if (status === "cancel") {
+      if (!zones["Cancel Tickets"]) {
+        zones["Cancel Tickets"] = { count: 0, tickets: [] };
+      }
+      zones["Cancel Tickets"].tickets.push(item);
+      zones["Cancel Tickets"].count++;
     }
+  });
+  Object.keys(zones).forEach((zone) => {
+    zones[zone].tickets.sort(
+      (a, b) => new Date(b.date) - new Date(a.date)
+    );
   });
   return zones;
 }, [groceryList, zoneMap]);
@@ -89,21 +108,17 @@ useEffect(() => {
 useEffect(() => {
   const newBlinking = {};
   const prev = prevZoneCountsRef.current;
-
   Object.keys(zoneCounts).forEach((zone) => {
     const currentCount = zoneCounts[zone]?.count || 0;
     const prevCount = prev[zone] || 0;
-
     if (currentCount > prevCount) {
       newBlinking[zone] = true;
-
-      // stop blinking after 3 seconds
       setTimeout(() => {
         setBlinkingZones((prevState) => ({
           ...prevState,
           [zone]: false,
         }));
-      }, 3000);
+      }, 5000);
     }
   });
 
@@ -115,12 +130,7 @@ useEffect(() => {
 
 const totalValidTickets = useMemo(() => {
   return groceryList.filter(item => {
-    const status = item.status?.toLowerCase().trim();
-    return (
-      status === "open" ||
-      status === "in progress" ||
-      status === "delivered"
-    );
+    return item.status?.toLowerCase().trim() === "open";
   }).length;
 }, [groceryList]);
 
@@ -183,7 +193,7 @@ const totalValidTickets = useMemo(() => {
   );
 })}
       </div>
-
+      
       {/* Ticket List */}
         {selectedZone && zoneCounts[selectedZone] && (
           <div>

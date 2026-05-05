@@ -4404,3 +4404,9 @@ cursor: not-allowed;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+@keyframes blink {
+  0% { transform: scale(1); background-color: #dc3545; }
+  50% { transform: scale(1.8); background-color: #ff0000; }
+  100% { transform: scale(1.2); background-color: #dc3545; }
+}

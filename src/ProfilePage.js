@@ -807,10 +807,11 @@ const handleStatusUpdate = async (ticket, newStatus) => {
       alert("You have Accepted the Order.");
     } else if (newStatus === "Open") {
       alert("You declined the order.");
+      setShowNotificationModal(false);
     }
   } catch (error) {
     console.error("Status update error:", error);
-  }
+  }    
 };
 
 const handleUpdatePaymentMethod = async (ticket) => {
@@ -968,7 +969,11 @@ const handleDressCategoryClick = async (category) => {
               const groceryData = await groceriesResponse.json(); 
               const collectionsData = await lakshmiResponse.json(); 
               const groceryOpenTickets = Array.isArray(groceryData)
-              ? groceryData.filter(item => String(item?.status).toLowerCase() === "open" || "in progress" || "delivered")
+              ? groceryData.filter(item =>
+                  ["open", "in progress", "delivered"].includes(
+                    String(item?.status).toLowerCase()
+                  )
+                )
               : [];
               const collectionOpenTickets = Array.isArray(collectionsData)
               ? collectionsData.filter(item => String(item?.status).toLowerCase() === "open")
@@ -2447,7 +2452,9 @@ const updateLocalStorageCart = (product, qty) => {
                 </p> 
                 <p><strong>{ticket.assignedTo ? "Assigned To" : "Payment Mode"}: </strong> {ticket.assignedTo || ticket.assignedTo || ticket.assignedTo || `${ticket.paymentMode} or UPI`}</p>
                 <p><strong>Date:</strong> {ticket.date ? new Date(ticket.date).toLocaleDateString('en-GB') : "N/A"}</p>
-              
+                {ticket?.martId && (
+                  <p><strong>Delivery Time Intimated Shortly!</strong></p>
+                )}
                  {/* View Details Button */}
                   {ticket.paidAmount && (
                     <>

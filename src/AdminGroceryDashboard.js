@@ -8,7 +8,7 @@ import {
 } from "@mui/icons-material";
 import Footer from './Footer.js';
 import { Button } from "react-bootstrap";    
-import "./App.css";
+import "./App.css";   
 // import { appConfig } from "./config";
 
 const NotificationsList = ({ notifications, highlightedItem }) => {

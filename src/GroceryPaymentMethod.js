@@ -702,7 +702,7 @@ throw new Error("Failed to update order.");
 // } catch (e) {
 // console.error("Referral PUT error:", e);
 // }
-// }
+// }   
 localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
 localStorage.removeItem("activeOrderId");
 localStorage.removeItem("allCategories");
@@ -753,11 +753,11 @@ const primary = addresses.find((a) => a.type === "primary");
 console.log("ZipCode:", primary?.zipCode);
 if (primary?.zipCode === "530048" || primary?.zipCode === "530045") {
 window.alert(
-`Thank You for Choosing the Lakshmi Mart Services! Your Reference Order Number is ${martId}. Delivery in 45 Minutes.`,
+`Thank You for Choosing the Handyman App Lakshmi Mart Services! Your Reference Order Number is ${martId}. Delivery Time Intimated Shortly!.`,
 );
 } else {
 window.alert(
-`Thank You for Choosing the Lakshmi Mart Services! Your Reference Order Number is ${martId}. Delivery in Between 45 to 120 Minutes.`,
+`Thank You for Choosing the Handyman App Lakshmi Mart Services! Your Reference Order Number is ${martId}. Delivery Time Intimated Shortly!.`,
 );
 }
 window.location.href = `/profilePage/${userType}/${userId}`;

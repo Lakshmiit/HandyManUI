@@ -8,7 +8,7 @@ const AdminOfferForm = () => {
   id: "",
   title: "",    
   header: "",
-  footer: "",
+  footer: "",   
   files: [],
   startDate: "",
   endDate: "",

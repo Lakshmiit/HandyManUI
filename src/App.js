@@ -190,7 +190,7 @@ function App() {
             <Route path="/groceryCart/:userType/:userId" element={<GroceryCartPage />} />
             {/* <Route path="/groceryIcons/:userType/:userId" element={<GroceryCategoryIcons />} /> */}
             <Route path="/adminOfferModal/Admin" element={<AdminOfferForm />} /> 
-
+    
             <Route path="/adminUploadGrocery/Admin" element={<AdminUploadGrocery />} />
             <Route path="/adminUpdateGrocery/:id/Admin" element={<AdminUpdateGrocery />} />
             <Route path="/adminGroceryApproval/:id/Admin" element={<AdminGroceryApproval />} /> 

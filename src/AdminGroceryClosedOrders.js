@@ -243,7 +243,7 @@ useEffect(() => {
     latitude: latitude,
     longitude: longitude,
     code: code,
-    units: units,
+    units: units,   
   };
 
     let response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`, {

@@ -12,7 +12,7 @@ const OffersBannerModal = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const imageCacheRef = useRef({});
 
-  // 🔹 Show modal initially
+  // 🔹 Show modal initially    
   useEffect(() => {
     setShowOffersModal(true);    
   }, []);

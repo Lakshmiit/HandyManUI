@@ -271,7 +271,7 @@ useEffect(() => {
   if (groceryItemId) {
     fetchGroceryData();
   }
-}, [groceryItemId, grandTotal]);
+}, [groceryItemId, grandTotal]);    
    
 const handleAssignedToChange = (e) => {
   const selectedAssignedTo = e.target.value;
@@ -328,6 +328,58 @@ const handleAssignedToChange = (e) => {
   } catch (error) {
     console.error('Error:', error);
     window.alert('Failed to Update Delivery Partner. Please try again later.');
+  }
+};
+
+const handleCancelOrder = async () => {
+  try {
+    const payload = {
+      ...cartData,
+      customerName,
+      address,
+      state,
+      district,
+      zipCode: pincode,
+      customerPhoneNumber: mobileNumber,
+      id: groceryItemId,
+      userId: customerId,
+      martId,
+      date: new Date(),
+      grandTotal,
+      totalItemsSelected,
+      status: "Cancel",
+      paymentMode,
+      utrTransactionNumber: transactionDetails,
+      transactionNumber,
+      transactionStatus,
+      paidAmount,
+      AssignedTo: "",
+      DeliveryPartnerUserId: "",
+      deliveryAssignedTime: "",
+      deliverySubmitTime: "",
+      latitude,
+      longitude,
+      code,
+      units,
+    };
+    const response = await fetch(
+      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      }
+    );
+    if (!response.ok) {
+      throw new Error("Failed to cancel order");
+    }
+    alert("Order has been cancelled successfully");
+    navigate(`/adminGroceryZoneDashboard`);
+  } catch (error) {
+    console.error("Cancel Error:", error);
+    alert("Failed to cancel order. Try again.");
   }
 };
 
@@ -479,14 +531,11 @@ const handleDownloadPDF = () => {
 
   const pdfShowFreeSugar =
     Number(grandTotal) > 599 && Number(grandTotal) < 998;
-  //   const pdfshowAttaSugar =
-  //   Number(grandTotal) > 499 && Number(grandTotal) < 999;
   let currentY = doc.lastAutoTable.finalY + 10;
 
   let requiredHeight = 12;
   if (pdfCashback > 0) requiredHeight += 6;
   if (pdfShowFreeSugar) requiredHeight += 6;
-  // if (pdfshowAttaSugar) requiredHeight += 6;
   if (currentY + requiredHeight > PAGE_HEIGHT - FOOTER_SPACE) {
     doc.addPage();
     addHeader(doc, martId);
@@ -517,19 +566,6 @@ const handleDownloadPDF = () => {
   );
   currentY += 8;
 }
-
-//   if (pdfshowAttaSugar) {
-//   doc.setFontSize(10);
-//   doc.setTextColor(0, 128, 0);
-//   doc.setFont("Roboto", "bold");
-//   doc.text(
-//     "🎁 Give Customer Sugar 1 Kg FREE",
-//     195,
-//     currentY,
-//     { align: "right" }
-//   );
-//   currentY += 8;
-// }
 
   doc.setFont("Roboto", "bold");
   doc.setFontSize(11);
@@ -726,17 +762,6 @@ const handleImageClick = (imageSrc, product) => {
       </td>    
     </tr>
   )} 
-     
-{/* {giftName && (
-<tr>
-  <td colSpan="9" className="text-end fw-bold text-success">
-    🎁 Free Gift:
-  </td>
-  <td className="fw-bold text-danger">
-    {giftName}
-  </td>
-</tr>
-)} */}
     <tr>
       <td colSpan="9" className="text-end fw-bold">
         Grand Total:
@@ -841,29 +866,16 @@ const handleImageClick = (imageSrc, product) => {
                 >
                   <ForwardIcon />
                 </Button>
+                <Button
+                  className="text-white mx-2"
+                  style={{ background: "red" }}
+                  onClick={handleCancelOrder}
+                  title="Cancel Order"
+                  disabled={assignedTo || selectedPartner}
+                >
+                  Cancel
+                </Button>
             </div>
-
-
-
-
-
-
-
-{/* <div className="text-end">
-  <button
-          style={{
-            background: "red",
-            color: "white",
-            borderRadius: "20px",
-            padding: "8px",
-          }}
-          onClick={handleUpdatePaymentMethod}
-        >
-          Re-Assign
-        </button>
-</div> */}
-
-
           </form>
         </div>
       </div>
