@@ -4410,3 +4410,24 @@ cursor: not-allowed;
   50% { transform: scale(1.8); background-color: #ff0000; }
   100% { transform: scale(1.2); background-color: #dc3545; }
 }
+
+.blinking-logo {
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.4;
+    transform: scale(1.08);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

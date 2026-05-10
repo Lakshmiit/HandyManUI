@@ -1,19 +1,21 @@
 import React, { useEffect, useState, useRef} from "react";
 import { Modal, Button } from "react-bootstrap";
 import axios from "axios";
-
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import Banner1 from './img/BannerModal.jpg';
 const IMAGE_API =
   "https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=";
 
 const OffersBannerModal = () => {
   const [showOffersModal, setShowOffersModal] = useState(false);
   const [offersData, setOffersData] = useState([]);
-  const [offerImages, setOfferImages] = useState({});
-  const [currentTime, setCurrentTime] = useState(new Date());
-  const imageCacheRef = useRef({});
+const [offerImages, setOfferImages] = useState({});
+  const [currentTime] = useState(new Date());
   const hasClosedRef = useRef(false);
-  // 🔹 Show modal initially    
-  useEffect(() => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [imagesLoading, setImagesLoading] = useState(true);
+  useEffect(() => {       
     setShowOffersModal(true);    
   }, []);
 
@@ -32,15 +34,65 @@ const OffersBannerModal = () => {
     fetchOffers();
   }, []);
 
+ useEffect(() => {
+  if (!offersData.length) return;
+  const fetchImages = async () => {
+    try {
+      setImagesLoading(true);
+      const imagesMap = {};
+      await Promise.all(
+        offersData.map(async (offer) => {
+          const imgs = await Promise.all(
+            (offer.image || []).map(async (imgObj) => {
+              try {
+                const response = await axios.get(
+                  `${IMAGE_API}${encodeURIComponent(imgObj.images)}`
+                );
+                if (response.data?.imageData) {
+                  return `data:image/jpeg;base64,${response.data.imageData}`;
+                }
+                return null;
+              } catch (err) {
+                console.error("Image fetch failed:", err);
+                return null;
+              }
+            })
+          );
+          imagesMap[String(offer.id)] = imgs.filter(Boolean);
+        })
+      );
+      setOfferImages(imagesMap);
+    } catch (err) {
+      console.error("Error loading images:", err);
+    } finally {
+      setImagesLoading(false);
+    }
+  };
+  fetchImages();
+}, [offersData]);
+
   // 🔹 Active offers filter
-  const activeOffers = offersData.filter((offer) => {
-    const start = new Date(offer.startDate);
-    const end = new Date(offer.endDate);
-    return currentTime >= start && currentTime <= end;
-  });
+ const activeOffers = offersData.filter((offer) => {
+  const start = new Date(offer.startDate);
+  const end = new Date(offer.endDate);
+  return currentTime >= start && currentTime <= end;
+});
+
+ useEffect(() => {
+  const allImages = activeOffers.flatMap(
+  (offer) => offerImages[String(offer.id)] || []
+);
+  if (allImages.length <= 1) return;
+  const interval = setInterval(() => {
+    setCurrentSlide((prev) =>
+      prev === allImages.length - 1 ? 0 : prev + 1
+    );
+  }, 3000);
+  return () => clearInterval(interval);
+}, [offerImages, activeOffers]);
 
   const handleClose = () => {
-  hasClosedRef.current = true;
+  hasClosedRef.current = true;    
   setShowOffersModal(false);
 };
 
@@ -55,82 +107,6 @@ const OffersBannerModal = () => {
     setShowOffersModal(hasActive);
   }
 }, [offersData, currentTime]);
-
-  // 🔹 Fetch images
-useEffect(() => {
-  if (!offersData.length) return;
-  const fetchImages = async () => {
-    try {
-      const imagesMap = {};
-      await Promise.all(
-        offersData.map(async (offer) => {
-          const imagePromises = (offer.image || []).map(async (img) => {
-            const key = img.images;
-            if (imageCacheRef.current[key]) {
-              return imageCacheRef.current[key];   
-            }
-            try {
-              const res = await fetch(
-                `${IMAGE_API}${encodeURIComponent(key)}`
-              );
-              const data = await res.json();
-              if (data?.imageData) {
-                const base64 = `data:image/jpeg;base64,${data.imageData}`;
-                imageCacheRef.current[key] = base64; 
-                return base64;
-              }
-            } catch (err) {
-              console.error("Image load failed:", err);
-            }
-            return null;
-          });
-          const images = await Promise.all(imagePromises);
-          imagesMap[offer.id] = images.filter(Boolean);
-        })
-      );
-      setOfferImages(imagesMap);
-    } catch (err) {
-      console.error("Error loading images:", err);
-    }
-  };
-  fetchImages();
-}, [offersData]);
-
-//   useEffect(() => {
-//     if (!offersData.length) return;
-//     const fetchImages = async () => {
-//       const imagesMap = {};
-//       for (const offer of offersData) {
-//         imagesMap[offer.id] = [];
-//         for (const img of offer.image || []) {
-//           try {
-//             const res = await fetch(
-//               `${IMAGE_API}${encodeURIComponent(img.images)}`
-//             );
-//             const data = await res.json();
-//             if (data?.imageData) {
-//               imagesMap[offer.id].push(
-//                 `data:image/jpeg;base64,${data.imageData}`
-//               );
-//             }
-//           } catch (err) {
-//             console.error("Image load failed:", err);
-//           }
-//         }
-//       }
-//       setOfferImages(imagesMap);
-//     };
-//     fetchImages();
-//   }, [offersData]);
-
-  // 🔹 Timer update
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, []);
 
   const formatDateTime = (dateString) => {
     return new Date(dateString).toLocaleString("en-IN", {
@@ -147,16 +123,38 @@ useEffect(() => {
       show={showOffersModal}
       onHide={handleClose}
       centered
+      size="lg"
       scrollable
+      dialogClassName="offers-modal"
     >
       <Modal.Header closeButton>
         <Modal.Title style={{ fontSize: "15px", fontWeight: "bold" }}>
           🎉  {activeOffers[0]?.title || "Special Offers"}
         </Modal.Title>
       </Modal.Header>
-
       <Modal.Body>
-        {activeOffers.length === 0 ? (
+        {imagesLoading ? (
+        <div
+          style={{
+            height: "250px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "#fff",
+          }}
+        >
+          <img
+            src={Banner1} 
+            alt="Loading Logo"
+            className="blinking-logo"
+            style={{
+              width: "250px",
+              height: "250px",
+              objectFit: "contain",
+            }}
+          />
+          </div>
+        ) : activeOffers.length === 0 ? (
           <div
             style={{
               height: "250px",
@@ -171,79 +169,105 @@ useEffect(() => {
             Offer has expired ⏳
           </div>
         ) : (
-          activeOffers.map((offer, index) => {
-            const images = offerImages[offer.id] || [];
+          (() => {
+            const allImages = activeOffers.flatMap(
+              (offer) => offerImages[String(offer.id)] || []
+            );
 
             return (
-              <div key={offer.id}>
-                {/* Single Image */}
-                {images.length === 1 && (
-                  <img
-                    src={images[0]}
-                    alt="offer"
-                    loading="lazy"
-                    style={{
-                      width: "100%",
-                      maxHeight: "500px",
-                      objectFit: "contain",
-                    }}
-                  />
-                )}
-
-                {/* Multiple Images */}
-                {images.length > 1 && (
-                  <div
-                    id={`carousel-${index}`}
-                    className="carousel slide carousel-fade"
-                    data-bs-ride="carousel"
-                    data-bs-interval="2000"
-                  >
-                    <div className="carousel-inner">
-                      {images.map((img, i) => (
-                        <div
-                          key={i}
-                          className={`carousel-item ${
-                            i === 0 ? "active" : ""
-                          }`}
-                        >
-                          <img
-                            src={img}
-                            className="d-block w-100"
-                            alt="offer"
-                            loading="lazy"
-                            style={{
-                              maxHeight: "400px",
-                              objectFit: "contain",
-                            }}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Offer Expiry */}
-                <p className= 'blinking-text' style={{ textAlign: "center",color: "red", marginTop: "5px", fontWeight: "500" }}>
-                Offer valid till: {formatDateTime(offer.endDate)}
-                </p>
-                {/* Footer */}
-                <p
-                style={{
-                    textAlign: "center",
-                    marginTop: "5px",
-                    color: "red",
-                    fontSize: "14px",
-                    fontWeight: "600",
-                }}
+              <>
+                {/* Slider */}
+                <div
+                  style={{
+                    width: "100%",
+                    overflow: "hidden",
+                    position: "relative",
+                    borderRadius: "12px",
+                    minHeight: "250px",
+                    background: "#fff",
+                  }}
                 >
-                {offer.description}
+                  <div
+                    style={{
+                      display: "flex",
+                      transform: `translateX(-${currentSlide * 100}%)`,
+                      transition: "transform 0.7s ease-in-out",
+                    }}
+                  >
+                    {allImages.map((img, index) => (
+                      <img
+                        key={index}
+                        src={img}
+                        alt={`offer-${index}`}
+                        style={{
+                          minWidth: "100%",
+                          width: "100%",
+                          height:
+                            window.innerWidth <= 768 ? "420px" : "500px",
+                          objectFit: "contain",
+                          flexShrink: 0,
+                          borderRadius: "10px",
+                          background: "#fff",
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Dots */}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    gap: "8px",
+                    marginTop: "10px",
+                  }}
+                >
+                  {allImages.map((_, index) => (
+                    <span
+                      key={index}
+                      onClick={() => setCurrentSlide(index)}
+                      style={{
+                        width: "10px",
+                        height: "10px",
+                        borderRadius: "50%",
+                        background:
+                          currentSlide === index ? "red" : "#ccc",
+                        cursor: "pointer",
+                      }}
+                    />
+                  ))}
+                </div>
+
+                <p
+                  className="blinking-text"
+                  style={{
+                    textAlign: "center",
+                    color: "red",
+                    fontSize: "12px",
+                    fontWeight: "400",
+                    marginTop: "10px",
+                  }}
+                >
+                  Offer valid till:{" "}
+                  {formatDateTime(activeOffers[0]?.endDate)}
                 </p>
-              </div>
+
+                <p
+                  style={{
+                    textAlign: "start",
+                    color: "red",
+                    fontSize: "12px",
+                    fontWeight: "400",
+                  }}
+                >
+                  {activeOffers[0]?.description}
+                </p>
+              </>
             );
-          })
+          })()
         )}
       </Modal.Body>
-
       <Modal.Footer>
         <Button variant="success" onClick={handleClose}>
           Shop Now 🛒

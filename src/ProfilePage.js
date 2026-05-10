@@ -192,21 +192,8 @@ const clickLock = useRef(false);
 const [isRegistered, setIsRegistered] = useState(false);
 const [partnerStatus, setPartnerStatus] = useState("");
 // const [isPickup, setIsPickup] = useState(false);
-const [cartData, setCartData] = useState(null);
-const [transactionDetails, setTransactionDetails] = useState('');
-const [transactionStatus, setTransactionStatus] = useState('');
-const [longitude, setLongitude] = useState('');
-const [latitude, setLatitude] = useState('');
-const [paidAmount, setPaidAmount] = useState('');
-const [date, setDate] = useState('');
-const [grandTotal, setGrandTotal] = useState('');
-const [items, setItems] = useState('');
-const [assignedTo, setAssignedTo] = useState('');
-const [deliveryPartnerUserId, setDeliveryPartnerUserId] = useState('');
-const [assignedDateTime, setAssignedDateTime] = useState("");
-const [totalItemsSelected, setTotalItemsSelected] = useState('');
-const [transactionNumber, setTransactionNumber] = useState('');
-const [city, setCity] = useState('');
+const [paidAmount] = useState('');
+const [items] = useState('');
 const HEADER_H = 0;          
 const MOBILE_ICONS_H = 0; 
 const MOBILE_EXTRA =0;     
@@ -236,8 +223,8 @@ const [selectedOrder, setSelectedOrder] = useState(null);
 const [showOrderModal, setShowOrderModal] = useState(false);
 
 useEffect(() => {
-  console.log(paidAmount,paymentMode, martId,status, imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery,error, showMenu, products, selectedCategory, dress);
-}, [paidAmount,paymentMode, martId, status, imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery, error,showMenu, products, selectedCategory, dress]);
+  console.log(state, address, mobileNumber,id, pinCode, paidAmount, paymentMode, martId,status, imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery,error, showMenu, products, selectedCategory, dress);
+}, [state, address, mobileNumber, id, pinCode, paidAmount, paymentMode, martId, status, imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery, error,showMenu, products, selectedCategory, dress]);
  
  const placeholderSuggestions = [
   'Search "Milk"', 'Search "Freedom Refined Sunflower Oil"', 'Search "Sona Masoori Rice"',
@@ -246,26 +233,6 @@ useEffect(() => {
   'Search "Horlicks"', 'Search "Eggs"', 'Search "Chocolate"', 'Search "Butter"',
   'Search "Bread"', 'Search "Chicken"', 'Search "Shampoo"', 'Search "Soap"',
 ];
-
-// const [showRedeem, setShowRedeem] = useState(false);     
-// const [refRecord, setRefRecord] = useState(null);
-// const [refLoading, setRefLoading] = useState(true);
-// // const [shouldShowGetCoins, setShouldShowGetCoins] = useState(false);
-// const [referralPoints, setReferralPoints] = useState('');
-// const [awardedPoints, setAwardedPoints] = useState(0);
-// const [awardLoading, setAwardLoading] = useState(true);
-// const [userPoints, setUserPoints] = useState(0);        
-// const [pointsLoading, setPointsLoading] = useState(true);
-// // const [claimAvailable, setClaimAvailable] = useState(false); 
-// const AWARDED_POINTS_KEY = `hm_referral_awarded_points_${userId || "guest"}`; 
-// // const [isReferralUsed, setIsReferralUsed] = useState(false);
-//   const [showMessage, setShowMessage] = useState(false);
-//   const [redeemOpen, setRedeemOpen] = useState(false);
-// const [displayNumbers, setDisplayNumbers] = useState("");
-// // redeemOpen, showRedeem, awardLoading,  awardedPoints, referralPoints,
-// useEffect(() => {
-//   console.log( redeemOpen, showRedeem, awardLoading,  awardedPoints, referralPoints);
-// }, [redeemOpen, showRedeem, awardLoading,  awardedPoints, referralPoints]);
 
 useEffect(() => {
   const onResize = () => {
@@ -296,7 +263,6 @@ useEffect(() => {
   async function fetchProductsAndFirstImages(warm = false, signal) {
     try {
       if (!warm) setImageLoading(true);
-      // https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net
       const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${category}`;
 
       const { data: items } = await axios.get(url, { signal });
@@ -624,81 +590,81 @@ useEffect(() => {
   return () => clearTimeout(timer); 
 }, [showCashbackModal]);
 
-useEffect(() => {
-  const fetchDeliveryData = async () => {
-    try {    
-      const response = await fetch(
-        `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetProductDetails?id=${id}`
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch grocery product data");
-      }
-      const data = await response.json();
-      console.log("Fetched Grocery Data:", data);
-      setCartData(data);
-      setId(data.id);
-      setMartId(data.martId);
-      setDate(data.date);
-      setMobileNumber(data.customerPhoneNumber);
-      setAddress(data.address);
-      setState(data.state);
-      setCity(data.district);
-      setPinCode(data.zipCode);
-      setPaymentMode(data.paymentMode);
-      setTransactionDetails(data.utrTransactionNumber);
-      setLongitude(data.longitude);
-      setLatitude(data.latitude);
-      setGrandTotal(data.grandTotal);
-      setPaymentMode(data.paymentMode);
-      setTotalItemsSelected(data.totalItemsSelected);
-      setTransactionStatus(data.transactionStatus);
-      setPaidAmount(data.paidAmount);
-      setTransactionNumber(data.transactionNumber);
-      setLatitude(data.latitude);
-      setLongitude(data.longitude);
-      setTotalItemsSelected(data.totalItemsSelected);
-      setDeliveryPartnerUserId(data.deliveryPartnerUserId);
-      setAssignedDateTime(data.deliveryAssignedTime);
-      setAssignedTo(data.assignedTo);
-      let allProducts = [];
-      let totalAmountFromApi = 0;
+// useEffect(() => {
+//   const fetchDeliveryData = async () => {
+//     try {    
+//       const response = await fetch(
+//         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetProductDetails?id=${id}`
+//       );
+//       if (!response.ok) {
+//         throw new Error("Failed to fetch grocery product data");
+//       }
+//       const data = await response.json();
+//       console.log("Fetched Grocery Data:", data);
+//       setCartData(data);
+//       setId(data.id);
+//       setMartId(data.martId);
+//       setDate(data.date);
+//       setMobileNumber(data.customerPhoneNumber);
+//       setAddress(data.address);
+//       setState(data.state);
+//       setCity(data.district);
+//       setPinCode(data.zipCode);
+//       setPaymentMode(data.paymentMode);
+//       setTransactionDetails(data.utrTransactionNumber);
+//       setLongitude(data.longitude);
+//       setLatitude(data.latitude);
+//       setGrandTotal(data.grandTotal);
+//       setPaymentMode(data.paymentMode);
+//       setTotalItemsSelected(data.totalItemsSelected);
+//       setTransactionStatus(data.transactionStatus);
+//       setPaidAmount(data.paidAmount);
+//       setTransactionNumber(data.transactionNumber);
+//       setLatitude(data.latitude);
+//       setLongitude(data.longitude);
+//       setTotalItemsSelected(data.totalItemsSelected);
+//       setDeliveryPartnerUserId(data.deliveryPartnerUserId);
+//       setAssignedDateTime(data.deliveryAssignedTime);
+//       setAssignedTo(data.assignedTo);
+//       let allProducts = [];
+//       let totalAmountFromApi = 0;
 
-      if (data.categories && Array.isArray(data.categories)) {
-        data.categories.forEach((cat) => {
-          totalAmountFromApi += Number(cat.totalAmount) || 0;
-          cat.products.forEach((p, idx) => {
-            allProducts.push({
-              serial: allProducts.length + 1,
-              name: p.productName,
-              category: cat.categoryName,
-              mrp: p.mrp,
-              discount: p.discount,
-              afterDiscountPrice: p.afterDiscountPrice,
-              quantity: p.noOfQuantity,
-              total: p.afterDiscountPrice * p.noOfQuantity,
-            });
-          });
-        });
-        setItems(allProducts);
-      }
-      const grandTotalNumeric = Number(data.grandTotal) || 0;
-      const cashback = totalAmountFromApi - grandTotalNumeric;
-      if ((cashback >= 49 && cashback <= 51) ||(cashback >= 99 && cashback <= 101) || (cashback >= 199 && cashback <= 201))
-      {
-        setCashbackAmount(cashback); 
-      } else {
-        setCashbackAmount(0);     
-      }
-    } catch (error) {
-      console.error("Error fetching grocery product data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-  if (id) {
-    fetchDeliveryData();
-  }
-}, [id]);
+//       if (data.categories && Array.isArray(data.categories)) {
+//         data.categories.forEach((cat) => {
+//           totalAmountFromApi += Number(cat.totalAmount) || 0;
+//           cat.products.forEach((p, idx) => {
+//             allProducts.push({
+//               serial: allProducts.length + 1,
+//               name: p.productName,
+//               category: cat.categoryName,
+//               mrp: p.mrp,
+//               discount: p.discount,
+//               afterDiscountPrice: p.afterDiscountPrice,
+//               quantity: p.noOfQuantity,
+//               total: p.afterDiscountPrice * p.noOfQuantity,
+//             });
+//           });
+//         });
+//         setItems(allProducts);
+//       }
+//       const grandTotalNumeric = Number(data.grandTotal) || 0;
+//       const cashback = totalAmountFromApi - grandTotalNumeric;
+//       if ((cashback >= 49 && cashback <= 51) ||(cashback >= 99 && cashback <= 101) || (cashback >= 199 && cashback <= 201))
+//       {
+//         setCashbackAmount(cashback); 
+//       } else {
+//         setCashbackAmount(0);     
+//       }
+//     } catch (error) {
+//       console.error("Error fetching grocery product data:", error);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+//   if (id) {
+//     fetchDeliveryData();
+//   }
+// }, [id]);
 
  useEffect(() => {
   const fetchGroceryData = async () => {
@@ -783,14 +749,37 @@ useEffect(() => {
 
 const handleStatusUpdate = async (ticket, newStatus) => {
   try {
+    const detailsResponse = await fetch(
+      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetProductDetails?id=${ticket.id}`
+    );
+
+    if (!detailsResponse.ok) {
+      throw new Error("Failed to fetch order details");
+    }
+    const currentOrderData = await detailsResponse.json();
+    // BUILD PAYLOAD USING CURRENT ORDER
     const payload = {
-      ...cartData,
+      ...currentOrderData,
       id: ticket.id,
       userId: userId,
       martId: ticket.martId,
+      date: ticket.date,  
       status: newStatus,
+      PaymentMode: ticket.paymentType,
+      utrTransactionNumber:  currentOrderData.utrTransactionNumber || "",
+      transactionNumber:  currentOrderData.transactionNumber || "",
+      transactionStatus:  currentOrderData.transactionStatus || "",
+      PaidAmount: newStatus === "Open" ? "" : String(ticket.receivedAmount || 0),
+      AssignedTo: currentOrderData.assignedTo,
+      DeliveryPartnerUserId: currentOrderData.deliveryPartnerUserId,
+      deliveryAssignedTime:currentOrderData.deliveryAssignedTime,
+      deliverySubmitTime: new Date().toISOString(),
+      latitude: currentOrderData.latitude,
+      longitude: currentOrderData.longitude,
+      isDelivered: true,
     };
-    const response = await fetch(
+    console.log("FINAL PAYLOAD:", payload);
+    const response = await fetch(      
       `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${ticket.id}`,
       {
         method: "PUT",
@@ -801,7 +790,7 @@ const handleStatusUpdate = async (ticket, newStatus) => {
       }
     );
     if (!response.ok) {
-      throw new Error("Failed to update status");
+      throw new Error("Failed to update order");
     }
     if (newStatus === "In Progress") {
       alert("You have Accepted the Order.");
@@ -816,54 +805,71 @@ const handleStatusUpdate = async (ticket, newStatus) => {
 
 const handleUpdatePaymentMethod = async (ticket) => {
   try {
+    const detailsResponse = await fetch(
+      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetProductDetails?id=${ticket.id}`
+    );
+
+    if (!detailsResponse.ok) {
+      throw new Error("Failed to fetch order details");
+    }
+    const currentOrderData = await detailsResponse.json();
+    // BUILD PAYLOAD USING CURRENT ORDER
     const payload = {
-      ...cartData,
-      customerName: fullName,
-      address: address,
-      state: state,
-      district: city,
-      zipCode: pinCode,
-      customerPhoneNumber: mobileNumber,
+      ...currentOrderData,
       id: ticket.id,
       userId: userId,
       martId: ticket.martId,
-      date: date,
-      grandTotal: grandTotal,
-      totalItemsSelected: totalItemsSelected,
+      date: ticket.date,
       status: "Delivered",
+      utrTransactionNumber:  currentOrderData.utrTransactionNumber || "",
+      transactionNumber:  currentOrderData.transactionNumber || "",
+      transactionStatus:  currentOrderData.transactionStatus || "",
       PaymentMode: ticket.paymentType,
-      utrTransactionNumber: transactionDetails,
-      transactionNumber: transactionNumber,
-      transactionStatus: transactionStatus,
-      PaidAmount: ticket.receivedAmount.toString(), 
-      AssignedTo: assignedTo,
-      DeliveryPartnerUserId: deliveryPartnerUserId,
-      deliveryAssignedTime: assignedDateTime,
+      PaidAmount:
+          ticket.paymentType?.toLowerCase() === "cash&online"
+            ? `cash=${ticket.cashAmount || 0}, online=${ticket.onlineAmount || 0}`
+            : String(ticket.receivedAmount || 0),
+    //   PaidAmount: ticket.paymentType === "both"
+    // ? ( Number(ticket.cashAmount || 0) + Number(ticket.onlineAmount || 0) ).toString()
+    // : (ticket.receivedAmount || 0).toString(),
+      AssignedTo: currentOrderData.assignedTo,
+      DeliveryPartnerUserId: currentOrderData.deliveryPartnerUserId,
+      deliveryAssignedTime:currentOrderData.deliveryAssignedTime,
       deliverySubmitTime: new Date().toISOString(),
-      latitude: latitude,
-      longitude: longitude,
-      isDelivered: false,
+      latitude: currentOrderData.latitude,
+      longitude: currentOrderData.longitude,
+      isDelivered: true,
     };
-    let response = await fetch(
+    console.log("FINAL PAYLOAD:", payload);
+    const response = await fetch(
       `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${ticket.id}`,
       {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
       }
     );
     if (!response.ok) {
-      throw new Error('Failed to Update.');
+      throw new Error("Failed to update order");
     }
-     navigate(`/profilePage/${userType}/${userId}`);
+    setGroceryData((prev) =>
+      prev.map((g) =>
+        g.id === ticket.id
+          ? { ...g, status: "Delivered" }
+          : g
+      )
+    );
+
+    setSelectedTicket(null);
+    alert("Order Delivered Successfully");
+    setShowNotificationModal(false);
   } catch (error) {
-    console.error('Error:', error);
-    window.alert('Failed to Update. Please try again later.');
+    console.error("Error:", error);
+    alert("Failed to update. Please try again.");
   }
 };
-
 // useEffect(() => {
 //   const autoOpenForNewUser = async () => {
 //     if (!userId) return;
@@ -1478,19 +1484,18 @@ const updateLocalStorageCart = (product, qty) => {
       </div>
           
       {/* EXPANDED DETAILS */}
-      {selectedTicket?.id === t.id && (
+      {selectedTicket?.id === t.id && t.status !== "Delivered" && (
   <div className="mt-2 p-2 border-top">
     {/* <div className="d-flex justify-content-end mb-2"> */}
   <button
     className="btn btn-success me-2"
-     onClick={() => {
+    onClick={() => {
+      const updatedTicket = { ...t, status: "In Progress" };
       const updated = groceryData.map((g) =>
-        g.id === t.id
-          ? { ...g, status: "In Progress" }
-          : g
+        g.id === t.id ? updatedTicket : g
       );
       setGroceryData(updated);
-      handleStatusUpdate(t, "In Progress");
+      handleStatusUpdate(updatedTicket, "In Progress");
     }}
   >
     Accept
@@ -1498,83 +1503,241 @@ const updateLocalStorageCart = (product, qty) => {
   <button
     className="btn btn-danger"
     onClick={() => {
-        const updated = groceryData.map((g) =>
-          g.id === t.id
-            ? { ...g, status: "Open" }
-            : g
-        );
-        setGroceryData(updated);
-        handleStatusUpdate(t, "Open");
-      }}
+      const updatedTicket = { ...t, status: "Open" };
+      const updated = groceryData.map((g) =>
+        g.id === t.id ? updatedTicket : g
+      );
+      setGroceryData(updated);
+      handleStatusUpdate(updatedTicket, "Open");
+    }}
   >
     Decline
   </button>
 {/* </div> */}
-    <div className="mt-2">
-          <input
-            type="radio"
-            name={`pay-${t.id}`}
-            checked={t.paymentType === "cash"}
-            onChange={() => {
-              const updated = groceryData.map((g) =>
-                g.id === t.id
-                  ? { ...g, paymentType: "cash" }
-                  : g
-              );
-              setGroceryData(updated);
-            }}
-          /> Cash
+    <div className="mt-1">
+                                  {/* CASH */}
+                                  <input
+                                    type="radio"
+                                    name={`pay-${t.id}`}
+                                    checked={t.paymentType === "cash"}
+                                    onChange={() => {
+                                      const updated = groceryData.map((g) =>
+                                        g.id === t.id
+                                          ? {
+                                              ...g,
+                                              paymentType: "cash",
+                                              receivedAmount: "",
+                                              cashAmount: "",
+                                              onlineAmount: "",
+                                            }
+                                          : g,
+                                      );
 
-          <input
-            type="radio"
-            name={`pay-${t.id}`}
-            className="ms-3"
-            checked={t.paymentType === "online"}
-            onChange={() => {
-              const updated = groceryData.map((g) =>
-                g.id === t.id
-                  ? { ...g, paymentType: "online" }
-                  : g
-              );
-              setGroceryData(updated);
-            }}
-          /> Online
-        </div>
+                                      setGroceryData(updated);
+                                    }}
+                                  />{" "}
+                                  Cash
+                                  {/* ONLINE */}
+                                  <input
+                                    type="radio"
+                                    name={`pay-${t.id}`}
+                                    className="ms-2"
+                                    checked={t.paymentType === "online"}
+                                    onChange={() => {
+                                      const updated = groceryData.map((g) =>
+                                        g.id === t.id
+                                          ? {
+                                              ...g,
+                                              paymentType: "online",
+                                              receivedAmount: "",
+                                              cashAmount: "",
+                                              onlineAmount: "",
+                                            }
+                                          : g,
+                                      );
+
+                                      setGroceryData(updated);
+                                    }}
+                                  />{" "}
+                                  Online
+                                  {/* CASH & ONLINE */}
+                                  <input
+                                    type="radio"
+                                    name={`pay-${t.id}`}
+                                    className="ms-1"
+                                    checked={t.paymentType === "Cash&Online"}
+                                    onChange={() => {
+                                      const updated = groceryData.map((g) =>
+                                        g.id === t.id
+                                          ? {
+                                              ...g,
+                                              paymentType: "Cash&Online",
+                                              receivedAmount: "",
+                                              cashAmount: "",
+                                              onlineAmount: "",
+                                            }
+                                          : g,
+                                      );
+
+                                      setGroceryData(updated);
+                                    }}
+                                  />{" "}
+                                  Cash & Online
+                                </div>
+
         <div className="mt-2 d-flex align-items-center justify-content-between">
      <div className="mt-2 d-flex align-items-center">
-        <label className="me-2 mb-0">Amount:</label>
-        <input
-          type="number"
-          className="form-control"
-          style={{ width: "150px" }}
-          placeholder="Enter Amount"
-          value={t.receivedAmount || ""}
-          onChange={(e) => {
-          let value = Number(e.target.value);
-          const grandTotal = t.grandTotal || 0;
-          if (value > grandTotal) {
-            value = grandTotal;
-          }
-          const updated = groceryData.map((g) =>
-            g.id === t.id
-              ? { ...g, receivedAmount: value }
-              : g
-          );
-          setGroceryData(updated);
-        }}
-        />
+        {/* SINGLE AMOUNT FIELD */}
+      {t.paymentType === "Cash&Online" ? (
+                                  <div className="mt-1">
+                                    <div className="d-flex align-items-center gap-1 flex-wrap">
+                                      {/* CASH AMOUNT */}
+                                      <div className="d-flex align-items-center">
+                                        <label className="me-2 mb-0">
+                                          Cash:
+                                        </label>
+                                        <input
+                                          type="number"
+                                          className="form-control"
+                                          style={{ width: "120px" }}
+                                          placeholder="Cash Amount"
+                                          value={t.cashAmount || ""}
+                                          onChange={(e) => {
+                                            let cash = Number(e.target.value);
+
+                                            const online = Number(
+                                              t.onlineAmount || 0,
+                                            );
+
+                                            // const grandTotal = Number(
+                                            //   t.grandTotal || 0,
+                                            // );
+
+                                            // if (cash + online > grandTotal) {
+                                            //   cash = grandTotal - online;
+                                            // }
+
+                                            const updated = groceryData.map(
+                                              (g) =>
+                                                g.id === t.id
+                                                  ? {
+                                                      ...g,
+                                                      cashAmount: cash,
+                                                      receivedAmount:
+                                                        cash + online,
+                                                    }
+                                                  : g,
+                                            );
+
+                                            setGroceryData(updated);
+                                          }}
+                                        />
+                                      </div>
+
+                                      {/* ONLINE AMOUNT */}
+                                      <div className="d-flex align-items-center">
+                                        <label className="me-2 mb-0">
+                                          Online:
+                                        </label>
+                                        <input
+                                          type="number"
+                                          className="form-control"
+                                          style={{ width: "120px" }}
+                                          placeholder="Online Amount"
+                                          value={t.onlineAmount || ""}
+                                          onChange={(e) => {
+                                            let online = Number(e.target.value);
+
+                                            const cash = Number(
+                                              t.cashAmount || 0,
+                                            );
+
+                                            // const grandTotal = Number(
+                                            //   t.grandTotal || 0,
+                                            // );
+
+                                            // if (cash + online > grandTotal) {
+                                            //   online = grandTotal - cash;
+                                            // }
+
+                                            const updated = groceryData.map(
+                                              (g) =>
+                                                g.id === t.id
+                                                  ? {
+                                                      ...g,
+                                                      onlineAmount: online,
+                                                      receivedAmount:
+                                                        cash + online,
+                                                    }
+                                                  : g,
+                                            );
+
+                                            setGroceryData(updated);
+                                          }}
+                                        />
+                                      </div>
+
+                                      {/* TOTAL */}
+                                      <div className="ms-2">
+                                        <strong>
+                                          Total: ₹ {t.receivedAmount || 0}
+                                        </strong>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="mt-2 d-flex align-items-center justify-content-between">
+                                    <div className="mt-2 d-flex align-items-center">
+                                      <label className="me-2 mb-0">
+                                        Amount:
+                                      </label>
+
+                                      <input
+                                        type="number"
+                                        className="form-control"
+                                        style={{ width: "150px" }}
+                                        placeholder="Enter Amount"
+                                        value={t.receivedAmount || ""}
+                                        onChange={(e) => {
+                                          let value = Number(e.target.value);
+
+                                          // const grandTotal = t.grandTotal || 0;
+
+                                          // if (value > grandTotal) {
+                                          //   value = grandTotal;
+                                          // }
+
+                                          const updated = groceryData.map(
+                                            (g) =>
+                                              g.id === t.id
+                                                ? {
+                                                    ...g,
+                                                    receivedAmount: value,
+                                                  }
+                                                : g,
+                                          );
+
+                                          setGroceryData(updated);
+                                        }}
+                                      />
+                                    </div>
+                                  </div>
+                                )}
+                                 <button
+                                    className="btn btn-success ms-1"
+                                    onClick={() => {
+                                      handleUpdatePaymentMethod(t);
+                                      setShowNotificationModal(false);
+                                    }}
+                                  disabled={!t.paymentType || !t.receivedAmount || Number(t.receivedAmount) <= 0 ||
+                                  (t.paymentType === "Cash&Online" &&
+                                    (
+                                      !t.cashAmount || Number(t.cashAmount) <= 0 || !t.onlineAmount || Number(t.onlineAmount) <= 0
+                                    )) }
+                                  >
+                                    Submit
+                                  </button>
       </div>
-<button
-  className="btn btn-success ms-1"
-  onClick={() => {
-    handleUpdatePaymentMethod(t);
-    setShowNotificationModal(false);
-    
-  }}
- disabled={!t.paymentType || !t.receivedAmount || Number(t.receivedAmount) <= 0 }
->
-  Submit
-</button>
   </div>
   </div>
 )}      
@@ -1597,7 +1760,6 @@ const updateLocalStorageCart = (product, qty) => {
   >
     <Modal.Title>Order Details</Modal.Title>
   </Modal.Header>
-
   <Modal.Body>
     {selectedOrder && (
       <>
@@ -1622,17 +1784,17 @@ const updateLocalStorageCart = (product, qty) => {
               <th>Price (₹)</th>
             </tr>
           </thead>
-          <tbody>
-            {selectedOrder.categories?.flatMap((cat) =>
-              cat.products.map((p, index) => (
+         <tbody>
+            {selectedOrder.categories
+              ?.flatMap((cat) => cat.products)
+              ?.map((p, index) => (
                 <tr key={index}>
                   <td>{index + 1}</td>
                   <td>{p.productName}</td>
                   <td>{p.noOfQuantity}</td>
                   <td>{p.afterDiscountPrice.toFixed(0)}</td>
                 </tr>
-              ))
-            )}
+              ))}
           </tbody>
         </table>
       </div>

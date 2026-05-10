@@ -498,9 +498,7 @@ onClick={() => navigate(`/profilePage/${userType}/${userId}`)}
 />
 <h4 className="fw-bold mt-1">{selectedCategory}</h4>
 </div>
-{(selectedCategory === "Vegetables" ||
-selectedCategory === "Fruits" ||
-selectedCategory === "Chicken" || 
+{(selectedCategory === "Chicken" || 
 selectedCategory === "Ice Creams" ) && (
 <div
 className="mt-1 rounded-3"
@@ -512,7 +510,7 @@ fontWeight: "600",
 border: "1px solid #ffd180",
 }}
 >
-📝 Delivery is only for Yendada and Madhurawada.
+📝 Delivery available only for Yendada and Madhurawada.
 </div>
 )}
 {selectedCategory === "Chicken" && (

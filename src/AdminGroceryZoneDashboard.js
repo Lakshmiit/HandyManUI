@@ -68,7 +68,7 @@ useEffect(() => {
       zones[zone].tickets.push(item);
       zones[zone].count++;
     }
-    if (status === "open") {
+   if (status === "open" || status === "in progress" || status === "delivered") {
       if (!zones["Grocery"]) {
         zones["Grocery"] = { count: 0, tickets: [] };
       }
@@ -81,7 +81,7 @@ useEffect(() => {
       }
       zones["In Progress"].tickets.push(item);
       zones["In Progress"].count++;
-    }
+    } 
     if (status === "delivered") {
       if (!zones["Delivered Tickets"]) {
         zones["Delivered Tickets"] = { count: 0, tickets: [] };
@@ -236,7 +236,6 @@ const totalValidTickets = useMemo(() => {
                   })}
                 </div>
                )}
-
               <div><strong>Customer Paid Amount:</strong> Rs {item.paidAmount} /-</div>
               <div><strong>Payment Mode:</strong> {item.paymentMode}</div>
             </div>

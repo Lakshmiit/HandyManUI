@@ -54,6 +54,7 @@ const showFreeSugar = Number(grandTotal) > 599 && Number(grandTotal) < 998;
  const [showZoomModal, setShowZoomModal] = useState(false);
   const [zoomImage, setZoomImage] = useState("");
   const [zoomProduct, setZoomProduct] = useState(null);
+  // const [date, setDate] = useState('');
   useEffect(() => {
   console.log(status,groceryData,groceryId, id, customerId, loading, longitude, latitude, grandTotal, paidAmount, transactionNumber, transactionStatus, totalItemsSelected, cartData, code, units);
 }, [status,groceryData, groceryId,id,customerId, loading, longitude, latitude, grandTotal, paidAmount, transactionNumber, transactionStatus, totalItemsSelected, cartData, code, units]);
@@ -78,7 +79,6 @@ useEffect(() => {
         setGrandTotal(data.grandTotal);
         setTotalItemsSelected(data.totalItemsSelected);
         setCustomerName(data.customerName);
-        setDate(data.date);
         setStatus(data.status);
         const products = (data?.categories ?? []).flatMap(
           (c) => c?.products ?? []
@@ -184,7 +184,7 @@ useEffect(() => {
       setTransactionStatus(data.transactionStatus);
       setPaidAmount(data.paidAmount);
       setTransactionNumber(data.transactionNumber);
-      
+        setDate(data.date);
       let allProducts = [];
       let totalAmountFromApi = 0;
 
@@ -294,7 +294,7 @@ const handleAssignedToChange = (e) => {
     id: groceryItemId,
     userId: customerId, 
     martId: martId,
-    date: new Date(),
+    date: date,
     grandTotal: grandTotal,
     totalItemsSelected: totalItemsSelected,
     status: "In Progress", 
@@ -333,34 +333,44 @@ const handleAssignedToChange = (e) => {
 
 const handleCancelOrder = async () => {
   try {
-    const payload = {
-      ...cartData,
-      customerName,
-      address,
-      state,
-      district,
-      zipCode: pincode,
-      customerPhoneNumber: mobileNumber,
+    const detailsResponse = await fetch(
+      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`
+    );
+    if (!detailsResponse.ok) {
+      throw new Error("Failed to fetch latest order details");
+    }
+    const latestData = await detailsResponse.json();
+     const payload = {
+      ...latestData,
       id: groceryItemId,
-      userId: customerId,
-      martId,
-      date: new Date(),
-      grandTotal,
-      totalItemsSelected,
+      userId: latestData.userId,
+      martId: latestData.martId,
+      date: latestData.date,
+      customerName: latestData.customerName,
+      address: latestData.address,
+      state: latestData.state,
+      district: latestData.district,
+      zipCode: latestData.zipCode,
+      customerPhoneNumber: latestData.customerPhoneNumber,
+      grandTotal: latestData.grandTotal,
+      totalItemsSelected: latestData.totalItemsSelected,
       status: "Cancel",
-      paymentMode,
-      utrTransactionNumber: transactionDetails,
-      transactionNumber,
-      transactionStatus,
-      paidAmount,
+      paymentMode: latestData.paymentMode,
+      utrTransactionNumber:
+        latestData.utrTransactionNumber || "",
+      transactionNumber:
+        latestData.transactionNumber || "",
+      transactionStatus:
+        latestData.transactionStatus || "",
+      paidAmount: latestData.paidAmount || "",
       AssignedTo: "",
       DeliveryPartnerUserId: "",
       deliveryAssignedTime: "",
       deliverySubmitTime: "",
-      latitude,
-      longitude,
-      code,
-      units,
+      latitude: latestData.latitude,
+      longitude: latestData.longitude,
+      code: latestData.code,
+      units: latestData.units,
     };
     const response = await fetch(
       `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
