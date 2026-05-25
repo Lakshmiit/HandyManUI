@@ -144,7 +144,7 @@ const indexOfLast = currentPage * rowsPerPage;
       };
 
       await axios.put(
-        `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UpLoadBannners/UpdateBanner/${editBanner.id}`,
+        `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UpLoadBannners/UpdateBannerDetails?id=${editBanner.id}`,
         payload
       );
 

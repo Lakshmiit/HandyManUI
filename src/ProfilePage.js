@@ -222,7 +222,7 @@ const [selectedTicket, setSelectedTicket] = useState(null);
 const [selectedOrder, setSelectedOrder] = useState(null);
 const [showOrderModal, setShowOrderModal] = useState(false);
 const [showDetails, setShowDetails] = useState(false);
-
+const [searchOrderId, setSearchOrderId] = useState("");
 useEffect(() => {
   console.log(state, address, mobileNumber,id, pinCode, paidAmount, paymentMode, martId,status, imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery,error, showMenu, products, selectedCategory, dress);
 }, [state, address, mobileNumber, id, pinCode, paidAmount, paymentMode, martId, status, imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery, error,showMenu, products, selectedCategory, dress]);
@@ -771,7 +771,7 @@ const handleStatusUpdate = async (ticket, newStatus) => {
       transactionNumber:  currentOrderData.transactionNumber || "",
       transactionStatus:  currentOrderData.transactionStatus || "",
       PaidAmount: newStatus === "Open" ? "" : String(ticket.receivedAmount || 0),
-      AssignedTo: newStatus === "Open" ? "" : currentOrderData.assignedTo,
+      AssignedTo: newStatus === "Open" ? ` ${currentOrderData.assignedTo} has Declined` : currentOrderData.assignedTo,
       DeliveryPartnerUserId: newStatus === "Open" ? ""  : currentOrderData.deliveryPartnerUserId,
       deliveryAssignedTime:newStatus === "Open" ? "" : currentOrderData.deliveryAssignedTime,
       deliverySubmitTime: new Date().toISOString(),
@@ -1165,6 +1165,10 @@ const updateLocalStorageCart = (product, qty) => {
   localStorage.setItem("allCategories", JSON.stringify(stored));
 };
 
+const filteredGroceryData = groceryData.filter((t) =>
+    t.martId?.toString().toLowerCase().includes(searchOrderId.toLowerCase())
+  );
+
   return (
     <>
     <OffersBannerModal/>
@@ -1452,52 +1456,65 @@ const updateLocalStorageCart = (product, qty) => {
 <Modal
   show={showNotificationModal}
   onHide={() => setShowNotificationModal(false)}
-  centered>
+  centered
+>
   <Modal.Header closeButton>
     <Modal.Title>Notification</Modal.Title>
   </Modal.Header>
+
   <Modal.Body>
     {isRegistered && partnerStatus === "open" ? (
       loading ? (
         <p>Loading tickets…</p>
-      ) : groceryData.length === 0 ? (
-        <p>No Tickets Found.</p>
       ) : (
-        <div className="notification-list">
-  {groceryData.map((t) => (
-    <div
-      key={t.id || t.martId}
-      className="notification-item mb-3 p-2 border rounded"
-    >
-      {/* CLICKABLE HEADER */}
-      <div>
-        <strong>Order Id:</strong> {" "}
-        <span
-          style={{ color: "blue", cursor: "pointer" }}
-         onClick={() => {
-            setSelectedTicket(t);
-            setSelectedOrder({
-              ...t,
-              paymentType: t.paymentType || "",
-              receivedAmount: t.receivedAmount || "",
-              cashAmount: t.cashAmount || "",
-              onlineAmount: t.onlineAmount || "",
-            });
-            setShowOrderModal(true);
-          }}
-        >
-         {t.martId}
-        </span> <br />
-         <strong>Name:</strong> {" "}
-        <span
-          style={{ color: "blue", cursor: "pointer" }}
-        >
-         {t.customerName}
-        </span>
-      </div>
-    </div>
-  ))}
-</div>
+        <>
+          {/* Search */}
+          <input
+            type="text"
+            className="form-control mb-3"
+            placeholder="Search by Order ID..."
+            value={searchOrderId}
+            onChange={(e) => setSearchOrderId(e.target.value)}
+          />
+          {filteredGroceryData.length === 0 ? (
+            <p>No Tickets Found.</p>
+          ) : (
+            <div className="notification-list">
+              {filteredGroceryData.map((t) => (
+                <div
+                  key={t.id || t.martId}
+                  className="notification-item mb-3 p-2 border rounded"
+                >
+                  <div>
+                    <strong>Order Id:</strong>{" "}
+                    <span
+                      style={{ color: "blue", cursor: "pointer" }}
+                      onClick={() => {
+                        setSelectedTicket(t);
+                        setSelectedOrder({
+                          ...t,
+                          paymentType: t.paymentType || "",
+                          receivedAmount: t.receivedAmount || "",
+                          cashAmount: t.cashAmount || "",
+                          onlineAmount: t.onlineAmount || "",
+                        });
+                        setShowOrderModal(true);
+                      }}
+                    >
+                      {t.martId}
+                    </span>
+                    <br />
+
+                    <strong>Name:</strong>{" "}
+                    <span style={{ color: "blue", cursor: "pointer" }}>
+                      {t.customerName}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
       )
     ) : (
       <p>You are already registered, pending for admin approval.</p>

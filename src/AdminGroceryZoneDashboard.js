@@ -15,7 +15,7 @@ const zoneData = {
 const AdminGroceryZoneDashboard = () => {
   const navigate = useNavigate();
   const [selectedZone, setSelectedZone] = useState(null);
-const allZones = ["Grocery", "A", "B", "C", "D", "E", "F", "G", "Others", "In Progress", "Delivered Tickets", "Cancel Tickets"];
+const allZones = ["Grocery", "A", "B", "C", "D", "E", "F", "G", "Others", "In Progress", "Delivered Tickets", "Cancel Tickets", "All Grocery"];
   const [groceryList, setGroceryList] = useState([]);
 const [loading, setLoading] = useState(true);
 const [blinkingZones, setBlinkingZones] = useState({});
@@ -95,6 +95,17 @@ useEffect(() => {
       }
       zones["Cancel Tickets"].tickets.push(item);
       zones["Cancel Tickets"].count++;
+    }
+     if (
+      status === "open" ||
+      status === "in progress" ||
+      status === "delivered"
+    ) {
+      if (!zones["All Grocery"]) {
+        zones["All Grocery"] = { count: 0, tickets: [] };
+      }
+      zones["All Grocery"].tickets.push(item);
+      zones["All Grocery"].count++;
     }
   });
   Object.keys(zones).forEach((zone) => {
