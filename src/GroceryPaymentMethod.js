@@ -87,8 +87,8 @@ console.log("ZipCode:", primary?.zipCode);
 }, [addresses]);
 
 useEffect(() => {
-console.log( error, limit, loading, isChecked, editingAddressId, customerName, groceryId, );
-}, [ error, limit, loading,isChecked,editingAddressId,customerName,groceryId,]);
+console.log( isOffersOrder, error, limit, loading, isChecked, editingAddressId, customerName, groceryId, );
+}, [ isOffersOrder, error, limit, loading,isChecked,editingAddressId,customerName,groceryId,]);
 
 // if (numericGrandTotal >= 1999) {   
 // cashback = 200;
@@ -102,7 +102,7 @@ let cashback = 0;
 // let giftName = "";
 
 // Cashback logic
-if (numericGrandTotal >= 299 && numericGrandTotal <= 599) {
+if (numericGrandTotal >= 399 && numericGrandTotal <= 699) {
   cashback = 30;
 } 
 else if (numericGrandTotal >= 999 && numericGrandTotal <= 1498) {
@@ -136,7 +136,7 @@ else if (numericGrandTotal >= 1999) {
 // }
 const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;
 
-const showSugarOffer = Number(grandTotal) >= 599 && Number(grandTotal) <= 998;
+const showSugarOffer = Number(grandTotal) >= 699 && Number(grandTotal) <= 998;
 // const showAttaOffer = Number(grandTotal) >= 499 && Number(grandTotal) <= 999;
 // const discount = Number(firstOrderDiscount || 0);
 // const referral = Number(referralAmount) || 0;
@@ -276,13 +276,13 @@ return () => ctrl.abort();
 fetchCart();
 }, [groceryItemId]);
 
-const goBackToCart = () => {
-if (isOffersOrder) {
-navigate(`/groceryOffersCart/${userType}/${userId}`);
-} else {
-navigate(`/groceryCart/${userType}/${userId}`);
-}
-};
+// const goBackToCart = () => {
+// if (isOffersOrder) {
+// navigate(`/groceryOffersCart/${userType}/${userId}`);
+// } else {
+// navigate(`/groceryCart/${userType}/${userId}`);
+// }
+// };
 
 // const getReferralRecord = async (userId) => {
 // if (!userId) return null;
@@ -647,7 +647,7 @@ deliveryAssignedTime: "",
 deliverySubmitTime: "",
 // location: `https://www.google.com/maps?q=${lat},${lng}`,
 };
-
+            
 let response = await fetch(
 `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
 {
@@ -945,7 +945,7 @@ Lakshmi Mart
 className="me-2 text-success"
 role="button"
 style={{ cursor: "pointer" }}
-onClick={goBackToCart}
+onClick={() =>navigate(`/groceryCart/${userType}/${userId}`)}
 >
 <ArrowBackIcon />
 </span>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef} from "react";
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button, Carousel } from "react-bootstrap";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
@@ -13,7 +13,6 @@ const OffersBannerModal = () => {
 const [offerImages, setOfferImages] = useState({});
   const [currentTime] = useState(new Date());
   const hasClosedRef = useRef(false);
-  const [currentSlide, setCurrentSlide] = useState(0);
   const [imagesLoading, setImagesLoading] = useState(true);
   useEffect(() => {       
     setShowOffersModal(true);    
@@ -77,19 +76,6 @@ const [offerImages, setOfferImages] = useState({});
   const end = new Date(offer.endDate);
   return currentTime >= start && currentTime <= end;
 });
-
- useEffect(() => {
-  const allImages = activeOffers.flatMap(
-  (offer) => offerImages[String(offer.id)] || []
-);
-  if (allImages.length <= 1) return;
-  const interval = setInterval(() => {
-    setCurrentSlide((prev) =>
-      prev === allImages.length - 1 ? 0 : prev + 1
-    );
-  }, 3000);
-  return () => clearInterval(interval);
-}, [offerImages, activeOffers]);
 
   const handleClose = () => {
   hasClosedRef.current = true;    
@@ -177,67 +163,29 @@ const [offerImages, setOfferImages] = useState({});
             return (
               <>
                 {/* Slider */}
-                <div
-                  style={{
-                    width: "100%",
-                    overflow: "hidden",
-                    position: "relative",
-                    borderRadius: "12px",
-                    minHeight: "250px",
-                    background: "#fff",
-                  }}
+                <Carousel
+                  interval={2000}
+                  indicators={false}
+                  controls={true}
+                  pause={false}
+                  touch={true}
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      transform: `translateX(-${currentSlide * 100}%)`,
-                      transition: "transform 0.7s ease-in-out",
-                    }}
-                  >
-                    {allImages.map((img, index) => (
+                  {allImages.map((img, index) => (
+                    <Carousel.Item key={index}>
                       <img
-                        key={index}
                         src={img}
                         alt={`offer-${index}`}
                         style={{
-                          minWidth: "100%",
                           width: "100%",
-                          height:
-                            window.innerWidth <= 768 ? "420px" : "500px",
+                          height: window.innerWidth <= 768 ? "400px" : "500px",
                           objectFit: "contain",
-                          flexShrink: 0,
                           borderRadius: "10px",
                           background: "#fff",
                         }}
                       />
-                    ))}
-                  </div>
-                </div>
-
-                {/* Dots */}
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    gap: "8px",
-                    marginTop: "10px",
-                  }}
-                >
-                  {allImages.map((_, index) => (
-                    <span
-                      key={index}
-                      onClick={() => setCurrentSlide(index)}
-                      style={{
-                        width: "10px",
-                        height: "10px",
-                        borderRadius: "50%",
-                        background:
-                          currentSlide === index ? "red" : "#ccc",
-                        cursor: "pointer",
-                      }}
-                    />
+                    </Carousel.Item>
                   ))}
-                </div>
+                </Carousel>
 
                 <p
                   className="blinking-text"

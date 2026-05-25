@@ -12,7 +12,6 @@ import CartImg from "./img/Cart.jpeg";
 import { useNavigate, useParams } from "react-router-dom";
 import Footer from "./Footer.js";
 // import { appConfig } from "./config";
-
 // import { useLocation } from "react-router-dom";
  
 const GroceryCartPage = () => {
@@ -21,7 +20,6 @@ const GroceryCartPage = () => {
   const { userId } = useParams();
   const { userType } = useParams();
   const [cartItems, setCartItems] = useState([]);
-  const removalTimers = useRef({});
   const [showZoomModal, setShowZoomModal] = useState(false);
   const [zoomImage, setZoomImage] = useState("");
   const [grandSummary, setGrandSummary] = useState({ items: 0, total: 0 });
@@ -87,17 +85,17 @@ useEffect(() => {
   const IMAGE_DOWNLOAD =
     `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
 
-  function toNum(v, f = 0) {
-    const n = Number(v);
-    return Number.isFinite(n) ? n : f;
-  }
+  // function toNum(v, f = 0) {
+  //   const n = Number(v);
+  //   return Number.isFinite(n) ? n : f;
+  // }
 
-  const getDynamicLimit = (productName) => {
+  const getDynamicLimit = useCallback((productName) => {
     const key = String(productName || "")
       .trim()
       .toLowerCase();
     return limitMap[key] ?? Infinity;
-  };
+  }, [limitMap]);
 
   useEffect(() => {
     if (!cartItems.length) return;
@@ -184,177 +182,6 @@ useEffect(() => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
 }, []);
 
-  const refreshStocksOnce = React.useCallback(async (signal) => {
-    const norm = (s) =>
-      String(s || "")
-        .toLowerCase()
-        .trim();
-    const isOffersRow = (obj) => norm(obj?.category) === "offers";
-
-    function pickBestNonOffer(items, name) {
-      const pool = (items || []).filter((it) => !isOffersRow(it));
-      if (!pool.length) return null;
-      const lname = norm(name);
-      const exact = pool.filter((it) => norm(it?.name) === lname);
-      const p = exact.length ? exact : pool;
-      return (
-        p.slice().sort((a, b) => {
-          const aStock = Number(a?.stockLeft || 0);
-          const bStock = Number(b?.stockLeft || 0);
-          if ((bStock > 0) !== (aStock > 0)) {
-              return bStock > 0 ? 1 : -1;
-          }
-          return Date.parse(b?.date || 0) - Date.parse(a?.date || 0);
-        })[0] || null
-      );
-    }
-    const saved = JSON.parse(localStorage.getItem("allCategories") || "[]");
-    const flat = saved
-      .flatMap((cat) =>
-        (cat.products || []).map((p) => ({
-          categoryName: cat.categoryName,
-          productName: p.productName || p.name || "",
-          qty: Math.min(
-            toNum(p.qty, 0),
-            getDynamicLimitRef(p.productName || p.name || ""),
-          ),
-          mrp: toNum(p.mrp, 0),
-          discount: toNum(p.discount, 0),
-          price: toNum(p.afterDiscountPrice ?? p.price, 0),
-          stockLeft: toNum(p.stockLeft, 0),
-          code: p.code,
-          units: p.units,
-          image: p.image ?? p.productImage ?? null,
-        })),
-      )
-      .filter((x) => x.qty > 0 && x.productName);
-    if (!flat.length) return;
-    const uniqueNames = Array.from(
-      new Set(flat.map((x) => x.productName.trim())),  
-    );
-    const lookups = await Promise.allSettled(
-      uniqueNames.map(async (name) => {
-        const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
-          name,
-        )}`;
-        const res = await fetch(url, { signal });
-        const text = await res.text();  
-        let data = [];
-        try {
-          data = text ? JSON.parse(text) : [];
-        } catch {
-          data = [];
-        }
-        return { name, items: Array.isArray(data) ? data : data ? [data] : [] };
-      }),
-    );
-    const stockMap = new Map();
-    lookups.forEach((r) => {
-      if (r.status !== "fulfilled") return;
-      const { name, items } = r.value || {};
-      const best = pickBestNonOffer(items, name);
-      if (!best) return;
-      const newStock = toNum(best?.stockLeft, null);
-      if (newStock !== null) stockMap.set(name, newStock);
-    });
-
-    if (!stockMap.size) return;
-    const updated = saved.map((cat) => ({
-      ...cat,
-      products: (cat.products || [])
-        .map((p) => {
-          const pname = p.productName || p.name || "";
-          if (!pname) return p;
-          const latestStock = stockMap.get(pname);
-          if (latestStock == null) return p;
-          const limit = getDynamicLimitRef(p.productName || p.name || "");
-          const currentQty = Math.min(toNum(p.qty, 0), limit);
-          const clampedQty = Math.max(0, Math.min(currentQty, latestStock));
-          return {
-            ...p,
-            stockLeft: String(latestStock),
-            qty: clampedQty,
-          };
-        })
-        .filter((p) => toNum(p.qty, 0) > 0),
-    }));
-    localStorage.setItem("allCategories", JSON.stringify(updated));
-    const allItems = updated
-      .flatMap((cat) =>
-        (cat.products || []).map((p, idx) => {
-          const persisted = p.image ?? p.productImage ?? "";
-          const imageFilename = getFilenameFromValue(persisted);
-          const imageUrl = imageFilename
-            ? fileToUrl(imageFilename)
-            : typeof persisted === "string"
-              ? persisted
-              : "";
-          return {
-            id: `${cat.categoryName}-${p.productId ?? p.id ?? idx}`,
-            productId: p.productId ?? p.id ?? idx,
-            name: p.productName ?? p.name ?? "",
-            category: cat.categoryName,
-            qty: toNum(p.qty, 0),
-            mrp: toNum(p.mrp, 0),
-            discount: toNum(p.discount, 0),
-            price: toNum(p.afterDiscountPrice ?? p.price, 0),
-            stockLeft: toNum(p.stockLeft, 0),
-            code: p.code,
-            units: p.units,
-            imageFilename,
-            imageUrl,
-          };
-        }),
-      )
-      .filter((it) => it.qty > 0 && Number(it.stockLeft) > 0);
-    setCartItems(allItems);
-    setGrandSummary({
-      items: allItems.reduce((s, it) => s + toNum(it.qty, 0), 0),
-      total: Math.round(
-        allItems.reduce(
-          (s, it) => s + toNum(it.price, 0) * toNum(it.qty, 0),
-          0,
-        ),
-      ),
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    const ctrl = new AbortController();
-    const tick = () => {
-      if (ctrl.signal.aborted) return;
-      refreshStocksOnce(ctrl.signal).catch((e) => {
-        if (e?.name !== "AbortError") console.warn("Stock refresh failed:", e);
-      });
-    };
-
-    tick();
-    // const id = setInterval(tick, 5000);
-    return () => {
-      // clearInterval(id);
-      ctrl.abort();
-    };
-  }, [refreshStocksOnce]);
-
-  useEffect(() => {
-  const handleFocus = () => {
-    const ctrl = new AbortController();
-    refreshStocksOnce(ctrl.signal);
-  };
-
-  const handleOnline = () => {
-    const ctrl = new AbortController();
-    refreshStocksOnce(ctrl.signal);
-  };
-  window.addEventListener("focus", handleFocus);
-  window.addEventListener("online", handleOnline);
-  return () => {
-    window.removeEventListener("focus", handleFocus);
-    window.removeEventListener("online", handleOnline);
-  };
-}, [refreshStocksOnce]);
-
   const buildCartFromStorage = React.useCallback(() => {
     const saved = JSON.parse(localStorage.getItem("allCategories") || "[]");
     const items = saved.flatMap((cat) =>
@@ -429,7 +256,7 @@ useEffect(() => {
               const blobUrl = URL.createObjectURL(blob);
               return { fn, url: blobUrl };
             } else {
-              return { fn, url: `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net${encodeURIComponent(fn)}` };
+              return { fn, url: `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(fn)}` };
             }
           }),
         );
@@ -452,7 +279,7 @@ useEffect(() => {
     };
   }, [cartItems, imageBlobMap, fileToUrl]);
 
-  const writeBackToStorage = (items) => {
+  const writeBackToStorage = useCallback((items) => {
     const grouped = items.reduce((acc, it) => {
       (acc[it.category] ||= []).push({
         productId: it.productId,
@@ -479,57 +306,42 @@ useEffect(() => {
       }),
     );
     localStorage.setItem("allCategories", JSON.stringify(allCategories));
-  };
+  },[]);
 
-  const removeItem = (rowId) => {
-  setCartItems((prev) => {
-    const updated = prev.filter((item) => item.id !== rowId);
-
-    writeBackToStorage(updated);
-    setGrandSummary(computeTotals(updated));
-
-    return updated;
-  });
-};
-
- const handleQtyChange = async (rowId, delta) => {
+const handleQtyChange = async (rowId, delta) => {
   const item = cartItems.find((i) => i.id === rowId);
   if (!item) return;
-  try {
-    const res = await fetch(
-      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(item.name)}`
-    );
-    const data = await res.json();
-    const latest = data?.[0];
-    const latestStock = Number(latest?.stockLeft || 0);
-    if (latestStock <= 0) {
-      alert(`${item.name} is out of stock`);
-      removeItem(rowId);
-      return;
-    }
-    setCartItems((prev) => {
-      const next = prev
-        .map((it) => {
-          if (it.id !== rowId) return it;
-          const limitMax = getDynamicLimit(it.name);
-          const maxAllowed = Math.min(latestStock, limitMax);
-          const currentQty = Number(it.qty || 0);
-          const proposed = currentQty + delta;
-          const clamped = Math.max(0, Math.min(proposed, maxAllowed));
-          return {
-            ...it,
-            qty: clamped,
-            stockLeft: latestStock, 
-          };
-        })
-        .filter((it) => it.qty > 0);
-      writeBackToStorage(next);
-      setGrandSummary(computeTotals(next));
-      return next;
-    });
-  } catch (error) {
-    console.error("Stock check failed:", error);
-  }
+
+  const latestStock = await fetchLatestStock(item.name);
+
+  setCartItems((prev) => {
+    const updated = prev.map((it) => {
+      if (it.id !== rowId) return it;
+      const limitMax = getDynamicLimit(it.name);
+      const maxAllowed = Math.min(latestStock, limitMax);
+      const proposedQty = Number(it.qty || 0) + delta;
+      if (latestStock <= 0) {
+        return {
+          ...it,
+          stockLeft: 0,
+          outOfStock: true,
+          qty: 0,
+        };
+      }
+      if (proposedQty <= 0) {
+        return null; 
+      }
+      return {
+        ...it,
+        stockLeft: latestStock,
+        outOfStock: false,
+        qty: Math.min(proposedQty, maxAllowed),
+      };
+    }).filter(Boolean);
+    writeBackToStorage(updated);
+    setGrandSummary(computeTotals(updated));
+    return updated;
+  });
 };
 
   const computeTotals = (items) => ({
@@ -542,11 +354,181 @@ useEffect(() => {
     ),
   });
 
+  const fetchLatestStock = useCallback(async (productName) => {
+  try {
+    const res = await fetch(
+      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(productName)}`
+    );
+    const data = await res.json();
+    const normalizedInput = normalizeName(productName);
+    const exactMatch = (Array.isArray(data) ? data : []).filter(
+      (x) => normalizeName(x.name) === normalizedInput
+    );
+    const latest = exactMatch.sort(
+      (a, b) => Date.parse(b?.date || 0) - Date.parse(a?.date || 0)
+    )[0];
+    return Number(latest?.stockLeft || 0);
+  } catch (err) {
+    console.error(err);
+    return 0;
+  }
+},[]);
+
+const normalizeName = (name) =>
+  String(name || "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+
+const refreshAllCartStocks = useCallback(async () => {
+  const saved =
+    JSON.parse(localStorage.getItem("allCategories")) || [];
+
+  const currentItems = saved.flatMap((cat) =>
+    (cat.products || []).map((p, idx) => ({
+      id: `${cat.categoryName}-${p.productId ?? p.id ?? idx}`,
+      productId: p.productId ?? p.id ?? idx,
+      name: p.productName ?? p.name ?? "",
+      category: cat.categoryName,
+      qty: Number(p.qty || 0),
+      mrp: Number(p.mrp || 0),
+      discount: Number(p.discount || 0),
+      price: Number(p.afterDiscountPrice || p.price || 0),
+      stockLeft: Number(p.stockLeft || 0),
+      code: p.code,
+      units: p.units,
+      imageFilename: getFilenameFromValue(p.image ?? p.productImage ?? ""),
+      imageUrl: fileToUrl(p.image ?? p.productImage ?? ""),
+    }))
+  );
+
+  if (!currentItems.length) return;
+
+  const stockResults = await Promise.all(
+    currentItems.map(async (item) => ({
+      name: item.name,
+      stockLeft: await fetchLatestStock(item.name),
+    }))
+  );
+
+  const updated = currentItems
+    .map((item) => {
+      const latest = stockResults.find(
+        (x) => normalizeName(x.name) === normalizeName(item.name)
+      );
+
+      if (!latest) return item;
+
+      const limit = getDynamicLimit(item.name);
+
+      if (latest.stockLeft <= 0) {
+        return {
+          ...item,
+          stockLeft: 0,
+          outOfStock: true,
+          qty: 0,
+        };
+      }
+
+      return {
+        ...item,
+        stockLeft: latest.stockLeft,
+        qty: Math.min(item.qty, latest.stockLeft, limit),
+      };
+    })
+    .filter(Boolean);
+
+  setCartItems(updated);
+  writeBackToStorage(updated);
+  setGrandSummary(computeTotals(updated));
+}, [fetchLatestStock, getDynamicLimit, writeBackToStorage, fileToUrl]);
+
+useEffect(() => {
+  refreshAllCartStocks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+}, []);
+
+useEffect(() => {
+  const handleFocus = () => {
+    refreshAllCartStocks();
+  };
+const handleOnline = () => {
+    refreshAllCartStocks();
+  };
+  const handleVisibility = () => {
+    if (document.visibilityState === "visible") {
+      refreshAllCartStocks();
+    }
+  };
+  window.addEventListener("focus", handleFocus);
+  window.addEventListener("online", handleOnline);
+  document.addEventListener("visibilitychange", handleVisibility);
+  return () => {
+    window.removeEventListener("focus", handleFocus);
+    window.removeEventListener("online", handleOnline);
+    document.removeEventListener("visibilitychange", handleVisibility);
+  };
+}, [refreshAllCartStocks]);
+
+const validateCartStockBeforeCheckout = async () => {
+  const checks = await Promise.all(
+    cartItems.map(async (item) => ({
+      name: item.name,
+      requestedQty: item.qty,
+      stockLeft: await fetchLatestStock(item.name),
+    }))
+  );
+
+  const invalidItems = checks.filter(
+    (x) => x.stockLeft <= 0 || x.requestedQty > x.stockLeft
+  );
+
+  if (invalidItems.length > 0) {
+    setCartItems((prev) => {
+      const updated = prev
+      .map((item) => {
+        const latest = checks.find(
+          (x) => normalizeName(x.name) === normalizeName(item.name)
+        );
+
+        if (!latest) return item;
+
+        if (latest.stockLeft <= 0) {
+          return {
+            ...item,
+            stockLeft: 0,
+            outOfStock: true,
+            qty: 0,
+          };
+        }
+
+        return {
+          ...item,
+          stockLeft: latest.stockLeft,
+          outOfStock: false,
+          qty: Math.min(item.qty, latest.stockLeft),
+        };
+      })
+      .filter(Boolean);
+      writeBackToStorage(updated);
+      setGrandSummary(computeTotals(updated));
+      return updated;
+    });
+     const itemNames = invalidItems.map((item) => item.name).join(", ");
+    alert(`${itemNames} items are out of stock.`);
+  return false;
+  }
+  return true;
+};
+
   const handleGroceryProceed = async (event) => {
     event.preventDefault();
+   const valid = await validateCartStockBeforeCheckout();
+    if (!valid) return;
+
     const allCategories =
       JSON.parse(localStorage.getItem("allCategories")) || [];
-  
+
     const payload = {
       id: "string",
       martId: "string",
@@ -649,20 +631,24 @@ useEffect(() => {
     }
   };
 
+  const outOfStockCount = cartItems.filter(
+  (item) => item.outOfStock || item.stockLeft <= 0
+).length;
+
   const handleImageClick = (imageSrc) => {
     setZoomImage(imageSrc);
     setShowZoomModal(true);
   };
 
-  const handleRestore = (id) => {
-    clearTimeout(removalTimers.current[id]);
-    delete removalTimers.current[id];
-    setCartItems((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, qty: 1, removing: false } : item,
-      ),
-    );
-  };
+  // const handleRestore = (id) => {
+  //   clearTimeout(removalTimers.current[id]);
+  //   delete removalTimers.current[id];
+  //   setCartItems((prev) =>
+  //     prev.map((item) =>
+  //       item.id === id ? { ...item, qty: 1, removing: false } : item,
+  //     ),
+  //   );
+  // };
 
   const itemsTotal = Math.round(
     cartItems.reduce((s, it) => s + it.mrp * it.qty, 0),
@@ -714,78 +700,150 @@ useEffect(() => {
           marginTop: "48px",
         }}
       >
-        {cartItems.map((item) => (
+        {outOfStockCount > 0 && (
+          <div
+            style={{
+              background: "#fff3cd",
+              color: "#856404",
+              padding: "8px",
+              borderRadius: "6px",
+              marginBottom: "10px",
+              fontSize: "12px",
+              fontWeight: "500",
+            }}
+          >
+            {outOfStockCount} item(s) are currently unavailable.
+          </div>
+        )}
+        {cartItems.map((item) => {
+        const isOutOfStock = item.outOfStock || item.stockLeft <= 0;
+
+        return (
           <div
             key={item.id}
-            className="cart-item d-flex align-items-start justify-content-between mb-2"
+            style={{
+              position: "relative",
+              display: "flex",
+              alignItems: "flex-start",
+              justifyContent: "space-between",
+              marginBottom: "12px",
+              padding: "10px",
+              borderRadius: "8px",
+              border: "1px solid #eee",
+              backgroundColor: isOutOfStock ? "#f5f5f5" : "#fff",
+            }}
           >
-            {/* Product Image */}
-            <img
-              src={
-                (item.imageFilename && imageBlobMap[item.imageFilename]) ||
-                (item.imageFilename && fileToUrl(item.imageFilename)) ||
-                item.imageUrl ||
-                "/placeholder.png"
-              }
-              alt={item.name}
-              onClick={() =>
-                handleImageClick(
-                  (item.imageFilename && imageBlobMap[item.imageFilename]) ||
-                    (item.imageFilename && fileToUrl(item.imageFilename)) ||
-                    item.imageUrl ||
-                    "/placeholder.png",
-                )
-              }
+            {/* faded content */}
+            <div
               style={{
-                height: 50,
-                width: 30,
-                cursor: "pointer",
-                borderRadius: 6,
+                display: "flex",
+                flex: 1,
+                opacity: isOutOfStock ? 0.45 : 1,
               }}
-              onError={(e) => {
-                e.currentTarget.src = "/placeholder.png";
-              }}
-            />
+            >
+              {/* Product Image */}
+              <img
+                src={
+                  (item.imageFilename && imageBlobMap[item.imageFilename]) ||
+                  (item.imageFilename && fileToUrl(item.imageFilename)) ||
+                  item.imageUrl ||
+                  "/placeholder.png"
+                }
+                alt={item.name}
+                onClick={() =>
+                  handleImageClick(
+                    (item.imageFilename && imageBlobMap[item.imageFilename]) ||
+                      (item.imageFilename && fileToUrl(item.imageFilename)) ||
+                      item.imageUrl ||
+                      "/placeholder.png"
+                  )
+                }
+                style={{
+                  height: 50,
+                  width: 30,
+                  borderRadius: 6,
+                  cursor: "pointer",
+                  // filter: isOutOfStock
+                  //   ? "grayscale(100%)"
+                  //   : "none",
+                }}
+              />
 
-            {/* Product Details */}
-            <div style={{ flex: 1, marginLeft: "8px" }}>
+              {/* Product Details */}
               <div
                 style={{
-                  fontWeight: "500",
-                  fontSize: "12px",
-                  marginRight: "5px",
+                  flex: 1,
+                  marginLeft: "10px",
+                  paddingRight: "70px",
                 }}
               >
-                {item.name}
-              </div>
-              <div style={{ fontSize: "12px", color: "#666" }}>
-                MRP: <s>₹{Math.round(item.mrp)}</s> &nbsp;
-                <span style={{ color: "red" }}>
-                  {Math.round(item.discount)}% off
-                </span>
-                <span style={{ color: "dark", marginLeft: "5px" }}>
-                  {item.units}
-                </span>
-              </div>
-              <div style={{ fontWeight: "600", fontSize: "12px" }}>
-                ₹{Math.round(item.price)}
+                <div
+                  style={{
+                    fontWeight: "500",
+                    fontSize: "12px",
+                    textDecoration: isOutOfStock
+                      ? "line-through"
+                      : "none",
+                  }}
+                >
+                  {item.name}
+                </div>
+
+                <div
+                  style={{
+                    fontSize: "12px",
+                    color: "#666",
+                    textDecoration: isOutOfStock
+                      ? "line-through"
+                      : "none",
+                  }}
+                >
+                  MRP: <s>₹{Math.round(item.mrp)}</s>
+                  <span style={{ color: "red", marginLeft: "5px" }}>
+                    {Math.round(item.discount)}% off
+                  </span>
+                  <span style={{ marginLeft: "5px" }}>
+                    {item.units}
+                  </span>
+                </div>
+
+                <div
+                  style={{
+                    fontWeight: "600",
+                    fontSize: "12px",
+                    textDecoration: isOutOfStock
+                      ? "line-through"
+                      : "none",
+                  }}
+                >
+                  ₹{Math.round(item.price)}
+                </div>
               </div>
             </div>
 
-            {/* Quantity Box */}
-            {item.removing ? (
+            {/* Right Side */}
+            {isOutOfStock ? (
               <button
-                onClick={() => handleRestore(item.id)}
+                onClick={() => {
+                  const updated = cartItems.filter(
+                    (x) => x.id !== item.id
+                  );
+                  setCartItems(updated);
+                  writeBackToStorage(updated);
+                  setGrandSummary(computeTotals(updated));
+                }}
                 style={{
-                  backgroundColor: "white",
-                  color: "green",
-                  border: "1px solid green",
+                  border: "1px solid #d32f2f",
+                  color: "#d32f2f",
+                  background: "white",
                   borderRadius: "6px",
-                  fontSize: "14px",
-                  padding: "8px",
+                  padding: "6px 10px",
+                  fontSize: "11px",
+                  fontWeight: "600",
+                  zIndex: 3,
                 }}
               >
-                Add
+                Remove
               </button>
             ) : (
               <div
@@ -805,34 +863,43 @@ useEffect(() => {
                 >
                   <RemoveIcon fontSize="small" />
                 </IconButton>
+
                 <span style={{ fontWeight: "bold", fontSize: "12px" }}>
-                  {Math.min(item.qty, getDynamicLimit(item.name))}
+                  {item.qty}
                 </span>
+
                 <IconButton
                   size="small"
                   onClick={() => handleQtyChange(item.id, 1)}
-                  style={{
-                    color: "white",
-                    padding: "2px",
-                    opacity: item.qty >= item.stockLeft ? 0.5 : 1,
-                  }}
-                  disabled={
-                    Math.min(item.qty, getDynamicLimit(item.name)) >=
-                    Math.min(item.stockLeft, getDynamicLimit(item.name))
-                  }
-                  title={
-                    Number.isFinite(item.stockLeft) &&
-                    item.qty >= item.stockLeft
-                      ? "No more stock"
-                      : "Add one"
-                  }
+                  style={{ color: "white", padding: "2px" }}
+                  disabled={item.qty >= item.stockLeft}
                 >
                   <AddIcon fontSize="small" />
                 </IconButton>
               </div>
             )}
+
+            {/* Out Of Stock Text */}
+            {isOutOfStock && (
+              <div
+                style={{
+                  position: "absolute",
+                  left: "50%",
+                  bottom: "12px",
+                  transform: "translateX(-50%)",
+                  color: "#d32f2f",
+                  fontSize: "13px",
+                  fontWeight: "700",
+                  zIndex: 4,
+                  background: "transparent",
+                }}
+              >
+                Out of Stock
+              </div>
+            )}
           </div>
-        ))}
+        );
+      })}
       </div>
 
       {/* Bill Details */}

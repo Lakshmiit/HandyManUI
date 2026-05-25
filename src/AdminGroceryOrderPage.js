@@ -23,7 +23,6 @@ const AdminGroceryOrderPage = () => {
   const [pincode, setPincode] = useState('');
   const [address, setAddress] = useState(''); 
   const [id, setId] = useState("");  
-const [assignedTo, setAssignedTo] = useState('');
 const [loading, setLoading] = useState(true);
 const [paymentMode, setPaymentMode] = useState('');
 const [transactionDetails, setTransactionDetails] = useState('');
@@ -31,7 +30,6 @@ const [customerId, setCustomerId] = useState('');
 const [mobileNumber, setMobileNumber] = useState('');
 const [customerName, setCustomerName] = useState('');
 const [date, setDate] = useState('');
-const [error, setError] = useState('');
 const [items, setItems] = useState([]);
 const [deliveryPartners, setDeliveryPartners] = useState([]);
 const [selectedPartner, setSelectedPartner] = useState(""); 
@@ -49,7 +47,7 @@ const [units, setUnits] = useState("");
   const [groceryId, setgroceryId] = useState();
 const [cashbackAmount, setCashbackAmount] = useState(0);
 const [status, setStatus] = useState();
-const showFreeSugar = Number(grandTotal) > 599 && Number(grandTotal) < 998;
+const showFreeSugar = Number(grandTotal) > 699 && Number(grandTotal) < 998;
 // const showAttaSugar = Number(grandTotal) > 499 && Number(grandTotal) < 999;
  const [showZoomModal, setShowZoomModal] = useState(false);
   const [zoomImage, setZoomImage] = useState("");
@@ -131,7 +129,6 @@ useEffect(() => {
         console.log("✅ First grocery id:", firstId);
       } catch (err) {
         if (err?.name === "AbortError") return;
-        setError(err.message || String(err));
         console.error("Error fetching cart data:", err);
       }
       return () => ctrl.abort();
@@ -217,7 +214,7 @@ useEffect(() => {
       const grandTotalNumeric = Number(data.grandTotal) || 0;
       const cashback = totalAmountFromApi - grandTotalNumeric;
         
-      if ((cashback >= 49 && cashback <= 51) ||(cashback >= 29 && cashback <= 31) || (cashback >= 99 && cashback <= 101) || (cashback >= 149 && cashback <= 151) || (cashback >= 199 && cashback <= 201))
+      if ((cashback >= 49 && cashback <= 51) || (cashback >= 29 && cashback <= 31) || (cashback >= 79 && cashback <= 81)  || (cashback >= 99 && cashback <= 101) || (cashback >= 149 && cashback <= 151) || (cashback >= 199 && cashback <= 201))
       {
         setCashbackAmount(cashback);                       
       } else {
@@ -273,11 +270,10 @@ useEffect(() => {
   }
 }, [groceryItemId, grandTotal]);    
    
-const handleAssignedToChange = (e) => {
-  const selectedAssignedTo = e.target.value;
-  setAssignedTo(selectedAssignedTo);
-  setError({});
-};
+// const handleAssignedToChange = (e) => {
+//   const selectedAssignedTo = e.target.value;
+//   setAssignedTo(selectedAssignedTo);
+// };
 
 // ForwardIcon 
   const handleUpdatePaymentMethod = async () => {
@@ -540,7 +536,7 @@ const handleDownloadPDF = () => {
   }
 
   const pdfShowFreeSugar =
-    Number(grandTotal) > 599 && Number(grandTotal) < 998;
+    Number(grandTotal) > 699 && Number(grandTotal) < 998;
   let currentY = doc.lastAutoTable.finalY + 10;
 
   let requiredHeight = 12;
@@ -830,7 +826,7 @@ const handleImageClick = (imageSrc, product) => {
               />
             </div> */}
             <Row>
-                  {/* Assigned To */}
+                  {/* Assigned To
                   <Col md={12}>
                     <Form.Group>
                       <label>Assigned To</label>
@@ -840,7 +836,7 @@ const handleImageClick = (imageSrc, product) => {
                       </Form.Control>
                       {error.assignedTo && <p className="text-danger">{error.assignedTo}</p>}
                     </Form.Group>
-                  </Col>
+                  </Col> */}
 
                    {/* New Delivery Partner Names Dropdown */}
                   <Col md={12}>
@@ -881,7 +877,7 @@ const handleImageClick = (imageSrc, product) => {
                   style={{ background: "red" }}
                   onClick={handleCancelOrder}
                   title="Cancel Order"
-                  disabled={assignedTo || selectedPartner}
+                  disabled={selectedPartner}
                 >
                   Cancel
                 </Button>

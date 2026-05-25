@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState} from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {  Modal, Card,  Form,  Button,  Row,  Col,  Container,  Carousel,} from "react-bootstrap";
 import Header from "./Header";
@@ -10,10 +11,13 @@ const AdminOfferForm = () => {
   header: "",
   footer: "",   
   files: [],
+  createdDate: "",
+  updatedDate: "",
   startDate: "",
   endDate: "",
   description: "",
 });
+const navigate = useNavigate();
   const [showPreview, setShowPreview] = useState(false);
   const [previews, setPreviews] = useState([]);
 
@@ -103,13 +107,15 @@ for (let file of formData.files) {
         id: formData.id || "",
         title: formData.title,
         date: "string",
+        createdDate: new Date().toISOString(),
+        updatedDate: new Date().toISOString(),
         startDate: new Date(formData.startDate).toISOString(),
         endDate: new Date(formData.endDate).toISOString(),
         header: formData.header,
         footer: formData.footer,
         description: formData.description,
         image: uploadedImages.map(url => ({
-          images: url
+          images: url            
         }))
       };
 
@@ -120,16 +126,18 @@ for (let file of formData.files) {
          payload
       );
       alert("Offer Uploaded Successfully!");
-      setFormData({
-        id: "",
-        header: "",
-        footer: "",
-        files: [],
-        startDate: "",
-        endDate: "",
-        description: "",
-      });
-      setPreviews([]);
+        navigate(`/adminBannerList/Admin`);
+      // setFormData({
+      //   id: "",
+      //   header: "",
+      //   footer: "",
+      //   files: [],
+      //   startDate: "",
+      //   endDate: "",
+      //   description: "",
+      // });
+      // setPreviews([]);
+      
     } catch (err) {
       console.error("Error:", err);
       alert("Upload Failed");
@@ -202,7 +210,7 @@ for (let file of formData.files) {
             {previews.length > 0 && (
               <div className="mb-3 text-center">
                 {previews.length === 1 ? (
-                  <img
+                  <img                          
                     src={previews[0]}
                     alt="preview"
                     style={{
@@ -295,12 +303,11 @@ for (let file of formData.files) {
               <Button
                 variant="danger"
                 className="w-100"
-                onClick={() => setShowPreview(true)}
+                onClick={() => navigate('/adminBannerList/Admin')}
               >
-                👁 Preview
+                Back
               </Button>
             </Col>
-
             <Col>
               <Button type="submit" className="btn btn-primary w-100">
                 Upload

@@ -13,7 +13,7 @@ const LoginPage = () => {
   const [submitted, setSubmitted] = useState(false);
   const [isChecked, setIsChecked] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const handleMobileChange = (e) => {
+  const handleMobileChange = (e) => {   
     const value = e.target.value;
     if (/^\d{0,10}$/.test(value)) {
         setMobile(value);   
@@ -119,7 +119,7 @@ const handleOTP = async (e) => {
   />
   </div>
     {error && <div className="text-danger mt-1">{error}</div>}
-   <a className="link" href="/userIdLogin" style={{fontSize: "14px"}}>Login With User ID</a>
+   {/* <a className="link" href="/userIdLogin" style={{fontSize: "14px"}}>Login With User ID</a> */}
    <div className="d-flex align-items-center flex-wrap">
   <input 
     type="checkbox" 

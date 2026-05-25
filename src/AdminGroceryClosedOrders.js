@@ -43,7 +43,7 @@ const [units, setUnits] = useState("");
  const [groceryData, setgroceryData] = useState();
   const [groceryId, setgroceryId] = useState();
 const [cashbackAmount, setCashbackAmount] = useState(0);
-const showFreeSugar = Number(grandTotal) > 599 && Number(grandTotal) < 998;
+const showFreeSugar = Number(grandTotal) > 699 && Number(grandTotal) < 998;
  const [showZoomModal, setShowZoomModal] = useState(false);
   const [zoomImage, setZoomImage] = useState("");
   const [zoomProduct, setZoomProduct] = useState(null);
@@ -145,6 +145,7 @@ useEffect(() => {
       setCartData(data);
       setCustomerId(data.userId);
       setId(data.id);
+      setDate(data.date);
       setMartId(data.martId); 
       setCustomerName(data.customerName);
       setMobileNumber(data.customerPhoneNumber);
@@ -196,7 +197,7 @@ useEffect(() => {
       const grandTotalNumeric = Number(data.grandTotal) || 0;
       const cashback = totalAmountFromApi - grandTotalNumeric;
         
-      if ((cashback >= 49 && cashback <= 51) ||(cashback >= 29 && cashback <= 31) || (cashback >= 99 && cashback <= 101) || (cashback >= 149 && cashback <= 151) || (cashback >= 199 && cashback <= 201))
+      if ((cashback >= 49 && cashback <= 51) || (cashback >= 29 && cashback <= 31) || (cashback >= 79 && cashback <= 81) || (cashback >= 99 && cashback <= 101) || (cashback >= 149 && cashback <= 151) || (cashback >= 199 && cashback <= 201))
       {
         setCashbackAmount(cashback);                       
       } else {
@@ -227,7 +228,7 @@ useEffect(() => {
     id: groceryItemId,
     userId: customerId, 
     martId: martId,
-    date: new Date(),
+    date: date,
     grandTotal: grandTotal,
     totalItemsSelected: totalItemsSelected,
     status: "Closed", 

@@ -68,7 +68,7 @@ useEffect(() => {
       zones[zone].tickets.push(item);
       zones[zone].count++;
     }
-   if (status === "open" || status === "in progress" || status === "delivered") {
+   if (status === "open") {
       if (!zones["Grocery"]) {
         zones["Grocery"] = { count: 0, tickets: [] };
       }

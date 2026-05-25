@@ -126,9 +126,12 @@ import { getLoginData } from "./utils/auth";
 import RoyalUpmaMix250g from './RoyalUpmaMix250g.js';
 import MartHomeAppliances from './MartHomeAppliances.js';
 import AdminOfferForm from './AdminOfferForm.js';
+import AdminBannerList from './AdminBannerList.js';
 import AdminGroceryZoneDashboard from './AdminGroceryZoneDashboard.js';
 import AdminGroceryClosedOrders from './AdminGroceryClosedOrders.js';
 import AdminGroceryDashboard from './AdminGroceryDashboard.js';
+import DeliveryPartnerDashboard from './DeliveryPartnerDashboard.js';
+
 // import OneRupeeGroceryItems from './OneRupeeGroceryItems.js';
 // import CustomerLocation from "./CustomerLocation.js";
 const PreventBackNavigation = () => {
@@ -168,7 +171,8 @@ function App() {
       <div className="App"> 
         <main>
           {/* className="mt-100" */}       
-          <Routes>
+          <Routes> 
+            <Route path="/deliveryPartnerDashboard/:userType/:userId" element={<DeliveryPartnerDashboard />} />
             <Route path="/adminGroceryZoneDashboard" element={<AdminGroceryZoneDashboard />} />
             <Route path="/adminGroceryClosedOrders/:groceryItemId" element={<AdminGroceryClosedOrders />} /> 
             <Route path="/adminGroceryDashboard" element={<AdminGroceryDashboard />} />
@@ -190,7 +194,7 @@ function App() {
             <Route path="/groceryCart/:userType/:userId" element={<GroceryCartPage />} />
             {/* <Route path="/groceryIcons/:userType/:userId" element={<GroceryCategoryIcons />} /> */}
             <Route path="/adminOfferModal/Admin" element={<AdminOfferForm />} /> 
-    
+            <Route path="/adminBannerList/Admin" element={<AdminBannerList />} />   
             <Route path="/adminUploadGrocery/Admin" element={<AdminUploadGrocery />} />
             <Route path="/adminUpdateGrocery/:id/Admin" element={<AdminUpdateGrocery />} />
             <Route path="/adminGroceryApproval/:id/Admin" element={<AdminGroceryApproval />} /> 
