@@ -130,7 +130,7 @@ import AdminBannerList from './AdminBannerList.js';
 import AdminGroceryZoneDashboard from './AdminGroceryZoneDashboard.js';
 import AdminGroceryClosedOrders from './AdminGroceryClosedOrders.js';
 import AdminGroceryDashboard from './AdminGroceryDashboard.js';
-import DeliveryPartnerDashboard from './DeliveryPartnerDashboard.js';
+// import DeliveryPartnerDashboard from './DeliveryPartnerDashboard.js';
 
 // import OneRupeeGroceryItems from './OneRupeeGroceryItems.js';
 // import CustomerLocation from "./CustomerLocation.js";
@@ -172,7 +172,7 @@ function App() {
         <main>
           {/* className="mt-100" */}       
           <Routes> 
-            <Route path="/deliveryPartnerDashboard/:userType/:userId" element={<DeliveryPartnerDashboard />} />
+            {/* <Route path="/deliveryPartnerDashboard/:userType/:userId" element={<DeliveryPartnerDashboard />} /> */}
             <Route path="/adminGroceryZoneDashboard" element={<AdminGroceryZoneDashboard />} />
             <Route path="/adminGroceryClosedOrders/:groceryItemId" element={<AdminGroceryClosedOrders />} /> 
             <Route path="/adminGroceryDashboard" element={<AdminGroceryDashboard />} />
