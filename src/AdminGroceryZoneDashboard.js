@@ -6,16 +6,16 @@ const zoneData = {
   A: ["530001", "530002", "530003", "530004"],
   B: ["530005", "530013", "530016", "530020", "530024", "530022", "530017"],
   C: ["530007", "530008", "530009", "530012", "530018"],
-  D: ["530011", "530031", "530029", "530026", "530032"],
+  D: ["530011", "530031", "530029", "530026", "530032", "530049"],
   E: ["530027", "530028", "530040"],
-  F: ["530014", "530041", "530043", "530045", "530048", "530049"],
+  F: ["530014", "530041", "530043", "530045", "530048"],
   G: ["531162", "531163", "531173"],
 };
 
 const AdminGroceryZoneDashboard = () => {
   const navigate = useNavigate();
   const [selectedZone, setSelectedZone] = useState(null);
-const allZones = ["Grocery", "A", "B", "C", "D", "E", "F", "G", "Others", "In Progress", "Delivered Tickets", "Cancel Tickets", "All Grocery"];
+const allZones = ["Grocery", "A", "B", "C", "D", "E", "F", "G", "Others", "In Progress", "Delivered Tickets", "Return Orders", "Cancel Tickets", "All Grocery"];
   const [groceryList, setGroceryList] = useState([]);
 const [loading, setLoading] = useState(true);
 const [blinkingZones, setBlinkingZones] = useState({});
@@ -26,7 +26,7 @@ useEffect(()=> {
 
 const fetchGroceryData = async () => {
   try {
-    const res = await fetch("https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetAllMartItems");
+    const res = await fetch("https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Mart/GetAllMartItems");
     const data = await res.json();
     const sortedOrders = data.sort(
       (a, b) => new Date(b.date) - new Date(a.date)
@@ -88,6 +88,13 @@ useEffect(() => {
       }
       zones["Delivered Tickets"].tickets.push(item);
       zones["Delivered Tickets"].count++;
+    }  
+    if (status === "return") {
+      if (!zones["Return Orders"]) {
+        zones["Return Orders"] = { count: 0, tickets: [] };
+      }
+      zones["Return Orders"].tickets.push(item);
+      zones["Return Orders"].count++;
     }    
     if (status === "cancel") {
       if (!zones["Cancel Tickets"]) {

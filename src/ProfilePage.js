@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef} from "react";
+import React, { useState, useEffect, useRef, useCallback} from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import './App.css';
 import { Modal, Button} from 'react-bootstrap';
-import Confetti from "react-confetti";
+// import Confetti from "react-confetti";
 import ImageCache from "./utils/ImageCache";
 import axios from "axios";    
 import Footer from './Footer.js';
@@ -16,7 +16,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Logo from "./img/Hm_Logo 1.png";
 import SearchIcon from "@mui/icons-material/Search";
 import LogoutIcon from "@mui/icons-material/Logout";   
-import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';          
 import ApartmentIcon from '@mui/icons-material/Apartment';
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -100,7 +100,6 @@ const categories = [
 const groceryCategories = [
   {label: 'LMart Products', value: 'LMart Special', image: RoyalImg},
   { label: 'Unbeatable 10 Offers', value: 'Unbeatable Offers', image: UnbeatableImg },
-  // { label: '₹1 Store', value: '₹1 Store', image: UnbeatableImg },
   { label: 'Rice & Ravva', value: 'Rice & Ravva', image: RavvaImg },    
   { label: 'Atta & Flours', value: 'Atta & Flours', image: AttaImg },
   { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
@@ -138,7 +137,7 @@ const collectionsCategories = [
   ];
 
   const IMAGE_API =
-  `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
+  `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/FileUpload/download?generatedfilename=`;
 
 const ProfilePage = () => {
    const [allProducts, setAllProducts] = useState([]);
@@ -191,7 +190,6 @@ const [paymentMode, setPaymentMode] = useState('');
 const clickLock = useRef(false);
 const [isRegistered, setIsRegistered] = useState(false);
 const [partnerStatus, setPartnerStatus] = useState("");
-// const [isPickup, setIsPickup] = useState(false);
 const [paidAmount] = useState('');
 const [items] = useState('');
 const HEADER_H = 0;          
@@ -199,8 +197,8 @@ const MOBILE_ICONS_H = 0;
 const MOBILE_EXTRA =0;     
 const MOBILE_PADDING_TOP = HEADER_H + MOBILE_ICONS_H + MOBILE_EXTRA;
 const [cartImages, setCartImages] = useState({});
-const [showCashbackModal, setShowCashbackModal] = useState(false);
-const [showConfetti, setShowConfetti] = useState(false);
+// const [showCashbackModal, setShowCashbackModal] = useState(false);
+// const [showConfetti, setShowConfetti] = useState(false);
 const [windowSize, setWindowSize] = useState({
   width: window.innerWidth,
   height: window.innerHeight,
@@ -217,15 +215,18 @@ const [placeholderIndex, setPlaceholderIndex] = useState(0);
 const firstCategories = groceryCategories.slice(0, 6);
 const secondCategories = groceryCategories.slice(6, 31);
 const [showOffersModal, setShowOffersModal] = useState(false);
-const [showCoinsModal, setShowCoinsModal] = useState(false);
+// const [showCoinsModal, setShowCoinsModal] = useState(false);
 const [selectedTicket, setSelectedTicket] = useState(null);
 const [selectedOrder, setSelectedOrder] = useState(null);
 const [showOrderModal, setShowOrderModal] = useState(false);
 const [showDetails, setShowDetails] = useState(false);
 const [searchOrderId, setSearchOrderId] = useState("");
+const [walletAmount, setWalletAmount] = useState("0");
+const [walletLoading, setWalletLoading] = useState(true);
+const [showWalletMessage, setShowWalletMessage] = useState(false);
 useEffect(() => {
-  console.log(state, address, mobileNumber,id, pinCode, paidAmount, paymentMode, martId,status, imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery,error, showMenu, products, selectedCategory, dress);
-}, [state, address, mobileNumber, id, pinCode, paidAmount, paymentMode, martId, status, imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery, error,showMenu, products, selectedCategory, dress]);
+  console.log(windowSize, state, address, mobileNumber,id, pinCode, paidAmount, paymentMode, martId,status, imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery,error, showMenu, products, selectedCategory, dress);
+}, [windowSize, state, address, mobileNumber, id, pinCode, paidAmount, paymentMode, martId, status, imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery, error,showMenu, products, selectedCategory, dress]);
  
  const placeholderSuggestions = [
   'Search "Milk"', 'Search "Freedom Refined Sunflower Oil"', 'Search "Sona Masoori Rice"',
@@ -253,18 +254,42 @@ useEffect(() => {
   return () => clearInterval(interval);
 }, [placeholderSuggestions.length]);        
 
+const fetchWalletAmount = useCallback(async () => {
+  try {
+    setWalletLoading(true);
+    const response = await fetch(
+      `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/OffersTransactions/GetOfferTransactionByUserId?userId=${userId}`
+    );
+    const data = await response.json();
+    if (data && data.length > 0) {
+      setWalletAmount(data[0].remainingAmount || "0");
+    } else {
+      setWalletAmount("0");
+    }
+  } catch (error) {
+    console.error("Error fetching wallet amount:", error);
+    setWalletAmount("0");
+  } finally {
+    setWalletLoading(false);
+  }
+}, [userId]);
+
+useEffect(() => {
+  if (userId) {
+    fetchWalletAmount();
+  }
+}, [userId, fetchWalletAmount]);
+
 useEffect(() => {  
   if (!selectedCategory) return;
   let cancelled = false;
   const controller = new AbortController();
-  // const POLL_MS = 2000;
-  // let pollId = null;
-
+  
   const category = selectedCategory; 
   async function fetchProductsAndFirstImages(warm = false, signal) {
     try {
       if (!warm) setImageLoading(true);
-      const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${category}`;
+      const url = `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/UploadGrocery/GetGroceryItemsBycategory?Category=${category}`;
 
       const { data: items } = await axios.get(url, { signal });
       const safeItems = (Array.isArray(items) ? items : []).map(normalizeProduct);
@@ -295,7 +320,7 @@ useEffect(() => {
       const fetchOne = async ({ productId, photo }) => {
         try {
           const res = await fetch(
-            `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`,
+            `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/FileUpload/download?generatedfilename=${photo}`,
             { signal }
           );
 
@@ -328,17 +353,10 @@ useEffect(() => {
       if (!cancelled && !warm) setImageLoading(false);
     }
   }
-  // First load
   fetchProductsAndFirstImages(false, controller.signal);
-  // Polling
-  // pollId = setInterval(() => {
-  //   const pollController = new AbortController();
-  //   fetchProductsAndFirstImages(true, pollController.signal);
-  // }, POLL_MS);
-  return () => {
+ return () => {
     cancelled = true;
     controller.abort();
-    // if (pollId) clearInterval(pollId);
   };
 }, [selectedCategory]); 
 
@@ -396,14 +414,6 @@ useEffect(() => {
 }, [cartImages]); 
 
 useEffect(() => {
-  if (showCashbackModal) {
-    setShowConfetti(true);
-    const timer = setTimeout(() => setShowConfetti(false), 3000);
-    return () => clearTimeout(timer);
-  }
-}, [showCashbackModal]);
-
-useEffect(() => {
   const handleResize = () => {
     setWindowSize({
       width: window.innerWidth,
@@ -450,7 +460,6 @@ useEffect(() => {
 
 useEffect(() => {
   let cancelled = false;
-  // const POLL_MS = 300000;
   const sendLog = async () => {
     try {
       const payload = {
@@ -460,7 +469,7 @@ useEffect(() => {
         message: "User fetching grocery items in profile page"
       };
       await axios.post(
-        `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/LmartLogs/UploadlogsDetails`,
+        `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/LmartLogs/UploadlogsDetails`,
         payload
       );
     } catch (err) {
@@ -472,7 +481,7 @@ useEffect(() => {
     if (showLoader) setLoading(true);
     try {
       const res = await axios.get(
-        `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetAllGroceryItems`
+        `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/UploadGrocery/GetAllGroceryItems`
       );
       if (cancelled) return;
       const normalized = (Array.isArray(res.data) ? res.data : [])
@@ -499,12 +508,8 @@ useEffect(() => {
     }
   };
   fetchProducts(true);
-  // const intervalId = setInterval(() => {
-  //   fetchProducts(false);
-  // }, POLL_MS);
   return () => {
     cancelled = true;
-    // clearInterval(intervalId);
   };
 }, [profile.mobileNumber]);
 
@@ -582,20 +587,11 @@ const handleAddClick = (product) => {
   });
 };
 
-  // cashback logic
-useEffect(() => {
-  if (!showCashbackModal) return; 
-  const timer = setTimeout(() => {
-    setShowCashbackModal(false);
-  }, 5000);
-  return () => clearTimeout(timer); 
-}, [showCashbackModal]);
-
 // useEffect(() => {
 //   const fetchDeliveryData = async () => {
 //     try {    
 //       const response = await fetch(
-//         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetProductDetails?id=${id}`
+//         `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Mart/GetProductDetails?id=${id}`
 //       );
 //       if (!response.ok) {
 //         throw new Error("Failed to fetch grocery product data");
@@ -670,7 +666,7 @@ useEffect(() => {
  useEffect(() => {
   const fetchGroceryData = async () => {
     try {
-      const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetMartTicketsByUserId?userId=${userId}`);
+      const response = await fetch(`https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Mart/GetMartTicketsByUserId?userId=${userId}`);
       if (!response.ok) throw new Error('Failed to fetch ticket data');
       const data = await response.json();
       const tickets = Array.isArray(data) ? data : (data && typeof data === "object" ? [data] : []);
@@ -710,7 +706,7 @@ const handleDeliveryPartnerClick = async () => {
   clickLock.current = true;
   try {
     const res = await axios.get(
-      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/DeliveryPartner/GetDeliveryPartnerDetailsByUserId?userId=${userId}`
+      `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/DeliveryPartner/GetDeliveryPartnerDetailsByUserId?userId=${userId}`
     );
     const raw = res?.data ?? null;
     const profile = Array.isArray(raw)
@@ -748,17 +744,19 @@ useEffect(() => {
   setCartSummary(summary);
 }, []);
 
+const isActionLocked =
+  selectedOrder?.status === "Open" || selectedOrder?.status === "Return";
+
 const handleStatusUpdate = async (ticket, newStatus) => {
   try {
     const detailsResponse = await fetch(
-      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetProductDetails?id=${ticket.id}`
+      `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Mart/GetProductDetails?id=${ticket.id}`
     );
 
     if (!detailsResponse.ok) {
       throw new Error("Failed to fetch order details");
     }
     const currentOrderData = await detailsResponse.json();
-    // BUILD PAYLOAD USING CURRENT ORDER
     const payload = {
       ...currentOrderData,
       id: ticket.id,
@@ -766,14 +764,15 @@ const handleStatusUpdate = async (ticket, newStatus) => {
       martId: ticket.martId,
       date: ticket.date,  
       status: newStatus,
-      PaymentMode: newStatus === "Open" ? "" : ticket.paymentType,
+      PaymentMode: newStatus === "Open" || newStatus === "Return" ? "" : ticket.paymentType,
       utrTransactionNumber:  currentOrderData.utrTransactionNumber || "",
       transactionNumber:  currentOrderData.transactionNumber || "",
       transactionStatus:  currentOrderData.transactionStatus || "",
-      PaidAmount: newStatus === "Open" ? "" : String(ticket.receivedAmount || 0),
-      AssignedTo: newStatus === "Open" ? ` ${currentOrderData.assignedTo} has Declined` : currentOrderData.assignedTo,
-      DeliveryPartnerUserId: newStatus === "Open" ? ""  : currentOrderData.deliveryPartnerUserId,
-      deliveryAssignedTime:newStatus === "Open" ? "" : currentOrderData.deliveryAssignedTime,
+      PaidAmount: newStatus === "Open" || newStatus === "Return" ? "" : String(ticket.receivedAmount || 0),
+      AssignedTo: newStatus === "Open" ? ` ${currentOrderData.assignedTo} has Declined` : newStatus === "Return"
+      ? `${currentOrderData.assignedTo} Return`: currentOrderData.assignedTo,
+      DeliveryPartnerUserId: newStatus === "Open" || newStatus === "Return" ? ""  : currentOrderData.deliveryPartnerUserId,
+      deliveryAssignedTime:newStatus === "Open" || newStatus === "Return" ? "" : currentOrderData.deliveryAssignedTime,
       deliverySubmitTime: new Date().toISOString(),
       latitude: currentOrderData.latitude,
       longitude: currentOrderData.longitude,
@@ -781,7 +780,7 @@ const handleStatusUpdate = async (ticket, newStatus) => {
     };
     console.log("FINAL PAYLOAD:", payload);
     const response = await fetch(      
-      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${ticket.id}`,
+      `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Mart/UpdateProductDetails/${ticket.id}`,
       {
         method: "PUT",
         headers: {
@@ -796,6 +795,9 @@ const handleStatusUpdate = async (ticket, newStatus) => {
     if (newStatus === "Open") {
       alert("You declined the order.");
       setShowNotificationModal(false);
+    } else if(newStatus === "Return") {
+      alert("Order returned.");
+      setShowNotificationModal(false);
     }
   } catch (error) {
     console.error("Status update error:", error);
@@ -805,14 +807,13 @@ const handleStatusUpdate = async (ticket, newStatus) => {
 const handleUpdatePaymentMethod = async (ticket) => {
   try {
     const detailsResponse = await fetch(
-      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetProductDetails?id=${ticket.id}`
+      `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Mart/GetProductDetails?id=${ticket.id}`
     );
 
     if (!detailsResponse.ok) {
       throw new Error("Failed to fetch order details");
     }
     const currentOrderData = await detailsResponse.json();
-    // BUILD PAYLOAD USING CURRENT ORDER
     const payload = {
       ...currentOrderData,
       id: ticket.id,
@@ -828,10 +829,7 @@ const handleUpdatePaymentMethod = async (ticket) => {
           ticket.paymentType?.toLowerCase() === "cash&online"
             ? `cash=${ticket.cashAmount || 0}, online=${ticket.onlineAmount || 0}`
             : String(ticket.receivedAmount || 0),
-    //   PaidAmount: ticket.paymentType === "both"
-    // ? ( Number(ticket.cashAmount || 0) + Number(ticket.onlineAmount || 0) ).toString()
-    // : (ticket.receivedAmount || 0).toString(),
-      AssignedTo: currentOrderData.assignedTo,
+     AssignedTo: currentOrderData.assignedTo,
       DeliveryPartnerUserId: currentOrderData.deliveryPartnerUserId,
       deliveryAssignedTime:currentOrderData.deliveryAssignedTime,
       deliverySubmitTime: new Date().toISOString(),
@@ -841,7 +839,7 @@ const handleUpdatePaymentMethod = async (ticket) => {
     };
     console.log("FINAL PAYLOAD:", payload);
     const response = await fetch(
-      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${ticket.id}`,
+      `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Mart/UpdateProductDetails/${ticket.id}`,
       {
         method: "PUT",
         headers: {
@@ -962,11 +960,11 @@ const handleDressCategoryClick = async (category) => {
           const fetchAllTickets = async () => {
             try { 
               const [ticketResponse, productResponse, technicianResponse, groceriesResponse, lakshmiResponse] = await Promise.all([
-                fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=raiseTicket`),
-                fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=buyProduct`),
-                fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=bookTechnician`),
-                fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=mart`),
-                fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=collections`),
+                fetch(`https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=raiseTicket`),
+                fetch(`https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=buyProduct`),
+                fetch(`https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=bookTechnician`),
+                fetch(`https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=mart`),
+                fetch(`https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=collections`),
               ]);      
               if (!ticketResponse.ok || !productResponse.ok || !technicianResponse || !groceriesResponse || !lakshmiResponse) {
                 throw new Error("Failed to fetch ticket, product and technician data");
@@ -1073,7 +1071,7 @@ const handleCustomerCareCall = () => {
           try {
             let apiUrl = "";
             if (userType === "customer") {
-              apiUrl = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`;
+              apiUrl = `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`;
             }
             if (!apiUrl) return;
             const response = await axios.get(apiUrl);
@@ -1112,7 +1110,7 @@ const fetchImageUrl = async (photoId) => {
   try { 
     if (!photoId) return;
     const response = await axios.get(
-      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photoId}`
+      `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/FileUpload/download?generatedfilename=${photoId}`
     );
     if (response.status === 200 && response.data.imageData) {
       const imageUrl = `data:image/jpeg;base64,${response.data.imageData}`;
@@ -1213,21 +1211,57 @@ const filteredGroceryData = groceryData.filter((t) =>
               </span>
             </div> */} 
           </div>
- 
-  {/* Profile Image */}
-  <div className="profile-img-wrapper">
-    <img
-      src={profileImage}
-      alt="Profile"
-      className="profile-img"
-    />
-  </div>
-</div>
-</div>
+
+           {/* Wallet Amount */}
+          <div className="coin-wrap" style={{marginLeft: 10, cursor: "pointer" }}
+            onClick={() => {
+              if (Number(walletAmount) > 0) {
+                setShowWalletMessage(true);
+              }
+            }}
+            >
+            <span className="coin-value" style={{color: "blue"}}>
+              ₹ {walletLoading ? "0" : walletAmount}
+            </span>
+          </div>   
+        {/* Profile Image */}
+        <div className="profile-img-wrapper">
+          <img
+            src={profileImage}
+            alt="Profile"
+            className="profile-img"
+          />
+        </div>
+      </div>
+      </div>
     </div>
     </header>
-
-     <Modal
+            {showWalletMessage && Number(walletAmount) > 0 && (
+              <div
+                className="alert alert-danger"
+                style={{
+                  position: "fixed",
+                  top: "80px",
+                  right: "20px",
+                  zIndex: 9999,
+                  maxWidth: "320px"
+                }}
+              >
+                <div className="d-flex justify-content-between align-items-start">
+                  <span>
+                    You have <strong>₹{walletAmount}</strong> in your wallet. You can use
+                    this amount on your orders. For every <strong>₹100</strong> of grand
+                    total, <strong>₹10</strong> will be deducted from your wallet balance.
+                  </span>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={() => setShowWalletMessage(false)}
+                  ></button>
+                </div>
+              </div>
+            )}
+     {/* <Modal
   show={showCoinsModal}
   onHide={() => setShowCoinsModal(false)}
   centered
@@ -1235,7 +1269,7 @@ const filteredGroceryData = groceryData.filter((t) =>
   <Modal.Header closeButton>
     <Modal.Title>🎁 Redeem Coins</Modal.Title>
   </Modal.Header>
-  <Modal.Body>
+  <Modal.Body> */}
     {/* Coins Display */}
     <div className="text-center mb-3">
     {/* <h5 className="gold-shine-text">{pointsLoading ? "0" : userPoints} Coins</h5> */}
@@ -1295,8 +1329,8 @@ const filteredGroceryData = groceryData.filter((t) =>
             ))
           )}
       </div> */}
-  </Modal.Body>
-</Modal>
+  {/* </Modal.Body>
+</Modal> */}
 
       <div className="pt-1 mt-100"> 
     <div
@@ -1535,17 +1569,18 @@ const filteredGroceryData = groceryData.filter((t) =>
     {selectedOrder && (
       <>
         {/* Customer Info */}
-        <div className="mb-2">
+        <div className="mb-1">
+        <strong>Order Id:</strong> {selectedOrder.martId} <br />
           <strong>Customer Name:</strong> {selectedOrder.customerName}
         </div>
-        <div className="mb-2">
+        <div className="mb-1">
           <strong>Address:</strong>{" "}
           {[selectedOrder.address, selectedOrder.district, selectedOrder.state, selectedOrder.zipCode]
             .filter(Boolean)
             .join(", ")}
         </div>
         {/* View Details Link */}
-        <div className="mb-2">
+        <div className="mb-1">
           <span
             onClick={() => setShowDetails(!showDetails)}
             style={{
@@ -1595,7 +1630,7 @@ const filteredGroceryData = groceryData.filter((t) =>
           </div>
         )}
                   {/* Totals */}
-                  <div className="text-center text-danger mt-2">
+                  <div className="text-center text-danger mt-1">
                     <h6>
                       <strong>Total Amount:</strong> ₹
                       {selectedOrder.categories?.reduce(
@@ -1609,12 +1644,13 @@ const filteredGroceryData = groceryData.filter((t) =>
                   </div>
                    {/* EXPANDED DETAILS */}
                   {selectedOrder.status !== "Delivered" && (
-                  <div className="mt-3 p-2 border-top">
+                  <div className="mt-2 p-2 border-top">
                     {/* Payment Type */}
                     <div className="mt-2">
                       <input
                         type="radio"
                         name="paymentType"
+                        disabled={isActionLocked}
                         checked={selectedOrder.paymentType === "cash"}
                         onChange={() =>
                           setSelectedOrder((prev) => ({
@@ -1632,6 +1668,7 @@ const filteredGroceryData = groceryData.filter((t) =>
                         type="radio"
                         name="paymentType"
                         className="ms-3"
+                        disabled={isActionLocked}
                         checked={selectedOrder.paymentType === "online"}
                         onChange={() =>
                           setSelectedOrder((prev) => ({
@@ -1649,6 +1686,7 @@ const filteredGroceryData = groceryData.filter((t) =>
                         type="radio"
                         name="paymentType"
                         className="ms-3"
+                        disabled={isActionLocked}
                         checked={selectedOrder.paymentType === "Cash&Online"}
                         onChange={() =>
                           setSelectedOrder((prev) => ({
@@ -1665,13 +1703,14 @@ const filteredGroceryData = groceryData.filter((t) =>
 
                     {/* Payment Inputs */}
                     {selectedOrder.paymentType === "Cash&Online" ? (
-                      <div className="mt-3 d-flex gap-3 flex-wrap align-items-end">
+                      <div className="mt-2 d-flex gap-3 flex-wrap align-items-end">
                         <div>
                           <label>Cash:</label>
                           <input
                             type="number"
                             className="form-control"
                             style={{ width: "120px" }}
+                            disabled={isActionLocked}
                             value={selectedOrder.cashAmount || ""}
                             onChange={(e) => {
                               const cash = Number(e.target.value);
@@ -1692,6 +1731,7 @@ const filteredGroceryData = groceryData.filter((t) =>
                             type="number"
                             className="form-control"
                             style={{ width: "120px" }}
+                            disabled={isActionLocked}
                             value={selectedOrder.onlineAmount || ""}
                             onChange={(e) => {
                               const online = Number(e.target.value);
@@ -1706,7 +1746,7 @@ const filteredGroceryData = groceryData.filter((t) =>
                           />
                         </div>
 
-                        <div className="mb-2">
+                        <div className="mb-1">
                           <strong>Total: ₹ {selectedOrder.receivedAmount || 0}</strong>
                         </div>
                         <button
@@ -1721,6 +1761,7 @@ const filteredGroceryData = groceryData.filter((t) =>
                             setShowOrderModal(false);
                           }}
                           disabled={
+                             isActionLocked ||
                             !selectedOrder.cashAmount ||
                             Number(selectedOrder.cashAmount) <= 0 ||
                             !selectedOrder.onlineAmount ||
@@ -1748,7 +1789,23 @@ const filteredGroceryData = groceryData.filter((t) =>
                       >
                         Decline
                       </button>
-                    </div>
+                       <button
+                        className="btn btn-warning ms-2"
+                        onClick={() => {
+                          handleStatusUpdate(selectedOrder, "Return");
+
+                          setGroceryData((prev) =>
+                            prev.map((item) =>
+                              item.id === selectedOrder.id
+                                ? { ...item, status: "Return" }
+                                : item
+                            )
+                          );
+                        }}
+                      >
+                        Return
+                      </button>
+                                        </div>
                       </div>
                     ) : (
                       <div className="mt-1 d-flex align-items-center gap-2 flex-wrap">
@@ -1788,7 +1845,7 @@ const filteredGroceryData = groceryData.filter((t) =>
                           Submit
                         </button>
                               {/* Decline */}
-                    <div className="mb-3">
+                    <div className="mb-2">
                       <button
                         className="btn btn-danger"
                         onClick={() => {
@@ -1806,6 +1863,22 @@ const filteredGroceryData = groceryData.filter((t) =>
                         }}
                       >
                         Decline
+                      </button>
+                       <button
+                        className="btn btn-warning ms-2"
+                        onClick={() => {
+                          handleStatusUpdate(selectedOrder, "Return");
+
+                          setGroceryData((prev) =>
+                            prev.map((item) =>
+                              item.id === selectedOrder.id
+                                ? { ...item, status: "Return" }
+                                : item
+                            )
+                          );
+                        }}
+                      >
+                        Return
                       </button>
                     </div>
                       </div>
@@ -2239,7 +2312,6 @@ const filteredGroceryData = groceryData.filter((t) =>
   </div>
 )}
   
-        {/* Address with Location */}
         <div className="col-md-9">
           {/* HOME APPLIANCES */}
     <div
@@ -2344,7 +2416,6 @@ const filteredGroceryData = groceryData.filter((t) =>
             style={{
               fontSize: "12px",
               fontWeight: "bold",
-              // fontFamily: "Roboto",
               marginTop: "6px",
               minHeight: "24px", 
               display: "flex",
@@ -2636,41 +2707,6 @@ const filteredGroceryData = groceryData.filter((t) =>
         </div> 
         </div>
         </div>
-       
-        {/* First Order Cashback Modal */}
-         <Modal
-          show={showCashbackModal}
-          onHide={() => setShowCashbackModal(false)}
-          centered
-          dialogClassName="cashback-modal"
-        >
-          <Modal.Body className="cashback-modal-body text-center">
-            {showConfetti && (
-              <Confetti
-                width={windowSize.width}
-                height={windowSize.height}
-                numberOfPieces={5000}
-                recycle={false}
-              />
-            )}
-            <div className="cashback-badge">₹50 CASHBACK</div>
-            <h3 className="cashback-title mt-3 mb-2">
-              Thank You for Choosing <span>Handyman</span>!
-            </h3>
-            <p className="cashback-text mb-2">
-              You&apos;ve got <strong>₹50 cashback</strong> on your first order.
-            </p>
-            <p className="cashback-subtext mb-4">
-              Place your first order and you can avail this cashback offer on your bill.
-            </p>
-            <Button
-              variant="light"
-              className="cashback-cta-btn"
-              onClick={() => setShowCashbackModal(false)}
-            > Close
-            </Button>
-          </Modal.Body>
-        </Modal> 
   
         {/* Modal for Mart Ticket Details */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered size="lg">
@@ -2766,290 +2802,6 @@ const filteredGroceryData = groceryData.filter((t) =>
   <Modal.Header closeButton>
    <Modal.Title style={{ fontSize: "15px", fontWeight: "bold" }}>🎉Handyman Special Offer Sale!</Modal.Title>
   </Modal.Header>
-  {/* <Modal.Body>
-  <div className="p-0">
-
-    <div
-      id="staticCarousel"
-      className="carousel slide carousel-fade"
-      data-bs-ride="carousel"
-      data-bs-interval="2000"
-    >
-
-      // {/* ✅ Indicators 
-      <div className="carousel-indicators">
-        {staticImages.map((_, i) => (
-          <button
-            key={i}
-            type="button"
-            data-bs-target="#staticCarousel"
-            data-bs-slide-to={i}
-            className={i === 0 ? "active" : ""}
-          ></button>
-        ))}
-      </div>
-
-      // {/* ✅ Images 
-      <div className="carousel-inner">
-        {staticImages.map((img, i) => (
-          <div
-            key={i}
-            className={`carousel-item ${i === 0 ? "active" : ""}`}
-          >
-            <img
-              src={img}
-              className="d-block w-100"
-              alt={`offer-${i}`}
-              style={{
-                maxHeight: "500px",
-                objectFit: "contain",
-              }}
-            />
-          </div>
-        ))}
-      </div>
-      // {/* Prev 
-      <button
-        className="carousel-control-prev"
-        type="button"
-        data-bs-target="#staticCarousel"
-        data-bs-slide="prev"
-      >
-        <span className="carousel-control-prev-icon"></span>
-      </button>
-      // {/* ✅ Next 
-      <button
-        className="carousel-control-next"
-        type="button"
-        data-bs-target="#staticCarousel"
-        data-bs-slide="next"
-      >
-        <span className="carousel-control-next-icon"></span>
-      </button>
-    </div>
-    // {/* ✅ Offer Text     
-    <p
-      style={{
-        textAlign: "center",
-        // marginTop: "10px",
-        fontWeight: "700",
-        color: "red",
-      }}
-    >
-      Offer valid till: 30 Apr 2026, 11:59 PM
-    </p>
-  </div>
-</Modal.Body> */}
-  {/* <Modal.Body>
-  {activeOffers.length === 0 ? (
-    <div
-      style={{
-        height: "250px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: "20px",
-        fontWeight: "bold",
-        color: "red",
-      }}
-    >
-      Offer has expired ⏳
-    </div>
-  ) : (
-    activeOffers.map((offer, index) => {
-      const images = Array.isArray(offerImages[offer.id])
-        ? offerImages[offer.id]
-        : [];
-      return (
-        <div key={offer.id} className="p-0">
-          {/* ✅ SINGLE IMAGE *
-          {images.length === 1 && (
-            <img
-              src={images[0]}
-              alt="offer"
-              style={{
-                width: "100%",
-                maxHeight: "500px",
-                objectFit: "contain",
-              }}
-            />
-          )}
-         <p
-         className="blinking"
-          style={{
-            textAlign: "center",
-            marginTop: "10px",
-            fontWeight: "600",
-            color: "red",
-          }}
-        >
-          Offer valid till: {formatDateTime(offer.endDate)}
-        </p> 
-          {/* ✅ MULTIPLE IMAGES *
-          {images.length > 1 && (
-            <div
-              id={`carousel-${index}`}
-              className="carousel slide carousel-fade"
-              data-bs-ride="carousel"
-              data-bs-interval="2000"
-            >
-              <div className="carousel-inner">
-                {images.map((img, i) => (
-                  <div
-                    key={i}
-                    className={`carousel-item ${i === 0 ? "active" : ""}`}
-                  >
-                    <img
-                      src={img}
-                      className="d-block w-100"
-                      alt="offer"
-                      style={{
-                        maxHeight: "500px",
-                        objectFit: "contain",
-                      }}
-                    />
-                  </div>
-                ))}
-              </div>
-              <button
-                className="carousel-control-prev"
-                type="button"
-                data-bs-target={`#carousel-${index}`}
-                data-bs-slide="prev"
-              >
-                <span className="carousel-control-prev-icon"></span>
-              </button>
-              <button
-                className="carousel-control-next"
-                type="button"
-                data-bs-target={`#carousel-${index}`}
-                data-bs-slide="next"
-              >
-                <span className="carousel-control-next-icon"></span>
-              </button>
-            </div>
-          )}
-        </div>
-      );
-    })
-  )}
-</Modal.Body>  */}
-  {/* <Modal.Body>
-     {activeOffers.map((offer, index) => {
-      const images = offerImages[offer.id] || [];
-      return (
-        <div key={offer.id} className="p-0">
-          {/* <h5 className= "fw-bold text-center"  style={{ fontFamily: "Roboto, sans-serif", color: "red" }}>{offer.title}</h5> */}
-          {/* ✅ SINGLE IMAGE 
-          {images.length === 1 && (
-            <img
-              src={images[0]}
-              alt="offer"
-              style={{
-                width: "100%",
-                maxHeight: "500px",
-                objectFit: "contain",
-                display: "block"
-              }}
-            />
-          )}
-          {/* ✅ MULTIPLE IMAGES CAROUSEL 
-            {images.length > 1 && (
-              <div
-                id={`carousel-${index}`}
-                className="carousel slide carousel-fade"
-                data-bs-ride="carousel"
-                data-bs-interval="2000"   
-              >
-                <div className="carousel-inner">
-                  {images.map((img, i) => (
-                    <div
-                      key={i}
-                      className={`carousel-item ${i === 0 ? "active" : ""}`}
-                    >
-                      <img
-                        src={img}
-                        className="d-block w-100"
-                        alt="offer"
-                        style={{
-                          maxHeight: "500px",
-                          objectFit: "contain",
-                          borderRadius: "8px",
-                        }}
-                      />
-                    </div>
-                  ))}
-                </div>
-
-                {/* Controls 
-                <button
-                  className="carousel-control-prev"
-                  type="button"
-                  data-bs-target={`#carousel-${index}`}
-                  data-bs-slide="prev"
-                >
-                  <span className="carousel-control-prev-icon"></span>
-                </button>
-
-                <button
-                  className="carousel-control-next"
-                  type="button"
-                  data-bs-target={`#carousel-${index}`}
-                  data-bs-slide="next"
-                >
-                  <span className="carousel-control-next-icon"></span>
-                </button>
-              </div>
-            )}
-            {/* <p className= "fw-bold"  style={{ fontFamily: "Roboto, sans-serif", color: "red" }}>{offer.description}</p>
-   </div>
-      );
-    })}
-  </Modal.Body> */}
-  {/* <Modal.Body>    */}
-     {/* <ul style={{ paddingLeft: "10px" }}>
-     <li>🛍️ New Users Get  → {" "} 
-  <span style={{ color: "green", fontWeight: "bold" }}>₹50 in Wallet!</span> <br/></li>
-      </ul> */}
-     
-     {/* <div className="container"> */}
-          {/* <div className="row">
-            {offers.map((offer, index) => (
-              <div className="col-6 mb-1" key={index}>
-                <div className="offer-card">
-                  {/*  Image * *
-                  {offer.img ? (
-                    <img src={offer.img} alt="offer" className="offer-img" />
-                  ) : (
-                    <div className="offer-img-box"></div>
-                  )}
-                  {/* Text *
-                 <div className="offer-condition">
-                  {offer.condition.split("|").map((line, i) => (
-                    <div key={i}>{highlightText(line)}</div>
-                  ))}
-                </div>
-                </div>
-              </div>
-            ))}
-          </div> */}
-        {/* </div> */}
-         {/* <div className="text-center">
-        <img  
-          src={Poster} 
-          alt="Grocery Offer Poster"
-          style={{ width: "100%", maxWidth: "500px", height: "50%" }}
-        />
-      </div> */}
-    {/* <div className="text-center">
-       <b style={{ color: "red", fontSize: "14px" }}>
-        💥 Handyman App – No Extra Charges. Pay Only Product Cost After Free Home Delivery.
-      </b> <br/> 
-       <b style={{ color: "green",fontSize: "13px" }}>
-        For any Queries Contact Customer Care: <span style={{color: "red", fontSize: "15px"}}>6281198953</span>
-      </b>
-    </div> */}
-  {/* </Modal.Body> */}
   <Modal.Footer>
     <Button variant="success" onClick={() => setShowOffersModal(false)}> 
       Shop Now 🛒

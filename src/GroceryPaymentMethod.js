@@ -7,11 +7,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Modal, Button, Form } from "react-bootstrap";
 import Footer from "./Footer.js";
-// import Container1Img from './img/199.png';
-// import Container2Img from './img/299.png';
-// import Container3Img from './img/499.png';
-// import Container4Img from './img/599.png';
-// import Container5Img from './img/699.png';
+import Confetti from "react-confetti";
 // import { appConfig } from "./config";
 
 const GroceryPaymentmethod = () => {
@@ -69,7 +65,10 @@ const [isOffersOrder, setIsOffersOrder] = useState(false);
 const [isNewUser, setIsNewUser] = useState(true);
 const isGuestName = (name) => (name ?? "").trim().toLowerCase() === "guest";
 const [loading, setLoading] = useState(false);
-
+const [offerWalletAmount, setOfferWalletAmount] = useState(0);
+const [offerTransactionId, setOfferTransactionId] = useState("");
+const [offerTransaction, setOfferTransaction] = useState(null);
+const [showConfetti, setShowConfetti] = useState(false);
 // const readServerPoints = (record) => {
 // const raw =
 // record?.referralPoints ?? 
@@ -87,75 +86,39 @@ console.log("ZipCode:", primary?.zipCode);
 }, [addresses]);
 
 useEffect(() => {
-console.log( isOffersOrder, error, limit, loading, isChecked, editingAddressId, customerName, groceryId, );
-}, [ isOffersOrder, error, limit, loading,isChecked,editingAddressId,customerName,groceryId,]);
+console.log( offerTransaction, isOffersOrder, error, limit, loading, isChecked, editingAddressId, customerName, groceryId, );
+}, [ offerTransaction, isOffersOrder, error, limit, loading,isChecked,editingAddressId,customerName,groceryId,]);
 
-// if (numericGrandTotal >= 1999) {   
-// cashback = 200;
-// } else if (numericGrandTotal >= 999  ) {
-// cashback = 100;
-// } else if (numericGrandTotal >= 599) {
-//   cashback = 50;
-// } 
 const numericGrandTotal = Number(grandTotal) || 0;
 let cashback = 0;
-// let giftName = "";
-
-// Cashback logic
-if (numericGrandTotal >= 399 && numericGrandTotal <= 699) {
+if (numericGrandTotal >= 399 && numericGrandTotal <= 998) {
   cashback = 30;
 } 
-else if (numericGrandTotal >= 999 && numericGrandTotal <= 1498) {
-  cashback = 100;
-}
-else if (numericGrandTotal >= 1499 && numericGrandTotal <= 1998) {
-  cashback = 150;
+else if (numericGrandTotal >= 999 && numericGrandTotal <= 1998) {
+  cashback = 50;
 }
 else if (numericGrandTotal >= 1999) {
-  cashback = 200;
+  cashback = 100;
 }
 
-// // Gift logic
-// if (numericGrandTotal >= 1699 && numericGrandTotal <= 1998) {
-//   giftName = "Paras Miracle Unbreakable Pedal Dustbin";
-// }
-// else if (numericGrandTotal >= 2499) {
-//   giftName = "Oliveware Easy Meal Lunch Box Set";
-// }
-
-// let extraItem = null;
-// let updatedGrandTotal = numericGrandTotal;
-
-// if (numericGrandTotal >= 299) {
-//   extraItem = {
-//     name: "Visakha Dairy Happy Full Cream Milk 500 ml",
-//     price: 1,
-//   };
-
-//   updatedGrandTotal = numericGrandTotal + 1;
-// }
 const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;
-
-const showSugarOffer = Number(grandTotal) >= 699 && Number(grandTotal) <= 998;
-// const showAttaOffer = Number(grandTotal) >= 499 && Number(grandTotal) <= 999;
-// const discount = Number(firstOrderDiscount || 0);
-// const referral = Number(referralAmount) || 0;
+// const showSugarOffer = Number(grandTotal) >= 699 && Number(grandTotal) <= 998;
 const primaryAddress = addresses.find((addr) => addr.type === "primary");
-const wallet = Number(primaryAddress?.walletAmount || 0);
+const wallet = Number(offerWalletAmount || 0);
 const gt = Number(grandTotal || 0);
-const netPayables = gt  - wallet - cashback;     
-// const netPayables = gt - discount - wallet - referral - cashback;  
+// FIRST ORDER
+let walletToUse = 0;
 
-// useEffect(() => {
-//   if (firstOrderDiscount > 0) {
-//     setShowConfetti(true);
-//     setTimeout(() => setShowConfetti(false), 4000);
-//   }
-// }, [firstOrderDiscount]);
+if (wallet > 0 && gt >= 100) {
+  const eligibleWalletUsage = Math.floor(gt / 100) * 10;
 
+  walletToUse = Math.min(wallet, eligibleWalletUsage);
+}
 
-
-
+// Final payable amount
+const netPayables = gt - walletToUse;
+const remainingWallet = wallet - walletToUse;    
+const finalWalletBalance = remainingWallet + cashback;
   // const getUserLocation = () => {
   //   return new Promise((resolve, reject) => {
   //     if (!navigator.geolocation) {
@@ -182,23 +145,13 @@ const netPayables = gt  - wallet - cashback;
   //   });
   // };
 
-
-
-// useEffect(() => {
-// const gt = Number(grandTotal) || 0;
-// const pts = Number(referralPoints) || 0;
-// const applied = Math.min(pts, gt);
-// setReferralAmount(applied);
-// setNetPayable(Math.max(0, gt - applied));
-// }, [grandTotal, referralPoints]);
-
 useEffect(() => {
 const fetchCart = async () => {
 if (!groceryItemId) return;
 const ctrl = new AbortController();
 try {
 const res1 = await fetch(
-`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`,
+`https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Mart/GetProductDetails?id=${groceryItemId}`,
 { signal: ctrl.signal },
 );
 if (!res1.ok) throw new Error("Failed to fetch product details");
@@ -218,7 +171,6 @@ setMartId(data.martId);
 setGrandTotal(data.grandTotal);
 setTotalItemsSelected(data.totalItemsSelected);
 setCustomerName(data.customerName);
-// setWalletAmount(data.walletAmount);
 setLimit(data.limit);
 
 const products = (data?.categories ?? []).flatMap(
@@ -239,7 +191,7 @@ setgroceryId(null);
 return;
 }
 const requests = productNames.map(async (name) => {
-const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
+const url = `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
            name,
          )}`;
 const res = await fetch(url, { signal: ctrl.signal });
@@ -276,17 +228,9 @@ return () => ctrl.abort();
 fetchCart();
 }, [groceryItemId]);
 
-// const goBackToCart = () => {
-// if (isOffersOrder) {
-// navigate(`/groceryOffersCart/${userType}/${userId}`);
-// } else {
-// navigate(`/groceryCart/${userType}/${userId}`);
-// }
-// };
-
 // const getReferralRecord = async (userId) => {
 // if (!userId) return null;
-// const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
+// const url = `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
 // const res = await fetch(url);     
 // const text = await res.text();
 // let data = []; 
@@ -296,7 +240,7 @@ fetchCart();
 // return data[0];
 // }
 // return null; 
-// };
+// }; 
 
 // useEffect(() => {
 // let cancelled = false;
@@ -328,7 +272,7 @@ fetchCart();
 const fetchCustomerData = useCallback(async () => {
 try {
 const response = await fetch(
-`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Address/GetAddressById/${userId}`,
+`https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Address/GetAddressById/${userId}`,
 );
 if (!response.ok) {
 throw new Error("Failed to fetch customer profile data");
@@ -363,6 +307,36 @@ console.error("Error fetching customer data:", error);
 }, [userId]);
 
 useEffect(() => {
+  const fetchOfferWalletAmount = async () => {
+    try {
+      const response = await fetch(
+        `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/OffersTransactions/GetOfferTransactionByUserId?userId=${userId}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch offer transaction details");
+      }
+      const data = await response.json();
+      console.log("Offer Transaction Response:", data);
+      if (Array.isArray(data) && data.length > 0) {
+        const latestTransaction = data[data.length - 1];
+        setOfferTransaction(latestTransaction);
+        setOfferTransactionId(latestTransaction.id);
+        const remaining = Number(latestTransaction?.remainingAmount || 0);
+        setOfferWalletAmount(remaining);
+      }
+    } catch (error) {
+      console.error(
+        "Error fetching offer wallet amount:",
+        error
+      );
+    }
+  };
+  if (userId) {
+    fetchOfferWalletAmount();
+  }
+}, [userId]);
+
+useEffect(() => {
 const primary = addresses.find((addr) => addr.type === "primary");
 const district = primary?.district?.toLowerCase();
 const walletAmount = Number(primaryAddress?.walletAmount || 0);
@@ -380,7 +354,7 @@ fetchCustomerData();
 
 useEffect(() => {
 axios
-.get(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/MasterData/getStates`)
+.get(`https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/MasterData/getStates`)
 .then((response) => {
 const data = response.data;
 console.log("States API Response:", data);
@@ -395,7 +369,7 @@ console.log("Wallet Amount:", walletAmount);
 useEffect(() => {
 if (stateId) {   
 axios
-.get(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
+.get(`https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/MasterData/getDistricts/${stateId}`)
 .then((response) => {
 setDistrictList(response.data);
 })
@@ -459,12 +433,12 @@ userId: userId,
 firstName: fullName,
 lastName: "lastName",
 fullName: fullName,
-WalletAmount: String(primaryAddress?.walletAmount || 0),
+WalletAmount: "0",
 };
 
 try {
 const response = await fetch(
-`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Customer/CustomerAddressEdit`,
+`https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Customer/CustomerAddressEdit`,
 {
 method: "POST",
 headers: {
@@ -497,79 +471,6 @@ alert("Failed to edit address. Please try again later.");
 };
 
 console.log("Address:", primaryAddress);
-const handleUpdateUserWalletAmount = async () => {
-const primaryAddress = addresses.find((addr) => addr.type === "primary");
-const state = primaryAddress?.state;
-const district = primaryAddress?.district || "";
-// const pincode = primaryAddress?.zipCode || primaryAddress?.pincode;
-const mobileNumber =
-primaryAddress?.mobileNumber || primaryAddress?.mobileNumber;
-
-const updatedAddress = {
-id: guestCustomerId,
-fullName,
-mobileNumber,
-address: newAddress,
-state,
-district,
-zipCode,
-};
-
-const payload3 = {
-id: primaryAddress?.id,
-profileType: "profileType",
-addressId: primaryAddress?.id,
-isPrimaryAddress: true,
-address: primaryAddress?.address,
-state: primaryAddress?.state,
-district: primaryAddress?.district,
-StateId: stateId,
-DistrictId: districtId,
-zipCode: primaryAddress?.zipCode,
-mobileNumber: primaryAddress?.mobileNumber,
-emailAddress: "emailAddress",
-userId: userId,
-firstName: primaryAddress?.fullName,
-lastName: "lastName",
-fullName: primaryAddress?.fullName,
-WalletAmount: "0",
-};
-
-try {
-const response = await fetch(
-`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Customer/CustomerAddressEdit`,
-{
-method: "POST",
-headers: {
-"Content-Type": "application/json",
-},
-body: JSON.stringify(payload3),
-},
-);
-if (!response.ok) {
-const errorText = await response.text();
-console.error("Error Response:", errorText);
-throw new Error("Failed to edit address.");
-}
-console.log("New fdsafdsf Addresass", primaryAddress?.address);
-
-setAddresses((prev) =>
-prev.map((addr) =>
-addr.id === guestCustomerId ? updatedAddress : addr,
-),
-);
-setAddressData(updatedAddress);
-await fetchCustomerData();
-
-setShowModal(false);
-resetAddressForm();
-setIsEditing(false);
-setEditingAddressId(null);
-} catch (error) {
-console.error("Error editing address:", error);
-alert("Failed to edit address. Please try again later.");
-}
-};
 
 const isAddressInvalid =
 !primaryAddress || !primaryAddress.address || !primaryAddress.zipCode;
@@ -615,7 +516,9 @@ const district = primaryAddress?.district || "";
 const pincode = primaryAddress?.zipCode || primaryAddress?.pincode;
 const mobileNumber =
 primaryAddress?.mobileNumber || primaryAddress?.mobileNumber;
-
+const existingWallet = Number(wallet || 0);
+const walletAfterUsage = existingWallet - walletToUse;
+const updatedWalletAmount = walletAfterUsage + cashback;
 const payload = {
 ...cartData,
 customerName: addressData.fullName || fullName,
@@ -642,6 +545,9 @@ latitude: 0,
 longitude: 0,                 
 isPickUp: false,
 isDelivered: false,
+ totalWalletAmount: String(updatedWalletAmount),
+  availedAmount: String(walletToUse),
+  remainingAmount: String(updatedWalletAmount),
 walletAmount: walletAmount,
 deliveryAssignedTime: "",
 deliverySubmitTime: "",
@@ -649,7 +555,7 @@ deliverySubmitTime: "",
 };
             
 let response = await fetch(
-`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+`https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Mart/UpdateProductDetails/${groceryItemId}`,
 {
 method: "PUT",
 headers: { "Content-Type": "application/json" },
@@ -660,6 +566,35 @@ body: JSON.stringify(payload),
 if (!response.ok) {
 throw new Error("Failed to update order.");
 }
+
+const offersTransactionPayload = {
+  id: offerTransactionId, 
+  userId: userId,
+  createdDate: offerTransaction?.createdDate,
+  updatedDate: new Date().toISOString(),
+  ticketId: martId,
+  totalWalletAmount: String(updatedWalletAmount),
+  availedAmount: String(walletToUse),
+  remainingAmount: String(updatedWalletAmount),
+};
+
+const offersResponse = await fetch(
+  `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/OffersTransactions/UpdateOffersTransactionsDetails/${offerTransactionId}`,
+  {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(offersTransactionPayload),
+  }
+);
+
+if (!offersResponse.ok) {
+  const errorText = await offersResponse.text();
+  console.error("Offers Transaction API Error:", errorText);
+}
+const offersResult = await offersResponse.json();
+console.log("Offers Transaction Success:",offersResult);
 
 // if (referralAmount > 0 && referralRec?.id) {
 // try {
@@ -674,7 +609,7 @@ throw new Error("Failed to update order.");
 // };
 
 // let resp = await fetch(
-// `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(id)}`,
+// `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(id)}`,
 // {
 // method: "PUT",
 // headers: { "Content-Type": "application/json; charset=utf-8" },
@@ -684,7 +619,7 @@ throw new Error("Failed to update order.");
 
 // if (!resp.ok) {
 // resp = await fetch(
-// `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints/${encodeURIComponent(id)}`,
+// `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/ReferralPoints/UpdateReferralPoints/${encodeURIComponent(id)}`,
 // {
 // method: "PUT",
 // headers: { "Content-Type": "application/json; charset=utf-8" },
@@ -710,7 +645,7 @@ localStorage.removeItem(`cartMeta_${groceryItemId}`);
 
 // if (selectedPayment === "online") {
 // response = await fetch(
-// `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+// `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Mart/UpdateProductDetails/${groceryItemId}`,
 // {
 // method: "PUT",
 // headers: {
@@ -733,7 +668,7 @@ localStorage.removeItem(`cartMeta_${groceryItemId}`);
 // window.location.href = `/groceryOnlinePayment/${groceryItemId}`;
 // } else if (selectedPayment === "cash") {
 // response = await fetch(
-// `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+// `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Mart/UpdateProductDetails/${groceryItemId}`,
 // {
 // method: "PUT",
 // headers: {
@@ -751,15 +686,14 @@ localStorage.removeItem("allCategories");
 localStorage.removeItem(`cartMeta_${groceryItemId}`);
 const primary = addresses.find((a) => a.type === "primary");
 console.log("ZipCode:", primary?.zipCode);
-if (primary?.zipCode === "530048" || primary?.zipCode === "530045") {
+// if (primary?.zipCode === "530048" || primary?.zipCode === "530045") {
 window.alert(
-`Thank You for Choosing the Handyman App Lakshmi Mart Services! Your Reference Order Number is ${martId}. Delivery Time Intimated Shortly!.`,
+`🎉 Thank You for Choosing the Handyman App Lakshmi Mart Services! Your Reference Order Number is ${martId}.
+  Cashback Earned: ₹${cashback}
+  Wallet Used: ₹${walletToUse}
+  Current Wallet Balance: ₹${updatedWalletAmount}.
+  Delivery Time Intimated Shortly!. 🎉`,
 );
-} else {
-window.alert(
-`Thank You for Choosing the Handyman App Lakshmi Mart Services! Your Reference Order Number is ${martId}. Delivery Time Intimated Shortly!.`,
-);
-}
 window.location.href = `/profilePage/${userType}/${userId}`;
 } catch (error) {
 console.error("Error:", error);
@@ -830,7 +764,7 @@ Units: item.units,
 Limit: item.limit || 0,
 };
 const res = await fetch(
-`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${encodeURIComponent(item.id)}`,
+`https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/UploadGrocery/UpdateGroceryItems?id=${encodeURIComponent(item.id)}`,
 {
 method: "PUT",
 headers: { "Content-Type": "application/json" },
@@ -858,7 +792,7 @@ const primaryAddress = addresses.find((addr) => addr.type === "primary");
 const mobileNumber =
 primaryAddress?.mobileNumber || primaryAddress?.mobileNumber;
 const response = await fetch(
-`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Auth/sendLmartsms`,
+`https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Auth/sendLmartsms`,
 {
 method: "POST",
 headers: {
@@ -886,11 +820,11 @@ console.error("Error sending SMS:", error);
 
 const handlePaymentAndSms = async () => {
 try {
+  setShowConfetti(true);
 setLoading(true);
 await Promise.all([
 handleUpdateStockLeft(),
 sendLmartsms(),
-handleUpdateUserWalletAmount(),
 handleUpdatePaymentMethod(),
 ]);
 } catch (error) {
@@ -1184,11 +1118,23 @@ customer support at 6281198953.
 <span className="name">{fullName}</span> Thank you for Choosing
 the Lakshmi Mart
 </p>
-
-<div style={{ textAlign: "center" }}>
+{wallet > 0 && (
+  <div
+    className="text-danger mt-1"
+    style={{
+      fontSize: "14px",
+      fontWeight: "600",
+      textAlign: "center",
+    }}
+  >
+    🎉 Thank you! your remaining wallet balance will be{" "}
+    <span style={{ color: "red" }}>₹{finalWalletBalance}</span>.
+  </div>
+)}
+{/* <div style={{ textAlign: "center" }}>
 {cashback  > 0 && (
 <span style={{ whiteSpace: "nowrap", color: "green" }}>
-🎉 You have got
+🎉 Your remaining wallet balance will be{" "}
 <span style={{ fontWeight: "bold", color: "red" }}> Rs </span>
 <span style={{ fontWeight: "bold", color: "red" }}>
 {cashback }
@@ -1199,7 +1145,7 @@ cashback!
 </span>
 </span>
 )}
-</div>
+</div> */}
 <table className="grocery-table m-2">
 <tbody>
 <tr>
@@ -1212,99 +1158,21 @@ Number of Items selected
 </td>
 <td style={{ width: "40%" }}>{totalItemsSelected}</td>
 </tr>
-{/* {freeItemImage && (
-                 <tr>
-                   <td colSpan="2" style={{ padding: "5px" }}>
-                     <div
-                       style={{
-                         display: "flex",
-                         flexDirection: "column",
-                         alignItems: "center",
-                         width: "100%",
-                       }}
-                     >
-                       <div
-                         style={{
-                           width: "100%",
-                           textAlign: "center",
-                           fontSize: "14px",
-                           fontWeight: "bold",
-                           color: "green",
-                           marginBottom: "2px",
-                         }}
-                       >
-                         🎁 Congratulations! You got a FREE item
-                       </div>
-
-                       <img
-                         src={freeItemImage}
-                         alt="Free Item"
-                         style={{
-                           width: "90px",
-                           height: "90px",
-                           objectFit: "contain",
-                         }}
-                       />
-                     </div>
-                   </td>
-                 </tr>
-               )} */}
-               {/* {giftName && (
-                <tr>
-                <td style={{ width: "40%", fontSize: "14px", color: "green" }}>
-                🎁 Free Gift
-                </td>
-                <td style={{ width: "40%", fontSize: "14px", color: "green", fontWeight: "bold" }}>
-                {giftName}
-                </td>
-                </tr>
-                )} */}
-               {/* {extraItem && (
-                    <tr>
-                      <td style={{ color: "green", fontSize: "14px" }}>
-                        🎁 Special Offer Item
-                      </td>
-                      <td style={{ color: "green", fontWeight: "bold" }}>
-                        {extraItem.name} - ₹{extraItem.price}
-                      </td>
-                    </tr>
-                  )} */}
-
                     <tr>
                     <td style={{ width: "40%", fontSize: "14px" }}>
                     Grand Total
                     </td>
                     <td style={{ width: "40%" }}>Rs {grandTotal} /-</td>
                     </tr>
-                    {/* {wallet  > 0 && (    
-                    <tr>
-                    <td style={{ width: "40%", fontSize: "14px",color: "red" }}>
-                    Wallet Amount
-                    </td>
-                    <td style={{ width: "40%", fontSize: "14px", color: "red" }}>
-                    {`Rs ${wallet } /-`}
-                    </td>
-                    </tr>
-                    )} */}
-{showSugarOffer && (
+{/* {showSugarOffer && (
                            <tr>     
                              <td colSpan="2" style={{ textAlign: "center" }}>
                                <div style={{ fontSize: "13px", fontWeight: 600, color: "red" }}>
                                  🎁 FREE Sugar 1 Kg
                                </div>
-                               {/* <img
-                       src={freeItemImage}
-                       alt="Free Item"
-                       style={{
-                         width: "100px",    
-                         height: "100px",
-                         objectFit: "contain",   
-                         display: "block",
-                       }}
-                     /> */}
                              </td>
                            </tr>
-                         )} 
+                         )}  */}
 {cashback  > 0 && (
 <tr>
 <td style={{ width: "40%", fontSize: "14px",color: "red" }}>
@@ -1317,15 +1185,22 @@ Cash Back
 )}
 
 {wallet > 0 && (
+<>
 <tr>
-<td style={{ width: "40%", fontSize: "14px", color: 'red' }}>
-First Order Wallet Amount 
-</td>
-
-<td style={{ width: "40%", fontSize: "14px", color: 'red' }}>
-{`Rs ${wallet} /-`}
-</td>     
+<td style={{ color: "red" }}>Balance</td>
+<td style={{ color: "red" }}>Rs {wallet} /-</td>
 </tr>
+
+<tr>
+<td style={{ color: "green" }}>Used</td>
+<td style={{ color: "green" }}>Rs {walletToUse} /-</td>
+</tr>
+
+<tr>
+<td style={{ color: "red" }}>Remaining</td>
+<td style={{ color: "red" }}>Rs {remainingWallet} /-</td>
+</tr>
+</>
 )}
 {/* {Number(referralAmount) > 0 && (     
              <tr>
@@ -1543,6 +1418,27 @@ isAddressInvalid
 </div>
 </div>
 </div>
+{showConfetti && (
+  <div
+    style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100vw",
+      height: "100vh",
+      zIndex: 9999,
+      pointerEvents: "none",
+    }}
+  >
+    <Confetti
+      width={window.innerWidth}
+      height={window.innerHeight}
+      recycle={false}
+      numberOfPieces={600}
+      gravity={0.25}
+    />
+  </div>
+)}
 <Footer />
 {/* Styles for floating menu */}
 <style jsx>{`
@@ -1679,15 +1575,8 @@ export default GroceryPaymentmethod;
 //   cashback = 50;
 // } 
 //   const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;
-
-//   // const showSugarOffer = Number(grandTotal) >= 299 && Number(grandTotal) <= 398;
-//   // const showAttaOffer = Number(grandTotal) >= 499 && Number(grandTotal) <= 999;
-//   // const gt = Number(grandTotal || 0);
-//   // const discount = Number(firstOrderDiscount || 0);
-//   // const referral = Number(referralAmount) || 0;
 //   const primaryAddress = addresses.find((addr) => addr.type === "primary");
 //   const wallet = Number(primaryAddress?.walletAmount || 0);
-// // const netPayables = gt - wallet - cashback;     
 // const walletAmountNum = Number(wallet) || 0;
 // const referralPointsNum = Number(referralPoints) || 0;
 // const MAX_PER_ORDER = 50;
@@ -1699,16 +1588,7 @@ export default GroceryPaymentmethod;
 // else if (referralPointsNum > 0) {
 //   referralUsed = Math.min(referralPointsNum, MAX_PER_ORDER, numericGrandTotal);
 // }
-// // final payable
 // const totalPayable = Math.max( 0, numericGrandTotal - (walletUsed + referralUsed));
-// // const netPayables = gt - discount - wallet - referral - cashback;  
-
-//   // useEffect(() => {
-//   //   if (firstOrderDiscount > 0) {
-//   //     setShowConfetti(true);
-//   //     setTimeout(() => setShowConfetti(false), 4000);
-//   //   }
-//   // }, [firstOrderDiscount]);
 
 //   useEffect(() => {
 //     const gt = Number(grandTotal) || 0;
@@ -1725,7 +1605,7 @@ export default GroceryPaymentmethod;
 //       const ctrl = new AbortController();
 //       try {
 //         const res1 = await fetch(
-//           `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`,
+//           `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Mart/GetProductDetails?id=${groceryItemId}`,
 //           { signal: ctrl.signal },
 //         );
 //         if (!res1.ok) throw new Error("Failed to fetch product details");
@@ -1766,7 +1646,7 @@ export default GroceryPaymentmethod;
 //           return;
 //         }
 //         const requests = productNames.map(async (name) => {
-//           const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
+//           const url = `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
 //             name,
 //           )}`;
 //           const res = await fetch(url, { signal: ctrl.signal });
@@ -1813,7 +1693,7 @@ export default GroceryPaymentmethod;
 
 //   const getReferralRecord = async (userId) => {
 //   if (!userId) return null;
-//   const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
+//   const url = `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
 //   const res = await fetch(url);     
 //   const text = await res.text();
 //   let data = []; 
@@ -1855,7 +1735,7 @@ export default GroceryPaymentmethod;
 //   const fetchCustomerData = useCallback(async () => {
 //     try {
 //       const response = await fetch(
-//         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Address/GetAddressById/${userId}`,
+//         `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Address/GetAddressById/${userId}`,
 //       );
 //       if (!response.ok) {
 //         throw new Error("Failed to fetch customer profile data");
@@ -1907,7 +1787,7 @@ export default GroceryPaymentmethod;
 
 //   useEffect(() => {
 //     axios
-//       .get(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/MasterData/getStates`)
+//       .get(`https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/MasterData/getStates`)
 //       .then((response) => {
 //         const data = response.data;
 //         console.log("States API Response:", data);
@@ -1923,7 +1803,7 @@ export default GroceryPaymentmethod;
 //   useEffect(() => {
 //     if (stateId) {
 //       axios
-//         .get(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
+//         .get(`https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/MasterData/getDistricts/${stateId}`)
 //         .then((response) => {
 //           setDistrictList(response.data);
 //         })
@@ -1992,7 +1872,7 @@ export default GroceryPaymentmethod;
 
 //     try {
 //       const response = await fetch(
-//         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Customer/CustomerAddressEdit`,
+//         `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Customer/CustomerAddressEdit`,
 //         {
 //           method: "POST",
 //           headers: {
@@ -2065,7 +1945,7 @@ export default GroceryPaymentmethod;
 
 //     try {
 //       const response = await fetch(
-//         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Customer/CustomerAddressEdit`,
+//         `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Customer/CustomerAddressEdit`,
 //         {
 //           method: "POST",
 //           headers: {
@@ -2166,7 +2046,7 @@ export default GroceryPaymentmethod;
 //       };
  
 //       let response = await fetch(
-//         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+//         `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Mart/UpdateProductDetails/${groceryItemId}`,
 //         {
 //           method: "PUT",
 //           headers: { "Content-Type": "application/json" },
@@ -2192,7 +2072,7 @@ export default GroceryPaymentmethod;
 //           };
 
 //           let resp = await fetch(
-//             `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(id)}`,
+//             `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(id)}`,
 //             {
 //               method: "PUT",
 //               headers: { "Content-Type": "application/json; charset=utf-8" },
@@ -2202,7 +2082,7 @@ export default GroceryPaymentmethod;
 
 //           if (!resp.ok) {
 //             resp = await fetch(
-//               `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints/${encodeURIComponent(id)}`,
+//               `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/ReferralPoints/UpdateReferralPoints/${encodeURIComponent(id)}`,
 //               {
 //                 method: "PUT",
 //                 headers: { "Content-Type": "application/json; charset=utf-8" },
@@ -2228,7 +2108,7 @@ export default GroceryPaymentmethod;
 
 //       if (selectedPayment === "online") {
 //         response = await fetch(
-//           `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+//           `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Mart/UpdateProductDetails/${groceryItemId}`,
 //           {
 //             method: "PUT",
 //             headers: {
@@ -2251,7 +2131,7 @@ export default GroceryPaymentmethod;
 //         window.location.href = `/groceryOnlinePayment/${groceryItemId}`;
 //       } else if (selectedPayment === "cash") {
 //         response = await fetch(
-//           `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+//           `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Mart/UpdateProductDetails/${groceryItemId}`,
 //           {
 //             method: "PUT",
 //             headers: {
@@ -2349,7 +2229,7 @@ export default GroceryPaymentmethod;
 //           Limit: item.limit || 0,
 //         };
 //         const res = await fetch(
-//           `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${encodeURIComponent(item.id)}`,
+//           `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/UploadGrocery/UpdateGroceryItems?id=${encodeURIComponent(item.id)}`,
 //           {
 //             method: "PUT",
 //             headers: { "Content-Type": "application/json" },
@@ -2377,7 +2257,7 @@ export default GroceryPaymentmethod;
 //       const mobileNumber =
 //         primaryAddress?.mobileNumber || primaryAddress?.mobileNumber;
 //       const response = await fetch(
-//         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Auth/sendLmartsms`,
+//         `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Auth/sendLmartsms`,
 //         {
 //           method: "POST",
 //           headers: {
@@ -3214,7 +3094,7 @@ export default GroceryPaymentmethod;
 // // final payable
 // const getReferralRecord = async (userId) => {
 //   if (!userId) return null;
-//   const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
+//   const url = `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
 //   const res = await fetch(url);     
 //   const text = await res.text();
 //   let data = []; 
@@ -3259,7 +3139,7 @@ export default GroceryPaymentmethod;
 //     const ctrl = new AbortController();
 //     try {
 //       const res1 = await fetch(
-//         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`,
+//         `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Mart/GetProductDetails?id=${groceryItemId}`,
 //         { signal: ctrl.signal }
 //       );
 //       if (!res1.ok) throw new Error("Failed to fetch product details");
@@ -3293,7 +3173,7 @@ export default GroceryPaymentmethod;
 //         return;
 //       }
 //       const requests = productNames.map(async (name) => {
-//         const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
+//         const url = `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
 //           name
 //         )}`;
 //         const res = await fetch(url, { signal: ctrl.signal });
@@ -3337,7 +3217,7 @@ export default GroceryPaymentmethod;
 
 //  const fetchCustomerData = useCallback(async () => {
 //       try {
-//         const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Address/GetAddressById/${userId}`);
+//         const response = await fetch(`https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Address/GetAddressById/${userId}`);
 //         if (!response.ok) {
 
 //           throw new Error('Failed to fetch customer profile data');
@@ -3380,7 +3260,7 @@ export default GroceryPaymentmethod;
 //   }, [fetchCustomerData]);
 
 //   useEffect(() => {
-//     axios.get('https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/MasterData/getStates')
+//     axios.get('https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/MasterData/getStates')
 //       .then(response => {
 //         const data = response.data;
 //         console.log("States API Response:", data); 
@@ -3394,7 +3274,7 @@ export default GroceryPaymentmethod;
   
 //    useEffect(() => {
 //     if (stateId) {
-//       axios.get(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
+//       axios.get(`https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/MasterData/getDistricts/${stateId}`)
 //         .then(response => {
 //           setDistrictList(response.data);
 //         })
@@ -3462,7 +3342,7 @@ export default GroceryPaymentmethod;
 //       };
     
 //       try {
-//         const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Customer/CustomerAddressEdit`, {
+//         const response = await fetch(`https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Customer/CustomerAddressEdit`, {
 //           method: 'POST',
 //           headers: {
 //             'Content-Type': 'application/json',
@@ -3555,7 +3435,7 @@ export default GroceryPaymentmethod;
 //     };
 
 //     let response = await fetch(
-//       `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+//       `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Mart/UpdateProductDetails/${groceryItemId}`,
 //       {
 //         method: "PUT",
 //         headers: { "Content-Type": "application/json" },
@@ -3582,7 +3462,7 @@ export default GroceryPaymentmethod;
 //         };
 
 //         let resp = await fetch(
-//           `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(id)}`,
+//           `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(id)}`,
 //           {
 //             method: "PUT",
 //             headers: { "Content-Type": "application/json; charset=utf-8" },
@@ -3592,7 +3472,7 @@ export default GroceryPaymentmethod;
 
 //         if (!resp.ok) {
 //           resp = await fetch(
-//             `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints/${encodeURIComponent(id)}`,
+//             `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/ReferralPoints/UpdateReferralPoints/${encodeURIComponent(id)}`,
 //             {
 //               method: "PUT",
 //               headers: { "Content-Type": "application/json; charset=utf-8" },
@@ -3618,7 +3498,7 @@ export default GroceryPaymentmethod;
 //     localStorage.removeItem(`cartMeta_${groceryItemId}`);
 
 //    if (selectedPayment === 'online') {
-//      response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`, {
+//      response = await fetch(`https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Mart/UpdateProductDetails/${groceryItemId}`, {
 //       method: 'PUT',
 //       headers: {
 //         'Content-Type': 'application/json',
@@ -3636,7 +3516,7 @@ export default GroceryPaymentmethod;
 //     window.alert(`We are Redirecting to the Payment Page! Your reference number is ${martId}.`);
 //     window.location.href = `/groceryOnlinePayment/${groceryItemId}`;
 //   } else if (selectedPayment === 'cash') {
-//     response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`, {
+//     response = await fetch(`https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Mart/UpdateProductDetails/${groceryItemId}`, {
 //       method: 'PUT',
 //       headers: {
 //         'Content-Type': 'application/json',
@@ -3699,7 +3579,7 @@ export default GroceryPaymentmethod;
 
 //     try {
 //       const response = await fetch(
-//         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Customer/CustomerAddressEdit`,
+//         `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Customer/CustomerAddressEdit`,
 //         {
 //           method: "POST",
 //           headers: {
@@ -3804,7 +3684,7 @@ export default GroceryPaymentmethod;
 //         Limit: item.limit || 0,
 //       };
 //       const res = await fetch(
-//         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${encodeURIComponent(item.id)}`,
+//         `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/UploadGrocery/UpdateGroceryItems?id=${encodeURIComponent(item.id)}`,
 //         {
 //           method: "PUT",
 //           headers: { "Content-Type": "application/json" },
@@ -3830,7 +3710,7 @@ export default GroceryPaymentmethod;
 //   try {
 //     const primaryAddress = addresses.find((addr) => addr.type === "primary");
 //     const mobileNumber = primaryAddress?.mobileNumber || primaryAddress?.mobileNumber; 
-//     const response = await fetch("https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Auth/sendLmartsms", {
+//     const response = await fetch("https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Auth/sendLmartsms", {
 //       method: "POST",
 //       headers: {
 //         "Content-Type": "application/json",

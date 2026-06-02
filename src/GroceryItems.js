@@ -15,15 +15,11 @@ import ImageCache from "./utils/ImageCache";
 import Footer from "./Footer.js";
 // import { appConfig } from "./config";
 
-// import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-// import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 const GroceryCard = () => {
 const navigate = useNavigate();
-// const location = useLocation();
 const { userType, userId, selectedUserType } = useParams();
 const location = useLocation();
 const encodedCategory = location.state?.encodedCategory || localStorage.getItem("encodedCategory");
-// const [selectedCategory, setSelectedCategory] = useState("");
 const [selectedCategory, setSelectedCategory] = useState(null);
 const [isMobile, setIsMobile] = useState(false);
 const [showMenu, setShowMenu] = useState(false);
@@ -38,6 +34,9 @@ const [searchQuery, setSearchQuery] = useState('');
 const [likedProducts, setLikedProducts] = useState({}); 
 const [zoomProduct, setZoomProduct] = useState(null);
 const [grandSummary, setGrandSummary] = useState({ items: 0, total: 0 });
+const FREE_DELIVERY_LIMIT = 150;
+const total = Number(grandSummary?.total || 0);
+const amountNeeded = FREE_DELIVERY_LIMIT - total;
 
 useEffect(() => {
 console.log(checked, imageLoading, grandSummary);
@@ -82,8 +81,6 @@ units: product?.units || "",
 CartStorage.upsertCategory(selectedCategory, current);
 setGrandSummary(CartStorage.grandSummary());
 }, [cart, selectedCategory, products]);
-
-// const handleAdd = (productId) => setCart(prev => ({ ...prev, [productId]: 1 }));
 
 const handleIncrement = (productId) =>
 setCart(prev => {
@@ -138,7 +135,6 @@ const stock = Number(product?.stockLeft || 0);
 const limit = getLimit(product);
 if (stock <= 0) return; 
 if(limit <= 0) return;
-// handleAdd(id);
 setCart(prev => ({ ...prev, [id]: 1}));
 setChecked(true);
 };
@@ -173,80 +169,6 @@ const idNum = Number(String(p.id || "").replace(/\D/g, "")) || 0;
 return idNum;
 }
 
-// useEffect(() => {
-//   if (!encodedCategory) return;
-//   const decodedCat = decodeURIComponent(encodedCategory);
-//   setSelectedCategory(decodedCat);
-//   const controller = new AbortController();
-//   let cancelled = false;
-//   async function fetchProductsAndFirstImages() {
-//     try {
-//       setImageLoading(true);
-//       const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
-//       const { data: items } = await axios.get(url, { signal: controller.signal });
-//       const safeItems = Array.isArray(items) ? items : [];
-//       if (cancelled) return;
-//       const sorted = [...safeItems].sort((a, b) => {
-//         const tb = getItemTime(b);
-//         const ta = getItemTime(a);
-//         if (tb !== ta) return tb - ta;   
-//         return String(b.id).localeCompare(String(a.id));
-//       }); 
-//       const firstImages = safeItems
-//         .map(p => ({ productId: p.id, photo: Array.isArray(p.images) ? p.images[0] : null }))
-//         .filter(x => !!x.photo);
-//       const cachedMap = {};
-//       const misses = [];
-//       for (const { productId, photo } of firstImages) {
-//         const cached = ImageCache.getBase64(photo);
-//         if (cached) {
-//           cachedMap[productId] = [`data:image/jpeg;base64,${cached}`];
-//         } else {
-//           misses.push({ productId, photo });
-//         }
-//       }
-//       setProducts(sorted);
-//       if (Object.keys(cachedMap).length) setImageUrls(prev => ({ ...prev, ...cachedMap }));
-//       if (cancelled) return;
-//       const fetchOne = async ({ productId, photo }) => {
-//         try {
-//           const res = await fetch(
-//             `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
-//             { signal: controller.signal }
-//           );
-//           const json = await res.json();
-//           const b64 = json?.imageData || "";
-//           if (!b64) return;
-//           ImageCachehandymanapiv14-cvccacc0cbggefds.centralindia-01.azurewebsites.net.setBase64(photo, b64);
-//           const dataUrl = `data:image/jpeg;base64,${b64}`;
-//           if (!cancelled) {
-//             setImageUrls(prev => {
-//               if (prev[productId]?.[0] === dataUrl) return prev;
-//               return { ...prev, [productId]: [dataUrl] };
-//             });
-//           }
-//         } catch (e) {
-//         }
-//       };
-
-//       await Promise.allSettled(misses.map(fetchOne));
-//     } catch (err) {
-//       if (err?.name !== "CanceledError" && err?.name !== "AbortError") {
-//         console.error("Error fetching grocery products:", err);
-//         setProducts([]);
-//         setImageUrls({});
-//       }
-//     } finally {
-//       if (!cancelled) setImageLoading(false);
-//     }
-//   }
-//   fetchProductsAndFirstImages();
-//   return () => {
-//     cancelled = true;
-//     controller.abort();
-//   };
-// }, [encodedCategory]);
-
 useEffect(() => {
 if (!encodedCategory) return;
 const decodedCat = decodeURIComponent(encodedCategory);
@@ -258,7 +180,7 @@ const controller = new AbortController();
 async function fetchProductsAndFirstImages(warm = false, signal) {
 try {
 if (!warm) setImageLoading(true);
-const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
+const url = `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
 const { data: items } = await axios.get(url, { signal });
 const safeItems = Array.isArray(items) ? items : [];
 if (cancelled) return;
@@ -296,7 +218,7 @@ if (cancelled) return;
 const fetchOne = async ({ productId, photo }) => {
 try {
 const res = await fetch(
-`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
+`https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
               { signal }     
 );
 const json = await res.json();
@@ -326,15 +248,9 @@ if (!cancelled && !warm) setImageLoading(false);
 }
 }
 fetchProductsAndFirstImages(false, controller.signal);
-// pollId = setInterval(() => {
-// const pollController = new AbortController();
-// fetchProductsAndFirstImages(true, pollController.signal);
-// }, POLL_MS);
-
 return () => {
 cancelled = true;
 controller.abort();
-// if (pollId) clearInterval(pollId);
  };
 }, [encodedCategory]);
 
@@ -533,26 +449,8 @@ border: "1px solid #90caf9",
 
 </div>
 
-{/* <div className="position-relative flex-grow-1 ms-5">
-                   <input
-                     type="text"
-                     className="form-control w-60 mt-2 ps-5 "
-                     placeholder="Search Products"
-                     value={searchQuery}
-                     onChange={(e) => setSearchQuery(e.target.value.trimStart())}
-                     />
-                     <SearchIcon
-                       className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"
-                       style={{ pointerEvents: 'none' }}
-                     />
-                   </div> */}
 {selectedCategory && (
 <>
-{/* <div className="d-flex align-items-center">
-   <ArrowBackIcon className="me-2" style={{ color: "green", cursor: "pointer" }}
-       onClick={() => navigate(`/profilePage/${userType}/${userId}`)}/>      
-       <h4 className="font-bold ">{selectedCategory}</h4>
-     </div> */}
 <div className="d-flex justify-content-end" style={{ marginTop: selectedCategory === "Chicken" ? "230px" : "120px"}}>  
 {/* style={{marginTop: "120px"}} */}
 <span className="text-success text-xs">
@@ -736,7 +634,6 @@ color: "white",
 borderRadius: "8px",
 padding: "2px",
 minWidth: "60px",
-// position: "relative",
 }}
 >
 <button
@@ -781,11 +678,34 @@ ADD
 </div>
 );
 })}
+
+{total > 0 && total < FREE_DELIVERY_LIMIT && (
+  <div
+    style={{
+      position: "fixed",
+      bottom: "92px",
+      left: "10px",
+      right: "10px",
+      backgroundColor: "#e4c663",
+      color: "#D10000",
+      padding: "8px",
+      borderRadius: "8px",
+      textAlign: "center",
+      fontWeight: "800",
+      fontSize: "12px",
+      zIndex: 2001,
+      boxShadow: "0 2px 5px rgba(0,0,0,0.15)"
+    }}
+  >
+    🎉 Add ₹{amountNeeded} more to unlock FREE DELIVERY
+  </div>
+)}
+
 {/* Cart Bar */}
 {(() => {
 // Safe reader that ALWAYS returns an array of categories
 const readAllCategories = () => {
-if (typeof window === "undefined") return []; // SSR guard
+if (typeof window === "undefined") return []; 
 try {
 const raw = localStorage.getItem("allCategories");
 if (!raw) return [];
@@ -822,8 +742,6 @@ return acc;
 );
 
 const items = summary.items;
-const total = Math.round(summary.total);
-
 return items > 0 ? (
 <div
 style={{
@@ -894,9 +812,6 @@ onClick={() => { setShowZoomModal(false); setZoomProduct(null); }}
 <h6 className="text-start fw-bold m-0" style={{ fontSize: "12px" }}>
 {zoomProduct?.name || ""}
 </h6>
-{/* <p className="text-start text-muted m-0" style={{ fontSize: "12px" }}>
-     MRP: ₹{zoomProduct?.mrp ?? ""}
-   </p> */}
 {zoomProduct?.afterDiscount != null && (
 <p className="text-start m-0" style={{ fontSize: "12px" }}>
 <b className="text-success me-2">₹{Math.round(Number(zoomProduct.afterDiscount))}</b>
@@ -908,37 +823,4 @@ onClick={() => { setShowZoomModal(false); setZoomProduct(null); }}
 </>
 );
 };
-<style jsx>{`
-      .zoomable-image {
-         transition: transform 0.3s ease-in-out;
-       }
-       .zoomable-image:hover {
-         transform: scale(1.1);
-       }
-       .zoom-container {
-         position: relative;
-         display: inline-block;
-       }
-   .close-button {
-     position: absolute;
-     top: 4px;  
-     right: 5px;  
-     background: red;
-     border: none;
-     font-size: 24px;
-     color: white;
-     padding: 5px;
-     border-radius: 50%;
-     cursor: pointer;
-     transition: 0.3s;
-   }
-   .close-button:hover {
-     background: darkred;
-   }
-        .zoom-image {
-       max-width: 70%;
-       height: 50%;
-       border-radius: 5px;
-       }
-     `}</style>
 export default GroceryCard;      

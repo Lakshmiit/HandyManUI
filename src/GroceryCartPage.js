@@ -26,22 +26,19 @@ const GroceryCartPage = () => {
   const [imageBlobMap, setImageBlobMap] = useState({});
   const [limitMap, setLimitMap] = useState({});
   const [addresses, setAddresses] = useState([]);
-  const [fullName, setFullName] = useState("");
+  const [fullName, setFullName] = useState(""); 
   const [isNewUser, setIsNewUser] = useState(true);
   const isGuestName = (name) => (name ?? "").trim().toLowerCase() === "guest";
-  const [walletAmount, setWalletAmount] = useState(0);
-const MIN_ORDER_TOTAL = Number(walletAmount) === 50 ? 150 : 100;
+// const MIN_ORDER_TOTAL = Number(walletAmount) === 50 ? 150 : 100;
    
   useEffect(() => {
     console.log(addresses, fullName, isNewUser);
   }, [addresses, fullName, isNewUser]);
 
-console.log("Wallet:", walletAmount);
-
   const fetchCustomerData = useCallback(async () => {
       try {
         const response = await fetch(
-          `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Address/GetAddressById/${userId}`,
+          `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Address/GetAddressById/${userId}`,
         );
         if (!response.ok) {
           throw new Error("Failed to fetch customer profile data");
@@ -59,13 +56,13 @@ console.log("Wallet:", walletAmount);
           emailAddress: addr.emailAddress,
           mobileNumber: addr.mobileNumber,
           fullName: addr.fullName,
-          walletAmount: addr.walletAmount,
+          // walletAmount: addr.walletAmount,
         }));            
         setAddresses(formattedAddresses);
         const apiFullName = addresses[0]?.fullName ?? "";
           setFullName(apiFullName);
-          const wallet = addresses[0]?.walletAmount ?? 0;
-          setWalletAmount(Number(wallet));
+          // const wallet = addresses[0]?.walletAmount ?? 0;
+          // setWalletAmount(Number(wallet));
         if (!apiFullName || isGuestName(apiFullName)) {
           setIsNewUser(true);
         } else {
@@ -83,7 +80,7 @@ useEffect(() => {
 }, [userId, fetchCustomerData]);
 
   const IMAGE_DOWNLOAD =
-    `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
+    `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/FileUpload/download?generatedfilename=`;
 
   // function toNum(v, f = 0) {
   //   const n = Number(v);
@@ -108,7 +105,7 @@ useEffect(() => {
         const results = await Promise.allSettled(
           uniqueNames.map(async (name) => {
             const res = await fetch(
-              `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
+              `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
                 name,
               )}`,
             );
@@ -256,7 +253,7 @@ useEffect(() => {
               const blobUrl = URL.createObjectURL(blob);
               return { fn, url: blobUrl };
             } else {
-              return { fn, url: `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(fn)}` };
+              return { fn, url: `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/FileUpload/download?generatedfilename=${encodeURIComponent(fn)}` };
             }
           }),
         );
@@ -357,7 +354,7 @@ const handleQtyChange = async (rowId, delta) => {
   const fetchLatestStock = useCallback(async (productName) => {
   try {
     const res = await fetch(
-      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(productName)}`
+      `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(productName)}`
     );
     const data = await res.json();
     const normalizedInput = normalizeName(productName);
@@ -523,6 +520,7 @@ const validateCartStockBeforeCheckout = async () => {
 
   const handleGroceryProceed = async (event) => {
     event.preventDefault();
+     await createWelcomeWalletIfEligible();
    const valid = await validateCartStockBeforeCheckout();
     if (!valid) return;
 
@@ -554,10 +552,14 @@ const validateCartStockBeforeCheckout = async () => {
       longitude: 0,
       isPickUp: false,
       isDelivered: false,
+      TotalWalletAmount:"",
+      RemainingAmount:"",
+      AvailedAmount:"",
       DeliveryAssignedTime: "",
       DeliverySubmitTime: "",
-      GrandTotal: roundedGrandTotal.toString(),
+      GrandTotal: finalGrandTotal.toString(),
       TotalItemsSelected: grandSummary.items.toString(),
+      location: "",
       categories: allCategories.map((cat) => {
         const products = (cat.products || []).map((p) => {
           const persisted = p.image ?? p.productImage ?? "";
@@ -596,7 +598,7 @@ const validateCartStockBeforeCheckout = async () => {
 
     try {
       const response = await fetch(
-        `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UploadProductDetails`,
+        `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Mart/UploadProductDetails`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -614,7 +616,7 @@ const validateCartStockBeforeCheckout = async () => {
             `cartMeta_${extractedId}`,
             JSON.stringify({
               items: grandSummary.items,
-              total: roundedGrandTotal,
+              total: finalGrandTotal,
             }),
           );
           navigate(
@@ -630,6 +632,67 @@ const validateCartStockBeforeCheckout = async () => {
       alert("An error occurred while uploading the order.");
     }
   };
+
+  const createWelcomeWalletIfEligible = async () => {
+  try {
+    const primaryAddress = addresses.find(
+      (addr) => addr.type === "primary"
+    );
+    const mobileNumber = primaryAddress?.mobileNumber;
+    if (!mobileNumber) return;
+    // Step 1: Verify Guest User
+    const guestResponse = await fetch(
+      `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Customer/GuestUserExistingVerification/${mobileNumber}`
+    );
+    if (!guestResponse.ok) return;
+    const guestData = await guestResponse.json();
+    if (!Array.isArray(guestData) || guestData.length === 0) return;
+    const customer = guestData[0];
+    const isGuest =
+      customer?.firstName?.trim().toLowerCase() === "guest";
+    if (!isGuest) {
+      console.log("Existing User - No Welcome Wallet");
+      return;
+    }
+    const offerResponse = await fetch(
+      `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/OffersTransactions/GetOfferTransactionByUserId?userId=${customer.userId}`
+    );
+
+    if (offerResponse.ok) {
+      const offerData = await offerResponse.json();
+      if (Array.isArray(offerData) && offerData.length > 0) {
+        console.log("Welcome wallet already exists");
+        return;
+      }
+    }
+
+    const payload3 = {
+      id: "string",
+      UserId: customer.userId,
+      CreatedDate: new Date().toISOString(),
+      UpdatedDate: new Date().toISOString(),
+      TicketId: "",
+      TotalWalletAmount: "50",
+      AvailedAmount: "0",
+      RemainingAmount: "50",
+    };
+    const createResponse = await fetch(
+      "https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/OffersTransactions/UploadOffersTransactionsDetails",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload3),
+      }
+    );
+    if (createResponse.ok) {
+      console.log("₹50 Welcome Wallet Created");
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
 
   const outOfStockCount = cartItems.filter(
   (item) => item.outOfStock || item.stockLeft <= 0
@@ -658,6 +721,15 @@ const validateCartStockBeforeCheckout = async () => {
   );
   const roundedItemsTotal = Math.round(itemsTotal);
   const roundedGrandTotal = Math.round(grandTotal);
+
+  const deliveryCharge = roundedGrandTotal >= 150 ? 0 : 15;
+const handlingCharge = roundedGrandTotal >= 150 ? 0 : 5;
+const extraCharges = deliveryCharge + handlingCharge;
+const finalGrandTotal = roundedGrandTotal + extraCharges;
+const FREE_DELIVERY_LIMIT = 150;
+const amountNeeded = Math.max( 0,
+FREE_DELIVERY_LIMIT - roundedGrandTotal
+);
 
   return (
     <div
@@ -916,34 +988,57 @@ const validateCartStockBeforeCheckout = async () => {
           <span>
             🚲 Delivery charge <InfoIcon fontSize="small" />
           </span>
-          <span className="text-danger fw-bold" style={{ fontSize: "10px" }}>
-            FREE
+          <span
+            className={deliveryCharge === 0 ? "text-danger fw-bold" : "fw-bold"}
+            style={{ fontSize: "10px" }}
+          >
+            {deliveryCharge === 0 ? "FREE" : `₹${deliveryCharge}`}
           </span>
         </div>
         <div className="d-flex justify-content-between align-items-center">
           <span>
             👜 Handling charge <InfoIcon fontSize="small" />
           </span>
-          <span className="text-danger fw-bold" style={{ fontSize: "10px" }}>
-            FREE
+          <span
+            className={handlingCharge === 0 ? "text-danger fw-bold" : "fw-bold"}
+            style={{ fontSize: "10px" }}
+          >
+            {handlingCharge === 0 ? "FREE" : `₹${handlingCharge}`}
           </span>
         </div>
         <hr className="my-2" />
         <div className="d-flex justify-content-between align-items-center fw-bold">
-          <span>Grand total</span>
-          <span>₹{roundedGrandTotal}</span>
+          <span className="text-danger">Grand total</span>
+          <span className="text-danger">₹{finalGrandTotal}</span>
         </div>
       </div>
       <Divider />
-      {roundedGrandTotal < MIN_ORDER_TOTAL && (
+      {roundedGrandTotal > 0 && roundedGrandTotal < FREE_DELIVERY_LIMIT && (
+        <div
+          style={{
+            backgroundColor: "#FFF3CD",
+            color: "#D10000",
+            padding: "10px",
+            borderRadius: "8px",
+            marginBottom: "10px",
+            fontSize: "13px",
+            fontWeight: "600",
+            textAlign: "center",
+            border: "1px solid #FFE69C"
+          }}
+        >
+          🎉 Add ₹{amountNeeded} more to unlock FREE DELIVERY
+        </div>
+      )}
+      {/* {roundedGrandTotal < MIN_ORDER_TOTAL && (
         <p style={{ color: "red", fontSize: "13px", marginTop: "0px" }}>
           Minimum order is ₹{MIN_ORDER_TOTAL} and above
         </p>
-      )}
+      )} */}
 
       {/* Footer */}
       <div
-        className="cart-footer d-flex justify-content-between align-items-center mt-2 px-3 py-2"
+        className="cart-footer d-flex justify-content-between align-items-center mt-1 px-3 py-2"
         style={{
           backgroundColor: "#008000",
           color: "white",
@@ -954,7 +1049,7 @@ const validateCartStockBeforeCheckout = async () => {
         <div>
           <span style={{ fontSize: "12px" }}>{grandSummary.items} items</span>
           <div style={{ fontWeight: "500", fontSize: "15px" }}>
-            ₹{roundedGrandTotal}
+            ₹{finalGrandTotal}
           </div>
         </div>
 
@@ -962,17 +1057,12 @@ const validateCartStockBeforeCheckout = async () => {
           style={{
             fontWeight: "500",
             fontSize: "15px",
-            cursor:
-              roundedGrandTotal < MIN_ORDER_TOTAL ? "not-allowed" : "pointer",
-            opacity: roundedGrandTotal < MIN_ORDER_TOTAL ? 0.6 : 1,
+            cursor: "pointer",
+            opacity: 1,
           }}
-          onClick={
-            roundedGrandTotal >= MIN_ORDER_TOTAL
-              ? handleGroceryProceed
-              : undefined
-          }
-        >
-          {roundedGrandTotal < MIN_ORDER_TOTAL ? "Add More Items" : "Proceed →"}
+          onClick={handleGroceryProceed}
+        > 
+          Proceed →
         </div>
       </div>
 
