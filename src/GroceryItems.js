@@ -180,7 +180,7 @@ const controller = new AbortController();
 async function fetchProductsAndFirstImages(warm = false, signal) {
 try {
 if (!warm) setImageLoading(true);
-const url = `https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
+const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
 const { data: items } = await axios.get(url, { signal });
 const safeItems = Array.isArray(items) ? items : [];
 if (cancelled) return;
@@ -218,7 +218,7 @@ if (cancelled) return;
 const fetchOne = async ({ productId, photo }) => {
 try {
 const res = await fetch(
-`https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
+`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
               { signal }     
 );
 const json = await res.json();

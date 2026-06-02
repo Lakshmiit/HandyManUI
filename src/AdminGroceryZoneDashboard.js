@@ -26,7 +26,7 @@ useEffect(()=> {
 
 const fetchGroceryData = async () => {
   try {
-    const res = await fetch("https://https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net//api/Mart/GetAllMartItems");
+    const res = await fetch("https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetAllMartItems");
     const data = await res.json();
     const sortedOrders = data.sort(
       (a, b) => new Date(b.date) - new Date(a.date)
