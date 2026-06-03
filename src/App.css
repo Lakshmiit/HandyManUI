@@ -4632,3 +4632,39 @@ cursor: not-allowed;
           text-align:center;
           padding:30px;
         }
+
+  /* Spinning ring around the image */
+.spinner-wrapper {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner-wrapper::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #e53935;
+  animation: spin360 1s linear infinite;
+  box-sizing: border-box;
+}
+
+@keyframes spin360 {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.spinner-inner-img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  border-radius: 50%;
+}

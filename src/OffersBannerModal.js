@@ -129,16 +129,18 @@ const [offerImages, setOfferImages] = useState({});
             background: "#fff",
           }}
         >
+          <div className="spinner-wrapper">
           <img
             src={Banner1} 
             alt="Loading Logo"
-            className="blinking-logo"
-            style={{
-              width: "250px",
-              height: "250px",
-              objectFit: "contain",
-            }}
+            className="spinner-inner-img"
+            // style={{
+            //   width: "250px",
+            //   height: "250px",
+            //   objectFit: "contain",
+            // }}
           />
+          </div>
           </div>
         ) : activeOffers.length === 0 ? (
           <div
