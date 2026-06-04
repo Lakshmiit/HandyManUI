@@ -180,7 +180,8 @@ useEffect(() => {
       setTransactionNumber(data.transactionNumber);
         setDate(data.date);
       let allProducts = [];
-      let totalAmountFromApi = 0;
+      // eslint-disable-next-line no-unused-vars
+      let totalAmountFromApi = 0;         
 
       if (data.categories && Array.isArray(data.categories)) {
         data.categories.forEach((cat) => {
@@ -208,9 +209,8 @@ useEffect(() => {
         setUnits(allProducts[0].units || "");
         }
       }
-      const itemTotal = totalAmountFromApi;
-
-      const cashbackAmount = Math.floor(itemTotal / 100) * 10;
+      const itemsTotal = items.reduce((sum, item) => sum + Number(item.total), 0);
+      const cashbackAmount = Math.max(0, itemsTotal - Number(grandTotal));
 
       setCashbackAmount(cashbackAmount);
       
@@ -223,7 +223,7 @@ useEffect(() => {
   if (groceryItemId) {
     fetchGroceryData();
   }
-}, [groceryItemId, grandTotal]);    
+}, [groceryItemId, grandTotal, items]);    
 
 // ForwardIcon 
   const handleUpdatePaymentMethod = async () => {

@@ -7,7 +7,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Modal, Button, Form } from "react-bootstrap";
 import Footer from "./Footer.js";
-import Confetti from "react-confetti";
 // import { appConfig } from "./config";
 
 const GroceryPaymentmethod = () => {
@@ -68,7 +67,6 @@ const [loading, setLoading] = useState(false);
 const [offerWalletAmount, setOfferWalletAmount] = useState(0);
 const [offerTransactionId, setOfferTransactionId] = useState("");
 const [offerTransaction, setOfferTransaction] = useState(null);
-const [showConfetti, setShowConfetti] = useState(false);
 // const readServerPoints = (record) => {
 // const raw =
 // record?.referralPoints ?? 
@@ -497,19 +495,19 @@ return () => window.removeEventListener("resize", handleResize);
       // let lat = 0;
       // let lng = 0;
 
-      try {
-        // const location = await getUserLocation();
-        // lat = location.latitude;
-        // lng = location.longitude;
-      } catch (error) {
-        if (error === "User denied location access") {
-          // showLocationPopup();
-          //return;
-        } else {
-          console.log("Location error:", error);
-          return; // also stop for other errors
-        }
-      }
+      // try {
+      //   // const location = await getUserLocation();
+      //   // lat = location.latitude;
+      //   // lng = location.longitude;
+      // } catch (error) {
+      //   if (error === "User denied location access") {
+      //     // showLocationPopup();
+      //     //return;
+      //   } else {
+      //     console.log("Location error:", error);
+      //     return; // also stop for other errors
+      //   }
+      // }
 const primaryAddress = addresses.find((addr) => addr.type === "primary");
 const state = primaryAddress?.state;
 const district = primaryAddress?.district || "";
@@ -567,6 +565,7 @@ if (!response.ok) {
 throw new Error("Failed to update order.");
 }
 
+try {
 const offersTransactionPayload = {
   id: offerTransactionId, 
   userId: userId,
@@ -589,13 +588,16 @@ const offersResponse = await fetch(
   }
 );
 
-if (!offersResponse.ok) {
-  const errorText = await offersResponse.text();
-  console.error("Offers Transaction API Error:", errorText);
+if (offersResponse.ok) {
+    const offersResult = await offersResponse.json();
+    console.log("Offers Transaction Success:", offersResult);
+  } else {
+    const errorText = await offersResponse.text();
+    console.error("Offers Transaction API Error:", errorText);
+  }
+} catch (offersErr) {
+  console.error("Offers Transaction failed (non-blocking):", offersErr);
 }
-const offersResult = await offersResponse.json();
-console.log("Offers Transaction Success:",offersResult);
-
 // if (referralAmount > 0 && referralRec?.id) {
 // try {
 // const id = String(referralRec.id).trim();
@@ -638,10 +640,10 @@ console.log("Offers Transaction Success:",offersResult);
 // console.error("Referral PUT error:", e);
 // }
 // }   
-localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
-localStorage.removeItem("activeOrderId");
-localStorage.removeItem("allCategories");
-localStorage.removeItem(`cartMeta_${groceryItemId}`);
+// localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
+// localStorage.removeItem("activeOrderId");
+// localStorage.removeItem("allCategories");
+// localStorage.removeItem(`cartMeta_${groceryItemId}`);
 
 // if (selectedPayment === "online") {
 // response = await fetch(
@@ -678,8 +680,6 @@ localStorage.removeItem(`cartMeta_${groceryItemId}`);
 // },
 // );
 
-if (!response.ok) {
-}
 localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
 localStorage.removeItem("activeOrderId");
 localStorage.removeItem("allCategories");
@@ -705,7 +705,7 @@ return (name ?? "")
 .toLowerCase()
 .replace(/\s+/g, "")
 .replace(/[^a-z0-9]/g, "");
-};
+};      
 
 const buildProductMapFromCart = (cart) => {
 const products = (cart?.categories ?? []).flatMap((c) => c?.products ?? []);
@@ -820,7 +820,6 @@ console.error("Error sending SMS:", error);
 
 const handlePaymentAndSms = async () => {
 try {
-  setShowConfetti(true);
 setLoading(true);
 await Promise.all([
 handleUpdateStockLeft(),
@@ -1120,32 +1119,18 @@ the Lakshmi Mart
 </p>
 {wallet > 0 && (
   <div
-    className="text-danger mt-1"
+    className="text-danger"
     style={{
       fontSize: "14px",
       fontWeight: "600",
       textAlign: "center",
     }}
   >
-    🎉 Thank you! your remaining wallet balance will be{" "}
-    <span style={{ color: "red" }}>₹{finalWalletBalance}</span>.
+    🎉 Thank you! {" "} 
+    <span style={{ color: "red" }}>₹{finalWalletBalance}</span>{" "}cashback will be credited to your wallet after your order is completed.
   </div>
 )}
-{/* <div style={{ textAlign: "center" }}>
-{cashback  > 0 && (
-<span style={{ whiteSpace: "nowrap", color: "green" }}>
-🎉 Your remaining wallet balance will be{" "}
-<span style={{ fontWeight: "bold", color: "red" }}> Rs </span>
-<span style={{ fontWeight: "bold", color: "red" }}>
-{cashback }
-</span>
-<span style={{ fontWeight: "normal", color: "green" }}>
-{" "}
-cashback!
-</span>
-</span>
-)}
-</div> */}
+
 <table className="grocery-table m-2">
 <tbody>
 <tr>
@@ -1164,53 +1149,20 @@ Number of Items selected
                     </td>
                     <td style={{ width: "40%" }}>Rs {grandTotal} /-</td>
                     </tr>
-{/* {showSugarOffer && (
-                           <tr>     
-                             <td colSpan="2" style={{ textAlign: "center" }}>
-                               <div style={{ fontSize: "13px", fontWeight: 600, color: "red" }}>
-                                 🎁 FREE Sugar 1 Kg
-                               </div>
-                             </td>
-                           </tr>
-                         )}  */}
-{cashback  > 0 && (
-<tr>
-<td style={{ width: "40%", fontSize: "14px",color: "red" }}>
-Cash Back
-</td>
-<td style={{ width: "40%", fontSize: "14px", color: "red" }}>
-{`Rs ${cashback } /-`}
-</td>
-</tr>
-)}
 
-{wallet > 0 && (
-<>
-<tr>
-<td style={{ color: "red" }}>Balance</td>
-<td style={{ color: "red" }}>Rs {wallet} /-</td>
-</tr>
-
-<tr>
-<td style={{ color: "green" }}>Used</td>
-<td style={{ color: "green" }}>Rs {walletToUse} /-</td>
-</tr>
-
-<tr>
-<td style={{ color: "red" }}>Remaining</td>
-<td style={{ color: "red" }}>Rs {remainingWallet} /-</td>
-</tr>
-</>
-)}
 {/* {Number(referralAmount) > 0 && (     
              <tr>
                <td style={{ width: "40%", fontSize: "14px" }}>Referral Earn Amount</td>
                <td style={{ width: "40%", color: "red" }}> Rs {referralAmount} /-</td>
              </tr>
            )} */}
+           <tr> 
+<td style={{ color: "red", fontSize: "13px" }}>Deduct Wallet Amt</td>
+<td style={{ color: "red" }}>Rs {walletToUse} /-</td>
+</tr> 
 <tr>
 <td
-style={{ width: "40%", fontSize: "14px", fontWeight: 600 }}
+style={{ width: "40%", fontSize: "14px", fontWeight: 400 }}
 >
 Total Payable
 </td>
@@ -1218,6 +1170,20 @@ Total Payable
 Rs {netPayables} /-
 </td>
 </tr>
+<tr>
+<td style={{ color: "red", fontSize: "13px" }}>Balance Wallet Amt</td>
+<td style={{ color: "red" }}>Rs {remainingWallet} /-</td>
+</tr>
+{cashback  > 0 && (
+<tr>
+<td style={{ width: "40%", fontSize: "13px",color: "red" }}>
+Added Wallet Amt
+</td>
+<td style={{ width: "40%", color: "red" }}>
+{`Rs ${cashback } /-`}
+</td>
+</tr>
+)}
 </tbody>
 </table>
 
@@ -1418,27 +1384,7 @@ isAddressInvalid
 </div>
 </div>
 </div>
-{showConfetti && (
-  <div
-    style={{
-      position: "fixed",
-      top: 0,
-      left: 0,
-      width: "100vw",
-      height: "100vh",
-      zIndex: 9999,
-      pointerEvents: "none",
-    }}
-  >
-    <Confetti
-      width={window.innerWidth}
-      height={window.innerHeight}
-      recycle={false}
-      numberOfPieces={600}
-      gravity={0.25}
-    />
-  </div>
-)}
+
 <Footer />
 {/* Styles for floating menu */}
 <style jsx>{`
@@ -1449,7 +1395,7 @@ isAddressInvalid
          width: 100%;
          height: 100%;
          background: rgba(0, 0, 0, 0.5);
-         display: flex;
+         display: flex;    
          justify-content: center;
          align-items: center;
          z-index: 1000;

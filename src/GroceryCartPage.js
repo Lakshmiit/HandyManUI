@@ -518,8 +518,17 @@ const validateCartStockBeforeCheckout = async () => {
   return true;
 };
 
+const activeItems = cartItems.filter(
+    (item) => !item.outOfStock && item.stockLeft > 0 && item.qty > 0
+  );
+  
   const handleGroceryProceed = async (event) => {
     event.preventDefault();
+    
+  if (activeItems.length === 0) {
+    alert("Your cart is empty. Please add items before proceeding.");
+    return;
+  }
      await createWelcomeWalletIfEligible();
    const valid = await validateCartStockBeforeCheckout();
     if (!valid) return;
@@ -635,11 +644,10 @@ const validateCartStockBeforeCheckout = async () => {
 
   const createWelcomeWalletIfEligible = async () => {
   try {
-    const primaryAddress = addresses.find(
-      (addr) => addr.type === "primary"
-    );
+    const primaryAddress = addresses.find((addr) => addr.type === "primary");
     const mobileNumber = primaryAddress?.mobileNumber;
     if (!mobileNumber) return;
+
     // Step 1: Verify Guest User
     const guestResponse = await fetch(
       `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Customer/GuestUserExistingVerification/${mobileNumber}`
@@ -647,21 +655,24 @@ const validateCartStockBeforeCheckout = async () => {
     if (!guestResponse.ok) return;
     const guestData = await guestResponse.json();
     if (!Array.isArray(guestData) || guestData.length === 0) return;
+
     const customer = guestData[0];
-    const isGuest =
-      customer?.firstName?.trim().toLowerCase() === "guest";
+    const isGuest = customer?.firstName?.trim().toLowerCase() === "guest";
     if (!isGuest) {
       console.log("Existing User - No Welcome Wallet");
       return;
     }
+
+    // Step 2: Check if wallet transaction already exists
     const offerResponse = await fetch(
-      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/OffersTransactions/GetOfferTransactionByUserId?userId=${customer.userId}`
+      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/OffersTransactions/GetOfferTransactionByUserId?userId=${userId}`
     );
 
     if (offerResponse.ok) {
       const offerData = await offerResponse.json();
+
       if (Array.isArray(offerData) && offerData.length > 0) {
-        console.log("Welcome wallet already exists");
+        console.log("Welcome wallet already exists — skipping POST.");
         return;
       }
     }
@@ -676,21 +687,24 @@ const validateCartStockBeforeCheckout = async () => {
       AvailedAmount: "0",
       RemainingAmount: "50",
     };
+
     const createResponse = await fetch(
       "https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/OffersTransactions/UploadOffersTransactionsDetails",
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload3),
       }
     );
+
     if (createResponse.ok) {
-      console.log("₹50 Welcome Wallet Created");
+      console.log("₹50 Welcome Wallet Created Successfully");
+    } else {
+      console.error("Failed to create welcome wallet:", await createResponse.text());
     }
+
   } catch (error) {
-    console.error(error);
+    console.error("createWelcomeWalletIfEligible error:", error);
   }
 };
 
@@ -1027,7 +1041,7 @@ FREE_DELIVERY_LIMIT - roundedGrandTotal
             border: "1px solid #FFE69C"
           }}
         >
-          🎉 Add ₹{amountNeeded} more to unlock FREE DELIVERY
+              🎉 Add ₹{amountNeeded} more to unlock save <strong style={{fontSize: "15px"}}>₹20</strong> FREE DELIVERY & Handling Charges
         </div>
       )}
       {/* {roundedGrandTotal < MIN_ORDER_TOTAL && (
@@ -1057,10 +1071,10 @@ FREE_DELIVERY_LIMIT - roundedGrandTotal
           style={{
             fontWeight: "500",
             fontSize: "15px",
-            cursor: "pointer",
-            opacity: 1,
+            cursor: activeItems.length === 0 ? "not-allowed" : "pointer", 
+            opacity: activeItems.length === 0 ? 0.5 : 1,
           }}
-          onClick={handleGroceryProceed}
+          onClick={activeItems.length > 0 ? handleGroceryProceed : undefined}
         > 
           Proceed →
         </div>
@@ -1071,7 +1085,7 @@ FREE_DELIVERY_LIMIT - roundedGrandTotal
           className="btn btn-warning mt-1 mb-1"
           onClick={() => navigate(`/profilePage/${userType}/${userId}`)}
         >
-          Back
+          Add More Items
         </button>
       </div>
       <Footer />

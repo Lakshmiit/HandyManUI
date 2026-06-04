@@ -130,8 +130,10 @@ import AdminBannerList from './AdminBannerList.js';
 import AdminGroceryZoneDashboard from './AdminGroceryZoneDashboard.js';
 import AdminGroceryClosedOrders from './AdminGroceryClosedOrders.js';
 import AdminGroceryDashboard from './AdminGroceryDashboard.js';
+// import DeliveryPartnerPaymentMethod from './DeliveryPartnerPaymentMethod.js';
+// import AdminRegistrationNumbers from './AdminRegisterationNumbers.js';
+import GroceryComboOffer from './GroceryComboOffer.js';
 // import DeliveryPartnerDashboard from './DeliveryPartnerDashboard.js';
-
 // import OneRupeeGroceryItems from './OneRupeeGroceryItems.js';
 // import CustomerLocation from "./CustomerLocation.js";
 const PreventBackNavigation = () => {
@@ -172,11 +174,13 @@ function App() {
         <main>
           {/* className="mt-100" */}       
           <Routes> 
+            <Route path="/groceryComboOffer/:userType/:userId/:id" element={<GroceryComboOffer />} />
+            {/* <Route path="/adminRegistrations/Admin" element={<AdminRegistrationNumbers />} />
+            <Route path= "/deliverypartnerPaymentMethod" element={<DeliveryPartnerPaymentMethod />} /> */}
             {/* <Route path="/deliveryPartnerDashboard/:userType/:userId" element={<DeliveryPartnerDashboard />} /> */}
             <Route path="/adminGroceryZoneDashboard" element={<AdminGroceryZoneDashboard />} />
             <Route path="/adminGroceryClosedOrders/:groceryItemId" element={<AdminGroceryClosedOrders />} /> 
             <Route path="/adminGroceryDashboard" element={<AdminGroceryDashboard />} />
-
             <Route path="/martHomeAppliances/:userType/:userId" element={<MartHomeAppliances />} /> 
             <Route path="/RoyalUpmaMix" element={<RoyalUpmaMix250g />} />
             <Route path="/termsandConditions" element={<TermsAndConditions />} />
@@ -232,7 +236,6 @@ function App() {
             <Route path="/buyProducts/:userType/:userId" element={<BuyProducts />} /> 
             <Route path="/sidebar/:userType" element={<Sidebar />} />
             <Route path="/buyproduct-view/:userType/:userId/:id" element={<BuyProductView />} />
-            {/* <Route path="/adminRegistrations/Admin" element={<AdminRegistrationNumbers />} /> */}
             <Route path="/adminUploadForm/Admin" element={<AdminUploadForm />} />
             <Route path="/adminProductApproval/:id/Admin" element={<AdminProductApproval />} />
             <Route path="/adminProductList/Admin" element={<AdminProductList />} /> 

@@ -5,7 +5,7 @@ import "./App.css";
 import Sidebar from "./Sidebar.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Dashboard as MoreVertIcon } from "@mui/icons-material";
-import { Button, Modal } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import SearchIcon from "@mui/icons-material/Search";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
@@ -45,13 +45,13 @@ const GroceryOfferItems = () => {
   const [products, setProducts] = useState([]);
   const [imageUrls, setImageUrls] = useState({});
   const [imageLoading, setImageLoading] = useState(true);
-  const [showZoomModal, setShowZoomModal] = useState(false);
-  const [zoomImage, setZoomImage] = useState("");
+  // const [showZoomModal, setShowZoomModal] = useState(false);
+  // const [zoomImage, setZoomImage] = useState("");
   const [cart, setCart] = useState({});
   const [checked, setChecked] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [likedProducts, setLikedProducts] = useState({});
-  const [zoomProduct, setZoomProduct] = useState(null);
+  // const [zoomProduct, setZoomProduct] = useState(null);
   const [grandSummary, setGrandSummary] = useState({ items: 0, total: 0 });
   const location = useLocation();
   const mobileNumber = localStorage.getItem("customerMobileNumber");
@@ -200,11 +200,11 @@ const GroceryOfferItems = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleImageClick = (imageSrc, product) => {
-    setZoomImage(imageSrc);
-    setZoomProduct(product);
-    setShowZoomModal(true);
-  };
+  // const handleImageClick = (imageSrc, product) => {
+  //   setZoomImage(imageSrc);
+  //   setZoomProduct(product);
+  //   setShowZoomModal(true);
+  // };
 
   function getItemTime(p) {
     if (p?.date) {
@@ -401,7 +401,7 @@ const GroceryOfferItems = () => {
                 fontFamily: "Roboto",
               }}
             >
-              Delivery Timings : 06:00 AM -09:00 PM
+              Delivery Timings : 07:00 AM -09:00 PM
             </span>
           </h1>
         </div>
@@ -584,13 +584,18 @@ const GroceryOfferItems = () => {
                                     : "pointer",
                                   borderRadius: "6px",
                                 }}
-                                onClick={() =>
-                                  !isOutOfStock &&
-                                  handleImageClick(
-                                    imageUrls[product.id][0],
-                                    product,
-                                  )
-                                }
+                                onClick={() => {
+                                  if (isOutOfStock) return;
+                                  navigate(
+                                    `/groceryComboOffer/${userType}/${userId}/${product.id}`,   
+                                    {
+                                      state: {
+                                        product,                              
+                                        imageUrl: imageUrls[product.id]?.[0] ?? null,  
+                                      },
+                                    }
+                                  );
+                                }}
                               />
                             ) : (
                               <span className="text-muted small">
@@ -667,6 +672,7 @@ const GroceryOfferItems = () => {
                                   {product.units}
                                 </b>
                               )}
+                          <p className="blinking-icon mb-0" style={{color: "#db1818", fontSize: "9px", fontWeight: "bold"}}>Click on the image to see more</p>
 
                               {(() => {
                                 const limit = getLimit(product);
@@ -700,7 +706,13 @@ const GroceryOfferItems = () => {
                                 type="checkbox"
                                 className="border-dark"
                                 checked={cart[product.id] > 0}
-                                readOnly
+                                onChange={() => {
+                                  if (cart[product.id] > 0) {
+                                    handleDecrementClick(product.id);
+                                  } else {
+                                    handleAddClick(product.id);
+                                  }
+                                }}
                               />
                             </div>
                           )}
@@ -919,7 +931,7 @@ const GroceryOfferItems = () => {
                           onClick={() => {
                             if (total < MIN_ORDER_TOTAL) return;
                             navigate(
-                              `/groceryOffersCart/${userType}/${userId}`,
+                              `/groceryCart/${userType}/${userId}`,
                               {
                                 state: { mobileNumber },
                               },
@@ -939,7 +951,7 @@ const GroceryOfferItems = () => {
         <Footer />
       </div>
 
-      <Modal
+      {/* <Modal
         show={showZoomModal}
         onHide={() => {
           setShowZoomModal(false);
@@ -978,7 +990,7 @@ const GroceryOfferItems = () => {
             </p>
           )}
         </Modal.Body>
-      </Modal>
+      </Modal> */}
     </>
   );
 };

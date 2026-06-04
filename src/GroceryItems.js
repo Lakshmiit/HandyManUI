@@ -336,7 +336,7 @@ textAlign: "center",
 fontFamily: "Roboto",
 }}
 >
-Delivery Timings : 06:00 AM -09:00 PM
+Delivery Timings : 07:00 AM -09:00 PM
 </span>
 </h1>
 </div>
@@ -686,19 +686,19 @@ ADD
       bottom: "92px",
       left: "10px",
       right: "10px",
-      backgroundColor: "#e4c663",
+      backgroundColor: "#FFF3CD",
       color: "#D10000",
       padding: "8px",
       borderRadius: "8px",
       textAlign: "center",
-      fontWeight: "800",
-      fontSize: "12px",
+      fontWeight: "600",
+      fontSize: "13px",
       zIndex: 2001,
       boxShadow: "0 2px 5px rgba(0,0,0,0.15)"
     }}
   >
-    🎉 Add ₹{amountNeeded} more to unlock FREE DELIVERY
-  </div>
+    🎉 Add ₹{amountNeeded} more to unlock save <strong style={{fontSize: "15px"}}>₹20</strong> FREE DELIVERY & Handling Charges
+  </div>      
 )}
 
 {/* Cart Bar */}

@@ -59,7 +59,7 @@ import { CartStorage } from "./CartStorage";
 import IcecreamImg from './img/IceCreams.jpeg';
 import DwakraProducts from './img/DwakraLogo.jpeg';
 import UnbeatableImg from './img/MilkOffers.jpeg';
-import Above45Img from './img/Above45.jpeg'; 
+import ComboPackImg from './img/ComboPack.jpeg'; 
 import AddIcCallIcon from '@mui/icons-material/AddIcCall';
 import RoyalImg from './img/LMartLogo.jpeg';
 import HomeElectricalImg from './img/HomeElectrical.jpeg';
@@ -98,6 +98,7 @@ const categories = [
 ]; 
        
 const groceryCategories = [
+  {label: 'Grocery Value Combo Packs', value: 'Grocery Value Combo Packs', image: ComboPackImg},
   {label: 'LMart Products', value: 'LMart Special', image: RoyalImg},
   { label: 'Unbeatable 10 Offers', value: 'Unbeatable Offers', image: UnbeatableImg },
   { label: 'Rice & Ravva', value: 'Rice & Ravva', image: RavvaImg },    
@@ -105,7 +106,6 @@ const groceryCategories = [
   { label: 'Vegetables', value: 'Vegetables', image: VegetablesImg },
   { label: 'Fruits', value: 'Fruits', image: FruitsImg }, 
   { label: 'Oils & Dals', value: 'Oils & Dals', image: OilsImg },
-  { label: 'Above 45 % Offers', value: 'Offers', image: Above45Img },
   { label: 'Masala, Spices & Pickles', value: 'Masala, Spices & Pickles', image: MasalaImg },
   { label: 'Instant Food, Chips & Namkeen', value: 'Instant Food, Chips & Namkeen', image: NamkeenImg },
   { label: 'Skin & Face Care', value: 'Skin & Face Care', image: SkinImg },
@@ -224,6 +224,7 @@ const [searchOrderId, setSearchOrderId] = useState("");
 const [walletAmount, setWalletAmount] = useState("0");
 const [walletLoading, setWalletLoading] = useState(true);
 const [showWalletMessage, setShowWalletMessage] = useState(false);
+const [showWelcomeMessage, setShowWelcomeMessage] = useState(false);
 useEffect(() => {
   console.log(windowSize, state, address, mobileNumber,id, pinCode, paidAmount, paymentMode, martId,status, imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery,error, showMenu, products, selectedCategory, dress);
 }, [windowSize, state, address, mobileNumber, id, pinCode, paidAmount, paymentMode, martId, status, imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery, error,showMenu, products, selectedCategory, dress]);
@@ -235,6 +236,16 @@ useEffect(() => {
   'Search "Horlicks"', 'Search "Eggs"', 'Search "Chocolate"', 'Search "Butter"',
   'Search "Bread"', 'Search "Chicken"', 'Search "Shampoo"', 'Search "Soap"',
 ];
+
+useEffect(() => {
+  if (!profile.fullName) return;
+  const name = profile.fullName.trim().toLowerCase();
+  if (name === "guest") {
+    setShowWelcomeMessage(true);
+    const timer = setTimeout(() => setShowWelcomeMessage(false), 5000);
+    return () => clearTimeout(timer);
+  }
+}, [profile.fullName]);
 
 useEffect(() => {
   const onResize = () => {
@@ -459,31 +470,30 @@ useEffect(() => {
 });
 
 useEffect(() => {
-  let cancelled = false;
-  const sendLog = async () => {
-    try {
-      const payload = {
-        id: "1", 
-        date: "string",
-        mobileNumber: profile.mobileNumber, 
-        message: "User fetching grocery items in profile page"
-      };
-      await axios.post(
-        `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/LmartLogs/UploadlogsDetails`,
-        payload
-      );
-    } catch (err) {
-      console.error("Log API failed", err);
-    }
-  };
+  // let cancelled = false;
+  // const sendLog = async () => {
+  //   try {
+  //     const payload = {
+  //       id: "1", 
+  //       date: "string",
+  //       mobileNumber: profile.mobileNumber, 
+  //       message: "User fetching grocery items in profile page"
+  //     };
+  //     await axios.post(
+  //       `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/LmartLogs/UploadlogsDetails`,
+  //       payload
+  //     );
+  //   } catch (err) {
+  //     console.error("Log API failed", err);
+  //   }
+  // };
   const fetchProducts = async (showLoader = false) => {
-    sendLog();
+    // sendLog();
     if (showLoader) setLoading(true);
     try {
       const res = await axios.get(
         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetAllGroceryItems`
       );
-      if (cancelled) return;
       const normalized = (Array.isArray(res.data) ? res.data : [])
         .map(normalizeProduct)
         .filter((p) => p.status === "Approved");
@@ -504,13 +514,10 @@ useEffect(() => {
     } catch (err) {
       console.error("Fetching grocery items failed", err);
     } finally {
-      if (showLoader && !cancelled) setLoading(false);
+      if (showLoader) setLoading(false);
     }
   };
   fetchProducts(true);
-  return () => {
-    cancelled = true;
-  };
 }, [profile.mobileNumber]);
 
   /* ================= FILTER ================= */
@@ -925,18 +932,18 @@ const handleGroceryCategoryClick = (category) => {
     return;
   }
   
-  // if (value === "Unbeatable Offers") {
-  //   navigate(`/groceryOffers/${userType}/${userId}`, {
-  //     state: { mobileNumber },
-  //   });     
-  // } else {
-  //   navigate(`/grocery/${userType}/${userId}`, {
-  //     state: { mobileNumber },
-  //   });
-  // }
-  navigate(`/grocery/${userType}/${userId}`, {
-  state: { mobileNumber },
-});
+  if (value === "Grocery Value Combo Packs") {
+    navigate(`/groceryOffers/${userType}/${userId}`, {
+      state: { mobileNumber },
+    });     
+  } else {
+    navigate(`/grocery/${userType}/${userId}`, {
+      state: { mobileNumber },
+    });
+  }
+//   navigate(`/grocery/${userType}/${userId}`, {
+//   state: { mobileNumber },
+// });
 };
 
 const handleDressCategoryClick = async (category) => {
@@ -1170,6 +1177,46 @@ const filteredGroceryData = groceryData.filter((t) =>
   return (
     <>
     <OffersBannerModal/>
+    {showWelcomeMessage && (
+  <div
+    style={{
+      position: "fixed",
+      top: isMobile ? "175px" : "80px",
+      left: "50%",
+      transform: "translateX(-50%)",
+      backgroundColor: "#fff8e1",
+      border: "2px solid #ffca28",
+      borderRadius: "12px",
+      padding: "16px 20px",
+      zIndex: 9999,
+      maxWidth: "340px",
+      width: "90%",
+      boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
+      textAlign: "center",
+    }}
+  >
+    <button
+      onClick={() => setShowWelcomeMessage(false)}
+      style={{
+        position: "absolute",
+        top: "8px",
+        right: "12px",
+        background: "none",
+        border: "none",
+        fontSize: "18px",
+        cursor: "pointer",
+        color: "#555",
+      }}
+    >
+      &times;
+    </button>
+    <p style={{ margin: 0, fontSize: "15px", fontWeight: "600", color: "#333" }}>
+      🎉 Welcome to Handyman App! Place your first order and get{" "}
+      <span style={{ color: "green", fontWeight: "bold" }}>₹50 bonus</span>{" "}
+      added to your wallet.
+    </p>
+  </div>
+)}
     <header className="header d-flex align-items-center justify-content-between p-2 bg-white shadow-sm" 
       style={{ position: 'fixed', top: 0, left: 0, right: 0, width: '100%', zIndex: 1000 }}>
        {isMobile ? (
@@ -1213,17 +1260,17 @@ const filteredGroceryData = groceryData.filter((t) =>
           </div>
 
            {/* Wallet Amount */}
-          <div className="coin-wrap" style={{marginLeft: 10, cursor: "pointer" }}
-            onClick={() => {
-              if (Number(walletAmount) > 0) {
-                setShowWalletMessage(true);
-              }
-            }}
+            <div 
+              className="coin-wrap" 
+              style={{ marginLeft: 10, cursor: "pointer" }}
+              onMouseEnter={() => setShowWalletMessage(true)}  
+              onMouseLeave={() => setShowWalletMessage(false)}  
+              onClick={() => setShowWalletMessage(true)}         
             >
-            <span className="coin-value" style={{color: "blue"}}>
-              ₹ {walletLoading ? "0" : walletAmount}
-            </span>
-          </div>   
+              <span className="coin-value" style={{ color: "blue" }}>
+                ₹ {walletLoading ? "0" : walletAmount}
+              </span>
+            </div>
         {/* Profile Image */}
         <div className="profile-img-wrapper">
           <img
@@ -1234,9 +1281,9 @@ const filteredGroceryData = groceryData.filter((t) =>
         </div>
       </div>
       </div>
-    </div>
+    </div> 
     </header>
-            {showWalletMessage && Number(walletAmount) > 0 && (
+           {showWalletMessage && (
               <div
                 className="alert alert-danger"
                 style={{
@@ -1244,14 +1291,15 @@ const filteredGroceryData = groceryData.filter((t) =>
                   top: "80px",
                   right: "20px",
                   zIndex: 9999,
-                  maxWidth: "320px"
+                  maxWidth: "320px",
+                  cursor: "default",
                 }}
+                onTouchEnd={() => setTimeout(() => setShowWalletMessage(false), 2500)}
               >
                 <div className="d-flex justify-content-between align-items-start">
-                  <span>
-                    You have <strong>₹{walletAmount}</strong> in your wallet. You can use
-                    this amount on your orders. For every <strong>₹100</strong> of grand
-                    total, <strong>₹10</strong> will be deducted from your wallet balance.
+                  <span className="blinking-icon" style={{fontSize: "15px"}}>  
+                    Wallet Balance: <strong>₹{walletAmount}.</strong> Enjoy<strong> ₹10 </strong>
+                    off from your wallet for every<strong> ₹100 </strong> spent.
                   </span>
                   <button
                     type="button"

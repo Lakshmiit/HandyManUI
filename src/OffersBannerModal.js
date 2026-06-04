@@ -4,6 +4,8 @@ import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import Banner1 from './img/BannerModal.jpg';
+import './App.css';  
+
 const IMAGE_API =
   "https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=";
 
@@ -120,27 +122,119 @@ const [offerImages, setOfferImages] = useState({});
       </Modal.Header>
       <Modal.Body>
         {imagesLoading ? (
-        <div
-          style={{
-            height: "250px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            background: "#fff",
-          }}
-        >
-          <div className="spinner-wrapper">
-          <img
-            src={Banner1} 
-            alt="Loading Logo"
-            className="spinner-inner-img"
-            // style={{
-            //   width: "250px",
-            //   height: "250px",
-            //   objectFit: "contain",
-            // }}
-          />
-          </div>
+          <div
+            style={{
+              height: "300px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "linear-gradient(135deg, #fff8f0 0%, #fff3e0 50%, #fce4ec 100%)",
+              borderRadius: "10px",
+              position: "relative",
+              overflow: "hidden",
+            }}
+          >
+            {/* Top shimmer bar */}
+            <div
+              className="banner-shimmer-bar"
+              style={{ position: "absolute", top: 0, left: 0, right: 0, height: "4px" }}
+            />
+
+            {/* Background shimmer skeleton rows */}
+            <div style={{ position: "absolute", inset: 0, opacity: 0.10, padding: "10px" }}>
+              {[...Array(5)].map((_, i) => (
+                <div
+                  key={i}
+                  className="banner-shimmer-bar"
+                  style={{ height: "50px", marginBottom: "8px", animationDelay: `${i * 0.15}s` }}
+                />
+              ))}
+            </div>
+
+            {/* Outer spinning ring */}
+            <div
+              className="banner-spin-outer"
+              style={{
+                width: "140px",
+                height: "140px",
+                borderRadius: "50%",
+                border: "4px solid transparent",
+                borderTop: "4px solid #ff5722",
+                borderRight: "4px solid #ff9800",
+                position: "absolute",
+              }}
+            />
+
+            {/* Inner spinning ring (reverse) */}
+            <div
+              className="banner-spin-inner"
+              style={{
+                width: "112px",
+                height: "112px",
+                borderRadius: "50%",
+                border: "3px solid transparent",
+                borderBottom: "3px solid #ffc107",
+                borderLeft: "3px solid #e91e63",
+                position: "absolute",
+              }}
+            />
+
+            {/* Logo center with pulse glow */}
+            <div
+              className="banner-pulse-glow"
+              style={{
+                width: "84px",
+                height: "84px",
+                borderRadius: "50%",
+                background: "#fff",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                overflow: "hidden",
+                position: "relative",
+                zIndex: 2,
+              }}
+            >
+              <img
+                src={Banner1}
+                alt="Loading Logo"
+                style={{ width: "76px", height: "76px", objectFit: "contain", borderRadius: "50%" }}
+              />
+            </div>
+
+            {/* badge */}
+            <div
+              className="banner-float-badge"
+              style={{
+                marginTop: "104px",
+                background: "linear-gradient(90deg, #ff5722, #ff9800)",
+                color: "#fff",
+                fontWeight: "700",
+                fontSize: "12px",
+                letterSpacing: "2px",       
+                padding: "5px 16px",
+                borderRadius: "20px",
+                boxShadow: "0 4px 14px rgba(255,87,34,0.35)",
+                position: "relative",
+                zIndex: 2,
+              }}
+            >
+              🎉 Please Wait Offers Loading ..
+            </div>
+
+            {/* Bouncing dots */}
+            <div style={{ marginTop: "14px", display: "flex", alignItems: "flex-end", height: "28px", position: "relative", zIndex: 2 }}>
+              <span className="banner-dot" style={{ background: "#ff5722" }} />
+              <span className="banner-dot" style={{ background: "#ff9800", animationDelay: "0.16s" }} />
+              <span className="banner-dot" style={{ background: "#ffc107", animationDelay: "0.32s" }} />
+            </div>
+
+            {/* Bottom shimmer bar */}
+            <div
+              className="banner-shimmer-bar"
+              style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "4px" }}
+            />
           </div>
         ) : activeOffers.length === 0 ? (
           <div
@@ -207,7 +301,7 @@ const [offerImages, setOfferImages] = useState({});
                   style={{
                     textAlign: "start",
                     color: "red",
-                    fontSize: "12px",
+                    fontSize: "12px", 
                     fontWeight: "400",
                   }}
                 >
