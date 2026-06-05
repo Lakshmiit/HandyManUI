@@ -26,8 +26,8 @@ const [currentPage, setCurrentPage] = useState(1);
     id: "",
     title: "",
     description: "",
-    header: "",
-    footer: "",
+    // header: "",
+    // footer: "",
     createdDate: "",
     updatedDate: "",
     startDate: "",
@@ -104,7 +104,6 @@ const indexOfLast = currentPage * rowsPerPage;
         endDate: banner.endDate?.slice(0, 16),
         image: banner.image || [],
       });
-
       setShowEditModal(true);
     } catch (err) {
       console.error(err);
@@ -114,12 +113,10 @@ const indexOfLast = currentPage * rowsPerPage;
 
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this banner?")) return;
-
     try {
       await axios.delete(
         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UpLoadBannners/DeleteBanner/${id}`
       );
-
       alert("Banner deleted successfully");
       fetchBanners();
     } catch (err) {
@@ -261,9 +258,7 @@ const indexOfLast = currentPage * rowsPerPage;
             <>
               <h4>{selectedBanner.title}</h4>
 
-              <p><strong>Header:</strong> {selectedBanner.header}</p>
               <p><strong>Description:</strong> {selectedBanner.description}</p>
-              <p><strong>Footer:</strong> {selectedBanner.footer}</p>
               <p>
                 <strong>Start:</strong>{" "}
                 {new Date(selectedBanner.startDate).toLocaleString()}
@@ -316,15 +311,15 @@ const indexOfLast = currentPage * rowsPerPage;
               />
             </Form.Group>
 
-            <Form.Group>
+            {/* <Form.Group>
               <Form.Label>Header</Form.Label>
               <Form.Control
                 value={editBanner.header}
                 onChange={(e) =>
                   setEditBanner({ ...editBanner, header: e.target.value })
                 }
-              />
-            </Form.Group>
+              />  
+            </Form.Group> */}
 
             <Form.Group>
               <Form.Label>Description</Form.Label>
@@ -341,7 +336,7 @@ const indexOfLast = currentPage * rowsPerPage;
               />
             </Form.Group>
 
-            <Form.Group>
+            {/* <Form.Group>
               <Form.Label>Footer</Form.Label>
               <Form.Control
                 value={editBanner.footer}
@@ -349,7 +344,7 @@ const indexOfLast = currentPage * rowsPerPage;
                   setEditBanner({ ...editBanner, footer: e.target.value })
                 }
               />
-            </Form.Group>
+            </Form.Group> */}
 
             <Form.Group>
               <Form.Label>Start Date & Time</Form.Label>

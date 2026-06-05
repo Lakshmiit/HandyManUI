@@ -223,15 +223,12 @@ useEffect(() => {
                 onChange={(e) => setCategory(e.target.value)}>
                 <option>Choose Category</option>
                 <option>LMart Special</option>
-                <option>₹1 Store</option>
-                <option>Offers</option>
                 <option>DWCRA</option>
-                <option>Christmas Offers</option>
+                <option>Grocery Value Combo Packs</option>
                 <option>Unbeatable Offers</option>
-                <option>Chicken Offers</option>
                 <option>Vegetables</option>
                 <option>Fruits</option>
-                <option>Rice & Ravva</option>
+                <option>Rice & Ravva</option>      
                 <option>Atta & Flours</option>
                 <option>Oils & Dals</option>
                 <option>Sugar, Salt & Jaggery</option>

@@ -130,8 +130,8 @@ import AdminBannerList from './AdminBannerList.js';
 import AdminGroceryZoneDashboard from './AdminGroceryZoneDashboard.js';
 import AdminGroceryClosedOrders from './AdminGroceryClosedOrders.js';
 import AdminGroceryDashboard from './AdminGroceryDashboard.js';
-// import DeliveryPartnerPaymentMethod from './DeliveryPartnerPaymentMethod.js';
-// import AdminRegistrationNumbers from './AdminRegisterationNumbers.js';
+import DeliveryPartnerPaymentMethod from './DeliveryPartnerPaymentMethod.js';
+import AdminRegistrationNumbers from './AdminRegisterationNumbers.js';
 import GroceryComboOffer from './GroceryComboOffer.js';
 // import DeliveryPartnerDashboard from './DeliveryPartnerDashboard.js';
 // import OneRupeeGroceryItems from './OneRupeeGroceryItems.js';
@@ -141,7 +141,7 @@ const PreventBackNavigation = () => {
    const location = useLocation(); 
 
 useEffect(() => {
-    if (location.pathname === "/") {
+    if (location.pathname === "/") {    
       const newUserId = getLoginData();
       if (newUserId) {
         navigate(`/profilePage/customer/${newUserId}`, { replace: true });
@@ -163,7 +163,7 @@ useEffect(() => {
       window.removeEventListener("popstate", handlePopState);
     };
   }, []);
-  return null;
+  return null;  
 };
 
 function App() {
@@ -175,8 +175,8 @@ function App() {
           {/* className="mt-100" */}       
           <Routes> 
             <Route path="/groceryComboOffer/:userType/:userId/:id" element={<GroceryComboOffer />} />
-            {/* <Route path="/adminRegistrations/Admin" element={<AdminRegistrationNumbers />} />
-            <Route path= "/deliverypartnerPaymentMethod" element={<DeliveryPartnerPaymentMethod />} /> */}
+            <Route path="/adminRegistrations/Admin" element={<AdminRegistrationNumbers />} />
+            <Route path= "/deliverypartnerPaymentMethod" element={<DeliveryPartnerPaymentMethod />} />
             {/* <Route path="/deliveryPartnerDashboard/:userType/:userId" element={<DeliveryPartnerDashboard />} /> */}
             <Route path="/adminGroceryZoneDashboard" element={<AdminGroceryZoneDashboard />} />
             <Route path="/adminGroceryClosedOrders/:groceryItemId" element={<AdminGroceryClosedOrders />} /> 

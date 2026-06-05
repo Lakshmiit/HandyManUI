@@ -207,7 +207,7 @@ useEffect(() => {
         if (allProducts.length > 0) {
         setCode(allProducts[0].code || "");
         setUnits(allProducts[0].units || "");
-        }
+        }  
       }
       const itemsTotal = items.reduce((sum, item) => sum + Number(item.total), 0);
       const cashbackAmount = Math.max(0, itemsTotal - Number(grandTotal));

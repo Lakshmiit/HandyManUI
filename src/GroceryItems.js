@@ -337,7 +337,7 @@ fontFamily: "Roboto",
 }}
 >
 Delivery Timings : 07:00 AM -09:00 PM
-</span>
+</span>  
 </h1>
 </div>
 

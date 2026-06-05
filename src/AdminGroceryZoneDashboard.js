@@ -71,7 +71,7 @@ const AdminGroceryZoneDashboard = () => {
     let intervalId = null;
 
     const ACTIVE_INTERVAL  = 30_000; 
-    const HIDDEN_INTERVAL  = 120_000;  
+    const HIDDEN_INTERVAL  = 120_000;     
 
     const start = (ms) => {
       if (intervalId) clearInterval(intervalId);

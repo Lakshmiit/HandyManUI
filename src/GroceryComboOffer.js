@@ -6,7 +6,6 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ImageCache from "./utils/ImageCache";
 import { CartStorage } from "./CartStorage";
 
-// const API_BASE = "https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net";
 const API_BASE = "https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net";
 
 const getLimit = (product) => {
@@ -14,7 +13,7 @@ const getLimit = (product) => {
   const apiLimit = Number(product.limit);
   if (Number.isFinite(apiLimit) && apiLimit > 0) return apiLimit;
   return Infinity;
-};
+};  
 
 const clampQtyFor = (product, qty) => {
   const n = Math.max(0, Number(qty) || 0);

@@ -713,7 +713,7 @@ const GroceryOfferItems = () => {
                                     handleAddClick(product.id);
                                   }
                                 }}
-                              />
+                              />   
                             </div>
                           )}
 

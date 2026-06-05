@@ -217,8 +217,8 @@ const [offerImages, setOfferImages] = useState({});
                 borderRadius: "20px",
                 boxShadow: "0 4px 14px rgba(255,87,34,0.35)",
                 position: "relative",
-                zIndex: 2,
-              }}
+                zIndex: 2,         
+              }}  
             >
               🎉 Please Wait Offers Loading ..
             </div>

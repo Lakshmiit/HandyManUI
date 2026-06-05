@@ -1278,7 +1278,7 @@ const filteredGroceryData = groceryData.filter((t) =>
             alt="Profile"
             className="profile-img"
           />
-        </div>
+        </div> 
       </div>
       </div>
     </div> 

@@ -310,29 +310,39 @@ useEffect(() => {
       const response = await fetch(
         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/OffersTransactions/GetOfferTransactionByUserId?userId=${userId}`
       );
-      if (!response.ok) {
-        throw new Error("Failed to fetch offer transaction details");
-      }
+      if (!response.ok) throw new Error("Failed to fetch offer transaction");
+
       const data = await response.json();
-      console.log("Offer Transaction Response:", data);
+      console.log("✅ Offer Transaction API Response:", JSON.stringify(data));
+
       if (Array.isArray(data) && data.length > 0) {
-        const latestTransaction = data[data.length - 1];
-        setOfferTransaction(latestTransaction);
-        setOfferTransactionId(latestTransaction.id);
-        const remaining = Number(latestTransaction?.remainingAmount || 0);
-        setOfferWalletAmount(remaining);
+        // Your API returns array — take the FIRST record (index 0)
+        const transaction = data[0];
+
+        console.log("✅ Transaction Object:", transaction);
+        console.log("✅ Transaction ID (id):", transaction.id);
+
+        // Directly use transaction.id — confirmed from your API response
+        setOfferTransaction(transaction);
+        setOfferTransactionId(transaction.id);  // "d62a51ef-61c0-48e3-8679-ae448810c477"
+        setOfferWalletAmount(Number(transaction.remainingAmount || 0));
+
+        console.log("✅ offerTransactionId set to:", transaction.id);
+        console.log("✅ offerWalletAmount set to:", transaction.remainingAmount);
+      } else {
+        console.warn("⚠️ No offer transactions found for userId:", userId);
       }
     } catch (error) {
-      console.error(
-        "Error fetching offer wallet amount:",
-        error
-      );
+      console.error("❌ Error fetching offer wallet amount:", error);
     }
   };
+
   if (userId) {
     fetchOfferWalletAmount();
   }
 }, [userId]);
+
+console.log("Wallet Amount:", offerWalletAmount);
 
 useEffect(() => {
 const primary = addresses.find((addr) => addr.type === "primary");
@@ -490,221 +500,267 @@ return () => window.removeEventListener("resize", handleResize);
 }, []);
 
 
-  const handleUpdatePaymentMethod = async () => {
-    try {
-      // let lat = 0;
-      // let lng = 0;
+//  const handleUpdatePaymentMethod = async () => {
+//   try {
+//     const primaryAddress = addresses.find((addr) => addr.type === "primary");
+//     const state = primaryAddress?.state;
+//     const district = primaryAddress?.district || "";
+//     const pincode = primaryAddress?.zipCode || primaryAddress?.pincode;
+//     const mobileNumber = primaryAddress?.mobileNumber;
+//     const existingWallet = Number(wallet || 0);
+//     const walletAfterUsage = existingWallet - walletToUse;
+//     const updatedWalletAmount = walletAfterUsage + cashback;
 
-      // try {
-      //   // const location = await getUserLocation();
-      //   // lat = location.latitude;
-      //   // lng = location.longitude;
-      // } catch (error) {
-      //   if (error === "User denied location access") {
-      //     // showLocationPopup();
-      //     //return;
-      //   } else {
-      //     console.log("Location error:", error);
-      //     return; // also stop for other errors
-      //   }
-      // }
-const primaryAddress = addresses.find((addr) => addr.type === "primary");
-const state = primaryAddress?.state;
-const district = primaryAddress?.district || "";
-const pincode = primaryAddress?.zipCode || primaryAddress?.pincode;
-const mobileNumber =
-primaryAddress?.mobileNumber || primaryAddress?.mobileNumber;
-const existingWallet = Number(wallet || 0);
-const walletAfterUsage = existingWallet - walletToUse;
-const updatedWalletAmount = walletAfterUsage + cashback;
-const payload = {
-...cartData,
-customerName: addressData.fullName || fullName,
-address: addressData.address || primaryAddress?.address,
-state: addressData.state || state,
-district: addressData.district || district,
-zipCode: addressData.zipCode || pincode,
-customerPhoneNumber: addressData.mobileNumber || mobileNumber,
-id: groceryItemId,
-userId: userId,
-martId: martId,
-date: new Date(),
-grandTotal: String(netPayables),
-totalItemsSelected: totalItemsSelected,
-status:  "Open",
-paymentMode: "",
-utrTransactionNumber: "",
-transactionNumber: "",  
-transactionStatus: "",
-paidAmount: "",
-AssignedTo: "",
-DeliveryPartnerUserId: "",
-latitude: 0,
-longitude: 0,                 
-isPickUp: false,
-isDelivered: false,
- totalWalletAmount: String(updatedWalletAmount),
-  availedAmount: String(walletToUse),
-  remainingAmount: String(updatedWalletAmount),
-walletAmount: walletAmount,
-deliveryAssignedTime: "",
-deliverySubmitTime: "",
-// location: `https://www.google.com/maps?q=${lat},${lng}`,
-};
-            
-let response = await fetch(
-`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
-{
-method: "PUT",
-headers: { "Content-Type": "application/json" },
-body: JSON.stringify(payload),
-},
-);
+//     const payload = {
+//       ...cartData,
+//       customerName: addressData.fullName || fullName,
+//       address: addressData.address || primaryAddress?.address,
+//       state: addressData.state || state,
+//       district: addressData.district || district,
+//       zipCode: addressData.zipCode || pincode,
+//       customerPhoneNumber: addressData.mobileNumber || mobileNumber,
+//       id: groceryItemId,
+//       userId: userId,
+//       martId: martId,
+//       date: new Date(),
+//       grandTotal: String(netPayables),
+//       totalItemsSelected: totalItemsSelected,
+//       status: "Open",
+//       paymentMode: "",
+//       utrTransactionNumber: "",
+//       transactionNumber: "",
+//       transactionStatus: "",
+//       paidAmount: "",
+//       AssignedTo: "",
+//       DeliveryPartnerUserId: "",
+//       latitude: 0,
+//       longitude: 0,
+//       isPickUp: false,
+//       isDelivered: false,
+//       totalWalletAmount: String(updatedWalletAmount),
+//       availedAmount: String(walletToUse),
+//       remainingAmount: String(updatedWalletAmount),
+//       walletAmount: walletAmount,
+//       deliveryAssignedTime: "",
+//       deliverySubmitTime: "",
+//     };
 
-if (!response.ok) {
-throw new Error("Failed to update order.");
-}
+//     const offersTransactionPayload = offerTransactionId
+//       ? {
+//           id: offerTransactionId,
+//           userId: userId,
+//           createdDate: offerTransaction?.createdDate,
+//           updatedDate: new Date().toISOString(),
+//           ticketId: martId,
+//           totalWalletAmount: String(updatedWalletAmount),
+//           availedAmount: String(walletToUse),
+//           remainingAmount: String(updatedWalletAmount),
+//         }
+//       : null;
 
-try {
-const offersTransactionPayload = {
-  id: offerTransactionId, 
-  userId: userId,
-  createdDate: offerTransaction?.createdDate,
-  updatedDate: new Date().toISOString(),
-  ticketId: martId,
-  totalWalletAmount: String(updatedWalletAmount),
-  availedAmount: String(walletToUse),
-  remainingAmount: String(updatedWalletAmount),
-};
+//     const martUpdatePromise = fetch(
+//       `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+//       {
+//         method: "PUT",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify(payload),
+//       }
+//     );
 
-const offersResponse = await fetch(
-  `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/OffersTransactions/UpdateOffersTransactionsDetails/${offerTransactionId}`,
-  {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(offersTransactionPayload),
-  }
-);
+//     const offersUpdatePromise = offersTransactionPayload
+//       ? fetch(
+//           `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/OffersTransactions/UpdateOffersTransactionsDetails/${offerTransactionId}`,
+//           {
+//             method: "PUT",
+//             headers: { "Content-Type": "application/json" },
+//             body: JSON.stringify(offersTransactionPayload),
+//           }
+//         )
+//       : Promise.resolve(null);
 
-if (offersResponse.ok) {
-    const offersResult = await offersResponse.json();
-    console.log("Offers Transaction Success:", offersResult);
-  } else {
-    const errorText = await offersResponse.text();
-    console.error("Offers Transaction API Error:", errorText);
-  }
-} catch (offersErr) {
-  console.error("Offers Transaction failed (non-blocking):", offersErr);
-}
-// if (referralAmount > 0 && referralRec?.id) {
-// try {
-// const id = String(referralRec.id).trim();
-// const payloadPut = {
-// id,
-// date: referralRec.date ?? new Date().toISOString(),
-// referralNumbers: referralRec.referralNumbers ?? "",
-// referreId: referralRec.referreId ?? userId ?? "",
-// IsReferralUsed: true,
-// referralPoints: "0",
+//     const [martResponse, offersResponse] = await Promise.all([
+//       martUpdatePromise,
+//       offersUpdatePromise,
+//     ]);
+//     if (!martResponse.ok) {
+//       const errText = await martResponse.text();
+//       console.error("Mart update failed:", errText);
+//       throw new Error("Failed to update order.");
+//     }
+//     console.log("✅ Mart order updated successfully");
+
+//     if (offersResponse === null) {
+//       console.warn("⚠️ offerTransactionId missing — offers transaction skipped");
+//     } else if (!offersResponse.ok) {
+//       const errText = await offersResponse.text();
+//       console.error("❌ Offers Transaction Update Failed:", errText);
+//     } else {
+//       console.log("✅ Offers transaction updated successfully");
+//     }
+
+//     localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
+//     localStorage.removeItem("activeOrderId");
+//     localStorage.removeItem("allCategories");
+//     localStorage.removeItem(`cartMeta_${groceryItemId}`);
+
+//     window.alert(
+//       `🎉 Thank You for Choosing the Handyman App Lakshmi Mart Services! Your Reference Order Number is ${martId}.\n` +
+//       `Cashback Earned: ₹${cashback}\n` +
+//       `Wallet Used: ₹${walletToUse}\n` +
+//       `Current Wallet Balance: ₹${updatedWalletAmount}.\n` +
+//       `Delivery Time Intimated Shortly!. 🎉`
+//     );
+
+//     window.location.href = `/profilePage/${userType}/${userId}`;
+
+//   } catch (error) {
+//     console.error("Error:", error);
+//     alert("Something went wrong. Please try again.");
+//   }
 // };
 
-// let resp = await fetch(
-// `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(id)}`,
-// {
-// method: "PUT",
-// headers: { "Content-Type": "application/json; charset=utf-8" },
-// body: JSON.stringify(payloadPut),
-// },
-// );
+const handleUpdateMartOrder = async () => {
+  const primaryAddress = addresses.find((addr) => addr.type === "primary");
+  const state = primaryAddress?.state;
+  const district = primaryAddress?.district || "";
+  const pincode = primaryAddress?.zipCode || primaryAddress?.pincode;
+  const mobileNumber = primaryAddress?.mobileNumber;
 
-// if (!resp.ok) {
-// resp = await fetch(
-// `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints/${encodeURIComponent(id)}`,
-// {
-// method: "PUT",
-// headers: { "Content-Type": "application/json; charset=utf-8" },
-// body: JSON.stringify(payloadPut),
-// },
-// );
-// }
+  const existingWallet = Number(offerWalletAmount || 0);
+  const walletAfterUsage = existingWallet - walletToUse;
+  const updatedWalletAmount = walletAfterUsage + cashback;
 
-// if (!resp.ok) {
-// const t = await resp.text().catch(() => "");
-// console.error("Referral PUT failed:", resp.status, t);
-// } else {
-// setReferralPoints(0);
-// }
-// } catch (e) {
-// console.error("Referral PUT error:", e);
-// }
-// }   
-// localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
-// localStorage.removeItem("activeOrderId");
-// localStorage.removeItem("allCategories");
-// localStorage.removeItem(`cartMeta_${groceryItemId}`);
+  const payload = {
+    ...cartData,
+    customerName: addressData.fullName || fullName,
+    address: addressData.address || primaryAddress?.address,
+    state: addressData.state || state,
+    district: addressData.district || district,
+    zipCode: addressData.zipCode || pincode,
+    customerPhoneNumber: addressData.mobileNumber || mobileNumber,
+    id: groceryItemId,
+    userId: userId,
+    martId: martId,
+    date: new Date(),
+    grandTotal: String(netPayables),
+    totalItemsSelected: totalItemsSelected,
+    status: "Open",
+    paymentMode: "",
+    utrTransactionNumber: "",
+    transactionNumber: "",
+    transactionStatus: "",
+    paidAmount: "",
+    AssignedTo: "",
+    DeliveryPartnerUserId: "",
+    latitude: 0,
+    longitude: 0,
+    isPickUp: false,
+    isDelivered: false,
+    totalWalletAmount: String(updatedWalletAmount),
+    availedAmount: String(walletToUse),
+    remainingAmount: String(updatedWalletAmount),
+    walletAmount: walletAmount,
+    deliveryAssignedTime: "",
+    deliverySubmitTime: "",
+  };
 
-// if (selectedPayment === "online") {
-// response = await fetch(
-// `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
-// {
-// method: "PUT",
-// headers: {
-// "Content-Type": "application/json",
-// },
-// body: JSON.stringify(payload),
-// },
-// );
+  console.log("📦 Mart Payload:", payload);
 
-// if (!response.ok) {
-// throw new Error("Failed to Update Payment.");
-// }
-// localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
-// localStorage.removeItem("activeOrderId");
-// localStorage.removeItem("allCategories");
-// localStorage.removeItem(`cartMeta_${groceryItemId}`);
-// window.alert(
-// `We are Redirecting to the Payment Page! Your reference number is ${martId}.`,
-// );
-// window.location.href = `/groceryOnlinePayment/${groceryItemId}`;
-// } else if (selectedPayment === "cash") {
-// response = await fetch(
-// `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
-// {
-// method: "PUT",
-// headers: {
-// "Content-Type": "application/json",
-// },
-// body: JSON.stringify(payload),
-// },
-// );
+  const response = await fetch(
+    `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+    {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    }
+  );
 
-localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
-localStorage.removeItem("activeOrderId");
-localStorage.removeItem("allCategories");
-localStorage.removeItem(`cartMeta_${groceryItemId}`);
-const primary = addresses.find((a) => a.type === "primary");
-console.log("ZipCode:", primary?.zipCode);
-// if (primary?.zipCode === "530048" || primary?.zipCode === "530045") {
-window.alert(
-`🎉 Thank You for Choosing the Handyman App Lakshmi Mart Services! Your Reference Order Number is ${martId}.
-  Cashback Earned: ₹${cashback}
-  Wallet Used: ₹${walletToUse}
-  Current Wallet Balance: ₹${updatedWalletAmount}.
-  Delivery Time Intimated Shortly!. 🎉`,
-);
-window.location.href = `/profilePage/${userType}/${userId}`;
-} catch (error) {
-console.error("Error:", error);
-}
+  if (!response.ok) {
+    const errText = await response.text();
+    console.error("❌ Mart update failed:", errText);
+    throw new Error("Failed to update mart order.");
+  }
+
+  console.log("✅ Mart order updated successfully");
+  return updatedWalletAmount;
 };
+
+
+const handleUpdateOffersTransaction = async (updatedWalletAmount) => {
+  console.log("🔍 offerTransactionId at PUT time:", offerTransactionId);
+  console.log("🔍 offerTransaction object at PUT time:", offerTransaction);
+
+  if (!offerTransactionId) {
+    console.warn("⚠️ offerTransactionId is missing — skipping offers transaction update");
+    return;
+  }
+
+  const offersTransactionPayload = {
+    id: offerTransactionId,                             
+    userId: userId,                                       
+    createdDate: offerTransaction?.createdDate,
+    updatedDate: new Date().toISOString(),
+    // ticketId: martId,
+    totalWalletAmount: String(updatedWalletAmount),
+    availedAmount: String(walletToUse),
+    remainingAmount: String(updatedWalletAmount),
+  };
+
+  console.log("📦 Offers Transaction Payload:", offersTransactionPayload);
+  console.log("📦 PUT URL:", `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/OffersTransactions/UpdateOffersTransactionsDetails/${offerTransactionId}`);
+
+  const response = await fetch(
+    `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/OffersTransactions/UpdateOffersTransactionsDetails/${offerTransactionId}`,
+    {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(offersTransactionPayload),
+    }
+  );
+
+  if (!response.ok) {
+    const errText = await response.text();
+    console.error("❌ Offers Transaction update failed:", errText);
+    return;
+  }
+
+  console.log("✅ Offers transaction updated successfully");
+};
+
+
+const handleUpdatePaymentMethod = async () => {
+  try {
+    const updatedWalletAmount = await handleUpdateMartOrder();
+
+    await handleUpdateOffersTransaction(updatedWalletAmount);
+    localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
+    localStorage.removeItem("activeOrderId");
+    localStorage.removeItem("allCategories");
+    localStorage.removeItem(`cartMeta_${groceryItemId}`);
+
+    window.alert(
+      `🎉 Thank You for Choosing the Handyman App Lakshmi Mart Services!\n` +
+      `Your Reference Order Number is ${martId}.\n` +
+      `Cashback Earned: ₹${cashback}\n` +
+      `Wallet Used: ₹${walletToUse}\n` +
+      `Current Wallet Balance: ₹${updatedWalletAmount}.\n` +
+      `Delivery Time Intimated Shortly!. 🎉`
+    );
+
+    window.location.href = `/profilePage/${userType}/${userId}`;
+
+  } catch (error) {
+    console.error("❌ Order placement error:", error);
+    alert("Something went wrong while placing the order. Please try again.");
+  }
+};
+
 
 const normalizeName = (name) => {
 return (name ?? "")
 .toLowerCase()
 .replace(/\s+/g, "")
-.replace(/[^a-z0-9]/g, "");
+.replace(/[^a-z0-9]/g, "");  
 };      
 
 const buildProductMapFromCart = (cart) => {
@@ -821,11 +877,11 @@ console.error("Error sending SMS:", error);
 const handlePaymentAndSms = async () => {
 try {
 setLoading(true);
-await Promise.all([
-handleUpdateStockLeft(),
-sendLmartsms(),
-handleUpdatePaymentMethod(),
-]);
+ await Promise.allSettled([
+      handleUpdateStockLeft(),
+      sendLmartsms(),
+    ]);
+    await handleUpdatePaymentMethod();
 } catch (error) {
 console.error(error);
 } finally {

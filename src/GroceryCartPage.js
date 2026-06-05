@@ -661,7 +661,7 @@ const activeItems = cartItems.filter(
     if (!isGuest) {
       console.log("Existing User - No Welcome Wallet");
       return;
-    }
+    }   
 
     // Step 2: Check if wallet transaction already exists
     const offerResponse = await fetch(
