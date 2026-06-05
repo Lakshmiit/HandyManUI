@@ -235,11 +235,11 @@ const GroceryOfferItems = () => {
   }
 
   useEffect(() => {
-    if (!selectedCategory) return;
+    if (!selectedCategory) return;     
     let cancelled = false;
     const controller = new AbortController();
     // const POLL_MS = 50000;
-    // let pollId = null;
+    // let pollId = null;      
 
     async function fetchProductsAndFirstImages(warm = false, signal) {
       try {
@@ -633,7 +633,7 @@ const GroceryOfferItems = () => {
                             )}
                           </div>
 
-                          {/* Product Name */}
+                          {/* Product Name */}   
                           <h6
                             className="text-start fw-bold m-0"
                             style={{

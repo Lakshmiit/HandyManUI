@@ -31,7 +31,7 @@ const [currentPage, setCurrentPage] = useState(1);
     createdDate: "",
     updatedDate: "",
     startDate: "",
-    endDate: "",
+    endDate: "",   
     image: [],
   });
 
@@ -309,7 +309,7 @@ const indexOfLast = currentPage * rowsPerPage;
                   setEditBanner({ ...editBanner, title: e.target.value })
                 }
               />
-            </Form.Group>
+            </Form.Group>   
 
             {/* <Form.Group>
               <Form.Label>Header</Form.Label>

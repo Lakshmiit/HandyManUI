@@ -15,7 +15,8 @@ const zoneData = {
 const AdminGroceryZoneDashboard = () => {
   const navigate = useNavigate();
   const [selectedZone, setSelectedZone] = useState(null);
-  const allZones = ["Grocery","A","B","C","D","E","F","G","Others","In Progress","Delivered Tickets","Return Orders","Cancel Tickets","All Grocery"];
+  const allZones = ["Grocery","A","B","C","D","E","F","G","Others","In Progress","Delivered Tickets","Cancel Tickets","All Grocery"];
+  // ,"Return Orders"
   const [groceryList, setGroceryList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [blinkingZones, setBlinkingZones] = useState({});
@@ -71,7 +72,7 @@ const AdminGroceryZoneDashboard = () => {
     let intervalId = null;
 
     const ACTIVE_INTERVAL  = 30_000; 
-    const HIDDEN_INTERVAL  = 120_000;     
+    const HIDDEN_INTERVAL  = 120_000;          
 
     const start = (ms) => {
       if (intervalId) clearInterval(intervalId);
@@ -131,7 +132,7 @@ const AdminGroceryZoneDashboard = () => {
       }
       if (status === "in progress") addTo("In Progress", item);
       if (status === "delivered")   addTo("Delivered Tickets", item);
-      if (status === "return")      addTo("Return Orders", item);
+      // if (status === "return")      addTo("Return Orders", item);
       if (status === "cancel")      addTo("Cancel Tickets", item);
       if (["open", "in progress", "delivered"].includes(status)) addTo("All Grocery", item);
     });

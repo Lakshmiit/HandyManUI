@@ -16,7 +16,7 @@ const getLimit = (product) => {
 };  
 
 const clampQtyFor = (product, qty) => {
-  const n = Math.max(0, Number(qty) || 0);
+  const n = Math.max(0, Number(qty) || 0);     
   const limit = getLimit(product);
   const stock = Number(product?.stockLeft || 0);
   return Math.min(n, limit, stock);

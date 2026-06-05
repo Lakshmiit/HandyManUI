@@ -214,7 +214,7 @@ const [offerImages, setOfferImages] = useState({});
                 fontSize: "12px",
                 letterSpacing: "2px",       
                 padding: "5px 16px",
-                borderRadius: "20px",
+                borderRadius: "20px",     
                 boxShadow: "0 4px 14px rgba(255,87,34,0.35)",
                 position: "relative",
                 zIndex: 2,         

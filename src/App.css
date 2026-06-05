@@ -3937,7 +3937,7 @@ cursor: not-allowed;
   border-radius: 50%;
   border: 2px solid gold;
   background: #fff;
-  display: grid;             
+  display: grid;                    
   place-items: center;
   padding: 2px;
   box-shadow: 0 0 8px gold, 0 0 16px #ffd700, 0 0 24px #ffc107;

@@ -26,14 +26,17 @@ const GroceryCartPage = () => {
   const [imageBlobMap, setImageBlobMap] = useState({});
   const [limitMap, setLimitMap] = useState({});
   const [addresses, setAddresses] = useState([]);
-  const [fullName, setFullName] = useState(""); 
+  const [fullName, setFullName] = useState("");
   const [isNewUser, setIsNewUser] = useState(true);
   const isGuestName = (name) => (name ?? "").trim().toLowerCase() === "guest";
-// const MIN_ORDER_TOTAL = Number(walletAmount) === 50 ? 150 : 100;
+  const [walletAmount, setWalletAmount] = useState(0);
+const MIN_ORDER_TOTAL = Number(walletAmount) === 50 ? 150 : 100;
    
   useEffect(() => {
     console.log(addresses, fullName, isNewUser);
   }, [addresses, fullName, isNewUser]);
+
+console.log("Wallet:", walletAmount);
 
   const fetchCustomerData = useCallback(async () => {
       try {
@@ -56,13 +59,13 @@ const GroceryCartPage = () => {
           emailAddress: addr.emailAddress,
           mobileNumber: addr.mobileNumber,
           fullName: addr.fullName,
-          // walletAmount: addr.walletAmount,
+          walletAmount: addr.walletAmount,
         }));            
         setAddresses(formattedAddresses);
         const apiFullName = addresses[0]?.fullName ?? "";
           setFullName(apiFullName);
-          // const wallet = addresses[0]?.walletAmount ?? 0;
-          // setWalletAmount(Number(wallet));
+          const wallet = addresses[0]?.walletAmount ?? 0;
+          setWalletAmount(Number(wallet));
         if (!apiFullName || isGuestName(apiFullName)) {
           setIsNewUser(true);
         } else {
@@ -518,18 +521,8 @@ const validateCartStockBeforeCheckout = async () => {
   return true;
 };
 
-const activeItems = cartItems.filter(
-    (item) => !item.outOfStock && item.stockLeft > 0 && item.qty > 0
-  );
-  
   const handleGroceryProceed = async (event) => {
     event.preventDefault();
-    
-  if (activeItems.length === 0) {
-    alert("Your cart is empty. Please add items before proceeding.");
-    return;
-  }
-     await createWelcomeWalletIfEligible();
    const valid = await validateCartStockBeforeCheckout();
     if (!valid) return;
 
@@ -561,14 +554,10 @@ const activeItems = cartItems.filter(
       longitude: 0,
       isPickUp: false,
       isDelivered: false,
-      TotalWalletAmount:"",
-      RemainingAmount:"",
-      AvailedAmount:"",
       DeliveryAssignedTime: "",
       DeliverySubmitTime: "",
-      GrandTotal: finalGrandTotal.toString(),
+      GrandTotal: roundedGrandTotal.toString(),
       TotalItemsSelected: grandSummary.items.toString(),
-      location: "",
       categories: allCategories.map((cat) => {
         const products = (cat.products || []).map((p) => {
           const persisted = p.image ?? p.productImage ?? "";
@@ -625,7 +614,7 @@ const activeItems = cartItems.filter(
             `cartMeta_${extractedId}`,
             JSON.stringify({
               items: grandSummary.items,
-              total: finalGrandTotal,
+              total: roundedGrandTotal,
             }),
           );
           navigate(
@@ -641,72 +630,6 @@ const activeItems = cartItems.filter(
       alert("An error occurred while uploading the order.");
     }
   };
-
-  const createWelcomeWalletIfEligible = async () => {
-  try {
-    const primaryAddress = addresses.find((addr) => addr.type === "primary");
-    const mobileNumber = primaryAddress?.mobileNumber;
-    if (!mobileNumber) return;
-
-    // Step 1: Verify Guest User
-    const guestResponse = await fetch(
-      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Customer/GuestUserExistingVerification/${mobileNumber}`
-    );
-    if (!guestResponse.ok) return;
-    const guestData = await guestResponse.json();
-    if (!Array.isArray(guestData) || guestData.length === 0) return;
-
-    const customer = guestData[0];
-    const isGuest = customer?.firstName?.trim().toLowerCase() === "guest";
-    if (!isGuest) {
-      console.log("Existing User - No Welcome Wallet");
-      return;
-    }   
-
-    // Step 2: Check if wallet transaction already exists
-    const offerResponse = await fetch(
-      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/OffersTransactions/GetOfferTransactionByUserId?userId=${userId}`
-    );
-
-    if (offerResponse.ok) {
-      const offerData = await offerResponse.json();
-
-      if (Array.isArray(offerData) && offerData.length > 0) {
-        console.log("Welcome wallet already exists — skipping POST.");
-        return;
-      }
-    }
-
-    const payload3 = {
-      id: "string",
-      UserId: customer.userId,
-      CreatedDate: new Date().toISOString(),
-      UpdatedDate: new Date().toISOString(),
-      TicketId: "",
-      TotalWalletAmount: "50",
-      AvailedAmount: "0",
-      RemainingAmount: "50",
-    };
-
-    const createResponse = await fetch(
-      "https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/OffersTransactions/UploadOffersTransactionsDetails",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload3),
-      }
-    );
-
-    if (createResponse.ok) {
-      console.log("₹50 Welcome Wallet Created Successfully");
-    } else {
-      console.error("Failed to create welcome wallet:", await createResponse.text());
-    }
-
-  } catch (error) {
-    console.error("createWelcomeWalletIfEligible error:", error);
-  }
-};
 
   const outOfStockCount = cartItems.filter(
   (item) => item.outOfStock || item.stockLeft <= 0
@@ -735,15 +658,6 @@ const activeItems = cartItems.filter(
   );
   const roundedItemsTotal = Math.round(itemsTotal);
   const roundedGrandTotal = Math.round(grandTotal);
-
-  const deliveryCharge = roundedGrandTotal >= 150 ? 0 : 15;
-const handlingCharge = roundedGrandTotal >= 150 ? 0 : 5;
-const extraCharges = deliveryCharge + handlingCharge;
-const finalGrandTotal = roundedGrandTotal + extraCharges;
-const FREE_DELIVERY_LIMIT = 150;
-const amountNeeded = Math.max( 0,
-FREE_DELIVERY_LIMIT - roundedGrandTotal
-);
 
   return (
     <div
@@ -1002,57 +916,34 @@ FREE_DELIVERY_LIMIT - roundedGrandTotal
           <span>
             🚲 Delivery charge <InfoIcon fontSize="small" />
           </span>
-          <span
-            className={deliveryCharge === 0 ? "text-danger fw-bold" : "fw-bold"}
-            style={{ fontSize: "10px" }}
-          >
-            {deliveryCharge === 0 ? "FREE" : `₹${deliveryCharge}`}
+          <span className="text-danger fw-bold" style={{ fontSize: "10px" }}>
+            FREE
           </span>
         </div>
         <div className="d-flex justify-content-between align-items-center">
           <span>
             👜 Handling charge <InfoIcon fontSize="small" />
           </span>
-          <span
-            className={handlingCharge === 0 ? "text-danger fw-bold" : "fw-bold"}
-            style={{ fontSize: "10px" }}
-          >
-            {handlingCharge === 0 ? "FREE" : `₹${handlingCharge}`}
+          <span className="text-danger fw-bold" style={{ fontSize: "10px" }}>
+            FREE
           </span>
         </div>
         <hr className="my-2" />
         <div className="d-flex justify-content-between align-items-center fw-bold">
-          <span className="text-danger">Grand total</span>
-          <span className="text-danger">₹{finalGrandTotal}</span>
+          <span>Grand total</span>
+          <span>₹{roundedGrandTotal}</span>
         </div>
       </div>
       <Divider />
-      {roundedGrandTotal > 0 && roundedGrandTotal < FREE_DELIVERY_LIMIT && (
-        <div
-          style={{
-            backgroundColor: "#FFF3CD",
-            color: "#D10000",
-            padding: "10px",
-            borderRadius: "8px",
-            marginBottom: "10px",
-            fontSize: "13px",
-            fontWeight: "600",
-            textAlign: "center",
-            border: "1px solid #FFE69C"
-          }}
-        >
-              🎉 Add ₹{amountNeeded} more to unlock save <strong style={{fontSize: "15px"}}>₹20</strong> FREE DELIVERY & Handling Charges
-        </div>
-      )}
-      {/* {roundedGrandTotal < MIN_ORDER_TOTAL && (
+      {roundedGrandTotal < MIN_ORDER_TOTAL && (
         <p style={{ color: "red", fontSize: "13px", marginTop: "0px" }}>
           Minimum order is ₹{MIN_ORDER_TOTAL} and above
         </p>
-      )} */}
+      )}
 
       {/* Footer */}
       <div
-        className="cart-footer d-flex justify-content-between align-items-center mt-1 px-3 py-2"
+        className="cart-footer d-flex justify-content-between align-items-center mt-2 px-3 py-2"
         style={{
           backgroundColor: "#008000",
           color: "white",
@@ -1063,7 +954,7 @@ FREE_DELIVERY_LIMIT - roundedGrandTotal
         <div>
           <span style={{ fontSize: "12px" }}>{grandSummary.items} items</span>
           <div style={{ fontWeight: "500", fontSize: "15px" }}>
-            ₹{finalGrandTotal}
+            ₹{roundedGrandTotal}
           </div>
         </div>
 
@@ -1071,12 +962,17 @@ FREE_DELIVERY_LIMIT - roundedGrandTotal
           style={{
             fontWeight: "500",
             fontSize: "15px",
-            cursor: activeItems.length === 0 ? "not-allowed" : "pointer", 
-            opacity: activeItems.length === 0 ? 0.5 : 1,
+            cursor:
+              roundedGrandTotal < MIN_ORDER_TOTAL ? "not-allowed" : "pointer",
+            opacity: roundedGrandTotal < MIN_ORDER_TOTAL ? 0.6 : 1,
           }}
-          onClick={activeItems.length > 0 ? handleGroceryProceed : undefined}
-        > 
-          Proceed →
+          onClick={
+            roundedGrandTotal >= MIN_ORDER_TOTAL
+              ? handleGroceryProceed
+              : undefined
+          }
+        >
+          {roundedGrandTotal < MIN_ORDER_TOTAL ? "Add More Items" : "Proceed →"}
         </div>
       </div>
 
@@ -1085,7 +981,7 @@ FREE_DELIVERY_LIMIT - roundedGrandTotal
           className="btn btn-warning mt-1 mb-1"
           onClick={() => navigate(`/profilePage/${userType}/${userId}`)}
         >
-          Add More Items
+          Back
         </button>
       </div>
       <Footer />

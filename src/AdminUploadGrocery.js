@@ -222,10 +222,10 @@ useEffect(() => {
                 required
                 onChange={(e) => setCategory(e.target.value)}>
                 <option>Choose Category</option>
-                <option>LMart Special</option>
+                <option>LMart Special</option>   
                 <option>DWCRA</option>
                 <option>Grocery Value Combo Packs</option>
-                <option>Unbeatable Offers</option>
+                <option>Unbeatable Offers</option>     
                 <option>Vegetables</option>
                 <option>Fruits</option>
                 <option>Rice & Ravva</option>      

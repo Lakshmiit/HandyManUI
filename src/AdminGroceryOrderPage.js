@@ -36,7 +36,6 @@ const [selectedPartner, setSelectedPartner] = useState("");
 const [longitude, setLongitude] = useState(""); 
 const [latitude, setLatitude] = useState(""); 
 const [grandTotal, setGrandTotal] = useState(""); 
-const [remainingAmount,setRemainingAmount] =useState('');
 const [paidAmount, setPaidAmount] = useState(""); 
 const [transactionNumber, setTransactionNumber] = useState(""); 
 const [transactionStatus, setTransactionStatus] = useState(""); 
@@ -48,17 +47,23 @@ const [units, setUnits] = useState("");
   const [groceryId, setgroceryId] = useState();
 const [cashbackAmount, setCashbackAmount] = useState(0);
 const [status, setStatus] = useState();
+const showFreeSugar = Number(grandTotal) > 699 && Number(grandTotal) < 998;
+// const showAttaSugar = Number(grandTotal) > 499 && Number(grandTotal) < 999;
  const [showZoomModal, setShowZoomModal] = useState(false);
   const [zoomImage, setZoomImage] = useState("");
   const [zoomProduct, setZoomProduct] = useState(null);
-
+  // const [date, setDate] = useState('');
   useEffect(() => {
   console.log(status,groceryData,groceryId, id, customerId, loading, longitude, latitude, grandTotal, paidAmount, transactionNumber, transactionStatus, totalItemsSelected, cartData, code, units);
 }, [status,groceryData, groceryId,id,customerId, loading, longitude, latitude, grandTotal, paidAmount, transactionNumber, transactionStatus, totalItemsSelected, cartData, code, units]);
 
+  // const [giftName, setGiftName] = useState("");
+// const [freeItemImage, setFreeItemImage] = useState(null);
+// const [freeItemName, setFreeItemName] = useState("");
 useEffect(() => {
     const fetchCart = async () => {
       if (!groceryItemId) return;
+
       const ctrl = new AbortController();
       try {
         const res1 = await fetch(
@@ -70,7 +75,6 @@ useEffect(() => {
         setCartData(data);
         setMartId(data.martId);
         setGrandTotal(data.grandTotal);
-        setRemainingAmount(data.remainingAmount);
         setTotalItemsSelected(data.totalItemsSelected);
         setCustomerName(data.customerName);
         setStatus(data.status);
@@ -172,7 +176,6 @@ useEffect(() => {
       setLongitude(data.longitude);
       setLatitude(data.latitude);
       setGrandTotal(data.grandTotal);
-      setRemainingAmount(data.remainingAmount);
       setPaymentMode(data.paymentMode);
       setTotalItemsSelected(data.totalItemsSelected);
       setTransactionStatus(data.transactionStatus);
@@ -180,8 +183,7 @@ useEffect(() => {
       setTransactionNumber(data.transactionNumber);
         setDate(data.date);
       let allProducts = [];
-      // eslint-disable-next-line no-unused-vars
-      let totalAmountFromApi = 0;         
+      let totalAmountFromApi = 0;
 
       if (data.categories && Array.isArray(data.categories)) {
         data.categories.forEach((cat) => {
@@ -207,13 +209,56 @@ useEffect(() => {
         if (allProducts.length > 0) {
         setCode(allProducts[0].code || "");
         setUnits(allProducts[0].units || "");
-        }  
+        }
       }
-      const itemsTotal = items.reduce((sum, item) => sum + Number(item.total), 0);
-      const cashbackAmount = Math.max(0, itemsTotal - Number(grandTotal));
+      const grandTotalNumeric = Number(data.grandTotal) || 0;
+      const cashback = totalAmountFromApi - grandTotalNumeric;
+        
+      if ((cashback >= 49 && cashback <= 51) || (cashback >= 29 && cashback <= 31) || (cashback >= 79 && cashback <= 81)  || (cashback >= 99 && cashback <= 101) || (cashback >= 149 && cashback <= 151) || (cashback >= 199 && cashback <= 201))
+      {
+        setCashbackAmount(cashback);                       
+      } else {
+        setCashbackAmount(0);        
+      }
 
-      setCashbackAmount(cashbackAmount);
-      
+      // const numericGrandTotal = Number(data.grandTotal) || 0;
+      // let gift = "";
+      // if (numericGrandTotal >= 1699 && numericGrandTotal <= 1998) {
+      //   gift = "Paras Miracle Pedal Dustbin";
+      // } 
+      // else if (numericGrandTotal >= 2499) {
+      //   gift = "Oliveware Easy Meal Lunch Box";
+      // }
+      // setGiftName(gift);
+
+//       let offerImage = null;
+// let offerName = "";
+
+// if (grandTotal >= 199 && grandTotal <= 298) {
+//   offerImage = Container1Img;
+//   offerName = "Masti Oye Masala Noodles 60 g + Thums Up Soft Drink 250 ml";
+// }
+// else if (grandTotal >= 299 && grandTotal <= 398) {
+//   offerImage = Container2Img;
+//   offerName = "Nayasa Use Max Plastic Storage Container Pack 1";
+// }
+// else if (grandTotal >= 399 && grandTotal <= 498) {
+//   offerName = "₹50 Cashback";
+// }
+// else if (grandTotal >= 499 && grandTotal <= 598) {
+//   offerImage = Container3Img;
+//   offerName = "Home One Plastic Container 550 ml";
+// }
+// else if (grandTotal >= 599 && grandTotal <= 698) {
+//   offerImage = Container4Img;
+//   offerName = "Max Store Food Storage Container Pack 3";
+// }
+// else if (grandTotal >= 699) {
+//   offerImage = Container5Img;
+//   offerName = "Nayasa Use Max Plastic Storage Container Pack 3";
+// }
+// setFreeItemImage(offerImage);
+// setFreeItemName(offerName);
     } catch (error) {
       console.error("Error fetching grocery product data:", error);
     } finally {
@@ -223,7 +268,12 @@ useEffect(() => {
   if (groceryItemId) {
     fetchGroceryData();
   }
-}, [groceryItemId, grandTotal, items]);    
+}, [groceryItemId, grandTotal]);    
+   
+// const handleAssignedToChange = (e) => {
+//   const selectedAssignedTo = e.target.value;
+//   setAssignedTo(selectedAssignedTo);
+// };
 
 // ForwardIcon 
   const handleUpdatePaymentMethod = async () => {
@@ -470,56 +520,69 @@ const handleDownloadPDF = () => {
   doc.setFont("Roboto", "normal");
   doc.setTextColor(0, 0, 0);
 
-  // const uiGrandTotal = Math.round(    
-  //   items.reduce((sum, item) => sum + Number(item.total), 0)
-  // );
+  const uiGrandTotal = Math.round(    
+    items.reduce((sum, item) => sum + Number(item.total), 0)
+  );
 
+  let pdfCashback = 0;
+  if (
+    (cashbackAmount >= 49 && cashbackAmount <= 51) ||
+    (cashbackAmount >= 29 && cashbackAmount <= 31) ||
+    (cashbackAmount >= 99 && cashbackAmount <= 101) ||
+    (cashbackAmount >= 149 && cashbackAmount <= 151)||
+    (cashbackAmount >= 199 && cashbackAmount <= 201)
+  ) {
+    pdfCashback = cashbackAmount;
+  }
+
+  const pdfShowFreeSugar =
+    Number(grandTotal) > 699 && Number(grandTotal) < 998;
   let currentY = doc.lastAutoTable.finalY + 10;
 
   let requiredHeight = 12;
+  if (pdfCashback > 0) requiredHeight += 6;
+  if (pdfShowFreeSugar) requiredHeight += 6;
   if (currentY + requiredHeight > PAGE_HEIGHT - FOOTER_SPACE) {
     doc.addPage();
     addHeader(doc, martId);
     addFooter(doc);
     currentY = TOP_MARGIN + 10;
   }
+  if (pdfCashback > 0) {
+    doc.setFontSize(10);
+    doc.setTextColor(0, 0, 0);
+    doc.text(
+      `Cashback Applied : Rs. ${pdfCashback}`,
+      195,
+      currentY,
+      { align: "right" }
+    );
+    currentY += 6;
+  }
+
+ if (pdfShowFreeSugar) {
+  doc.setFontSize(10);
+  doc.setTextColor(0, 128, 0);
+  doc.setFont("Roboto", "bold");
+  doc.text(
+    "🎁 Give Customer Sugar 1 Kg FREE",
+    195,
+    currentY,
+    { align: "right" }
+  );
+  currentY += 8;
+}
+
   doc.setFont("Roboto", "bold");
   doc.setFontSize(11);
-  doc.setTextColor(200, 0, 0);
+  doc.setTextColor(200, 0, 0); 
   doc.text(
-    `Cashback Earned : Rs. ${cashbackAmount}`,
+    `Grand Total : Rs. ${uiGrandTotal}`,
     195,
     currentY,
     { align: "right" }
   );
-
-  currentY += 6; 
-  doc.text(
-    `Grand Total : Rs. ${grandTotal}`,
-    195,
-    currentY,
-    { align: "right" }
-  );
-  currentY += 6; 
-  doc.text(
-    `Remaining Wallet Balance : Rs. ${remainingAmount}`,
-    195,
-    currentY,
-    { align: "right" }
-  );
-
-  currentY += 6;
-
-  doc.setFontSize(10);
-doc.setTextColor(200, 0, 0);
-
-  doc.text(
-    "For every Rs.100 order value, Rs.10 will be used from wallet on next order.",
-    105, 
-    currentY,
-    { align: "center" }
-  );
-    doc.save(`Grocery_Order_${martId}.pdf`);
+  doc.save(`Grocery_Order_${martId}.pdf`);
 };
 
 useEffect(() => {
@@ -556,12 +619,7 @@ const handleImageClick = (imageSrc, product) => {
     setZoomProduct(product);
     setShowZoomModal(true);
   };
-  const itemsTotal = items.reduce((sum, item) => sum + Number(item.total), 0);
-
-  const deliveryCharge = itemsTotal >= 150 ? 0 : 15;
-
-  const handlingCharge = itemsTotal >= 150 ? 0 : 5;
-
+  
   return (
   <>
 <div className="d-flex flex-row justify-content-start align-items-start" style={{marginTop: "130px"}}>
@@ -693,27 +751,23 @@ const handleImageClick = (imageSrc, product) => {
     ))}
   </tbody>
   <tfoot>
-    
- <tr>
-  <td colSpan="5" className="text-end fw-bold text-danger">
-    Delivery Charge: {deliveryCharge === 0 ? "FREE" : `₹${deliveryCharge}`}
-  </td>
-  
-  <td colSpan="5" className="text-end fw-bold text-danger">
-    Handling Charge: {handlingCharge === 0 ? "FREE" : `₹${handlingCharge}`}
-  </td>      
-</tr>
-{cashbackAmount > 0 && (
-<tr>
-  <td colSpan="9" className="text-end fw-bold text-success">
-    Cashback Earned:
-  </td>
-  <td className="fw-bold text-success">
-    ₹{cashbackAmount}
-  </td>
-</tr>
-)}
-
+     {cashbackAmount > 0 && (
+    <tr>
+      <td colSpan="9" className="text-end fw-bold text-danger">
+        Cashback Applied:
+      </td>
+      <td className="fw-bold text-success">
+        ₹{cashbackAmount}
+      </td>
+    </tr> 
+  )}
+  {showFreeSugar && (
+    <tr>
+      <td colSpan="10" className="text-end fw-bold text-danger">
+        🎁 Give Customer <strong> Sugar 1 Kg FREE</strong>
+      </td>    
+    </tr>
+  )} 
     <tr>
       <td colSpan="9" className="text-end fw-bold">
         Grand Total:
@@ -721,18 +775,7 @@ const handleImageClick = (imageSrc, product) => {
       <td className="fw-bold">     
         ₹{grandTotal}
       </td>
-    </tr> 
-
-
- <tr>
-      <td colSpan="9" className=" text-danger text-end fw-bold">
-        Your's current wallet balance :
-      </td>
-      <td className="fw-bold">     
-        ₹{remainingAmount}
-      </td>
     </tr>   
-
   </tfoot>  
 </table>
 <div className="text-end">
