@@ -5,9 +5,14 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import Banner1 from './img/BannerModal.jpg';
 import './App.css';  
+import ImageCache from "./utils/ImageCache";
 
 const IMAGE_API =
   "https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=";
+
+const MODAL_SHOW_LIMIT = 5;
+const MODAL_COUNT_KEY = "offerModalShowCount";
+const MODAL_DATE_KEY = "offerModalShowDate";
 
 const OffersBannerModal = () => {
   const [showOffersModal, setShowOffersModal] = useState(false);
@@ -16,9 +21,9 @@ const [offerImages, setOfferImages] = useState({});
   const [currentTime] = useState(new Date());
   const hasClosedRef = useRef(false);
   const [imagesLoading, setImagesLoading] = useState(true);
-  useEffect(() => {       
-    setShowOffersModal(true);    
-  }, []);
+  // useEffect(() => {       
+  //   setShowOffersModal(true);    
+  // }, []);
 
   // 🔹 Fetch banners
   useEffect(() => {
@@ -35,7 +40,44 @@ const [offerImages, setOfferImages] = useState({});
     fetchOffers();
   }, []);
 
- useEffect(() => {
+//  useEffect(() => {
+//   if (!offersData.length) return;
+//   const fetchImages = async () => {
+//     try {
+//       setImagesLoading(true);
+//       const imagesMap = {};
+//       await Promise.all(
+//         offersData.map(async (offer) => {
+//           const imgs = await Promise.all(
+//             (offer.image || []).map(async (imgObj) => {
+//               try {
+//                 const response = await axios.get(
+//                   `${IMAGE_API}${encodeURIComponent(imgObj.images)}`
+//                 );
+//                 if (response.data?.imageData) {
+//                   return `data:image/jpeg;base64,${response.data.imageData}`;
+//                 }
+//                 return null;
+//               } catch (err) {
+//                 console.error("Image fetch failed:", err);
+//                 return null;
+//               }
+//             })
+//           );
+//           imagesMap[String(offer.id)] = imgs.filter(Boolean);
+//         })
+//       );
+//       setOfferImages(imagesMap);
+//     } catch (err) {
+//       console.error("Error loading images:", err);
+//     } finally {
+//       setImagesLoading(false);
+//     }
+//   };
+//   fetchImages();
+// }, [offersData]);
+
+useEffect(() => {
   if (!offersData.length) return;
   const fetchImages = async () => {
     try {
@@ -45,12 +87,37 @@ const [offerImages, setOfferImages] = useState({});
         offersData.map(async (offer) => {
           const imgs = await Promise.all(
             (offer.image || []).map(async (imgObj) => {
+              const filename = imgObj.images;
               try {
+                // ✅ Step 1: Check blob URL (fastest - same session)
+                const cachedBlob = ImageCache.getBlobUrl(filename);
+                if (cachedBlob) {
+                  return cachedBlob;
+                }
+
+                // ✅ Step 2: Check IndexedDB (persists across sessions)
+                const cachedBase64 = await ImageCache.getBase64(filename);
+                if (cachedBase64) {
+                  const base64Url = `data:image/jpeg;base64,${cachedBase64}`;
+                  // Save to blob cache for faster access this session
+                  ImageCache.setBlobUrl(filename, base64Url);
+                  return base64Url;
+                }
+
+                // ✅ Step 3: Fetch from API (first time only)
                 const response = await axios.get(
-                  `${IMAGE_API}${encodeURIComponent(imgObj.images)}`
+                  `${IMAGE_API}${encodeURIComponent(filename)}`
                 );
                 if (response.data?.imageData) {
-                  return `data:image/jpeg;base64,${response.data.imageData}`;
+                  const base64 = response.data.imageData;
+                  const base64Url = `data:image/jpeg;base64,${base64}`;
+
+                  // Save to IndexedDB for next session
+                  await ImageCache.setBase64(filename, base64);
+                  // Save to blob cache for this session
+                  ImageCache.setBlobUrl(filename, base64Url);
+
+                  return base64Url;
                 }
                 return null;
               } catch (err) {
@@ -79,23 +146,64 @@ const [offerImages, setOfferImages] = useState({});
   return currentTime >= start && currentTime <= end;
 });
 
-  const handleClose = () => {
+ const handleClose = () => {
   hasClosedRef.current = true;    
   setShowOffersModal(false);
+  const today = new Date().toDateString(); 
+  const savedDate = localStorage.getItem(MODAL_DATE_KEY);
+
+  if (savedDate !== today) {
+    localStorage.setItem(MODAL_DATE_KEY, today);
+    localStorage.setItem(MODAL_COUNT_KEY, "1"); 
+  } else {
+    const count = parseInt(localStorage.getItem(MODAL_COUNT_KEY) || "0", 10);
+    localStorage.setItem(MODAL_COUNT_KEY, String(count + 1));
+  }
 };
 
   // 🔹 Control modal visibility
-  useEffect(() => {
+//   useEffect(() => {
+//   if (offersData.length > 0 && !hasClosedRef.current) {
+//     const hasActive = offersData.some((offer) => {
+//       const start = new Date(offer.startDate);
+//       const end = new Date(offer.endDate);
+//       return currentTime >= start && currentTime <= end;
+//     });
+//     setShowOffersModal(hasActive);
+//   }
+// }, [offersData, currentTime]);
+
+useEffect(() => {
+  const today = new Date().toDateString();
+  const savedDate = localStorage.getItem(MODAL_DATE_KEY);
+
+  if (savedDate !== today) {
+    localStorage.setItem(MODAL_DATE_KEY, today);
+    localStorage.setItem(MODAL_COUNT_KEY, "0");
+  }
+
+  const count = parseInt(localStorage.getItem(MODAL_COUNT_KEY) || "0", 10);
+  if (count < MODAL_SHOW_LIMIT) {
+    setShowOffersModal(true);
+  }
+}, []);
+
+useEffect(() => {
   if (offersData.length > 0 && !hasClosedRef.current) {
+    const count = parseInt(localStorage.getItem(MODAL_COUNT_KEY) || "0", 10);
+    if (count >= MODAL_SHOW_LIMIT) return;
+
     const hasActive = offersData.some((offer) => {
       const start = new Date(offer.startDate);
       const end = new Date(offer.endDate);
       return currentTime >= start && currentTime <= end;
     });
-    setShowOffersModal(hasActive);
+
+    if (hasActive) {
+      setShowOffersModal(true);
+    }
   }
 }, [offersData, currentTime]);
-
   const formatDateTime = (dateString) => {
     return new Date(dateString).toLocaleString("en-IN", {
       day: "2-digit",

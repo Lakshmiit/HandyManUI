@@ -223,7 +223,7 @@ const [selectedTicket, setSelectedTicket] = useState(null);
 const [selectedOrder, setSelectedOrder] = useState(null);
 const [showOrderModal, setShowOrderModal] = useState(false);
 const [showDetails, setShowDetails] = useState(false);
-
+const [searchOrderId, setSearchOrderId] = useState("");
 useEffect(() => {
   console.log(state, address, mobileNumber,id, pinCode, paidAmount, paymentMode, martId,status, imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery,error, showMenu, products, selectedCategory, dress);
 }, [state, address, mobileNumber, id, pinCode, paidAmount, paymentMode, martId, status, imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery, error,showMenu, products, selectedCategory, dress]);
@@ -452,24 +452,24 @@ useEffect(() => {
 useEffect(() => {
   let cancelled = false;
   // const POLL_MS = 300000;
-  const sendLog = async () => {
-    try {
-      const payload = {
-        id: "1", 
-        date: "string",
-        mobileNumber: profile.mobileNumber, 
-        message: "User fetching grocery items in profile page"
-      };
-      await axios.post(
-        `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/LmartLogs/UploadlogsDetails`,
-        payload
-      );
-    } catch (err) {
-      console.error("Log API failed", err);
-    }
-  };
+  // const sendLog = async () => {
+  //   try {
+  //     const payload = {
+  //       id: "1", 
+  //       date: "string",
+  //       mobileNumber: profile.mobileNumber, 
+  //       message: "User fetching grocery items in profile page"
+  //     };
+  //     await axios.post(
+  //       `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/LmartLogs/UploadlogsDetails`,
+  //       payload
+  //     );
+  //   } catch (err) {
+  //     console.error("Log API failed", err);
+  //   }
+  // };
   const fetchProducts = async (showLoader = false) => {
-    sendLog();
+    // sendLog();
     if (showLoader) setLoading(true);
     try {
       const res = await axios.get(
@@ -1166,6 +1166,10 @@ const updateLocalStorageCart = (product, qty) => {
   localStorage.setItem("allCategories", JSON.stringify(stored));
 };
 
+const filteredGroceryData = groceryData.filter((t) =>
+    t.martId?.toString().toLowerCase().includes(searchOrderId.toLowerCase())
+  );
+
   return (
     <>
     <OffersBannerModal/>
@@ -1461,45 +1465,56 @@ const updateLocalStorageCart = (product, qty) => {
     {isRegistered && partnerStatus === "open" ? (
       loading ? (
         <p>Loading tickets…</p>
-      ) : groceryData.length === 0 ? (
-        <p>No Tickets Found.</p>
       ) : (
-        <div className="notification-list">
-  {groceryData.map((t) => (
-    <div
-      key={t.id || t.martId}
-      className="notification-item mb-3 p-2 border rounded"
-    >
-      {/* CLICKABLE HEADER */}
-      <div>
-        <strong>Order Id:</strong> {" "}
-        <span
-          style={{ color: "blue", cursor: "pointer" }}
-         onClick={() => {
-            setSelectedTicket(t);
-            setSelectedOrder({
-              ...t,
-              paymentType: t.paymentType || "",
-              receivedAmount: t.receivedAmount || "",
-              cashAmount: t.cashAmount || "",
-              onlineAmount: t.onlineAmount || "",
-            });
-            setShowOrderModal(true);
-          }}
-        >
-         {t.martId}
-        </span> <br />
-         <strong>Name:</strong> {" "}
-        <span
-          style={{ color: "blue", cursor: "pointer" }}
-        >
-         {t.customerName}
-        </span>
-      </div>
-    </div>
-  ))}
-</div>
-      )
+       <>
+          {/* Search */}
+          <input
+            type="text"
+            className="form-control mb-3"
+            placeholder="Search by Order ID..."
+            value={searchOrderId}
+            onChange={(e) => setSearchOrderId(e.target.value)}
+          />
+          {filteredGroceryData.length === 0 ? (
+            <p>No Tickets Found.</p>
+          ) : (
+            <div className="notification-list">
+              {filteredGroceryData.map((t) => (
+                <div
+                  key={t.id || t.martId}
+                  className="notification-item mb-3 p-2 border rounded"
+                >
+                  <div>
+                    <strong>Order Id:</strong>{" "}
+                    <span
+                      style={{ color: "blue", cursor: "pointer" }}
+                      onClick={() => {
+                        setSelectedTicket(t);
+                        setSelectedOrder({
+                          ...t,
+                          paymentType: t.paymentType || "",
+                          receivedAmount: t.receivedAmount || "",
+                          cashAmount: t.cashAmount || "",
+                          onlineAmount: t.onlineAmount || "",
+                        });
+                        setShowOrderModal(true);
+                      }}
+                    >
+                      {t.martId}
+                    </span>
+                    <br />
+
+                    <strong>Name:</strong>{" "}
+                    <span style={{ color: "blue", cursor: "pointer" }}>
+                      {t.customerName}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          </>
+        )
     ) : (
       <p>You are already registered, pending for admin approval.</p>
     )}

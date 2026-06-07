@@ -15,11 +15,11 @@ import ImageCache from "./utils/ImageCache";
 import Footer from "./Footer.js";
 // import { appConfig } from "./config";
 
-const normalizeName = (s) =>
-  String(s || "")
-    .toLowerCase()
-    .replace(/\s+/g, " ")
-    .trim();
+// const normalizeName = (s) =>
+//   String(s || "")
+//     .toLowerCase()
+//     .replace(/\s+/g, " ")
+//     .trim();
 
 const getLimit = (product) => {
   if (!product) return Infinity;
@@ -83,10 +83,10 @@ const GroceryOfferItems = () => {
     console.log(imageLoading, checked, grandSummary);
   }, [imageLoading, checked, grandSummary]);
 
-  const MIN_ORDER_TOTAL =
-    normalizeName(selectedCategory) === normalizeName("Unbeatable Offers")
-      ? 100
-      : 100;
+  // const MIN_ORDER_TOTAL =
+  //   normalizeName(selectedCategory) === normalizeName("Unbeatable Offers")
+  //     ? 100
+  //     : 100;
   const OFFERS = "Offers";
   const encodedCategory = OFFERS;
 
@@ -271,9 +271,17 @@ const GroceryOfferItems = () => {
         const cachedMap = {};
         const misses = [];
         for (const { productId, photo } of firstImages) {
-          const cached = ImageCache.getBase64(photo);
+          const blobUrl = ImageCache.getBlobUrl(photo);
+          if (blobUrl) {
+            cachedMap[productId] = [blobUrl];
+            continue;
+          }
+
+          const cached = await ImageCache.getBase64(photo);
           if (cached) {
-            cachedMap[productId] = [`data:image/jpeg;base64,${cached}`];
+            const dataUrl = `data:image/jpeg;base64,${cached}`;
+            ImageCache.setBlobUrl(photo, dataUrl); 
+            cachedMap[productId] = [dataUrl];
           } else {
             misses.push({ productId, photo });
           }
@@ -285,23 +293,27 @@ const GroceryOfferItems = () => {
         const fetchOne = async ({ productId, photo }) => {
           try {
             const res = await fetch(
-              `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
-                photo,
-              )}`,
+              `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
               { signal },  
             );
             const json = await res.json();
             const b64 = json?.imageData || "";
             if (!b64) return;
-            ImageCache.setBase64(photo, b64);
+
+            await ImageCache.setBase64(photo, b64);
             const dataUrl = `data:image/jpeg;base64,${b64}`;
+
+            ImageCache.setBlobUrl(photo, dataUrl);
+
             if (!cancelled) {
               setImageUrls((prev) => {
                 if (prev[productId]?.[0] === dataUrl) return prev;
                 return { ...prev, [productId]: [dataUrl] };
               });
             }
-          } catch {}
+          } catch (err) {
+            console.error("fetchOne failed:", err); 
+          }
         };
         await Promise.allSettled(misses.map(fetchOne));
       } catch (err) {
@@ -808,7 +820,7 @@ const GroceryOfferItems = () => {
                     })}
 
                   {/* Cart Bar */}
-                  {(() => {
+                  {/* {(() => {
                     const readAllCategories = () => {
                       if (typeof window === "undefined") return [];
                       try {
@@ -942,7 +954,7 @@ const GroceryOfferItems = () => {
                         </button>
                       </div>
                     ) : null;
-                  })()}
+                  })()} */}
                 </div>
               </>
             )}

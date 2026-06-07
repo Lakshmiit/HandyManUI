@@ -24,8 +24,17 @@ const clampQtyFor = (product, qty) => {
 
 const fetchImage = async (photo, signal) => {
   if (!photo) return null;
-  const cached = ImageCache.getBase64(photo);
-  if (cached) return `data:image/jpeg;base64,${cached}`;
+
+  const blobUrl = ImageCache.getBlobUrl(photo);
+  if (blobUrl) return blobUrl;
+
+  const cached = await ImageCache.getBase64(photo);
+  if (cached) {
+    const dataUrl = `data:image/jpeg;base64,${cached}`;
+    ImageCache.setBlobUrl(photo, dataUrl); 
+    return dataUrl;
+  }
+
   try {
     const res = await fetch(
       `${API_BASE}/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
@@ -34,10 +43,14 @@ const fetchImage = async (photo, signal) => {
     const json = await res.json();
     const b64 = json?.imageData || "";
     if (b64) {
-      ImageCache.setBase64(photo, b64);
-      return `data:image/jpeg;base64,${b64}`;
+      const dataUrl = `data:image/jpeg;base64,${b64}`;
+      await ImageCache.setBase64(photo, b64);       
+      ImageCache.setBlobUrl(photo, dataUrl);         
+      return dataUrl;
     }
-  } catch {}
+  } catch (err) {
+    console.error("fetchImage failed:", err); 
+  }
   return null;
 };
 
@@ -169,7 +182,7 @@ const GroceryComboOffer = () => {
   const [grandSummary, setGrandSummary] = useState({ items: 0, total: 0 });
 
   const mobileNumber = localStorage.getItem("customerMobileNumber");
-  const MIN_ORDER_TOTAL = 100;
+  // const MIN_ORDER_TOTAL = 100;
 
   useEffect(() =>{
     console.log(grandSummary);
@@ -331,6 +344,16 @@ const GroceryComboOffer = () => {
       productData: subProducts[name]?.data,
     }));
 
+     localStorage.setItem("comboSelectedItems", JSON.stringify({
+    comboProductId: mainProduct?.id,
+    comboProductName: mainProduct?.name,
+    items: selectedItems.map(({ category, productName, productData }) => ({
+      category,
+      productName,
+      image: Array.isArray(productData?.images) ? productData.images[0] : null,
+    })),
+  }));
+
     navigate(`/groceryCart/${userType}/${userId}`, {
       state: {
         comboProduct: mainProduct,
@@ -375,7 +398,7 @@ const GroceryComboOffer = () => {
     );
 
     const items = summary.items;
-    const total = Math.round(summary.total);
+    // const total = Math.round(summary.total);
     if (items === 0) return null;
 
     if (!mainProduct) {
@@ -391,57 +414,58 @@ const GroceryComboOffer = () => {
       </button>
     </div>
   );    
-}
-    return (
-      <div
-        style={{
-          position: "fixed",
-          bottom: 0, left: 0,
-          width: "100%",
-          backgroundColor: "green",
-          color: "white",
-          padding: "6px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          fontWeight: "bold",
-          zIndex: 2000,
-          borderRadius: "20px",
-          marginBottom: "5px",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          🛒
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <span style={{ fontSize: "10px" }}>{items} items</span>
-            <span style={{ fontSize: "10px" }}>₹{total}</span>
-            {total < MIN_ORDER_TOTAL && (
-              <span style={{ fontSize: "13px", opacity: 0.9, fontWeight: "bold" }}>
-                Add ₹{MIN_ORDER_TOTAL - total} more to reach Minimum Order
-              </span>
-            )}
-          </div>
-        </div>
-        <button
-          type="button"
-          style={{
-            fontSize: "12px",
-            cursor: total < MIN_ORDER_TOTAL ? "not-allowed" : "pointer",
-            background: "transparent",
-            border: "none",
-            color: "white",
-            fontWeight: "bold",
-            opacity: total < MIN_ORDER_TOTAL ? 0.7 : 1,
-          }}
-          onClick={() => {
-            if (total < MIN_ORDER_TOTAL) return;
-            navigate(`/groceryCart/${userType}/${userId}`, { state: { mobileNumber } });
-          }}
-        >
-          View Cart →
-        </button>
-      </div>
-    );
+}  
+// click on the image choose products and add the cart 
+    // return (
+    //   <div
+    //     style={{
+    //       position: "fixed",
+    //       bottom: 0, left: 0,
+    //       width: "100%",
+    //       backgroundColor: "green",
+    //       color: "white",
+    //       padding: "6px",
+    //       display: "flex",
+    //       justifyContent: "space-between",
+    //       alignItems: "center",
+    //       fontWeight: "bold",
+    //       zIndex: 2000,
+    //       borderRadius: "20px",
+    //       marginBottom: "5px",
+    //     }}
+    //   >
+    //     <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+    //       🛒
+    //       <div style={{ display: "flex", flexDirection: "column" }}>
+    //         <span style={{ fontSize: "10px" }}>{items} items</span>
+    //         <span style={{ fontSize: "10px" }}>₹{total}</span>
+    //         {total < MIN_ORDER_TOTAL && (
+    //           <span style={{ fontSize: "13px", opacity: 0.9, fontWeight: "bold" }}>
+    //             Add ₹{MIN_ORDER_TOTAL - total} more to reach Minimum Order
+    //           </span>
+    //         )}
+    //       </div>
+    //     </div>
+    //     <button
+    //       type="button"
+    //       style={{
+    //         fontSize: "12px",
+    //         cursor: total < MIN_ORDER_TOTAL ? "not-allowed" : "pointer",
+    //         background: "transparent",
+    //         border: "none",
+    //         color: "white",
+    //         fontWeight: "bold",
+    //         opacity: total < MIN_ORDER_TOTAL ? 0.7 : 1,
+    //       }}
+    //       onClick={() => {
+    //         if (total < MIN_ORDER_TOTAL) return;
+    //         navigate(`/groceryCart/${userType}/${userId}`, { state: { mobileNumber } });
+    //       }}
+    //     >
+    //       View Cart →
+    //     </button>
+    //   </div>
+    // );
   };
 
   return (

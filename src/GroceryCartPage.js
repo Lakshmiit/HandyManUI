@@ -31,12 +31,50 @@ const GroceryCartPage = () => {
   const isGuestName = (name) => (name ?? "").trim().toLowerCase() === "guest";
   const [walletAmount, setWalletAmount] = useState(0);
 const MIN_ORDER_TOTAL = Number(walletAmount) === 50 ? 150 : 100;
-   
+   const [comboInfo, setComboInfo] = useState(null);
+const [comboImages, setComboImages] = useState({});
   useEffect(() => {
     console.log(addresses, fullName, isNewUser);
   }, [addresses, fullName, isNewUser]);
 
 console.log("Wallet:", walletAmount);
+
+useEffect(() => {
+  try {
+    const raw = localStorage.getItem("comboSelectedItems");
+    if (!raw) return;
+    setComboInfo(JSON.parse(raw));
+  } catch {}
+}, []);
+
+useEffect(() => {
+  if (!comboInfo?.items?.length) return;
+  let cancelled = false;
+  (async () => {
+    const map = {};
+    await Promise.allSettled(
+      comboInfo.items.map(async ({ productName, image }) => {
+        if (!image) return;
+        try {
+          const res = await fetch(
+            `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(image)}`
+          );
+          const contentType = res.headers.get("content-type") || "";
+          if (contentType.includes("application/json")) {
+            const data = await res.json();
+            if (data?.imageData) {
+              map[productName] = `data:image/jpeg;base64,${data.imageData}`;
+            }
+          } else {
+            map[productName] = res.url;
+          }
+        } catch {}
+      })
+    );
+    if (!cancelled) setComboImages(map);
+  })();
+  return () => { cancelled = true; };
+}, [comboInfo]);
 
   const fetchCustomerData = useCallback(async () => {
       try {
@@ -521,49 +559,156 @@ const validateCartStockBeforeCheckout = async () => {
   return true;
 };
 
+  // const handleGroceryProceed = async (event) => {
+  //   event.preventDefault();
+  //  const valid = await validateCartStockBeforeCheckout();
+  //   if (!valid) return;
+
+  //   const allCategories =
+  //     JSON.parse(localStorage.getItem("allCategories")) || [];
+
+  //   const payload = {
+  //     id: "string",
+  //     martId: "string",
+  //     date: "string",
+  //     customerId: userId,
+  //     status: "Draft",
+  //     paymentMode: "",
+  //     utrTransactionNumber: "",
+  //     transactionNumber: "",
+  //     transactionStatus: "",
+  //     TransactionType: "",
+  //     paidAmount: "",
+  //     walletAmount: "walletValue",
+  //     customerName: "",
+  //     address: "",
+  //     state: "",
+  //     district: "",
+  //     zipCode: "",
+  //     customerPhoneNumber: "",
+  //     AssignedTo: "",
+  //     DeliveryPartnerUserId: "",
+  //     latitude: 0,     
+  //     longitude: 0,
+  //     isPickUp: false,
+  //     isDelivered: false,
+  //     DeliveryAssignedTime: "",
+  //     DeliverySubmitTime: "",
+  //     GrandTotal: roundedGrandTotal.toString(),
+  //     TotalItemsSelected: grandSummary.items.toString(),
+  //     categories: allCategories.map((cat) => {
+  //       const products = (cat.products || []).map((p) => {
+  //         const persisted = p.image ?? p.productImage ?? "";
+  //         const filename = getFilenameFromValue(persisted);
+  //         const safeImage =
+  //           filename || (typeof persisted === "string" ? persisted : "");
+  //         return {
+  //           productName: p.productName?.trim() || p.name?.trim() || "",
+  //           noOfQuantity: String(p.qty),
+  //           productImage: safeImage,
+  //           mrp: String(p.mrp || 0),
+  //           discount: String(p.discount || 0),
+  //           afterDiscountPrice: String(p.afterDiscountPrice || p.price || 0),
+  //           stockLeft: String(p.stockLeft - p.qty),
+  //           code: String(p.code),
+  //           units: String(p.units),
+  //         };
+  //       });
+  //       return {
+  //         categoryName: cat.categoryName,
+  //         numberOfItemsSelected: products.reduce(
+  //           (sum, p) => sum + Number(p.noOfQuantity),
+  //           0,
+  //         ),
+  //         totalAmount: Math.round(
+  //           products.reduce(
+  //             (sum, p) =>
+  //               sum + Number(p.afterDiscountPrice) * Number(p.noOfQuantity),
+  //             0,
+  //           ),
+  //         ),
+  //         products,
+  //       };
+  //     }),
+  //   };
+
+  //   try {
+  //     const response = await fetch(
+  //       `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UploadProductDetails`,
+  //       {
+  //         method: "POST",
+  //         headers: { "Content-Type": "application/json" },
+  //         body: JSON.stringify(payload),
+  //       },
+  //     );
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       const extractedId = data.id;
+  //       if (extractedId) {
+  //         const currentCart = localStorage.getItem("allCategories") || "[]";
+  //         localStorage.setItem(`cartSnapshot_${extractedId}`, currentCart);
+  //         localStorage.setItem("activeOrderId", extractedId);
+  //         localStorage.setItem(
+  //           `cartMeta_${extractedId}`,
+  //           JSON.stringify({
+  //             items: grandSummary.items,
+  //             total: roundedGrandTotal,
+  //           }),
+  //         );
+  //         navigate(
+  //           `/groceryPaymentMethod/${userType}/${userId}/${extractedId}`,
+  //         );
+  //       }
+  //     } else {
+  //       const errorText = await response.text();
+  //       alert("Failed to upload order: " + errorText);
+  //     }
+  //   } catch (error) {
+  //     console.error("API Error:", error);
+  //     alert("An error occurred while uploading the order.");
+  //   }
+  // };
+
   const handleGroceryProceed = async (event) => {
-    event.preventDefault();
-   const valid = await validateCartStockBeforeCheckout();
-    if (!valid) return;
+  event.preventDefault();
+  const valid = await validateCartStockBeforeCheckout();
+  if (!valid) return;
 
-    const allCategories =
-      JSON.parse(localStorage.getItem("allCategories")) || [];
+  const allCategories = JSON.parse(localStorage.getItem("allCategories")) || [];
 
-    const payload = {
-      id: "string",
-      martId: "string",
-      date: "string",
-      customerId: userId,
-      status: "Draft",
-      paymentMode: "",
-      utrTransactionNumber: "",
-      transactionNumber: "",
-      transactionStatus: "",
-      TransactionType: "",
-      paidAmount: "",
-      walletAmount: "walletValue",
-      customerName: "",
-      address: "",
-      state: "",
-      district: "",
-      zipCode: "",
-      customerPhoneNumber: "",
-      AssignedTo: "",
-      DeliveryPartnerUserId: "",
-      latitude: 0,     
-      longitude: 0,
-      isPickUp: false,
-      isDelivered: false,
-      DeliveryAssignedTime: "",
-      DeliverySubmitTime: "",
-      GrandTotal: roundedGrandTotal.toString(),
-      TotalItemsSelected: grandSummary.items.toString(),
-      categories: allCategories.map((cat) => {
+  const comboRaw = localStorage.getItem("comboSelectedItems");
+  let comboCategory = null;
+
+  if (comboRaw) {
+    try {
+      const comboData = JSON.parse(comboRaw);
+      if (comboData?.items?.length > 0) {
+        comboCategory = {
+          categoryName: comboData.comboProductName || "Combo Selections",
+          numberOfItemsSelected: comboData.items.length,
+          totalAmount: 0,  
+          products: comboData.items.map((item) => ({
+            productName: item.productName?.trim() || "",
+            noOfQuantity: "1",
+            productImage: item.image || "",
+            mrp: "0",
+            discount: "0",
+            afterDiscountPrice: "0",
+            stockLeft: "0",
+            code: "",
+            units: item.category || "",   
+          })),
+        };
+      }
+    } catch {}
+  }
+
+  const finalCategories = comboCategory
+    ? [...allCategories.map((cat) => {
         const products = (cat.products || []).map((p) => {
           const persisted = p.image ?? p.productImage ?? "";
           const filename = getFilenameFromValue(persisted);
-          const safeImage =
-            filename || (typeof persisted === "string" ? persisted : "");
+          const safeImage = filename || (typeof persisted === "string" ? persisted : "");
           return {
             productName: p.productName?.trim() || p.name?.trim() || "",
             noOfQuantity: String(p.qty),
@@ -578,62 +723,110 @@ const validateCartStockBeforeCheckout = async () => {
         });
         return {
           categoryName: cat.categoryName,
-          numberOfItemsSelected: products.reduce(
-            (sum, p) => sum + Number(p.noOfQuantity),
-            0,
-          ),
+          numberOfItemsSelected: products.reduce((sum, p) => sum + Number(p.noOfQuantity), 0),
           totalAmount: Math.round(
-            products.reduce(
-              (sum, p) =>
-                sum + Number(p.afterDiscountPrice) * Number(p.noOfQuantity),
-              0,
-            ),
+            products.reduce((sum, p) => sum + Number(p.afterDiscountPrice) * Number(p.noOfQuantity), 0)
           ),
           products,
         };
-      }),
-    };
+      }), comboCategory]
+    : allCategories.map((cat) => {
+        const products = (cat.products || []).map((p) => {
+          const persisted = p.image ?? p.productImage ?? "";
+          const filename = getFilenameFromValue(persisted);
+          const safeImage = filename || (typeof persisted === "string" ? persisted : "");
+          return {
+            productName: p.productName?.trim() || p.name?.trim() || "",
+            noOfQuantity: String(p.qty),
+            productImage: safeImage,
+            mrp: String(p.mrp || 0),
+            discount: String(p.discount || 0),
+            afterDiscountPrice: String(p.afterDiscountPrice || p.price || 0),
+            stockLeft: String(p.stockLeft - p.qty),
+            code: String(p.code),
+            units: String(p.units),
+          };
+        });
+        return {
+          categoryName: cat.categoryName,
+          numberOfItemsSelected: products.reduce((sum, p) => sum + Number(p.noOfQuantity), 0),
+          totalAmount: Math.round(
+            products.reduce((sum, p) => sum + Number(p.afterDiscountPrice) * Number(p.noOfQuantity), 0)
+          ),
+          products,
+        };
+      });
 
-    try {
-      const response = await fetch(
-        `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UploadProductDetails`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        },
-      );
-      if (response.ok) {
-        const data = await response.json();
-        const extractedId = data.id;
-        if (extractedId) {
-          const currentCart = localStorage.getItem("allCategories") || "[]";
-          localStorage.setItem(`cartSnapshot_${extractedId}`, currentCart);
-          localStorage.setItem("activeOrderId", extractedId);
-          localStorage.setItem(
-            `cartMeta_${extractedId}`,
-            JSON.stringify({
-              items: grandSummary.items,
-              total: roundedGrandTotal,
-            }),
-          );
-          navigate(
-            `/groceryPaymentMethod/${userType}/${userId}/${extractedId}`,
-          );
-        }
-      } else {
-        const errorText = await response.text();
-        alert("Failed to upload order: " + errorText);
-      }
-    } catch (error) {
-      console.error("API Error:", error);
-      alert("An error occurred while uploading the order.");
-    }
+  const payload = {
+    id: "string",
+    martId: "string",
+    date: "string",
+    customerId: userId,
+    status: "Draft",
+    paymentMode: "",
+    utrTransactionNumber: "",
+    transactionNumber: "",
+    transactionStatus: "",
+    TransactionType: "",
+    paidAmount: "",
+    walletAmount: "walletValue",
+    customerName: "",
+    address: "",
+    state: "",
+    district: "",
+    zipCode: "",
+    customerPhoneNumber: "",
+    AssignedTo: "",
+    DeliveryPartnerUserId: "",
+    latitude: 0,
+    longitude: 0,
+    isPickUp: false,
+    isDelivered: false,
+    DeliveryAssignedTime: "",
+    DeliverySubmitTime: "",
+    GrandTotal: roundedGrandTotal.toString(),
+    TotalItemsSelected: grandSummary.items.toString(),
+    categories: finalCategories,   
   };
 
+  try {
+    const response = await fetch(
+      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UploadProductDetails`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      },
+    );
+    if (response.ok) {
+      const data = await response.json(); 
+      const extractedId = data.id;
+      if (extractedId) {
+        const currentCart = localStorage.getItem("allCategories") || "[]";
+        localStorage.setItem(`cartSnapshot_${extractedId}`, currentCart);
+        localStorage.setItem("activeOrderId", extractedId);
+        localStorage.setItem(
+          `cartMeta_${extractedId}`,
+          JSON.stringify({ items: grandSummary.items, total: roundedGrandTotal }),
+        );
+
+        localStorage.removeItem("comboSelectedItems");
+
+        navigate(`/groceryPaymentMethod/${userType}/${userId}/${extractedId}`);
+      }
+    } else {
+      const errorText = await response.text();
+      alert("Failed to upload order: " + errorText);
+    }
+  } catch (error) {
+    console.error("API Error:", error);
+    alert("An error occurred while uploading the order.");
+  }
+};
+
   const outOfStockCount = cartItems.filter(
-  (item) => item.outOfStock || item.stockLeft <= 0
-).length;
+    (item) => item.outOfStock || item.stockLeft <= 0
+  ).length;
 
   const handleImageClick = (imageSrc) => {
     setZoomImage(imageSrc);
@@ -901,6 +1094,63 @@ const validateCartStockBeforeCheckout = async () => {
         );
       })}
       </div>
+
+      {/* Combo selected items panel */}
+{comboInfo?.items?.length > 0 && (
+  <div style={{ padding: "8px", borderTop: "1px solid #eee" }}>
+    <p style={{ fontSize: "13px", fontWeight: "600", marginBottom: "8px" }}>
+      📦 {comboInfo.comboProductName} — Your Selections
+    </p>
+    <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+      {comboInfo.items.map(({ category, productName }) => (
+        <div
+          key={category}
+          style={{
+            display: "flex", flexDirection: "column", alignItems: "center",
+            gap: "4px", minWidth: "72px", maxWidth: "88px",
+          }}
+        >
+          <div
+            style={{
+              width: 56, height: 56, borderRadius: 8, overflow: "hidden",
+              background: "#f3f4f6", display: "flex",
+              alignItems: "center", justifyContent: "center",
+            }}
+          >
+            {comboImages[productName] ? (
+              <img
+                src={comboImages[productName]}
+                alt={productName}
+                style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
+              />
+            ) : (
+              <span style={{ fontSize: 22 }}>🛒</span>
+            )}
+          </div>
+          <span
+            style={{
+              fontSize: "10px", fontWeight: "500", textAlign: "center",
+              color: "#374151", lineHeight: 1.3,
+              display: "-webkit-box", WebkitLineClamp: 3,
+              WebkitBoxOrient: "vertical", overflow: "hidden",
+            }}
+          >
+            {productName}
+          </span>
+          <span
+            style={{
+              fontSize: "9px", color: "#6b7280",
+              background: "#f0fdf4", borderRadius: 4,
+              padding: "1px 5px", fontWeight: 500,
+            }}
+          >
+            {category}
+          </span>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
 
       {/* Bill Details */}
       <div className="bill-details p-1">
