@@ -146,14 +146,14 @@ const GroceryOfferItems = () => {
     });
   }, [products]);
 
-  const handleIncrement = (productId) =>
-    setCart((prev) => {
-      const product = products.find((p) => String(p.id) === String(productId));
-      if (!product) return prev;
-      const nextQty = clampQtyFor(product, (prev[productId] || 0) + 1);
-      if (nextQty === prev[productId]) return prev;
-      return { ...prev, [productId]: nextQty };
-    });
+  // const handleIncrement = (productId) =>
+  //   setCart((prev) => {
+  //     const product = products.find((p) => String(p.id) === String(productId));
+  //     if (!product) return prev;
+  //     const nextQty = clampQtyFor(product, (prev[productId] || 0) + 1);
+  //     if (nextQty === prev[productId]) return prev;
+  //     return { ...prev, [productId]: nextQty };
+  //   });
 
   const handleAddClick = (id) => {
     const product = products.find((p) => String(p.id) === String(id));
@@ -164,14 +164,14 @@ const GroceryOfferItems = () => {
     setChecked(true);
   };
 
-  const getQty = (id) => Number(cart?.[id] || 0);
-  const canAddMore = (id) => {
-    const product = products.find((p) => String(p.id) === String(id));
-    if (!product) return false;
-    const current = getQty(id);
-    const maxAllowed = clampQtyFor(product, Infinity);
-    return current < maxAllowed;
-  };
+  // const getQty = (id) => Number(cart?.[id] || 0);
+  // const canAddMore = (id) => {
+  //   const product = products.find((p) => String(p.id) === String(id));
+  //   if (!product) return false;
+  //   const current = getQty(id);
+  //   const maxAllowed = clampQtyFor(product, Infinity);
+  //   return current < maxAllowed;
+  // };
 
   const handleDecrementClick = (productId) =>
     setCart((prev) => {
@@ -238,9 +238,6 @@ const GroceryOfferItems = () => {
     if (!selectedCategory) return;     
     let cancelled = false;
     const controller = new AbortController();
-    // const POLL_MS = 50000;
-    // let pollId = null;      
-
     async function fetchProductsAndFirstImages(warm = false, signal) {
       try {
         if (!warm) setImageLoading(true);
@@ -330,14 +327,9 @@ const GroceryOfferItems = () => {
     }
 
     fetchProductsAndFirstImages(false, controller.signal);
-//     pollId = setInterval(() => {
-// const pollController = new AbortController();
-// fetchProductsAndFirstImages(true, pollController.signal);
-// }, POLL_MS);
-    return () => {
+ return () => {
       cancelled = true;
       controller.abort();
-      // if (pollId) clearInterval(pollId);
     };
   }, [selectedCategory]);         
 
@@ -581,12 +573,22 @@ const GroceryOfferItems = () => {
                             style={{ height: "90px" }}
                           >
                             {imageUrls[product.id]?.[0] ? (
+                                <div style={{
+                                  position: "relative",
+                                  width: "54px",
+                                  height: "54px",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                }}>
+                                  <div className="img-outer-ring" />
+                                  <div className="img-inner-ring" />
+                                  <div className="img-center-dot" />
+                                </div>
+                              ) : (   
                               <img
                                 src={imageUrls[product.id]?.[0]}
                                 alt={product.name}
-                                decoding="async"
-                                loading="eager"
-                                fetchPriority="high"
                                 style={{
                                   maxHeight: "80px",
                                   maxWidth: "100%",
@@ -609,11 +611,7 @@ const GroceryOfferItems = () => {
                                   );
                                 }}
                               />
-                            ) : (
-                              <span className="text-muted small">
-                                Loading Image
-                              </span>
-                            )}
+                           )}
 
                             {isOutOfStock && (
                               <div
@@ -684,7 +682,7 @@ const GroceryOfferItems = () => {
                                   {product.units}
                                 </b>
                               )}
-                          <p className="blinking-icon mb-0" style={{color: "#db1818", fontSize: "9px", fontWeight: "bold"}}>Click on the image to see more</p>
+                          {/* <p className="blinking-icon mb-0" style={{color: "#db1818", fontSize: "9px", fontWeight: "bold"}}>Click on the image to see more</p> */}
 
                               {(() => {
                                 const limit = getLimit(product);
@@ -729,92 +727,39 @@ const GroceryOfferItems = () => {
                             </div>
                           )}
 
-                          {/* Add / Counter */}
-                          {!isOutOfStock && (
-                            <div
+                       {/* Add / Counter */}
+                        {!isOutOfStock && (
+                          <div
+                            style={{
+                              position: "absolute",
+                              bottom: "8px",
+                              right: "8px",
+                            }}
+                          >
+                            <button
+                              className="btn fw-bold"
                               style={{
-                                position: "absolute",
-                                bottom: "8px",
-                                right: "8px",
+                                border: "1px solid green",
+                                color: "white",
+                                backgroundColor: "green",
+                                borderRadius: "8px",
+                                padding: "2px 8px",
+                                fontSize: "11px",
+                              }}
+                              onClick={() => {
+                                handleAddClick(product.id);
+                                navigate(`/groceryComboOffer/${userType}/${userId}/${product.id}`, {
+                                  state: {
+                                    product,
+                                    imageUrl: imageUrls[product.id]?.[0] ?? null,
+                                  },
+                                });
                               }}
                             >
-                              {cart[product.id] ? (
-                                <div
-                                  className="d-flex align-items-center justify-content-between"
-                                  style={{
-                                    backgroundColor: "green",
-                                    color: "white",
-                                    borderRadius: "8px",
-                                    padding: "2px",
-                                    minWidth: "60px",
-                                  }}
-                                >
-                                  <button
-                                    className="btn btn-sm p-0 text-white"
-                                    style={{
-                                      fontWeight: "bold",
-                                      width: "25px",
-                                      height: "25px",
-                                    }}
-                                    onClick={() =>
-                                      handleDecrementClick(product.id)
-                                    }
-                                  >
-                                    –
-                                  </button>
-                                  <span className="fw-bold">
-                                    {cart[product.id]}
-                                  </span>
-                                  <button
-                                    className="btn btn-sm p-0 text-white"
-                                    style={{
-                                      fontWeight: "bold",
-                                      width: "25px",
-                                      height: "25px",
-                                      opacity: canAddMore(product.id) ? 1 : 0.5,
-                                      cursor: canAddMore(product.id)
-                                        ? "pointer"
-                                        : "not-allowed",
-                                    }}
-                                    onClick={() =>
-                                      canAddMore(product.id) &&
-                                      handleIncrement(product.id)
-                                    }
-                                    disabled={!canAddMore(product.id)}
-                                    title={
-                                      !canAddMore(product.id)
-                                        ? Number(product.stockLeft || 0) <=
-                                          getQty(product.id)
-                                          ? "No more stock"
-                                          : getLimit(product) === Infinity
-                                            ? "No more stock"
-                                            : `Limit ${getLimit(
-                                                product,
-                                              )} per customer`
-                                        : "Add one"
-                                    }
-                                  >
-                                    +
-                                  </button>
-                                </div>
-                              ) : (
-                                <button
-                                  className="btn fw-bold"
-                                  style={{
-                                    border: "1px solid green",
-                                    color: "green",
-                                    backgroundColor: "#f6fff6",
-                                    borderRadius: "8px",
-                                    padding: "2px 12px",
-                                    fontSize: "13px",
-                                  }}
-                                  onClick={() => handleAddClick(product.id)}
-                                >
-                                  ADD
-                                </button>
-                              )}
-                            </div>
-                          )}
+                              ADD
+                            </button>
+                          </div>
+                        )}
                         </div>
                       );
                     })}

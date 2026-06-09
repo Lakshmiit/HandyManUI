@@ -177,7 +177,6 @@ const GroceryComboOffer = () => {
   const [subProducts, setSubProducts] = useState({});
   const [groups, setGroups] = useState({});
   const [selections, setSelections] = useState({});
-
   const [cart, setCart] = useState({});
   const [grandSummary, setGrandSummary] = useState({ items: 0, total: 0 });
 
@@ -197,7 +196,6 @@ const GroceryComboOffer = () => {
   const afterDiscount = Math.round(Number(mainProduct?.afterDiscount || 0));
   const mrp = Math.round(Number(mainProduct?.mrp || 0));
   const discountPct = Math.round(Number(mainProduct?.discount || 0));
-  const limit = Number(mainProduct?.limit || 0);
 
   const getQty = (id) => Number(cart?.[id] || 0);
 
@@ -260,7 +258,6 @@ const GroceryComboOffer = () => {
       image: mainProduct.images?.[0] || "",
       code: mainProduct.code || "",
       units: mainProduct.units || "",
-      limit: mainProduct.limit || "",
     }));
 
     CartStorage.upsertCategory(selectedCategory, current);
@@ -546,12 +543,6 @@ const GroceryComboOffer = () => {
             Out of Stock
           </div>
         )}
-
-        {limit > 0 && (
-          <p style={{ fontSize: 11, color: "#16a34a", fontWeight: 600, margin: 0 }}>
-            Max {limit} per customer
-          </p>
-        )}
       </div>
 
       {/* Combo items */}
@@ -571,19 +562,19 @@ const GroceryComboOffer = () => {
               <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 10 }}>
                 <span
                   style={{
-                    background: "#dcfce7", color: "#16a34a",
+                    background: "#ffffff", color: "#16a34a",
                     fontSize: 11, fontWeight: 700, borderRadius: 20, padding: "3px 10px",
                   }}
                 >
                   {cat}
                 </span>
                 {names.length > 1 && (
-                  <span style={{ fontSize: 11, color: "#dc2626" }}>Select any one</span>
+                  <span style={{ fontSize: 12, color: "#dc2626" }}>Select any one</span>
                 )}
               </div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
                 {names.map((name) => (
-                  <SubProductCard
+                  <SubProductCard   
                     key={name}
                     name={name}
                     selected={selections[cat] === name}

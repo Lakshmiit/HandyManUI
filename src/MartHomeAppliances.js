@@ -181,8 +181,6 @@ const mapApiProductToUI = (p) => {
     setSelectedCategory(decodedCat);
     let cancelled = false;
     const controller = new AbortController();
-    // const POLL_MS = 2000; 
-    // let pollId = null;
     async function fetchProductsAndFirstImages(warm = false, signal) {
       try {   
         if (!warm) setImageLoading(true);
@@ -209,19 +207,20 @@ const mapApiProductToUI = (p) => {
           }))
         )
           .filter(x => !!x.photo);
-        const cachedMap = {};
-const misses = [];
+          const cachedMap = {};
+          const misses = [];
 
-for (const { productId, photo } of allImages) {
-  const cached = ImageCache.getBase64(photo);
-  if (cached) {
-    if (!cachedMap[productId]) cachedMap[productId] = [];
-    cachedMap[productId].push(`data:image/jpeg;base64,${cached}`);
-  } else {
-    misses.push({ productId, photo });
-  }
-}
-
+          await Promise.all(
+            allImages.map(async ({ productId, photo }) => {
+              const cached = await ImageCache.getBase64(photo);   
+              if (cached) {
+                if (!cachedMap[productId]) cachedMap[productId] = [];
+                cachedMap[productId].push(`data:image/jpeg;base64,${cached}`);
+              } else {
+                misses.push({ productId, photo });
+              }
+            })
+          );
 if (Object.keys(cachedMap).length) {
   setImageUrls(prev => {
     const merged = { ...prev };
@@ -242,7 +241,7 @@ if (Object.keys(cachedMap).length) {
             const json = await res.json();
             const b64 = json?.imageData || "";
             if (!b64) return;
-            ImageCache.setBase64(photo, b64);
+            await ImageCache.setBase64(photo, b64);
             const dataUrl = `data:image/jpeg;base64,${b64}`;
             if (!cancelled) {
               setImageUrls(prev => {
@@ -270,15 +269,9 @@ if (Object.keys(cachedMap).length) {
       }
     }
     fetchProductsAndFirstImages(false, controller.signal);
-    // pollId = setInterval(() => {
-    //   const pollController = new AbortController();
-    //   fetchProductsAndFirstImages(true, pollController.signal);
-    // }, POLL_MS);      
-
     return () => {
-      cancelled = true;
+      cancelled = true;  
       controller.abort();
-      // if (pollId) clearInterval(pollId);
     };
   }, [encodedCategory, selectedCategory]);
 
@@ -489,13 +482,26 @@ if (Object.keys(cachedMap).length) {
     className="d-flex justify-content-center align-items-center position-relative"
     style={{ height: "90px" }}
   >
-    {imageUrls[product.id]?.[0] ? (
+    {!imageUrls[product.id] ? (
+       <div style={{
+            position: "relative",
+            width: "54px",
+            height: "54px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}>
+            <div className="img-outer-ring" />
+            <div className="img-inner-ring" />
+            <div className="img-center-dot" />
+          </div>  
+        ) : (
       <img
         src={imageUrls[product.id]?.[0]}
         alt={product.name}
-        decoding="async"
-        loading="eager"
-        fetchpriority="high"
+      //  decoding="async"
+      //   loading="eager" 
+      //   fetchpriority="high"
         style={{
           maxHeight: "80px",
           maxWidth: "100%",
@@ -505,8 +511,6 @@ if (Object.keys(cachedMap).length) {
         }}
         onClick={() => !isOutOfStock && handleImageClick(imageUrls[product.id][0], product)}
       />
-    ) : (
-      <span className="text-muted small">Loading Image</span>
     )}
 
     {isOutOfStock && (

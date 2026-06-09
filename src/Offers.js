@@ -148,7 +148,7 @@ useLayoutEffect(() => {
     observerRef.current?.observe(el);
   };
 
-  const maybeFetchFirstImages = useCallback(() => {
+  const maybeFetchFirstImages = useCallback(async () => {
   const list = Array.isArray(filtered) ? filtered : [];
   const visibleIds = Array.from(visibleSetRef.current);
   const firstTwelveIds = list.slice(0, 12).map((p) => String(p.id));
@@ -166,7 +166,7 @@ useLayoutEffect(() => {
       continue;
     }
 
-    const cached = ImageCache.getBase64(first);
+    const cached = await ImageCache.getBase64(first);
     if (cached) {
       const url = `data:image/jpeg;base64,${cached}`;
       setImageUrls((prev) => ({
@@ -185,7 +185,7 @@ useLayoutEffect(() => {
         const b64 = data?.imageData || '';
         if (!b64) return;
 
-        ImageCache.setBase64(first, b64);
+        await ImageCache.setBase64(first, b64);
         const url = `data:image/jpeg;base64,${b64}`;
 
         setImageUrls((prev) => ({
@@ -247,7 +247,7 @@ useLayoutEffect(() => {
     const first = photos[0];
     let firstUrl = imageUrls[product.id]?.[0] || null;
     if (!firstUrl) {
-      const cached = ImageCache.getBase64(first);
+      const cached = await ImageCache.getBase64(first);
       if (cached) {
         firstUrl = `data:image/jpeg;base64,${cached}`;
       } else {
@@ -273,7 +273,7 @@ useLayoutEffect(() => {
       (photos.slice(1) || []).map((photo) =>
         limiterRef.current(async () => {
           try {
-            const c = ImageCache.getBase64(photo);
+            const c = await ImageCache.getBase64(photo);
             let url = null;
             if (c) {
               url = `data:image/jpeg;base64,${c}`;
@@ -283,7 +283,7 @@ useLayoutEffect(() => {
               );
               const data = await res.json();
               if (!data?.imageData) return;
-              ImageCache.setBase64(photo, data.imageData);
+              await ImageCache.setBase64(photo, data.imageData);
               url = `data:image/jpeg;base64,${data.imageData}`;
             }
             if (url) {
@@ -401,28 +401,36 @@ useLayoutEffect(() => {
                       )}
 
                       {imageLoading ? (
-                        <span className="text-muted small">Loading Image</span>
-                      ) : firstImg ? (
+                         <div style={{
+                            position: "relative",
+                            width: "54px",
+                            height: "54px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}>
+                            <div className="img-outer-ring" />
+                            <div className="img-inner-ring" />
+                            <div className="img-center-dot" />
+                          </div>
+                        ) : (
                         <img
                           src={firstImg}
-                          alt={product.productName}
-                          decoding="async"
-                          loading={idx < 12 ? 'eager' : 'lazy'}
-                          fetchpriority={idx < 12 ? 'high' : 'low'}
+                          alt={""}
+                          // decoding="async"
+                          // loading={idx < 12 ? 'eager' : 'lazy'}
+                          // fetchpriority={idx < 12 ? 'high' : 'low'}
                           style={{
                             maxHeight: 80,
-                            maxWidth: '100%',
+                            maxWidth: '100%',   
                             objectFit: 'contain',
                             cursor: 'pointer',
                             borderRadius: 6,
                           }}
                           onClick={() => openGallery(product)}
                         />
-                      ) : (
-                        <span className="text-muted small">No Image</span>
-                      )}
+                     )}
                     </div>
-
 
                     <h6 className="text-start fw-bold m-0" style={{fontSize: '11px',
                       display: '-webkit-box',
