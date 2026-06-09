@@ -15,8 +15,8 @@ const zoneData = {
 const AdminGroceryZoneDashboard = () => {
   const navigate = useNavigate();
   const [selectedZone, setSelectedZone] = useState(null);
-  const allZones = ["Grocery","A","B","C","D","E","F","G","Others","In Progress","Delivered Tickets","Cancel Tickets","All Grocery"];
-  // ,"Return Orders"
+  const allZones = ["Grocery","A","B","C","D","E","F","G","Others","In Progress","Delivered Tickets","Return Orders","Cancel Tickets","All Grocery"];
+  
   const [groceryList, setGroceryList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [blinkingZones, setBlinkingZones] = useState({});
@@ -132,7 +132,7 @@ const AdminGroceryZoneDashboard = () => {
       }
       if (status === "in progress") addTo("In Progress", item);
       if (status === "delivered")   addTo("Delivered Tickets", item);
-      // if (status === "return")      addTo("Return Orders", item);
+      if (status === "return")      addTo("Return Orders", item);
       if (status === "cancel")      addTo("Cancel Tickets", item);
       if (["open", "in progress", "delivered"].includes(status)) addTo("All Grocery", item);
     });
@@ -196,7 +196,7 @@ const AdminGroceryZoneDashboard = () => {
         })}
       </div>
 
-      {selectedZone && zoneCounts[selectedZone] && (
+      {selectedZone && zoneCounts[selectedZone] && (     
         <div>
           <h3 className="text-danger">Zone {selectedZone} Orders</h3>
           {(zoneCounts[selectedZone]?.tickets || []).map((item) => (

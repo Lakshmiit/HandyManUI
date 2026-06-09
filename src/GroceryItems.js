@@ -14,9 +14,6 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ImageCache from "./utils/ImageCache";
 import Footer from "./Footer.js";
 // import { appConfig } from "./config";
-
-// import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-// import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 const GroceryCard = () => {
 const navigate = useNavigate();
 // const location = useLocation();
@@ -39,6 +36,9 @@ const [searchQuery, setSearchQuery] = useState('');
 const [likedProducts, setLikedProducts] = useState({}); 
 const [zoomProduct, setZoomProduct] = useState(null);
 const [grandSummary, setGrandSummary] = useState({ items: 0, total: 0 });
+const FREE_DELIVERY_LIMIT = 150;
+const total = Number(grandSummary?.total || 0);
+const amountNeeded = FREE_DELIVERY_LIMIT - total;
 
 useEffect(() => {       
 console.log(checked, grandSummary);
@@ -585,8 +585,7 @@ onClick={() => navigate(`/profilePage/${userType}/${userId}`)}
 />
 <h4 className="fw-bold mt-1">{selectedCategory}</h4>
 </div>
-{(selectedCategory === "Vegetables" ||
-selectedCategory === "Fruits" ||
+{(
 selectedCategory === "Chicken" || 
 selectedCategory === "Ice Creams" ) && (
 <div
@@ -637,11 +636,6 @@ border: "1px solid #90caf9",
                    </div> */}
 {selectedCategory && (
 <>
-{/* <div className="d-flex align-items-center">
-   <ArrowBackIcon className="me-2" style={{ color: "green", cursor: "pointer" }}
-       onClick={() => navigate(`/profilePage/${userType}/${userId}`)}/>      
-       <h4 className="font-bold ">{selectedCategory}</h4>
-     </div> */}
 <div className="d-flex justify-content-end" style={{ marginTop: selectedCategory === "Chicken" ? "230px" : "120px"}}>  
 {/* style={{marginTop: "120px"}} */}
 <span className="text-success text-xs">
@@ -728,7 +722,7 @@ onClick={() => toggleLike(product.id)}
     <img
       src={imageUrls[product.id]}
       alt={product.name}
-      style={{
+      style={{   
         maxHeight: "80px",
         maxWidth: "100%",
         objectFit: "contain",
@@ -873,6 +867,29 @@ ADD
 </div>
 );
 })}
+
+{total > 0 && total < FREE_DELIVERY_LIMIT && (
+  <div
+    style={{
+      position: "fixed",
+      bottom: "92px",
+      left: "10px",
+      right: "10px",
+      backgroundColor: "#FFF3CD",
+      color: "#D10000",
+      padding: "8px",
+      borderRadius: "8px",
+      textAlign: "center",
+      fontWeight: "600",
+      fontSize: "13px",
+      zIndex: 2001,
+      boxShadow: "0 2px 5px rgba(0,0,0,0.15)"
+    }}
+  >
+    🎉 Add ₹{amountNeeded} more to unlock save <strong style={{fontSize: "15px"}}>₹20</strong> FREE DELIVERY & Handling Charges
+  </div>      
+)}
+
 {/* Cart Bar */}
 {(() => {
 // Safe reader that ALWAYS returns an array of categories

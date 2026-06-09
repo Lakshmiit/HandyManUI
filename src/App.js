@@ -131,7 +131,7 @@ import AdminGroceryZoneDashboard from './AdminGroceryZoneDashboard.js';
 import AdminGroceryClosedOrders from './AdminGroceryClosedOrders.js';
 import AdminGroceryDashboard from './AdminGroceryDashboard.js';
 import DeliveryPartnerPaymentMethod from './DeliveryPartnerPaymentMethod.js';
-// import AdminRegistrationNumbers from './AdminRegisterationNumbers.js';
+import AdminRegistrationNumbers from './AdminRegisterationNumbers.js';
 import GroceryComboOffer from './GroceryComboOffer.js';
 // import DeliveryPartnerDashboard from './DeliveryPartnerDashboard.js';
 // import OneRupeeGroceryItems from './OneRupeeGroceryItems.js';
@@ -175,7 +175,7 @@ function App() {
           {/* className="mt-100" */}       
           <Routes> 
             <Route path="/groceryComboOffer/:userType/:userId/:id" element={<GroceryComboOffer />} />
-            {/* <Route path="/adminRegistrations/Admin" element={<AdminRegistrationNumbers />} /> */}
+            <Route path="/adminRegistrations/Admin" element={<AdminRegistrationNumbers />} />
             <Route path= "/deliverypartnerPaymentMethod" element={<DeliveryPartnerPaymentMethod />} />
             {/* <Route path="/deliveryPartnerDashboard/:userType/:userId" element={<DeliveryPartnerDashboard />} /> */}
             <Route path="/adminGroceryZoneDashboard" element={<AdminGroceryZoneDashboard />} />
@@ -303,7 +303,7 @@ function App() {
             <Route path="/ordersNotificationsbell/:userId" element={<OrdersNotificationBell />} />
             <Route path="/trackStatusNotificationsbell/:userId" element={<TrackStatusNotificationBell />} />
             <Route path="/offersIcons/:userType/:userId" element={<IconsOffersProducts />} />
-            <Route path="/offers/:userType/:userId" element={<Offers />} />
+            <Route path="/offers/:userType/:userId" element={<Offers />} />  
             <Route path="/offersBuyProduct/:userType/:userId/:id" element={<OffersBuyProductPage />} />
             <Route path="/viewOffersBuyProduct/:userType/:userId/:id" element={<ViewOffersBuyProductPage />} />
             <Route path="/technicianDetailsNotifications/:userType/:userId/:category/:pincode/:technicianName" element={<BookTechnicianDetailsNotifications />} />

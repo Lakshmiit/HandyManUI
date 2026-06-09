@@ -17,7 +17,7 @@ const AdminRegistrationNumbers = () => {
   const [walletLoading, setWalletLoading] = useState(false);
   const [walletSuccess, setWalletSuccess] = useState(null);
   const [walletError, setWalletError] = useState(null);
-  const [isNewTransaction, setIsNewTransaction] = useState(false); // 👈 track POST vs PUT
+  const [isNewTransaction, setIsNewTransaction] = useState(false); 
 
   const resetAll = () => {
     setCheckStatus(null);
@@ -126,7 +126,7 @@ const AdminRegistrationNumbers = () => {
           CreatedDate: new Date().toISOString(),
           UpdatedDate: new Date().toISOString(),
           TicketId: "",
-          TotalWalletAmount: amount,
+          TotalWalletAmount: amount,   
           AvailedAmount: "0",
           RemainingAmount: amount,
         };
