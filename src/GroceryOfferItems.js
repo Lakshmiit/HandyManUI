@@ -572,7 +572,7 @@ const GroceryOfferItems = () => {
                             className="d-flex justify-content-center align-items-center position-relative"
                             style={{ height: "90px" }}
                           >
-                            {imageUrls[product.id]?.[0] ? (
+                            {!imageUrls[product.id]?.[0] ? (
                                 <div style={{
                                   position: "relative",
                                   width: "54px",
@@ -587,7 +587,7 @@ const GroceryOfferItems = () => {
                                 </div>
                               ) : (   
                               <img
-                                src={imageUrls[product.id]?.[0]}
+                                src={imageUrls[product.id][0]}
                                 alt={product.name}
                                 style={{
                                   maxHeight: "80px",

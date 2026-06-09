@@ -559,6 +559,12 @@ const validateCartStockBeforeCheckout = async () => {
   return true;
 };
 
+const removeEntireCombo = () => {
+  localStorage.removeItem("comboSelectedItems");
+  setComboInfo(null);
+  setComboImages({});
+};
+
   // const handleGroceryProceed = async (event) => {
   //   event.preventDefault();
   //  const valid = await validateCartStockBeforeCheckout();
@@ -669,8 +675,19 @@ const validateCartStockBeforeCheckout = async () => {
   //   }
   // };
 
+  const activeItems = cartItems.filter(
+    (item) => !item.outOfStock && item.stockLeft > 0 && item.qty > 0
+  );
+
   const handleGroceryProceed = async (event) => {
   event.preventDefault();
+   const hasCombo =
+  comboInfo?.items?.length > 0;
+
+if (activeItems.length === 0 && !hasCombo) {
+  alert("Your cart is empty");
+  return;
+}
   const valid = await validateCartStockBeforeCheckout();
   if (!valid) return;
 
@@ -785,7 +802,7 @@ const validateCartStockBeforeCheckout = async () => {
     DeliveryAssignedTime: "",
     DeliverySubmitTime: "",
     GrandTotal: roundedGrandTotal.toString(),
-    TotalItemsSelected: grandSummary.items.toString(),
+    TotalItemsSelected: totalItemCount.toString(),
     categories: finalCategories,   
   };
 
@@ -851,6 +868,10 @@ const validateCartStockBeforeCheckout = async () => {
   );
   const roundedItemsTotal = Math.round(itemsTotal);
   const roundedGrandTotal = Math.round(grandTotal);
+const comboCount = comboInfo?.items?.length || 0;
+
+const totalItemCount =
+  grandSummary.items + comboCount;
 
   return (
     <div
@@ -891,6 +912,7 @@ const validateCartStockBeforeCheckout = async () => {
           overflowY: "auto",
           padding: "8px",
           marginTop: "48px",
+          minHeight: "250px"
         }}
       >
         {outOfStockCount > 0 && (
@@ -936,12 +958,24 @@ const validateCartStockBeforeCheckout = async () => {
             >
               {/* Product Image */}
               <img
-                src={
-                  (item.imageFilename && imageBlobMap[item.imageFilename]) ||
-                  (item.imageFilename && fileToUrl(item.imageFilename)) ||
-                  item.imageUrl ||
-                  "/placeholder.png"
+              src={
+                  item.isCombo
+                    ? item.imageUrl
+                    : (
+                        (item.imageFilename &&
+                          imageBlobMap[item.imageFilename]) ||
+                        (item.imageFilename &&
+                          fileToUrl(item.imageFilename)) ||
+                        item.imageUrl ||
+                        "/placeholder.png"
+                      )
                 }
+                // src={
+                //   (item.imageFilename && imageBlobMap[item.imageFilename]) ||
+                //   (item.imageFilename && fileToUrl(item.imageFilename)) ||
+                //   item.imageUrl ||
+                //   "/placeholder.png"
+                // }
                 alt={item.name}
                 onClick={() =>
                   handleImageClick(
@@ -1098,9 +1132,40 @@ const validateCartStockBeforeCheckout = async () => {
       {/* Combo selected items panel */}
 {comboInfo?.items?.length > 0 && (
   <div style={{ padding: "8px", borderTop: "1px solid #eee" }}>
-    <p style={{ fontSize: "13px", fontWeight: "600", marginBottom: "8px" }}>
-      📦 {comboInfo.comboProductName} — Your Selections
-    </p>
+      <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: "8px",
+      }}
+    >
+      <p
+        style={{
+          fontSize: "12px",
+          fontWeight: "600",
+          margin: 0,
+        }}
+      >
+        📦 {comboInfo.comboProductName}
+      </p>
+
+      <button
+        onClick={removeEntireCombo}
+        style={{
+          background: "#2e7d32",
+          color: "#fff",
+          border: "none",
+          borderRadius: "6px",
+          padding: "4px",
+          fontSize: "11px",
+          fontWeight: "700",
+          cursor: "pointer",
+        }}
+      >
+        Remove Combo
+      </button>
+    </div>
     <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
       {comboInfo.items.map(({ category, productName }) => (
         <div
@@ -1202,7 +1267,7 @@ const validateCartStockBeforeCheckout = async () => {
         }}
       >
         <div>
-          <span style={{ fontSize: "12px" }}>{grandSummary.items} items</span>
+          <span style={{ fontSize: "12px" }}>{totalItemCount} items</span>
           <div style={{ fontWeight: "500", fontSize: "15px" }}>
             ₹{roundedGrandTotal}
           </div>
@@ -1231,7 +1296,7 @@ const validateCartStockBeforeCheckout = async () => {
           className="btn btn-warning mt-1 mb-1"
           onClick={() => navigate(`/profilePage/${userType}/${userId}`)}
         >
-          Back
+          Add More Items
         </button>
       </div>
       <Footer />
