@@ -1,8 +1,41 @@
 import React, { useEffect, useState } from "react";
+import * as XLSX from "xlsx";
 
 const DeliveryPartnerPaymentDashboard = () => {
   const [martItems, setMartItems] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const downloadExcel = () => {
+    const excelData = summaryData.map((item, index) => ({
+      "S.No": index + 1,
+      "Delivery Partner": item.deliveryPartnerName,
+      "Mart Id": item.martId,
+      "Grand Total": Number(item.grandTotal || 0).toFixed(2),
+      Date: item.date,
+      Cash: Number(item.cash || 0).toFixed(2),
+      Online: Number(item.online || 0).toFixed(2),
+      "Cash & Online": Number(item.cashAndOnline || 0).toFixed(2),
+      "Total Orders": item.totalOrders,
+      "Total Amount Received":
+        filters.paymentType === "cash"
+          ? Number(item.cash || 0).toFixed(2)
+          : filters.paymentType === "online"
+            ? Number(item.online || 0).toFixed(2)
+            : filters.paymentType === "cash&online"
+              ? Number(item.cashAndOnline || 0).toFixed(2)
+              : Number(item.totalAmount || 0).toFixed(2),
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Payment Summary");
+
+    XLSX.writeFile(
+      workbook,
+      `Payment_Summary_${new Date().toISOString().split("T")[0]}.xlsx`,
+    );
+  };
 
   const [filters, setFilters] = useState({
     paymentType: "All",
@@ -12,8 +45,7 @@ const DeliveryPartnerPaymentDashboard = () => {
   });
 
   // API
-  const MART_API =
-    "https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetAllMartItems";
+  const MART_API = "https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetAllMartItems";
 
   // FETCH API
   useEffect(() => {
@@ -21,7 +53,7 @@ const DeliveryPartnerPaymentDashboard = () => {
   }, []);
 
   const fetchData = async () => {
-    try { 
+    try {
       setLoading(true);
 
       const response = await fetch(MART_API);
@@ -288,7 +320,7 @@ const DeliveryPartnerPaymentDashboard = () => {
                     fromDate: "",
                   });
 
-                  return;
+                  return;  
                 }
 
                 setFilters({
@@ -502,6 +534,12 @@ const DeliveryPartnerPaymentDashboard = () => {
         </table>
       </div>
 
+      <div className="table-header">
+        <button onClick={downloadExcel} className="download-btn">
+          Download Excel
+        </button>
+      </div>
+
       {/* CSS */}
       <style>{`
         .dashboard-container{
@@ -525,6 +563,8 @@ const DeliveryPartnerPaymentDashboard = () => {
           margin-bottom:25px;
           font-weight:bold;
         }
+
+
 
         .filters-row{
           display:flex;
@@ -672,9 +712,24 @@ const DeliveryPartnerPaymentDashboard = () => {
           text-align:center;
           padding:30px;
         }
+
+
+.download-btn {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.download-btn:hover {
+  background: #218838;
+}
       `}</style>
     </div>
   );
-}
+};
 
 export default DeliveryPartnerPaymentDashboard;
