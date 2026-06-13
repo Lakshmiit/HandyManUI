@@ -10,14 +10,14 @@ import Footer from "./Footer.js";
 // import { appConfig } from "./config";
 
 const GroceryPaymentmethod = () => {
-const navigate = useNavigate();
-const { userType } = useParams();
+const navigate = useNavigate();   
+const { userType } = useParams();    
 const { userId } = useParams();
-const { groceryItemId } = useParams();    
+const { groceryItemId } = useParams();        
 const [isMobile, setIsMobile] = useState(false);
 const [isChecked, setIsChecked] = useState(true);
 // const [selectedPayment] = useState("cash");
-const [error, setError] = useState("");
+const [error, setError] = useState("");    
 const [martId, setMartId] = useState("");
 const [totalItemsSelected, setTotalItemsSelected] = useState("");
 const [limit, setLimit] = useState("");

@@ -713,18 +713,18 @@ onClick={() => toggleLike(product.id)}
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-    }}>
+    }}>    
       <div className="img-outer-ring" />
       <div className="img-inner-ring" />
       <div className="img-center-dot" />
     </div>
-  ) : (
+  ) : (  
     <img
       src={imageUrls[product.id]}
       alt={product.name}
       style={{   
         maxHeight: "80px",
-        maxWidth: "100%",
+        maxWidth: "100%",    
         objectFit: "contain",
         cursor: isOutOfStock ? "not-allowed" : "pointer",
         borderRadius: "6px",

@@ -181,7 +181,7 @@ useEffect(() => {
         setDate(data.date);
       let allProducts = [];
       // eslint-disable-next-line 
-      let totalAmountFromApi = 0;
+      let totalAmountFromApi = 0;    
 
       if (data.categories && Array.isArray(data.categories)) {
         data.categories.forEach((cat) => {
@@ -281,68 +281,180 @@ useEffect(() => {
   }
 };
 
+// const handleCancelOrder = async () => {
+//   try {
+//     const detailsResponse = await fetch(
+//       `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`
+//     );
+//     if (!detailsResponse.ok) {
+//       throw new Error("Failed to fetch latest order details");
+//     }
+//     const latestData = await detailsResponse.json();
+//      const payload = {
+//       ...latestData,
+//       id: groceryItemId,
+//       userId: latestData.userId,
+//       martId: latestData.martId,
+//       date: latestData.date,
+//       customerName: latestData.customerName,
+//       address: latestData.address,
+//       state: latestData.state,
+//       district: latestData.district,
+//       zipCode: latestData.zipCode,
+//       customerPhoneNumber: latestData.customerPhoneNumber,
+//       grandTotal: latestData.grandTotal,
+//       totalItemsSelected: latestData.totalItemsSelected,
+//       status: "Cancel",
+//       paymentMode: latestData.paymentMode,
+//       utrTransactionNumber:
+//         latestData.utrTransactionNumber || "",
+//       transactionNumber:
+//         latestData.transactionNumber || "",
+//       transactionStatus:
+//         latestData.transactionStatus || "",
+//       paidAmount: latestData.paidAmount || "",
+//       AssignedTo: "",
+//       DeliveryPartnerUserId: "",
+//       deliveryAssignedTime: "",
+//       deliverySubmitTime: "",
+//       latitude: latestData.latitude,
+//       longitude: latestData.longitude,
+//       code: latestData.code,
+//       units: latestData.units,
+//     };
+//     const response = await fetch(
+//       `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+//       {
+//         method: "PUT",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify(payload),
+//       }
+//     );
+//     if (!response.ok) {
+//       throw new Error("Failed to cancel order");
+//     }
+//     alert("Order has been cancelled successfully");
+//     navigate(`/adminGroceryZoneDashboard`);
+//   } catch (error) {
+//     console.error("Cancel Error:", error);
+//     alert("Failed to cancel order. Try again.");
+//   }
+// };
+
 const handleCancelOrder = async () => {
   try {
     const detailsResponse = await fetch(
       `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`
     );
-    if (!detailsResponse.ok) {
-      throw new Error("Failed to fetch latest order details");
-    }
+    if (!detailsResponse.ok) throw new Error("Failed to fetch latest order details");
     const latestData = await detailsResponse.json();
-     const payload = {
+
+    const cancelPayload = {
       ...latestData,
       id: groceryItemId,
-      userId: latestData.userId,
-      martId: latestData.martId,
-      date: latestData.date,
-      customerName: latestData.customerName,
-      address: latestData.address,
-      state: latestData.state,
-      district: latestData.district,
-      zipCode: latestData.zipCode,
-      customerPhoneNumber: latestData.customerPhoneNumber,
-      grandTotal: latestData.grandTotal,
-      totalItemsSelected: latestData.totalItemsSelected,
       status: "Cancel",
-      paymentMode: latestData.paymentMode,
-      utrTransactionNumber:
-        latestData.utrTransactionNumber || "",
-      transactionNumber:
-        latestData.transactionNumber || "",
-      transactionStatus:
-        latestData.transactionStatus || "",
-      paidAmount: latestData.paidAmount || "",
       AssignedTo: "",
       DeliveryPartnerUserId: "",
       deliveryAssignedTime: "",
       deliverySubmitTime: "",
-      latitude: latestData.latitude,
-      longitude: latestData.longitude,
-      code: latestData.code,
-      units: latestData.units,
     };
-    const response = await fetch(
+
+    const cancelResponse = await fetch(
       `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
       {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(cancelPayload),
       }
     );
-    if (!response.ok) {
-      throw new Error("Failed to cancel order");
+    if (!cancelResponse.ok) throw new Error("Failed to cancel order");
+
+    let allProducts = [];
+    if (latestData.categories && Array.isArray(latestData.categories)) {
+      latestData.categories.forEach((cat) => {
+        cat.products.forEach((p) => {
+          allProducts.push({
+            productName: p.productName,   
+            quantity: p.noOfQuantity,     
+          });
+        });
+      });
     }
-    alert("Order has been cancelled successfully");
+
+    const stockUpdateResults = await Promise.allSettled(
+      allProducts.map(async ({ productName, quantity }) => {
+        const getRes = await fetch(
+          `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(productName)}`
+        );
+        if (!getRes.ok) throw new Error(`GET failed for "${productName}"`);
+        const groceryItems = await getRes.json();
+
+        const matched = Array.isArray(groceryItems)
+          ? groceryItems.find(
+              (g) =>
+                g.name?.trim().toLowerCase() === productName?.trim().toLowerCase()
+            )
+          : null;
+
+        if (!matched) {
+          console.warn(`No matching grocery item found for "${productName}"`);
+          return;
+        }
+
+        const currentStock = parseInt(matched.stockLeft) || 0;
+        const updatedStock = currentStock + parseInt(quantity);
+
+        const putPayload = {
+          id: matched.id,
+          Date: matched.date,
+          GroceryItemId: matched.groceryItemId,
+          Name: matched.name,
+          Category: matched.category,
+          Images: matched.images,
+          MRP: matched.mrp,
+          Discount: matched.discount,
+          AfterDiscount: matched.afterDiscount,
+          StockLeft: updatedStock.toString(),   
+          DeliveryIn: matched.deliveryIn,
+          Status: matched.status,
+          code: matched.code,
+          units: matched.units,
+          RequestedBy: matched.requestedBy || "Admin",
+          manufactureDate: matched.manufactureDate || "",
+          expireDate: matched.expireDate || "",
+          Limit: matched.limit,
+        };
+
+        const putRes = await fetch(
+          `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${matched.id}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(putPayload),
+          }
+        );
+        if (!putRes.ok) throw new Error(`PUT failed for "${productName}"`);
+
+        console.log(`✅ Stock restored for "${productName}": ${currentStock} + ${quantity} = ${updatedStock}`);
+      })
+    );
+
+    stockUpdateResults.forEach((result, idx) => {
+      if (result.status === "rejected") {
+        console.error(`Stock update failed for item ${idx + 1}:`, result.reason);
+      }
+    });
+
+    alert("Order has been cancelled and stock has been restored successfully");
     navigate(`/adminGroceryZoneDashboard`);
+
   } catch (error) {
     console.error("Cancel Error:", error);
     alert("Failed to cancel order. Try again.");
   }
 };
-
   // Detect screen size for responsiveness
 useEffect(() => {
   const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -523,13 +635,14 @@ doc.setTextColor(200, 0, 0);
 };
 
 useEffect(() => {
-  if (!items.length) return;        
+  if (!items.length) return;   
+  const currentItems = items;     
   const controller = new AbortController();
   async function loadImages() {
     const map = {};
     await Promise.all(
-      items.map(async (item) => {
-        if (!item.image) return;
+      currentItems.map(async (item) => {    
+        if (!item.image) return;    
         try {
           const res = await fetch(
             `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
@@ -541,15 +654,20 @@ useEffect(() => {
           if (!json?.imageData) return;
           map[item.id] = `data:image/jpeg;base64,${json.imageData}`;
         } catch (err) {
+          if (err?.name === "AbortError") return;
           console.error("Image fetch failed:", err);
         }
       })
     );
-    setImageUrls(map);
+
+    if (!controller.signal.aborted) {
+      setImageUrls(map);
+    }
   }
   loadImages();
   return () => controller.abort();
-}, [items]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [items.length]); 
 
 const handleImageClick = (imageSrc, product) => {
     setZoomImage(imageSrc);

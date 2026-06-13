@@ -669,13 +669,15 @@ const handleAddClick = (product) => {
 //     fetchDeliveryData();
 //   }
 // }, [id]);
-
- useEffect(() => {
+       
+ useEffect(() => {   
   const fetchGroceryData = async () => {
     try {
       const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetMartTicketsByUserId?userId=${userId}`);
-      if (!response.ok) throw new Error('Failed to fetch ticket data');
-      const data = await response.json();
+      if (!response.ok) {
+      throw new Error('Failed to fetch ticket data');
+    }
+      const data = await response.json();        
       const tickets = Array.isArray(data) ? data : (data && typeof data === "object" ? [data] : []);
       const inProgressTickets = tickets.filter(
         (item) =>

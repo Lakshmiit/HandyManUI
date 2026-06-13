@@ -230,7 +230,7 @@ function App() {
             <Route path="/" element={<HandyManLogo />} /> 
             <Route path="/loginnew" element={<LoginPage />} />
             <Route path="/otpVerification" element={<OTPVerificationPage />} />
-            <Route path="/userIdLogin" element={<UserIdLogin />} />
+            <Route path="/userIdLogin" element={<UserIdLogin />} />    
             <Route path="/raiseTicket/:userType/:userId" element={<RaiseTicket />} />
             <Route path="/raiseTicketConfirmation/:userType/:userId" element={<RaiseTicketConfirmation />} />
             <Route path="/buyProducts/:userType/:userId" element={<BuyProducts />} /> 
@@ -238,7 +238,7 @@ function App() {
             <Route path="/buyproduct-view/:userType/:userId/:id" element={<BuyProductView />} />
             <Route path="/adminUploadForm/Admin" element={<AdminUploadForm />} />
             <Route path="/adminProductApproval/:id/Admin" element={<AdminProductApproval />} />
-            <Route path="/adminProductList/Admin" element={<AdminProductList />} /> 
+            <Route path="/adminProductList/Admin" element={<AdminProductList />} />    
             <Route path="/adminUpdateProduct/:id/Admin" element={<AdminUpdateProduct />} /> 
             <Route path="/adminSidebar" element={<AdminSidebar />} />
             <Route path="/adminNotifications" element={<AdminNotifications />} />

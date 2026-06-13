@@ -120,7 +120,7 @@ const AdminRegistrationNumbers = () => {
 
       if (isNewTransaction) {
         // ───── POST ─────
-        const postPayload = {
+        const postPayload = {  
           id: "string",
           UserId: customerData.userId,
           CreatedDate: new Date().toISOString(),
@@ -129,8 +129,8 @@ const AdminRegistrationNumbers = () => {
           TotalWalletAmount: amount,   
           AvailedAmount: "0",
           RemainingAmount: amount,
-        };
-
+        };    
+     
         console.log("[Step 3] POST payload:", postPayload);
         const postRes = await axios.post(
           `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/OffersTransactions/UploadOffersTransactionsDetails`,
