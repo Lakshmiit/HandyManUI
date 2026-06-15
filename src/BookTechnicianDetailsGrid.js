@@ -37,7 +37,7 @@
 //               try {
 //                 let apiUrl = "";
              
-//                   apiUrl = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/technician/technicianProfileData?profileType=${userType}&UserId=${userId}`;
+//                   apiUrl = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/technician/technicianProfileData?profileType=${userType}&UserId=${userId}`;
                 
 //                 if (!apiUrl) return;
 //                 const response = await axios.get(apiUrl);
@@ -57,7 +57,7 @@
     
 //   useEffect(() => {
 //     setLoading(true);
-//     const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/BookTechnician/GetBookTechnicianNotifications?category=${category}&pincode=${pincode}&technicianName=${technicianName}`;
+//     const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/BookTechnician/GetBookTechnicianNotifications?category=${category}&pincode=${pincode}&technicianName=${technicianName}`;
 //     axios.get(url)
 //       .then((response) => {
 //         console.log("API Response:", response.data); 

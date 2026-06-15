@@ -19,14 +19,14 @@ const AdminGroceryApproval = () => {
   useEffect(() => {         
     const fetchData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItems/${id}`);
+        const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItems/${id}`);
         const data = await response.json();
         setGroceryData(data);
 
         const imageRequests =
           data.images?.map((photo) =>
             fetch(
-              `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+              `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
             )
               .then((res) => res.json())
               .then((data) => ({
@@ -42,7 +42,7 @@ const AdminGroceryApproval = () => {
       }
     };
     fetchData();
-  }, [id]);
+  }, [id]);   
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -65,7 +65,7 @@ const AdminGroceryApproval = () => {
     };
 
     try {   
-      const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${id}`, {
+      const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

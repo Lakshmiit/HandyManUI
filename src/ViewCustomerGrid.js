@@ -30,7 +30,7 @@
 //   }, [ticketData]);
 //   useEffect(() => {
 //     setLoading(true);
-//     const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/RaiseTicket/GetRaiseTicketNotificationsByCustomerId?customerId=${userId}`
+//     const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/RaiseTicket/GetRaiseTicketNotificationsByCustomerId?customerId=${userId}`
 
 //     axios.get(url)
 //       .then(response => {
@@ -52,7 +52,7 @@
 //   const handleDelete = (ticketId) => {
 //     const confirmDelete = window.confirm('Are you sure you want to delete this ticket?');
 //     if (confirmDelete) {
-//       axios.delete(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/RaiseTicket/${ticketId}`)
+//       axios.delete(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/RaiseTicket/${ticketId}`)
 //         .then(() => {
 //           setTicketData(prevData => prevData.filter(ticket => ticket.id !== ticketId));
 //           setFilteredData(prevData => prevData.filter(ticket => ticket.id !== ticketId));

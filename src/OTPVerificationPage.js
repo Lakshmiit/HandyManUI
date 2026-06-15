@@ -102,7 +102,7 @@ const OTPVerificationPage = () => {
       setCanResend(false);
 
       const response = await fetch(
-        `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Auth/bhashsmssendotp`,
+        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Auth/bhashsmssendotp`,
         {
           method: "POST",
           headers: {
@@ -137,7 +137,7 @@ const OTPVerificationPage = () => {
 
     try {
       const response1 = await fetch(
-        `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UserOnBoarding/GuestUserUpload`,
+        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UserOnBoarding/GuestUserUpload`,
         {
           method: "POST",
           headers: {
@@ -184,7 +184,7 @@ const OTPVerificationPage = () => {
       };
 
       const response2 = await fetch(
-        `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Customer/GuestCustomerUpload`,
+        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Customer/GuestCustomerUpload`,
         {
           method: "POST",
           headers: {
@@ -227,7 +227,7 @@ const OTPVerificationPage = () => {
       };   
 
       const otpResponse = await fetch(
-        `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Auth/validateotp`,
+        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Auth/validateotp`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -242,7 +242,7 @@ const OTPVerificationPage = () => {
 
       // STEP 2 — Check if user exists
       const verifyUserRes = await fetch(
-        `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UserOnBoarding/GuestUserVerificationByMobileNo?mobileNo=${mobile}`,
+        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UserOnBoarding/GuestUserVerificationByMobileNo?mobileNo=${mobile}`,
       );
 
       if (verifyUserRes.status === 200) {

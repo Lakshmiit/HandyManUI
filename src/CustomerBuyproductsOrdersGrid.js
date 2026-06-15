@@ -29,7 +29,7 @@
 //   }, [productData])
 //   useEffect(() => {
 //     setLoading(true);
-//     const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForUserList?UserID=${userId}`
+//     const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForUserList?UserID=${userId}`
 //     axios.get(url)
 //       .then(response => {
 //         const products = response.data.map((product) => ({

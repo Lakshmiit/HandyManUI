@@ -6,7 +6,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ImageCache from "./utils/ImageCache";
 import { CartStorage } from "./CartStorage";
 
-const API_BASE = "https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net";
+const API_BASE = "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net";
 
 const getLimit = (product) => {
   if (!product) return Infinity;

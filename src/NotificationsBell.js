@@ -18,7 +18,7 @@
 //     const unsubscribe = onSnapshot(notificationsRef, async () => {
 //       try {
 //         const response = await fetch(
-//           `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/BookTechnician/GetBookTechnicianDetailsForUserList?userId=${userId}`
+//           `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/BookTechnician/GetBookTechnicianDetailsForUserList?userId=${userId}`
 //         );
 //         const data = await response.json();
 

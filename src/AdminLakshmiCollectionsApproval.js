@@ -31,12 +31,12 @@ const AdminLakshmiCollectionsApproval = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadLakshmiCollection/GetLakshmiCollections?id=${id}`);
+        const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadLakshmiCollection/GetLakshmiCollections?id=${id}`);
         const data = await response.json();
         setCollectionData(data);
          const imagePromises = (data.images ?? []).map(async (file) => {
           const r = await fetch(
-            `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(file)}`
+            `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(file)}`
           );
           const j = await r.json();
           const b64 = j.imageData || j.fileData || j.videoData; 
@@ -49,7 +49,7 @@ const AdminLakshmiCollectionsApproval = () => {
         });
         const videoPromises = (data.videos ?? []).map(async (file) => {
           const r = await fetch(
-            `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(file)}`
+            `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(file)}`
           );
           const j = await r.json();
           const b64 = j.videoData || j.fileData || j.imageData; 
@@ -124,7 +124,7 @@ const AdminLakshmiCollectionsApproval = () => {
       stockLeft,
     };
     try {
-      const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadLakshmiCollection/UpdateLakshmiCollection?id=${id}`, {
+      const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadLakshmiCollection/UpdateLakshmiCollection?id=${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

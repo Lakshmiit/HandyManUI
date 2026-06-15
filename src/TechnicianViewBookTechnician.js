@@ -62,7 +62,7 @@
 //   useEffect(() => {
 //     const fetchtechnicianData = async () => {
 //       try {
-//         const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/BookTechnician/GetBookTechnician/${raiseTicketId}`);
+//         const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/BookTechnician/GetBookTechnician/${raiseTicketId}`);
 //         if (!response.ok) {
 //           throw new Error('Failed to fetch technician data');
 //         }
@@ -106,7 +106,7 @@
 //               try {
 //                 let apiUrl = "";
              
-//                   apiUrl = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/technician/technicianProfileData?profileType=${userType}&UserId=${userId}`;
+//                   apiUrl = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/technician/technicianProfileData?profileType=${userType}&UserId=${userId}`;
                 
 //                 if (!apiUrl) return;
 //                 const response = await axios.get(apiUrl);
@@ -230,7 +230,7 @@
 //   };
 
 //   try {
-//     const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
+//     const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/BookTechnician/${raiseTicketId}`, {
 //       method: 'PUT',
 //       headers: {
 //         'Content-Type': 'application/json',
@@ -261,7 +261,7 @@
 //      navigate(`/technicianGridDetails/${userType}/${userId}/${category}/${zipCode}/${technicianName}`);
 
 //     //  navigate(`/profilePage/${userType}/${userId}`);
-//   // window.location.href = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/CustomerProfilePage?ReactToken=${customerId}$${userType}`;
+//   // window.location.href = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/CustomerProfilePage?ReactToken=${customerId}$${userType}`;
 //   } catch (error) {
 //     console.error('Error:', error);
 //     window.alert('Failed to forward Customer. Please try again later.');
