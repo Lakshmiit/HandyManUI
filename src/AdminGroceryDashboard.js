@@ -368,11 +368,11 @@ const totalNotifications = raiseTicketCount + bookTechnicianCount + buyProductCo
     setHighlightedProduct(null);
   };
 
-   const handleClearGroceryNotifications = () => {
-    setNewGroceryCount(0);
-    setGlowGrocery(false);
-    setHighlightedGrocery(null);
-  };
+  //  const handleClearGroceryNotifications = () => {
+  //   setNewGroceryCount(0);
+  //   setGlowGrocery(false);                                                                                                      
+  //   setHighlightedGrocery(null);
+  // };
 
   const handleClearCollectionNotifications = () => {
     setNewCollectionCount(0);
@@ -560,10 +560,10 @@ const handleTabClick = (tab) => {
               />
               <div
                 className="view-notifications text-info mx-2"
-                onClick={() => {
-                   navigate(`/groceryItemsNotificationGrid`);
-                  handleClearGroceryNotifications();
-                }}
+                // onClick={() => {
+                //    navigate(`/groceryItemsNotificationGrid`);
+                //   handleClearGroceryNotifications();
+                // }}
                 style={{ cursor: "pointer" }}
               > 
                 View All Notifications

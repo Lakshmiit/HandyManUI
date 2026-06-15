@@ -100,7 +100,7 @@ else if (numericGrandTotal >= 999 && numericGrandTotal <= 1998) {
   cashback = 50;
 }
 else if (numericGrandTotal >= 1999) {
-  cashback = 100;
+  cashback = 250;
 }
 
 const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;

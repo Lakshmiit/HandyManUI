@@ -11,7 +11,6 @@ const zoneData = {
   F: ["530014", "530041", "530043", "530045", "530048"],
   G: ["531162", "531163", "531173"],
 };    
-    
 const AdminGroceryZoneDashboard = () => {
   const navigate = useNavigate();       
   const [selectedZone, setSelectedZone] = useState(null);
@@ -20,7 +19,7 @@ const AdminGroceryZoneDashboard = () => {
   const [groceryList, setGroceryList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [blinkingZones, setBlinkingZones] = useState({});
-  const prevZoneCountsRef = useRef({});
+  const prevZoneCountsRef = useRef({}); 
 
   useEffect(()=> {
   console.log(loading);

@@ -13,7 +13,7 @@
 
 
 // const RaiseQuotation = () => {
-//   const [isMobile, setIsMobile] = useState(false);
+//   const [isMobile, setIsMobile] = useState(false);    
 //   const [showMenu, setShowMenu] = useState(false);
 //   const {raiseTicketId} = useParams();
 //   const [id, setId] = useState('');

@@ -18,9 +18,6 @@ import Footer from "./Footer.js";
 const IMAGE_DOWNLOAD =
   `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
 
-const norm = (s) =>
-  String(s || "").toLowerCase().replace(/\s+/g, " ").replace("500ml", "500 ml").replace("1l", "1 l").trim();
-
 const getLimit = (item) => {
   const limit = Number(item?.limit);
   if (Number.isFinite(limit) && limit > 0) return limit;
@@ -150,7 +147,6 @@ const GroceryOffersCartPage = () => {
   const [showZoomModal, setShowZoomModal] = useState(false);
   const [zoomImage, setZoomImage] = useState("");
   const [grandSummary, setGrandSummary] = useState({ items: 0, total: 0 });
-    const pollRef = useRef(null);
 const [walletAmount, setWalletAmount] = useState(0);
   const [addresses, setAddresses] = useState([]);
   const [fullName, setFullName] = useState("");
@@ -161,6 +157,11 @@ const MIN_ORDER_TOTAL =
   Number(walletAmount) === 50 || Number(referralAmount) > 0
     ? 150
     : 100;
+    const normalizeName = (name) =>
+     String(name || "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
  useEffect(() => {
     console.log(addresses, fullName, isNewUser);
   }, [addresses, fullName, isNewUser]);
@@ -342,25 +343,174 @@ setGrandSummary(computeTotals(clampedItems));
     };
   }, [cartItems, imageBlobMap]);
 
-const handleQtyChange = (rowId, delta) => {
+const handleQtyChange = async (rowId, delta) => {
+  const item = cartItems.find((i) => i.id === rowId);
+  if (!item) return;
+  const latest = await fetchLatestStock(item.name);
   setCartItems((prev) => {
-    const next = prev
+    const updated = prev
       .map((it) => {
         if (it.id !== rowId) return it;
-        const proposed = Number(it.qty || 0) + delta;
-        const clamped = clampQty(it, proposed);
-        return { ...it, qty: clamped };
+        const limitMax =
+          latest.limit > 0 ? latest.limit : Infinity;
+        const maxAllowed = Math.min(
+          latest.stockLeft,
+          limitMax
+        );
+        const proposedQty = Number(it.qty || 0) + delta;
+        if (latest.stockLeft === null) {
+          return it;
+        }
+
+        if (latest.stockLeft <= 0) {
+          return null;
+        }
+        if (proposedQty <= 0) {
+          return null;
+        }
+        return {
+          ...it,
+          stockLeft: latest.stockLeft,
+          limit: latest.limit,
+          qty: Math.min(proposedQty, maxAllowed),
+        };
       })
-      .filter(isValidCartItem);
-    writeBackToStorage(next);
-    setGrandSummary(computeTotals(next));
-    return next;
+      .filter(Boolean);
+    writeBackToStorage(updated);
+    setGrandSummary(computeTotals(updated));
+    return updated;
   });
+};
+
+const fetchLatestStock = useCallback(async (productName) => {
+  try {
+    const res = await fetch(
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(productName)}`
+    );
+    const data = await res.json();
+    const normalizedInput = normalizeName(productName);
+    const exactMatch = (Array.isArray(data) ? data : []).filter(
+      (x) => normalizeName(x.name) === normalizedInput
+    );
+    const latest = exactMatch.sort(
+      (a, b) => Date.parse(b?.date || 0) - Date.parse(a?.date || 0)
+    )[0];
+   if (!latest) {
+    return {
+      stockLeft: null,
+      limit: null,
+    };
+  }
+  return {
+    stockLeft: Number(latest.stockLeft),
+    limit: Number(latest.limit || 0),
+  };
+  } catch (err) {
+    console.error(err);
+    return {
+      stockLeft: null,
+      limit: null,
+    };
+  }
+}, []);
+
+const refreshAllCartStocks = useCallback(async () => {
+  const currentItems = cartItemsRef.current;
+  if (!currentItems.length) return;
+
+  const stockResults = await Promise.all(
+    currentItems.map(async (item) => ({
+      name: item.name,
+      latest: await fetchLatestStock(item.name),
+    }))
+  );
+
+  const updated = currentItems
+    .map((item) => {
+      const match = stockResults.find(
+        (x) =>
+          normalizeName(x.name) === normalizeName(item.name)
+      );
+      if (!match) return item;
+      const latestStock = match.latest.stockLeft;
+      const latestLimit =
+        match.latest.limit > 0
+          ? match.latest.limit
+          : Infinity;
+      if (latestStock === null) {
+        return item;
+      }
+
+      if (latestStock <= 0) {
+        return null;
+      }
+      return {
+        ...item,
+        stockLeft: latestStock,
+        limit: latestLimit,
+        qty: Math.min(item.qty, latestStock, latestLimit),
+      };
+    })
+    .filter(Boolean);
+  setCartItems(updated);
+  writeBackToStorage(updated);
+  setGrandSummary(computeTotals(updated));
+}, [fetchLatestStock]);
+
+useEffect(() => {
+  refreshAllCartStocks();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, []);
+
+useEffect(() => {
+  const handleFocus = () => refreshAllCartStocks();
+  const handleOnline = () => refreshAllCartStocks();
+  const handleVisibility = () => {
+    if (document.visibilityState === "visible") {
+      refreshAllCartStocks();
+    }
+  };
+  window.addEventListener("focus", handleFocus);
+  window.addEventListener("online", handleOnline);
+  document.addEventListener(
+    "visibilitychange",
+    handleVisibility
+  );
+  return () => {
+    window.removeEventListener("focus", handleFocus);
+    window.removeEventListener("online", handleOnline);
+    document.removeEventListener(
+      "visibilitychange",
+      handleVisibility
+    );
+  };
+}, [refreshAllCartStocks]);
+
+const validateCartStockBeforeCheckout = async () => {
+  const checks = await Promise.all(
+    cartItems.map(async (item) => ({
+      name: item.name,
+      requestedQty: item.qty,
+      latest: await fetchLatestStock(item.name),
+    }))
+  );
+  const invalidItems = checks.filter(
+    (x) =>
+      x.latest.stockLeft <= 0 ||
+      x.requestedQty > x.latest.stockLeft
+  );
+  if (invalidItems.length > 0) {
+    await refreshAllCartStocks();
+    alert("Some items are out of stock. Cart updated.");
+    return false;
+  }
+  return true;
 };
 
   // ----- Proceed -----
   const handleGroceryProceed = async (event) => {
-    event.preventDefault();
+    const valid = await validateCartStockBeforeCheckout();
+    if (!valid) return;
     const allCategories =
           JSON.parse(localStorage.getItem("allCategories")) || [];
     //  const firstOrderData = await CheckFirstOrder(mobileNumber);
@@ -394,6 +544,11 @@ const handleQtyChange = (rowId, delta) => {
       longitude: 0,
       isPickUp: false,
       isDelivered: false,
+
+      totalWalletAmount:"",
+      availedAmount :"",
+     remainingAmount :"",
+
       deliveryAssignedTime: "",
       deliverySubmitTime: "",
       GrandTotal: String(grandSummary.total),
@@ -499,68 +654,6 @@ const cartItemsRef = useRef([]);
 useEffect(() => {
   cartItemsRef.current = cartItems;
 }, [cartItems]);
-
- // ----- Poll stock & re-clamp by stock + per-item limit -----
-useEffect(() => {
-  const fetchAndUpdateStock = async () => {
-    try {
-      const categories = Array.from(
-        new Set(
-          cartItemsRef.current
-            .map((it) => it.category)
-            .filter(Boolean)
-        )
-      );
-      if (!categories.length) return;
-      const allProducts = [];
-      for (const cat of categories) {
-        const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(
-          cat
-        )}`;
-        const res = await fetch(url);
-        const list = (await res.json()) || [];
-        allProducts.push(...list);
-      }
-     const byId = new Map();
-      const byName = new Map();
-      allProducts.forEach((p) => {
-        const stock = Number(p.stockLeft || 0);
-        const limit = Number(p.limit || 0);   
-        byId.set(String(p.id), { stock, limit });
-        byName.set(norm(p.name), { stock, limit });
-      });
-      setCartItems((prev) => {
-        let changed = false;
-        const next = prev.map((it) => {
-         const apiData =
-          byId.get(String(it.productId)) ??
-          byName.get(norm(it.name));
-        const stock = apiData?.stock ?? Number(it.stockLeft || 0);
-        const limit = Number(apiData?.limit || it.limit || 0);
-        const maxAllowed = Math.min(stock, getLimit({ limit }));
-        const clampedQty = Math.max(0, Math.min(Number(it.qty || 0), maxAllowed));
-          if (stock !== it.stockLeft || limit !== it.limit || clampedQty !== it.qty) {
-            changed = true;
-          }
-          return { ...it, stockLeft: stock, limit, qty: clampedQty };
-        });
-        const filtered = next.filter(isValidCartItem);
-        if (changed) {
-          writeBackToStorage(filtered);
-          setGrandSummary(computeTotals(filtered));
-        }
-        return filtered;
-      });
-    } catch (e) {
-       console.error("Stock/limit update failed:", e);
-    }
-  };
-  fetchAndUpdateStock();
-   pollRef.current = setInterval(fetchAndUpdateStock, 5000);
-  return () => {
-    if (pollRef.current) clearInterval(pollRef.current);
-  };
-}, []); 
 
   const handleImageClick = (imageSrc) => {
     setZoomImage(imageSrc);

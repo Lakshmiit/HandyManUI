@@ -106,12 +106,12 @@ const AdminRegistrationNumbers = () => {
     }
 
     // PUT guard — wallet already has balance
-    if (!isNewTransaction && transactionData && transactionData.totalWalletAmount !== "0") {
-      setWalletError(
-        `Wallet already has ₹${transactionData.totalWalletAmount}. Cannot add again.`
-      );
-      return;
-    }
+    // if (!isNewTransaction && transactionData && transactionData.totalWalletAmount !== "0") {
+    //   setWalletError(
+    //     `Wallet already has ₹${transactionData.totalWalletAmount}. Cannot add again.`
+    //   );
+    //   return;
+    // }
 
     setWalletLoading(true);
 
@@ -119,7 +119,6 @@ const AdminRegistrationNumbers = () => {
       const amount = String(walletAmount);
 
       if (isNewTransaction) {
-        // ───── POST ─────
         const postPayload = {  
           id: "string",
           UserId: customerData.userId,
@@ -139,7 +138,7 @@ const AdminRegistrationNumbers = () => {
         console.log("[Step 3] POST response:", postRes.data);
 
         setWalletSuccess(
-          `₹${walletAmount} wallet created successfully for ${customerData.firstName} ${customerData.lastName}!`
+          `₹${walletAmount} wallet created successfully for ${customerData.firstName}!`
         );
         setTransactionData({
           totalWalletAmount: amount,
@@ -151,7 +150,6 @@ const AdminRegistrationNumbers = () => {
         setIsNewTransaction(false);
 
       } else {
-        // ───── PUT ─────
         if (!transactionData) {
           setWalletError("Transaction data missing for update.");
           return;
@@ -176,7 +174,7 @@ const AdminRegistrationNumbers = () => {
         console.log("[Step 3] PUT response:", putRes.data);
 
         setWalletSuccess(
-          `₹${walletAmount} added successfully to ${customerData.firstName} ${customerData.lastName}'s wallet!`
+          `₹${walletAmount} added successfully to ${customerData.firstName}'s wallet!`
         );
         setTransactionData((prev) => ({
           ...prev,

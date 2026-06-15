@@ -864,7 +864,7 @@ if (activeItems.length === 0 && !hasCombo) {
     GrandTotal: finalGrandTotal.toString(),
     TotalItemsSelected: totalItemCount.toString(),
     categories: finalCategories,  
-    // Location: '', 
+    Location: '', 
   };
       
   try {
@@ -1420,7 +1420,7 @@ const totalItemCount =
       <div
         className="cart-footer d-flex justify-content-between align-items-center mt-2 px-3 py-2"
         style={{
-          backgroundColor: "#008000",
+          backgroundColor: "#008000",  
           color: "white",
           borderRadius: "8px",
           width: "100%",
