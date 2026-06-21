@@ -11,6 +11,7 @@ const zoneData = {
   F: ["530014", "530041", "530043", "530045", "530048"],
   G: ["531162", "531163", "531173"],
 };    
+// handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net
 const AdminGroceryZoneDashboard = () => {
   const navigate = useNavigate();       
   const [selectedZone, setSelectedZone] = useState(null);
@@ -70,8 +71,8 @@ const AdminGroceryZoneDashboard = () => {
   useEffect(() => {
     let intervalId = null;
 
-    const ACTIVE_INTERVAL  = 30_000; 
-    const HIDDEN_INTERVAL  = 120_000;          
+    const ACTIVE_INTERVAL  = 300_000; 
+    const HIDDEN_INTERVAL  = 300_000;          
 
     const start = (ms) => {
       if (intervalId) clearInterval(intervalId);
@@ -124,7 +125,7 @@ const AdminGroceryZoneDashboard = () => {
       const status = item.status?.toLowerCase().trim();
       const zip    = item.zipCode?.trim();
       const zone   = zip && zoneMap[zip] ? zoneMap[zip] : "Others";
-
+    
       if (status === "open") {
         addTo(zone, item);
         addTo("Grocery", item);
@@ -133,7 +134,7 @@ const AdminGroceryZoneDashboard = () => {
       if (status === "delivered")   addTo("Delivered Tickets", item);
       if (status === "return")      addTo("Return Orders", item);
       if (status === "cancel")      addTo("Cancel Tickets", item);
-      if (["open", "in progress", "delivered"].includes(status)) addTo("All Grocery", item);
+      if (["open", "in progress", "delivered", "return"].includes(status)) addTo("All Grocery", item);
     });
 
     Object.keys(zones).forEach((zone) => {

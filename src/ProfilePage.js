@@ -322,7 +322,7 @@ useEffect(() => {
           cachedMap[productId] = [`data:image/jpeg;base64,${cached}`];
         } else {
           misses.push({ productId, photo });
-        }
+        }    
       }
       if (Object.keys(cachedMap).length) {
         setImageUrls((prev) => ({ ...prev, ...cachedMap }));
@@ -380,6 +380,8 @@ useEffect(() => {
   const categories = JSON.parse(localStorage.getItem("allCategories") || "[]");
   categories.forEach(cat => {
     cat.products.forEach(async (p) => {
+      if (cartImages[p.id]) return;
+      if (cartImages[p.id]) return;
       if (!p.imageFile || cartImages[p.id]) return;
       try {
         const res = await fetch(
@@ -1851,6 +1853,7 @@ const filteredGroceryData = groceryData.filter((t) =>
                                 : item
                             )        
                           );
+                          setShowOrderModal(false);
                         }}
                       >
                         Return
