@@ -15,7 +15,7 @@ import PermIdentityIcon from '@mui/icons-material/PermIdentity';
 import { useNavigate, useParams } from "react-router-dom";   
 import Logo from "./img/Hm_Logo 1.png";
 import SearchIcon from "@mui/icons-material/Search";
-import LogoutIcon from "@mui/icons-material/Logout";   
+import LogoutIcon from '@mui/icons-material/Logout';   
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';          
 import ApartmentIcon from '@mui/icons-material/Apartment';
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
@@ -1852,6 +1852,21 @@ const handleCustomerCareCall = () => {
         return () => document.removeEventListener("mousedown", handleCloseMenuOnClickOutside);
       }, []);
             
+const fetchImageUrl = useCallback(async (photoId) => {
+  try {
+    if (!photoId) return;
+    const response = await axios.get(
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photoId)}`
+    );
+    if (response.status === 200 && response.data.imageData) {
+      const imageUrl = toCachedImageUrl(photoId, response.data.imageData);
+      setProfileImage(imageUrl);
+    }
+  } catch (error) {
+    console.error("Error fetching image:", error);
+  }
+}, []);
+
       useEffect(() => {
         if (!userId || !userType) return;
         const fetchProfileData = async () => {
@@ -1878,7 +1893,7 @@ const handleCustomerCareCall = () => {
           }
         };
         fetchProfileData();
-      }, [userType, userId, isMobile]);
+      }, [userType, userId, isMobile, fetchImageUrl]);
       
       useEffect(() => {
         if (category && district) {
@@ -1892,21 +1907,6 @@ const handleCustomerCareCall = () => {
   });
   return () => window.removeEventListener("storage", () => {});
 }, []);
-
-const fetchImageUrl = async (photoId) => {
-  try { 
-    if (!photoId) return;
-    const response = await axios.get(
-      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photoId)}`
-    );
-    if (response.status === 200 && response.data.imageData) {
-      const imageUrl = toCachedImageUrl(photoId, response.data.imageData);
-      setProfileImage(imageUrl);
-    }
-  } catch (error) {
-    console.error("Error fetching image:", error);
-  }
-};
   
  if (loading) {
   return <div></div>; 
