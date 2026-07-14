@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef} from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import './App.css';
@@ -1063,6 +1063,21 @@ const handleCustomerCareCall = () => {
         return () => document.removeEventListener("mousedown", handleCloseMenuOnClickOutside);
       }, []);
             
+const fetchImageUrl = useCallback(async (photoId) => {
+  try {
+    if (!photoId) return;
+    const response = await axios.get(
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photoId)}`
+    );
+    if (response.status === 200 && response.data.imageData) {
+      const imageUrl = `data:image/jpeg;base64,${response.data.imageData}`;
+      setProfileImage(imageUrl);
+    }
+  } catch (error) {
+    console.error("Error fetching image:", error);
+  }
+}, []);
+
       useEffect(() => {
         if (!userId || !userType) return;
         const fetchProfileData = async () => {
@@ -1089,7 +1104,7 @@ const handleCustomerCareCall = () => {
           }
         };
         fetchProfileData();
-      }, [userType, userId, isMobile]);
+      }, [userType, userId, isMobile, fetchImageUrl]);
       
       useEffect(() => {
         if (category && district) {
@@ -1103,21 +1118,6 @@ const handleCustomerCareCall = () => {
   });
   return () => window.removeEventListener("storage", () => {});
 }, []);
-
-const fetchImageUrl = async (photoId) => {
-  try { 
-    if (!photoId) return;
-    const response = await axios.get(
-      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photoId}`
-    );
-    if (response.status === 200 && response.data.imageData) {
-      const imageUrl = `data:image/jpeg;base64,${response.data.imageData}`;
-      setProfileImage(imageUrl);
-    }
-  } catch (error) {
-    console.error("Error fetching image:", error);
-  }
-};
   
  if (loading) {
   return <div></div>; 
