@@ -21,7 +21,6 @@ import ApartmentIcon from '@mui/icons-material/Apartment';
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import Electrical from './img/Electrical.jpeg';
 import Electronics from './img/Electronics.jpeg';  
 import Plumbing from './img/Plumbing.jpeg';
@@ -69,9 +68,7 @@ import HomePlumbingImg from './img/HomePlumbing.jpeg';
 import OffersBannerModal from './OffersBannerModal.js';
 import {
   appendHelpRequestMessage,
-  fetchActiveUserSummary,
   fetchHelpRequests,
-  fetchProfileMessages,
   getNotificationState,
   registerInstallActivity,
   requestNotificationPermission,
@@ -152,22 +149,6 @@ const collectionsCategories = [
 
   const IMAGE_API =
   `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
-
-const formatActivityDuration = (seconds) => {
-  const totalSeconds = Number(seconds || 0);
-  if (!totalSeconds) {
-    return "0 min";
-  }
-
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.max(1, Math.round((totalSeconds % 3600) / 60));
-
-  if (hours > 0) {
-    return `${hours}h ${minutes}m`;
-  }
-
-  return `${minutes} min`;
-};
 
 const formatRelativeActivity = (value) => {
   if (!value) {
@@ -318,7 +299,6 @@ const [notificationPermission, setNotificationPermission] = useState(
   () => getNotificationState().permissionGranted
 );
 const [isEnablingNotifications, setIsEnablingNotifications] = useState(false);
-const [profileMessages, setProfileMessages] = useState([]);
 const [helpRequests, setHelpRequests] = useState([]);
 const [showHelpBoardModal, setShowHelpBoardModal] = useState(false);
 const [activeHelpRequestId, setActiveHelpRequestId] = useState("");
@@ -331,7 +311,6 @@ const [helpVoiceError, setHelpVoiceError] = useState("");
 const [isRecordingHelpVoice, setIsRecordingHelpVoice] = useState(false);
 const [submittingHelpRequest, setSubmittingHelpRequest] = useState(false);
 const [profileInsightsLoading, setProfileInsightsLoading] = useState(true);
-const [userActivitySummary, setUserActivitySummary] = useState(null);
 const [latestHelpReply, setLatestHelpReply] = useState(null);
 const sessionStartedAtRef = useRef(Date.now());
 const sessionIdRef = useRef(`profile-${userId || "guest"}-${Date.now()}`);
@@ -421,8 +400,6 @@ const refreshProfileInsights = useCallback(async () => {
   const resolvedMobileNumber = profile.mobileNumber || mobileNumber;
 
   if (!userId && !resolvedMobileNumber) {
-    setUserActivitySummary(null);
-    setProfileMessages([]);
     setHelpRequests([]);
     setProfileInsightsLoading(false);
     return;
@@ -430,25 +407,13 @@ const refreshProfileInsights = useCallback(async () => {
 
   setProfileInsightsLoading(true);
   try {
-    const [summary, messages, requests] = await Promise.all([
-      fetchActiveUserSummary({
-        userId,
-        mobileNumber: resolvedMobileNumber,
-      }),
-      fetchProfileMessages({
-        userId,
-        mobileNumber: resolvedMobileNumber,
-      }),
-      fetchHelpRequests({
-        userId,
-        mobileNumber: resolvedMobileNumber,
-      }),
-    ]);
-    setUserActivitySummary(summary);
-    setProfileMessages(Array.isArray(messages) ? messages : []);
+    const requests = await fetchHelpRequests({
+      userId,
+      mobileNumber: resolvedMobileNumber,
+    });
     setHelpRequests(Array.isArray(requests) ? requests : []);
   } catch (error) {
-    console.error("Failed to refresh profile activity insights", error);
+    console.error("Failed to refresh help requests", error);
   } finally {
     setProfileInsightsLoading(false);
   }
@@ -522,27 +487,6 @@ const handleEnableNotifications = useCallback(async () => {
     setIsEnablingNotifications(false);
   }
 }, [district, mobileNumber, profile.district, profile.fullName, profile.mobileNumber, refreshProfileInsights, sendActivityEvent, userId]);
-
-const handleProfileMessageAction = useCallback((message) => {
-  sendActivityEvent("profile-message-opened", {
-    action: "profile_message_opened",
-    metadata: {
-      messageId: message?.id,
-      title: message?.title,
-    },
-  });
-
-  if (!message?.ctaUrl) {
-    return;
-  }
-
-  if (/^https?:\/\//i.test(message.ctaUrl)) {
-    window.location.href = message.ctaUrl;
-    return;
-  }
-
-  navigate(message.ctaUrl);
-}, [navigate, sendActivityEvent]);
 
 const stopHelpRecorderStream = useCallback(() => {
   if (helpRecorderStreamRef.current) {
@@ -923,19 +867,16 @@ useEffect(() => {
     return;
   }
 
-  const replyMarker = getHelpReplyMarker(latestRepliedRequest);
   const storageKey = `hm_last_seen_help_reply_${userId || profile.mobileNumber || mobileNumber || "guest"}`;
   const savedMarker = typeof window !== "undefined" ? localStorage.getItem(storageKey) || "" : "";
 
   lastSeenHelpReplyRef.current = savedMarker;
   setLatestHelpReply(latestRepliedRequest);
 
-  if (replyMarker && replyMarker !== savedMarker) {
-    setActiveHelpRequestId(latestRepliedRequest.id);
-    setShowHelpBoardModal(true);
-    markHelpReplySeen(latestRepliedRequest);
+  if (latestRepliedRequest?.id) {
+    setActiveHelpRequestId((currentRequestId) => currentRequestId || latestRepliedRequest.id);
   }
-}, [helpRequests, markHelpReplySeen, mobileNumber, profile.mobileNumber, userId]);
+}, [helpRequests, mobileNumber, profile.mobileNumber, userId]);
 
 useEffect(() => {
   if (!showHelpBoardModal) {
@@ -1700,31 +1641,31 @@ const handleGroceryCategoryClick = (category) => {
   const mobileNumber = profile?.mobileNumber || "";
   const encodedCategory = encodeURIComponent(value);
   localStorage.setItem("encodedCategory", encodedCategory);
+
   if (value === "Kitchenware Appliances") {
     navigate(`/grocery/${userType}/${userId}`, {
       state: { mobileNumber },
     });
     return;
   }
+
   if (value === "Electrical Products" || value === "Plumbing Products") {
     navigate(`/martHomeAppliances/${userType}/${userId}`, {
-      state: { applianceType: value }, 
+      state: { applianceType: value },
     });
     return;
   }
-  
-  if (value === "Grocery Value Combo Packs") {
+
+  if (value === "Grocery Value Combo Packs" || value === "Unbeatable Offers") {
     navigate(`/groceryOffers/${userType}/${userId}`, {
-      state: { mobileNumber },
-    });     
-  } else {
-    navigate(`/grocery/${userType}/${userId}`, {
-      state: { mobileNumber },
+      state: { mobileNumber, encodedCategory },
     });
+    return;
   }
-//   navigate(`/grocery/${userType}/${userId}`, {
-//   state: { mobileNumber },
-// });
+
+  navigate(`/grocery/${userType}/${userId}`, {
+    state: { mobileNumber },
+  });
 };
 
 const handleDressCategoryClick = async (category) => {
@@ -3915,117 +3856,20 @@ const filteredGroceryData = groceryData.filter((t) =>
     </Button>
   </Modal.Footer>
 </Modal>
-<div className="container mb-4">
-  <div className="card shadow-sm border-0">
-    <div className="card-body">
-      <div className="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
-        <div>
-          <h5 className="mb-1">Your activity and admin updates</h5>
-          <div className="text-muted small">
-            Track recent activity, notification status, and messages sent from the admin dashboard.
-          </div>
-        </div>
-        <div className="d-flex gap-2 flex-wrap">
-          <span className={`badge ${notificationPermission === "granted" ? "bg-success" : notificationPermission === "denied" ? "bg-danger" : "bg-warning text-dark"}`}>
-            Notifications: {notificationPermission}
-          </span>
-          <span className="badge bg-primary">
-            Active time: {formatActivityDuration(userActivitySummary?.totalActiveSeconds)}
-          </span>
-          <Button size="sm" variant="outline-primary" onClick={handleOpenHelpBoard}>
-            Help board
-          </Button>
-          {notificationPermission !== "granted" && (
-            <Button size="sm" variant="outline-success" onClick={handleOpenPushPrompt}>
-              {notificationPermission === "denied" ? "Fix notifications" : "Enable notifications"}
-            </Button>
-          )}
-        </div>
-      </div>
-
-      <div className="row g-3 mb-3">
-        <div className="col-md-4">
-          <div className="border rounded p-3 h-100 bg-light">
-            <div className="text-muted small">Last active</div>
-            <div className="fw-bold">{formatRelativeActivity(userActivitySummary?.lastActiveAt || userActivitySummary?.lastSeenAt)}</div>
-          </div>
-        </div>
-        <div className="col-md-4">
-          <div className="border rounded p-3 h-100 bg-light">
-            <div className="text-muted small">Tracked actions</div>
-            <div className="fw-bold">{userActivitySummary?.totalEvents || 0} events</div>
-          </div>
-        </div>
-        <div className="col-md-4">
-          <div className="border rounded p-3 h-100 bg-light">
-            <div className="text-muted small">Unread admin messages</div>
-            <div className="fw-bold">{userActivitySummary?.unreadMessages || profileMessages.length || 0}</div>
-          </div>
-        </div>
-        <div className="col-md-4">
-          <div className="border rounded p-3 h-100 bg-light">
-            <div className="text-muted small">Your help requests</div>
-            <div className="fw-bold">{helpRequests.length || 0}</div>
-          </div>
-        </div>
-      </div>
-
-      <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
-        <h6 className="mb-0">Messages below your profile page</h6>
-        {profileInsightsLoading && <span className="small text-muted">Refreshing activity...</span>}
-      </div>
-
-      {!profileInsightsLoading && profileMessages.length === 0 && (
-        <div className="border rounded p-3 text-muted bg-light">
-          No admin messages yet. New promotions and announcements will appear here.
-        </div>
-      )}
-
-      <div className="d-flex flex-column gap-3">
-        {profileMessages.map((message) => (
-          <div key={message.id} className="border rounded p-3 bg-white shadow-sm">
-            <div className="d-flex justify-content-between align-items-start flex-wrap gap-2">
-              <div>
-                <div className="fw-bold">{message.title || "HandyMan update"}</div>
-                <div className="small text-muted">{formatRelativeActivity(message.createdAt)}</div>
-              </div>
-              {message.offerCode && (
-                <span className="badge bg-warning text-dark">Code: {message.offerCode}</span>
-              )}
-            </div>
-            <p className="mb-2 mt-2">{message.body}</p>
-            {message.ctaUrl && (
-              <Button size="sm" variant="outline-primary" onClick={() => handleProfileMessageAction(message)}>
-                {message.ctaLabel || "Open"}
-              </Button>
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
-  </div>
-</div>
 
 <button
   type="button"
   className="profile-help-chat-launcher"
   onClick={() => handleOpenHelpBoard()}
-  aria-label="Open help assistant chat"
-  title="Open help assistant chat"
+  aria-label="Open live chat assistant"
+  title="Open live chat assistant"
 >
   <span className="profile-help-chat-icon" aria-hidden="true">
     <SupportAgentIcon style={{ fontSize: "22px" }} />
   </span>
   <span className="profile-help-chat-copy">
-    <strong>Help assistant</strong>
-    <small>
-      {latestHelpReply
-        ? "Admin replied. Continue the conversation here."
-        : "Chat with us about orders, offers, or delivery."}
-    </small>
-  </span>
-  <span className="profile-help-chat-badge">
-    {latestHelpReply ? "!" : helpRequests.length || <HelpOutlineIcon style={{ fontSize: "18px" }} />}
+    <strong>Live chat</strong>
+    <small>Orders, offers, and delivery support</small>
   </span>
 </button>
          <Footer />

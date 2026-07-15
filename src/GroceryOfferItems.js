@@ -37,11 +37,11 @@ const clampQtyFor = (product, qty) => {
   return Math.min(n, limit, stock);
 };
 
-const INITIAL_IMAGE_COUNT = 12;
-const IMAGE_FETCH_CONCURRENCY = 4;
-const INITIAL_VISIBLE_PRODUCTS = 8;
-const PRODUCT_REVEAL_STEP = 6;
-const PRODUCT_REVEAL_DELAY = 110;
+const INITIAL_IMAGE_COUNT = 18;
+const IMAGE_FETCH_CONCURRENCY = 8;
+const INITIAL_VISIBLE_PRODUCTS = 10;
+const PRODUCT_REVEAL_STEP = 8;
+const PRODUCT_REVEAL_DELAY = 80;
 const OFFER_SKELETON_COUNT = 8;
 
 const loadOfferImage = async ({ productId, photo, signal }) => {
@@ -358,7 +358,7 @@ const GroceryOfferItems = () => {
         const initialImages = imageQueue.slice(0, INITIAL_IMAGE_COUNT);
         const deferredImages = imageQueue.slice(INITIAL_IMAGE_COUNT);
 
-        await hydrateOfferImages({
+        const initialHydration = hydrateOfferImages({
           items: initialImages,
           signal,
           concurrency: IMAGE_FETCH_CONCURRENCY,
@@ -369,10 +369,12 @@ const GroceryOfferItems = () => {
           void hydrateOfferImages({
             items: deferredImages,
             signal,
-            concurrency: IMAGE_FETCH_CONCURRENCY,
+            concurrency: Math.max(4, Math.floor(IMAGE_FETCH_CONCURRENCY / 2)),
             onResolved: applyResolvedImage,
           });
         }
+
+        await initialHydration;
       } catch (err) {
         if (err?.name !== "CanceledError" && err?.name !== "AbortError") {
           console.error("Error fetching grocery products:", err);
