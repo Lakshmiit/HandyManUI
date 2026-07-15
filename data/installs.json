@@ -1,0 +1,56 @@
+[
+  {
+    "installId": "install-101",
+    "userId": "demo-user-101",
+    "name": "Demo User",
+    "fullName": "Demo User",
+    "mobileNumber": "9990001111",
+    "device": "android",
+    "browser": "chrome",
+    "location": "Hyderabad",
+    "district": "Kukatpally",
+    "city": "",
+    "state": "",
+    "permissionGranted": "granted",
+    "pushEnabled": true,
+    "notificationsEnabled": true,
+    "hasSubscription": false,
+    "pushSubscription": null,
+    "tags": [],
+    "source": {
+      "flow": "manual-test-login",
+      "env": "local"
+    },
+    "firstSeenAt": "2026-07-13T22:47:20.231Z",
+    "lastSeenAt": "2026-07-13T22:47:20.240Z",
+    "createdAt": "2026-07-13T22:47:20.231Z",
+    "updatedAt": "2026-07-13T22:47:20.241Z"
+  },
+  {
+    "installId": "install-202",
+    "userId": "demo-user-202",
+    "name": "Demo User Two",
+    "fullName": "Demo User Two",
+    "mobileNumber": "9990002222",
+    "device": "android",
+    "browser": "chrome",
+    "location": "Hyderabad",
+    "district": "Madhapur",
+    "city": "",
+    "state": "",
+    "permissionGranted": "granted",
+    "pushEnabled": true,
+    "notificationsEnabled": true,
+    "hasSubscription": false,
+    "pushSubscription": null,
+    "tags": [],
+    "source": {
+      "flow": "manual-test-login",
+      "env": "local-18081"
+    },
+    "firstSeenAt": "2026-07-13T22:48:18.803Z",
+    "lastSeenAt": "2026-07-13T22:48:18.812Z",
+    "createdAt": "2026-07-13T22:48:18.803Z",
+    "updatedAt": "2026-07-13T22:48:18.813Z"
+  }
+]

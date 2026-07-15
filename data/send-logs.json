@@ -1,0 +1,68 @@
+[
+  {
+    "id": "92364399-b3f0-4fc7-bc58-9324897ffcf4",
+    "campaignType": "promo",
+    "audience": "selected",
+    "templateId": null,
+    "title": "Weekend Offer",
+    "body": "Flat 20% off on select items",
+    "ctaLabel": "Shop now",
+    "ctaUrl": "/offers/weekend",
+    "offerCode": "WKND20",
+    "filters": {},
+    "recipientIds": [
+      "demo-user-101"
+    ],
+    "recipients": [
+      {
+        "id": "demo-user-101",
+        "userId": "demo-user-101",
+        "mobileNumber": "9990001111",
+        "name": "Demo User",
+        "device": "android",
+        "location": "Hyderabad",
+        "lastSeenAt": "",
+        "source": null,
+        "deliveryStatus": "accepted"
+      }
+    ],
+    "requestedAt": "2026-07-13T22:47:20.288Z",
+    "storedAt": "2026-07-13T22:47:20.288Z",
+    "status": "accepted",
+    "provider": "storage-only",
+    "note": "Stored for delivery processing. Connect a push provider to perform actual device delivery."
+  },
+  {
+    "id": "8675f790-b5e2-4b67-a5e1-af9beddff196",
+    "campaignType": "promo",
+    "audience": "selected",
+    "templateId": null,
+    "title": "Weekend Offer",
+    "body": "Flat 20% off on select items",
+    "ctaLabel": "Shop now",
+    "ctaUrl": "/offers/weekend",
+    "offerCode": "WKND20",
+    "filters": {},
+    "recipientIds": [
+      "demo-user-202"
+    ],
+    "recipients": [
+      {
+        "id": "demo-user-202",
+        "userId": "demo-user-202",
+        "mobileNumber": "9990002222",
+        "name": "Demo User Two",
+        "device": "android",
+        "location": "Hyderabad",
+        "lastSeenAt": "",
+        "source": null,
+        "deliveryStatus": "accepted"
+      }
+    ],
+    "requestedAt": "2026-07-13T22:48:18.839Z",
+    "storedAt": "2026-07-13T22:48:18.839Z",
+    "status": "accepted",
+    "provider": "storage-only",
+    "note": "Stored for delivery processing. Connect a push provider to perform actual device delivery."
+  }
+]

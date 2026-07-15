@@ -1,0 +1,32 @@
+[
+  {
+    "id": "7a531870-45ca-4f36-b2e2-4ea32a512dcb",
+    "userId": "demo-user-101",
+    "installId": "install-101",
+    "mobileNumber": "9990001111",
+    "name": "Demo User",
+    "eventType": "login",
+    "loginAt": "2026-07-13T22:47:20.240Z",
+    "device": "android",
+    "browser": "chrome",
+    "location": "Hyderabad",
+    "ipAddress": "",
+    "metadata": {},
+    "createdAt": "2026-07-13T22:47:20.240Z"
+  },
+  {
+    "id": "d1991af0-a4e6-4506-8d73-681daf9fbc63",
+    "userId": "demo-user-202",
+    "installId": "install-202",
+    "mobileNumber": "9990002222",
+    "name": "Demo User Two",
+    "eventType": "login",
+    "loginAt": "2026-07-13T22:48:18.812Z",
+    "device": "android",
+    "browser": "chrome",
+    "location": "Hyderabad",
+    "ipAddress": "",
+    "metadata": {},
+    "createdAt": "2026-07-13T22:48:18.812Z"
+  }
+]
