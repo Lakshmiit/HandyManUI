@@ -45,7 +45,7 @@ const DeliveryPartnerPaymentDashboard = () => {
   });
 
   // API
-  const MART_API = "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetAllMartItems";
+  const MART_API = "https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetAllMartItems";
 
   // FETCH API
   useEffect(() => {

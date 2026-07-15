@@ -16,7 +16,7 @@ import Footer from "./Footer.js";
 // import { useLocation } from "react-router-dom";
  
 const IMAGE_DOWNLOAD =
-  `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
+  `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
 
 const getLimit = (item) => {
   const limit = Number(item?.limit);
@@ -170,7 +170,7 @@ console.log("Wallet:", walletAmount);
 
 const getReferralRecord = async (userId) => {
   if (!userId) return null;
-  const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
+  const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
   const res = await fetch(url);
   const text = await res.text();
   let data = [];
@@ -200,7 +200,7 @@ useEffect(() => {
   const fetchCustomerData = useCallback(async () => {
       try {
         const response = await fetch(
-          `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Address/GetAddressById/${userId}`,
+          `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Address/GetAddressById/${userId}`,
         );
         if (!response.ok) {
           throw new Error("Failed to fetch customer profile data");
@@ -385,7 +385,7 @@ const handleQtyChange = async (rowId, delta) => {
 const fetchLatestStock = useCallback(async (productName) => {
   try {
     const res = await fetch(
-      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(productName)}`
+      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(productName)}`
     );
     const data = await res.json();
     const normalizedInput = normalizeName(productName);
@@ -610,7 +610,7 @@ const validateCartStockBeforeCheckout = async () => {
     };
     try {
       const response = await fetch(
-        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UploadProductDetails`,
+        `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UploadProductDetails`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

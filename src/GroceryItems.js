@@ -14,27 +14,6 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ImageCache from "./utils/ImageCache";
 import Footer from "./Footer.js";
 // import { appConfig } from "./config";
-
-const IMAGE_API =
-  "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=";
-const INITIAL_VISIBLE_PRODUCTS = 24;
-const PRODUCT_RENDER_CHUNK = 24;
-const PRODUCT_RENDER_DELAY_MS = 60;
-const PRIORITY_IMAGE_COUNT = 18;
-const IMAGE_FETCH_CONCURRENCY = 8;
-const DEFERRED_IMAGE_FETCH_CONCURRENCY = 4;
-const DEFERRED_IMAGE_START_DELAY_MS = 80;
-const EAGER_IMAGE_COUNT = 8;
-const HIGH_PRIORITY_IMAGE_COUNT = 4;
-
-const normalizeProduct = (product) => ({
-  ...product,
-  stockLeft: Number(product?.stockLeft || 0),
-  limit: Number(product?.limit || 0),
-  afterDiscount: Number(product?.afterDiscount || 0),
-  mrp: Number(product?.mrp || 0),
-});
-
 const GroceryCard = () => {
 const navigate = useNavigate();
 // const location = useLocation();
@@ -46,11 +25,9 @@ const [selectedCategory, setSelectedCategory] = useState(null);
 const [isMobile, setIsMobile] = useState(false);
 const [showMenu, setShowMenu] = useState(false);
 const [products, setProducts] = useState([]);
-const [visibleProductCount, setVisibleProductCount] = useState(INITIAL_VISIBLE_PRODUCTS);
 const [imageUrls, setImageUrls] = useState({});
 // const [imageLoading, setImageLoading] = useState(true);
-const [loadingImages, setLoadingImages] = useState({});
-const [loadedImageIds, setLoadedImageIds] = useState({});
+const [loadingImages, setLoadingImages] = useState({}); 
 const [showZoomModal, setShowZoomModal] = useState(false);
 const [zoomImage, setZoomImage] = useState("");
 const [cart, setCart] = useState({});
@@ -206,7 +183,7 @@ return idNum;
 //   async function fetchProductsAndFirstImages() {
 //     try {
 //       setImageLoading(true);
-//       const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
+//       const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
 //       const { data: items } = await axios.get(url, { signal: controller.signal });
 //       const safeItems = Array.isArray(items) ? items : [];
 //       if (cancelled) return;
@@ -235,7 +212,7 @@ return idNum;
 //       const fetchOne = async ({ productId, photo }) => {
 //         try {
 //           const res = await fetch(
-//             `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
+//             `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
 //             { signal: controller.signal }
 //           );
 //           const json = await res.json();
@@ -275,15 +252,13 @@ useEffect(() => {
   if (!encodedCategory) return;
   const decodedCat = decodeURIComponent(encodedCategory);
   setSelectedCategory(decodedCat);
-
   const controller = new AbortController();
-  let cancelled = false;
 
   const fetchProducts = async () => {
     try {
-      const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
+      const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
       const { data: items } = await axios.get(url, { signal: controller.signal });
-      const safeItems = (Array.isArray(items) ? items : []).map(normalizeProduct);
+      const safeItems = Array.isArray(items) ? items : [];
 
       const sorted = [...safeItems].sort((a, b) => {
         const stockA = Number(a.stockLeft || 0);
@@ -296,179 +271,73 @@ useEffect(() => {
         return String(b.id).localeCompare(String(a.id));
       });
 
-      if (cancelled) return;
-
       setProducts(sorted);
-      setVisibleProductCount(INITIAL_VISIBLE_PRODUCTS);
-      setImageUrls({});
-      setLoadedImageIds({});
 
       const initialLoading = {};
-      const imageEntries = [];
+      safeItems.forEach(p => { initialLoading[p.id] = true; });
+      setLoadingImages(initialLoading);
 
-      sorted.forEach((product, index) => {
+      safeItems.forEach(async (product) => {
         const photo = Array.isArray(product.images) ? product.images[0] : null;
-        initialLoading[product.id] = Boolean(photo);
-        if (photo) {
-          imageEntries.push({
-            productId: product.id,
-            photo,
-            priority: index < PRIORITY_IMAGE_COUNT ? 0 : 1,
-          });
+
+        if (!photo) {
+          setLoadingImages(prev => ({ ...prev, [product.id]: false }));
+          return;
+        }
+
+        try {
+          const cachedBlob = ImageCache.getBlobUrl(photo);
+          if (cachedBlob) {
+            setImageUrls(prev => ({ ...prev, [product.id]: cachedBlob }));
+            return;
+          }
+
+            const cachedB64 = await ImageCache.getBase64(photo); 
+            if (cachedB64) {
+              const dataUrl = `data:image/jpeg;base64,${cachedB64}`;
+              ImageCache.setBlobUrl(photo, dataUrl);
+              setImageUrls(prev => ({ ...prev, [product.id]: dataUrl }));
+              return;
+            }
+
+          const res = await fetch(
+            `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
+            { signal: controller.signal }
+          );
+          if (!res.ok) {
+              console.error("Image fetch failed, status:", res.status);
+              return;
+            }
+          const json = await res.json();
+          console.log("Image API response:", json); 
+          const b64 = json?.imageData || "";
+            if (!b64) {
+              console.warn("No base64 data for:", photo);
+              return;
+            }
+          await ImageCache.setBase64(photo, b64);
+
+          const dataUrl = `data:image/jpeg;base64,${b64}`;
+          ImageCache.setBlobUrl(photo, dataUrl);
+          setImageUrls(prev => ({ ...prev, [product.id]: dataUrl }));
+        } catch (e) {
+          console.error("Image load error:", e);
+        } finally {
+          setLoadingImages(prev => ({ ...prev, [product.id]: false }));
         }
       });
 
-      setLoadingImages(initialLoading);
-
-      const cachedImageMap = {};
-      const misses = [];
-
-      await Promise.all(
-        imageEntries.map(async (entry) => {
-          const cachedBlob = ImageCache.getBlobUrl(entry.photo);
-          if (cachedBlob) {
-            cachedImageMap[entry.productId] = cachedBlob;
-            initialLoading[entry.productId] = false;
-            return;
-          }
-
-          const cachedB64 = await ImageCache.getBase64(entry.photo);
-          if (cachedB64) {
-            const objectUrl = ImageCache.getOrCreateObjectUrl(entry.photo, cachedB64);
-            cachedImageMap[entry.productId] = objectUrl;
-            initialLoading[entry.productId] = false;
-            return;
-          }
-
-          misses.push(entry);
-        })
-      );
-
-      if (cancelled) return;
-
-      if (Object.keys(cachedImageMap).length) {
-        setImageUrls((prev) => ({ ...prev, ...cachedImageMap }));
-        setLoadingImages((prev) => {
-          const next = { ...prev };
-          Object.keys(cachedImageMap).forEach((productId) => {
-            next[productId] = false;
-          });
-          return next;
-        });
-      }
-
-      const fastLane = misses.filter((entry) => entry.priority === 0);
-      const deferredLane = misses.filter((entry) => entry.priority !== 0);
-
-      const runImageQueue = async (queue, concurrency) => {
-        if (!queue.length || cancelled) return;
-
-        let cursor = 0;
-        const worker = async () => {
-          while (!cancelled && cursor < queue.length) {
-            const currentIndex = cursor;
-            cursor += 1;
-            const current = queue[currentIndex];
-
-            try {
-              const res = await fetch(`${IMAGE_API}${encodeURIComponent(current.photo)}`, {
-                signal: controller.signal,
-              });
-              if (!res.ok) {
-                console.error("Image fetch failed, status:", res.status);
-                continue;
-              }
-
-              const json = await res.json();
-              const b64 = json?.imageData || "";
-              if (!b64) continue;
-
-              await ImageCache.setBase64(current.photo, b64);
-              const objectUrl = ImageCache.getOrCreateObjectUrl(current.photo, b64);
-
-              if (!cancelled) {
-                setImageUrls((prev) => (
-                  prev[current.productId] === objectUrl
-                    ? prev
-                    : { ...prev, [current.productId]: objectUrl }
-                ));
-              }
-            } catch (e) {
-              if (e?.name !== "AbortError") {
-                console.error("Image load error:", e);
-              }
-            } finally {
-              if (!cancelled) {
-                setLoadingImages((prev) => ({ ...prev, [current.productId]: false }));
-              }
-            }
-          }
-        };
-
-        const workerCount = Math.min(concurrency, queue.length);
-        await Promise.all(Array.from({ length: workerCount }, () => worker()));
-      };
-
-      await runImageQueue(fastLane, IMAGE_FETCH_CONCURRENCY);
-
-      if (cancelled || !deferredLane.length) return;
-
-      await new Promise((resolve) => setTimeout(resolve, DEFERRED_IMAGE_START_DELAY_MS));
-      await runImageQueue(deferredLane, DEFERRED_IMAGE_FETCH_CONCURRENCY);
     } catch (err) {
       if (err?.name !== "CanceledError" && err?.name !== "AbortError") {
         console.error("Error fetching products:", err);
         setProducts([]);
-        setImageUrls({});
-        setLoadingImages({});
       }
     }
   };
 
   fetchProducts();
-  return () => {
-    cancelled = true;
-    controller.abort();
-  };
+  return () => controller.abort();
 }, [encodedCategory]);
-
-useEffect(() => {
-  const filtered = products.filter(
-    (p) =>
-      p.category?.toLowerCase() === selectedCategory?.toLowerCase() &&
-      p.status === "Approved" &&
-      (searchQuery === "" || p.name?.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
-
-  if (filtered.length <= INITIAL_VISIBLE_PRODUCTS) {
-    setVisibleProductCount(filtered.length || INITIAL_VISIBLE_PRODUCTS);
-    return undefined;
-  }
-
-  setVisibleProductCount(INITIAL_VISIBLE_PRODUCTS);
-
-  const timer = window.setInterval(() => {
-    setVisibleProductCount((prev) => {
-      if (prev >= filtered.length) {
-        window.clearInterval(timer);
-        return prev;
-      }
-      return Math.min(prev + PRODUCT_RENDER_CHUNK, filtered.length);
-    });
-  }, PRODUCT_RENDER_DELAY_MS);
-
-  return () => window.clearInterval(timer);
-}, [products, searchQuery, selectedCategory]);
-
-const filteredProducts = products.filter(
-  (p) =>
-    p.category?.toLowerCase() === selectedCategory?.toLowerCase() &&
-    p.status === "Approved" &&
-    (searchQuery === "" || p.name?.toLowerCase().includes(searchQuery.toLowerCase()))
-);
-
-const visibleProducts = filteredProducts.slice(0, visibleProductCount);
-const remainingProducts = Math.max(filteredProducts.length - visibleProducts.length, 0);
 
 // useEffect(() => {
 // if (!encodedCategory) return;
@@ -481,7 +350,7 @@ const remainingProducts = Math.max(filteredProducts.length - visibleProducts.len
 // async function fetchProductsAndFirstImages(warm = false, signal) {
 // try {
 // if (!warm) setImageLoading(true);
-// const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
+// const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
 // const { data: items } = await axios.get(url, { signal });
 // const safeItems = Array.isArray(items) ? items : [];
 // if (cancelled) return;
@@ -519,7 +388,7 @@ const remainingProducts = Math.max(filteredProducts.length - visibleProducts.len
 // const fetchOne = async ({ productId, photo }) => {
 // try {
 // const res = await fetch(
-// `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
+// `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
 //               { signal }     
 // );
 // const json = await res.json();
@@ -795,7 +664,15 @@ sum + (product ? Number(product.afterDiscount) * qty : 0)
 </div>
 
 <div className="grocery-row flex flex-wrap gap-1" style={{marginBottom: "60px"}}>
-{visibleProducts.map((product, index) => {
+{products
+.filter(
+(p) =>
+p.category?.toLowerCase() === selectedCategory.toLowerCase() &&
+p.status === "Approved" &&
+(searchQuery === "" ||
+p.name?.toLowerCase().includes(searchQuery.toLowerCase()))
+)
+.map((product) => {
 const stock = Number(product.stockLeft || 0);
 const isOutOfStock = stock <= 0;
 return (
@@ -828,47 +705,34 @@ onClick={() => toggleLike(product.id)}
   className="d-flex justify-content-center align-items-center position-relative"
   style={{ height: "90px" }}
 >
-  {imageUrls[product.id] ? (
+  {loadingImages[product.id] || !imageUrls[product.id] ? (
+    <div style={{
+      position: "relative",
+      width: "54px",
+      height: "54px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    }}>    
+      <div className="img-outer-ring" />
+      <div className="img-inner-ring" />
+      <div className="img-center-dot" />
+    </div>
+  ) : (  
     <img
       src={imageUrls[product.id]}
       alt={product.name}
-      loading={index < EAGER_IMAGE_COUNT ? "eager" : "lazy"}
-      fetchPriority={index < HIGH_PRIORITY_IMAGE_COUNT ? "high" : "auto"}
-      decoding="async"
-      width="160"
-      height="160"
-      className={`category-product-image ${loadedImageIds[product.id] ? "is-visible" : ""}`}
-      style={{
+      style={{   
         maxHeight: "80px",
-        maxWidth: "100%",
+        maxWidth: "100%",    
         objectFit: "contain",
         cursor: isOutOfStock ? "not-allowed" : "pointer",
-        borderRadius: "10px",
+        borderRadius: "6px",
       }}
-      onLoad={() =>
-        setLoadedImageIds((prev) => ({ ...prev, [product.id]: true }))
-      }
-      onError={() =>
-        setLoadedImageIds((prev) => ({ ...prev, [product.id]: true }))
-      }
       onClick={() =>
         !isOutOfStock && handleImageClick(imageUrls[product.id], product)
       }
     />
-  ) : null}
-
-  {(loadingImages[product.id] || !imageUrls[product.id] || !loadedImageIds[product.id]) && (
-    <div className="category-image-rocket-loader" aria-hidden="true">
-      <div className="category-image-rocket-glow" />
-      <div className="category-image-rocket-trail" />
-      <div className="category-image-rocket-window" />
-      <div className="category-image-rocket-fin category-image-rocket-fin-left" />
-      <div className="category-image-rocket-fin category-image-rocket-fin-right" />
-      <div className="category-image-rocket-body" />
-      <div className="category-image-rocket-flame" />
-      <div className="category-image-rocket-smoke category-image-rocket-smoke-one" />
-      <div className="category-image-rocket-smoke category-image-rocket-smoke-two" />
-    </div>
   )}
 
   {isOutOfStock && (
@@ -1003,12 +867,6 @@ ADD
 </div>
 );
 })}
-</div>
-{remainingProducts > 0 && (
-  <div className="category-progress-hint">
-    Loading {remainingProducts} more items...
-  </div>
-)}
 
 {total > 0 && total < FREE_DELIVERY_LIMIT && (
   <div
@@ -1122,6 +980,7 @@ View Cart →
 </div>
 ) : null;
 })()}
+</div>
 </>
 )}  
 </div>

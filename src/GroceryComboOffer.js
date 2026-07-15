@@ -6,7 +6,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ImageCache from "./utils/ImageCache";
 import { CartStorage } from "./CartStorage";
 
-const API_BASE = "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net";
+const API_BASE = "https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net";
 
 const getLimit = (product) => {
   if (!product) return Infinity;
@@ -30,7 +30,9 @@ const fetchImage = async (photo, signal) => {
 
   const cached = await ImageCache.getBase64(photo);
   if (cached) {
-    return ImageCache.getOrCreateObjectUrl(photo, cached);
+    const dataUrl = `data:image/jpeg;base64,${cached}`;
+    ImageCache.setBlobUrl(photo, dataUrl); 
+    return dataUrl;
   }
 
   try {
@@ -41,8 +43,10 @@ const fetchImage = async (photo, signal) => {
     const json = await res.json();
     const b64 = json?.imageData || "";
     if (b64) {
-      await ImageCache.setBase64(photo, b64);
-      return ImageCache.getOrCreateObjectUrl(photo, b64);
+      const dataUrl = `data:image/jpeg;base64,${b64}`;
+      await ImageCache.setBase64(photo, b64);       
+      ImageCache.setBlobUrl(photo, dataUrl);         
+      return dataUrl;
     }
   } catch (err) {
     console.error("fetchImage failed:", err); 
@@ -146,15 +150,7 @@ const SubProductCard = ({ name, selected, onSelect, image, loading }) => (
       {loading ? (
         <div style={{ width: 40, height: 40, borderRadius: "50%", background: "#e5e7eb" }} />
       ) : image ? (
-        <img
-          src={image}
-          alt={name}
-          loading="lazy"
-          decoding="async"
-          width="72"
-          height="72"
-          style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
-        />
+        <img src={image} alt={name} style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }} />
       ) : (
         <span style={{ fontSize: 28 }}>🛒</span>
       )}
@@ -505,13 +501,7 @@ const GroceryComboOffer = () => {
           )}
           {mainImg ? (
             <img
-              src={mainImg}
-              alt={mainProduct?.name || ""}
-              loading="eager"
-              fetchPriority="high"
-              decoding="async"
-              width="320"
-              height="320"
+              src={mainImg} alt={mainProduct?.name || ""}
               style={{ maxHeight: 160, maxWidth: "100%", objectFit: "contain", borderRadius: 12 }}
             />
           ) : (

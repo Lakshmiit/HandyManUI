@@ -41,7 +41,7 @@ const AdminRegistrationNumbers = () => {
 
     try {  
       const res = await axios.get(
-        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Customer/GuestUserExistingVerification/${mobileNumber}`
+        `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Customer/GuestUserExistingVerification/${mobileNumber}`
       );
       console.log("[Step 1] Response:", res.data);
 
@@ -70,7 +70,7 @@ const AdminRegistrationNumbers = () => {
 
     try {
       const txRes = await axios.get(
-        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/OffersTransactions/GetOfferTransactionByUserId?userId=${userId}`
+        `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/OffersTransactions/GetOfferTransactionByUserId?userId=${userId}`
       );
       console.log("[Step 2] Response:", txRes.data);
 
@@ -106,12 +106,12 @@ const AdminRegistrationNumbers = () => {
     }
 
     // PUT guard — wallet already has balance
-    // if (!isNewTransaction && transactionData && transactionData.totalWalletAmount !== "0") {
-    //   setWalletError(
-    //     `Wallet already has ₹${transactionData.totalWalletAmount}. Cannot add again.`
-    //   );
-    //   return;
-    // }
+    if (!isNewTransaction && transactionData && transactionData.totalWalletAmount !== "0") {
+      setWalletError(
+        `Wallet already has ₹${transactionData.totalWalletAmount}. Cannot add again.`
+      );
+      return;
+    }
 
     setWalletLoading(true);
 
@@ -119,6 +119,7 @@ const AdminRegistrationNumbers = () => {
       const amount = String(walletAmount);
 
       if (isNewTransaction) {
+        // ───── POST ─────
         const postPayload = {  
           id: "string",
           UserId: customerData.userId,
@@ -132,13 +133,13 @@ const AdminRegistrationNumbers = () => {
      
         console.log("[Step 3] POST payload:", postPayload);
         const postRes = await axios.post(
-          `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/OffersTransactions/UploadOffersTransactionsDetails`,
+          `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/OffersTransactions/UploadOffersTransactionsDetails`,
           postPayload
         );
         console.log("[Step 3] POST response:", postRes.data);
 
         setWalletSuccess(
-          `₹${walletAmount} wallet created successfully for ${customerData.firstName}!`
+          `₹${walletAmount} wallet created successfully for ${customerData.firstName} ${customerData.lastName}!`
         );
         setTransactionData({
           totalWalletAmount: amount,
@@ -150,6 +151,7 @@ const AdminRegistrationNumbers = () => {
         setIsNewTransaction(false);
 
       } else {
+        // ───── PUT ─────
         if (!transactionData) {
           setWalletError("Transaction data missing for update.");
           return;
@@ -168,13 +170,13 @@ const AdminRegistrationNumbers = () => {
 
         console.log("[Step 3] PUT payload:", putPayload);
         const putRes = await axios.put(
-          `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/OffersTransactions/UpdateOffersTransactionsDetails/${transactionData.id}`,
+          `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/OffersTransactions/UpdateOffersTransactionsDetails/${transactionData.id}`,
           putPayload
         );
         console.log("[Step 3] PUT response:", putRes.data);
 
         setWalletSuccess(
-          `₹${walletAmount} added successfully to ${customerData.firstName}'s wallet!`
+          `₹${walletAmount} added successfully to ${customerData.firstName} ${customerData.lastName}'s wallet!`
         );
         setTransactionData((prev) => ({
           ...prev,
@@ -390,7 +392,7 @@ export default AdminRegistrationNumbers;
 //   setLoading(true);
 
 //   try {
-//     const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Customer/GuestUserExistingVerification/${mobileNumber}`);
+//     const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Customer/GuestUserExistingVerification/${mobileNumber}`);
 //     if (!response.ok) {
 //       throw new Error('Failed to fetch user data');
 //     }

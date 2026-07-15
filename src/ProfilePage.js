@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useRef,useCallback} from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import './App.css';
@@ -15,12 +15,11 @@ import PermIdentityIcon from '@mui/icons-material/PermIdentity';
 import { useNavigate, useParams } from "react-router-dom";   
 import Logo from "./img/Hm_Logo 1.png";
 import SearchIcon from "@mui/icons-material/Search";
-import LogoutIcon from '@mui/icons-material/Logout';   
+import LogoutIcon from "@mui/icons-material/Logout";   
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';          
 import ApartmentIcon from '@mui/icons-material/Apartment';
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import MenuIcon from '@mui/icons-material/Menu';
-import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import Electrical from './img/Electrical.jpeg';
 import Electronics from './img/Electronics.jpeg';  
 import Plumbing from './img/Plumbing.jpeg';
@@ -66,16 +65,7 @@ import RoyalImg from './img/LMartLogo.jpeg';
 import HomeElectricalImg from './img/HomeElectrical.jpeg';
 import HomePlumbingImg from './img/HomePlumbing.jpeg'; 
 import OffersBannerModal from './OffersBannerModal.js';
-import {
-  appendHelpRequestMessage,
-  fetchHelpRequests,
-  getNotificationState,
-  registerInstallActivity,
-  requestNotificationPermission,
-  submitHelpRequest,
-  trackLoginActivity,
-  trackUserActivity,
-} from "./utils/auth";
+import { useLocalStorage } from './hooks/useLocalStorage';
 // import { appConfig } from "./config";                     
 
 const getMenuList = (userType, userId, category, district ,ZipCode,technicianFullName, isMobile) => {
@@ -141,8 +131,6 @@ const groceryCategories = [
   { label: 'DWCRA Products', value: 'DWCRA', image: DwakraProducts },
   { label: 'Chicken', value: 'Chicken', image: ChickenImg },
 ];
-const PRIORITY_GROCERY_CATEGORY_COUNT = 10;
-
 // ${appConfig.apiBaseUrl}
 const collectionsCategories = [
   { label: 'Dupatta Sets', value: 'Dupatta Sets', image: setkurti },
@@ -150,65 +138,7 @@ const collectionsCategories = [
   ];
 
   const IMAGE_API =
-  `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
-
-const formatRelativeActivity = (value) => {
-  if (!value) {
-    return "Not tracked yet";
-  }
-
-  const timestamp = new Date(value);
-  if (Number.isNaN(timestamp.getTime())) {
-    return "Not tracked yet";
-  }
-
-  const diffMinutes = Math.max(0, Math.round((Date.now() - timestamp.getTime()) / 60000));
-  if (diffMinutes < 1) {
-    return "Just now";
-  }
-  if (diffMinutes < 60) {
-    return `${diffMinutes} min ago`;
-  }
-
-  const diffHours = Math.round(diffMinutes / 60);
-  if (diffHours < 24) {
-    return `${diffHours} hr ago`;
-  }
-
-  return timestamp.toLocaleString();
-};
-
-const formatHelpTopicLabel = (topic) =>
-  (topic || "other")
-    .replace(/[_-]+/g, " ")
-    .replace(/\s+/g, " ")
-    .trim()
-    .replace(/\b\w/g, (match) => match.toUpperCase()) || "Other";
-
-const getHelpReplyMarker = (request) => {
-  if (!request?.id) {
-    return "";
-  }
-
-  return [request.id, request.repliedAt || request.updatedAt || "", request.adminReply || ""]
-    .filter(Boolean)
-    .join("::");
-};
-
-const sortHelpRequestsByLatest = (requests = []) =>
-  [...requests].sort((left, right) => {
-    const leftTime = new Date(left?.updatedAt || left?.latestMessageAt || left?.createdAt || 0).getTime();
-    const rightTime = new Date(right?.updatedAt || right?.latestMessageAt || right?.createdAt || 0).getTime();
-    return rightTime - leftTime;
-  });
-
-const readBlobAsDataUrl = (blob) =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(String(reader.result || ""));
-    reader.onerror = () => reject(new Error("Unable to read the recorded voice note."));
-    reader.readAsDataURL(blob);
-  });
+  `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
 
 const ProfilePage = () => {
    const [allProducts, setAllProducts] = useState([]);
@@ -283,12 +213,8 @@ const displayProducts =
 searchQuery.trim().length > 0 ? filteredProducts : products;
 const [imageLoading, setImageLoading] = useState(true);
 const [placeholderIndex, setPlaceholderIndex] = useState(0);
-const firstCategories = useMemo(() => groceryCategories.slice(0, 6), []);
-const secondCategories = useMemo(() => groceryCategories.slice(6, 31), []);
-const priorityGroceryCategories = useMemo(
-  () => groceryCategories.slice(0, PRIORITY_GROCERY_CATEGORY_COUNT),
-  []
-);
+const firstCategories = groceryCategories.slice(0, 6);
+const secondCategories = groceryCategories.slice(6, 31);
 const [showOffersModal, setShowOffersModal] = useState(false);
 // const [showCoinsModal, setShowCoinsModal] = useState(false);
 const [selectedTicket, setSelectedTicket] = useState(null);
@@ -300,86 +226,6 @@ const [walletAmount, setWalletAmount] = useState("0");
 const [walletLoading, setWalletLoading] = useState(true);
 const [showWalletMessage, setShowWalletMessage] = useState(false);
 const [showWelcomeMessage, setShowWelcomeMessage] = useState(false);
-const [showPushPromptModal, setShowPushPromptModal] = useState(false);
-const [notificationPermission, setNotificationPermission] = useState(
-  () => getNotificationState().permissionGranted
-);
-const [isEnablingNotifications, setIsEnablingNotifications] = useState(false);
-const [helpRequests, setHelpRequests] = useState([]);
-const [showHelpBoardModal, setShowHelpBoardModal] = useState(false);
-const [activeHelpRequestId, setActiveHelpRequestId] = useState("");
-const [helpRequestTopic, setHelpRequestTopic] = useState("delivery");
-const [helpRequestMessage, setHelpRequestMessage] = useState("");
-const [helpRequestError, setHelpRequestError] = useState("");
-const [helpRequestSuccess, setHelpRequestSuccess] = useState("");
-const [helpVoiceDraft, setHelpVoiceDraft] = useState(null);
-const [helpVoiceError, setHelpVoiceError] = useState("");
-const [isRecordingHelpVoice, setIsRecordingHelpVoice] = useState(false);
-const [submittingHelpRequest, setSubmittingHelpRequest] = useState(false);
-const [profileInsightsLoading, setProfileInsightsLoading] = useState(true);
-const [latestHelpReply, setLatestHelpReply] = useState(null);
-const sessionStartedAtRef = useRef(Date.now());
-const sessionIdRef = useRef(`profile-${userId || "guest"}-${Date.now()}`);
-const hasTrackedSessionRef = useRef(false);
-const lastSeenHelpReplyRef = useRef("");
-const helpRecorderRef = useRef(null);
-const helpRecorderStreamRef = useRef(null);
-const helpRecorderChunksRef = useRef([]);
-const helpRecordingStartedAtRef = useRef(0);
-const helpMessagesEndRef = useRef(null);
-const canRecordHelpVoice =
-  typeof window !== "undefined" &&
-  typeof window.MediaRecorder !== "undefined" &&
-  typeof navigator !== "undefined" &&
-  Boolean(navigator.mediaDevices?.getUserMedia);
-const helpConversations = sortHelpRequestsByLatest(helpRequests);
-const activeHelpRequest =
-  helpConversations.find((request) => request.id === activeHelpRequestId) || helpConversations[0] || null;
-const activeHelpMessages = Array.isArray(activeHelpRequest?.messages) ? activeHelpRequest.messages : [];
-
-const toCachedImageUrl = (filename, base64) => {
-  if (!base64 || !filename) return "";
-  return ImageCache.getOrCreateObjectUrl(filename, base64);
-};
-
-const getProductImageSrc = useCallback(
-  (productId) => {
-    const imageEntry = cartImages[productId] || imageUrls[productId];
-    if (Array.isArray(imageEntry)) {
-      return imageEntry[0] || "";
-    }
-    return imageEntry || "";
-  },
-  [cartImages, imageUrls]
-);
-
-const renderImagePlaceholder = (label) => (
-  <div
-    className="d-flex flex-column justify-content-center align-items-center w-100 h-100"
-    style={{
-      minHeight: "80px",
-      borderRadius: "10px",
-      background: "linear-gradient(135deg, #f6f7f9 0%, #eceff3 100%)",
-      border: "1px solid #edf0f4",
-      padding: "10px",
-      textAlign: "center",
-    }}
-  >
-    <div
-      style={{
-        width: "70%",
-        height: "44px",
-        borderRadius: "8px",
-        backgroundColor: "#dde3ea",
-        marginBottom: "8px",
-      }}
-    />
-    <span className="text-muted" style={{ fontSize: "10px", fontWeight: 500 }}>
-      {label}
-    </span>
-  </div>
-);
-
 useEffect(() => {
   console.log(windowSize, state, address, mobileNumber,id, pinCode, paidAmount, paymentMode, martId,status, imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery,error, showMenu, products, selectedCategory, dress);
 }, [windowSize, state, address, mobileNumber, id, pinCode, paidAmount, paymentMode, martId, status, imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery, error,showMenu, products, selectedCategory, dress]);
@@ -401,555 +247,6 @@ useEffect(() => {
     return () => clearTimeout(timer);
   }
 }, [profile.fullName]);
-
-const refreshProfileInsights = useCallback(async () => {
-  const resolvedMobileNumber = profile.mobileNumber || mobileNumber;
-
-  if (!userId && !resolvedMobileNumber) {
-    setHelpRequests([]);
-    setProfileInsightsLoading(false);
-    return;
-  }
-
-  setProfileInsightsLoading(true);
-  try {
-    const requests = await fetchHelpRequests({
-      userId,
-      mobileNumber: resolvedMobileNumber,
-    });
-    setHelpRequests(Array.isArray(requests) ? requests : []);
-  } catch (error) {
-    console.error("Failed to refresh help requests", error);
-  } finally {
-    setProfileInsightsLoading(false);
-  }
-}, [mobileNumber, profile.mobileNumber, userId]);
-
-const sendActivityEvent = useCallback((eventType, extra = {}) => {
-  const resolvedMobileNumber = profile.mobileNumber || mobileNumber;
-
-  if (!userId && !resolvedMobileNumber) {
-    return Promise.resolve(null);
-  }
-
-  return trackUserActivity({
-    userId,
-    mobileNumber: resolvedMobileNumber,
-    name: profile.fullName,
-    fullName: profile.fullName,
-    location: profile.district || district,
-    sessionId: sessionIdRef.current,
-    page: "profile-page",
-    path: typeof window !== "undefined" ? window.location.pathname : "/profile",
-    ...extra,
-    eventType,
-  });
-}, [district, mobileNumber, profile.district, profile.fullName, profile.mobileNumber, userId]);
-
-const handleOpenPushPrompt = useCallback(() => {
-  const currentNotificationState = getNotificationState();
-  setNotificationPermission(currentNotificationState.permissionGranted);
-  setShowPushPromptModal(true);
-}, []);
-
-const handleEnableNotifications = useCallback(async () => {
-  const currentNotificationState = getNotificationState();
-  setNotificationPermission(currentNotificationState.permissionGranted);
-
-  if (currentNotificationState.permissionGranted === "unsupported") {
-    setShowPushPromptModal(true);
-    return;
-  }
-
-  if (currentNotificationState.permissionGranted === "granted") {
-    setShowPushPromptModal(false);
-    await refreshProfileInsights();
-    return;
-  }
-
-  setIsEnablingNotifications(true);
-  try {
-    const permission = await requestNotificationPermission({
-      userId,
-      mobileNumber: profile.mobileNumber || mobileNumber,
-      name: profile.fullName,
-      fullName: profile.fullName,
-      location: profile.district || district,
-    });
-
-    setNotificationPermission(permission);
-    if (permission === "granted") {
-      setShowPushPromptModal(false);
-      await sendActivityEvent("notification-enabled", {
-        action: "notifications_enabled",
-      });
-    } else {
-      setShowPushPromptModal(true);
-    }
-    await refreshProfileInsights();
-  } catch (error) {
-    console.error("Failed to request notification permission", error);
-  } finally {
-    setIsEnablingNotifications(false);
-  }
-}, [district, mobileNumber, profile.district, profile.fullName, profile.mobileNumber, refreshProfileInsights, sendActivityEvent, userId]);
-
-const stopHelpRecorderStream = useCallback(() => {
-  if (helpRecorderStreamRef.current) {
-    helpRecorderStreamRef.current.getTracks().forEach((track) => track.stop());
-    helpRecorderStreamRef.current = null;
-  }
-  helpRecorderRef.current = null;
-}, []);
-
-const markHelpReplySeen = useCallback(
-  (request) => {
-    const replyMarker = getHelpReplyMarker(request);
-    const storageKey = `hm_last_seen_help_reply_${userId || profile.mobileNumber || mobileNumber || "guest"}`;
-
-    if (replyMarker && typeof window !== "undefined") {
-      localStorage.setItem(storageKey, replyMarker);
-      lastSeenHelpReplyRef.current = replyMarker;
-    }
-  },
-  [mobileNumber, profile.mobileNumber, userId]
-);
-
-const resetHelpComposer = useCallback(() => {
-  setHelpRequestMessage("");
-  setHelpVoiceDraft(null);
-  setHelpVoiceError("");
-}, []);
-
-const handleOpenHelpBoard = useCallback(
-  (requestId = "") => {
-    const nextRequestId = requestId || helpConversations[0]?.id || "";
-    const selectedRequest = helpConversations.find((request) => request.id === nextRequestId) || helpConversations[0] || null;
-
-    setActiveHelpRequestId(nextRequestId);
-    setHelpRequestError("");
-    setHelpRequestSuccess("");
-    setHelpVoiceError("");
-    setShowHelpBoardModal(true);
-
-    if (selectedRequest?.adminReply) {
-      setLatestHelpReply(selectedRequest);
-      markHelpReplySeen(selectedRequest);
-    }
-
-    sendActivityEvent("help-board-opened", {
-      action: "help_board_opened",
-      metadata: {
-        requestId: nextRequestId || undefined,
-      },
-    });
-  },
-  [helpConversations, markHelpReplySeen, sendActivityEvent]
-);
-
-const handleStartNewHelpThread = useCallback(() => {
-  setActiveHelpRequestId("");
-  setHelpRequestTopic("delivery");
-  setHelpRequestError("");
-  setHelpRequestSuccess("");
-  setHelpVoiceError("");
-  resetHelpComposer();
-  setShowHelpBoardModal(true);
-}, [resetHelpComposer]);
-
-const handleCloseHelpBoard = useCallback(() => {
-  if (helpRecorderRef.current && helpRecorderRef.current.state !== "inactive") {
-    helpRecorderChunksRef.current = [];
-    helpRecorderRef.current.stop();
-  } else {
-    stopHelpRecorderStream();
-  }
-
-  if (activeHelpRequest?.adminReply) {
-    markHelpReplySeen(activeHelpRequest);
-  }
-
-  setIsRecordingHelpVoice(false);
-  setHelpRequestError("");
-  setHelpVoiceError("");
-  setShowHelpBoardModal(false);
-}, [activeHelpRequest, markHelpReplySeen, stopHelpRecorderStream]);
-
-const startHelpVoiceRecording = useCallback(async () => {
-  if (!canRecordHelpVoice) {
-    setHelpVoiceError("Voice messages are not supported in this browser.");
-    return;
-  }
-
-  setHelpVoiceError("");
-  setHelpRequestError("");
-  setHelpRequestSuccess("");
-  setHelpVoiceDraft(null);
-
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const preferredMimeTypes = ["audio/webm;codecs=opus", "audio/webm", "audio/ogg", "audio/mp4"];
-    const mimeType = preferredMimeTypes.find((candidate) =>
-      typeof window.MediaRecorder.isTypeSupported === "function"
-        ? window.MediaRecorder.isTypeSupported(candidate)
-        : false
-    );
-    const recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
-
-    helpRecorderStreamRef.current = stream;
-    helpRecorderRef.current = recorder;
-    helpRecorderChunksRef.current = [];
-    helpRecordingStartedAtRef.current = Date.now();
-
-    recorder.ondataavailable = (event) => {
-      if (event.data && event.data.size > 0) {
-        helpRecorderChunksRef.current.push(event.data);
-      }
-    };
-
-    recorder.onstop = async () => {
-      const chunks = helpRecorderChunksRef.current;
-      helpRecorderChunksRef.current = [];
-      setIsRecordingHelpVoice(false);
-
-      const voiceBlob = chunks.length
-        ? new Blob(chunks, { type: recorder.mimeType || "audio/webm" })
-        : null;
-
-      stopHelpRecorderStream();
-
-      if (!voiceBlob || voiceBlob.size === 0) {
-        return;
-      }
-
-      try {
-        const dataUrl = await readBlobAsDataUrl(voiceBlob);
-        setHelpVoiceDraft({
-          dataUrl,
-          mimeType: voiceBlob.type || recorder.mimeType || "audio/webm",
-          fileName: `help-voice-${Date.now()}.webm`,
-          durationSeconds: Math.max(1, Math.round((Date.now() - helpRecordingStartedAtRef.current) / 1000)),
-          sizeBytes: voiceBlob.size,
-        });
-      } catch (error) {
-        console.error("Failed to prepare voice note", error);
-        setHelpVoiceError("We recorded your voice note, but could not prepare it for sending.");
-      }
-    };
-
-    recorder.onerror = () => {
-      setIsRecordingHelpVoice(false);
-      stopHelpRecorderStream();
-      setHelpVoiceError("Unable to record a voice message right now.");
-    };
-
-    recorder.start();
-    setIsRecordingHelpVoice(true);
-  } catch (error) {
-    console.error("Failed to start voice recording", error);
-    stopHelpRecorderStream();
-    setIsRecordingHelpVoice(false);
-    setHelpVoiceError("Please allow microphone access to record a voice message.");
-  }
-}, [canRecordHelpVoice, stopHelpRecorderStream]);
-
-const stopHelpVoiceRecording = useCallback(() => {
-  if (!helpRecorderRef.current) {
-    return;
-  }
-
-  if (helpRecorderRef.current.state !== "inactive") {
-    helpRecorderRef.current.stop();
-  }
-}, []);
-
-const clearHelpVoiceDraft = useCallback(() => {
-  setHelpVoiceDraft(null);
-  setHelpVoiceError("");
-}, []);
-
-const handleSubmitHelpRequest = useCallback(async () => {
-  const resolvedMobileNumber = profile.mobileNumber || mobileNumber;
-  const trimmedMessage = helpRequestMessage.trim();
-
-  if (isRecordingHelpVoice) {
-    setHelpRequestError("Stop the voice recording before sending your message.");
-    return;
-  }
-
-  if (!trimmedMessage && !helpVoiceDraft) {
-    setHelpRequestError("Type a message or record a voice note for the admin team.");
-    return;
-  }
-
-  setSubmittingHelpRequest(true);
-  setHelpRequestError("");
-  setHelpRequestSuccess("");
-  setHelpVoiceError("");
-
-  try {
-    let responsePayload = null;
-
-    if (activeHelpRequest?.id) {
-      responsePayload = await appendHelpRequestMessage({
-        requestId: activeHelpRequest.id,
-        userId,
-        mobileNumber: resolvedMobileNumber,
-        name: profile.fullName,
-        fullName: profile.fullName,
-        location: profile.district || district,
-        topic: activeHelpRequest.topic,
-        title: activeHelpRequest.title,
-        message: trimmedMessage,
-        voiceNote: helpVoiceDraft,
-        sentBy: profile.fullName || "User",
-        metadata: {
-          page: "profile-page",
-        },
-        messageMetadata: {
-          page: "profile-page",
-          hasVoiceNote: Boolean(helpVoiceDraft),
-        },
-      });
-
-      await sendActivityEvent("help-request-message-sent", {
-        action: "help_request_message_sent",
-        metadata: {
-          topic: activeHelpRequest.topic,
-          requestId: activeHelpRequest.id,
-          hasVoiceNote: Boolean(helpVoiceDraft),
-        },
-      });
-
-      setHelpRequestSuccess("Your message was added to the chat.");
-    } else {
-      responsePayload = await submitHelpRequest({
-        userId,
-        mobileNumber: resolvedMobileNumber,
-        name: profile.fullName,
-        fullName: profile.fullName,
-        location: profile.district || district,
-        topic: helpRequestTopic,
-        title: `${helpRequestTopic.replace(/-/g, " ")} help request`,
-        message: trimmedMessage,
-        voiceNote: helpVoiceDraft,
-        metadata: {
-          page: "profile-page",
-        },
-        messageMetadata: {
-          page: "profile-page",
-          hasVoiceNote: Boolean(helpVoiceDraft),
-        },
-      });
-
-      await sendActivityEvent("help-request-submitted", {
-        action: "help_request_submitted",
-        metadata: {
-          topic: helpRequestTopic,
-          hasVoiceNote: Boolean(helpVoiceDraft),
-        },
-      });
-
-      setHelpRequestSuccess("Your question has been sent to the admin team.");
-    }
-
-    resetHelpComposer();
-    const nextRequestId = responsePayload?.item?.id || activeHelpRequest?.id || "";
-    if (nextRequestId) {
-      setActiveHelpRequestId(nextRequestId);
-    }
-    await refreshProfileInsights();
-  } catch (error) {
-    console.error("Failed to submit help request", error);
-    setHelpRequestError(error?.message || "Unable to submit your request right now.");
-  } finally {
-    setSubmittingHelpRequest(false);
-  }
-}, [
-  activeHelpRequest,
-  district,
-  helpRequestMessage,
-  helpRequestTopic,
-  helpVoiceDraft,
-  isRecordingHelpVoice,
-  mobileNumber,
-  profile.district,
-  profile.fullName,
-  profile.mobileNumber,
-  refreshProfileInsights,
-  resetHelpComposer,
-  sendActivityEvent,
-  userId,
-]);
-
-useEffect(() => {
-  sessionStartedAtRef.current = Date.now();
-  sessionIdRef.current = `profile-${userId || "guest"}-${Date.now()}`;
-  hasTrackedSessionRef.current = false;
-}, [userId]);
-
-useEffect(() => {
-  const resolvedMobileNumber = profile.mobileNumber || mobileNumber;
-
-  if (!userId || hasTrackedSessionRef.current || (!profile.fullName && !resolvedMobileNumber)) {
-    return undefined;
-  }
-
-  hasTrackedSessionRef.current = true;
-  const currentNotificationState = getNotificationState();
-  setNotificationPermission(currentNotificationState.permissionGranted);
-  setShowPushPromptModal(currentNotificationState.permissionGranted === "default");
-
-  const identity = {
-    userId,
-    mobileNumber: resolvedMobileNumber,
-    name: profile.fullName,
-    fullName: profile.fullName,
-    location: profile.district || district,
-    source: {
-      page: "profile-page",
-      startedAt: new Date().toISOString(),
-    },
-  };
-
-  trackLoginActivity(identity);
-  registerInstallActivity(identity);
-  sendActivityEvent("profile-opened", {
-    action: "profile_opened",
-  });
-  refreshProfileInsights();
-
-  const heartbeat = setInterval(() => {
-    const elapsedSeconds = Math.max(
-      1,
-      Math.round((Date.now() - sessionStartedAtRef.current) / 1000)
-    );
-
-    sendActivityEvent("heartbeat", {
-      action: "profile_heartbeat",
-      durationSeconds: elapsedSeconds,
-      activeSeconds: elapsedSeconds,
-      metadata: {
-        notificationPermission: getNotificationState().permissionGranted,
-      },
-    });
-    refreshProfileInsights();
-  }, 60000);
-
-  return () => {
-    clearInterval(heartbeat);
-    const elapsedSeconds = Math.max(
-      1,
-      Math.round((Date.now() - sessionStartedAtRef.current) / 1000)
-    );
-    sendActivityEvent("session-ended", {
-      action: "profile_session_closed",
-      durationSeconds: elapsedSeconds,
-      activeSeconds: elapsedSeconds,
-    });
-  };
-}, [district, mobileNumber, profile.district, profile.fullName, profile.mobileNumber, refreshProfileInsights, sendActivityEvent, userId]);
-
-useEffect(() => {
-  if (!helpRequests.length) {
-    setActiveHelpRequestId("");
-    return;
-  }
-
-  setActiveHelpRequestId((currentRequestId) => {
-    if (currentRequestId && helpRequests.some((request) => request.id === currentRequestId)) {
-      return currentRequestId;
-    }
-
-    return sortHelpRequestsByLatest(helpRequests)[0]?.id || "";
-  });
-}, [helpRequests]);
-
-useEffect(() => {
-  const latestRepliedRequest = sortHelpRequestsByLatest(helpRequests).find((request) => request?.adminReply) || null;
-
-  if (!latestRepliedRequest) {
-    setLatestHelpReply(null);
-    return;
-  }
-
-  const storageKey = `hm_last_seen_help_reply_${userId || profile.mobileNumber || mobileNumber || "guest"}`;
-  const savedMarker = typeof window !== "undefined" ? localStorage.getItem(storageKey) || "" : "";
-
-  lastSeenHelpReplyRef.current = savedMarker;
-  setLatestHelpReply(latestRepliedRequest);
-
-  if (latestRepliedRequest?.id) {
-    setActiveHelpRequestId((currentRequestId) => currentRequestId || latestRepliedRequest.id);
-  }
-}, [helpRequests, mobileNumber, profile.mobileNumber, userId]);
-
-useEffect(() => {
-  priorityGroceryCategories.forEach((category) => {
-    const image = new Image();
-    image.decoding = "async";
-    image.fetchPriority = "high";
-    image.src = category.image;
-  });
-}, [priorityGroceryCategories]);
-
-useEffect(() => {
-  if (!showHelpBoardModal) {
-    return;
-  }
-
-  if (activeHelpRequest?.adminReply) {
-    markHelpReplySeen(activeHelpRequest);
-  }
-
-  if (helpMessagesEndRef.current) {
-    helpMessagesEndRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
-  }
-}, [activeHelpMessages.length, activeHelpRequest, markHelpReplySeen, showHelpBoardModal]);
-
-useEffect(() => () => {
-  stopHelpRecorderStream();
-}, [stopHelpRecorderStream]);
-
-useEffect(() => {
-  const trimmedQuery = searchQuery.trim();
-  if (!trimmedQuery) {
-    return undefined;
-  }
-
-  const timer = setTimeout(() => {
-    sendActivityEvent("search", {
-      action: "search",
-      metadata: {
-        query: trimmedQuery.slice(0, 60),
-      },
-    });
-  }, 900);
-
-  return () => clearTimeout(timer);
-}, [searchQuery, sendActivityEvent]);
-
-useEffect(() => {
-  if (!selectedCategory) {
-    return;
-  }
-
-  const selectedLabel =
-    typeof selectedCategory === "object"
-      ? selectedCategory.label || selectedCategory.value || ""
-      : String(selectedCategory || "");
-
-  if (!selectedLabel) {
-    return;
-  }
-
-  sendActivityEvent("category-selected", {
-    action: "category_selected",
-    metadata: {
-      category: selectedLabel,
-    },
-  });
-}, [selectedCategory, sendActivityEvent]);
 
 useEffect(() => {
   const onResize = () => {
@@ -973,7 +270,7 @@ const fetchWalletAmount = useCallback(async () => {
   try {
     setWalletLoading(true);
     const response = await fetch(
-      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/OffersTransactions/GetOfferTransactionByUserId?userId=${userId}`
+      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/OffersTransactions/GetOfferTransactionByUserId?userId=${userId}`
     );
     const data = await response.json();
     if (data && data.length > 0) {
@@ -1004,7 +301,7 @@ useEffect(() => {
   async function fetchProductsAndFirstImages(warm = false, signal) {
     try {
       if (!warm) setImageLoading(true);
-      const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${category}`;
+      const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${category}`;
 
       const { data: items } = await axios.get(url, { signal });
       const safeItems = (Array.isArray(items) ? items : []).map(normalizeProduct);
@@ -1019,11 +316,11 @@ useEffect(() => {
         }))
         .filter((x) => !!x.photo);
       const cachedMap = {};
-      const misses = [];
+      const misses = [];    
       for (const { productId, photo } of firstImages) {
-        const cached = await ImageCache.getBase64(photo);
+        const cached = ImageCache.getBase64(photo);
         if (cached) {
-          cachedMap[productId] = toCachedImageUrl(photo, cached);
+          cachedMap[productId] = [`data:image/jpeg;base64,${cached}`];
         } else {
           misses.push({ productId, photo });
         }
@@ -1035,7 +332,7 @@ useEffect(() => {
       const fetchOne = async ({ productId, photo }) => {
         try {
           const res = await fetch(
-            `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
+            `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`,
             { signal }
           );
 
@@ -1043,13 +340,13 @@ useEffect(() => {
           const b64 = json?.imageData || "";
           if (!b64) return;
 
-          await ImageCache.setBase64(photo, b64);
-          const objectUrl = toCachedImageUrl(photo, b64);
+          ImageCache.setBase64(photo, b64);
+          const dataUrl = `data:image/jpeg;base64,${b64}`;
 
           if (!cancelled) {
             setImageUrls((prev) => {
-              if (prev[productId] === objectUrl) return prev;
-              return { ...prev, [productId]: objectUrl };
+              if (prev[productId]?.[0] === dataUrl) return prev;
+              return { ...prev, [productId]: [dataUrl] };
             });
           }
         } catch {}
@@ -1084,6 +381,7 @@ useEffect(() => {
   const categories = JSON.parse(localStorage.getItem("allCategories") || "[]");
   categories.forEach(cat => {
     cat.products.forEach(async (p) => {
+      // Skip if already cached or if fetch is in progress
       if (cartImages[p.id]) return;
       if (cartImages[p.id]) return;
       if (!p.imageFile || cartImages[p.id]) return;
@@ -1095,7 +393,7 @@ useEffect(() => {
         if (json?.imageData) {
           setCartImages(prev => ({
             ...prev,
-            [p.id]: toCachedImageUrl(p.imageFile, json.imageData),
+            [p.id]: `data:image/jpeg;base64,${json.imageData}`,
           }));
         }
       } catch (err) {
@@ -1120,7 +418,7 @@ useEffect(() => {
         if (json?.imageData) {
           setCartImages(prev => ({
             ...prev,
-            [item.id]: toCachedImageUrl(item.imageFile, json.imageData),
+            [item.id]: `data:image/jpeg;base64,${json.imageData}`,
           }));
         }
       } catch (e) {
@@ -1186,7 +484,7 @@ useEffect(() => {
   //       message: "User fetching grocery items in profile page"
   //     };
   //     await axios.post(
-  //       `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/LmartLogs/UploadlogsDetails`,
+  //       `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/LmartLogs/UploadlogsDetails`,
   //       payload
   //     );
   //   } catch (err) {
@@ -1198,7 +496,7 @@ useEffect(() => {
     if (showLoader) setLoading(true);
     try {
       const res = await axios.get(
-        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetAllGroceryItems`
+        `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetAllGroceryItems`
       );
       const normalized = (Array.isArray(res.data) ? res.data : [])
         .map(normalizeProduct)
@@ -1243,51 +541,22 @@ useEffect(() => {
   useEffect(() => {
     if (!filteredProducts.length) return;
     const controller = new AbortController();
-    let cancelled = false;
-
-    const hydrateFilteredImages = async () => {
-      await Promise.allSettled(
-        filteredProducts.map(async (p) => {
-          const photo = p.images?.[0];
-          if (!photo || imageUrls[p.id]) return;
-
-          const cached = await ImageCache.getBase64(photo);
-          if (cached) {
-            if (!cancelled) {
-              const objectUrl = toCachedImageUrl(photo, cached);
-              setImageUrls((prev) => (prev[p.id] === objectUrl ? prev : {
-                ...prev,
-                [p.id]: objectUrl,
-              }));
-            }
-            return;
-          }
-
-          try {
-            const res = await fetch(
-              `${IMAGE_API}${encodeURIComponent(photo)}`,
-              { signal: controller.signal }
-            );
-            const json = await res.json();
-            const b64 = json?.imageData || "";
-            if (!b64 || cancelled) return;
-
-            await ImageCache.setBase64(photo, b64);
-            const objectUrl = toCachedImageUrl(photo, b64);
-            setImageUrls((prev) => (prev[p.id] === objectUrl ? prev : {
-              ...prev,
-              [p.id]: objectUrl,
-            }));
-          } catch {}
-        })
-      );
-    };
-
-    hydrateFilteredImages();
-    return () => {
-      cancelled = true;
-      controller.abort();
-    };
+    filteredProducts.forEach(async (p) => {
+      if (!p.images?.[0] || imageUrls[p.id]) return;
+      try {
+        const res = await fetch(
+          `${IMAGE_API}${encodeURIComponent(p.images[0])}`,
+          { signal: controller.signal }
+        );
+        const json = await res.json();
+        if (!json?.imageData) return;
+        setImageUrls((prev) => ({
+          ...prev,
+          [p.id]: `data:image/jpeg;base64,${json.imageData}`,
+        }));
+      } catch {}
+    });
+    return () => controller.abort();
   }, [filteredProducts, imageUrls]);
 
 const handleAddClick = (product) => {
@@ -1333,7 +602,7 @@ const handleAddClick = (product) => {
 //   const fetchDeliveryData = async () => {
 //     try {    
 //       const response = await fetch(
-//         `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetProductDetails?id=${id}`
+//         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetProductDetails?id=${id}`
 //       );
 //       if (!response.ok) {
 //         throw new Error("Failed to fetch grocery product data");
@@ -1408,7 +677,7 @@ const handleAddClick = (product) => {
  useEffect(() => {   
   const fetchGroceryData = async () => {
     try {
-      const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetMartTicketsByUserId?userId=${userId}`);
+      const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetMartTicketsByUserId?userId=${userId}`);
       if (!response.ok) {
       throw new Error('Failed to fetch ticket data');
     }
@@ -1450,7 +719,7 @@ const handleDeliveryPartnerClick = async () => {
   clickLock.current = true;
   try {
     const res = await axios.get(
-      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/DeliveryPartner/GetDeliveryPartnerDetailsByUserId?userId=${userId}`
+      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/DeliveryPartner/GetDeliveryPartnerDetailsByUserId?userId=${userId}`
     );
     const raw = res?.data ?? null;
     const profile = Array.isArray(raw)
@@ -1494,7 +763,7 @@ const isActionLocked =
 const handleStatusUpdate = async (ticket, newStatus) => {
   try {
     const detailsResponse = await fetch(
-      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetProductDetails?id=${ticket.id}`
+      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetProductDetails?id=${ticket.id}`
     );
 
     if (!detailsResponse.ok) {
@@ -1524,7 +793,7 @@ const handleStatusUpdate = async (ticket, newStatus) => {
     };
     console.log("FINAL PAYLOAD:", payload);
     const response = await fetch(      
-      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UpdateProductDetails/${ticket.id}`,
+      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${ticket.id}`,
       {
         method: "PUT",
         headers: {
@@ -1551,7 +820,7 @@ const handleStatusUpdate = async (ticket, newStatus) => {
 const handleUpdatePaymentMethod = async (ticket) => {
   try {
     const detailsResponse = await fetch(
-      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetProductDetails?id=${ticket.id}`
+      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetProductDetails?id=${ticket.id}`
     );
 
     if (!detailsResponse.ok) {
@@ -1583,7 +852,7 @@ const handleUpdatePaymentMethod = async (ticket) => {
     };
     console.log("FINAL PAYLOAD:", payload);
     const response = await fetch(
-      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UpdateProductDetails/${ticket.id}`,
+      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${ticket.id}`,
       {
         method: "PUT",
         headers: {
@@ -1656,31 +925,31 @@ const handleGroceryCategoryClick = (category) => {
   const mobileNumber = profile?.mobileNumber || "";
   const encodedCategory = encodeURIComponent(value);
   localStorage.setItem("encodedCategory", encodedCategory);
-
   if (value === "Kitchenware Appliances") {
     navigate(`/grocery/${userType}/${userId}`, {
       state: { mobileNumber },
     });
     return;
   }
-
   if (value === "Electrical Products" || value === "Plumbing Products") {
     navigate(`/martHomeAppliances/${userType}/${userId}`, {
-      state: { applianceType: value },
+      state: { applianceType: value }, 
     });
     return;
   }
-
-  if (value === "Grocery Value Combo Packs" || value === "Unbeatable Offers") {
+  
+  if (value === "Grocery Value Combo Packs") {
     navigate(`/groceryOffers/${userType}/${userId}`, {
-      state: { mobileNumber, encodedCategory },
+      state: { mobileNumber },
+    });     
+  } else {
+    navigate(`/grocery/${userType}/${userId}`, {
+      state: { mobileNumber },
     });
-    return;
   }
-
-  navigate(`/grocery/${userType}/${userId}`, {
-    state: { mobileNumber },
-  });
+//   navigate(`/grocery/${userType}/${userId}`, {
+//   state: { mobileNumber },
+// });
 };
 
 const handleDressCategoryClick = async (category) => {
@@ -1704,11 +973,11 @@ const handleDressCategoryClick = async (category) => {
           const fetchAllTickets = async () => {
             try { 
               const [ticketResponse, productResponse, technicianResponse, groceriesResponse, lakshmiResponse] = await Promise.all([
-                fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=raiseTicket`),
-                fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=buyProduct`),
-                fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=bookTechnician`),
-                fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=mart`),
-                fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=collections`),
+                fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=raiseTicket`),
+                fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=buyProduct`),
+                fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=bookTechnician`),
+                fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=mart`),
+                fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=collections`),
               ]);      
               if (!ticketResponse.ok || !productResponse.ok || !technicianResponse || !groceriesResponse || !lakshmiResponse) {
                 throw new Error("Failed to fetch ticket, product and technician data");
@@ -1809,28 +1078,13 @@ const handleCustomerCareCall = () => {
         return () => document.removeEventListener("mousedown", handleCloseMenuOnClickOutside);
       }, []);
             
-const fetchImageUrl = useCallback(async (photoId) => {
-  try {
-    if (!photoId) return;
-    const response = await axios.get(
-      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photoId)}`
-    );
-    if (response.status === 200 && response.data.imageData) {
-      const imageUrl = toCachedImageUrl(photoId, response.data.imageData);
-      setProfileImage(imageUrl);
-    }
-  } catch (error) {
-    console.error("Error fetching image:", error);
-  }
-}, []);
-
       useEffect(() => {
         if (!userId || !userType) return;
         const fetchProfileData = async () => {
           try {
             let apiUrl = "";
             if (userType === "customer") {
-              apiUrl = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`;
+              apiUrl = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`;
             }
             if (!apiUrl) return;
             const response = await axios.get(apiUrl);
@@ -1850,7 +1104,7 @@ const fetchImageUrl = useCallback(async (photoId) => {
           }
         };
         fetchProfileData();
-      }, [userType, userId, isMobile, fetchImageUrl]);
+      }, [userType, userId, isMobile]);
       
       useEffect(() => {
         if (category && district) {
@@ -1864,6 +1118,21 @@ const fetchImageUrl = useCallback(async (photoId) => {
   });
   return () => window.removeEventListener("storage", () => {});
 }, []);
+
+const fetchImageUrl = async (photoId) => {
+  try { 
+    if (!photoId) return;
+    const response = await axios.get(
+      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photoId}`
+    );
+    if (response.status === 200 && response.data.imageData) {
+      const imageUrl = `data:image/jpeg;base64,${response.data.imageData}`;
+      setProfileImage(imageUrl);
+    }
+  } catch (error) {
+    console.error("Error fetching image:", error);
+  }
+};
   
  if (loading) {
   return <div></div>; 
@@ -1967,7 +1236,7 @@ const filteredGroceryData = groceryData.filter((t) =>
     </div>
         <div className="hdr_icns d-flex align-items-center ">
       <div id="dropdown-container" className="dropdown-container" style={{ position: "relative" }}>
-        <div className="d-flex align-items-center gap-2">
+        <div className="d-flex align-items-center">
          {/* Customer Care Number */}
           <div
                 className="d-flex align-items-start"
@@ -2161,11 +1430,6 @@ const filteredGroceryData = groceryData.filter((t) =>
                  <div className="label fw-bold mt-0 fs-5">Address</div>
                  <p className="value">{profile.address}</p>
                <hr />
-               <p className="logout-btn m-1" onClick={handleOpenPushPrompt}>
-                 <NotificationsActiveIcon />
-                 <span className="fs-5">{notificationPermission === "granted" ? "Notifications enabled" : notificationPermission === "denied" ? "Fix notifications" : "Enable notifications"}</span>
-               </p>
-               <hr />
                <p className="logout-btn m-1" onClick={() => window.location.href = "/loginnew"}>
                  <LogoutIcon />
                  <span className="fs-5">Logout</span>
@@ -2225,13 +1489,6 @@ const filteredGroceryData = groceryData.filter((t) =>
                       <small style={{ fontSize: "12px", fontFamily: "Poppins", lineHeight: "28px" }}>My Tickets</small>
                     </div>
                     <hr style={{ margin: '4px 0' }} />
-                    <div className="d-flex align-items-start" style={{ cursor: "pointer" }} onClick={handleOpenPushPrompt}>
-                      <NotificationsActiveIcon sx={{ fontSize: 24, marginRight: '8px' }} />
-                      <small style={{ fontSize: "12px", fontFamily: "Poppins", lineHeight: "28px" }}>
-                        {notificationPermission === "granted" ? "Notifications On" : notificationPermission === "denied" ? "Fix notifications" : "Enable notifications"}
-                      </small>
-                    </div>
-                    <hr style={{ margin: '4px 0' }} />
                   <div className="d-flex align-items-center logout-btn" style={{ cursor: 'pointer' }} onClick={() => window.location.href = "/loginnew"}>
                     <LogoutIcon className="me-2" />
                     <span>Logout</span>
@@ -2279,271 +1536,6 @@ const filteredGroceryData = groceryData.filter((t) =>
       disabled={!selectedOption}
     >
       Continue
-    </Button>
-  </Modal.Footer>
-</Modal>
-
-<Modal
-  show={showPushPromptModal}
-  onHide={() => setShowPushPromptModal(false)}
-  centered
-  className="profile-push-modal"
->
-  <Modal.Header closeButton>
-    <Modal.Title>Stay updated instantly</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    <div className="profile-push-modal__icon" aria-hidden="true">🔔</div>
-    <h5 className="profile-push-modal__heading">Turn on HandyMan notifications</h5>
-    <p className="profile-push-modal__copy">
-      Get admin offers, order updates, and profile alerts without needing to refresh the page.
-    </p>
-    <div className="profile-push-modal__status-row">
-      <span className="text-muted small">Browser status</span>
-      <span className={`badge ${notificationPermission === "granted" ? "bg-success" : notificationPermission === "denied" ? "bg-danger" : notificationPermission === "unsupported" ? "bg-secondary" : "bg-warning text-dark"}`}>
-        {notificationPermission}
-      </span>
-    </div>
-    {notificationPermission === "denied" && (
-      <div className="profile-push-modal__hint">
-        Notifications are blocked in the browser. Allow them in site settings, then try again.
-      </div>
-    )}
-    {notificationPermission === "unsupported" && (
-      <div className="profile-push-modal__hint">
-        This browser does not support push notifications yet.
-      </div>
-    )}
-  </Modal.Body>
-  <Modal.Footer>
-    <Button variant="outline-secondary" onClick={() => setShowPushPromptModal(false)}>
-      Maybe later
-    </Button>
-    <Button
-      variant="success"
-      onClick={handleEnableNotifications}
-      disabled={isEnablingNotifications || notificationPermission === "unsupported"}
-    >
-      {notificationPermission === "granted"
-        ? "Enabled"
-        : isEnablingNotifications
-          ? "Enabling..."
-          : notificationPermission === "denied"
-            ? "Try again"
-            : "Enable notifications"}
-    </Button>
-  </Modal.Footer>
-</Modal>
-
-<Modal
-  show={showHelpBoardModal}
-  onHide={handleCloseHelpBoard}
-  centered
-  scrollable
-  size="lg"
-  className="profile-help-modal"
->
-  <Modal.Header closeButton>
-    <Modal.Title>Help assistant chat</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    <p className="text-muted small mb-3">
-      Ask about delivery, placing orders, offers, or anything else. This chat stays in one thread for you and the admin team.
-    </p>
-
-    {helpRequestError && (
-      <div className="alert alert-danger py-2" role="alert">
-        {helpRequestError}
-      </div>
-    )}
-
-    {helpVoiceError && (
-      <div className="alert alert-warning py-2" role="alert">
-        {helpVoiceError}
-      </div>
-    )}
-
-    {helpRequestSuccess && (
-      <div className="alert alert-success py-2" role="alert">
-        {helpRequestSuccess}
-      </div>
-    )}
-
-    <div className="profile-help-shell">
-      <div className="profile-help-conversations">
-        <div className="profile-help-conversations__header">
-          <div>
-            <h6 className="mb-1">Your chats</h6>
-            <div className="small text-muted">
-              {profileInsightsLoading ? "Refreshing conversations..." : `${helpConversations.length} thread${helpConversations.length === 1 ? "" : "s"}`}
-            </div>
-          </div>
-          <Button size="sm" variant="outline-primary" onClick={handleStartNewHelpThread}>
-            New chat
-          </Button>
-        </div>
-
-        {!profileInsightsLoading && helpConversations.length === 0 ? (
-          <div className="profile-help-empty">
-            <strong>Start your first chat</strong>
-            <span>Send a short text or a voice note and the admin team will reply here.</span>
-          </div>
-        ) : (
-          <div className="profile-help-conversation-list">
-            {helpConversations.map((request) => (
-              <button
-                key={request.id}
-                type="button"
-                className={`profile-help-conversation-chip ${activeHelpRequest?.id === request.id ? "is-active" : ""}`}
-                onClick={() => handleOpenHelpBoard(request.id)}
-              >
-                <div className="profile-help-conversation-chip__top">
-                  <strong>{formatHelpTopicLabel(request.topic)}</strong>
-                  <span className={`badge text-capitalize ${request.adminReply ? "bg-success" : "bg-info text-dark"}`}>
-                    {request.adminReply ? "answered" : request.status || "open"}
-                  </span>
-                </div>
-                <div className="profile-help-conversation-chip__preview">
-                  {request.latestMessagePreview || request.message || "Voice message"}
-                </div>
-                <div className="profile-help-conversation-chip__time">
-                  {formatRelativeActivity(request.latestMessageAt || request.updatedAt || request.createdAt)}
-                </div>
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <div className="profile-help-thread-panel">
-        <div className="profile-help-thread-header">
-          <div>
-            <h6 className="mb-1">
-              {activeHelpRequest ? formatHelpTopicLabel(activeHelpRequest.topic) : "Start a new chat"}
-            </h6>
-            <div className="small text-muted">
-              {activeHelpRequest
-                ? `Started ${formatRelativeActivity(activeHelpRequest.createdAt)}`
-                : "Pick a topic, type a question, or record a voice note."}
-            </div>
-          </div>
-          {latestHelpReply?.id === activeHelpRequest?.id ? (
-            <span className="badge bg-success">Admin replied</span>
-          ) : null}
-        </div>
-
-        <div className="profile-help-thread">
-          {activeHelpRequest ? (
-            activeHelpMessages.map((message) => {
-              const roleName = message.role === "admin" ? "HandyMan team" : message.sentBy || "You";
-              return (
-                <div
-                  key={message.id}
-                  className={`profile-help-message profile-help-message--${message.role === "admin" ? "admin" : message.role === "system" ? "system" : "user"}`}
-                >
-                  <div className="profile-help-message__meta">
-                    <strong>{roleName}</strong>
-                    <span>{formatRelativeActivity(message.createdAt)}</span>
-                  </div>
-                  <div className="profile-help-message__bubble">
-                    {message.text ? <p className="mb-0">{message.text}</p> : null}
-                    {message.voiceNote?.dataUrl ? (
-                      <audio controls preload="none" className="profile-help-message__audio" src={message.voiceNote.dataUrl} />
-                    ) : null}
-                  </div>
-                </div>
-              );
-            })
-          ) : (
-            <div className="profile-help-empty profile-help-empty--thread">
-              <strong>Hello from HandyMan support</strong>
-              <span>Tell us what you need today and we will keep the conversation going here.</span>
-            </div>
-          )}
-          <div ref={helpMessagesEndRef} />
-        </div>
-
-        <div className="profile-help-composer">
-          {!activeHelpRequest && (
-            <div className="mb-3">
-              <label className="form-label fw-bold">Topic</label>
-              <select
-                className="form-select"
-                value={helpRequestTopic}
-                onChange={(e) => setHelpRequestTopic(e.target.value)}
-              >
-                <option value="delivery">Delivery</option>
-                <option value="placing-orders">Placing orders</option>
-                <option value="offers">Offers</option>
-                <option value="other">Other questions</option>
-              </select>
-            </div>
-          )}
-
-          <div className="mb-2">
-            <label className="form-label fw-bold">
-              {activeHelpRequest ? "Continue the chat" : "Your message"}
-            </label>
-            <textarea
-              className="form-control"
-              rows={4}
-              maxLength={600}
-              value={helpRequestMessage}
-              onChange={(e) => setHelpRequestMessage(e.target.value)}
-              placeholder={activeHelpRequest ? "Type your reply here..." : "Type your question here..."}
-            />
-            <div className="text-muted small mt-1 text-end">
-              {helpRequestMessage.length}/600
-            </div>
-          </div>
-
-          {helpVoiceDraft && (
-            <div className="profile-help-voice-preview">
-              <div>
-                <strong>Voice message ready</strong>
-                <div className="small text-muted">
-                  {helpVoiceDraft.durationSeconds}s • {Math.max(1, Math.round((helpVoiceDraft.sizeBytes || 0) / 1024))} KB
-                </div>
-              </div>
-              <audio controls preload="none" src={helpVoiceDraft.dataUrl} />
-              <Button size="sm" variant="outline-secondary" onClick={clearHelpVoiceDraft}>
-                Remove voice note
-              </Button>
-            </div>
-          )}
-
-          <div className="profile-help-composer__actions">
-            <div className="profile-help-composer__secondary">
-              {canRecordHelpVoice ? (
-                isRecordingHelpVoice ? (
-                  <Button variant="danger" onClick={stopHelpVoiceRecording}>
-                    Stop recording
-                  </Button>
-                ) : (
-                  <Button variant="outline-primary" onClick={startHelpVoiceRecording}>
-                    Record voice message
-                  </Button>
-                )
-              ) : (
-                <span className="small text-muted">Voice messages work in supported browsers with microphone access.</span>
-              )}
-              {isRecordingHelpVoice && <span className="profile-help-recording-pill">Recording now...</span>}
-            </div>
-            <Button variant="primary" onClick={handleSubmitHelpRequest} disabled={submittingHelpRequest || isRecordingHelpVoice}>
-              {submittingHelpRequest
-                ? "Sending..."
-                : activeHelpRequest
-                  ? "Send message"
-                  : "Start chat"}
-            </Button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </Modal.Body>
-  <Modal.Footer>
-    <Button variant="secondary" onClick={handleCloseHelpBoard}>
-      Close chat
     </Button>
   </Modal.Footer>
 </Modal>
@@ -2863,7 +1855,6 @@ const filteredGroceryData = groceryData.filter((t) =>
                                 : item
                             )        
                           );
-                          setShowOrderModal(false);
                         }}
                       >
                         Return
@@ -2937,7 +1928,7 @@ const filteredGroceryData = groceryData.filter((t) =>
                               item.id === selectedOrder.id
                                 ? { ...item, status: "Return" }
                                 : item
-                            )
+                            )        
                           );
                         }}
                       >
@@ -3033,7 +2024,6 @@ const filteredGroceryData = groceryData.filter((t) =>
        {displayProducts.map((product) => {
         const maxQty = getMaxAllowedQty(product);   
         const isOutOfStock = maxQty <= 0;
-        const imageSrc = getProductImageSrc(product.id);
           return (
             <div
         key={product.id}
@@ -3052,12 +2042,13 @@ const filteredGroceryData = groceryData.filter((t) =>
     className="d-flex justify-content-center align-items-center position-relative"
     style={{ height: "90px" }}
   >
-    {imageSrc ? (
+    {imageUrls[product.id] ? (
       <img
-        src={imageSrc}
+        src={cartImages[product.id] || imageUrls[product.id]}
         alt={product.name}
         decoding="async"
-        loading="lazy"
+        loading="eager"
+        fetchpriority="high"
         style={{
           maxHeight: "80px",
           maxWidth: "100%",
@@ -3066,11 +2057,11 @@ const filteredGroceryData = groceryData.filter((t) =>
           borderRadius: "6px",
         }}
         onClick={() => !isOutOfStock && handleImageClick(
-      imageSrc,
+      cartImages[product.id] || imageUrls[product.id],
       product
     )}/>
     ) : (
-      renderImagePlaceholder(imageLoading ? "Loading image..." : "Image will appear shortly")
+      <span className="text-muted small">Loading Image</span>
     )}
 
     {isOutOfStock && (
@@ -3445,7 +2436,7 @@ const filteredGroceryData = groceryData.filter((t) =>
     </h5> 
 
 <div className="row row-cols-3 row-cols-md-6 g-1">
-  {firstCategories.map((cat, index) => (
+  {firstCategories.map((cat) => (
     <div
        className="col"
         key={cat.label}
@@ -3467,12 +2458,6 @@ const filteredGroceryData = groceryData.filter((t) =>
           <img
             src={cat.image}
             alt={cat.label}
-            loading="eager"
-            fetchPriority={index < 3 ? "high" : "auto"}
-            decoding="async"
-            width="80"
-            height="80"
-            draggable="false"
             style={{
               height: "80px",
               width: "80px",
@@ -3524,12 +2509,6 @@ const filteredGroceryData = groceryData.filter((t) =>
           <img
             src={cat.image}
             alt={cat.label}
-            loading="lazy"
-            fetchPriority="low"
-            decoding="async"
-            width="80"
-            height="80"
-            draggable="false"
             style={{
               height: "80px",
               width: "80px",
@@ -3542,12 +2521,12 @@ const filteredGroceryData = groceryData.filter((t) =>
             style={{
               fontSize: "12px",
               fontWeight: "bold",
+              marginBottom: "3px",
               marginTop: "5px",
               minHeight: "24px", 
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-
               textAlign: "center",
               lineHeight: "1.2",
             }}
@@ -3883,24 +2862,8 @@ const filteredGroceryData = groceryData.filter((t) =>
     </Button>
   </Modal.Footer>
 </Modal>
-
-<button
-  type="button"
-  className="profile-help-chat-launcher"
-  onClick={() => handleOpenHelpBoard()}
-  aria-label="Open live chat assistant"
-  title="Open live chat assistant"
->
-  <span className="profile-help-chat-icon" aria-hidden="true">
-    <SupportAgentIcon style={{ fontSize: "22px" }} />
-  </span>
-  <span className="profile-help-chat-copy">
-    <strong>Live chat</strong>
-    <small>Orders, offers, and delivery support</small>
-  </span>
-</button>
          <Footer />
         </>    
   );
 };
-export default ProfilePage;  
+export default ProfilePage;

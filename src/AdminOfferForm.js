@@ -66,7 +66,7 @@ const uploadFile = async (byteArray, fileName, mimeType) => {
     formData.append("fileName", fileName);
 
     const response = await fetch(
-      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/upload?filename=` +
+      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/upload?filename=` +
         fileName,
       {
         method: "POST",
@@ -122,7 +122,7 @@ for (let file of formData.files) {
       console.log("Sending Payload:", payload);
 
       await axios.post(
-        "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UpLoadBannners/UploadBanners",
+        "https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UpLoadBannners/UploadBanners",
          payload
       );
       alert("Offer Uploaded Successfully!");

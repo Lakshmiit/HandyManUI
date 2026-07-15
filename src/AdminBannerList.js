@@ -39,7 +39,7 @@ const [currentPage, setCurrentPage] = useState(1);
     try {
       setLoading(true);
       const res = await axios.get(
-        "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UpLoadBannners/GetBanners"
+        "https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UpLoadBannners/GetBanners"
       );
       setBannersList(res.data || []);
     } catch (err) {
@@ -65,7 +65,7 @@ const indexOfLast = currentPage * rowsPerPage;
     const imageRequests =
       banner.image?.map((photo) =>
         fetch(
-          `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo.images}`
+          `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo.images}`
         )
           .then((res) => res.json())
           .then((data) => ({
@@ -115,7 +115,7 @@ const indexOfLast = currentPage * rowsPerPage;
     if (!window.confirm("Delete this banner?")) return;
     try {
       await axios.delete(
-        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UpLoadBannners/DeleteBanner/${id}`
+        `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UpLoadBannners/DeleteBanner/${id}`
       );
       alert("Banner deleted successfully");
       fetchBanners();
@@ -141,7 +141,7 @@ const indexOfLast = currentPage * rowsPerPage;
       };
 
       await axios.put(
-        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UpLoadBannners/UpdateBannerDetails?id=${editBanner.id}`,
+        `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UpLoadBannners/UpdateBannerDetails?id=${editBanner.id}`,
         payload
       );
 
