@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef,useCallback} from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import './App.css';
@@ -141,6 +141,8 @@ const groceryCategories = [
   { label: 'DWCRA Products', value: 'DWCRA', image: DwakraProducts },
   { label: 'Chicken', value: 'Chicken', image: ChickenImg },
 ];
+const PRIORITY_GROCERY_CATEGORY_COUNT = 10;
+
 // ${appConfig.apiBaseUrl}
 const collectionsCategories = [
   { label: 'Dupatta Sets', value: 'Dupatta Sets', image: setkurti },
@@ -281,8 +283,12 @@ const displayProducts =
 searchQuery.trim().length > 0 ? filteredProducts : products;
 const [imageLoading, setImageLoading] = useState(true);
 const [placeholderIndex, setPlaceholderIndex] = useState(0);
-const firstCategories = groceryCategories.slice(0, 6);
-const secondCategories = groceryCategories.slice(6, 31);
+const firstCategories = useMemo(() => groceryCategories.slice(0, 6), []);
+const secondCategories = useMemo(() => groceryCategories.slice(6, 31), []);
+const priorityGroceryCategories = useMemo(
+  () => groceryCategories.slice(0, PRIORITY_GROCERY_CATEGORY_COUNT),
+  []
+);
 const [showOffersModal, setShowOffersModal] = useState(false);
 // const [showCoinsModal, setShowCoinsModal] = useState(false);
 const [selectedTicket, setSelectedTicket] = useState(null);
@@ -877,6 +883,15 @@ useEffect(() => {
     setActiveHelpRequestId((currentRequestId) => currentRequestId || latestRepliedRequest.id);
   }
 }, [helpRequests, mobileNumber, profile.mobileNumber, userId]);
+
+useEffect(() => {
+  priorityGroceryCategories.forEach((category) => {
+    const image = new Image();
+    image.decoding = "async";
+    image.fetchPriority = "high";
+    image.src = category.image;
+  });
+}, [priorityGroceryCategories]);
 
 useEffect(() => {
   if (!showHelpBoardModal) {
@@ -3430,7 +3445,7 @@ const filteredGroceryData = groceryData.filter((t) =>
     </h5> 
 
 <div className="row row-cols-3 row-cols-md-6 g-1">
-  {firstCategories.map((cat) => (
+  {firstCategories.map((cat, index) => (
     <div
        className="col"
         key={cat.label}
@@ -3452,6 +3467,12 @@ const filteredGroceryData = groceryData.filter((t) =>
           <img
             src={cat.image}
             alt={cat.label}
+            loading="eager"
+            fetchPriority={index < 3 ? "high" : "auto"}
+            decoding="async"
+            width="80"
+            height="80"
+            draggable="false"
             style={{
               height: "80px",
               width: "80px",
@@ -3503,6 +3524,12 @@ const filteredGroceryData = groceryData.filter((t) =>
           <img
             src={cat.image}
             alt={cat.label}
+            loading="lazy"
+            fetchPriority="low"
+            decoding="async"
+            width="80"
+            height="80"
+            draggable="false"
             style={{
               height: "80px",
               width: "80px",
