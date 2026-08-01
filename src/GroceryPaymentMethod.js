@@ -93,13 +93,19 @@ let cashback = 0;
 // let giftName = "";
 
 // Cashback logic
-if (numericGrandTotal >= 399 && numericGrandTotal <= 998) {
+if (numericGrandTotal >= 499 && numericGrandTotal <= 998) {
   cashback = 30;
 } 
-else if (numericGrandTotal >= 999 && numericGrandTotal <= 1998) {
+else if (numericGrandTotal >= 999 && numericGrandTotal <= 1498) {
   cashback = 50;
 }
-else if (numericGrandTotal >= 1999) {
+else if (numericGrandTotal >= 1499 && numericGrandTotal <= 1998) {
+  cashback = 100;
+}
+else if (numericGrandTotal >= 1999 && numericGrandTotal <= 2998) {
+  cashback = 150;
+}
+else if (numericGrandTotal >= 2999) {
   cashback = 250;
 }
 
@@ -154,7 +160,7 @@ if (!groceryItemId) return;
 const ctrl = new AbortController();
 try {
 const res1 = await fetch(
-`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`,
+`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`,
 { signal: ctrl.signal },
 );
 if (!res1.ok) throw new Error("Failed to fetch product details");
@@ -194,7 +200,7 @@ setgroceryId(null);
 return;
 }
 const requests = productNames.map(async (name) => {
-const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
+const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
            name,
          )}`;
 const res = await fetch(url, { signal: ctrl.signal });
@@ -233,7 +239,7 @@ fetchCart();
 
 // const getReferralRecord = async (userId) => {
 // if (!userId) return null;
-// const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
+// const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
 // const res = await fetch(url);     
 // const text = await res.text();
 // let data = []; 
@@ -275,7 +281,7 @@ fetchCart();
 const fetchCustomerData = useCallback(async () => {
 try {
 const response = await fetch(
-`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Address/GetAddressById/${userId}`,
+`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Address/GetAddressById/${userId}`,
 );
 if (!response.ok) {
 throw new Error("Failed to fetch customer profile data");
@@ -328,7 +334,7 @@ useEffect(() => {
   const fetchOfferWalletAmount = async () => {
     try {
       const response = await fetch(
-        `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/OffersTransactions/GetOfferTransactionByUserId?userId=${userId}`
+        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/OffersTransactions/GetOfferTransactionByUserId?userId=${userId}`
       );
       if (!response.ok) throw new Error("Failed to fetch offer transaction");
 
@@ -364,7 +370,7 @@ console.log("Wallet Amount:", offerWalletAmount);
 
 useEffect(() => {
 axios
-.get(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/MasterData/getStates`)
+.get(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getStates`)
 .then((response) => {
 const data = response.data;
 console.log("States API Response:", data);
@@ -379,7 +385,7 @@ console.log("Wallet Amount:", walletAmount);
 useEffect(() => {
 if (stateId) {   
 axios
-.get(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
+.get(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
 .then((response) => {
 setDistrictList(response.data);
 })
@@ -448,7 +454,7 @@ WalletAmount: "",
 
 try {
 const response = await fetch(
-`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Customer/CustomerAddressEdit`,
+`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Customer/CustomerAddressEdit`,
 {
 method: "POST",
 headers: {
@@ -560,7 +566,7 @@ return () => window.removeEventListener("resize", handleResize);
 // };
             
 // let response = await fetch(
-// `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+// `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
 // {
 // method: "PUT",
 // headers: { "Content-Type": "application/json" },
@@ -585,7 +591,7 @@ return () => window.removeEventListener("resize", handleResize);
 // // };
 
 // // let resp = await fetch(
-// // `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(id)}`,
+// // `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(id)}`,
 // // {
 // // method: "PUT",
 // // headers: { "Content-Type": "application/json; charset=utf-8" },
@@ -595,7 +601,7 @@ return () => window.removeEventListener("resize", handleResize);
 
 // // if (!resp.ok) {
 // // resp = await fetch(
-// // `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints/${encodeURIComponent(id)}`,
+// // `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints/${encodeURIComponent(id)}`,
 // // {
 // // method: "PUT",
 // // headers: { "Content-Type": "application/json; charset=utf-8" },
@@ -621,7 +627,7 @@ return () => window.removeEventListener("resize", handleResize);
 
 // // if (selectedPayment === "online") {
 // // response = await fetch(
-// // `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+// // `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
 // // {
 // // method: "PUT",
 // // headers: {
@@ -644,7 +650,7 @@ return () => window.removeEventListener("resize", handleResize);
 // // window.location.href = `/groceryOnlinePayment/${groceryItemId}`;
 // // } else if (selectedPayment === "cash") {
 // // response = await fetch(
-// // `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+// // `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
 // // {
 // // method: "PUT",
 // // headers: {
@@ -723,7 +729,7 @@ const handleUpdateMartOrder = async () => {
   };
   console.log("📦 Mart Payload:", payload);
   const response = await fetch(
-    `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+    `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
     {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -757,9 +763,9 @@ const handleUpdateOffersTransaction = async (updatedWalletAmount) => {
     remainingAmount: String(updatedWalletAmount),
   };
   console.log("📦 Offers Transaction Payload:", offersTransactionPayload);
-  console.log("📦 PUT URL:", `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/OffersTransactions/UpdateOffersTransactionsDetails/${offerTransactionId}`);
+  console.log("📦 PUT URL:", `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/OffersTransactions/UpdateOffersTransactionsDetails/${offerTransactionId}`);
   const response = await fetch(
-    `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/OffersTransactions/UpdateOffersTransactionsDetails/${offerTransactionId}`,
+    `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/OffersTransactions/UpdateOffersTransactionsDetails/${offerTransactionId}`,
     {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -862,7 +868,7 @@ Units: item.units,
 Limit: item.limit || 0,
 };
 const res = await fetch(
-`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${encodeURIComponent(item.id)}`,
+`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${encodeURIComponent(item.id)}`,
 {
 method: "PUT",
 headers: { "Content-Type": "application/json" },
@@ -890,7 +896,7 @@ const primaryAddress = addresses.find((addr) => addr.type === "primary");
 const mobileNumber =
 primaryAddress?.mobileNumber || primaryAddress?.mobileNumber;
 const response = await fetch(
-`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Auth/sendLmartsms`,
+`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Auth/sendLmartsms`,
 {
 method: "POST",
 headers: {
@@ -1659,7 +1665,7 @@ export default GroceryPaymentmethod;
 //       const ctrl = new AbortController();
 //       try {
 //         const res1 = await fetch(
-//           `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`,
+//           `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`,
 //           { signal: ctrl.signal },
 //         );
 //         if (!res1.ok) throw new Error("Failed to fetch product details");
@@ -1700,7 +1706,7 @@ export default GroceryPaymentmethod;
 //           return;
 //         }
 //         const requests = productNames.map(async (name) => {
-//           const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
+//           const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
 //             name,
 //           )}`;
 //           const res = await fetch(url, { signal: ctrl.signal });
@@ -1739,7 +1745,7 @@ export default GroceryPaymentmethod;
 
 //   const getReferralRecord = async (userId) => {
 //   if (!userId) return null;
-//   const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
+//   const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
 //   const res = await fetch(url);     
 //   const text = await res.text();
 //   let data = []; 
@@ -1781,7 +1787,7 @@ export default GroceryPaymentmethod;
 //   const fetchCustomerData = useCallback(async () => {
 //     try {
 //       const response = await fetch(
-//         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Address/GetAddressById/${userId}`,
+//         `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Address/GetAddressById/${userId}`,
 //       );
 //       if (!response.ok) {
 //         throw new Error("Failed to fetch customer profile data");
@@ -1833,7 +1839,7 @@ export default GroceryPaymentmethod;
 
 //   useEffect(() => {
 //     axios
-//       .get(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/MasterData/getStates`)
+//       .get(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getStates`)
 //       .then((response) => {
 //         const data = response.data;
 //         console.log("States API Response:", data);
@@ -1849,7 +1855,7 @@ export default GroceryPaymentmethod;
 //   useEffect(() => {
 //     if (stateId) {
 //       axios
-//         .get(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
+//         .get(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
 //         .then((response) => {
 //           setDistrictList(response.data);
 //         })
@@ -1918,7 +1924,7 @@ export default GroceryPaymentmethod;
 
 //     try {
 //       const response = await fetch(
-//         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Customer/CustomerAddressEdit`,
+//         `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Customer/CustomerAddressEdit`,
 //         {
 //           method: "POST",
 //           headers: {
@@ -1991,7 +1997,7 @@ export default GroceryPaymentmethod;
 
 //     try {
 //       const response = await fetch(
-//         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Customer/CustomerAddressEdit`,
+//         `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Customer/CustomerAddressEdit`,
 //         {
 //           method: "POST",
 //           headers: {
@@ -2092,7 +2098,7 @@ export default GroceryPaymentmethod;
 //       };
  
 //       let response = await fetch(
-//         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+//         `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
 //         {
 //           method: "PUT",
 //           headers: { "Content-Type": "application/json" },
@@ -2118,7 +2124,7 @@ export default GroceryPaymentmethod;
 //           };
 
 //           let resp = await fetch(
-//             `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(id)}`,
+//             `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(id)}`,
 //             {
 //               method: "PUT",
 //               headers: { "Content-Type": "application/json; charset=utf-8" },
@@ -2128,7 +2134,7 @@ export default GroceryPaymentmethod;
 
 //           if (!resp.ok) {
 //             resp = await fetch(
-//               `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints/${encodeURIComponent(id)}`,
+//               `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints/${encodeURIComponent(id)}`,
 //               {
 //                 method: "PUT",
 //                 headers: { "Content-Type": "application/json; charset=utf-8" },
@@ -2154,7 +2160,7 @@ export default GroceryPaymentmethod;
 
 //       if (selectedPayment === "online") {
 //         response = await fetch(
-//           `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+//           `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
 //           {
 //             method: "PUT",
 //             headers: {
@@ -2177,7 +2183,7 @@ export default GroceryPaymentmethod;
 //         window.location.href = `/groceryOnlinePayment/${groceryItemId}`;
 //       } else if (selectedPayment === "cash") {
 //         response = await fetch(
-//           `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+//           `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
 //           {
 //             method: "PUT",
 //             headers: {
@@ -2275,7 +2281,7 @@ export default GroceryPaymentmethod;
 //           Limit: item.limit || 0,
 //         };
 //         const res = await fetch(
-//           `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${encodeURIComponent(item.id)}`,
+//           `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${encodeURIComponent(item.id)}`,
 //           {
 //             method: "PUT",
 //             headers: { "Content-Type": "application/json" },
@@ -2303,7 +2309,7 @@ export default GroceryPaymentmethod;
 //       const mobileNumber =
 //         primaryAddress?.mobileNumber || primaryAddress?.mobileNumber;
 //       const response = await fetch(
-//         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Auth/sendLmartsms`,
+//         `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Auth/sendLmartsms`,
 //         {
 //           method: "POST",
 //           headers: {
@@ -3140,7 +3146,7 @@ export default GroceryPaymentmethod;
 // // final payable
 // const getReferralRecord = async (userId) => {
 //   if (!userId) return null;
-//   const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
+//   const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
 //   const res = await fetch(url);     
 //   const text = await res.text();
 //   let data = []; 
@@ -3185,7 +3191,7 @@ export default GroceryPaymentmethod;
 //     const ctrl = new AbortController();
 //     try {
 //       const res1 = await fetch(
-//         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`,
+//         `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`,
 //         { signal: ctrl.signal }
 //       );
 //       if (!res1.ok) throw new Error("Failed to fetch product details");
@@ -3219,7 +3225,7 @@ export default GroceryPaymentmethod;
 //         return;
 //       }
 //       const requests = productNames.map(async (name) => {
-//         const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
+//         const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
 //           name
 //         )}`;
 //         const res = await fetch(url, { signal: ctrl.signal });
@@ -3256,7 +3262,7 @@ export default GroceryPaymentmethod;
 
 //  const fetchCustomerData = useCallback(async () => {
 //       try {
-//         const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Address/GetAddressById/${userId}`);
+//         const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Address/GetAddressById/${userId}`);
 //         if (!response.ok) {
 
 //           throw new Error('Failed to fetch customer profile data');
@@ -3299,7 +3305,7 @@ export default GroceryPaymentmethod;
 //   }, [fetchCustomerData]);
 
 //   useEffect(() => {
-//     axios.get('https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/MasterData/getStates')
+//     axios.get('https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getStates')
 //       .then(response => {
 //         const data = response.data;
 //         console.log("States API Response:", data); 
@@ -3313,7 +3319,7 @@ export default GroceryPaymentmethod;
   
 //    useEffect(() => {
 //     if (stateId) {
-//       axios.get(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
+//       axios.get(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
 //         .then(response => {
 //           setDistrictList(response.data);
 //         })
@@ -3381,7 +3387,7 @@ export default GroceryPaymentmethod;
 //       };
     
 //       try {
-//         const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Customer/CustomerAddressEdit`, {
+//         const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Customer/CustomerAddressEdit`, {
 //           method: 'POST',
 //           headers: {
 //             'Content-Type': 'application/json',
@@ -3474,7 +3480,7 @@ export default GroceryPaymentmethod;
 //     };
 
 //     let response = await fetch(
-//       `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+//       `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
 //       {
 //         method: "PUT",
 //         headers: { "Content-Type": "application/json" },
@@ -3501,7 +3507,7 @@ export default GroceryPaymentmethod;
 //         };
 
 //         let resp = await fetch(
-//           `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(id)}`,
+//           `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(id)}`,
 //           {
 //             method: "PUT",
 //             headers: { "Content-Type": "application/json; charset=utf-8" },
@@ -3511,7 +3517,7 @@ export default GroceryPaymentmethod;
 
 //         if (!resp.ok) {
 //           resp = await fetch(
-//             `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints/${encodeURIComponent(id)}`,
+//             `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints/${encodeURIComponent(id)}`,
 //             {
 //               method: "PUT",
 //               headers: { "Content-Type": "application/json; charset=utf-8" },
@@ -3537,7 +3543,7 @@ export default GroceryPaymentmethod;
 //     localStorage.removeItem(`cartMeta_${groceryItemId}`);
 
 //    if (selectedPayment === 'online') {
-//      response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`, {
+//      response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`, {
 //       method: 'PUT',
 //       headers: {
 //         'Content-Type': 'application/json',
@@ -3555,7 +3561,7 @@ export default GroceryPaymentmethod;
 //     window.alert(`We are Redirecting to the Payment Page! Your reference number is ${martId}.`);
 //     window.location.href = `/groceryOnlinePayment/${groceryItemId}`;
 //   } else if (selectedPayment === 'cash') {
-//     response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`, {
+//     response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`, {
 //       method: 'PUT',
 //       headers: {
 //         'Content-Type': 'application/json',
@@ -3618,7 +3624,7 @@ export default GroceryPaymentmethod;
 
 //     try {
 //       const response = await fetch(
-//         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Customer/CustomerAddressEdit`,
+//         `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Customer/CustomerAddressEdit`,
 //         {
 //           method: "POST",
 //           headers: {
@@ -3723,7 +3729,7 @@ export default GroceryPaymentmethod;
 //         Limit: item.limit || 0,
 //       };
 //       const res = await fetch(
-//         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${encodeURIComponent(item.id)}`,
+//         `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${encodeURIComponent(item.id)}`,
 //         {
 //           method: "PUT",
 //           headers: { "Content-Type": "application/json" },
@@ -3749,7 +3755,7 @@ export default GroceryPaymentmethod;
 //   try {
 //     const primaryAddress = addresses.find((addr) => addr.type === "primary");
 //     const mobileNumber = primaryAddress?.mobileNumber || primaryAddress?.mobileNumber; 
-//     const response = await fetch("https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Auth/sendLmartsms", {
+//     const response = await fetch("https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Auth/sendLmartsms", {
 //       method: "POST",
 //       headers: {
 //         "Content-Type": "application/json",

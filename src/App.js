@@ -133,6 +133,8 @@ import AdminGroceryDashboard from './AdminGroceryDashboard.js';
 import DeliveryPartnerPaymentMethod from './DeliveryPartnerPaymentMethod.js';
 import AdminRegistrationNumbers from './AdminRegisterationNumbers.js';
 import GroceryComboOffer from './GroceryComboOffer.js';
+import AdminPushNotifications from './AdminPushNotifications.js';
+import AdminLiveChat from './AdminLiveChat.js';
 // import DeliveryPartnerDashboard from './DeliveryPartnerDashboard.js';
 // import OneRupeeGroceryItems from './OneRupeeGroceryItems.js';
 // import CustomerLocation from "./CustomerLocation.js";
@@ -175,6 +177,8 @@ function App() {
           {/* className="mt-100" */}       
           <Routes> 
             <Route path="/groceryComboOffer/:userType/:userId/:id" element={<GroceryComboOffer />} />
+            <Route path="/adminPushNotifications/Admin" element={<AdminPushNotifications />} />
+            <Route path="/adminLiveChat/Admin" element={<AdminLiveChat />} />
             <Route path="/adminRegistrations/Admin" element={<AdminRegistrationNumbers />} />
             <Route path= "/deliverypartnerPaymentMethod" element={<DeliveryPartnerPaymentMethod />} />
             {/* <Route path="/deliveryPartnerDashboard/:userType/:userId" element={<DeliveryPartnerDashboard />} /> */}

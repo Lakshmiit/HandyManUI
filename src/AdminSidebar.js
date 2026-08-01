@@ -11,6 +11,8 @@ import ForumIcon from "@mui/icons-material/Forum";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import GroupsIcon from "@mui/icons-material/Groups";
 import DescriptionIcon from '@mui/icons-material/Description';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import LiveHelpIcon from '@mui/icons-material/LiveHelp';
 
 const menuConfig = [
   { MenuIcon: <DashboardIcon />, MenuTitle: "Dashboard", TargetUrl: `https://lakshmisaiserviceproviders.com/Dashboard` },
@@ -31,6 +33,8 @@ const menuConfig = [
   { MenuIcon: <UploadIcon />, MenuTitle: "Upload Product", TargetUrl: "/product-list" },
   { MenuIcon: <DescriptionIcon />, MenuTitle: "Get A Technician Upload Job Description", TargetUrl: "" },
   { MenuIcon: <SupportAgentIcon />, MenuTitle: "Customer Care Helpdesk", TargetUrl: "/CustomerHelpDesk" },
+  { MenuIcon: <NotificationsActiveIcon />, MenuTitle: "Push Notifications", TargetUrl: "/adminPushNotifications/Admin" },
+  { MenuIcon: <LiveHelpIcon />, MenuTitle: "Live Chat", TargetUrl: "/adminLiveChat/Admin" },
   { MenuIcon: <ForumIcon />, MenuTitle: "Chat", TargetUrl: "/Chat" },
   { MenuIcon: <MailOutlineIcon />, MenuTitle: "SMS Center", TargetUrl: "/SMSCenter" },
   { MenuIcon: <GroupsIcon />, MenuTitle: "Meetings", TargetUrl: "/meetings" },

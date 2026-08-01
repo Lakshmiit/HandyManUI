@@ -66,6 +66,9 @@ import HomeElectricalImg from './img/HomeElectrical.jpeg';
 import HomePlumbingImg from './img/HomePlumbing.jpeg'; 
 import OffersBannerModal from './OffersBannerModal.js';
 import { useLocalStorage } from './hooks/useLocalStorage';
+import LiveChatWidget from './components/LiveChatWidget';
+import PushNotificationService from './utils/PushNotificationService';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 // import { appConfig } from "./config";                     
 
 const getMenuList = (userType, userId, category, district ,ZipCode,technicianFullName, isMobile) => {
@@ -138,7 +141,7 @@ const collectionsCategories = [
   ];
 
   const IMAGE_API =
-  `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
+  `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
 
 const ProfilePage = () => {
    const [allProducts, setAllProducts] = useState([]);
@@ -226,6 +229,52 @@ const [walletAmount, setWalletAmount] = useState("0");
 const [walletLoading, setWalletLoading] = useState(true);
 const [showWalletMessage, setShowWalletMessage] = useState(false);
 const [showWelcomeMessage, setShowWelcomeMessage] = useState(false);
+const [pushEnabled, setPushEnabled] = useState(
+  () => localStorage.getItem(`hm_push_enabled_${userId}`) === 'true'
+);
+const [pushDismissed, setPushDismissed] = useState(
+  () => sessionStorage.getItem('hm_push_dismissed') === 'true'
+);
+const [pushLoading, setPushLoading] = useState(false);
+
+const handleEnablePush = async () => {
+  setPushLoading(true);
+  try {
+    const result = await PushNotificationService.initialize(userId);
+    if (result.granted) {
+      setPushEnabled(true);
+      localStorage.setItem(`hm_push_enabled_${userId}`, 'true');
+      PushNotificationService.show(
+        'Notifications Enabled!',
+        'You will now receive order updates and offers from Handyman.'
+      );
+    } else {
+      alert(result.reason || 'Could not enable notifications. Please allow notifications in your browser settings.');
+    }
+  } catch (err) {
+    console.error('Push notification error:', err);
+  } finally {
+    setPushLoading(false);
+  }
+};
+
+const handleDismissPush = () => {
+  setPushDismissed(true);
+  sessionStorage.setItem('hm_push_dismissed', 'true');
+};
+
+/* ── Smart cache refresh: clear stale cache once per day ── */
+useEffect(() => {
+  const CACHE_KEY = 'hm_cache_last_cleared';
+  const ONE_DAY = 24 * 60 * 60 * 1000;
+  const last = Number(localStorage.getItem(CACHE_KEY) || 0);
+  if (Date.now() - last > ONE_DAY) {
+    ImageCache.clearAll().then(() => {
+      localStorage.setItem(CACHE_KEY, String(Date.now()));
+    });
+  }
+}, []);
+
 useEffect(() => {
   console.log(windowSize, state, address, mobileNumber,id, pinCode, paidAmount, paymentMode, martId,status, imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery,error, showMenu, products, selectedCategory, dress);
 }, [windowSize, state, address, mobileNumber, id, pinCode, paidAmount, paymentMode, martId, status, imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery, error,showMenu, products, selectedCategory, dress]);
@@ -270,7 +319,7 @@ const fetchWalletAmount = useCallback(async () => {
   try {
     setWalletLoading(true);
     const response = await fetch(
-      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/OffersTransactions/GetOfferTransactionByUserId?userId=${userId}`
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/OffersTransactions/GetOfferTransactionByUserId?userId=${userId}`
     );
     const data = await response.json();
     if (data && data.length > 0) {
@@ -301,7 +350,7 @@ useEffect(() => {
   async function fetchProductsAndFirstImages(warm = false, signal) {
     try {
       if (!warm) setImageLoading(true);
-      const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${category}`;
+      const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${category}`;
 
       const { data: items } = await axios.get(url, { signal });
       const safeItems = (Array.isArray(items) ? items : []).map(normalizeProduct);
@@ -332,7 +381,7 @@ useEffect(() => {
       const fetchOne = async ({ productId, photo }) => {
         try {
           const res = await fetch(
-            `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`,
+            `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`,
             { signal }
           );
 
@@ -484,7 +533,7 @@ useEffect(() => {
   //       message: "User fetching grocery items in profile page"
   //     };
   //     await axios.post(
-  //       `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/LmartLogs/UploadlogsDetails`,
+  //       `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/LmartLogs/UploadlogsDetails`,
   //       payload
   //     );
   //   } catch (err) {
@@ -496,7 +545,7 @@ useEffect(() => {
     if (showLoader) setLoading(true);
     try {
       const res = await axios.get(
-        `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetAllGroceryItems`
+        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetAllGroceryItems`
       );
       const normalized = (Array.isArray(res.data) ? res.data : [])
         .map(normalizeProduct)
@@ -602,7 +651,7 @@ const handleAddClick = (product) => {
 //   const fetchDeliveryData = async () => {
 //     try {    
 //       const response = await fetch(
-//         `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetProductDetails?id=${id}`
+//         `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetProductDetails?id=${id}`
 //       );
 //       if (!response.ok) {
 //         throw new Error("Failed to fetch grocery product data");
@@ -677,7 +726,7 @@ const handleAddClick = (product) => {
  useEffect(() => {   
   const fetchGroceryData = async () => {
     try {
-      const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetMartTicketsByUserId?userId=${userId}`);
+      const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetMartTicketsByUserId?userId=${userId}`);
       if (!response.ok) {
       throw new Error('Failed to fetch ticket data');
     }
@@ -719,7 +768,7 @@ const handleDeliveryPartnerClick = async () => {
   clickLock.current = true;
   try {
     const res = await axios.get(
-      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/DeliveryPartner/GetDeliveryPartnerDetailsByUserId?userId=${userId}`
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/DeliveryPartner/GetDeliveryPartnerDetailsByUserId?userId=${userId}`
     );
     const raw = res?.data ?? null;
     const profile = Array.isArray(raw)
@@ -763,7 +812,7 @@ const isActionLocked =
 const handleStatusUpdate = async (ticket, newStatus) => {
   try {
     const detailsResponse = await fetch(
-      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetProductDetails?id=${ticket.id}`
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetProductDetails?id=${ticket.id}`
     );
 
     if (!detailsResponse.ok) {
@@ -793,7 +842,7 @@ const handleStatusUpdate = async (ticket, newStatus) => {
     };
     console.log("FINAL PAYLOAD:", payload);
     const response = await fetch(      
-      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${ticket.id}`,
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UpdateProductDetails/${ticket.id}`,
       {
         method: "PUT",
         headers: {
@@ -820,7 +869,7 @@ const handleStatusUpdate = async (ticket, newStatus) => {
 const handleUpdatePaymentMethod = async (ticket) => {
   try {
     const detailsResponse = await fetch(
-      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetProductDetails?id=${ticket.id}`
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetProductDetails?id=${ticket.id}`
     );
 
     if (!detailsResponse.ok) {
@@ -852,7 +901,7 @@ const handleUpdatePaymentMethod = async (ticket) => {
     };
     console.log("FINAL PAYLOAD:", payload);
     const response = await fetch(
-      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${ticket.id}`,
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UpdateProductDetails/${ticket.id}`,
       {
         method: "PUT",
         headers: {
@@ -973,11 +1022,11 @@ const handleDressCategoryClick = async (category) => {
           const fetchAllTickets = async () => {
             try { 
               const [ticketResponse, productResponse, technicianResponse, groceriesResponse, lakshmiResponse] = await Promise.all([
-                fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=raiseTicket`),
-                fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=buyProduct`),
-                fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=bookTechnician`),
-                fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=mart`),
-                fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=collections`),
+                fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=raiseTicket`),
+                fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=buyProduct`),
+                fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=bookTechnician`),
+                fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=mart`),
+                fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=collections`),
               ]);      
               if (!ticketResponse.ok || !productResponse.ok || !technicianResponse || !groceriesResponse || !lakshmiResponse) {
                 throw new Error("Failed to fetch ticket, product and technician data");
@@ -1084,7 +1133,7 @@ const handleCustomerCareCall = () => {
           try {
             let apiUrl = "";
             if (userType === "customer") {
-              apiUrl = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`;
+              apiUrl = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`;
             }
             if (!apiUrl) return;
             const response = await axios.get(apiUrl);
@@ -1123,7 +1172,7 @@ const fetchImageUrl = async (photoId) => {
   try { 
     if (!photoId) return;
     const response = await axios.get(
-      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photoId}`
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photoId}`
     );
     if (response.status === 200 && response.data.imageData) {
       const imageUrl = `data:image/jpeg;base64,${response.data.imageData}`;
@@ -2862,6 +2911,42 @@ const filteredGroceryData = groceryData.filter((t) =>
     </Button>
   </Modal.Footer>
 </Modal>
+
+{/* Push Notification Opt-in Banner */}
+{!pushEnabled && !pushDismissed && userId && (
+  <div className="push-notification-banner">
+    <div className="push-notification-banner-content">
+      <NotificationsActiveIcon style={{ fontSize: 24, color: "#ff9800" }} />
+      <div style={{ flex: 1 }}>
+        <strong>Stay Updated!</strong>
+        <p style={{ margin: 0, fontSize: 13 }}>Get instant alerts on orders, offers & more</p>
+      </div>
+      <button
+        className="btn btn-sm btn-warning"
+        onClick={handleEnablePush}
+        disabled={pushLoading}
+        style={{ whiteSpace: "nowrap" }}
+      >
+        {pushLoading ? "Enabling..." : "Enable"}
+      </button>
+      <button
+        className="btn btn-sm btn-light ms-1"
+        onClick={handleDismissPush}
+        style={{ padding: "2px 8px", fontSize: 16, lineHeight: 1 }}
+        title="Dismiss"
+      >
+        &times;
+      </button>
+    </div>
+  </div>
+)}
+
+{/* Live Chat Widget */}
+<LiveChatWidget
+  userId={userId}
+  userName={profile.fullName || fullName || "Customer"}
+  userType={userType}
+/>
          <Footer />
         </>    
   );

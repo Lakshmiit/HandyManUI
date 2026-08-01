@@ -12,6 +12,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { CartStorage } from "./CartStorage";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ImageCache from "./utils/ImageCache";
+import { getImageFilename } from "./utils/imageSource";
 import Footer from "./Footer.js";
 // import { appConfig } from "./config";
 
@@ -115,7 +116,7 @@ const GroceryOfferItems = () => {
         discount: Number(product?.discount || 0),
         afterDiscountPrice: Number(product?.afterDiscount || 0),
         stockLeft: Number(product?.stockLeft || 0),
-        image: product?.images?.[0] || "",
+        image: getImageFilename(product?.images?.[0]),
         code: product?.code || "",
         units: product?.units || "",
         limit: product?.limit || "",
@@ -241,7 +242,7 @@ const GroceryOfferItems = () => {
     async function fetchProductsAndFirstImages(warm = false, signal) {
       try {
         if (!warm) setImageLoading(true);
-        const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(
+        const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(
           selectedCategory,
         )}`;
         const { data: items } = await axios.get(url, { signal });
@@ -290,7 +291,7 @@ const GroceryOfferItems = () => {
         const fetchOne = async ({ productId, photo }) => {
           try {
             const res = await fetch(
-              `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
+              `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
               { signal },  
             );
             const json = await res.json();

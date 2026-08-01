@@ -55,7 +55,7 @@ useEffect(() => {
       const ctrl = new AbortController();
       try {
         const res1 = await fetch(
-          `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`,
+          `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`,
           { signal: ctrl.signal }
         );
         if (!res1.ok) throw new Error("Failed to fetch product details");
@@ -87,7 +87,7 @@ useEffect(() => {
         }
 
         const requests = productNames.map(async (name) => {
-          const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
+          const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
             name
           )}`;
           const res = await fetch(url, { signal: ctrl.signal });
@@ -135,7 +135,7 @@ useEffect(() => {
   const fetchGroceryData = async () => {
     try {
       const response = await fetch(
-        `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`
+        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch grocery product data");
@@ -247,7 +247,7 @@ useEffect(() => {
     units: units,   
   };
 
-    let response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`, {
+    let response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -286,7 +286,7 @@ useEffect(() => {
         if (!item.image) return;
         try {
           const res = await fetch(
-            `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
+            `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
               item.image
             )}`,
             { signal: controller.signal }
