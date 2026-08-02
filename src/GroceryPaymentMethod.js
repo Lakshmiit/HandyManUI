@@ -26,9 +26,16 @@ const CASHBACK_CONFIG_TOKENS = [
 ];
 
 const normalizeRuleNumber = (value) => {
+  if (
+    value === "" ||
+    value === null ||
+    value === undefined
+  ) {
+    return null;
+  }
+
   const n = Number(value);
   return Number.isFinite(n) ? n : null;
-};
 
 const normalizeCashbackRule = (rule) => {
   if (!rule || typeof rule !== "object") return null;
@@ -135,17 +142,23 @@ const getActiveCashbackRulesFromBanners = (banners) => {
 
 const computeCashback = (total, rules) => {
   const numericTotal = Number(total) || 0;
-  let matchedCashback = 0;
 
-  for (const rule of Array.isArray(rules) ? rules : []) {
-    const minOk = numericTotal >= rule.minAmount;
-    const maxOk = rule.maxAmount === null || numericTotal <= rule.maxAmount;
-    if (minOk && maxOk) {
-      matchedCashback = Number(rule.cashback) || 0;
+  for (const rule of rules) {
+    const min = Number(rule.minAmount);
+
+    const max =
+      rule.maxAmount === null ||
+      rule.maxAmount === undefined ||
+      rule.maxAmount === ""
+        ? Infinity
+        : Number(rule.maxAmount);
+
+    if (numericTotal >= min && numericTotal <= max) {
+      return Number(rule.cashback) || 0;
     }
   }
 
-  return matchedCashback;
+  return 0;
 };
 
 const GroceryPaymentmethod = () => {
