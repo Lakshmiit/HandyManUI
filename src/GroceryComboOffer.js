@@ -5,8 +5,9 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ImageCache from "./utils/ImageCache";
 import { CartStorage } from "./CartStorage";
+import { getImageFilename, imageValueToUrl } from "./utils/imageSource";
 
-const API_BASE = "https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net";
+const API_BASE = "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net";
 
 const getLimit = (product) => {
   if (!product) return Infinity;
@@ -25,27 +26,27 @@ const clampQtyFor = (product, qty) => {
 const fetchImage = async (photo, signal) => {
   if (!photo) return null;
 
-  const blobUrl = ImageCache.getBlobUrl(photo);
+  const filename = getImageFilename(photo);
+  if (!filename) return imageValueToUrl(photo) || null;
+
+  const blobUrl = ImageCache.getBlobUrl(filename);
   if (blobUrl) return blobUrl;
 
-  const cached = await ImageCache.getBase64(photo);
+  const cached = await ImageCache.getBase64(filename);
   if (cached) {
     const dataUrl = `data:image/jpeg;base64,${cached}`;
-    ImageCache.setBlobUrl(photo, dataUrl); 
+    ImageCache.setBlobUrl(filename, dataUrl);
     return dataUrl;
   }
 
   try {
-    const res = await fetch(
-      `${API_BASE}/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
-      { signal }
-    );
+    const res = await fetch(imageValueToUrl(filename), { signal });
     const json = await res.json();
     const b64 = json?.imageData || "";
     if (b64) {
       const dataUrl = `data:image/jpeg;base64,${b64}`;
-      await ImageCache.setBase64(photo, b64);       
-      ImageCache.setBlobUrl(photo, dataUrl);         
+      await ImageCache.setBase64(filename, b64);
+      ImageCache.setBlobUrl(filename, dataUrl);
       return dataUrl;
     }
   } catch (err) {
@@ -255,7 +256,7 @@ const GroceryComboOffer = () => {
       discount: Number(mainProduct.discount || 0),
       afterDiscountPrice: Number(mainProduct.afterDiscount || 0),
       stockLeft: Number(mainProduct.stockLeft || 0),
-      image: mainProduct.images?.[0] || "",
+      image: getImageFilename(mainProduct.images?.[0]),
       code: mainProduct.code || "",
       units: mainProduct.units || "",
     }));
@@ -347,7 +348,9 @@ const GroceryComboOffer = () => {
     items: selectedItems.map(({ category, productName, productData }) => ({
       category,
       productName,
-      image: Array.isArray(productData?.images) ? productData.images[0] : null,
+      image: getImageFilename(
+        Array.isArray(productData?.images) ? productData.images[0] : null
+      ),
     })),
   }));
 

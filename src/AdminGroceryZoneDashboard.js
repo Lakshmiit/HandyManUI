@@ -28,7 +28,7 @@ const AdminGroceryZoneDashboard = () => {
 
   const fetchGroceryData = useCallback(async (isInitial = false) => {
     try {
-      const res = await fetch("https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetAllMartItems");
+      const res = await fetch("https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetAllMartItems");
       const data = await res.json();
 
       setGroceryList((prev) => {

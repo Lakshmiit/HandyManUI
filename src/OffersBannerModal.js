@@ -8,7 +8,7 @@ import './App.css';
 import ImageCache from "./utils/ImageCache";
 
 const IMAGE_API =
-  "https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=";
+  "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=";
 
 const OffersBannerModal = () => {
   const [showOffersModal, setShowOffersModal] = useState(false);
@@ -26,7 +26,7 @@ const [offerImages, setOfferImages] = useState({});
     const fetchOffers = async () => {
       try {
         const res = await axios.get(
-          "https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UpLoadBannners/GetBanners"
+          "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UpLoadBannners/GetBanners"
         );
         setOffersData(res.data);
       } catch (err) {

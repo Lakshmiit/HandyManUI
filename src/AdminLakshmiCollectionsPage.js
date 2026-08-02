@@ -51,7 +51,7 @@ const AdminLakshmiCollectionsPage = () => {
   const downloadImage = async (fileName) => {
     if (!fileName) return null;
     const res = await fetch(
-      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
         fileName
       )}`
     );
@@ -78,6 +78,7 @@ const AdminLakshmiCollectionsPage = () => {
 
   // Fetch order + images (same pattern as list page)
   useEffect(() => {
+    const blobUrls = [];
     const fetchCollectionData = async () => {
       try {
         if (!collectionId) {
@@ -86,7 +87,7 @@ const AdminLakshmiCollectionsPage = () => {
         }
         setImageLoading(true);
         const response = await fetch(
-          `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/LakshmiCollection/GetLakshmicollectionsById?id=${collectionId}`
+          `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/LakshmiCollection/GetLakshmicollectionsById?id=${collectionId}`
         );
         if (!response.ok) throw new Error("Failed to fetch collection details");
         const data = await response.json();
@@ -121,6 +122,9 @@ const AdminLakshmiCollectionsPage = () => {
           items.map(async (it) => {
             try {
               const url = await downloadImage(it.productImage);
+              if (url && url.startsWith("blob:")) {
+                blobUrls.push(url);
+              }
               return [it.id, url ? [url] : []]; 
             } catch (e) {
               console.warn("Image fetch failed for", it.productImage, e);
@@ -145,12 +149,10 @@ const AdminLakshmiCollectionsPage = () => {
     };
     fetchCollectionData();
     return () => {
-      Object.values(imageUrls).forEach((arr) => {
-        (arr || []).forEach((src) => {
-          if (src && src.startsWith("blob:")) URL.revokeObjectURL(src);
-        });
+      blobUrls.forEach((src) => {
+        if (src && src.startsWith("blob:")) URL.revokeObjectURL(src);
       });
-    }; // eslint-disable-next-line react-hooks/exhaustive-deps
+    };
   }, [collectionId]);
 
   const openZoom = (src) => {

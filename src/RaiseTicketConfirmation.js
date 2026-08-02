@@ -1,14 +1,8 @@
-// import React from "react";
-// import { useParams } from "react-router-dom";
+/*
+ * Compile-only shim generated because this module was absent from published source maps.
+ * Replace it with the original application source to restore its feature behavior.
+ */
 
-// const RaiseTicketConfirmation = () => {
-// const {ticketId} = useParams();
-// const {fullName} = useParams();
-// return(
-//     <div>
-//    Dear ${fullName} Greetings!!. Ticket has been submitted successfully! Your reference number is ${ticketId}.
-//     </div>
-// );
-// };
+const UnavailableRecoveredModule = () => null;
 
-// export default RaiseTicketConfirmation
+export default UnavailableRecoveredModule;

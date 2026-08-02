@@ -11,6 +11,7 @@ import "./App.css";
 import CartImg from "./img/Cart.jpeg";
 import { useNavigate, useParams } from "react-router-dom";
 import Footer from "./Footer.js";
+import { getImageFilename, imageValueToUrl } from "./utils/imageSource";
 // import { appConfig } from "./config";
 // import { useLocation } from "react-router-dom";
  
@@ -54,11 +55,10 @@ useEffect(() => {
     const map = {};
     await Promise.allSettled(
       comboInfo.items.map(async ({ productName, image }) => {
-        if (!image) return;
+        const filename = getImageFilename(image);
+        if (!filename) return;
         try {
-          const res = await fetch(
-            `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(image)}`
-          );
+          const res = await fetch(imageValueToUrl(filename));
           const contentType = res.headers.get("content-type") || "";
           if (contentType.includes("application/json")) {
             const data = await res.json();
@@ -79,7 +79,7 @@ useEffect(() => {
   const fetchCustomerData = useCallback(async () => {
       try {
         const response = await fetch(
-          `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Address/GetAddressById/${userId}`,
+          `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Address/GetAddressById/${userId}`,
         );
         if (!response.ok) {
           throw new Error("Failed to fetch customer profile data");
@@ -120,9 +120,6 @@ useEffect(() => {
   }
 }, [userId, fetchCustomerData]);
 
-  const IMAGE_DOWNLOAD =
-    `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
-
   // function toNum(v, f = 0) {
   //   const n = Number(v);
   //   return Number.isFinite(n) ? n : f;
@@ -155,7 +152,7 @@ useEffect(() => {
         const results = await Promise.allSettled(
           uniqueNames.map(async (name) => {
             const res = await fetch(
-              `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
+              `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
                 name,
               )}`,
             );
@@ -210,23 +207,8 @@ useEffect(() => {
     return limitMapRef.current[key] ?? Infinity;
   };
   
-  function getFilenameFromValue(value) {
-    if (!value) return "";
-    const v = String(value);
-    const i = v.indexOf("generatedfilename=");
-    if (i >= 0)
-      return decodeURIComponent(v.slice(i + "generatedfilename=".length));
-    if (/^https?:\/\//i.test(v)) return "";
-    return v.trim();
-  }
-
  const fileToUrl = useCallback((filenameOrUrl) => {
-  if (!filenameOrUrl) return "";
-  if (/^https?:\/\//i.test(String(filenameOrUrl))) {
-    return filenameOrUrl;
-  }
-  return IMAGE_DOWNLOAD + encodeURIComponent(filenameOrUrl);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  return imageValueToUrl(filenameOrUrl);
 }, []);
 
   const buildCartFromStorage = React.useCallback(() => {
@@ -236,12 +218,8 @@ useEffect(() => {
         .filter((p) => Number(p.qty) > 0)
         .map((p, idx) => {
           const persisted = p.image ?? p.productImage ?? "";
-          const imageFilename = getFilenameFromValue(persisted);
-          const imageUrl = imageFilename
-            ? fileToUrl(imageFilename)
-            : typeof persisted === "string"
-              ? persisted
-              : "";
+          const imageFilename = getImageFilename(persisted);
+          const imageUrl = imageValueToUrl(persisted);
           const rawQty = Number(p.qty);
           const limit = getDynamicLimitRef(p.productName ?? p.name ?? "");
           const stock = Number(p.stockLeft || Infinity);
@@ -263,7 +241,6 @@ useEffect(() => {
         }),
     );
     return items;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -303,7 +280,7 @@ useEffect(() => {
               const blobUrl = URL.createObjectURL(blob);
               return { fn, url: blobUrl };
             } else {
-              return { fn, url: `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(fn)}` };
+              return { fn, url: `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(fn)}` };
             }
           }),
         );
@@ -340,7 +317,7 @@ useEffect(() => {
         units: it.units,
         image:
           it.imageFilename ||
-          getFilenameFromValue(it.imageUrl) ||
+          getImageFilename(it.imageUrl) ||
           it.imageUrl ||
           null,
       });
@@ -404,7 +381,7 @@ const handleQtyChange = async (rowId, delta) => {
 const fetchLatestStockForHandyman = useCallback(async (productName) => {
   try {
     const res = await fetch(
-      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Product/GetProductsByProductName?productName=${encodeURIComponent(productName)}`
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Product/GetProductsByProductName?productName=${encodeURIComponent(productName)}`
     );
     if (!res.ok) return Infinity;
     const data = await res.json();
@@ -433,7 +410,7 @@ const fetchLatestStockForHandyman = useCallback(async (productName) => {
   }
     try {
     const res = await fetch(
-      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(productName)}`
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(productName)}`
     );
     if (!res.ok) return Infinity;
     const data = await res.json();
@@ -475,8 +452,8 @@ const refreshAllCartStocks = useCallback(async () => {
       stockLeft: Number(p.stockLeft || 0),
       code: p.code,
       units: p.units,
-      imageFilename: getFilenameFromValue(p.image ?? p.productImage ?? ""),
-      imageUrl: fileToUrl(p.image ?? p.productImage ?? ""),
+      imageFilename: getImageFilename(p.image ?? p.productImage ?? ""),
+      imageUrl: imageValueToUrl(p.image ?? p.productImage ?? ""),
     }))
   );
 
@@ -522,12 +499,11 @@ const refreshAllCartStocks = useCallback(async () => {
   setCartItems(updated);
   writeBackToStorage(updated);
   setGrandSummary(computeTotals(updated));
-}, [fetchLatestStock, getDynamicLimit, writeBackToStorage, fileToUrl]);
+}, [fetchLatestStock, getDynamicLimit, writeBackToStorage]);
 
 useEffect(() => {
   refreshAllCartStocks();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-}, []);
+}, [refreshAllCartStocks]);
 
 useEffect(() => {
   const handleFocus = () => {
@@ -683,7 +659,7 @@ const removeEntireCombo = () => {
 
   //   try {
   //     const response = await fetch(
-  //       `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UploadProductDetails`,
+  //       `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UploadProductDetails`,
   //       {
   //         method: "POST",
   //         headers: { "Content-Type": "application/json" },
@@ -781,7 +757,7 @@ if (activeItems.length === 0 && !hasCombo) {
     ? [...allCategories.map((cat) => {
         const products = (cat.products || []).map((p) => {
           const persisted = p.image ?? p.productImage ?? "";
-          const filename = getFilenameFromValue(persisted);
+          const filename = getImageFilename(persisted);
           const safeImage = filename || (typeof persisted === "string" ? persisted : "");
           return {
             productName: p.productName?.trim() || p.name?.trim() || "",
@@ -807,7 +783,7 @@ if (activeItems.length === 0 && !hasCombo) {
     : allCategories.map((cat) => {
         const products = (cat.products || []).map((p) => {
           const persisted = p.image ?? p.productImage ?? "";
-          const filename = getFilenameFromValue(persisted);
+          const filename = getImageFilename(persisted);
           const safeImage = filename || (typeof persisted === "string" ? persisted : "");
           return {
             productName: p.productName?.trim() || p.name?.trim() || "",
@@ -864,12 +840,13 @@ if (activeItems.length === 0 && !hasCombo) {
     GrandTotal: finalGrandTotal.toString(),
     TotalItemsSelected: totalItemCount.toString(),
     categories: finalCategories,  
-    // Location: '', 
+    SlotTime : ""
+       // Location: '', 
   };
       
   try {
     const response = await fetch(
-      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UploadProductDetails`,
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UploadProductDetails`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -910,7 +887,7 @@ const createWelcomeWalletIfEligible = async () => {
 
     // Step 1: Verify Guest User
     const guestResponse = await fetch(
-      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Customer/GuestUserExistingVerification/${mobileNumber}`
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Customer/GuestUserExistingVerification/${mobileNumber}`
     );
     if (!guestResponse.ok) return;
     const guestData = await guestResponse.json();
@@ -921,7 +898,7 @@ const createWelcomeWalletIfEligible = async () => {
 
     // Step 2: Check if wallet transaction already exists
     const offerResponse = await fetch(
-      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/OffersTransactions/GetOfferTransactionByUserId?userId=${userId}`
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/OffersTransactions/GetOfferTransactionByUserId?userId=${userId}`
     );
 
     if (offerResponse.ok) {
@@ -947,7 +924,7 @@ const createWelcomeWalletIfEligible = async () => {
     };
 
     const createResponse = await fetch(
-      "https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/OffersTransactions/UploadOffersTransactionsDetails",
+      "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/OffersTransactions/UploadOffersTransactionsDetails",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -1543,7 +1520,7 @@ export default GroceryCartPage;
 //         if (!image) return;
 //         try {
 //           const res = await fetch(
-//             `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(image)}`
+//             `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(image)}`
 //           );
 //           const contentType = res.headers.get("content-type") || "";
 //           if (contentType.includes("application/json")) {
@@ -1565,7 +1542,7 @@ export default GroceryCartPage;
 //   const fetchCustomerData = useCallback(async () => {
 //       try {
 //         const response = await fetch(
-//           `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Address/GetAddressById/${userId}`,
+//           `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Address/GetAddressById/${userId}`,
 //         );
 //         if (!response.ok) {
 //           throw new Error("Failed to fetch customer profile data");
@@ -1607,7 +1584,7 @@ export default GroceryCartPage;
 // }, [userId, fetchCustomerData]);
 
 //   const IMAGE_DOWNLOAD =
-//     `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
+//     `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
 
 //   // function toNum(v, f = 0) {
 //   //   const n = Number(v);
@@ -1632,7 +1609,7 @@ export default GroceryCartPage;
 //         const results = await Promise.allSettled(
 //           uniqueNames.map(async (name) => {
 //             const res = await fetch(
-//               `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
+//               `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
 //                 name,
 //               )}`,
 //             );
@@ -1780,7 +1757,7 @@ export default GroceryCartPage;
 //               const blobUrl = URL.createObjectURL(blob);
 //               return { fn, url: blobUrl };
 //             } else {
-//               return { fn, url: `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(fn)}` };
+//               return { fn, url: `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(fn)}` };
 //             }
 //           }),
 //         );
@@ -1881,7 +1858,7 @@ export default GroceryCartPage;
 //   const fetchLatestStock = useCallback(async (productName) => {
 //   try {
 //     const res = await fetch(
-//       `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(productName)}`
+//       `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(productName)}`
 //     );
 //     const data = await res.json();
 //     const normalizedInput = normalizeName(productName);
@@ -2126,7 +2103,7 @@ export default GroceryCartPage;
 
 //   //   try {
 //   //     const response = await fetch(
-//   //       `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UploadProductDetails`,
+//   //       `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UploadProductDetails`,
 //   //       {
 //   //         method: "POST",
 //   //         headers: { "Content-Type": "application/json" },
@@ -2294,7 +2271,7 @@ export default GroceryCartPage;
 
 //   try {
 //     const response = await fetch(
-//       `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UploadProductDetails`,
+//       `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UploadProductDetails`,
 //       {
 //         method: "POST",
 //         headers: { "Content-Type": "application/json" },

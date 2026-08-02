@@ -45,7 +45,7 @@ useEffect(() => {
     try {
       setSelectedCategory(encodedCategory);
       setImageLoading(true);
-      const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadLakshmiCollection/GetAllLakshmiCollectionsByCategory?category=${encodedCategory}`;
+      const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadLakshmiCollection/GetAllLakshmiCollectionsByCategory?category=${encodedCategory}`;
       const response = await axios.get(url);
       const list = Array.isArray(response.data) ? response.data : [];
       const approvedList = list.filter(
@@ -58,7 +58,7 @@ useEffect(() => {
         if (!firstPhoto) return;
         try {
           const res = await fetch(
-            `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(firstPhoto)}`
+            `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(firstPhoto)}`
           );
           let blob;
           const ct = res.headers.get("content-type") || "";

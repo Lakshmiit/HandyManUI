@@ -11,12 +11,12 @@ import "./App.css";
 import CartImg from "./img/Cart.jpeg";
 import { useNavigate, useParams } from "react-router-dom";
 import Footer from "./Footer.js";
+import { IMAGE_DOWNLOAD_URL, getImageFilename, imageValueToUrl } from "./utils/imageSource";
 // import { appConfig } from "./config";
 
 // import { useLocation } from "react-router-dom";
  
-const IMAGE_DOWNLOAD =
-  `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
+const IMAGE_DOWNLOAD = IMAGE_DOWNLOAD_URL;
 
 const getLimit = (item) => {
   const limit = Number(item?.limit);
@@ -33,21 +33,7 @@ const getLimit = (item) => {
   return Math.max(0, Math.min(qty, maxAllowed));
 };
 
-const getFilenameFromValue = (value) => {
-  if (!value) return "";
-  const v = String(value);
-  const i = v.indexOf("generatedfilename=");
-  if (i >= 0)
-    return decodeURIComponent(v.slice(i + "generatedfilename=".length));
-  if (/^https?:\/\//i.test(v)) return "";
-  return v.trim();
-};
-
-const fileToUrl = (filenameOrUrl) => {
-  if (!filenameOrUrl) return "";
-  if (/^https?:\/\//i.test(String(filenameOrUrl))) return filenameOrUrl;
-  return `${IMAGE_DOWNLOAD}${encodeURIComponent(String(filenameOrUrl))}`;
-};
+const fileToUrl = imageValueToUrl;
 
 const isValidCartItem = (it) => {
   const hasName = Boolean(String(it.name || "").trim());
@@ -60,12 +46,8 @@ const mapSavedToItems = (saved) => {
   return saved.flatMap((cat) =>
     (cat.products || []).map((p, idx) => {
       const persisted = p.image ?? p.productImage ?? "";
-      const imageFilename = getFilenameFromValue(persisted);
-      const imageUrl = imageFilename
-        ? fileToUrl(imageFilename)
-        : typeof persisted === "string"
-        ? persisted
-        : "";
+      const imageFilename = getImageFilename(persisted);
+      const imageUrl = imageValueToUrl(persisted);
 
       const qty = Number(p.qty || p.noOfQuantity || 0);
       const mrp = Number(p.mrp || 0);
@@ -122,7 +104,7 @@ const writeBackToStorage = (items) => {
       limit: it.limit,
       image:
         it.imageFilename ||
-        getFilenameFromValue(it.imageUrl) ||
+        getImageFilename(it.imageUrl) ||
         it.imageUrl ||
         null,
     });
@@ -170,7 +152,7 @@ console.log("Wallet:", walletAmount);
 
 const getReferralRecord = async (userId) => {
   if (!userId) return null;
-  const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
+  const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
   const res = await fetch(url);
   const text = await res.text();
   let data = [];
@@ -200,7 +182,7 @@ useEffect(() => {
   const fetchCustomerData = useCallback(async () => {
       try {
         const response = await fetch(
-          `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Address/GetAddressById/${userId}`,
+          `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Address/GetAddressById/${userId}`,
         );
         if (!response.ok) {
           throw new Error("Failed to fetch customer profile data");
@@ -385,7 +367,7 @@ const handleQtyChange = async (rowId, delta) => {
 const fetchLatestStock = useCallback(async (productName) => {
   try {
     const res = await fetch(
-      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(productName)}`
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(productName)}`
     );
     const data = await res.json();
     const normalizedInput = normalizeName(productName);
@@ -459,8 +441,7 @@ const refreshAllCartStocks = useCallback(async () => {
 
 useEffect(() => {
   refreshAllCartStocks();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, []);
+}, [refreshAllCartStocks]);
 
 useEffect(() => {
   const handleFocus = () => refreshAllCartStocks();
@@ -557,7 +538,7 @@ const validateCartStockBeforeCheckout = async () => {
         const products = (cat.products || [])   
           .map((p) => {
             const persisted = p.image ?? p.productImage ?? "";
-            const filename = getFilenameFromValue(persisted);
+            const filename = getImageFilename(persisted);
             const safeImage =
               filename || (typeof persisted === "string" ? persisted : "");
             const qty = Number(p.qty || p.noOfQuantity || 0);
@@ -610,7 +591,7 @@ const validateCartStockBeforeCheckout = async () => {
     };
     try {
       const response = await fetch(
-        `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UploadProductDetails`,
+        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UploadProductDetails`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

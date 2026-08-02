@@ -12,6 +12,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { CartStorage } from "./CartStorage";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ImageCache from "./utils/ImageCache";
+import { getImageFilename, imageValueToUrl } from "./utils/imageSource";
 import Footer from "./Footer.js";
 // import { appConfig } from "./config";
 const GroceryCard = () => {
@@ -27,7 +28,7 @@ const [showMenu, setShowMenu] = useState(false);
 const [products, setProducts] = useState([]);
 const [imageUrls, setImageUrls] = useState({});
 // const [imageLoading, setImageLoading] = useState(true);
-const [loadingImages, setLoadingImages] = useState({}); 
+const [, setLoadingImages] = useState({}); 
 const [showZoomModal, setShowZoomModal] = useState(false);
 const [zoomImage, setZoomImage] = useState("");
 const [cart, setCart] = useState({});
@@ -183,7 +184,7 @@ return idNum;
 //   async function fetchProductsAndFirstImages() {
 //     try {
 //       setImageLoading(true);
-//       const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
+//       const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
 //       const { data: items } = await axios.get(url, { signal: controller.signal });
 //       const safeItems = Array.isArray(items) ? items : [];
 //       if (cancelled) return;
@@ -212,7 +213,7 @@ return idNum;
 //       const fetchOne = async ({ productId, photo }) => {
 //         try {
 //           const res = await fetch(
-//             `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
+//             `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
 //             { signal: controller.signal }
 //           );
 //           const json = await res.json();
@@ -256,7 +257,7 @@ useEffect(() => {
 
   const fetchProducts = async () => {
     try {
-      const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
+      const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
       const { data: items } = await axios.get(url, { signal: controller.signal });
       const safeItems = Array.isArray(items) ? items : [];
 
@@ -273,59 +274,49 @@ useEffect(() => {
 
       setProducts(sorted);
 
-      const initialLoading = {};
-      safeItems.forEach(p => { initialLoading[p.id] = true; });
-      setLoadingImages(initialLoading);
+      const imageProducts = sorted
+        .map((product) => ({
+          product,
+          photo: Array.isArray(product.images) ? product.images[0] : null,
+        }))
+        .filter(({ photo }) => Boolean(photo));
 
-      safeItems.forEach(async (product) => {
-        const photo = Array.isArray(product.images) ? product.images[0] : null;
+      setImageUrls({});
+      setLoadingImages(
+        Object.fromEntries(imageProducts.map(({ product }) => [product.id, true]))
+      );
 
-        if (!photo) {
-          setLoadingImages(prev => ({ ...prev, [product.id]: false }));
-          return;
-        }
-
-        try {
-          const cachedBlob = ImageCache.getBlobUrl(photo);
-          if (cachedBlob) {
-            setImageUrls(prev => ({ ...prev, [product.id]: cachedBlob }));
+      await Promise.allSettled(
+        imageProducts.map(async ({ product, photo }) => {
+          const filename = getImageFilename(photo);
+          if (!filename) {
+            const directUrl = imageValueToUrl(photo);
+            if (directUrl) {
+              setImageUrls((prev) => ({ ...prev, [product.id]: directUrl }));
+            }
             return;
           }
 
-            const cachedB64 = await ImageCache.getBase64(photo); 
-            if (cachedB64) {
-              const dataUrl = `data:image/jpeg;base64,${cachedB64}`;
-              ImageCache.setBlobUrl(photo, dataUrl);
-              setImageUrls(prev => ({ ...prev, [product.id]: dataUrl }));
-              return;
-            }
+          let imageData = await ImageCache.getBase64(filename);
+          if (!imageData) {
+            const response = await fetch(imageValueToUrl(filename), {
+              signal: controller.signal,
+            });
+            if (!response.ok) throw new Error(`Image request failed: ${response.status}`);
+            const data = await response.json();
+            imageData = data?.imageData || "";
+            if (!imageData) throw new Error("Image response did not contain imageData");
+            await ImageCache.setBase64(filename, imageData);
+          }
 
-          const res = await fetch(
-            `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
-            { signal: controller.signal }
-          );
-          if (!res.ok) {
-              console.error("Image fetch failed, status:", res.status);
-              return;
-            }
-          const json = await res.json();
-          console.log("Image API response:", json); 
-          const b64 = json?.imageData || "";
-            if (!b64) {
-              console.warn("No base64 data for:", photo);
-              return;
-            }
-          await ImageCache.setBase64(photo, b64);
+          setImageUrls((prev) => ({
+            ...prev,
+            [product.id]: `data:image/jpeg;base64,${imageData}`,
+          }));
+        })
+      );
 
-          const dataUrl = `data:image/jpeg;base64,${b64}`;
-          ImageCache.setBlobUrl(photo, dataUrl);
-          setImageUrls(prev => ({ ...prev, [product.id]: dataUrl }));
-        } catch (e) {
-          console.error("Image load error:", e);
-        } finally {
-          setLoadingImages(prev => ({ ...prev, [product.id]: false }));
-        }
-      });
+      if (!controller.signal.aborted) setLoadingImages({});
 
     } catch (err) {
       if (err?.name !== "CanceledError" && err?.name !== "AbortError") {
@@ -350,7 +341,7 @@ useEffect(() => {
 // async function fetchProductsAndFirstImages(warm = false, signal) {
 // try {
 // if (!warm) setImageLoading(true);
-// const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
+// const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${encodeURIComponent(decodedCat)}`;
 // const { data: items } = await axios.get(url, { signal });
 // const safeItems = Array.isArray(items) ? items : [];
 // if (cancelled) return;
@@ -388,7 +379,7 @@ useEffect(() => {
 // const fetchOne = async ({ productId, photo }) => {
 // try {
 // const res = await fetch(
-// `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
+// `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
 //               { signal }     
 // );
 // const json = await res.json();
@@ -705,34 +696,29 @@ onClick={() => toggleLike(product.id)}
   className="d-flex justify-content-center align-items-center position-relative"
   style={{ height: "90px" }}
 >
-  {loadingImages[product.id] || !imageUrls[product.id] ? (
-    <div style={{
-      position: "relative",
-      width: "54px",
-      height: "54px",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-    }}>    
-      <div className="img-outer-ring" />
-      <div className="img-inner-ring" />
-      <div className="img-center-dot" />
-    </div>
-  ) : (  
+  {imageUrls[product.id] ? (
     <img
       src={imageUrls[product.id]}
       alt={product.name}
+      loading="lazy"
+      decoding="async"
       style={{   
         maxHeight: "80px",
         maxWidth: "100%",    
         objectFit: "contain",
         cursor: isOutOfStock ? "not-allowed" : "pointer",
         borderRadius: "6px",
+        backgroundColor: "#f5f5f5",
       }}
       onClick={() =>
         !isOutOfStock && handleImageClick(imageUrls[product.id], product)
       }
     />
+  ) : (
+    <div style={{
+      width: "60px", height: "60px",
+      backgroundColor: "#f0f0f0", borderRadius: "6px",
+    }} />
   )}
 
   {isOutOfStock && (

@@ -50,7 +50,7 @@ useEffect(() => {
           const fetchCollectionData = async () => {
               try {
                   setLoading(true);
-                  const collectionResponse = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadLakshmiCollection/GetLakshmiCollections?id=${id}`);
+                  const collectionResponse = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadLakshmiCollection/GetLakshmiCollections?id=${id}`);
                   if (!collectionResponse.ok) {
                       throw new Error('Product not found');
                   }
@@ -212,7 +212,7 @@ useEffect(() => {
       const formData = new FormData();
       formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
       formData.append('fileName', fileName);
-      const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/upload?filename=` + fileName, {
+      const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/upload?filename=` + fileName, {
         method: 'POST',
         headers: {
           'Accept': 'text/plain',
@@ -268,7 +268,7 @@ const handleSubmit = async (event) => {
     };
 
     try {
-      const response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadLakshmiCollection/UpdateLakshmiCollection?id=${id}`, {
+      const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadLakshmiCollection/UpdateLakshmiCollection?id=${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json"

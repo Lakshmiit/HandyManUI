@@ -31,7 +31,7 @@ const BookTechnicianNotification = () => {
 
   useEffect(() => {
     setLoading(true);
-    const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/BookTechnician/GetBookTechnicianForAdminList`
+    const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/BookTechnician/GetBookTechnicianForAdminList`
     axios.get(url)
       .then(response => {
         const technicians = response.data.map((technician) => ({
@@ -61,7 +61,7 @@ const BookTechnicianNotification = () => {
   const handleDelete = (technicianId) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this ticket?');
     if (confirmDelete) {
-      axios.delete(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/RaiseTicket/${technicianId}`)
+      axios.delete(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/RaiseTicket/${technicianId}`)
         .then(() => {
           setTechnicianData(prevData => prevData.filter(technician => technician.id !== technicianId));
           setFilteredData(prevData => prevData.filter(technician => technician.id !== technicianId));

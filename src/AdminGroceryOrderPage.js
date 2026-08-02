@@ -45,12 +45,33 @@ const [code, setCode] = useState("");
 const [units, setUnits] = useState("");
  const [groceryData, setgroceryData] = useState();
   const [groceryId, setgroceryId] = useState();
-const [cashbackAmount, setCashbackAmount] = useState(0);
 const [status, setStatus] = useState();
  const [showZoomModal, setShowZoomModal] = useState(false);
  const [remainingAmount,setRemainingAmount] =useState('');
   const [zoomImage, setZoomImage] = useState("");
-  const [zoomProduct, setZoomProduct] = useState(null);   
+  const [zoomProduct, setZoomProduct] = useState(null);  
+  const [availedAmount, setAvailedAmount] = useState('');
+    const [selectedDate, setSelectedDate] = useState("");
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
+
+  const timeSlots = [
+    "7:00 AM - 9:00 AM",
+    "9:00 AM - 11:00 AM",
+    "11:00 AM - 1:00 PM",
+    "1:00 PM - 2:00 PM",
+    "2:00 PM - 4:00 PM",
+    "4:00 PM - 6:00 PM",
+    "6:00 PM - 8:00 PM",
+    "8:00 PM - 10:00 PM",
+  ];
+
+   const deliveryDateTime =
+    selectedDate && selectedTimeSlot
+      ? `${selectedDate} ${selectedTimeSlot}`
+      : "";
+
+  console.log(deliveryDateTime);
+
   useEffect(() => {
   console.log(status,groceryData,groceryId, id, customerId, loading, longitude, latitude, grandTotal, paidAmount, transactionNumber, transactionStatus, totalItemsSelected, cartData, code, units);
 }, [status,groceryData, groceryId,id,customerId, loading, longitude, latitude, grandTotal, paidAmount, transactionNumber, transactionStatus, totalItemsSelected, cartData, code, units]);
@@ -62,7 +83,7 @@ useEffect(() => {
       const ctrl = new AbortController();
       try {
         const res1 = await fetch(
-          `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`,
+          `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`,
           { signal: ctrl.signal }
         );
         if (!res1.ok) throw new Error("Failed to fetch product details");
@@ -71,6 +92,7 @@ useEffect(() => {
         setMartId(data.martId);
         setGrandTotal(data.grandTotal);
         setRemainingAmount(data.remainingAmount);
+        setAvailedAmount(data.availedAmount);
         setTotalItemsSelected(data.totalItemsSelected);
         setCustomerName(data.customerName);
         setStatus(data.status);
@@ -94,7 +116,7 @@ useEffect(() => {
         }
 
         const requests = productNames.map(async (name) => {
-          const url = `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
+          const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
             name
           )}`;
           const res = await fetch(url, { signal: ctrl.signal });
@@ -136,7 +158,7 @@ useEffect(() => {
 useEffect(() => {
   const fetchDeliveryPartners = async () => {
     try {
-      const response = await axios.get(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/DeliveryPartner/GetAllDeliveryPartners`);
+      const response = await axios.get(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/DeliveryPartner/GetAllDeliveryPartners`);
       const partners = response.data.filter(partner => partner.status === "open");
       setDeliveryPartners(partners);
     } catch (error) {
@@ -150,7 +172,7 @@ useEffect(() => {
   const fetchGroceryData = async () => {
     try {
       const response = await fetch(
-        `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`
+        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch grocery product data");
@@ -209,10 +231,6 @@ useEffect(() => {
         setUnits(allProducts[0].units || "");
         }
       }
-       const itemsTotal = items.reduce((sum, item) => sum + Number(item.total), 0);
-      const cashbackAmount = Math.max(0, itemsTotal - Number(grandTotal));
-            setCashbackAmount(cashbackAmount);
-
     } catch (error) {
       console.error("Error fetching grocery product data:", error);
     } finally {
@@ -261,9 +279,10 @@ useEffect(() => {
     longitude: longitude,
     code: code,
     units: units,
+    slotTime:`${selectedDate} ${selectedTimeSlot}`,
   };
 
-    let response = await fetch(`https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`, {
+    let response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -281,72 +300,10 @@ useEffect(() => {
   }
 };
 
-// const handleCancelOrder = async () => {
-//   try {
-//     const detailsResponse = await fetch(
-//       `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`
-//     );
-//     if (!detailsResponse.ok) {
-//       throw new Error("Failed to fetch latest order details");
-//     }
-//     const latestData = await detailsResponse.json();
-//      const payload = {
-//       ...latestData,
-//       id: groceryItemId,
-//       userId: latestData.userId,
-//       martId: latestData.martId,
-//       date: latestData.date,
-//       customerName: latestData.customerName,
-//       address: latestData.address,
-//       state: latestData.state,
-//       district: latestData.district,
-//       zipCode: latestData.zipCode,
-//       customerPhoneNumber: latestData.customerPhoneNumber,
-//       grandTotal: latestData.grandTotal,
-//       totalItemsSelected: latestData.totalItemsSelected,
-//       status: "Cancel",
-//       paymentMode: latestData.paymentMode,
-//       utrTransactionNumber:
-//         latestData.utrTransactionNumber || "",
-//       transactionNumber:
-//         latestData.transactionNumber || "",
-//       transactionStatus:
-//         latestData.transactionStatus || "",
-//       paidAmount: latestData.paidAmount || "",
-//       AssignedTo: "",
-//       DeliveryPartnerUserId: "",
-//       deliveryAssignedTime: "",
-//       deliverySubmitTime: "",
-//       latitude: latestData.latitude,
-//       longitude: latestData.longitude,
-//       code: latestData.code,
-//       units: latestData.units,
-//     };
-//     const response = await fetch(
-//       `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
-//       {
-//         method: "PUT",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify(payload),
-//       }
-//     );
-//     if (!response.ok) {
-//       throw new Error("Failed to cancel order");
-//     }
-//     alert("Order has been cancelled successfully");
-//     navigate(`/adminGroceryZoneDashboard`);
-//   } catch (error) {
-//     console.error("Cancel Error:", error);
-//     alert("Failed to cancel order. Try again.");
-//   }
-// };
-
 const handleCancelOrder = async () => {
   try {
     const detailsResponse = await fetch(
-      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetProductDetails?id=${groceryItemId}`
     );
     if (!detailsResponse.ok) throw new Error("Failed to fetch latest order details");
     const latestData = await detailsResponse.json();
@@ -362,7 +319,7 @@ const handleCancelOrder = async () => {
     };
 
     const cancelResponse = await fetch(
-      `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
       {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -386,7 +343,7 @@ const handleCancelOrder = async () => {
     const stockUpdateResults = await Promise.allSettled(
       allProducts.map(async ({ productName, quantity }) => {
         const getRes = await fetch(
-          `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(productName)}`
+          `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(productName)}`
         );
         if (!getRes.ok) throw new Error(`GET failed for "${productName}"`);
         const groceryItems = await getRes.json();
@@ -428,7 +385,7 @@ const handleCancelOrder = async () => {
         };
 
         const putRes = await fetch(
-          `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${matched.id}`,
+          `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/UpdateGroceryItems?id=${matched.id}`,
           {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
@@ -467,171 +424,493 @@ useEffect(() => {
      e.preventDefault();
    };
 
-const addHeader = (doc, martId) => {
-  doc.setTextColor(0, 0, 0); 
-  doc.setFontSize(12);
-  doc.setFont("Roboto", "bold");
-  doc.text("Handyman", 14, 12);
-  doc.text("Lakshmi Mart", 195, 12, { align: "right" });
-  doc.setLineWidth(0.5);
-  doc.line(14, 15, 195, 15);
-  doc.setFontSize(11);
-  doc.setFont("Roboto", "bold");
-  doc.text(`Order Number: ${martId}`, 105, 22, { align: "center" });
+// const addHeader = (doc, martId) => {
+//   doc.setTextColor(0, 0, 0); 
+//   doc.setFontSize(12);
+//   doc.setFont("Roboto", "bold");
+//   doc.text("Handyman", 14, 12);
+//   doc.text("Lakshmi Mart", 195, 12, { align: "right" });
+//   doc.setLineWidth(0.5);
+//   doc.line(14, 15, 195, 15);
+//   doc.setFontSize(11);
+//   doc.setFont("Roboto", "bold");
+//   doc.text(`Order Number: ${martId}`, 105, 22, { align: "center" });
+// };
+
+// const addFooter = (doc) => {
+//   const pageHeight = doc.internal.pageSize.height;
+//   doc.setLineWidth(0.5);
+//    doc.line(
+//     20,                
+//     pageHeight - 15,    
+//     190,                
+//     pageHeight - 15    
+//   );
+//   doc.setTextColor(0, 0, 0);
+//   doc.setFontSize(9);
+//   doc.setFont("Roboto", "bold");
+//   doc.text(
+//     "For Support : Call / WhatsApp 6281198953 | Mon–Sun : 7:00 AM – 9:00 PM",
+//     105,    
+//     pageHeight - 10,
+//     { align: "center" }            
+//   );
+// };
+
+// const handleDownloadPDF = () => {
+//   const doc = new jsPDF("p", "mm", "a4");
+//   const PAGE_HEIGHT = doc.internal.pageSize.height;
+//   const FOOTER_SPACE = 25;
+//   const TOP_MARGIN = 30;
+//   addHeader(doc, martId);
+//   addFooter(doc);
+//   doc.setFont("Roboto", "normal");
+//   doc.setFontSize(10);
+//   doc.setTextColor(0, 0, 0);
+//   doc.text(`Customer Name: ${customerName || ""}`, 14, 28);  const addressText = `Customer Address: ${[
+//     address,
+//     district,
+//     state,
+//     pincode,
+//     mobileNumber,
+//   ].filter(Boolean).join(", ")}`;
+
+//   doc.text(addressText || "", 14, 32, { maxWidth: 180 });
+//   doc.text(`Date: ${date ? date.split("T")[0] : ""}`, 14, 42);  autoTable(doc, {
+//     startY: 48,
+//     head: [[
+//       "S.No",
+//       "Photo",
+//       "Item Name",
+//       "Category",
+//       "MRP",
+//       "Dis (%)",
+//       "Price",
+//       "Qty",
+//       "Total",
+//     ]],
+//     body: items.map((item, index) => [
+//       index + 1,
+//       "",
+//       item.name,
+//       item.category,
+//       `Rs. ${Math.round(item.mrp)}`,
+//       `${Math.round(item.discount)}%`,
+//       `Rs. ${Math.round(item.afterDiscountPrice)}`,
+//       item.quantity,
+//       `Rs. ${Math.round(item.total)}`,
+//     ]),
+//     styles: {
+//       fontSize: 9,
+//       cellPadding: 3,
+//       textColor: [0, 0, 0],
+//     },
+//     headStyles: {
+//       fillColor: [0, 128, 0],
+//       textColor: [255, 255, 255],
+//       halign: "center",
+//     },
+//     columnStyles: {
+//       0: { cellWidth: 10, halign: "center" },
+//       1: { cellWidth: 25 },
+//       2: { cellWidth: 40 },
+//       3: { cellWidth: 25 },
+//       4: { cellWidth: 20, halign: "right" },
+//       5: { cellWidth: 15, halign: "right" },
+//       6: { cellWidth: 23, halign: "right" },
+//       7: { cellWidth: 12, halign: "center" },
+//       8: { cellWidth: 23, halign: "right" },
+//     },
+//     didDrawCell(data) {
+//       if (data.column.index === 1 && data.cell.section === "body") {
+//         const item = items[data.row.index];
+//         const imgData = imageUrls[item?.id];
+//         if (!imgData) return;
+
+//         const size = 14;
+//         const x = data.cell.x + (data.cell.width - size) / 2;
+//         const y = data.cell.y + (data.cell.height - size) / 2;
+
+//         doc.addImage(imgData, "JPEG", x, y, size, size);
+//       }
+//     },
+//     didDrawPage() {
+//       addHeader(doc, martId);
+//       addFooter(doc);
+//     },
+//   });
+
+//   doc.setFont("Roboto", "normal");
+//   doc.setTextColor(0, 0, 0);
+
+// let currentY = doc.lastAutoTable.finalY + 10;
+
+//   let requiredHeight = 12;
+//   if (currentY + requiredHeight > PAGE_HEIGHT - FOOTER_SPACE) {
+//     doc.addPage();
+//     addHeader(doc, martId);
+//     addFooter(doc);
+//     currentY = TOP_MARGIN + 10;
+//   }
+//   doc.setFont("Roboto", "bold");
+//   doc.setFontSize(11);
+//   doc.setTextColor(200, 0, 0);
+//   doc.text(
+//     `Cashback Earned : Rs. ${availedAmount}`,
+//     195,
+//     currentY,
+//     { align: "right" }
+//   );
+
+//   currentY += 6; 
+//   doc.text(
+//     `Grand Total : Rs. ${grandTotal}`,
+//     195,
+//     currentY,
+//     { align: "right" }
+//   );
+//   currentY += 6; 
+//   doc.text(
+//     `Remaining Wallet Balance : Rs. ${remainingAmount}`,
+//     195,
+//     currentY,
+//     { align: "right" }
+//   );
+
+//   currentY += 6;
+
+//   doc.setFontSize(10);
+// doc.setTextColor(200, 0, 0);
+     
+//   doc.text(
+//     "For every Rs.100 order value, Rs.10 will be used from wallet on next order.",
+//     105, 
+//     currentY,
+//     { align: "center" }
+//   );
+//     doc.save(`Grocery_Order_${martId}.pdf`);
+// };
+
+const fmtDate = (iso) => {
+  if (!iso) return "";
+  const d = new Date(iso);
+  return `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()}`;
 };
-
-const addFooter = (doc) => {
-  const pageHeight = doc.internal.pageSize.height;
-  doc.setLineWidth(0.5);
-   doc.line(
-    20,                
-    pageHeight - 15,    
-    190,                
-    pageHeight - 15    
-  );
-  doc.setTextColor(0, 0, 0);
-  doc.setFontSize(9);
-  doc.setFont("Roboto", "bold");
-  doc.text(
-    "For Support : Call / WhatsApp 6281198953 | Mon–Sun : 7:00 AM – 9:00 PM",
-    105,    
-    pageHeight - 10,
-    { align: "center" }            
-  );
+ 
+const fmtDateTime = (d) => {
+  const day = String(d.getDate()).padStart(2, "0");
+  const mon = String(d.getMonth() + 1).padStart(2, "0");
+  const yr = d.getFullYear();
+  let h = d.getHours();
+  const min = String(d.getMinutes()).padStart(2, "0");
+  const ampm = h >= 12 ? "PM" : "AM";
+  h = h % 12 || 12;
+  return `${day}/${mon}/${yr}  ${h}:${min} ${ampm}`;
 };
-
-const handleDownloadPDF = () => {
-  const doc = new jsPDF("p", "mm", "a4");
-  const PAGE_HEIGHT = doc.internal.pageSize.height;
-  const FOOTER_SPACE = 25;
-  const TOP_MARGIN = 30;
-  addHeader(doc, martId);
-  addFooter(doc);
-  doc.setFont("Roboto", "normal");
-  doc.setFontSize(10);
-  doc.setTextColor(0, 0, 0);
-  doc.text(`Customer Name: ${customerName || ""}`, 14, 28);  const addressText = `Customer Address: ${[
-    address,
-    district,
-    state,
-    pincode,
-    mobileNumber,
-  ].filter(Boolean).join(", ")}`;
-
-  doc.text(addressText || "", 14, 32, { maxWidth: 180 });
-  doc.text(`Date: ${date ? date.split("T")[0] : ""}`, 14, 42);  autoTable(doc, {
-    startY: 48,
-    head: [[
-      "S.No",
-      "Photo",
-      "Item Name",
-      "Category",
-      "MRP",
-      "Dis (%)",
-      "Price",
-      "Qty",
-      "Total",
-    ]],
-    body: items.map((item, index) => [
-      index + 1,
-      "",
-      item.name,
-      item.category,
-      `Rs. ${Math.round(item.mrp)}`,
-      `${Math.round(item.discount)}%`,
-      `Rs. ${Math.round(item.afterDiscountPrice)}`,
-      item.quantity,
-      `Rs. ${Math.round(item.total)}`,
-    ]),
-    styles: {
-      fontSize: 9,
-      cellPadding: 3,
-      textColor: [0, 0, 0],
-    },
-    headStyles: {
-      fillColor: [0, 128, 0],
-      textColor: [255, 255, 255],
-      halign: "center",
-    },
-    columnStyles: {
-      0: { cellWidth: 10, halign: "center" },
-      1: { cellWidth: 25 },
-      2: { cellWidth: 40 },
-      3: { cellWidth: 25 },
-      4: { cellWidth: 20, halign: "right" },
-      5: { cellWidth: 15, halign: "right" },
-      6: { cellWidth: 23, halign: "right" },
-      7: { cellWidth: 12, halign: "center" },
-      8: { cellWidth: 23, halign: "right" },
-    },
-    didDrawCell(data) {
-      if (data.column.index === 1 && data.cell.section === "body") {
-        const item = items[data.row.index];
-        const imgData = imageUrls[item?.id];
-        if (!imgData) return;
-
-        const size = 14;
-        const x = data.cell.x + (data.cell.width - size) / 2;
-        const y = data.cell.y + (data.cell.height - size) / 2;
-
-        doc.addImage(imgData, "JPEG", x, y, size, size);
-      }
-    },
-    didDrawPage() {
-      addHeader(doc, martId);
-      addFooter(doc);
-    },
-  });
-
-  doc.setFont("Roboto", "normal");
-  doc.setTextColor(0, 0, 0);
-
-let currentY = doc.lastAutoTable.finalY + 10;
-
-  let requiredHeight = 12;
-  if (currentY + requiredHeight > PAGE_HEIGHT - FOOTER_SPACE) {
-    doc.addPage();
-    addHeader(doc, martId);
-    addFooter(doc);
-    currentY = TOP_MARGIN + 10;
-  }
-  doc.setFont("Roboto", "bold");
+ 
+const GREEN     = [26, 110, 42];   
+const WHITE     = [255, 255, 255];
+const BLACK     = [0, 0, 0];
+const DARK_GRAY = [60, 60, 60];
+const MID_GRAY  = [120, 120, 120];
+const LIGHT_BG  = [245, 250, 246];
+const RED_TEXT  = [180, 0, 0];
+const GREEN_TEXT= [26, 110, 42];
+ 
+ 
+const drawPageHeader = (doc, martId) => {
+  const W = doc.internal.pageSize.width;
+ 
+  doc.setFillColor(...GREEN);
+  doc.rect(0, 0, W, 22, "F");
+ 
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(14);
+  doc.setTextColor(...WHITE);
+  doc.text("Lakshmi Mart", 14, 10);
+ 
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+  doc.text("Handyman Grocery Services", 14, 16);
+ 
+  doc.setFont("helvetica", "bold");
   doc.setFontSize(11);
-  doc.setTextColor(200, 0, 0);
+  doc.text("TAX INVOICE", W - 14, 10, { align: "right" });
+ 
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+  doc.text(`Order: ${martId}`, W - 14, 16, { align: "right" });
+};
+ 
+const drawPageFooter = (doc) => {
+  const W = doc.internal.pageSize.width;
+  const H = doc.internal.pageSize.height;
+ 
+  doc.setDrawColor(...MID_GRAY);
+  doc.setLineWidth(0.3);
+  doc.line(14, H - 14, W - 14, H - 14);
+ 
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+  doc.setTextColor(...MID_GRAY);
   doc.text(
-    `Cashback Earned : Rs. ${cashbackAmount}`,
-    195,
-    currentY,
-    { align: "right" }
-  );
-
-  currentY += 6; 
-  doc.text(
-    `Grand Total : Rs. ${grandTotal}`,
-    195,
-    currentY,
-    { align: "right" }
-  );
-  currentY += 6; 
-  doc.text(
-    `Remaining Wallet Balance : Rs. ${remainingAmount}`,
-    195,
-    currentY,
-    { align: "right" }
-  );
-
-  currentY += 6;
-
-  doc.setFontSize(10);
-doc.setTextColor(200, 0, 0);
-
-  doc.text(
-    "For every Rs.100 order value, Rs.10 will be used from wallet on next order.",
-    105, 
-    currentY,
+    "Support: Call / WhatsApp 6281198953  |  Mon–Sun 7:00 AM – 9:00 PM",
+    W / 2,
+    H - 8,
     { align: "center" }
   );
-    doc.save(`Grocery_Order_${martId}.pdf`);
+};
+ 
+const handleDownloadPDF = () => {
+  const doc = new jsPDF("p", "mm", "a4");
+  const PAGE_W  = doc.internal.pageSize.width;  
+  const PAGE_H  = doc.internal.pageSize.height;  
+  const FOOTER_SPACE = 16;
+  const HEADER_HEIGHT = 16;
+ 
+  const invNumber   = (martId || "").slice(-4);
+  const invDateTime = fmtDateTime(new Date());
+  const poDate      = fmtDate(date);
+  const fullAddress = [address, district, state, pincode, mobileNumber]
+    .filter(Boolean)
+    .join(", ");
+  const productsTotal = items.reduce((s, it) => s + Number(it.total), 0);
+  const grandTotalNum = parseFloat(grandTotal) || 0;
+  const availedNum    = parseFloat(availedAmount) || 0;
+  const remainingNum  = parseFloat(remainingAmount) || 0;
+  const paidNum       = parseFloat(paidAmount) || 0;
+ 
+  drawPageHeader(doc, martId);
+  drawPageFooter(doc);
+ 
+  let curY = HEADER_HEIGHT + 6;
+ 
+  doc.setFillColor(...LIGHT_BG);
+  doc.rect(0, curY, PAGE_W, 14, "F");
+ 
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(8);
+  doc.setTextColor(...GREEN_TEXT);
+  const metaFields = [
+    [`Invoice No.`, `No${invNumber}`],
+    [`Invoice Date`, invDateTime],
+    [`PO No.`,       martId],
+    [`PO Date`,      poDate],
+    [`State of Supply`, "Andhra Pradesh"],
+  ];
+  const colW = PAGE_W / metaFields.length;
+  metaFields.forEach(([label, val], i) => {
+    const x = 14 + i * colW;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7);
+    doc.setTextColor(...MID_GRAY);
+    doc.text(label.toUpperCase(), x, curY + 4);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8);
+    doc.setTextColor(...DARK_GRAY);
+    doc.text(String(val), x, curY + 10);
+  });
+  curY += 18;
+ 
+  const halfW = (PAGE_W - 28) / 2;
+ 
+  doc.setDrawColor(...MID_GRAY);
+  doc.setLineWidth(0.3);
+  doc.roundedRect(14, curY, halfW, 18, 2, 2, "S");
+  doc.roundedRect(14 + halfW + 4, curY, halfW, 18, 2, 2, "S");
+ 
+  doc.setFillColor(...GREEN);
+  doc.roundedRect(14, curY, halfW, 6, 2, 2, "F");
+  doc.roundedRect(14 + halfW + 4, curY, halfW, 6, 2, 2, "F");
+ 
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(7.5);
+  doc.setTextColor(...WHITE);
+  doc.text("BILLING ADDRESS", 17, curY + 4.2);
+  doc.text("SHIPPING ADDRESS", 17 + halfW + 4, curY + 4.2);
+ 
+  const addrLines = doc.splitTextToSize(fullAddress, halfW - 6);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(8.5);
+  doc.setTextColor(...DARK_GRAY);
+  doc.text((customerName || "").trim(), 17, curY + 11);
+  doc.text((customerName || "").trim(), 17 + halfW + 4, curY + 11);
+ 
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(7.5);
+  doc.setTextColor(...MID_GRAY);
+  doc.text(addrLines, 17, curY + 16);
+  doc.text(addrLines, 17 + halfW + 4, curY + 16);
+ 
+  curY += 22;
+ 
+  autoTable(doc, {
+  startY: curY + 2,
+  margin: { left: 8, right: 8 },
+
+  head: [[
+    "No",
+    "Item Name",
+    "Category",
+    "MRP",
+    "Qty",
+    "Disc %",
+    "Amount"
+  ]],
+
+  body: items.map((item, idx) => [
+    idx + 1,
+    (item.name || "").substring(0, 35),
+    (item.category || "").substring(0, 20),
+    Math.round(item.mrp),
+    item.quantity,
+    `${Math.round(item.discount)}%`,
+    item.total.toFixed(0),
+  ]),
+
+  styles: {
+  fontSize: 5.5,
+  cellPadding: 0.5,
+  minCellHeight: 4,
+  overflow: "hidden",
+  textColor: [60, 60, 60],
+  lineColor: [220, 220, 220],
+  lineWidth: 0.1,
+},
+
+  headStyles: {
+    fillColor: [26, 110, 42],
+    textColor: [255, 255, 255],
+    fontSize: 7,
+    fontStyle: "bold",
+    halign: "center",
+  },
+
+  alternateRowStyles: {
+    fillColor: [248, 250, 248],
+  },
+
+  columnStyles: {
+  0: { cellWidth: 8, halign: "center" },   
+  1: { cellWidth: 55 },                   
+  2: { cellWidth: 35 },                    
+  3: { cellWidth: 15, halign: "right" },   
+  4: { cellWidth: 10, halign: "center" },  
+  5: { cellWidth: 12, halign: "center" },  
+  6: { cellWidth: 20, halign: "right" },   
+},
+
+  didDrawPage() {
+    drawPageHeader(doc, martId);
+    drawPageFooter(doc);
+  }
+});
+ 
+  curY = doc.lastAutoTable.finalY + 4;
+ 
+  const TOTAL_X    = PAGE_W - 14 - 110; 
+  const TOTAL_W    = 100;
+  const LINE_H     = 7;
+ 
+  const totalsRows = [
+    { label: "Products total",          value: `Rs ${productsTotal.toFixed(2)}`,    bold: false, color: DARK_GRAY },
+  ];
+ 
+  if (grandTotalNum !== productsTotal) {
+    const diff = productsTotal - grandTotalNum;
+    if (diff > 0) {
+      totalsRows.push({ label: "Discount", value: ` Rs ${diff.toFixed(2)}`, bold: false, color: RED_TEXT });
+    }
+  }
+  if (availedNum > 0) {
+    totalsRows.push({ label: "Cashback applied",          value: ` Rs ${availedNum.toFixed(2)}`,    bold: false, color: GREEN_TEXT });
+  }
+  totalsRows.push(   { label: "Grand Total",             value: `Rs ${grandTotalNum.toFixed(2)}`,   bold: true,  color: BLACK,      divider: true });
+  totalsRows.push(   { label: "Remaining wallet balance",value: `Rs ${remainingNum.toFixed(2)}`,    bold: false, color: MID_GRAY });
+ 
+  const totalsBoxH = totalsRows.length * LINE_H + 12;
+ 
+  const PAYMENT_BOX_H = 25;
+  const NOTE_H = 4;
+  const NEEDED = totalsBoxH + PAYMENT_BOX_H + NOTE_H + 4;
+ 
+  if (curY + NEEDED > PAGE_H - FOOTER_SPACE) {
+    doc.addPage();
+    drawPageHeader(doc, martId);
+    drawPageFooter(doc);
+    curY = HEADER_HEIGHT + 10;
+  }
+ 
+  doc.setDrawColor(...MID_GRAY);
+  doc.setLineWidth(0.3);
+  doc.roundedRect(TOTAL_X, curY, TOTAL_W, totalsBoxH, 2, 2, "S");
+ 
+  doc.setFillColor(...GREEN);
+  doc.roundedRect(TOTAL_X, curY, TOTAL_W, 7, 2, 2, "F");
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(7.5);
+  doc.setTextColor(...WHITE);
+  doc.text("ORDER SUMMARY", TOTAL_X + 4, curY + 4.8);
+ 
+  let rowY = curY + 12;
+  totalsRows.forEach((row) => {
+    if (row.divider) {
+      doc.setDrawColor(...GREEN);
+      doc.setLineWidth(0.4);
+      doc.line(TOTAL_X + 3, rowY - 2, TOTAL_X + TOTAL_W - 3, rowY - 2);
+      rowY += 1;
+    }
+    doc.setFont("helvetica", row.bold ? "bold" : "normal");
+    doc.setFontSize(row.bold ? 9 : 8);
+    doc.setTextColor(...row.color);
+    doc.text(row.label, TOTAL_X + 4, rowY);
+    doc.text(row.value, TOTAL_X + TOTAL_W - 4, rowY, { align: "right" });
+    rowY += LINE_H;
+  });
+ 
+  curY += totalsBoxH + 8;
+ 
+  doc.setDrawColor(...MID_GRAY);
+  doc.setLineWidth(0.3);
+  doc.roundedRect(TOTAL_X, curY, TOTAL_W, PAYMENT_BOX_H, 2, 2, "S");
+ 
+  doc.setFillColor(...LIGHT_BG);
+  doc.roundedRect(TOTAL_X, curY, TOTAL_W, 7, 2, 2, "F");
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(7.5);
+  doc.setTextColor(...GREEN_TEXT);
+  doc.text("PAYMENT DETAILS", TOTAL_X + 4, curY + 4.8);
+ 
+  const payRows = [
+    { label: "Amount paid",   value: `Rs ${paidNum.toFixed(2)}`,   color: GREEN_TEXT },
+    { label: "Payment mode",  value: String(paymentMode || "—").toUpperCase(), color: DARK_GRAY },
+  ];
+ 
+  let pRowY = curY + 13;
+  payRows.forEach((row) => {
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8.5);
+    doc.setTextColor(...row.color);
+    doc.text(row.label, TOTAL_X + 4, pRowY);
+    doc.text(row.value, TOTAL_X + TOTAL_W - 4, pRowY, { align: "right" });
+    pRowY += 8;
+  });
+ 
+  curY += PAYMENT_BOX_H + 6;
+ 
+  doc.setFillColor(253, 247, 238);
+  doc.roundedRect(14, curY, PAGE_W - 28, NOTE_H, 2, 2, "F");
+  doc.setFont("helvetica", "italic");
+  doc.setFontSize(7.5);
+  doc.setTextColor("red");
+  doc.text(
+    "Note: For every Rs 100 order value, Rs 10 will be used from wallet on next order.",
+    PAGE_W / 2,
+    curY + 5.5,
+    { align: "center" }
+  );
+ 
+  doc.save(`Invoice_${martId}.pdf`);
 };
 
 useEffect(() => {
@@ -645,7 +924,7 @@ useEffect(() => {
         if (!item.image) return;    
         try {
           const res = await fetch(
-            `https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
+            `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
               item.image
             )}`,
             { signal: controller.signal }
@@ -803,31 +1082,31 @@ const handleImageClick = (imageSrc, product) => {
         </td>
         <td>{item.code}</td>
         <td>{item.category}</td>
-        <td>₹{item.mrp}</td>
+        <td>Rs {item.mrp}</td>
         <td>{item.discount}%</td>
-        <td>₹{item.afterDiscountPrice.toFixed(0)}</td>
+        <td>Rs {item.afterDiscountPrice.toFixed(0)}</td>
         <td>{item.quantity}</td>
-        <td>₹{item.total.toFixed(0)}</td>
+        <td>Rs {item.total.toFixed(0)}</td>
       </tr>
     ))}
   </tbody>
   <tfoot>
      <tr>
   <td colSpan="5" className="text-end fw-bold text-danger">
-    Delivery Charge: {deliveryCharge === 0 ? "FREE" : `₹${deliveryCharge}`}
+    Delivery Charge: {deliveryCharge === 0 ? "FREE" : `Rs ${deliveryCharge}`}
   </td>
   
   <td colSpan="5" className="text-end fw-bold text-danger">
-    Handling Charge: {handlingCharge === 0 ? "FREE" : `₹${handlingCharge}`}
+    Handling Charge: {handlingCharge === 0 ? "FREE" : `Rs ${handlingCharge}`}
   </td>      
 </tr>
-{cashbackAmount > 0 && (
+{availedAmount > 0 && (
 <tr>
   <td colSpan="9" className="text-end fw-bold text-success">
-    Cashback Earned:
+    Cashback Applied:
   </td>
   <td className="fw-bold text-success">
-    ₹{cashbackAmount}
+    Rs {availedAmount}
   </td>
 </tr>
 )}
@@ -836,7 +1115,7 @@ const handleImageClick = (imageSrc, product) => {
         Grand Total:
       </td>
       <td className="fw-bold">     
-        ₹{grandTotal}
+        Rs {grandTotal}
       </td>
     </tr> 
  <tr>
@@ -844,7 +1123,7 @@ const handleImageClick = (imageSrc, product) => {
         Your's current wallet balance :
       </td>
       <td className="fw-bold">     
-        ₹{remainingAmount}
+        Rs {remainingAmount}
       </td>  
       </tr>
   </tfoot>  
@@ -862,6 +1141,43 @@ const handleImageClick = (imageSrc, product) => {
           Download PDF
         </button>
 </div>
+
+<Row>
+                {/* Delivery Date */}
+                <Col md={6}>
+                  <Form.Group>
+                    <label>Delivery Date</label>
+                    <Form.Control
+                      type="date"
+                      value={selectedDate}
+                      onChange={(e) => setSelectedDate(e.target.value)}
+                      required
+                    />
+                  </Form.Group>
+                </Col>
+
+                {/* Time Slot */}
+                <Col md={6}>
+                  <Form.Group>
+                    <label>Time Slot</label>
+                    <Form.Control
+                      as="select"
+                      value={selectedTimeSlot}
+                      onChange={(e) => setSelectedTimeSlot(e.target.value)}
+                      required
+                    >
+                      <option value="">Select Time Slot</option>
+
+                      {timeSlots.map((slot, index) => (
+                        <option key={index} value={slot}>
+                          {slot}
+                        </option>
+                      ))}
+                    </Form.Control>
+                  </Form.Group>
+                </Col>
+              </Row>
+
 
         {/* <div className='payment'>
         <label className='fw-bold fs-5 w-100 p-2' style={{ background: "green", color: "white", borderRadius: "15px", width: "25px" }}>Payment Mode</label>
