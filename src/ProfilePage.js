@@ -140,7 +140,7 @@ const collectionsCategories = [
   ];
 
   const IMAGE_API =
-  `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
+  `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
 
 const ProfilePage = () => {
    const [allProducts, setAllProducts] = useState([]);
@@ -235,6 +235,13 @@ const [pushDismissed, setPushDismissed] = useState(
   () => sessionStorage.getItem('hm_push_dismissed') === 'true'
 );
 const [pushLoading, setPushLoading] = useState(false);
+const [deliveryTicketsLoading, setDeliveryTicketsLoading] = useState(false);
+const [showTrackModal, setShowTrackModal] = useState(false);
+const [trackLoading, setTrackLoading] = useState(false);
+const [trackError, setTrackError] = useState("");
+const [trackedOrder, setTrackedOrder] = useState(null);
+const [autoOrderPrompt, setAutoOrderPrompt] = useState(null);
+const martTicketSyncRef = useRef(false);
 
 const handleEnablePush = async () => {
   setPushLoading(true);
@@ -318,7 +325,7 @@ const fetchWalletAmount = useCallback(async () => {
   try {
     setWalletLoading(true);
     const response = await fetch(
-      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/OffersTransactions/GetOfferTransactionByUserId?userId=${userId}`
+      `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/OffersTransactions/GetOfferTransactionByUserId?userId=${userId}`
     );
     const data = await response.json();
     if (data && data.length > 0) {
@@ -349,7 +356,7 @@ useEffect(() => {
   async function fetchProductsAndFirstImages(warm = false, signal) {
     try {
       if (!warm) setImageLoading(true);
-      const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${category}`;
+      const url = `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${category}`;
 
       const { data: items } = await axios.get(url, { signal });
       const safeItems = (Array.isArray(items) ? items : []).map(normalizeProduct);
@@ -380,7 +387,7 @@ useEffect(() => {
       const fetchOne = async ({ productId, photo }) => {
         try {
           const res = await fetch(
-            `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`,
+            `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`,
             { signal }
           );
 
@@ -532,7 +539,7 @@ useEffect(() => {
   //       message: "User fetching grocery items in profile page"
   //     };
   //     await axios.post(
-  //       `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/LmartLogs/UploadlogsDetails`,
+  //       `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/LmartLogs/UploadlogsDetails`,
   //       payload
   //     );
   //   } catch (err) {
@@ -544,7 +551,7 @@ useEffect(() => {
     if (showLoader) setLoading(true);
     try {
       const res = await axios.get(
-        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetAllGroceryItems`
+        `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/UploadGrocery/GetAllGroceryItems`
       );
       const normalized = (Array.isArray(res.data) ? res.data : [])
         .map(normalizeProduct)
@@ -650,7 +657,7 @@ const handleAddClick = (product) => {
 //   const fetchDeliveryData = async () => {
 //     try {    
 //       const response = await fetch(
-//         `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetProductDetails?id=${id}`
+//         `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/Mart/GetProductDetails?id=${id}`
 //       );
 //       if (!response.ok) {
 //         throw new Error("Failed to fetch grocery product data");
@@ -722,40 +729,42 @@ const handleAddClick = (product) => {
 //   }
 // }, [id]);
        
- useEffect(() => {   
-  const fetchGroceryData = async () => {
-    try {
-      const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetMartTicketsByUserId?userId=${userId}`);
-      if (!response.ok) {
-      throw new Error('Failed to fetch ticket data');
+const loadDeliveryPartnerTickets = useCallback(async () => {
+  try {
+    setDeliveryTicketsLoading(true);
+    const response = await fetch(
+      `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/Mart/GetMartTicketsByUserId?userId=${userId}`,
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch ticket data");
     }
-      const data = await response.json();        
-      const tickets = Array.isArray(data) ? data : (data && typeof data === "object" ? [data] : []);
-      const inProgressTickets = tickets.filter(
-        (item) =>
-          item.status &&
-          item.status.toLowerCase() === "in progress"
-      );
-      setGroceryData(inProgressTickets);
-      const first = inProgressTickets[0] || {};
-      setMartId(first.martId || "");
-      setState(first.state || "");
-      setDistrict(first.district);
-      setPinCode(first.zipCode || first.pinCode || "");
-      setAddress(first.address || "");
-      setId(first.id || "");
-      setPaymentMode(first.paymentMode || "");
-      setStatus(first.status || "");
-      setFullName(first.customerName || "");
-      setMobileNumber(first.customerPhoneNumber || "");
-    } catch (error) {
-      console.error('Error fetching ticket data:', error);
-      setGroceryData([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-  fetchGroceryData();
+    const data = await response.json();
+    const tickets = Array.isArray(data)
+      ? data
+      : data && typeof data === "object"
+        ? [data]
+        : [];
+    const inProgressTickets = tickets.filter(
+      (item) => item.status && item.status.toLowerCase() === "in progress",
+    );
+    setGroceryData(inProgressTickets);
+    const first = inProgressTickets[0] || {};
+    setMartId(first.martId || "");
+    setState(first.state || "");
+    setDistrict(first.district || "");
+    setPinCode(first.zipCode || first.pinCode || "");
+    setAddress(first.address || "");
+    setId(first.id || "");
+    setPaymentMode(first.paymentMode || "");
+    setStatus(first.status || "");
+    setFullName(first.customerName || "");
+    setMobileNumber(first.customerPhoneNumber || "");
+  } catch (error) {
+    console.error("Error fetching ticket data:", error);
+    setGroceryData([]);
+  } finally {
+    setDeliveryTicketsLoading(false);
+  }
 }, [userId]);
 
   useEffect(() => {            
@@ -767,7 +776,7 @@ const handleDeliveryPartnerClick = async () => {
   clickLock.current = true;
   try {
     const res = await axios.get(
-      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/DeliveryPartner/GetDeliveryPartnerDetailsByUserId?userId=${userId}`
+      `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/DeliveryPartner/GetDeliveryPartnerDetailsByUserId?userId=${userId}`
     );
     const raw = res?.data ?? null;
     const profile = Array.isArray(raw)
@@ -779,6 +788,7 @@ const handleDeliveryPartnerClick = async () => {
     setIsRegistered(reg);
     setPartnerStatus(st);
     if (reg) {
+      await loadDeliveryPartnerTickets();
       setShowNotificationModal(true); 
     } else {
       setShowInterestModal(true);
@@ -811,7 +821,7 @@ const isActionLocked =
 const handleStatusUpdate = async (ticket, newStatus) => {
   try {
     const detailsResponse = await fetch(
-      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetProductDetails?id=${ticket.id}`
+      `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/Mart/GetProductDetails?id=${ticket.id}`
     );
 
     if (!detailsResponse.ok) {
@@ -841,7 +851,7 @@ const handleStatusUpdate = async (ticket, newStatus) => {
     };
     console.log("FINAL PAYLOAD:", payload);
     const response = await fetch(      
-      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UpdateProductDetails/${ticket.id}`,
+      `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/Mart/UpdateProductDetails/${ticket.id}`,
       {
         method: "PUT",
         headers: {
@@ -868,7 +878,7 @@ const handleStatusUpdate = async (ticket, newStatus) => {
 const handleUpdatePaymentMethod = async (ticket) => {
   try {
     const detailsResponse = await fetch(
-      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetProductDetails?id=${ticket.id}`
+      `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/Mart/GetProductDetails?id=${ticket.id}`
     );
 
     if (!detailsResponse.ok) {
@@ -900,7 +910,7 @@ const handleUpdatePaymentMethod = async (ticket) => {
     };
     console.log("FINAL PAYLOAD:", payload);
     const response = await fetch(
-      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UpdateProductDetails/${ticket.id}`,
+      `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/Mart/UpdateProductDetails/${ticket.id}`,
       {
         method: "PUT",
         headers: {
@@ -1017,43 +1027,135 @@ const handleDressCategoryClick = async (category) => {
     setError(`Oops! No collections found for ${value} category.`);
   }
 };    
+const buildMartUpdateSignature = (ticket) =>
+  [
+    ticket?.status || "",
+    ticket?.slotTime || "",
+    ticket?.assignedTo || "",
+    ticket?.deliveryAssignedTime || "",
+    ticket?.deliverySubmitTime || "",
+  ].join("|");
+
+const formatMartUpdateMessage = (ticket) => {
+  const orderId = ticket?.martId || ticket?.id || "your order";
+  if (ticket?.slotTime) {
+    return `Order ${orderId} is scheduled for ${ticket.slotTime}.`;
+  }
+  if (ticket?.assignedTo) {
+    return `Order ${orderId} is assigned to ${ticket.assignedTo}.`;
+  }
+  if (ticket?.status) {
+    return `Order ${orderId} status updated to ${ticket.status}.`;
+  }
+  return `Order ${orderId} has a new update.`;
+};
+
+const notifyMartOrderUpdates = useCallback((martTickets) => {
+  const storageKey = `hm_seen_mart_updates_${userId}`;
+  let seenMap = {};
+  try {
+    seenMap = JSON.parse(localStorage.getItem(storageKey) || "{}");
+  } catch {
+    seenMap = {};
+  }
+
+  const nextSeenMap = { ...seenMap };
+  const updatedTickets = [];
+
+  (Array.isArray(martTickets) ? martTickets : []).forEach((ticket) => {
+    const ticketKey = String(ticket?.id || ticket?.martId || "").trim();
+    if (!ticketKey) return;
+
+    const signature = buildMartUpdateSignature(ticket);
+    if (!signature) return;
+
+    if (!martTicketSyncRef.current) {
+      nextSeenMap[ticketKey] = signature;
+      return;
+    }
+
+    if (seenMap[ticketKey] !== signature) {
+      nextSeenMap[ticketKey] = signature;
+      updatedTickets.push(ticket);
+    }
+  });
+
+  localStorage.setItem(storageKey, JSON.stringify(nextSeenMap));
+
+  if (updatedTickets.length > 0) {
+    const latestTicket = updatedTickets[updatedTickets.length - 1];
+    const message = formatMartUpdateMessage(latestTicket);
+    setAutoOrderPrompt({
+      title: "Order Update",
+      message,
+      ticket: latestTicket,
+    });
+    if (PushNotificationService.isEnabled()) {
+      PushNotificationService.show("Handyman Order Update", message);
+    }
+  }
+
+  martTicketSyncRef.current = true;
+}, [userId]);
+
+const fetchAllTickets = useCallback(async ({ silent = false } = {}) => {
+  try {
+    if (!silent) {
+      setLoading(true);
+    }
+    const [ticketResponse, productResponse, technicianResponse, groceriesResponse, lakshmiResponse] = await Promise.all([
+      fetch(`https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=raiseTicket`),
+      fetch(`https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=buyProduct`),
+      fetch(`https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=bookTechnician`),
+      fetch(`https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=mart`),
+      fetch(`https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=collections`),
+    ]);
+    if (!ticketResponse.ok || !productResponse.ok || !technicianResponse || !groceriesResponse || !lakshmiResponse) {
+      throw new Error("Failed to fetch ticket, product and technician data");
+    }
+    const ticketData = await ticketResponse.json();
+    const productData = await productResponse.json();
+    const technicianData = await technicianResponse.json();
+    const groceryData = await groceriesResponse.json();
+    const collectionsData = await lakshmiResponse.json();
+    const groceryOpenTickets = Array.isArray(groceryData)
+      ? groceryData.filter((item) =>
+          ["open", "in progress", "delivered"].includes(
+            String(item?.status).toLowerCase(),
+          ),
+        )
+      : [];
+    const collectionOpenTickets = Array.isArray(collectionsData)
+      ? collectionsData.filter((item) => String(item?.status).toLowerCase() === "open")
+      : [];
+    const nextTickets = [
+      ...ticketData,
+      ...productData,
+      ...technicianData,
+      ...groceryOpenTickets,
+      ...collectionOpenTickets,
+    ];
+    setAllTickets(nextTickets);
+    notifyMartOrderUpdates(groceryOpenTickets);
+  } catch (error) {
+    console.error("Error fetching ticket, product data:", error);
+  } finally {
+    if (!silent) {
+      setLoading(false);
+    }
+  }
+}, [notifyMartOrderUpdates, userId]);
+
         useEffect(() => {
-          const fetchAllTickets = async () => {
-            try { 
-              const [ticketResponse, productResponse, technicianResponse, groceriesResponse, lakshmiResponse] = await Promise.all([
-                fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=raiseTicket`),
-                fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=buyProduct`),
-                fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=bookTechnician`),
-                fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=mart`),
-                fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=collections`),
-              ]);      
-              if (!ticketResponse.ok || !productResponse.ok || !technicianResponse || !groceriesResponse || !lakshmiResponse) {
-                throw new Error("Failed to fetch ticket, product and technician data");
-              }
-              const ticketData = await ticketResponse.json();
-              const productData = await productResponse.json();
-              const technicianData = await technicianResponse.json(); 
-              const groceryData = await groceriesResponse.json(); 
-              const collectionsData = await lakshmiResponse.json(); 
-              const groceryOpenTickets = Array.isArray(groceryData)
-              ? groceryData.filter(item =>
-                  ["open", "in progress", "delivered"].includes(
-                    String(item?.status).toLowerCase()
-                  )
-                )
-              : [];
-              const collectionOpenTickets = Array.isArray(collectionsData)
-              ? collectionsData.filter(item => String(item?.status).toLowerCase() === "open")
-              : [];
-              setAllTickets([...ticketData, ...productData, ...technicianData, ...groceryOpenTickets, ...collectionOpenTickets]);
-            } catch (error) {
-              console.error("Error fetching ticket, product data:", error);
-            } finally {
-              setLoading(false);
-            }
-          };
           fetchAllTickets();
-        }, [userId]);
+        }, [fetchAllTickets]);
+
+        useEffect(() => {
+          const intervalId = window.setInterval(() => {
+            fetchAllTickets({ silent: true });
+          }, 60000);
+          return () => window.clearInterval(intervalId);
+        }, [fetchAllTickets]);
 
         const calculateCashback = (ticket) => {
   if (!ticket || !ticket.categories) return 0;
@@ -1083,6 +1185,28 @@ const handleDressCategoryClick = async (category) => {
 const handleCustomerCareCall = () => {
     window.location.href = "tel:6281198953";
   };
+
+const handleTrackOrder = async (ticket) => {
+  try {
+    setShowTrackModal(true);
+    setTrackLoading(true);
+    setTrackError("");
+    setTrackedOrder(null);
+    const response = await fetch(
+      `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/Mart/GetProductDetails?id=${ticket.id}`,
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch live order status");
+    }
+    const liveOrder = await response.json();
+    setTrackedOrder(liveOrder);
+  } catch (error) {
+    console.error("Error fetching tracked order:", error);
+    setTrackError("Unable to load the latest order status right now. Please try again.");
+  } finally {
+    setTrackLoading(false);
+  }
+};
 
         const handleViewDetails = (ticket) => {
           setSelectedTicket(ticket);
@@ -1132,7 +1256,7 @@ const handleCustomerCareCall = () => {
           try {
             let apiUrl = "";
             if (userType === "customer") {
-              apiUrl = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`;
+              apiUrl = `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`;
             }
             if (!apiUrl) return;
             const response = await axios.get(apiUrl);
@@ -1171,7 +1295,7 @@ const fetchImageUrl = async (photoId) => {
   try { 
     if (!photoId) return;
     const response = await axios.get(
-      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photoId}`
+      `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photoId}`
     );
     if (response.status === 200 && response.data.imageData) {
       const imageUrl = `data:image/jpeg;base64,${response.data.imageData}`;
@@ -1588,6 +1712,39 @@ const filteredGroceryData = groceryData.filter((t) =>
   </Modal.Footer>
 </Modal>
 
+<Modal
+  show={!!autoOrderPrompt}
+  onHide={() => setAutoOrderPrompt(null)}
+  centered
+>
+  <Modal.Header closeButton>
+    <Modal.Title>{autoOrderPrompt?.title || "Order Update"}</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    <p className="mb-2">{autoOrderPrompt?.message}</p>
+    <div className="small text-muted">
+      Tap Track Now to view the latest delivery slot and order assignment details.
+    </div>
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={() => setAutoOrderPrompt(null)}>
+      Dismiss
+    </Button>
+    <Button
+      variant="success"
+      onClick={() => {
+        const ticket = autoOrderPrompt?.ticket;
+        setAutoOrderPrompt(null);
+        if (ticket) {
+          handleTrackOrder(ticket);
+        }
+      }}
+    >
+      Track Now
+    </Button>
+  </Modal.Footer>
+</Modal>
+
 {/* Notification Modal */}
 <Modal
   show={showNotificationModal}
@@ -1600,7 +1757,7 @@ const filteredGroceryData = groceryData.filter((t) =>
 
   <Modal.Body>
     {isRegistered && partnerStatus === "open" ? (
-      loading ? (
+      deliveryTicketsLoading ? (
         <p>Loading tickets…</p>
       ) : (
         <>
@@ -2759,10 +2916,10 @@ const filteredGroceryData = groceryData.filter((t) =>
 {ticket.martId && (
   <>
   <p className="ticket-content fw-bold">
-    Order:&nbsp;
+    Tracking:&nbsp;
     <button
       type="button"
-      onClick={() => handleViewDetails(ticket)}
+      onClick={() => handleTrackOrder(ticket)}
       style={{
         background: "none",
         border: "none",
@@ -2772,7 +2929,7 @@ const filteredGroceryData = groceryData.filter((t) =>
         cursor: "pointer",
       }}
     >
-      View Order
+      Track Now
     </button>
   </p>
   <p className="fw-bold">Grand Total : {ticket.grandTotal} /-</p>
@@ -2787,7 +2944,11 @@ const filteredGroceryData = groceryData.filter((t) =>
                 <p><strong>{ticket.assignedTo ? "Assigned To" : "Payment Mode"}: </strong> {ticket.assignedTo || ticket.assignedTo || ticket.assignedTo || `${ticket.paymentMode} or UPI`}</p>
                 <p><strong>Date:</strong> {ticket.date ? new Date(ticket.date).toLocaleDateString('en-GB') : "N/A"}</p>
                 {ticket?.martId && (
-                  <p><strong>Delivery Time Intimated Shortly!</strong></p>
+                  <p>
+                    <strong>
+                      {ticket.slotTime ? `Scheduled Delivery: ${ticket.slotTime}` : "Delivery Time Intimated Shortly!"}
+                    </strong>
+                  </p>
                 )}
                  {/* View Details Button */}
                   {ticket.paidAmount && (
@@ -2810,6 +2971,65 @@ const filteredGroceryData = groceryData.filter((t) =>
         </div>
         </div>
   
+      <Modal show={showTrackModal} onHide={() => setShowTrackModal(false)} centered>
+        <Modal.Header closeButton style={{ backgroundColor: "#198754", color: "white" }}>
+          <Modal.Title style={{ color: "white" }}>Track Order</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {trackLoading ? (
+            <p className="mb-0">Loading latest order status...</p>
+          ) : trackError ? (
+            <p className="text-danger mb-0">{trackError}</p>
+          ) : trackedOrder ? (
+            <>
+              <div className="mb-2">
+                <strong>Order Id:</strong> {trackedOrder.martId || trackedOrder.id}
+              </div>
+              <div className="mb-2">
+                <strong>Status:</strong> {trackedOrder.status || "N/A"}
+              </div>
+              <div className="mb-2">
+                <strong>Assigned To:</strong> {trackedOrder.assignedTo || "Delivery partner will be assigned shortly"}
+              </div>
+              <div className={`alert ${trackedOrder.slotTime ? "alert-success" : "alert-info"} mb-2`}>
+                {trackedOrder.slotTime ? (
+                  <>
+                    <strong>Scheduled Delivery:</strong> {trackedOrder.slotTime}
+                  </>
+                ) : (
+                  <>
+                    <strong>Delivery Time Update:</strong> Delivery time will be intimated shortly.
+                  </>
+                )}
+              </div>
+              <div className="small text-muted">
+                {trackedOrder.deliveryAssignedTime
+                  ? `Last assigned update: ${new Date(trackedOrder.deliveryAssignedTime).toLocaleString("en-GB")}`
+                  : "We will update this screen as soon as the admin schedules the order."}
+              </div>
+            </>
+          ) : (
+            <p className="mb-0">No tracking details available.</p>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          {trackedOrder?.categories?.length ? (
+            <Button
+              variant="outline-primary"
+              onClick={() => {
+                handleViewDetails(trackedOrder);
+                setShowTrackModal(false);
+              }}
+            >
+              View Items
+            </Button>
+          ) : null}
+          <Button variant="secondary" onClick={() => setShowTrackModal(false)}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
         {/* Modal for Mart Ticket Details */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered size="lg">
         <Modal.Header

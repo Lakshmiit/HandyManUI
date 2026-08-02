@@ -79,7 +79,7 @@ useEffect(() => {
   const fetchCustomerData = useCallback(async () => {
       try {
         const response = await fetch(
-          `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Address/GetAddressById/${userId}`,
+          `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/Address/GetAddressById/${userId}`,
         );
         if (!response.ok) {
           throw new Error("Failed to fetch customer profile data");
@@ -152,7 +152,7 @@ useEffect(() => {
         const results = await Promise.allSettled(
           uniqueNames.map(async (name) => {
             const res = await fetch(
-              `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
+              `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
                 name,
               )}`,
             );
@@ -280,7 +280,7 @@ useEffect(() => {
               const blobUrl = URL.createObjectURL(blob);
               return { fn, url: blobUrl };
             } else {
-              return { fn, url: `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(fn)}` };
+              return { fn, url: `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(fn)}` };
             }
           }),
         );
@@ -381,7 +381,7 @@ const handleQtyChange = async (rowId, delta) => {
 const fetchLatestStockForHandyman = useCallback(async (productName) => {
   try {
     const res = await fetch(
-      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Product/GetProductsByProductName?productName=${encodeURIComponent(productName)}`
+      `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/Product/GetProductsByProductName?productName=${encodeURIComponent(productName)}`
     );
     if (!res.ok) return Infinity;
     const data = await res.json();
@@ -410,7 +410,7 @@ const fetchLatestStockForHandyman = useCallback(async (productName) => {
   }
     try {
     const res = await fetch(
-      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(productName)}`
+      `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(productName)}`
     );
     if (!res.ok) return Infinity;
     const data = await res.json();
@@ -659,7 +659,7 @@ const removeEntireCombo = () => {
 
   //   try {
   //     const response = await fetch(
-  //       `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UploadProductDetails`,
+  //       `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/Mart/UploadProductDetails`,
   //       {
   //         method: "POST",
   //         headers: { "Content-Type": "application/json" },
@@ -840,12 +840,13 @@ if (activeItems.length === 0 && !hasCombo) {
     GrandTotal: finalGrandTotal.toString(),
     TotalItemsSelected: totalItemCount.toString(),
     categories: finalCategories,  
-    // Location: '', 
+    SlotTime : ""
+       // Location: '', 
   };
       
   try {
     const response = await fetch(
-      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UploadProductDetails`,
+      `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/Mart/UploadProductDetails`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -886,7 +887,7 @@ const createWelcomeWalletIfEligible = async () => {
 
     // Step 1: Verify Guest User
     const guestResponse = await fetch(
-      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Customer/GuestUserExistingVerification/${mobileNumber}`
+      `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/Customer/GuestUserExistingVerification/${mobileNumber}`
     );
     if (!guestResponse.ok) return;
     const guestData = await guestResponse.json();
@@ -897,7 +898,7 @@ const createWelcomeWalletIfEligible = async () => {
 
     // Step 2: Check if wallet transaction already exists
     const offerResponse = await fetch(
-      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/OffersTransactions/GetOfferTransactionByUserId?userId=${userId}`
+      `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/OffersTransactions/GetOfferTransactionByUserId?userId=${userId}`
     );
 
     if (offerResponse.ok) {
@@ -923,7 +924,7 @@ const createWelcomeWalletIfEligible = async () => {
     };
 
     const createResponse = await fetch(
-      "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/OffersTransactions/UploadOffersTransactionsDetails",
+      "https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/OffersTransactions/UploadOffersTransactionsDetails",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -1519,7 +1520,7 @@ export default GroceryCartPage;
 //         if (!image) return;
 //         try {
 //           const res = await fetch(
-//             `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(image)}`
+//             `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(image)}`
 //           );
 //           const contentType = res.headers.get("content-type") || "";
 //           if (contentType.includes("application/json")) {
@@ -1541,7 +1542,7 @@ export default GroceryCartPage;
 //   const fetchCustomerData = useCallback(async () => {
 //       try {
 //         const response = await fetch(
-//           `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Address/GetAddressById/${userId}`,
+//           `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/Address/GetAddressById/${userId}`,
 //         );
 //         if (!response.ok) {
 //           throw new Error("Failed to fetch customer profile data");
@@ -1583,7 +1584,7 @@ export default GroceryCartPage;
 // }, [userId, fetchCustomerData]);
 
 //   const IMAGE_DOWNLOAD =
-//     `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
+//     `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
 
 //   // function toNum(v, f = 0) {
 //   //   const n = Number(v);
@@ -1608,7 +1609,7 @@ export default GroceryCartPage;
 //         const results = await Promise.allSettled(
 //           uniqueNames.map(async (name) => {
 //             const res = await fetch(
-//               `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
+//               `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(
 //                 name,
 //               )}`,
 //             );
@@ -1756,7 +1757,7 @@ export default GroceryCartPage;
 //               const blobUrl = URL.createObjectURL(blob);
 //               return { fn, url: blobUrl };
 //             } else {
-//               return { fn, url: `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(fn)}` };
+//               return { fn, url: `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(fn)}` };
 //             }
 //           }),
 //         );
@@ -1857,7 +1858,7 @@ export default GroceryCartPage;
 //   const fetchLatestStock = useCallback(async (productName) => {
 //   try {
 //     const res = await fetch(
-//       `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(productName)}`
+//       `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(productName)}`
 //     );
 //     const data = await res.json();
 //     const normalizedInput = normalizeName(productName);
@@ -2102,7 +2103,7 @@ export default GroceryCartPage;
 
 //   //   try {
 //   //     const response = await fetch(
-//   //       `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UploadProductDetails`,
+//   //       `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/Mart/UploadProductDetails`,
 //   //       {
 //   //         method: "POST",
 //   //         headers: { "Content-Type": "application/json" },
@@ -2270,7 +2271,7 @@ export default GroceryCartPage;
 
 //   try {
 //     const response = await fetch(
-//       `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UploadProductDetails`,
+//       `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/Mart/UploadProductDetails`,
 //       {
 //         method: "POST",
 //         headers: { "Content-Type": "application/json" },

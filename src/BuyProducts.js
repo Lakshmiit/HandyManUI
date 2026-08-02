@@ -78,7 +78,7 @@ useEffect(() => {
     const fetchProfileType = useCallback(async () => {
       try {
         // ${app.}
-        const API_URL = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Address/GetAddressById/`;
+        const API_URL = `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/Address/GetAddressById/`;
         const response = await fetch(`${API_URL}${userId}`);
         if (!response.ok) {
           throw new Error("Failed to fetch customer profile data");
@@ -126,7 +126,7 @@ useEffect(() => {
 }, [addresses]);
 
   useEffect(() => {
-    axios.get(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getStates`)
+    axios.get(`https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/MasterData/getStates`)
       .then(response => {
         const data = response.data;
         console.log("States API Response:", data); 
@@ -140,7 +140,7 @@ useEffect(() => {
   
    useEffect(() => {
     if (stateId) {
-      axios.get(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
+      axios.get(`https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
         .then(response => {
           setDistrictList(response.data);
         })
@@ -228,7 +228,7 @@ useEffect(() => {
     };
   
     try {
-      const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/BuyProduct/BuyProductUpload`,{
+      const response = await fetch(`https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/BuyProduct/BuyProductUpload`,{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -363,7 +363,7 @@ useEffect(() => {
     };
   
     try {
-      const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Customer/CustomerAddressEdit`, {
+      const response = await fetch(`https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/Customer/CustomerAddressEdit`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -399,7 +399,7 @@ const fetchProductsByCategory = async (selectedCategory) => {
     setLoading(true);
     setNoProductNameError("");
     const response = await fetch(
-      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Product/GetProductsByCategory?Category=${selectedCategory}`
+      `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/Product/GetProductsByCategory?Category=${selectedCategory}`
     );
     if (!response.ok) {
       throw new Error("Failed to fetch products");

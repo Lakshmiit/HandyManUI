@@ -21,7 +21,7 @@ import Footer from "./Footer.js";
 import "./App.css";
 
 const API =
-  "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api";
+  "https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api";
 
 const AdminPushNotifications = () => {
   const [isMobile, setIsMobile] = useState(false);

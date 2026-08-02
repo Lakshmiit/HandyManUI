@@ -54,7 +54,7 @@ const [error, setError] = useState('');
           setError("");
       
           const encodedCategory = encodeURIComponent(value);
-          const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Product/GetProductsByCategory?Category=${encodedCategory}`;
+          const url = `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/Product/GetProductsByCategory?Category=${encodedCategory}`;
           const response = await axios.get(url);
           const productsData = response.data;
       
