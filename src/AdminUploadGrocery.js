@@ -91,7 +91,7 @@ useEffect(() => {
       formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
       formData.append('fileName', fileName);
      
-      const response = await fetch(`https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/FileUpload/upload?filename=` + fileName, {
+      const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/upload?filename=` + fileName, {
         method: 'POST',
         headers: {
           'Accept': 'text/plain',
@@ -150,7 +150,7 @@ useEffect(() => {
       Limit: limit ? limit.toString() : "",    
     };   
     try {
-      const response = await fetch(`https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/UploadGrocery/UploadGrocery`, {
+      const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/UploadGrocery`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

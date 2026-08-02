@@ -90,7 +90,7 @@ const [currentPage, setCurrentPage] = useState(1);
     try {
       setLoading(true);
       const res = await axios.get(
-        "https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/UpLoadBannners/GetBanners"
+        "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UpLoadBannners/GetBanners"
       );
       setBannersList(res.data || []);
     } catch (err) {
@@ -116,7 +116,7 @@ const indexOfLast = currentPage * rowsPerPage;
     const imageRequests =
       banner.image?.map((photo) =>
         fetch(
-          `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo.images}`
+          `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo.images}`
         )
           .then((res) => res.json())
           .then((data) => ({
@@ -173,7 +173,7 @@ const indexOfLast = currentPage * rowsPerPage;
     if (!window.confirm("Delete this banner?")) return;
     try {
       await axios.delete(
-        `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/UpLoadBannners/DeleteBanner/${id}`
+        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UpLoadBannners/DeleteBanner/${id}`
       );
       alert("Banner deleted successfully");
       fetchBanners();
@@ -233,7 +233,7 @@ const indexOfLast = currentPage * rowsPerPage;
       };
 
       await axios.put(
-        `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/UpLoadBannners/UpdateBannerDetails?id=${editBanner.id}`,
+        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UpLoadBannners/UpdateBannerDetails?id=${editBanner.id}`,
         payload
       );
 

@@ -47,7 +47,7 @@ const ApartmentRaiseActionView = () => {
   useEffect(() => {
     const fetchapartmentData = async () => {
       try {
-        const response = await fetch(`https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/ApartmentRaiseTicket/GetApartmentMaintenanceRaiseTicket/${apartmentRaiseTicketId}`);
+        const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/ApartmentRaiseTicket/GetApartmentMaintenanceRaiseTicket/${apartmentRaiseTicketId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch ticket data');
         }
@@ -72,7 +72,7 @@ const ApartmentRaiseActionView = () => {
         setIsSubscription(data.isSubscription);
         const imageRequests =
           data.attachments?.map((photo) => fetch(
-              `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
+              `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`
             )
             .then((res) => res.json())
               .then((data) => ({

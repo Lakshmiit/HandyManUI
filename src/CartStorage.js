@@ -5,7 +5,7 @@ const CART_KEY = "allCategories";
 export const fileToUrl = (fn) => {
   if (!fn) return null;
   if (fn.startsWith("http")) return fn;
-  return `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(fn)}`;
+  return `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(fn)}`;
 };
 
 /* ---------------- CLEAN DATA ---------------- */

@@ -140,7 +140,7 @@ const collectionsCategories = [
   ];
 
   const IMAGE_API =
-  `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
+  `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
 
 const ProfilePage = () => {
    const [allProducts, setAllProducts] = useState([]);
@@ -325,7 +325,7 @@ const fetchWalletAmount = useCallback(async () => {
   try {
     setWalletLoading(true);
     const response = await fetch(
-      `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/OffersTransactions/GetOfferTransactionByUserId?userId=${userId}`
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/OffersTransactions/GetOfferTransactionByUserId?userId=${userId}`
     );
     const data = await response.json();
     if (data && data.length > 0) {
@@ -356,7 +356,7 @@ useEffect(() => {
   async function fetchProductsAndFirstImages(warm = false, signal) {
     try {
       if (!warm) setImageLoading(true);
-      const url = `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${category}`;
+      const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsBycategory?Category=${category}`;
 
       const { data: items } = await axios.get(url, { signal });
       const safeItems = (Array.isArray(items) ? items : []).map(normalizeProduct);
@@ -387,7 +387,7 @@ useEffect(() => {
       const fetchOne = async ({ productId, photo }) => {
         try {
           const res = await fetch(
-            `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`,
+            `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo}`,
             { signal }
           );
 
@@ -539,7 +539,7 @@ useEffect(() => {
   //       message: "User fetching grocery items in profile page"
   //     };
   //     await axios.post(
-  //       `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/LmartLogs/UploadlogsDetails`,
+  //       `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/LmartLogs/UploadlogsDetails`,
   //       payload
   //     );
   //   } catch (err) {
@@ -551,7 +551,7 @@ useEffect(() => {
     if (showLoader) setLoading(true);
     try {
       const res = await axios.get(
-        `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/UploadGrocery/GetAllGroceryItems`
+        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetAllGroceryItems`
       );
       const normalized = (Array.isArray(res.data) ? res.data : [])
         .map(normalizeProduct)
@@ -657,7 +657,7 @@ const handleAddClick = (product) => {
 //   const fetchDeliveryData = async () => {
 //     try {    
 //       const response = await fetch(
-//         `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/Mart/GetProductDetails?id=${id}`
+//         `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetProductDetails?id=${id}`
 //       );
 //       if (!response.ok) {
 //         throw new Error("Failed to fetch grocery product data");
@@ -733,7 +733,7 @@ const loadDeliveryPartnerTickets = useCallback(async () => {
   try {
     setDeliveryTicketsLoading(true);
     const response = await fetch(
-      `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/Mart/GetMartTicketsByUserId?userId=${userId}`,
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetMartTicketsByUserId?userId=${userId}`,
     );
     if (!response.ok) {
       throw new Error("Failed to fetch ticket data");
@@ -776,7 +776,7 @@ const handleDeliveryPartnerClick = async () => {
   clickLock.current = true;
   try {
     const res = await axios.get(
-      `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/DeliveryPartner/GetDeliveryPartnerDetailsByUserId?userId=${userId}`
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/DeliveryPartner/GetDeliveryPartnerDetailsByUserId?userId=${userId}`
     );
     const raw = res?.data ?? null;
     const profile = Array.isArray(raw)
@@ -821,7 +821,7 @@ const isActionLocked =
 const handleStatusUpdate = async (ticket, newStatus) => {
   try {
     const detailsResponse = await fetch(
-      `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/Mart/GetProductDetails?id=${ticket.id}`
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetProductDetails?id=${ticket.id}`
     );
 
     if (!detailsResponse.ok) {
@@ -851,7 +851,7 @@ const handleStatusUpdate = async (ticket, newStatus) => {
     };
     console.log("FINAL PAYLOAD:", payload);
     const response = await fetch(      
-      `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/Mart/UpdateProductDetails/${ticket.id}`,
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UpdateProductDetails/${ticket.id}`,
       {
         method: "PUT",
         headers: {
@@ -878,7 +878,7 @@ const handleStatusUpdate = async (ticket, newStatus) => {
 const handleUpdatePaymentMethod = async (ticket) => {
   try {
     const detailsResponse = await fetch(
-      `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/Mart/GetProductDetails?id=${ticket.id}`
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetProductDetails?id=${ticket.id}`
     );
 
     if (!detailsResponse.ok) {
@@ -910,7 +910,7 @@ const handleUpdatePaymentMethod = async (ticket) => {
     };
     console.log("FINAL PAYLOAD:", payload);
     const response = await fetch(
-      `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/Mart/UpdateProductDetails/${ticket.id}`,
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UpdateProductDetails/${ticket.id}`,
       {
         method: "PUT",
         headers: {
@@ -1104,11 +1104,11 @@ const fetchAllTickets = useCallback(async ({ silent = false } = {}) => {
       setLoading(true);
     }
     const [ticketResponse, productResponse, technicianResponse, groceriesResponse, lakshmiResponse] = await Promise.all([
-      fetch(`https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=raiseTicket`),
-      fetch(`https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=buyProduct`),
-      fetch(`https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=bookTechnician`),
-      fetch(`https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=mart`),
-      fetch(`https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=collections`),
+      fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=raiseTicket`),
+      fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=buyProduct`),
+      fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=bookTechnician`),
+      fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=mart`),
+      fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/RaiseTicket/GetAllTicketsList?userId=${userId}&type=collections`),
     ]);
     if (!ticketResponse.ok || !productResponse.ok || !technicianResponse || !groceriesResponse || !lakshmiResponse) {
       throw new Error("Failed to fetch ticket, product and technician data");
@@ -1193,7 +1193,7 @@ const handleTrackOrder = async (ticket) => {
     setTrackError("");
     setTrackedOrder(null);
     const response = await fetch(
-      `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/Mart/GetProductDetails?id=${ticket.id}`,
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetProductDetails?id=${ticket.id}`,
     );
     if (!response.ok) {
       throw new Error("Failed to fetch live order status");
@@ -1256,7 +1256,7 @@ const handleTrackOrder = async (ticket) => {
           try {
             let apiUrl = "";
             if (userType === "customer") {
-              apiUrl = `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`;
+              apiUrl = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/customer/customerProfileData?profileType=${userType}&UserId=${userId}`;
             }
             if (!apiUrl) return;
             const response = await axios.get(apiUrl);
@@ -1295,7 +1295,7 @@ const fetchImageUrl = async (photoId) => {
   try { 
     if (!photoId) return;
     const response = await axios.get(
-      `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photoId}`
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photoId}`
     );
     if (response.status === 200 && response.data.imageData) {
       const imageUrl = `data:image/jpeg;base64,${response.data.imageData}`;

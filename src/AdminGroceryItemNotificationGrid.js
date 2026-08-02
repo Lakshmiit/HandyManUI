@@ -41,7 +41,7 @@ const [activeTab, setActiveTab] = useState("Open");
 
   useEffect(() => {
     setLoading(true);
-    const url = `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/Mart/GetAllMartItems`;
+    const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetAllMartItems`;
 
     axios.get(url)
       .then(response => {
@@ -69,7 +69,7 @@ const [activeTab, setActiveTab] = useState("Open");
   const handleDelete = (groceryId) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this grocery?');
     if (confirmDelete) {
-      axios.delete(`https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/RaiseTicket/${groceryId}`)
+      axios.delete(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/RaiseTicket/${groceryId}`)
         .then(() => {
           setGroceryData(prev => prev.filter(g => g.id !== groceryId));
           setFilteredData(prev => prev.filter(g => g.id !== groceryId));

@@ -88,7 +88,7 @@ useEffect(() => {
     setErr("");
     try {
       const res = await fetch(
-        `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/UploadLakshmiCollection/GetLakshmiCollections?id=${id}`
+        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadLakshmiCollection/GetLakshmiCollections?id=${id}`
       );
       if (!res.ok) throw new Error("Failed to fetch product");
       const data = await res.json();
@@ -100,7 +100,7 @@ useEffect(() => {
 
       const buildRequest = async (fileName) => {
         const r = await fetch(
-          `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
+          `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
             fileName
           )}`
         );
@@ -250,7 +250,7 @@ const allOutOfStock = sizes.length > 0 && sizes.every(s => (s.stock ?? 0) <= 0);
     setPosting(true);
     setPostMsg(null);
     const res = await fetch(
-      `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/LakshmiCollection/UploadColectionsDetails`,
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/LakshmiCollection/UploadColectionsDetails`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

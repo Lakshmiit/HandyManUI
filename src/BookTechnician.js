@@ -64,7 +64,7 @@ const [isNewUser, setIsNewUser] = useState(true);
   // Fetch customer profile data
     const fetchCustomerData = useCallback(async () => {
       try {
-        const response = await fetch(`https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/Address/GetAddressById/${userId}`);
+        const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Address/GetAddressById/${userId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch customer profile data');
         }
@@ -111,7 +111,7 @@ const [isNewUser, setIsNewUser] = useState(true);
   }, [fetchCustomerData]);
 
   useEffect(() => {
-    axios.get(`https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/MasterData/getStates`)
+    axios.get(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getStates`)
       .then(response => {
         const data = response.data;
         console.log("States API Response:", data); 
@@ -125,7 +125,7 @@ const [isNewUser, setIsNewUser] = useState(true);
   
    useEffect(() => {
     if (stateId) {
-      axios.get(`https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
+      axios.get(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
         .then(response => {
           setDistrictList(response.data);
         })
@@ -193,7 +193,7 @@ useEffect(() => {
   const fetchJobsByCategory = async (selectedCategory) => {
     try {
       setLoading(true);
-      const response = await fetch(`https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/UploadJobDescriptionBookTechnician/GetSelctedJobsByCategory?Category=${selectedCategory}`);
+      const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadJobDescriptionBookTechnician/GetSelctedJobsByCategory?Category=${selectedCategory}`);
       if (!response.ok) {
         throw new Error("Failed to fetch jobs");
       }
@@ -312,7 +312,7 @@ const handleUpdateJobDescription = async (e) => {
     TechnicianFullName: "",
   };
   try {
-    const response = await fetch(`https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/BookTechnician/CreateBookTechnician`, {
+    const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/BookTechnician/CreateBookTechnician`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -378,7 +378,7 @@ const handleUpdateJobDescription = async (e) => {
       };
     
       try {
-        const response = await fetch(`https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/Customer/CustomerAddressEdit`, {
+        const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Customer/CustomerAddressEdit`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -52,7 +52,7 @@ useEffect(() => {
 }, [isChecked, editingAddressId]);
 
 const getUploadItemByProductName = useCallback(async (productName) => {
-    const url = `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/UploadLakshmiCollection/GetLakshmiCollectionsItemByProductName?productName=${encodeURIComponent(productName)}`;
+    const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadLakshmiCollection/GetLakshmiCollectionsItemByProductName?productName=${encodeURIComponent(productName)}`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Failed to fetch UploadLakshmiCollection for ${productName}`);
     const arr = await res.json();
@@ -65,7 +65,7 @@ const getUploadItemByProductName = useCallback(async (productName) => {
       ...itemObj,
       stockLeft: newStockLeftStr,
     };
-    const url = `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/UploadLakshmiCollection/UpdateLakshmiCollection?id=${encodeURIComponent(itemObj.id)}`;
+    const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadLakshmiCollection/UpdateLakshmiCollection?id=${encodeURIComponent(itemObj.id)}`;
     const res = await fetch(url, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -85,7 +85,7 @@ const getUploadItemByProductName = useCallback(async (productName) => {
                 return;
                 }
                 const response = await fetch(
-                `https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/LakshmiCollection/GetLakshmiCollectionDetails/${collectionId}`
+                `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/LakshmiCollection/GetLakshmiCollectionDetails/${collectionId}`
                 );
                 if (!response.ok) throw new Error("Failed to fetch collection details");
                 const data = await response.json();
@@ -130,7 +130,7 @@ const getUploadItemByProductName = useCallback(async (productName) => {
 
  const fetchCustomerData = useCallback(async () => {
       try {
-        const response = await fetch(`https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/Address/GetAddressById/${userId}`);
+        const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Address/GetAddressById/${userId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch customer profile data');
         }
@@ -161,7 +161,7 @@ const getUploadItemByProductName = useCallback(async (productName) => {
   }, [fetchCustomerData]);
 
   useEffect(() => {
-    axios.get(`https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/MasterData/getStates`)
+    axios.get(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getStates`)
       .then(response => {
         const data = response.data;
         console.log("States API Response:", data); 
@@ -175,7 +175,7 @@ const getUploadItemByProductName = useCallback(async (productName) => {
   
    useEffect(() => {
     if (stateId) {
-      axios.get(`https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
+      axios.get(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
         .then(response => {
           setDistrictList(response.data);
         })
@@ -238,7 +238,7 @@ const getUploadItemByProductName = useCallback(async (productName) => {
       };
     
       try {
-        const response = await fetch(`https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/Customer/CustomerAddressEdit`, {
+        const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Customer/CustomerAddressEdit`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -357,7 +357,7 @@ const handleUpdatePaymentMethod = async (e) => {
     };
   try {
       // Step 1: Update the LakshmiCollection (as before)
-      let response = await fetch(`https://lmartzoneav1-bhdzfxcse7ctdxbd.westus2-01.azurewebsites.net/api/LakshmiCollection/UpdateLakshmiCollectionDetails/${collectionId}`, {
+      let response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/LakshmiCollection/UpdateLakshmiCollectionDetails/${collectionId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
