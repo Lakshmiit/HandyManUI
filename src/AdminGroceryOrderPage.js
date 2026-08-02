@@ -666,7 +666,7 @@ useEffect(() => {
   }
   loadImages();
   return () => controller.abort();
-}, [items.length]); 
+}, [items]); 
 
 const handleImageClick = (imageSrc, product) => {
     setZoomImage(imageSrc);

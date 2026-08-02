@@ -65,7 +65,6 @@ import RoyalImg from './img/LMartLogo.jpeg';
 import HomeElectricalImg from './img/HomeElectrical.jpeg';
 import HomePlumbingImg from './img/HomePlumbing.jpeg'; 
 import OffersBannerModal from './OffersBannerModal.js';
-import { useLocalStorage } from './hooks/useLocalStorage';
 import LiveChatWidget from './components/LiveChatWidget';
 import PushNotificationService from './utils/PushNotificationService';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';

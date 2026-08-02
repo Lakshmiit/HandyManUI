@@ -4,7 +4,6 @@ import Header from "./Header";
 import Footer from "./Footer";
 import { useNavigate } from "react-router-dom";
 import {
-  CASHBACK_CONFIG_FOOTER,
   CASHBACK_CONFIG_HEADER,
   CASHBACK_CONFIG_TITLE,
   deleteLocalCashbackOffer,

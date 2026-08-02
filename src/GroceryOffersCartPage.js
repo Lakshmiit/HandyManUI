@@ -441,7 +441,7 @@ const refreshAllCartStocks = useCallback(async () => {
 
 useEffect(() => {
   refreshAllCartStocks();
-}, []);
+}, [refreshAllCartStocks]);
 
 useEffect(() => {
   const handleFocus = () => refreshAllCartStocks();

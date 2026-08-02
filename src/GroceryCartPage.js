@@ -120,9 +120,6 @@ useEffect(() => {
   }
 }, [userId, fetchCustomerData]);
 
-  const IMAGE_DOWNLOAD =
-    `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
-
   // function toNum(v, f = 0) {
   //   const n = Number(v);
   //   return Number.isFinite(n) ? n : f;
@@ -502,11 +499,11 @@ const refreshAllCartStocks = useCallback(async () => {
   setCartItems(updated);
   writeBackToStorage(updated);
   setGrandSummary(computeTotals(updated));
-}, [fetchLatestStock, getDynamicLimit, writeBackToStorage, fileToUrl]);
+}, [fetchLatestStock, getDynamicLimit, writeBackToStorage]);
 
 useEffect(() => {
   refreshAllCartStocks();
-}, []);
+}, [refreshAllCartStocks]);
 
 useEffect(() => {
   const handleFocus = () => {

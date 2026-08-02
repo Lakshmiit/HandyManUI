@@ -19,29 +19,6 @@ const createEmptyCashbackRule = () => ({
   cashback: "",
 });
 
-const parseCashbackRules = (value) => {
-  if (!value) return [];
-
-  const normalizedText = String(value)
-    .split(/\r?\n|;/)
-    .map((line) => line.trim())
-    .filter(Boolean);
-
-  return normalizedText
-    .map((line) => {
-      const match = line.match(
-        /^(?:>=\s*)?(\d+)(?:\s*-\s*(\d+)|\s*\+)?\s*[:=,>]\s*(\d+)$/,
-      );
-      if (!match) return null;
-      return {
-        minAmount: match[1] || "",
-        maxAmount: match[2] || "",
-        cashback: match[3] || "",
-      };
-    })
-    .filter(Boolean);
-};
-
 const serializeCashbackRules = (rules) =>
   rules
     .map((rule) => ({

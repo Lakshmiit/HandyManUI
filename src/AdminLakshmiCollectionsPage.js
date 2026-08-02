@@ -78,6 +78,7 @@ const AdminLakshmiCollectionsPage = () => {
 
   // Fetch order + images (same pattern as list page)
   useEffect(() => {
+    const blobUrls = [];
     const fetchCollectionData = async () => {
       try {
         if (!collectionId) {
@@ -121,6 +122,9 @@ const AdminLakshmiCollectionsPage = () => {
           items.map(async (it) => {
             try {
               const url = await downloadImage(it.productImage);
+              if (url && url.startsWith("blob:")) {
+                blobUrls.push(url);
+              }
               return [it.id, url ? [url] : []]; 
             } catch (e) {
               console.warn("Image fetch failed for", it.productImage, e);
@@ -145,10 +149,8 @@ const AdminLakshmiCollectionsPage = () => {
     };
     fetchCollectionData();
     return () => {
-      Object.values(imageUrls).forEach((arr) => {
-        (arr || []).forEach((src) => {
-          if (src && src.startsWith("blob:")) URL.revokeObjectURL(src);
-        });
+      blobUrls.forEach((src) => {
+        if (src && src.startsWith("blob:")) URL.revokeObjectURL(src);
       });
     };
   }, [collectionId]);
