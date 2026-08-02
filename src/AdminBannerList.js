@@ -7,10 +7,59 @@ import {
   Carousel,
   Spinner,
   Form,
+  Row,
+  Col,
 } from "react-bootstrap";
 import Header from "./Header";
 import Footer from "./Footer";
 import { useNavigate } from "react-router-dom";
+
+const CASHBACK_CONFIG_TITLE = "Grocery Cashback Rules";
+const CASHBACK_CONFIG_HEADER = "cashback-config";
+const createEmptyCashbackRule = () => ({
+  minAmount: "",
+  maxAmount: "",
+  cashback: "",
+});
+
+const isCashbackConfigBanner = (banner) =>
+  String(banner?.header || "").trim().toLowerCase() === CASHBACK_CONFIG_HEADER;
+
+const parseCashbackRules = (value) => {
+  if (!value) return [];
+
+  return String(value)
+    .split(/\r?\n|;/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const match = line.match(
+        /^(?:>=\s*)?(\d+)(?:\s*-\s*(\d+)|\s*\+)?\s*[:=,>]\s*(\d+)$/,
+      );
+      if (!match) return null;
+      return {
+        minAmount: match[1] || "",
+        maxAmount: match[2] || "",
+        cashback: match[3] || "",
+      };
+    })
+    .filter(Boolean);
+};
+
+const serializeCashbackRules = (rules) =>
+  rules
+    .map((rule) => ({
+      minAmount: String(rule.minAmount || "").trim(),
+      maxAmount: String(rule.maxAmount || "").trim(),
+      cashback: String(rule.cashback || "").trim(),
+    }))
+    .filter((rule) => rule.minAmount && rule.cashback)
+    .map((rule) =>
+      rule.maxAmount
+        ? `${rule.minAmount}-${rule.maxAmount}=${rule.cashback}`
+        : `${rule.minAmount}=${rule.cashback}`,
+    )
+    .join("\n");
 
 const BannerList = () => {
   const navigate = useNavigate();
@@ -26,8 +75,10 @@ const [currentPage, setCurrentPage] = useState(1);
     id: "",
     title: "",
     description: "",
-    // header: "",
-    // footer: "",
+    header: "",
+    footer: "",
+    offerType: "banner",
+    cashbackRules: [createEmptyCashbackRule()],
     createdDate: "",
     updatedDate: "",
     startDate: "",
@@ -93,6 +144,8 @@ const indexOfLast = currentPage * rowsPerPage;
     try {
       const images = await fetchBannerImages(banner);
       setBannerImages(images);
+      const cashbackRules = parseCashbackRules(banner.description);
+      const isCashbackConfig = isCashbackConfigBanner(banner);
 
       setEditBanner({
         id: banner.id,
@@ -100,6 +153,11 @@ const indexOfLast = currentPage * rowsPerPage;
         description: banner.description || "",
         header: banner.header || "",
         footer: banner.footer || "",
+        offerType: isCashbackConfig ? "cashback-config" : "banner",
+        cashbackRules:
+          isCashbackConfig && cashbackRules.length > 0
+            ? cashbackRules
+            : [createEmptyCashbackRule()],
         startDate: banner.startDate?.slice(0, 16),
         endDate: banner.endDate?.slice(0, 16),
         image: banner.image || [],
@@ -125,14 +183,48 @@ const indexOfLast = currentPage * rowsPerPage;
     }
   };
 
+  const handleCashbackRuleChange = (index, field, value) => {
+    const sanitizedValue = value.replace(/[^0-9]/g, "");
+    setEditBanner((prev) => ({
+      ...prev,
+      cashbackRules: prev.cashbackRules.map((rule, ruleIndex) =>
+        ruleIndex === index ? { ...rule, [field]: sanitizedValue } : rule,
+      ),
+    }));
+  };
+
+  const addCashbackRule = () => {
+    setEditBanner((prev) => ({
+      ...prev,
+      cashbackRules: [...prev.cashbackRules, createEmptyCashbackRule()],
+    }));
+  };
+
+  const removeCashbackRule = (index) => {
+    setEditBanner((prev) => ({
+      ...prev,
+      cashbackRules:
+        prev.cashbackRules.length === 1
+          ? [createEmptyCashbackRule()]
+          : prev.cashbackRules.filter((_, ruleIndex) => ruleIndex !== index),
+    }));
+  };
+
   const handleUpdate = async () => {
     try {
+      const isCashbackConfig = editBanner.offerType === "cashback-config";
+      const serializedRules = serializeCashbackRules(editBanner.cashbackRules || []);
+      if (isCashbackConfig && !serializedRules) {
+        alert("Please add at least one cashback rule.");
+        return;
+      }
+
       const payload = {
         id: editBanner.id,
-        title: editBanner.title,
-        description: editBanner.description,
-        header: editBanner.header,
-        footer: editBanner.footer,
+        title: isCashbackConfig ? CASHBACK_CONFIG_TITLE : editBanner.title,
+        description: isCashbackConfig ? serializedRules : editBanner.description,
+        header: isCashbackConfig ? CASHBACK_CONFIG_HEADER : editBanner.header,
+        footer: isCashbackConfig ? "Admin-managed cashback thresholds" : editBanner.footer,
         createdDate: editBanner.createdDate,
         updatedDate: new Date(),
         startDate: editBanner.startDate,
@@ -178,7 +270,7 @@ const indexOfLast = currentPage * rowsPerPage;
           <button
             className="btn btn-success"
             style={{ position: "absolute", right: 0 }}
-            onClick={() => navigate(`/adminOfferModal/Admin`)}
+            onClick={() => navigate('/adminOfferModal/Admin')}
           >
             Upload Poster
           </button>
@@ -258,7 +350,31 @@ const indexOfLast = currentPage * rowsPerPage;
             <>
               <h4>{selectedBanner.title}</h4>
 
-              <p><strong>Description:</strong> {selectedBanner.description}</p>
+              {isCashbackConfigBanner(selectedBanner) ? (
+                <div className="mb-3">
+                  <strong>Cashback Rules:</strong>
+                  <Table bordered size="sm" className="mt-2 mb-0">
+                    <thead>
+                      <tr>
+                        <th>Min Amount</th>
+                        <th>Max Amount</th>
+                        <th>Cashback</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {parseCashbackRules(selectedBanner.description).map((rule, index) => (
+                        <tr key={`view-rule-${index}`}>
+                          <td>{rule.minAmount}</td>
+                          <td>{rule.maxAmount || "No limit"}</td>
+                          <td>{rule.cashback}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                </div>
+              ) : (
+                <p><strong>Description:</strong> {selectedBanner.description}</p>
+              )}
               <p>
                 <strong>Start:</strong>{" "}
                 {new Date(selectedBanner.startDate).toLocaleString()}
@@ -304,47 +420,89 @@ const indexOfLast = currentPage * rowsPerPage;
             <Form.Group>
               <Form.Label>Title</Form.Label>
               <Form.Control
-                value={editBanner.title}
+                value={editBanner.offerType === "cashback-config" ? CASHBACK_CONFIG_TITLE : editBanner.title}
+                readOnly={editBanner.offerType === "cashback-config"}
                 onChange={(e) =>
                   setEditBanner({ ...editBanner, title: e.target.value })
                 }
               />
             </Form.Group>   
 
-            {/* <Form.Group>
-              <Form.Label>Header</Form.Label>
-              <Form.Control
-                value={editBanner.header}
-                onChange={(e) =>
-                  setEditBanner({ ...editBanner, header: e.target.value })
-                }
-              />  
-            </Form.Group> */}
-
-            <Form.Group>
-              <Form.Label>Description</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                value={editBanner.description}
-                onChange={(e) =>
-                  setEditBanner({
-                    ...editBanner,
-                    description: e.target.value,
-                  })
-                }
-              />
-            </Form.Group>
-
-            {/* <Form.Group>
-              <Form.Label>Footer</Form.Label>
-              <Form.Control
-                value={editBanner.footer}
-                onChange={(e) =>
-                  setEditBanner({ ...editBanner, footer: e.target.value })
-                }
-              />
-            </Form.Group> */}
+            {editBanner.offerType === "cashback-config" ? (
+              <div className="border rounded p-2 my-3 bg-light">
+                <div className="d-flex justify-content-between align-items-center mb-2">
+                  <Form.Label className="fw-bold mb-0">Cashback Slabs</Form.Label>
+                  <Button type="button" size="sm" variant="success" onClick={addCashbackRule}>
+                    Add Row
+                  </Button>
+                </div>
+                {editBanner.cashbackRules.map((rule, index) => (
+                  <Row key={`edit-cashback-rule-${index}`} className="g-2 align-items-end mb-2">
+                    <Form.Group as={Col} xs={4}>
+                      <Form.Label className="small fw-bold">Min Amount</Form.Label>
+                      <Form.Control
+                        type="text"
+                        inputMode="numeric"
+                        value={rule.minAmount}
+                        onChange={(e) =>
+                          handleCashbackRuleChange(index, "minAmount", e.target.value)
+                        }
+                        placeholder="300"
+                      />
+                    </Form.Group>
+                    <Form.Group as={Col} xs={4}>
+                      <Form.Label className="small fw-bold">Max Amount</Form.Label>
+                      <Form.Control
+                        type="text"
+                        inputMode="numeric"
+                        value={rule.maxAmount}
+                        onChange={(e) =>
+                          handleCashbackRuleChange(index, "maxAmount", e.target.value)
+                        }
+                        placeholder="Optional"
+                      />
+                    </Form.Group>
+                    <Form.Group as={Col} xs={3}>
+                      <Form.Label className="small fw-bold">Cashback</Form.Label>
+                      <Form.Control
+                        type="text"
+                        inputMode="numeric"
+                        value={rule.cashback}
+                        onChange={(e) =>
+                          handleCashbackRuleChange(index, "cashback", e.target.value)
+                        }
+                        placeholder="20"
+                      />
+                    </Form.Group>
+                    <Col xs={1} className="d-flex justify-content-end">
+                      <Button
+                        type="button"
+                        variant="outline-danger"
+                        size="sm"
+                        onClick={() => removeCashbackRule(index)}
+                      >
+                        ×
+                      </Button>
+                    </Col>
+                  </Row>
+                ))}
+              </div>
+            ) : (
+              <Form.Group>
+                <Form.Label>Description</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  value={editBanner.description}
+                  onChange={(e) =>
+                    setEditBanner({
+                      ...editBanner,
+                      description: e.target.value,
+                    })
+                  }
+                />
+              </Form.Group>
+            )}
 
             <Form.Group>
               <Form.Label>Start Date & Time</Form.Label>

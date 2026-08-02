@@ -127,6 +127,7 @@ import RoyalUpmaMix250g from './RoyalUpmaMix250g.js';
 import MartHomeAppliances from './MartHomeAppliances.js';
 import AdminOfferForm from './AdminOfferForm.js';
 import AdminBannerList from './AdminBannerList.js';
+import AdminCashbackOffersList from './AdminCashbackOffersList.js';
 import AdminGroceryZoneDashboard from './AdminGroceryZoneDashboard.js';
 import AdminGroceryClosedOrders from './AdminGroceryClosedOrders.js';
 import AdminGroceryDashboard from './AdminGroceryDashboard.js';
@@ -135,6 +136,7 @@ import AdminRegistrationNumbers from './AdminRegisterationNumbers.js';
 import GroceryComboOffer from './GroceryComboOffer.js';
 import AdminPushNotifications from './AdminPushNotifications.js';
 import AdminLiveChat from './AdminLiveChat.js';
+import MilkSubscriptionPreview from './MilkSubscriptionPreview.js';
 // import DeliveryPartnerDashboard from './DeliveryPartnerDashboard.js';
 // import OneRupeeGroceryItems from './OneRupeeGroceryItems.js';
 // import CustomerLocation from "./CustomerLocation.js";
@@ -200,9 +202,12 @@ function App() {
  
             <Route path="/grocery/:userType/:userId" element={<GroceryItems />} />
             <Route path="/groceryCart/:userType/:userId" element={<GroceryCartPage />} />
+            <Route path="/milkSubscriptionPreview" element={<MilkSubscriptionPreview />} />
             {/* <Route path="/groceryIcons/:userType/:userId" element={<GroceryCategoryIcons />} /> */}
             <Route path="/adminOfferModal/Admin" element={<AdminOfferForm />} /> 
+            <Route path="/adminCashbackOfferCreate/Admin" element={<AdminOfferForm />} />
             <Route path="/adminBannerList/Admin" element={<AdminBannerList />} />   
+            <Route path="/adminCashbackOffers/Admin" element={<AdminCashbackOffersList />} />
             <Route path="/adminUploadGrocery/Admin" element={<AdminUploadGrocery />} />
             <Route path="/adminUpdateGrocery/:id/Admin" element={<AdminUpdateGrocery />} />
             <Route path="/adminGroceryApproval/:id/Admin" element={<AdminGroceryApproval />} /> 

@@ -7,7 +7,146 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Modal, Button, Form } from "react-bootstrap";
 import Footer from "./Footer.js";
+import { getLocalCashbackOffers } from "./utils/localCashbackOffers";
 // import { appConfig } from "./config";
+
+const DEFAULT_CASHBACK_RULES = [
+  { minAmount: 499, maxAmount: 998, cashback: 30 },
+  { minAmount: 999, maxAmount: 1498, cashback: 50 },
+  { minAmount: 1499, maxAmount: 1998, cashback: 100 },
+  { minAmount: 1999, maxAmount: 2998, cashback: 150 },
+  { minAmount: 2999, maxAmount: null, cashback: 250 },
+];
+
+const CASHBACK_CONFIG_TOKENS = [
+  "grocery cashback rules",
+  "cashback rules",
+  "cashback config",
+  "cashback-config",
+];
+
+const normalizeRuleNumber = (value) => {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : null;
+};
+
+const normalizeCashbackRule = (rule) => {
+  if (!rule || typeof rule !== "object") return null;
+  const minAmount = normalizeRuleNumber(
+    rule.minAmount ?? rule.min ?? rule.greaterThan ?? rule.threshold,
+  );
+  const maxAmount = normalizeRuleNumber(rule.maxAmount ?? rule.max ?? null);
+  const cashback = normalizeRuleNumber(
+    rule.cashback ?? rule.amount ?? rule.reward,
+  );
+
+  if (minAmount === null || cashback === null) return null;
+  return {
+    minAmount,
+    maxAmount,
+    cashback,
+  };
+};
+
+const parseCashbackRules = (value) => {
+  if (!value) return [];
+
+  if (Array.isArray(value)) {
+    return value.map(normalizeCashbackRule).filter(Boolean);
+  }
+
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    if (!trimmed) return [];
+
+    try {
+      const parsed = JSON.parse(trimmed);
+      const jsonRules = parseCashbackRules(parsed);
+      if (jsonRules.length > 0) {
+        return jsonRules;
+      }
+    } catch {
+      // Fallback to line-based parsing below.
+    }
+
+    return trimmed
+      .split(/\r?\n|;/)
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .map((line) => {
+        const match = line.match(
+          /^(?:>=\s*)?(\d+)(?:\s*-\s*(\d+)|\s*\+)?\s*[:=,>]\s*(\d+)$/,
+        );
+        if (!match) return null;
+        return normalizeCashbackRule({
+          minAmount: match[1],
+          maxAmount: match[2] ?? null,
+          cashback: match[3],
+        });
+      })
+      .filter(Boolean);
+  }
+
+  return [];
+};
+
+const sortCashbackRules = (rules) =>
+  [...rules].sort((a, b) => {
+    if (a.minAmount !== b.minAmount) return a.minAmount - b.minAmount;
+    if (a.maxAmount === null) return 1;
+    if (b.maxAmount === null) return -1;
+    return a.maxAmount - b.maxAmount;
+  });
+
+const isCashbackConfigBanner = (banner) => {
+  const haystack = [banner?.title, banner?.header, banner?.footer]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  return CASHBACK_CONFIG_TOKENS.some((token) => haystack.includes(token));
+};
+
+const getActiveCashbackRulesFromBanners = (banners) => {
+  const now = Date.now();
+  const configBanner = (Array.isArray(banners) ? banners : [])
+    .filter(isCashbackConfigBanner)
+    .filter((banner) => {
+      const start = banner?.startDate ? Date.parse(banner.startDate) : null;
+      const end = banner?.endDate ? Date.parse(banner.endDate) : null;
+      const startOk = start === null || Number.isNaN(start) || start <= now;
+      const endOk = end === null || Number.isNaN(end) || end >= now;
+      return startOk && endOk;
+    })
+    .sort((a, b) => {
+      const aTime = Date.parse(a?.updatedDate || a?.createdDate || 0) || 0;
+      const bTime = Date.parse(b?.updatedDate || b?.createdDate || 0) || 0;
+      return bTime - aTime;
+    })[0];
+
+  if (!configBanner) return [];
+
+  return sortCashbackRules(
+    parseCashbackRules(
+      configBanner.description || configBanner.footer || configBanner.header,
+    ),
+  );
+};
+
+const computeCashback = (total, rules) => {
+  const numericTotal = Number(total) || 0;
+  let matchedCashback = 0;
+
+  for (const rule of Array.isArray(rules) ? rules : []) {
+    const minOk = numericTotal >= rule.minAmount;
+    const maxOk = rule.maxAmount === null || numericTotal <= rule.maxAmount;
+    if (minOk && maxOk) {
+      matchedCashback = Number(rule.cashback) || 0;
+    }
+  }
+
+  return matchedCashback;
+};
 
 const GroceryPaymentmethod = () => {
 const navigate = useNavigate();   
@@ -67,6 +206,7 @@ const [loading, setLoading] = useState(false);
 const [offerWalletAmount, setOfferWalletAmount] = useState(0);
 const [offerTransactionId, setOfferTransactionId] = useState("");
 const [offerTransaction, setOfferTransaction] = useState(null);
+const [cashbackRules, setCashbackRules] = useState(DEFAULT_CASHBACK_RULES);
 
 // const readServerPoints = (record) => {
 // const raw =
@@ -87,27 +227,38 @@ console.log("ZipCode:", primary?.zipCode);
 useEffect(() => {
 console.log( offerTransaction, isOffersOrder, error, limit, loading, isChecked, editingAddressId, customerName, groceryId, );
 }, [ offerTransaction, isOffersOrder, error, limit, loading,isChecked,editingAddressId,customerName,groceryId,]);
+
+useEffect(() => {
+let cancelled = false;
+
+const loadCashbackRules = async () => {
+try {
+const data = getLocalCashbackOffers();
+const rules = getActiveCashbackRulesFromBanners(data);
+if (!cancelled && rules.length > 0) {
+setCashbackRules(rules);
+return;
+}
+if (!cancelled) {
+setCashbackRules(DEFAULT_CASHBACK_RULES);
+}
+} catch (cashbackError) {
+console.error("Failed to load cashback rules:", cashbackError);
+if (!cancelled) {
+setCashbackRules(DEFAULT_CASHBACK_RULES);
+}
+}
+};
+
+loadCashbackRules();
+return () => {
+cancelled = true;
+};
+}, []);
  
 const numericGrandTotal = Number(grandTotal) || 0;
-let cashback = 0;
+const cashback = computeCashback(numericGrandTotal, cashbackRules);
 // let giftName = "";
-
-// Cashback logic
-if (numericGrandTotal >= 499 && numericGrandTotal <= 998) {
-  cashback = 30;
-} 
-else if (numericGrandTotal >= 999 && numericGrandTotal <= 1498) {
-  cashback = 50;
-}
-else if (numericGrandTotal >= 1499 && numericGrandTotal <= 1998) {
-  cashback = 100;
-}
-else if (numericGrandTotal >= 1999 && numericGrandTotal <= 2998) {
-  cashback = 150;
-}
-else if (numericGrandTotal >= 2999) {
-  cashback = 250;
-}
 
 const isFirstOrderMinNotReached = isNewUser && numericGrandTotal < 150;
 const primaryAddress = addresses.find((addr) => addr.type === "primary");
