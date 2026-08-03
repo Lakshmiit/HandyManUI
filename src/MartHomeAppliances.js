@@ -13,6 +13,8 @@ import { CartStorage } from "./CartStorage";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ImageCache from "./utils/ImageCache";
 import Footer from "./Footer.js";
+import { getImageFilename, imageValueToUrl } from "./utils/imageSource";
+
 // import { appConfig } from "./config";
 
 const MartHomeAppliances = () => { 
@@ -176,105 +178,121 @@ const mapApiProductToUI = (p) => {
 };
 
  useEffect(() => {
-    if (!encodedCategory) return;
-    const decodedCat = decodeURIComponent(encodedCategory);
-    setSelectedCategory(decodedCat);
-    let cancelled = false;
-    const controller = new AbortController();
-    async function fetchProductsAndFirstImages(warm = false, signal) {
-      try {   
-        if (!warm) setImageLoading(true);
-        const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Product/GetProductsByCategory?Category=${encodeURIComponent(
-          selectedCategory
-        )}`;
-        const { data } = await axios.get(url, { signal });
-        const safeItems = Array.isArray(data) ? data.map(mapApiProductToUI) : [];
-        const sorted = [...safeItems].sort((a, b) => {
-          const stockA = Number(a.stockLeft || 0);
-          const stockB = Number(b.stockLeft || 0);
-          if (stockA <= 0 && stockB > 0) return 1;
-          if (stockA > 0 && stockB <= 0) return -1;
-          const timeA = getItemTime(a);
-          const timeB = getItemTime(b);
-          return timeB - timeA;
-        });
-        setProducts(sorted);
-        if (warm) return;
-        const allImages = safeItems.flatMap(p =>
-          (p.images || []).map(photo => ({
+  if (!encodedCategory) return;
+  const decodedCat = decodeURIComponent(encodedCategory);
+  setSelectedCategory(decodedCat);
+  let cancelled = false;
+  const controller = new AbortController();
+
+  async function fetchProductsAndFirstImages(warm = false, signal) {
+    try {
+      if (!warm) setImageLoading(true);
+      const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Product/GetProductsByCategory?Category=${encodeURIComponent(
+        selectedCategory
+      )}`;
+      const { data } = await axios.get(url, { signal });
+      const safeItems = Array.isArray(data) ? data.map(mapApiProductToUI) : [];
+      const sorted = [...safeItems].sort((a, b) => {
+        const stockA = Number(a.stockLeft || 0);
+        const stockB = Number(b.stockLeft || 0);
+        if (stockA <= 0 && stockB > 0) return 1;
+        if (stockA > 0 && stockB <= 0) return -1;
+        const timeA = getItemTime(a);
+        const timeB = getItemTime(b);
+        return timeB - timeA;
+      });
+      setProducts(sorted);
+      if (warm) return;
+
+      // Resolve a filename (if any) for every product image up front
+      const allImages = safeItems
+        .flatMap((p) =>
+          (p.images || []).map((photo) => ({
             productId: p.id,
-            photo
+            photo,
+            filename: getImageFilename(photo),
           }))
         )
-          .filter(x => !!x.photo);
-          const cachedMap = {};
-          const misses = [];
+        .filter((x) => !!x.photo);
 
-          await Promise.all(
-            allImages.map(async ({ productId, photo }) => {
-              const cached = await ImageCache.getBase64(photo);   
-              if (cached) {
-                if (!cachedMap[productId]) cachedMap[productId] = [];
-                cachedMap[productId].push(`data:image/jpeg;base64,${cached}`);
-              } else {
-                misses.push({ productId, photo });
-              }
-            })
-          );
-if (Object.keys(cachedMap).length) {
-  setImageUrls(prev => {
-    const merged = { ...prev };
-    for (const id in cachedMap) {
-      merged[id] = [...(merged[id] || []), ...cachedMap[id]];
-    }
-    return merged;
-  });
-}
+      const cachedMap = {};
+      const misses = [];
 
-        if (cancelled) return;
-        const fetchOne = async ({ productId, photo }) => {
-          try {
-            const res = await fetch(
-              `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
-              { signal }
-            );
-            const json = await res.json();
-            const b64 = json?.imageData || "";
-            if (!b64) return;
-            await ImageCache.setBase64(photo, b64);
-            const dataUrl = `data:image/jpeg;base64,${b64}`;
-            if (!cancelled) {
-              setImageUrls(prev => {
+      await Promise.all(
+        allImages.map(async ({ productId, photo, filename }) => {
+          // No filename means `photo` is already a usable direct URL
+          if (!filename) {
+            const directUrl = imageValueToUrl(photo);
+            if (directUrl) {
+              if (!cachedMap[productId]) cachedMap[productId] = [];
+              cachedMap[productId].push(directUrl);
+            }
+            return;
+          }
+          const cached = await ImageCache.getBase64(filename);
+          if (cached) {
+            if (!cachedMap[productId]) cachedMap[productId] = [];
+            cachedMap[productId].push(`data:image/jpeg;base64,${cached}`);
+          } else {
+            misses.push({ productId, filename });
+          }
+        })
+      );
+
+      if (Object.keys(cachedMap).length) {
+        setImageUrls((prev) => {
+          const merged = { ...prev };
+          for (const id in cachedMap) {
+            merged[id] = [...(merged[id] || []), ...cachedMap[id]];
+          }
+          return merged;
+        });
+      }
+
+      if (cancelled) return;
+
+      const fetchOne = async ({ productId, filename }) => {
+        try {
+          const res = await fetch(imageValueToUrl(filename), { signal });
+          if (!res.ok) throw new Error(`Image request failed: ${res.status}`);
+          const json = await res.json();
+          const b64 = json?.imageData || "";
+          if (!b64) return;
+          await ImageCache.setBase64(filename, b64);
+          const dataUrl = `data:image/jpeg;base64,${b64}`;
+          if (!cancelled) {
+            setImageUrls((prev) => {
               const existing = prev[productId] || [];
               if (existing.includes(dataUrl)) return prev;
               return {
                 ...prev,
-                [productId]: [...existing, dataUrl]
+                [productId]: [...existing, dataUrl],
               };
             });
-            }
-          } catch {}
-        };
-        await Promise.allSettled(misses.map(fetchOne));
-      } catch (err) {
-        if (err?.name !== "CanceledError" && err?.name !== "AbortError") {
-          console.error("Error fetching grocery products:", err);
-          if (!warm) {
-            setProducts([]);
-            setImageUrls({});
           }
-        }
-      } finally {
-        if (!cancelled && !warm) setImageLoading(false);
-      }
-    }
-    fetchProductsAndFirstImages(false, controller.signal);
-    return () => {
-      cancelled = true;  
-      controller.abort();
-    };
-  }, [encodedCategory, selectedCategory]);
+        } catch {}
+      };
 
+      await Promise.allSettled(misses.map(fetchOne));
+    } catch (err) {
+      if (err?.name !== "CanceledError" && err?.name !== "AbortError") {
+        console.error("Error fetching grocery products:", err);
+        if (!warm) {
+          setProducts([]);
+          setImageUrls({});
+        }
+      }
+    } finally {
+      if (!cancelled && !warm) setImageLoading(false);
+    }
+  }
+
+  fetchProductsAndFirstImages(false, controller.signal);
+  return () => {
+    cancelled = true;
+    controller.abort();
+  };
+}, [encodedCategory, selectedCategory]);
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     handleResize();
@@ -482,20 +500,7 @@ if (Object.keys(cachedMap).length) {
     className="d-flex justify-content-center align-items-center position-relative"
     style={{ height: "90px" }}
   >
-    {!imageUrls[product.id] ? (
-       <div style={{
-            position: "relative",
-            width: "54px",
-            height: "54px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}>
-            <div className="img-outer-ring" />
-            <div className="img-inner-ring" />
-            <div className="img-center-dot" />
-          </div>  
-        ) : (
+    
       <img
         src={imageUrls[product.id]?.[0]}
         alt={product.name}
@@ -511,7 +516,7 @@ if (Object.keys(cachedMap).length) {
         }}
         onClick={() => !isOutOfStock && handleImageClick(imageUrls[product.id][0], product)}
       />
-    )}
+    
 
     {isOutOfStock && (
       <div
