@@ -939,7 +939,7 @@ const handleUpdatePaymentMethod = async (ticket) => {
 
     setSelectedTicket(null);
     alert("Order Delivered Successfully");
-    // setShowNotificationModal(false);
+    setShowNotificationModal(false);
   } catch (error) {
     console.error("Error:", error);
     alert("Failed to update. Please try again.");
