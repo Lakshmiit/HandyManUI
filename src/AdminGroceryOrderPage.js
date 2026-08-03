@@ -316,7 +316,7 @@ const handleCancelOrder = async () => {
       DeliveryPartnerUserId: "",
       deliveryAssignedTime: "",
       deliverySubmitTime: "",
-      SlotTime: latestData.slotTime,
+      SlotTime: "",
     };
 
     const cancelResponse = await fetch(
