@@ -20,12 +20,12 @@ import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import ApartmentIcon from '@mui/icons-material/Apartment';
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import MenuIcon from '@mui/icons-material/Menu';
-import Electrical from './img/Electrical.jpeg';
+// import Electrical from './img/Electrical.jpeg';
 import Electronics from './img/Electronics.jpeg';  
-import Plumbing from './img/Plumbing.jpeg';
+// import Plumbing from './img/Plumbing.jpeg';
 import Hardware from './img/Hardware.jpeg';
 import HomeDecor from './img/HomeDecor.jpeg';
-import HomeAppliances from './img/Kitchenware.jpeg';
+// import HomeAppliances from './img/Kitchenware.jpeg';
 import BabyKidsImg from './img/BabyKids.jpeg';
 import PoojaImg from './img/Pooja.jpeg';
 import HairImg from './img/HairCare.jpeg';
@@ -53,8 +53,8 @@ import HouseHoldImg from './img/HouseHold.jpeg';
 import ChickenImg from './img/Chicken.jpeg';
 import StationaryImg from './img/Stationary.jpeg';
 import KidsImg from './img/KidsZone.jpeg';
-import setkurti from './img/3pcsset.jpeg';
-import kurti from './img/2pcsset.jpeg';
+// import setkurti from './img/3pcsset.jpeg';
+// import kurti from './img/2pcsset.jpeg';
 import { CartStorage } from "./CartStorage";
 import IcecreamImg from './img/IceCreams.jpeg';
 import DwakraProducts from './img/DwakraLogo.jpeg';
@@ -91,14 +91,14 @@ const getMenuList = (userType, userId, category, district ,ZipCode,technicianFul
           return []; 
   }
 };
-const categories = [
-{ label: 'Home Decors', value: 'Home Decors', image: HomeDecor }, 
-{ label: 'Home Appliances', value: 'Home Appliances', image: HomeAppliances },         
-{ label: 'Electrical Items', value: 'Electrical items', image: Electrical }, 
-{ label: 'Electronics Appliances', value: 'Electronics appliances', image: Electronics },   
-{ label: 'Plumbing & Sanitary', value: 'Sanitary items', image: Plumbing },         
-{ label: 'Hardware Items', value: 'Hardware items', image: Hardware },      
-]; 
+// const categories = [
+// { label: 'Home Decors', value: 'Home Decors', image: HomeDecor }, 
+// { label: 'Home Appliances', value: 'Home Appliances', image: HomeAppliances },         
+// { label: 'Electrical Items', value: 'Electrical items', image: Electrical }, 
+// { label: 'Electronics Appliances', value: 'Electronics appliances', image: Electronics },   
+// { label: 'Plumbing & Sanitary', value: 'Sanitary items', image: Plumbing },         
+// { label: 'Hardware Items', value: 'Hardware items', image: Hardware },      
+// ]; 
        
 const groceryCategories = [
   {label: 'Grocery Value Combo Packs', value: 'Grocery Value Combo Packs', image: ComboPackImg},
@@ -134,10 +134,10 @@ const groceryCategories = [
   { label: 'Chicken', value: 'Chicken', image: ChickenImg },
 ];
 // ${appConfig.apiBaseUrl}
-const collectionsCategories = [
-  { label: 'Dupatta Sets', value: 'Dupatta Sets', image: setkurti },
-  { label: 'Kurta Sets', value: 'Kurta Sets', image: kurti},
-  ];
+// const collectionsCategories = [
+//   { label: 'Dupatta Sets', value: 'Dupatta Sets', image: setkurti },
+//   { label: 'Kurta Sets', value: 'Kurta Sets', image: kurti},
+//   ];
 
   const IMAGE_API =
   `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
@@ -165,16 +165,17 @@ const ProfilePage = () => {
     const [allTickets, setAllTickets] = useState([]);
     const menuRef = useRef(null);
     const ticketScrollRef = useRef(null);  
-   const [error, setError] = useState('');
+  //  const [error, setError] = useState('');
     const [products, setProducts] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState(""); 
-const [grocery, setGrocery] = useState([]);
+     const [selectedCategory] = useState(""); 
+    // const [selectedCategory, setSelectedCategory] = useState(""); 
+// const [grocery, setGrocery] = useState([]);
 const [cartSummary, setCartSummary] = useState({
   items: 0,
   total: 0,  
   products: [],
 }); 
-const [dress, setDress] = useState([]);
+// const [dress, setDress] = useState([]);
 const [deliveryProfile, setDeliveryProfile] = useState(null);
 const [showInterestModal, setShowInterestModal] = useState(false);
 const [showNotificationModal, setShowNotificationModal] = useState(false);
@@ -242,7 +243,8 @@ const [trackError, setTrackError] = useState("");
 const [trackedOrder, setTrackedOrder] = useState(null);
 const [autoOrderPrompt, setAutoOrderPrompt] = useState(null);
 const martTicketSyncRef = useRef(false);
-
+const [deliveryLoading, setDeliveryLoading] = useState(false);
+  
 const handleEnablePush = async () => {
   setPushLoading(true);
   try {
@@ -282,8 +284,8 @@ useEffect(() => {
 }, []);
 
 useEffect(() => {
-  console.log(windowSize, state, address, mobileNumber,id, pinCode, paidAmount, paymentMode, martId,status, imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery,error, showMenu, products, selectedCategory, dress);
-}, [windowSize, state, address, mobileNumber, id, pinCode, paidAmount, paymentMode, martId, status, imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery, error,showMenu, products, selectedCategory, dress]);
+  console.log(windowSize, state, address, mobileNumber,id, pinCode, paidAmount, paymentMode, martId,status, imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items,  showMenu, products);
+}, [windowSize, state, address, mobileNumber, id, pinCode, paidAmount, paymentMode, martId, status, imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, showMenu, products]);
  
  const placeholderSuggestions = [
   'Search "Milk"', 'Search "Freedom Refined Sunflower Oil"', 'Search "Sona Masoori Rice"',
@@ -774,6 +776,8 @@ const loadDeliveryPartnerTickets = useCallback(async () => {
 const handleDeliveryPartnerClick = async () => {
   if (clickLock.current) return;
   clickLock.current = true;
+  setDeliveryLoading(true);
+  setShowNotificationModal(true);
   try {
     const res = await axios.get(
       `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/DeliveryPartner/GetDeliveryPartnerDetailsByUserId?userId=${userId}`
@@ -797,6 +801,7 @@ const handleDeliveryPartnerClick = async () => {
     console.error("Error fetching profile:", err);
     setShowInterestModal(true);
   } finally {
+    setDeliveryLoading(false);
     setTimeout(() => { clickLock.current = false; }, 200);
   }
 };
@@ -848,6 +853,7 @@ const handleStatusUpdate = async (ticket, newStatus) => {
       latitude: currentOrderData.latitude,
       longitude: currentOrderData.longitude,
       isDelivered: true,
+      slotTime: currentOrderData.slotTime,
     };
     console.log("FINAL PAYLOAD:", payload);
     const response = await fetch(      
@@ -907,6 +913,7 @@ const handleUpdatePaymentMethod = async (ticket) => {
       latitude: currentOrderData.latitude,
       longitude: currentOrderData.longitude,
       isDelivered: true,
+      slotTime: currentOrderData.slotTime,
     };
     console.log("FINAL PAYLOAD:", payload);
     const response = await fetch(
@@ -932,7 +939,7 @@ const handleUpdatePaymentMethod = async (ticket) => {
 
     setSelectedTicket(null);
     alert("Order Delivered Successfully");
-    setShowNotificationModal(false);
+    // setShowNotificationModal(false);
   } catch (error) {
     console.error("Error:", error);
     alert("Failed to update. Please try again.");
@@ -960,23 +967,23 @@ const handleUpdatePaymentMethod = async (ticket) => {
 //   autoOpenForNewUser();
 // }, [userId]);
 
-const handleCategoryClick = async (category) => {
-  const { value } = category; 
-  try {
-    setSelectedCategory(category);
-    setProducts([]);
-    setError("");
-    const encodedCategory = encodeURIComponent(value);
-    localStorage.setItem("encodedCategory", encodedCategory);
-    navigate(`/offers/${userType}/${userId}`, {
-      state: { encodedCategory }, 
-    });
-  } catch (error) {
-    console.error("Error fetching products:", error);
-    setProducts([]);
-    setError(`Oops! No products found for ${value} category.`);
-  }
-};
+// const handleCategoryClick = async (category) => {
+//   const { value } = category; 
+//   try {
+//     setSelectedCategory(category);
+//     setProducts([]);
+//     setError("");
+//     const encodedCategory = encodeURIComponent(value);
+//     localStorage.setItem("encodedCategory", encodedCategory);
+//     navigate(`/offers/${userType}/${userId}`, {
+//       state: { encodedCategory }, 
+//     });
+//   } catch (error) {
+//     console.error("Error fetching products:", error);
+//     setProducts([]);
+//     setError(`Oops! No products found for ${value} category.`);
+//   }
+// };
 
 const handleGroceryCategoryClick = (category) => {
   const { value } = category;
@@ -989,7 +996,7 @@ const handleGroceryCategoryClick = (category) => {
     });
     return;
   }
-  if (value === "Electrical Products" || value === "Plumbing Products") {
+  if (value === "Electrical Products" || value === "Plumbing Products"  || value === "Home Decors" || value === "Electronics appliances" || value === "Hardware items") {
     navigate(`/martHomeAppliances/${userType}/${userId}`, {
       state: { applianceType: value }, 
     });
@@ -1010,23 +1017,23 @@ const handleGroceryCategoryClick = (category) => {
 // });
 };
 
-const handleDressCategoryClick = async (category) => {
-  const { value } = category;
-  try {
-    setSelectedCategory(category);
-    setDress([]);
-    setError("");
-    const encodedCategory = encodeURIComponent(value);
-    localStorage.setItem("encodedCategory", encodedCategory);
-    navigate(`/lakshmiCollections/${userType}/${userId}`, {
-      state: { encodedCategory },  
-    });
-  } catch (error) {
-    console.error("Error fetching collections:", error);
-    setGrocery([]);
-    setError(`Oops! No collections found for ${value} category.`);
-  }
-};    
+// const handleDressCategoryClick = async (category) => {
+//   const { value } = category;
+//   try {
+//     setSelectedCategory(category);
+//     setDress([]);
+//     setError("");
+//     const encodedCategory = encodeURIComponent(value);
+//     localStorage.setItem("encodedCategory", encodedCategory);
+//     navigate(`/lakshmiCollections/${userType}/${userId}`, {
+//       state: { encodedCategory },  
+//     });
+//   } catch (error) {
+//     console.error("Error fetching collections:", error);
+//     setGrocery([]);
+//     setError(`Oops! No collections found for ${value} category.`);
+//   }
+// };    
 const buildMartUpdateSignature = (ticket) =>
   [
     ticket?.status || "",
@@ -1641,8 +1648,8 @@ const filteredGroceryData = groceryData.filter((t) =>
                   <hr style={{ margin: '4px 0' }} />
                      <div
                       className="d-flex align-items-start"
-                      style={{ cursor: "pointer" }}
-                      onClick={handleDeliveryPartnerClick}
+                      style={{ cursor: deliveryLoading ? "not-allowed" : "pointer",  opacity: deliveryLoading ? 0.5 : 1 }}
+                      onClick={deliveryLoading ? undefined :handleDeliveryPartnerClick}
                     >
                       <DeliveryDiningIcon sx={{ fontSize: 24, marginRight: "4px" }} />
                       <small
@@ -2579,26 +2586,20 @@ const filteredGroceryData = groceryData.filter((t) =>
       color: "#000",
       }}
     >
-      <h6 className="fw-bold text-center mb-2" style={{ letterSpacing: "1px" }}>
+      <h6 className="fw-bold text-center mb-2" style={{ letterSpacing: "1px", color: "#ff5722", fontSize: "20px"}}>
         Home Appliances
-      </h6>
-      <div className="d-flex justify-content-around align-items-center">
-        {[
-          {
-            label: "Electrical",
-            value: "Electrical Products",
-            image: HomeElectricalImg,
-          },
-          {
-            label: "Plumbing",
-            value: "Plumbing Products",
-            image: HomePlumbingImg,
-          },
-          {
-            label: "Kitchenware",
-            value: "Kitchenware Appliances",
-            image: KitchenImg,
-          },
+      </h6>    
+      <div className="d-flex justify-content-around align-items-center row row-cols-3 row-cols-md-6">
+         {[
+          { label: "Electrical", value: "Electrical Products", image: HomeElectricalImg,},
+          { label: "Plumbing", value: "Plumbing Products", image: HomePlumbingImg, },
+          { label: "Kitchenware", value: "Kitchenware Appliances", image: KitchenImg,},
+          {  label: "Home Decors",  value: "Home Decors", image: HomeDecor,},
+          // { label: 'Home Appliances', value: 'Home Appliances', image: HomeAppliances },   
+          // { label: 'Electrical Items', value: 'Electrical items', image: Electrical }, 
+          { label: 'Electronics Appliances', value: 'Electronics appliances', image: Electronics },   
+          // { label: 'Plumbing & Sanitary', value: 'Sanitary items', image: Plumbing },         
+          { label: 'Hardware Items', value: 'Hardware items', image: Hardware },  
         ].map((item) => (
           <div
             key={item.value}
@@ -2745,7 +2746,7 @@ const filteredGroceryData = groceryData.filter((t) =>
   </div>
   
   {/* Home Products Section */}
-  <div className="shadow-lg p-2 mb-1 rounded-5 bg-transparent border-0">
+  {/* <div className="shadow-lg p-2 mb-1 rounded-5 bg-transparent border-0">
     <h5 className="text-center fw-bold mb-3" style={{color: "#ff5722", fontSize: "20px"}}>Home Products</h5>
     <div className="row row-cols-3 row-cols-md-5 g-2 align-items-stretch">
       {categories.map((cat) => (
@@ -2793,10 +2794,10 @@ const filteredGroceryData = groceryData.filter((t) =>
         </div>
       ))}
     </div>
-  </div>
+  </div> */}
 
    {/* Collections Section */}
-  <div className="shadow-lg p-2 rounded-5 text-center bg-transparent border-0">
+  {/* <div className="shadow-lg p-2 rounded-5 text-center bg-transparent border-0">
    <span
    style={{
     background: "linear-gradient(45deg, #ff4081, #ff9800, #ff5722)",
@@ -2858,7 +2859,7 @@ const filteredGroceryData = groceryData.filter((t) =>
         </div>
       ))}
     </div>
-  </div>
+  </div> */}
 </div>
 
   {/* Dashboard Desktop */}
