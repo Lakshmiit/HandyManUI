@@ -4,6 +4,7 @@ import './App.css';
 import {useNavigate } from "react-router-dom";
 import HandyManCharacter from "./img/hm_char.png";
 import HandyManLogo from "./img/Hm_Logo 1.png";
+import StorefrontIcon from "@mui/icons-material/Storefront";
 // import { appConfig } from "./config";
 
 const LoginPage = () => {
@@ -119,6 +120,17 @@ const handleOTP = async (e) => {
   />
   </div>
     {error && <div className="text-danger mt-1">{error}</div>}
+    <div className="d-flex gap-2 align-items-center">
+      <button
+        type="button"
+        className="btn btn-outline-success btn-sm d-inline-flex align-items-center gap-1"
+        onClick={() => Navigate("/vendor/login")}
+        title="Vendor login"
+      >
+        <StorefrontIcon fontSize="small" /> Vendor login
+      </button>
+      <a className="small" href="/vendor/register">Register as a vendor</a>
+    </div>
    {/* <a className="link" href="/userIdLogin" style={{fontSize: "14px"}}>Login With User ID</a> */}
    <div className="d-flex align-items-center flex-wrap">
   <input 

@@ -80,6 +80,10 @@ import BookTechnicianDetailsGrid from './BookTechnicianDetailsGrid.js';
 import RaiseTicketConfirmation from './RaiseTicketConfirmation.js';
 import HandyManLogo from './HandyManLogo.js';
 import LoginPage from './LoginPage.js';
+import VendorLoginPage from './VendorLoginPage.js';
+import VendorRegisterPage from './VendorRegisterPage.js';
+import VendorStockUpdatePage from './VendorStockUpdatePage.js';
+import VendorPreviewPage from './VendorPreviewPage.js';
 import UserIdLogin from './UserIdLogin.js';
 import CustomerRaiseTicketGridView from './CustomerRaiseTicketGridView.js';
 import OTPVerificationPage from './OTPVerificationPage.js';
@@ -236,6 +240,10 @@ function App() {
             {/* <Route path="/customerRegistration" element={<CustomerRegistration />} /> */}
             {/* <Route path="/technicianRegistration" element={<TechnicianRegistration />} /> */}
             <Route path="/profilePage/:userType/:userId" element={<ProfilePage />} />
+            <Route path="/vendor/login" element={<VendorLoginPage />} />
+            <Route path="/vendor/register" element={<VendorRegisterPage />} />
+            <Route path="/vendor/stock-update/:vendorId" element={<VendorStockUpdatePage />} />
+            <Route path="/vendor/preview/:vendorId" element={<VendorPreviewPage />} />
             <Route path="/" element={<HandyManLogo />} /> 
             <Route path="/loginnew" element={<LoginPage />} />
             <Route path="/otpVerification" element={<OTPVerificationPage />} />

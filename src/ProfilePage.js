@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef,useCallback} from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import './App.css';
@@ -68,6 +68,7 @@ import OffersBannerModal from './OffersBannerModal.js';
 import LiveChatWidget from './components/LiveChatWidget';
 import PushNotificationService from './utils/PushNotificationService';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import { getVendorProfileById, makePlaceholderImage } from './utils/vendorStorage';
 // import { appConfig } from "./config";                     
 
 const getMenuList = (userType, userId, category, district ,ZipCode,technicianFullName, isMobile) => {
@@ -79,6 +80,7 @@ const getMenuList = (userType, userId, category, district ,ZipCode,technicianFul
       ...(!isMobile ? [{MenuIcon: <LocalOfferIcon sx={{ fontSize: iconSize }} />, MenuTitle: "Buy Product Offers", TargetUrl: `/offersIcons/${userType}/${userId}`
     }] : []),
       { MenuIcon: <ApartmentIcon sx={{ fontSize: 40 }} />,  MenuTitle: isMobile ? "Apartment AMC" : "Apartment Common Area Maintenance", TargetUrl: `/aboutApartmentRaiseTicket/${userType}/${userId}` },
+      { MenuIcon: <StorefrontIcon sx={{ fontSize: 40 }} />, MenuTitle: "Vendor Portal", TargetUrl: "/vendor/login" },
     ...(!isMobile ? [{MenuIcon: <PermIdentityIcon sx={{ fontSize: iconSize }} />, MenuTitle: "Accounts"
     }] : []),
     ...(!isMobile ? [{MenuIcon: <DeliveryDiningIcon sx={{ fontSize: iconSize }} />, MenuTitle: "Delivery Partner", TargetUrl: `/deliveryPartner/${userType}/${userId}`
@@ -147,9 +149,25 @@ const ProfilePage = () => {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [imageUrls, setImageUrls] = useState({});    
   const [searchQuery, setSearchQuery] = useState("");
-   const [listening, setListening] = useState(false);
+  const [listening, setListening] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const handleVendorPortal = () => {
+    const vendorId = localStorage.getItem("vendorSession");
+    // Remember where to send the vendor back once they're done in the
+    // vendor portal — VendorStockUpdatePage / VendorPreviewPage read this.
+    if (userType && userId) {
+      localStorage.setItem("vendorReturnProfile", `/profilePage/${userType}/${userId}`);
+    }
+    navigate(vendorId ? `/vendor/preview/${vendorId}` : "/vendor/login");
+  };
+  // ── Vendor session (read directly from localStorage) ──
+  const [vendorSessionId, setVendorSessionId] = useState(
+    () => localStorage.getItem("vendorSession") || ""
+  );
+  const [vendorProfile, setVendorProfile] = useState(null);
+  const [vendorSelectedCategories, setVendorSelectedCategories] = useState([]);
+  const [activeVendorCategoryTab, setActiveVendorCategoryTab] = useState("");
   const {userId} = useParams();
     const {userType} = useParams();
     const [category, setCategory] = useState('');
@@ -284,6 +302,201 @@ useEffect(() => {
 useEffect(() => {
   console.log(windowSize, state, address, mobileNumber,id, pinCode, paidAmount, paymentMode, martId,status, imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery,error, showMenu, products, selectedCategory, dress);
 }, [windowSize, state, address, mobileNumber, id, pinCode, paidAmount, paymentMode, martId, status, imageLoading, zoomProduct, zoomImage, showZoomModal, cartSummary, items, grocery, error,showMenu, products, selectedCategory, dress]);
+
+/* ── Vendor session: load vendor profile + their locally-saved selected categories ── */
+useEffect(() => {
+  const loadVendorSession = () => {
+    const currentVendorId = localStorage.getItem("vendorSession") || "";
+    setVendorSessionId(currentVendorId);
+    if (!currentVendorId) {
+      setVendorProfile(null);
+      setVendorSelectedCategories([]);
+      return;
+    }
+    const storedProfile = getVendorProfileById(currentVendorId);
+    setVendorProfile(storedProfile || null);
+    try {
+      const storedCategories = JSON.parse(
+        localStorage.getItem(`vendorSelectedCategories-${currentVendorId}`) || "[]"
+      );
+      const safeCategories = Array.isArray(storedCategories) ? storedCategories : [];
+      setVendorSelectedCategories(safeCategories);
+      setActiveVendorCategoryTab((prev) =>
+        safeCategories.includes(prev) ? prev : (safeCategories[0] || "")
+      );
+    } catch {
+      setVendorSelectedCategories([]);
+      setActiveVendorCategoryTab("");
+    }
+  };
+  loadVendorSession();
+  window.addEventListener("storage", loadVendorSession);
+  return () => window.removeEventListener("storage", loadVendorSession);
+}, []);
+
+/* Products (from the already-fetched grocery catalog) that fall under the
+   vendor's locally-selected categories — grouped by category for display. */
+const vendorSelectedProducts = useMemo(() => {
+  if (!vendorSessionId || vendorSelectedCategories.length === 0) return {};
+  return vendorSelectedCategories.reduce((acc, cat) => {
+    acc[cat] = allProducts.filter((p) => (p.category || "Unspecified") === cat);
+    return acc;
+  }, {});
+}, [vendorSessionId, vendorSelectedCategories, allProducts]);
+
+const getVendorCategoryImage = (cat) => {
+  const match =
+    groceryCategories.find((c) => c.value === cat) ||
+    categories.find((c) => c.value === cat) ||
+    collectionsCategories.find((c) => c.value === cat);
+  if (match) return match.image;
+  return makePlaceholderImage(cat, "ff5722", "ffffff");
+};
+
+/* Prefetch real product photos for the vendor's selected-category products —
+   cache-first (IndexedDB via ImageCache), same pattern used for the Lakshmi
+   Mart category grid, so these load just as fast instead of sitting on the
+   placeholder until a search/category click happens to warm them. */
+useEffect(() => {
+  const allVendorProducts = Object.values(vendorSelectedProducts).flat();
+  if (!allVendorProducts.length) return;
+  let cancelled = false;
+  const controller = new AbortController();
+
+  const targets = allVendorProducts
+    .map((p) => ({ productId: p.id, photo: Array.isArray(p.images) ? p.images[0] : null }))
+    .filter((x) => x.photo && !imageUrls[x.productId]);
+
+  const cachedMap = {};
+  const misses = [];
+  for (const { productId, photo } of targets) {
+    const cached = ImageCache.getBase64(photo);
+    if (cached) {
+      cachedMap[productId] = `data:image/jpeg;base64,${cached}`;
+    } else {
+      misses.push({ productId, photo });
+    }
+  }
+  if (Object.keys(cachedMap).length) {
+    setImageUrls((prev) => ({ ...prev, ...cachedMap }));
+  }
+
+  const fetchOne = async ({ productId, photo }) => {
+    try {
+      const res = await fetch(`${IMAGE_API}${encodeURIComponent(photo)}`, { signal: controller.signal });
+      const json = await res.json();
+      const b64 = json?.imageData || "";
+      if (!b64 || cancelled) return;
+      ImageCache.setBase64(photo, b64);
+      setImageUrls((prev) =>
+        prev[productId] ? prev : { ...prev, [productId]: `data:image/jpeg;base64,${b64}` }
+      );
+    } catch {}
+  };
+
+  Promise.allSettled(misses.map(fetchOne));
+
+  return () => {
+    cancelled = true;
+    controller.abort();
+  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [vendorSelectedProducts]);
+
+/* Renders the vendor session card — called just below the "Welcome" header
+   in both the desktop sidebar and the mobile view. */
+const renderVendorPanel = () => {
+  if (!vendorSessionId || !vendorProfile) return null;
+  return (
+    <div className="shadow-lg p-2 rounded-5 text-center bg-transparent border-0 mb-2 mt-2">
+      <h5 className="fw-bold mb-2" style={{ color: "#ff5722", fontSize: "20px" }}>
+        {vendorProfile.name}{" "}
+        <span className="badge bg-success align-middle ms-1" style={{ fontSize: "10px" }}>
+          Vendor Session
+        </span>
+      </h5>
+
+      {vendorSelectedCategories.length === 0 ? (
+        <small className="text-muted d-block mb-2">
+          No categories selected yet from the vendor portal.
+        </small>
+      ) : (
+        <>
+          {/* Category tabs — same groceryIcon-card tile UI as the Lakshmi Mart section */}
+          <div className="row row-cols-3 row-cols-md-6 g-1">
+            {vendorSelectedCategories.map((cat) => {
+              const isActive = activeVendorCategoryTab === cat;
+              return (
+                <div
+                  className="col"
+                  key={cat}
+                  onClick={() => setActiveVendorCategoryTab(cat)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <div
+                    className="groceryIcon-card border-0 shadow-sm text-center d-flex flex-column align-items-center justify-content-between"
+                    style={{
+                      height: isMobile ? "130px" : "140px",
+                      width: isMobile ? "90px" : "120px",
+                      cursor: "pointer",
+                      padding: "6px",
+                      margin: "5px",
+                      boxShadow: isActive
+                        ? "0 0 0 2px #ff5722, 0 4px 10px rgba(0,0,0,0.15)"
+                        : undefined,
+                    }}
+                  >
+                    <img
+                      src={getVendorCategoryImage(cat)}
+                      alt={cat}
+                      style={{
+                        height: "80px",
+                        width: "80px",
+                        borderRadius: "8px",
+                        marginTop: "2px",
+                        objectFit: "cover",
+                      }}
+                    />
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        fontWeight: "bold",
+                        marginTop: "6px",
+                        minHeight: "24px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        textAlign: "center",
+                        lineHeight: "1.2",
+                        color: isActive ? "#ff5722" : "#000",
+                      }}
+                    >
+                      {cat}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Products for the active category tab — identical card/behavior
+              (Add/counter, discount badge, out-of-stock) as Lakshmi Mart */}
+          {activeVendorCategoryTab && (
+            <div className="grocery-row flex flex-wrap justify-content-center gap-1 mt-2" style={{ marginBottom: "5px" }}>
+              {(vendorSelectedProducts[activeVendorCategoryTab] || []).length === 0 ? (
+                <small className="text-muted d-block my-2">
+                  No approved products found yet for "{activeVendorCategoryTab}".
+                </small>
+              ) : (
+                (vendorSelectedProducts[activeVendorCategoryTab] || []).map((p) => renderProductCard(p))
+              )}
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+};
  
  const placeholderSuggestions = [
   'Search "Milk"', 'Search "Freedom Refined Sunflower Oil"', 'Search "Sona Masoori Rice"',
@@ -651,6 +864,185 @@ const handleAddClick = (product) => {
     }
     return { ...prev, [product.id]: newQty };
   });
+};
+
+/* Shared product card — same markup/behavior (Add/counter, discount badge,
+   out-of-stock overlay) used by the Lakshmi Mart / search product grid, and
+   reused by the vendor session panel so vendor category products look and
+   behave identically. */
+const renderProductCard = (product) => {
+  const maxQty = getMaxAllowedQty(product);
+  const isOutOfStock = maxQty <= 0;
+  return (
+    <div
+      key={product.id}
+      className="w-[200px] flex flex-col p-2 bg-white rounded shadow-sm border position-relative"
+      style={{ minHeight: "250px", opacity: isOutOfStock ? 0.6 : 1 }}
+    >
+      <div className="d-flex flex-row justify-content-between absolute top-0 left-0 w-full">
+        {Number(product.discount) > 0 && !isOutOfStock && (
+          <span className="discount-badge">
+            {Math.round(Number(product.discount))}%
+          </span>
+        )}
+      </div>
+      {/* Product Image */}
+      <div
+        className="d-flex justify-content-center align-items-center position-relative"
+        style={{ height: "90px" }}
+      >
+        {imageUrls[product.id] ? (
+          <img
+            src={cartImages[product.id] || imageUrls[product.id]}
+            alt={product.name}
+            decoding="async"
+            loading="eager"
+            fetchpriority="high"
+            style={{
+              maxHeight: "80px",
+              maxWidth: "100%",
+              objectFit: "contain",
+              cursor: isOutOfStock ? "not-allowed" : "pointer",
+              borderRadius: "6px",
+            }}
+            onClick={() => !isOutOfStock && handleImageClick(
+              cartImages[product.id] || imageUrls[product.id],
+              product
+            )}
+          />
+        ) : (
+          <span className="text-muted small">Loading Image</span>
+        )}
+
+        {isOutOfStock && (
+          <div
+            className="position-absolute d-flex justify-content-center align-items-center"
+            style={{
+              top: 0, left: 0, width: "100%", height: "100%",
+              background: "rgba(255,255,255,0.75)", borderRadius: "6px", zIndex: 2,
+            }}
+          >
+            <span
+              style={{
+                fontWeight: 500, backgroundColor: "grey", color: "white",
+                fontSize: "10px", borderRadius: "6px", margin: "1px", padding: "2px",
+              }}
+            >
+              Out of Stock
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Product Name */}
+      <h6
+        className="text-start fw-bold m-0"
+        style={{
+          fontSize: "11px",
+          display: "-webkit-box",
+          WebkitLineClamp: 3,
+          WebkitBoxOrient: "vertical",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          lineHeight: "1.2em",
+          maxHeight: "3.6em",
+        }}
+      >
+        {product.name}
+      </h6>
+
+      {/* Price/MRP/Units — ONLY when in stock */}
+      {!isOutOfStock && (
+        <div className="text-start m-0" style={{ fontSize: "11px" }}>
+          {product.afterDiscount != null && (
+            <b className="text-success me-2">
+              ₹{Math.round(Number(product.afterDiscount))}
+            </b>
+          )}
+          {product.mrp != null && <s className="text-muted">₹{product.mrp}</s>}
+          {product.units && (
+            <b className="text-success" style={{ marginLeft: "5px" }}>
+              {product.units}
+            </b>
+          )}
+        </div>
+      )}
+
+      {Number(product.limit) > 0 && (
+        <div
+          style={{
+            fontSize: "10px",
+            marginBottom: "5px",
+            color: "#d32f2f",
+          }}
+        >
+          Max {Number(product.limit)} Per User
+        </div>
+      )}
+
+      {/* Checkbox */}
+      {!isOutOfStock && (
+        <div style={{ position: "absolute", bottom: "8px", left: "8px" }}>
+          <input
+            type="checkbox"
+            className="border-dark"
+            checked={cart[product.id] > 0}
+            readOnly
+          />
+        </div>
+      )}
+
+      {/* Add/Counter — ONLY when in stock */}
+      {!isOutOfStock && (
+        <div style={{ position: "absolute", bottom: "8px", right: "8px" }}>
+          {cart[product.id] ? (
+            <div
+              className="d-flex align-items-center justify-content-between"
+              style={{
+                backgroundColor: "green",
+                color: "white",
+                borderRadius: "8px",
+                padding: "2px",
+                minWidth: "60px",
+              }}
+            >
+              {/* ➖ DECREMENT */}
+              <button
+                className="btn btn-sm p-0 text-white"
+                onClick={() => handleDecrementClick(product)}
+              >
+                –
+              </button>
+              <span className="fw-bold">{cart[product.id]}</span>
+              {/* ➕ INCREMENT */}
+              <button
+                className="btn btn-sm p-0 text-white"
+                disabled={(cart[product.id] || 0) >= maxQty}
+                onClick={() => handleIncrement(product)}
+              >
+                +
+              </button>
+            </div>
+          ) : (
+            <button
+              className="btn fw-bold"
+              style={{
+                border: "1px solid green",
+                color: "green",
+                backgroundColor: "#f6fff6",
+                borderRadius: "8px",
+                padding: "2px 12px",
+                fontSize: "13px",
+              }}
+              onClick={() => handleAddClick(product)}
+            >
+              ADD
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  );
 };
 
 // useEffect(() => {
@@ -1579,6 +1971,7 @@ const filteredGroceryData = groceryData.filter((t) =>
              <div className="profile-info">
                <div className="webprofile-section">
                <div className="text-primary fw-bold cust-name">Welcome  <small className="text-dark" style={{fontFamily: "Poppins, sans-serif"}}>{profile.fullName}{" "}</small></div>
+                   {renderVendorPanel()}
                    <div className="fw-bold fs-4">Lakshmi Sai Service Providers</div>
                    <div className="webprofile-img-wrapper">
                      <img src={profileImage} alt="Profile" 
@@ -2226,179 +2619,7 @@ const filteredGroceryData = groceryData.filter((t) =>
  {/* 📦 PRODUCTS */}
       {loading && <p>Loading products...</p>}
       <div className="grocery-row flex flex-wrap gap-1" style={{marginBottom: "5px"}}>
-       {displayProducts.map((product) => {
-        const maxQty = getMaxAllowedQty(product);   
-        const isOutOfStock = maxQty <= 0;
-          return (
-            <div
-        key={product.id}
-        className="w-[200px] flex flex-col p-2 bg-white rounded shadow-sm border position-relative"
-        style={{ minHeight: "250px", opacity: isOutOfStock ? 0.6 : 1 }}
-      >
-        <div className="d-flex flex-row justify-content-between absolute top-0 left-0 w-full">
-          {Number(product.discount) > 0 && !isOutOfStock && (
-            <span className="discount-badge">
-              {Math.round(Number(product.discount))}%
-            </span>
-          )}
-  </div>
-  {/* Product Image */}
-  <div
-    className="d-flex justify-content-center align-items-center position-relative"
-    style={{ height: "90px" }}
-  >
-    {imageUrls[product.id] ? (
-      <img
-        src={cartImages[product.id] || imageUrls[product.id]}
-        alt={product.name}
-        decoding="async"
-        loading="eager"
-        fetchpriority="high"
-        style={{
-          maxHeight: "80px",
-          maxWidth: "100%",
-          objectFit: "contain",
-          cursor: isOutOfStock ? "not-allowed" : "pointer",
-          borderRadius: "6px",
-        }}
-        onClick={() => !isOutOfStock && handleImageClick(
-      cartImages[product.id] || imageUrls[product.id],
-      product
-    )}/>
-    ) : (
-      <span className="text-muted small">Loading Image</span>
-    )}
-
-    {isOutOfStock && (
-      <div
-        className="position-absolute d-flex justify-content-center align-items-center"
-        style={{
-          top: 0, left: 0, width: "100%", height: "100%",
-          background: "rgba(255,255,255,0.75)", borderRadius: "6px", zIndex: 2,
-        }}
-      >
-        <span
-          style={{
-            fontWeight: 500, backgroundColor: "grey", color: "white",
-            fontSize: "10px", borderRadius: "6px", margin: "1px", padding: "2px",
-          }}
-        >
-          Out of Stock
-        </span>
-      </div>
-    )}
-  </div>
-
-  {/* Product Name */}
-  <h6
-    className="text-start fw-bold m-0"
-    style={{
-      fontSize: "11px",
-      display: "-webkit-box",
-      WebkitLineClamp: 3,
-      WebkitBoxOrient: "vertical",
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-      lineHeight: "1.2em",
-      maxHeight: "3.6em",
-    }}
-  >
-    {product.name}
-  </h6>
-
-  {/* Price/MRP/Units — ONLY when in stock */}
-  {!isOutOfStock && (
-    <div className="text-start m-0" style={{ fontSize: "11px" }}>
-      {product.afterDiscount != null && (
-        <b className="text-success me-2">
-          ₹{Math.round(Number(product.afterDiscount))}
-        </b>
-      )}
-      {product.mrp != null && <s className="text-muted">₹{product.mrp}</s>}
-      {product.units && (
-        <b className="text-success" style={{ marginLeft: "5px" }}>
-          {product.units}
-        </b>
-      )}
-    </div>
-  )}
-
-  {Number(product.limit) > 0 && (
-  <div
-    style={{
-      fontSize: "10px",
-      marginBottom: "5px",
-      color: "#d32f2f",
-    }}
-  >
-    Max {Number(product.limit)} Per User
-  </div>
-)}
-
-  {/* Checkbox */}
-  {!isOutOfStock && (
-    <div style={{ position: "absolute", bottom: "8px", left: "8px" }}>
-      <input
-        type="checkbox"
-        className="border-dark"
-        checked={cart[product.id] > 0}
-        readOnly
-      />
-    </div>
-  )}
-
-{/* Add/Counter — ONLY when in stock */}
-{!isOutOfStock && (
-  <div style={{ position: "absolute", bottom: "8px", right: "8px" }}>
-    {cart[product.id] ? (
-      <div
-        className="d-flex align-items-center justify-content-between"
-        style={{
-          backgroundColor: "green",
-          color: "white",
-          borderRadius: "8px",
-          padding: "2px",
-          minWidth: "60px",
-        }}
-      >
-        {/* ➖ DECREMENT */}
-        <button
-          className="btn btn-sm p-0 text-white"
-          onClick={() => handleDecrementClick(product)}
-        >
-          –
-        </button>
-        <span className="fw-bold">{cart[product.id]}</span>
-        {/* ➕ INCREMENT */}
-        <button
-          className="btn btn-sm p-0 text-white"
-          disabled={(cart[product.id] || 0) >= maxQty}
-          onClick={() => handleIncrement(product)}
-        >
-          +
-        </button>
-      </div>
-    ) : (
-      <button
-        className="btn fw-bold"
-        style={{
-          border: "1px solid green",
-          color: "green",
-          backgroundColor: "#f6fff6",
-          borderRadius: "8px",
-          padding: "2px 12px",
-          fontSize: "13px",
-        }}
-        onClick={() => handleAddClick(product)}
-      >
-        ADD
-      </button>
-    )}
-  </div>
-)}
-</div>
-    );
-  })}
+       {displayProducts.map((product) => renderProductCard(product))}
 {/* Cart Bar */}               
 {(() => {
   const readAllCategories = () => {
@@ -2507,6 +2728,7 @@ const filteredGroceryData = groceryData.filter((t) =>
                   {profile.fullName}
                 </small>
               </div>
+              {renderVendorPanel()}
             </div>
             </div>
           )}
@@ -2525,10 +2747,12 @@ const filteredGroceryData = groceryData.filter((t) =>
   >
     <div className="d-flex flex-wrap justify-content-around align-items-center">
       {menuList.map((menu, index) => (
-        <a
+        menu.MenuTitle === "Vendor Portal" ? (
+        <button
           key={index}
-          href={menu.TargetUrl}
-          className="d-flex flex-column align-items-center justify-content-center text-decoration-none text-dark ms-1"
+          type="button"
+          onClick={handleVendorPortal}
+          className="btn p-0 border-0 bg-transparent d-flex flex-column align-items-center justify-content-center text-decoration-none text-dark ms-1"
           style={{ minWidth: '10px', flex: '0 0 auto' }}
         >
           <div
@@ -2565,7 +2789,28 @@ const filteredGroceryData = groceryData.filter((t) =>
               </React.Fragment>
             ))}
           </small>
+        </button>
+        ) : (
+        <a
+          key={index}
+          href={menu.TargetUrl}
+          className="d-flex flex-column align-items-center justify-content-center text-decoration-none text-dark ms-1"
+          style={{ minWidth: '10px', flex: '0 0 auto' }}
+        >
+          <div
+            style={{
+              backgroundColor: '#ffc107', borderRadius: '50%', padding: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '40px', height: '40px', boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+            }}
+          >
+            {React.cloneElement(menu.MenuIcon, { sx: { fontSize: 22, color: '#000' } })}
+          </div>
+          <small style={{ fontSize: '12px', fontFamily: "Roboto", fontWeight: 'bold', textAlign: 'center', lineHeight: '14px', marginTop: '4px', color: '#333', letterSpacing: '0.5px' }}>
+            {menu.MenuTitle.split(' ').map((word, idx) => (
+              <React.Fragment key={idx}>{word}{idx !== menu.MenuTitle.split(' ').length - 1 && <br />}</React.Fragment>
+            ))}
+          </small>
         </a>
+        )
       ))}
     </div>
   </div>
@@ -2868,11 +3113,11 @@ const filteredGroceryData = groceryData.filter((t) =>
     <div className="row g-2">
       {menuList.map((menu, index) => (
         <div className="col-4" key={index}>
-          {menu.MenuTitle === "Delivery Partner" ? (
+          {menu.MenuTitle === "Delivery Partner" || menu.MenuTitle === "Vendor Portal" ? (
             <div
               className="text-decoration-none"
               style={{ color: "inherit", cursor: "pointer" }}
-              onClick={handleDeliveryPartnerClick}
+              onClick={menu.MenuTitle === "Vendor Portal" ? handleVendorPortal : handleDeliveryPartnerClick}
             >
               <div className="mnu_mn text-center d-flex flex-column justify-content-center align-items-center">
                 <span className="material-symbols-outlined custom-icon" style={{ fontSize: "40px" }}>
