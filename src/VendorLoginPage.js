@@ -1,69 +1,205 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { findVendorByCredentials } from "./utils/vendorStorage";
+import { loginVendorViaApi } from "./utils/vendorStorage";
+import { isSuperAdminUsername, loginSuperAdmin } from "./utils/superAdminStore";
 
 const VendorLoginPage = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
+
+  const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    setError("");
+  const handleSubmit = async (event) => {
+  event.preventDefault();
 
-    if (!email.trim() || !password.trim()) {
-      setError("Please enter both email and password.");
+  setError("");
+
+  if (!userName.trim() || !password.trim()) {
+    setError("Please enter both username and password.");
+    return;
+  }
+
+  const enteredUserName = userName.trim();
+  const enteredPassword = password.trim();
+
+  // Super admin shares this same login form — no separate login page.
+  // Whatever username is typed decides where the form goes next.
+  if (isSuperAdminUsername(enteredUserName)) {
+    setIsSubmitting(true);
+    const ok = loginSuperAdmin(enteredUserName, enteredPassword);
+    setIsSubmitting(false);
+
+    if (!ok) {
+      setError("Invalid username or password.");
       return;
     }
 
-    const vendor = findVendorByCredentials(email.trim().toLowerCase(), password.trim());
+    navigate("/superadmin/vendors");
+    return;
+  }
 
+  setIsSubmitting(true);
+
+  try {
+    const vendor = await loginVendorViaApi(
+      enteredUserName,
+      enteredPassword
+    );
+
+    console.log("Vendor login response:", vendor);
+
+    // API returned no vendor
     if (!vendor) {
-      setError("Vendor credentials not found. Please register or try again.");
+      setError("Invalid username or password.");
       return;
     }
 
-    localStorage.setItem("vendorSession", vendor.vendorId);
-    // A vendor lands on their profile first and can open stock management from there.
+    // Make sure vendorId exists
+    if (!vendor.vendorId) {
+      console.error("vendorId is missing:", vendor);
+      setError("Vendor ID not found.");
+      return;
+    }
+
+    console.log("Login successful");
+    console.log("Vendor ID:", vendor.vendorId);
+    console.log("Vendor:", vendor);
+
+    // Save vendorId
+    localStorage.setItem(
+      "vendorSession",
+      vendor.vendorId
+    );
+
+    // Save complete API vendor response
+    localStorage.setItem(
+      "vendorProfile",
+      JSON.stringify(vendor)
+    );
+
+    // Also save in vendorProfiles so getVendorProfileById()
+    // can find the vendor
+    const existingProfiles = JSON.parse(
+      localStorage.getItem("vendorProfiles") || "[]"
+    );
+
+    const profile = {
+      vendorId: vendor.vendorId,
+      name: vendor.fullName,
+      userName: vendor.userName,
+      phone: vendor.mobileNumber,
+      email: vendor.email || "",
+      address: vendor.address || "",
+      storeName: vendor.storeName,
+      registrationCertificate:
+        vendor.registrationCertificate || "",
+      gst: vendor.gst || "",
+      aadhaarCard: vendor.aadhaarCard || "",
+    };
+
+    const updatedProfiles = [
+      ...existingProfiles.filter(
+        (item) => item.vendorId !== vendor.vendorId
+      ),
+      profile,
+    ];
+
+    localStorage.setItem(
+      "vendorProfiles",
+      JSON.stringify(updatedProfiles)
+    );
+
+    console.log("Saved vendor profile:", profile);
+
+    // Navigate using vendorId
     navigate(`/vendor/preview/${vendor.vendorId}`);
-  };
+  } catch (err) {
+    console.error("Vendor login error:", err);
+
+    setError(
+      "Unable to log in right now. Please try again."
+    );
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <div className="h-100 mt-4 d-flex justify-content-center align-items-center">
-      <div className="card p-4" style={{ minWidth: 320, maxWidth: 520, width: "100%" }}>
-        <h3 className="mb-3 text-center">Vendor Login</h3>
+      <div
+        className="card p-4"
+        style={{
+          minWidth: 320,
+          maxWidth: 520,
+          width: "100%",
+        }}
+      >
+        <h3 className="mb-3 text-center">
+          Vendor Login
+        </h3>
+
         <form onSubmit={handleSubmit}>
+          {/* Username */}
           <div className="mb-3">
-            <label className="form-label">Email</label>
+            <label className="form-label">
+              Username
+            </label>
+
             <input
-              type="email"
+              type="text"
               className="form-control"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="vendor@example.com"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+              placeholder="Enter username"
+              autoComplete="username"
               required
             />
           </div>
+
+          {/* Password */}
           <div className="mb-3">
-            <label className="form-label">Password</label>
+            <label className="form-label">
+              Password
+            </label>
+
             <input
               type="password"
               className="form-control"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter password"
+              autoComplete="current-password"
               required
             />
           </div>
-          {error && <div className="alert alert-danger">{error}</div>}
-          <button type="submit" className="btn btn-primary w-100">
-            Login
+
+          {/* Error */}
+          {error && (
+            <div className="alert alert-danger">
+              {error}
+            </div>
+          )}
+
+          {/* Login */}
+          <button
+            type="submit"
+            className="btn btn-primary w-100"
+            disabled={isSubmitting}
+          >
+            {isSubmitting
+              ? "Logging in..."
+              : "Login"}
           </button>
         </form>
+
         <div className="mt-3 text-center">
           <small>
-            New vendor? <a href="/vendor/register">Register here</a>
+            New vendor?{" "}
+            <a href="/vendor/register">
+              Register here
+            </a>
           </small>
         </div>
       </div>

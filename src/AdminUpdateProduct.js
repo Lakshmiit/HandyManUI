@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from "react";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { Button } from 'react-bootstrap';
-import "./App.css"; 
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import UpdateIcon from '@mui/icons-material/Update';
-import { useParams, useNavigate } from 'react-router-dom';
-import AdminSidebar from './AdminSidebar';
-import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
+import "bootstrap/dist/css/bootstrap.min.css";
+import { Button } from "react-bootstrap";
+import "./App.css";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import UpdateIcon from "@mui/icons-material/Update";
+import { useParams, useNavigate } from "react-router-dom";
+import AdminSidebar from "./AdminSidebar";
+import { Dashboard as MoreVertIcon } from "@mui/icons-material";
 // import { appConfig } from "./config";
 
 const AdminUpdate = () => {
   const { id } = useParams();
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const [selectedUserType]  = useState(""); 
+  const [selectedUserType] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const navigate = useNavigate();
   const [productName, setProductName] = useState("");
@@ -21,69 +21,75 @@ const AdminUpdate = () => {
   const [catalogue, setCatalogue] = useState("");
   const [productSize, setProductSize] = useState("");
   const [units, setUnits] = useState("");
-  const [productPhotos, setProductPhotos] = useState([]); 
+  const [productPhotos, setProductPhotos] = useState([]);
   const [rate, setRate] = useState("");
   const [discount, setDiscount] = useState("");
-  const [specifications, setSpecifications] = useState([{ label: "", value: "" }]); 
+  const [specifications, setSpecifications] = useState([
+    { label: "", value: "" },
+  ]);
   const [warranty, setWarranty] = useState("");
   const [moreInfo, setMoreInfo] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [product, setProduct] = useState(null);
-  const [uploadedFiles, setUploadedFiles] = useState([]); 
+  const [uploadedFiles, setUploadedFiles] = useState([]);
   const [color, setColor] = useState("");
   const [specificationDesc, setSpecificationDesc] = useState("");
-  const [deliveryInDays,setDeliveryInDays] =useState("");
-  const [productId, setProductID] = useState('');
-  const [uniqueId, setUniqueId] = useState('');
-  const [productStatus, setProductStatus] = useState('');
-const [existingFiles, setExistingFiles] = useState([]);
-const [stockLeft, setStockLeft] = useState('');
-  useEffect(() => {     
-          const fetchProductData = async () => {
-              try {
-                  setLoading(true);
-                  const productResponse = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Product/${id}`);
-                  if (!productResponse.ok) {
-                      throw new Error('Product not found');
-                  }
-                  const productData = await productResponse.json();
-                  console.log("productData:", productData);
-                  setProduct(productData);
-                  setUniqueId(productData.id);
-                  setProductName(productData.productName);
-                 setProductID(productData.productId);
-                 setProductStatus(productData.productStatus);
-                  setCategory(productData.category);
-                  setCatalogue(productData.catalogue);
-                  setColor(productData.color);
-                  setProductSize(productData.productSize);
-                  setUnits(productData.units);
-                  setRate(productData.rate);
-                  setDiscount(productData.discount);
-                  setSpecifications(productData.specifications || [{ label: "", value: "" }]);
-                  setSpecificationDesc(productData.specificationDesc);
-                  setWarranty(productData.warranty);
-                  setMoreInfo(productData.additionalInformation);
-                  setDeliveryInDays(productData.deliveryInDays);
-                  setExistingFiles(productData.productPhotos || []);
-                  setStockLeft(productData.numberOfStockAvailable);
-                  } catch (error) {
-                  setError(error.message);
-              } finally {
-                  setLoading(false);
-              }
-          };
-          if (id) {
-              fetchProductData();
-          }
-      }, [id]);
+  const [deliveryInDays, setDeliveryInDays] = useState("");
+  const [productId, setProductID] = useState("");
+  const [uniqueId, setUniqueId] = useState("");
+  const [productStatus, setProductStatus] = useState("");
+  const [existingFiles, setExistingFiles] = useState([]);
+  const [stockLeft, setStockLeft] = useState("");
+  useEffect(() => {
+    const fetchProductData = async () => {
+      try {
+        setLoading(true);
+        const productResponse = await fetch(
+          `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/Product/${id}`,
+        );
+        if (!productResponse.ok) {
+          throw new Error("Product not found");
+        }
+        const productData = await productResponse.json();
+        console.log("productData:", productData);
+        setProduct(productData);
+        setUniqueId(productData.id);
+        setProductName(productData.productName);
+        setProductID(productData.productId);
+        setProductStatus(productData.productStatus);
+        setCategory(productData.category);
+        setCatalogue(productData.catalogue);
+        setColor(productData.color);
+        setProductSize(productData.productSize);
+        setUnits(productData.units);
+        setRate(productData.rate);
+        setDiscount(productData.discount);
+        setSpecifications(
+          productData.specifications || [{ label: "", value: "" }],
+        );
+        setSpecificationDesc(productData.specificationDesc);
+        setWarranty(productData.warranty);
+        setMoreInfo(productData.additionalInformation);
+        setDeliveryInDays(productData.deliveryInDays);
+        setExistingFiles(productData.productPhotos || []);
+        setStockLeft(productData.numberOfStockAvailable);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (id) {
+      fetchProductData();
+    }
+  }, [id]);
 
-const handleRemoveExistingFile = (index) => {
-  const updated = [...existingFiles];
-  updated.splice(index, 1);
-  setExistingFiles(updated);
-};
+  const handleRemoveExistingFile = (index) => {
+    const updated = [...existingFiles];
+    updated.splice(index, 1);
+    setExistingFiles(updated);
+  };
 
   // Handle file input change (multiple files)
   const handleFileChange = (event) => {
@@ -96,18 +102,18 @@ const handleRemoveExistingFile = (index) => {
     setShowAlert(true);
   };
 
-// Detect screen size for responsiveness
-useEffect(() => {
-  const handleResize = () => setIsMobile(window.innerWidth <= 768);
-  handleResize(); 
-  window.addEventListener('resize', handleResize);
-  return () => window.removeEventListener('resize', handleResize);
-}, []);
+  // Detect screen size for responsiveness
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
-const handleRemoveFile = (index) => {
-  const updatedUploadedFiles = uploadedFiles.filter((_, i) => i !== index);
-  setUploadedFiles(updatedUploadedFiles);
-};
+  const handleRemoveFile = (index) => {
+    const updatedUploadedFiles = uploadedFiles.filter((_, i) => i !== index);
+    setUploadedFiles(updatedUploadedFiles);
+  };
 
   // Handle file upload
   const handleUploadFiles = async () => {
@@ -125,12 +131,11 @@ const handleRemoveFile = (index) => {
       const response = await uploadFile(byteArray, fileName, mimeType, file);
       if (response) {
         uploadedFilesList.push({
-          src: response, 
-          alt: fileName  
+          src: response,
+          alt: fileName,
         });
-        alert("Image Updated Sucessfully"); 
-      }
-      else {
+        alert("Image Updated Sucessfully");
+      } else {
         alert("Failed Upload Image");
       }
     }
@@ -154,20 +159,27 @@ const handleRemoveFile = (index) => {
   const uploadFile = async (byteArray, fileName, mimeType, file) => {
     try {
       const formData = new FormData();
-      formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
-      formData.append('fileName', fileName);
-      const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/upload?filename=` + fileName, {
-        method: 'POST',
-        headers: {
-          'Accept': 'text/plain',
+      formData.append(
+        "file",
+        new Blob([byteArray], { type: mimeType }),
+        fileName,
+      );
+      formData.append("fileName", fileName);
+      const response = await fetch(
+        `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/FileUpload/upload?filename=` + fileName,
+        {
+          method: "POST",
+          headers: {
+            Accept: "text/plain",
+          },
+          body: formData,
         },
-        body: formData,
-      });
+      );
       const responseData = await response.text();
-      return responseData || ''; 
+      return responseData || "";
     } catch (error) {
-      console.error('Error uploading file:', error);
-      return '';
+      console.error("Error uploading file:", error);
+      return "";
     }
   };
 
@@ -175,13 +187,13 @@ const handleRemoveFile = (index) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const allProductPhotos = [
-    ...existingFiles, 
-    ...uploadedFiles.map(file => file.src), 
-  ];
+      ...existingFiles,
+      ...uploadedFiles.map((file) => file.src),
+    ];
 
     const payload = {
       id: uniqueId,
-      ProductId:  productId,
+      ProductId: productId,
       deliveryInDays: deliveryInDays,
       category: category,
       ProductStatus: productStatus,
@@ -193,26 +205,32 @@ const handleRemoveFile = (index) => {
       units: units,
       rate: parseFloat(rate),
       discount: parseFloat(discount),
-      afterDiscount: (parseFloat(rate) - (parseFloat(rate) * parseFloat(discount) / 100)).toString(),
-      specifications: specifications.map(spec => ({
+      afterDiscount: (
+        parseFloat(rate) -
+        (parseFloat(rate) * parseFloat(discount)) / 100
+      ).toString(),
+      specifications: specifications.map((spec) => ({
         label: spec.label,
         value: spec.value,
       })),
       specificationDesc: specificationDesc,
       warranty: warranty,
       AdditionalInformation: moreInfo,
-      ProductOwnedBy:"Admin",
+      ProductOwnedBy: "Admin",
       numberOfStockAvailable: stockLeft,
     };
 
     try {
-      const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Product/${uniqueId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json"
+      const response = await fetch(
+        `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/Product/${uniqueId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
         },
-        body: JSON.stringify(payload)
-      }); 
+      );
 
       if (response.ok) {
         alert("Product updated successfully!");
@@ -234,7 +252,7 @@ const handleRemoveFile = (index) => {
 
   const handleSpecificationDescChange = (value) => {
     setSpecificationDesc(value);
-  }
+  };
 
   // Handle removal of a specification
   const handleRemoveSpecification = (index) => {
@@ -249,26 +267,26 @@ const handleRemoveFile = (index) => {
 
   if (loading) {
     return <div>Loading...</div>;
-}
+  }
 
-if (error) {
+  if (error) {
     return <div>{error}</div>;
-}
+  }
 
-if (!product) {
+  if (!product) {
     return <div>No data available for the selected product.</div>;
-}
+  }
 
   return (
     <div className="d-flex flex-row justify-content-start align-items-start mt-mob-50">
       {/* Sidebar */}
-     {!isMobile && (
-          <div className="ml-0 m-4 p-0 adm_mnu">
-          <AdminSidebar userType={selectedUserType}/>
-         </div>
-          )}
-          
-          {/* Floating menu for mobile */}
+      {!isMobile && (
+        <div className="ml-0 m-4 p-0 adm_mnu">
+          <AdminSidebar userType={selectedUserType} />
+        </div>
+      )}
+
+      {/* Floating menu for mobile */}
       {isMobile && (
         <div className="floating-menu">
           <Button
@@ -280,21 +298,23 @@ if (!product) {
           </Button>
 
           {showMenu && (
-              <div className="sidebar-container">
-                <AdminSidebar userType={selectedUserType} />
-              </div>
+            <div className="sidebar-container">
+              <AdminSidebar userType={selectedUserType} />
+            </div>
           )}
         </div>
       )}
 
       {/* Main Content */}
-      <div className={`container m-1 ${isMobile ? 'w-100' : 'w-75'}`}>
+      <div className={`container m-1 ${isMobile ? "w-100" : "w-75"}`}>
         <h3 className="mb-3 text-center">Update Products</h3>
         <div className="bg-white rounded-3 p-3 bx_sdw w-60 m-auto">
           <form onSubmit={handleSubmit}>
             {/* Product Name */}
             <div className="form-group">
-              <label>Product Name <span className="req_star">*</span></label>
+              <label>
+                Product Name <span className="req_star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -317,7 +337,9 @@ if (!product) {
 
             {/* Catalogue */}
             <div className="form-group">
-              <label>Catalogue<span className="req_star">*</span></label>
+              <label>
+                Catalogue<span className="req_star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -329,7 +351,9 @@ if (!product) {
 
             {/* Product Size */}
             <div className="form-group">
-              <label>Size<span className="req_star">*</span></label>
+              <label>
+                Size<span className="req_star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -353,80 +377,91 @@ if (!product) {
 
             {/* Units */}
             <div className="form-group">
-              <label>Units <span className="req_star">*</span></label>
-              <input type="text"
-              className="form-control"
-              value={units}
-              onChange={(e) => setUnits(e.target.value)}
-              placeholder="Enter Units" />
+              <label>
+                Units <span className="req_star">*</span>
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                value={units}
+                onChange={(e) => setUnits(e.target.value)}
+                placeholder="Enter Units"
+              />
             </div>
 
             {/* Product Images */}
             <div className="form-group">
-  <label>
-    Product Photos <span className="req_star">*</span>
-  </label>
-  <input
-    type="file"
-    className="form-control"
-    multiple
-    onChange={handleFileChange}
-  />
+              <label>
+                Product Photos <span className="req_star">*</span>
+              </label>
+              <input
+                type="file"
+                className="form-control"
+                multiple
+                onChange={handleFileChange}
+              />
 
-  {/* Render existing filenames from server */}
-  {existingFiles.length > 0 && (
-    <div className="mt-2">
-      <strong>Existing Photos:</strong>
-      {existingFiles.map((file, index) => (
-        <div key={index} className="d-flex align-items-center gap-2 mb-2">
-          <p>{file}</p>
-          <button
-            type="button"
-            onClick={() => handleRemoveExistingFile(index)}
-            className="btn btn-danger btn-sm px-2 py-1"
-          >
-            Remove
-          </button>
-        </div>
-      ))}
-    </div>
-  )}
+              {/* Render existing filenames from server */}
+              {existingFiles.length > 0 && (
+                <div className="mt-2">
+                  <strong>Existing Photos:</strong>
+                  {existingFiles.map((file, index) => (
+                    <div
+                      key={index}
+                      className="d-flex align-items-center gap-2 mb-2"
+                    >
+                      <p>{file}</p>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveExistingFile(index)}
+                        className="btn btn-danger btn-sm px-2 py-1"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
 
-  {/* Render newly added files */}
-  {productPhotos.length > 0 && (
-    <div className="mt-2">
-      <strong>New Uploads:</strong>
-      {productPhotos.map((file, index) => (
-        <div key={index} className="d-flex align-items-center gap-2 mb-2">
-          <p>{file.name}</p>
-          <button
-            type="button"
-            onClick={() => handleRemoveFile(index)}
-            className="btn btn-danger btn-sm px-2 py-1"
-          >
-            X
-          </button>
-        </div>
-      ))}
-    </div>
-  )}
-</div>
-                                <div>
-                                    {/* Alert for uploading files */}
-                                    {showAlert && (
-                                        <div className="alert alert-danger  mt-2">
-                                        Please click the <strong>Upload Files</strong> button to upload the selected images.
-                                        </div>
-                                    )}
-                                    <button
-                                        type="button"
-                                        className="btn btn-primary mt-2"
-                                        onClick={handleUploadFiles}
-                                        disabled={loading || productPhotos.length === 0}
-                                    >
-                                        {loading ? 'Uploading...' : 'Upload Files'}
-                                    </button>
-                                </div>
+              {/* Render newly added files */}
+              {productPhotos.length > 0 && (
+                <div className="mt-2">
+                  <strong>New Uploads:</strong>
+                  {productPhotos.map((file, index) => (
+                    <div
+                      key={index}
+                      className="d-flex align-items-center gap-2 mb-2"
+                    >
+                      <p>{file.name}</p>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveFile(index)}
+                        className="btn btn-danger btn-sm px-2 py-1"
+                      >
+                        X
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div>
+              {/* Alert for uploading files */}
+              {showAlert && (
+                <div className="alert alert-danger  mt-2">
+                  Please click the <strong>Upload Files</strong> button to
+                  upload the selected images.
+                </div>
+              )}
+              <button
+                type="button"
+                className="btn btn-primary mt-2"
+                onClick={handleUploadFiles}
+                disabled={loading || productPhotos.length === 0}
+              >
+                {loading ? "Uploading..." : "Upload Files"}
+              </button>
+            </div>
             {/* Rate */}
             <div className="form-group">
               <label>Rate</label>
@@ -457,14 +492,16 @@ if (!product) {
               <input
                 type="text"
                 className="form-control"
-                value={`${Math.round(Number(rate || 0) - (Number(rate || 0) * Number((discount || "0").toString().replace("%", "")) / 100))} /-`}
+                value={`${Math.round(Number(rate || 0) - (Number(rate || 0) * Number((discount || "0").toString().replace("%", ""))) / 100)} /-`}
                 placeholder="If any Discount Enter Percentage"
               />
             </div>
 
             {/* Product Specifications */}
             <div className="form-group">
-              <label>Product Specifications <span className="req_star">*</span></label>
+              <label>
+                Product Specifications <span className="req_star">*</span>
+              </label>
               {specifications.map((spec, index) => (
                 <div key={index} className="d-flex gap-3">
                   <input
@@ -472,14 +509,18 @@ if (!product) {
                     className="form-control"
                     placeholder="Specification Name"
                     value={spec.label}
-                    onChange={(e) => handleSpecificationChange(index, "label", e.target.value)}
+                    onChange={(e) =>
+                      handleSpecificationChange(index, "label", e.target.value)
+                    }
                   />
                   <input
                     type="text"
                     className="form-control"
                     placeholder="Specification Value"
                     value={spec.value}
-                    onChange={(e) => handleSpecificationChange(index, "value", e.target.value)}
+                    onChange={(e) =>
+                      handleSpecificationChange(index, "value", e.target.value)
+                    }
                   />
                   <button
                     type="button"
@@ -492,13 +533,17 @@ if (!product) {
               ))}
 
               <textarea
-                  type="text"
-                  className="form-control mt-2"
-                  placeholder="Optional"  
-                  value={specificationDesc}
-                  onChange={(e) => handleSpecificationDescChange(e.target.value)}           
+                type="text"
+                className="form-control mt-2"
+                placeholder="Optional"
+                value={specificationDesc}
+                onChange={(e) => handleSpecificationDescChange(e.target.value)}
               />
-              <button type="button" className="btn btn-primary" onClick={handleAddSpecification}>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleAddSpecification}
+              >
                 Add Specification
               </button>
             </div>
@@ -526,8 +571,10 @@ if (!product) {
               />
             </div>
 
-             <div className="form-group">
-              <label>Delivery In Days <span className="req_star">*</span></label>
+            <div className="form-group">
+              <label>
+                Delivery In Days <span className="req_star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -538,38 +585,39 @@ if (!product) {
             </div>
 
             <div className="form-group">
-              <label>Stock Left <span className="req_star">*</span></label>
+              <label>
+                Stock Left <span className="req_star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
                 value={stockLeft}
                 onChange={(e) => setStockLeft(e.target.value)}
                 placeholder="Stock Left"
-              /> 
+              />
             </div>
 
             {/* Submit Button */}
             <div className="d-flex justify-content-between gap-3 mt-3">
-      {/* Update Product Button */}
-      <button
-        type="submit"
-        className="btn btn-success w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
-      >
-        <UpdateIcon className="me-2" />
-        <span>Update Product</span>
-      </button>
+              {/* Update Product Button */}
+              <button
+                type="submit"
+                className="btn btn-success w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
+              >
+                <UpdateIcon className="me-2" />
+                <span>Update Product</span>
+              </button>
 
-      {/* View Single Product Button */}
-      <button
-        type="button"
-        className="btn btn-primary w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
-        onClick={() => navigate(`/adminProductList/Admin`)}
-      >
-        <VisibilityIcon className="me-2" />
-        <span>View Product</span>
-      </button>
-    </div>
-
+              {/* View Single Product Button */}
+              <button
+                type="button"
+                className="btn btn-primary w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
+                onClick={() => navigate(`/adminProductList/Admin`)}
+              >
+                <VisibilityIcon className="me-2" />
+                <span>View Product</span>
+              </button>
+            </div>
           </form>
         </div>
       </div>

@@ -1,7 +1,16 @@
-import React, { useState} from "react";
+import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import {  Modal, Card,  Form,  Button,  Row,  Col,  Container,  Carousel,} from "react-bootstrap";
+import {
+  Modal,
+  Card,
+  Form,
+  Button,
+  Row,
+  Col,
+  Container,
+  Carousel,
+} from "react-bootstrap";
 import Header from "./Header";
 import Footer from "./Footer";
 import {
@@ -35,29 +44,34 @@ const serializeCashbackRules = (rules) =>
     .join("\n");
 
 const AdminOfferForm = () => {
-const location = useLocation();
-const navigate = useNavigate();
-const isDedicatedCashbackPage = location.pathname === "/adminCashbackOfferCreate/Admin";
-const defaultOfferType = isDedicatedCashbackPage ? "cashback-config" : "banner";
-const listPagePath = isDedicatedCashbackPage
-  ? CASHBACK_OFFERS_LIST_PATH
-  : GENERAL_BANNERS_LIST_PATH;
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isDedicatedCashbackPage =
+    location.pathname === "/adminCashbackOfferCreate/Admin";
+  const defaultOfferType = isDedicatedCashbackPage
+    ? "cashback-config"
+    : "banner";
+  const listPagePath = isDedicatedCashbackPage
+    ? CASHBACK_OFFERS_LIST_PATH
+    : GENERAL_BANNERS_LIST_PATH;
   const [formData, setFormData] = useState({
-  id: "",
-  offerType: defaultOfferType,
-  title: isDedicatedCashbackPage ? CASHBACK_CONFIG_TITLE : "",    
-  header: isDedicatedCashbackPage ? CASHBACK_CONFIG_HEADER : "",
-  footer: isDedicatedCashbackPage ? CASHBACK_CONFIG_FOOTER : "",   
-  files: [],
-  createdDate: "",
-  updatedDate: "",
-  startDate: "",
-  endDate: "",
-  description: "",
-});
+    id: "",
+    offerType: defaultOfferType,
+    title: isDedicatedCashbackPage ? CASHBACK_CONFIG_TITLE : "",
+    header: isDedicatedCashbackPage ? CASHBACK_CONFIG_HEADER : "",
+    footer: isDedicatedCashbackPage ? CASHBACK_CONFIG_FOOTER : "",
+    files: [],
+    createdDate: "",
+    updatedDate: "",
+    startDate: "",
+    endDate: "",
+    description: "",
+  });
   const [showPreview, setShowPreview] = useState(false);
   const [previews, setPreviews] = useState([]);
-  const [cashbackRules, setCashbackRules] = useState([createEmptyCashbackRule()]);
+  const [cashbackRules, setCashbackRules] = useState([
+    createEmptyCashbackRule(),
+  ]);
 
   // Handle Input Change
   const handleChange = (e) => {
@@ -108,51 +122,48 @@ const listPagePath = isDedicatedCashbackPage
 
     setFormData({ ...formData, files: selectedFiles });
 
-    const previewUrls = selectedFiles.map((file) =>
-      URL.createObjectURL(file)
-    );
+    const previewUrls = selectedFiles.map((file) => URL.createObjectURL(file));
     setPreviews(previewUrls);
   };
 
   const getFileByteArray = (file) => {
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const byteArray = new Uint8Array(reader.result);
-      resolve(byteArray);
-    };
-    reader.readAsArrayBuffer(file);
-  });
-};
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const byteArray = new Uint8Array(reader.result);
+        resolve(byteArray);
+      };
+      reader.readAsArrayBuffer(file);
+    });
+  };
 
-const uploadFile = async (byteArray, fileName, mimeType) => {
-  try {
-    const formData = new FormData();
-    formData.append(
-      "file",
-      new Blob([byteArray], { type: mimeType }),
-      fileName
-    );
-    formData.append("fileName", fileName);
-
-    const response = await fetch(
-      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/upload?filename=` +
+  const uploadFile = async (byteArray, fileName, mimeType) => {
+    try {
+      const formData = new FormData();
+      formData.append(
+        "file",
+        new Blob([byteArray], { type: mimeType }),
         fileName,
-      {
-        method: "POST",
-        headers: {
-          Accept: "text/plain",
+      );
+      formData.append("fileName", fileName);
+
+      const response = await fetch(
+        `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/FileUpload/upload?filename=` + fileName,
+        {
+          method: "POST",
+          headers: {
+            Accept: "text/plain",
+          },
+          body: formData,
         },
-        body: formData,
-      }
-    );
-    const responseData = await response.text();
-    return responseData || "";
-  } catch (error) {
-    console.error("Upload error:", error);
-    return "";
-  }
-};
+      );
+      const responseData = await response.text();
+      return responseData || "";
+    } catch (error) {
+      console.error("Upload error:", error);
+      return "";
+    }
+  };
 
   // Submit Form
   const handleSubmit = async (e) => {
@@ -162,19 +173,19 @@ const uploadFile = async (byteArray, fileName, mimeType) => {
       const isCashbackConfig = formData.offerType === "cashback-config";
       const uploadedImages = [];
 
-if (!isCashbackConfig) {
-for (let file of formData.files) {
-  const byteArray = await getFileByteArray(file);
-  const response = await uploadFile(byteArray, file.name, file.type);
+      if (!isCashbackConfig) {
+        for (let file of formData.files) {
+          const byteArray = await getFileByteArray(file);
+          const response = await uploadFile(byteArray, file.name, file.type);
 
-  if (response) {
-    uploadedImages.push(response); 
-  } else {
-    alert("Image upload failed");
-    return;
-  }
-}
-}
+          if (response) {
+            uploadedImages.push(response);
+          } else {
+            alert("Image upload failed");
+            return;
+          }
+        }
+      }
 
       const serializedRules = serializeCashbackRules(cashbackRules);
       if (isCashbackConfig && !serializedRules) {
@@ -193,9 +204,9 @@ for (let file of formData.files) {
         header: isCashbackConfig ? CASHBACK_CONFIG_HEADER : formData.header,
         footer: isCashbackConfig ? CASHBACK_CONFIG_FOOTER : formData.footer,
         description: isCashbackConfig ? serializedRules : formData.description,
-        image: uploadedImages.map(url => ({
-          images: url            
-        }))
+        image: uploadedImages.map((url) => ({
+          images: url,
+        })),
       };
 
       console.log("Sending Payload:", payload);
@@ -208,12 +219,12 @@ for (let file of formData.files) {
         });
       } else {
         await axios.post(
-          "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UpLoadBannners/UploadBanners",
-           payload
+          "https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/UpLoadBannners/UploadBanners",
+          payload,
         );
       }
       alert("Offer Uploaded Successfully!");
-        navigate(listPagePath);
+      navigate(listPagePath);
       // setFormData({
       //   id: "",
       //   header: "",
@@ -224,7 +235,6 @@ for (let file of formData.files) {
       //   description: "",
       // });
       // setPreviews([]);
-      
     } catch (err) {
       console.error("Error:", err);
       alert("Upload Failed");
@@ -252,7 +262,9 @@ for (let file of formData.files) {
           }}
         >
           <h2 className="text-center mb-2 fw-bold text-primary fs-6">
-            {formData.offerType === "cashback-config" ? "🎉 Create Cashback Offer" : "🎉 Create Offer"}
+            {formData.offerType === "cashback-config"
+              ? "🎉 Create Cashback Offer"
+              : "🎉 Create Offer"}
           </h2>
           <Form onSubmit={handleSubmit}>
             {!isDedicatedCashbackPage && (
@@ -264,7 +276,9 @@ for (let file of formData.files) {
                   onChange={handleChange}
                 >
                   <option value="banner">Poster / Banner</option>
-                  <option value="cashback-config">Grocery Cashback Rules</option>
+                  <option value="cashback-config">
+                    Grocery Cashback Rules
+                  </option>
                 </Form.Select>
               </Form.Group>
             )}
@@ -311,7 +325,7 @@ for (let file of formData.files) {
                 {previews.length > 0 && (
                   <div className="mb-3 text-center">
                     {previews.length === 1 ? (
-                      <img                          
+                      <img
                         src={previews[0]}
                         alt="preview"
                         style={{
@@ -330,7 +344,7 @@ for (let file of formData.files) {
                               alt={`slide-${index}`}
                               style={{
                                 width: "100%",
-                                height: "200px", 
+                                height: "200px",
                                 objectFit: "cover",
                                 borderRadius: "10px",
                               }}
@@ -344,8 +358,12 @@ for (let file of formData.files) {
               </>
             ) : (
               <>
-                <div className="alert alert-info py-2" style={{ fontSize: "13px" }}>
-                  Create admin-managed cashback slabs here. Add one row per rule such as order amount 300 gives cashback 20.
+                <div
+                  className="alert alert-info py-2"
+                  style={{ fontSize: "13px" }}
+                >
+                  Create admin-managed cashback slabs here. Add one row per rule
+                  such as order amount 300 gives cashback 20.
                 </div>
                 <Form.Group className="mb-2">
                   <Form.Label className="fw-bold">Config Title</Form.Label>
@@ -353,45 +371,73 @@ for (let file of formData.files) {
                 </Form.Group>
                 <div className="border rounded p-2 mb-3 bg-light">
                   <div className="d-flex justify-content-between align-items-center mb-2">
-                    <Form.Label className="fw-bold mb-0">Cashback Slabs</Form.Label>
-                    <Button type="button" size="sm" variant="success" onClick={addCashbackRule}>
+                    <Form.Label className="fw-bold mb-0">
+                      Cashback Slabs
+                    </Form.Label>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="success"
+                      onClick={addCashbackRule}
+                    >
                       Add Row
                     </Button>
                   </div>
                   {cashbackRules.map((rule, index) => (
-                    <Row key={`cashback-rule-${index}`} className="g-2 align-items-end mb-2">
+                    <Row
+                      key={`cashback-rule-${index}`}
+                      className="g-2 align-items-end mb-2"
+                    >
                       <Col xs={4}>
-                        <Form.Label className="small fw-bold">Min Amount</Form.Label>
+                        <Form.Label className="small fw-bold">
+                          Min Amount
+                        </Form.Label>
                         <Form.Control
                           type="text"
                           inputMode="numeric"
                           value={rule.minAmount}
                           onChange={(e) =>
-                            handleCashbackRuleChange(index, "minAmount", e.target.value)
+                            handleCashbackRuleChange(
+                              index,
+                              "minAmount",
+                              e.target.value,
+                            )
                           }
                           placeholder="300"
                         />
                       </Col>
                       <Col xs={4}>
-                        <Form.Label className="small fw-bold">Max Amount</Form.Label>
+                        <Form.Label className="small fw-bold">
+                          Max Amount
+                        </Form.Label>
                         <Form.Control
                           type="text"
                           inputMode="numeric"
                           value={rule.maxAmount}
                           onChange={(e) =>
-                            handleCashbackRuleChange(index, "maxAmount", e.target.value)
+                            handleCashbackRuleChange(
+                              index,
+                              "maxAmount",
+                              e.target.value,
+                            )
                           }
                           placeholder="Optional"
                         />
                       </Col>
                       <Col xs={3}>
-                        <Form.Label className="small fw-bold">Cashback</Form.Label>
+                        <Form.Label className="small fw-bold">
+                          Cashback
+                        </Form.Label>
                         <Form.Control
                           type="text"
                           inputMode="numeric"
                           value={rule.cashback}
                           onChange={(e) =>
-                            handleCashbackRuleChange(index, "cashback", e.target.value)
+                            handleCashbackRuleChange(
+                              index,
+                              "cashback",
+                              e.target.value,
+                            )
                           }
                           placeholder="20"
                         />
@@ -416,9 +462,7 @@ for (let file of formData.files) {
             <Row>
               <Col>
                 <Form.Group className="mb-2">
-                  <Form.Label className="fw-bold">
-                    Start Date & Time
-                  </Form.Label>
+                  <Form.Label className="fw-bold">Start Date & Time</Form.Label>
                   <Form.Control
                     type="datetime-local"
                     name="startDate"
@@ -431,9 +475,7 @@ for (let file of formData.files) {
 
               <Col>
                 <Form.Group className="mb-2">
-                  <Form.Label className="fw-bold">
-                    End Date & Time
-                  </Form.Label>
+                  <Form.Label className="fw-bold">End Date & Time</Form.Label>
                   <Form.Control
                     type="datetime-local"
                     name="endDate"
@@ -475,61 +517,55 @@ for (let file of formData.files) {
 
             {/* Submit */}
             <Row className="mt-2">
-            <Col>
-              <Button
-                variant="danger"
-                className="w-100"
-                onClick={() => navigate(listPagePath)}
-              >
-                Back
-              </Button>
-            </Col>
-            <Col>
-              <Button type="submit" className="btn btn-primary w-100">
-                Upload
-              </Button>
-            </Col>
-          </Row>
+              <Col>
+                <Button
+                  variant="danger"
+                  className="w-100"
+                  onClick={() => navigate(listPagePath)}
+                >
+                  Back
+                </Button>
+              </Col>
+              <Col>
+                <Button type="submit" className="btn btn-primary w-100">
+                  Upload
+                </Button>
+              </Col>
+            </Row>
           </Form>
         </Card>
       </Container>
-      <Modal
-  show={showPreview}
-  onHide={() => setShowPreview(false)}
-  centered
->
-  <Modal.Header closeButton>
-    <Modal.Title>Banner Preview</Modal.Title>
-  </Modal.Header>
+      <Modal show={showPreview} onHide={() => setShowPreview(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Banner Preview</Modal.Title>
+        </Modal.Header>
 
-  <Modal.Body>
-    <div style={{ textAlign: "center" }}>
-      {/* Header */}
-      <h5>{formData.header || "Header Preview"}</h5>
-      {/* Image Preview */}
-      {previews.length > 0 && (
-        <img
-          src={previews[0]}
-          alt="preview"
-          style={{
-            width: "100%",
-            height: "200px",
-            objectFit: "cover",
-            borderRadius: "10px",
-          }}
-        />
-      )}
-      {/* Description */}
-      <p className="mt-2">
-        {formData.description || "Description preview"}
-      </p>
-      {/* Footer */}
-      <small>
-        {formData.footer || "Footer Preview"}
-      </small>
-    </div>
-  </Modal.Body>
-</Modal>
+        <Modal.Body>
+          <div style={{ textAlign: "center" }}>
+            {/* Header */}
+            <h5>{formData.header || "Header Preview"}</h5>
+            {/* Image Preview */}
+            {previews.length > 0 && (
+              <img
+                src={previews[0]}
+                alt="preview"
+                style={{
+                  width: "100%",
+                  height: "200px",
+                  objectFit: "cover",
+                  borderRadius: "10px",
+                }}
+              />
+            )}
+            {/* Description */}
+            <p className="mt-2">
+              {formData.description || "Description preview"}
+            </p>
+            {/* Footer */}
+            <small>{formData.footer || "Footer Preview"}</small>
+          </div>
+        </Modal.Body>
+      </Modal>
       <Footer />
     </>
   );

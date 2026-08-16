@@ -1,22 +1,22 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Divider, IconButton } from "@mui/material";
-import {
-  Close as CloseIcon, Info as InfoIcon,
-} from "@mui/icons-material";
+import { Close as CloseIcon, Info as InfoIcon } from "@mui/icons-material";
 import "./App.css";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Modal } from "react-bootstrap";
-import Collections from './img/Collections.jpeg';
+import Collections from "./img/Collections.jpeg";
 // import { appConfig } from "./config";
 
-const currency = (n) => (isNaN(n) ? "0" : Math.round(n)).toLocaleString("en-IN");
+const currency = (n) =>
+  (isNaN(n) ? "0" : Math.round(n)).toLocaleString("en-IN");
 
 const LakshmiCollectionCartPage = () => {
   const navigate = useNavigate();
   const { userId, userType } = useParams();
   const removalTimers = useRef({});
   const location = useLocation();
-  const uploadedId = location.state?.uploadedId || localStorage.getItem("uploadedId");
+  const uploadedId =
+    location.state?.uploadedId || localStorage.getItem("uploadedId");
   const [imageLoading, setImageLoading] = useState(true);
   const [showZoomModal, setShowZoomModal] = useState(false);
   const [zoomImage, setZoomImage] = useState("");
@@ -37,9 +37,9 @@ const LakshmiCollectionCartPage = () => {
         if (!uploadedId) {
           console.error("No id found in localStorage or location state");
           return;
-        }   
+        }
         const response = await fetch(
-          `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/LakshmiCollection/GetLakshmiCollectionDetails/${uploadedId}`
+          `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/LakshmiCollection/GetLakshmiCollectionDetails/${uploadedId}`,
         );
         if (!response.ok) throw new Error("Failed to fetch collection details");
         const data = await response.json();
@@ -51,7 +51,7 @@ const LakshmiCollectionCartPage = () => {
             if (productImageFilename) {
               try {
                 const imgRes = await fetch(
-                  `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${productImageFilename}`
+                  `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${productImageFilename}`,
                 );
                 const imgData = await imgRes.json();
                 if (imgData?.imageData) {
@@ -65,7 +65,11 @@ const LakshmiCollectionCartPage = () => {
                   productImageUrl = URL.createObjectURL(blob);
                 }
               } catch (err) {
-                console.error("Image fetch failed for", productImageFilename, err);
+                console.error(
+                  "Image fetch failed for",
+                  productImageFilename,
+                  err,
+                );
               }
             }
             return {
@@ -79,11 +83,11 @@ const LakshmiCollectionCartPage = () => {
               mrp: Number(p.mrp) || 0,
               discount: Number(p.discount) || 0,
               size: p.size,
-              stockLeft:  Number(p.stockLeft),
+              stockLeft: Number(p.stockLeft),
               colour: p.colour,
-              noOfQuantity:  Number(p.noOfQuantity) || 0
+              noOfQuantity: Number(p.noOfQuantity) || 0,
             };
-          })
+          }),
         );
         setCollectionItems(itemsWithImages);
         setImageLoading(false);
@@ -102,12 +106,13 @@ const LakshmiCollectionCartPage = () => {
   };
 
   const itemsTotal = collectionItems.reduce(
-    (acc, item) => acc + (Number(item.mrp) || 0) * (Number(item.qty ?? 1)),
-    0
+    (acc, item) => acc + (Number(item.mrp) || 0) * Number(item.qty ?? 1),
+    0,
   );
   const grandTotal = collectionItems.reduce(
-    (acc, item) => acc + (Number(item.afterDiscountPrice) || 0) * (Number(item.qty ?? 1)),
-    0
+    (acc, item) =>
+      acc + (Number(item.afterDiscountPrice) || 0) * Number(item.qty ?? 1),
+    0,
   );
 
   const roundedItemsTotal = Math.round(itemsTotal);
@@ -118,7 +123,7 @@ const LakshmiCollectionCartPage = () => {
 
     const totalItemsSelected = collectionItems.reduce(
       (sum, item) => sum + Number(item.qty ?? 1),
-      0
+      0,
     );
 
     const payload = {
@@ -161,19 +166,21 @@ const LakshmiCollectionCartPage = () => {
 
     try {
       const response = await fetch(
-        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/LakshmiCollection/UpdateLakshmiCollectionDetails/${uploadedId}`,
+        `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/LakshmiCollection/UpdateLakshmiCollectionDetails/${uploadedId}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
-        }
+        },
       );
 
       if (!response.ok) throw new Error("Failed to update collection details");
-     
+
       const result = await response.json();
       console.log("Update success:", result);
-      navigate(`/lakshmiCollectionPaymentMethod/${userType}/${userId}/${uploadedId}`)
+      navigate(
+        `/lakshmiCollectionPaymentMethod/${userType}/${userId}/${uploadedId}`,
+      );
     } catch (error) {
       console.error("Error updating collection:", error);
       alert("Update failed!");
@@ -194,8 +201,8 @@ const LakshmiCollectionCartPage = () => {
       {/* Header */}
       <div className="cart-header d-flex justify-content-between">
         <div className="d-flex align-items-center">
-           <img
-            src={Collections} 
+          <img
+            src={Collections}
             alt="Collections"
             style={{
               height: 50,
@@ -205,12 +212,16 @@ const LakshmiCollectionCartPage = () => {
               objectFit: "cover",
             }}
           />
-          <h3 className="ms-1" style={{ fontSize: 18}}>
+          <h3 className="ms-1" style={{ fontSize: 18 }}>
             My Collections
           </h3>
         </div>
-        <IconButton onClick={() => navigate(`/profilePage/${userType}/${userId}`)}>
-          <CloseIcon style={{ cursor: "pointer", fontSize: 30, color: "tomato" }} />
+        <IconButton
+          onClick={() => navigate(`/profilePage/${userType}/${userId}`)}
+        >
+          <CloseIcon
+            style={{ cursor: "pointer", fontSize: 30, color: "tomato" }}
+          />
         </IconButton>
       </div>
       <Divider />
@@ -220,7 +231,11 @@ const LakshmiCollectionCartPage = () => {
         className="cart-items flex-grow-1"
         style={{ overflowY: "auto", padding: 8, marginTop: 50 }}
       >
-        {imageLoading && <div className="text-muted" style={{ fontSize: 12 }}>Loading items…</div>}
+        {imageLoading && (
+          <div className="text-muted" style={{ fontSize: 12 }}>
+            Loading items…
+          </div>
+        )}
 
         {!imageLoading && collectionItems.length === 0 && (
           <div className="text-muted" style={{ fontSize: 12 }}>
@@ -264,18 +279,26 @@ const LakshmiCollectionCartPage = () => {
                   MRP: <s>{currency(item.mrp)}</s>&nbsp;
                   <span style={{ color: "red" }}>{item.discount}% off</span>
                 </div>
-                <div style={{display: "flex", alignItems: "center", gap: "6px", fontWeight: 700, fontSize: 12 }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    fontWeight: 700,
+                    fontSize: 12,
+                  }}
+                >
                   ₹{currency(item.afterDiscountPrice * qty)}
                   {item.size && (
-                  <span style={{ fontSize: 11, color: "#000" }}>
-                    Size: {item.size}
-                  </span>
-                )}
-                {item.colour && (
-                  <span style={{ fontSize: 11, color: "#000" }}>
-                    Colour: {item.colour}
-                  </span>
-                )}
+                    <span style={{ fontSize: 11, color: "#000" }}>
+                      Size: {item.size}
+                    </span>
+                  )}
+                  {item.colour && (
+                    <span style={{ fontSize: 11, color: "#000" }}>
+                      Colour: {item.colour}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
@@ -288,14 +311,20 @@ const LakshmiCollectionCartPage = () => {
         <p className="fs-6 fw-bold" style={{ marginBottom: 6 }}>
           Bill details
         </p>
-        <div className="d-flex justify-content-between align-items-center" style={{ fontSize: 13 }}>
+        <div
+          className="d-flex justify-content-between align-items-center"
+          style={{ fontSize: 13 }}
+        >
           <span>📋 Items total</span>
           <span>
             <s className="text-muted">₹{currency(roundedItemsTotal)}</s>&nbsp;₹
             {currency(roundedGrandTotal)}
           </span>
         </div>
-        <div className="d-flex justify-content-between align-items-center" style={{ fontSize: 13 }}>
+        <div
+          className="d-flex justify-content-between align-items-center"
+          style={{ fontSize: 13 }}
+        >
           <span>
             🚲 Delivery charge <InfoIcon fontSize="small" />
           </span>
@@ -303,7 +332,10 @@ const LakshmiCollectionCartPage = () => {
             FREE
           </span>
         </div>
-        <div className="d-flex justify-content-between align-items-center" style={{ fontSize: 13 }}>
+        <div
+          className="d-flex justify-content-between align-items-center"
+          style={{ fontSize: 13 }}
+        >
           <span>
             👜 Handling charge <InfoIcon fontSize="small" />
           </span>
@@ -332,7 +364,9 @@ const LakshmiCollectionCartPage = () => {
         }}
       >
         <div>
-          <div style={{ fontWeight: 600, fontSize: 15 }}>₹{currency(roundedGrandTotal)}</div>
+          <div style={{ fontWeight: 600, fontSize: 15 }}>
+            ₹{currency(roundedGrandTotal)}
+          </div>
           <div style={{ fontSize: 12 }}>TOTAL</div>
         </div>
 
@@ -356,8 +390,15 @@ const LakshmiCollectionCartPage = () => {
       </div>
 
       {/* Zoom Modal */}
-      <Modal show={showZoomModal} onHide={() => setShowZoomModal(false)} centered>
-        <button className="close-button text-end mt-0" onClick={() => setShowZoomModal(false)}>
+      <Modal
+        show={showZoomModal}
+        onHide={() => setShowZoomModal(false)}
+        centered
+      >
+        <button
+          className="close-button text-end mt-0"
+          onClick={() => setShowZoomModal(false)}
+        >
           &times;
         </button>
         <Modal.Body className="text-center">

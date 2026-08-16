@@ -11,11 +11,15 @@ import "./App.css";
 import CartImg from "./img/Cart.jpeg";
 import { useNavigate, useParams } from "react-router-dom";
 import Footer from "./Footer.js";
-import { IMAGE_DOWNLOAD_URL, getImageFilename, imageValueToUrl } from "./utils/imageSource";
+import {
+  IMAGE_DOWNLOAD_URL,
+  getImageFilename,
+  imageValueToUrl,
+} from "./utils/imageSource";
 // import { appConfig } from "./config";
 
 // import { useLocation } from "react-router-dom";
- 
+
 const IMAGE_DOWNLOAD = IMAGE_DOWNLOAD_URL;
 
 const getLimit = (item) => {
@@ -24,10 +28,8 @@ const getLimit = (item) => {
   return Infinity;
 };
 
-    const clampQty = (item, qty) => {
-  const stockMax = Number.isFinite(item.stockLeft)
-    ? item.stockLeft
-    : Infinity;
+const clampQty = (item, qty) => {
+  const stockMax = Number.isFinite(item.stockLeft) ? item.stockLeft : Infinity;
   const limit = getLimit(item);
   const maxAllowed = Math.min(stockMax, limit);
   return Math.max(0, Math.min(qty, maxAllowed));
@@ -43,51 +45,49 @@ const isValidCartItem = (it) => {
 };
 
 const mapSavedToItems = (saved) => {
-  return saved.flatMap((cat) =>
-    (cat.products || []).map((p, idx) => {
-      const persisted = p.image ?? p.productImage ?? "";
-      const imageFilename = getImageFilename(persisted);
-      const imageUrl = imageValueToUrl(persisted);
+  return saved
+    .flatMap((cat) =>
+      (cat.products || []).map((p, idx) => {
+        const persisted = p.image ?? p.productImage ?? "";
+        const imageFilename = getImageFilename(persisted);
+        const imageUrl = imageValueToUrl(persisted);
 
-      const qty = Number(p.qty || p.noOfQuantity || 0);
-      const mrp = Number(p.mrp || 0);
-      const discount = Number(p.discount || 0);
-      const price = Number(
-        p.afterDiscountPrice || p.afterDiscount || p.price || 0
-      );
-      const stockLeft = Number(p.stockLeft || 0);
-      const item = {
-        id: `${cat.categoryName}-${p.productId ?? p.id ?? idx}`,
-        productId: p.productId ?? p.id ?? idx,
-        name: p.productName ?? p.name ?? "",
-        category: cat.categoryName,
-        qty,
-        mrp,
-        discount,
-        price,
-        stockLeft,
-        code: p.code,
-        units: p.units,
-        limit: Number(p.limit || 0),
-        imageFilename,
-        imageUrl,
-      };
+        const qty = Number(p.qty || p.noOfQuantity || 0);
+        const mrp = Number(p.mrp || 0);
+        const discount = Number(p.discount || 0);
+        const price = Number(
+          p.afterDiscountPrice || p.afterDiscount || p.price || 0,
+        );
+        const stockLeft = Number(p.stockLeft || 0);
+        const item = {
+          id: `${cat.categoryName}-${p.productId ?? p.id ?? idx}`,
+          productId: p.productId ?? p.id ?? idx,
+          name: p.productName ?? p.name ?? "",
+          category: cat.categoryName,
+          qty,
+          mrp,
+          discount,
+          price,
+          stockLeft,
+          code: p.code,
+          units: p.units,
+          limit: Number(p.limit || 0),
+          imageFilename,
+          imageUrl,
+        };
 
-      return item;
-    })
-  )
-  .filter(isValidCartItem);
-};     
+        return item;
+      }),
+    )
+    .filter(isValidCartItem);
+};
 
 const computeTotals = (items) => ({
   items: items.reduce((s, it) => s + Number(it.qty || 0), 0),
   total: Math.round(
-    items.reduce(
-      (s, it) => s + Number(it.price || 0) * Number(it.qty || 0),
-      0
-    )
+    items.reduce((s, it) => s + Number(it.price || 0) * Number(it.qty || 0), 0),
   ),
-});           
+});
 
 const writeBackToStorage = (items) => {
   const grouped = items.reduce((acc, it) => {
@@ -115,114 +115,112 @@ const writeBackToStorage = (items) => {
     ([categoryName, products]) => ({
       categoryName,
       products: products.filter((p) => Number(p.qty) > 0),
-    })
+    }),
   );
   localStorage.setItem("allCategories", JSON.stringify(allCategories));
 };
 
 const GroceryOffersCartPage = () => {
   const navigate = useNavigate();
-    // const location = useLocation();
+  // const location = useLocation();
   const { userId, userType } = useParams();
   const [cartItems, setCartItems] = useState([]);
   const [imageBlobMap, setImageBlobMap] = useState({});
   const [showZoomModal, setShowZoomModal] = useState(false);
   const [zoomImage, setZoomImage] = useState("");
   const [grandSummary, setGrandSummary] = useState({ items: 0, total: 0 });
-const [walletAmount, setWalletAmount] = useState(0);
+  const [walletAmount, setWalletAmount] = useState(0);
   const [addresses, setAddresses] = useState([]);
   const [fullName, setFullName] = useState("");
   const [isNewUser, setIsNewUser] = useState(true);
   const isGuestName = (name) => (name ?? "").trim().toLowerCase() === "guest";
-const [referralAmount, setReferralAmount] = useState(0);
-const MIN_ORDER_TOTAL =
-  Number(walletAmount) === 50 || Number(referralAmount) > 0
-    ? 150
-    : 100;
-    const normalizeName = (name) =>
-     String(name || "")
-    .replace(/\s+/g, " ")
-    .trim()
-    .toLowerCase();
- useEffect(() => {
+  const [referralAmount, setReferralAmount] = useState(0);
+  const MIN_ORDER_TOTAL =
+    Number(walletAmount) === 50 || Number(referralAmount) > 0 ? 150 : 100;
+  const normalizeName = (name) =>
+    String(name || "")
+      .replace(/\s+/g, " ")
+      .trim()
+      .toLowerCase();
+  useEffect(() => {
     console.log(addresses, fullName, isNewUser);
   }, [addresses, fullName, isNewUser]);
 
-console.log("Wallet:", walletAmount);
+  console.log("Wallet:", walletAmount);
 
-const getReferralRecord = async (userId) => {
-  if (!userId) return null;
-  const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
-  const res = await fetch(url);
-  const text = await res.text();
-  let data = [];
-  try {
-    data = text ? JSON.parse(text) : [];
-  } catch {
-    data = [];
-  }
-  if (Array.isArray(data) && data.length > 0) {
-    data.sort((a, b) => new Date(b.date) - new Date(a.date));
-    return data[0];
-  }
-  return null;
-};
-
-useEffect(() => {
-  const fetchReferral = async () => {
-    const rec = await getReferralRecord(userId);
-    const points = Number(rec?.points || 0);
-    setReferralAmount(points);
+  const getReferralRecord = async (userId) => {
+    if (!userId) return null;
+    const url = `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
+    const res = await fetch(url);
+    const text = await res.text();
+    let data = [];
+    try {
+      data = text ? JSON.parse(text) : [];
+    } catch {
+      data = [];
+    }
+    if (Array.isArray(data) && data.length > 0) {
+      data.sort((a, b) => new Date(b.date) - new Date(a.date));
+      return data[0];
+    }
+    return null;
   };
-  if (userId) {
-    fetchReferral();
-  }
-}, [userId]);
+
+  useEffect(() => {
+    const fetchReferral = async () => {
+      const rec = await getReferralRecord(userId);
+      const points = Number(rec?.points || 0);
+      setReferralAmount(points);
+    };
+    if (userId) {
+      fetchReferral();
+    }
+  }, [userId]);
 
   const fetchCustomerData = useCallback(async () => {
-      try {
-        const response = await fetch(
-          `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Address/GetAddressById/${userId}`,
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch customer profile data");
-        }
-        const data = await response.json();
-        console.log(data);
-        const addresses = Array.isArray(data) ? data : [data];
-        const formattedAddresses = addresses.map((addr) => ({
-          id: addr.addressId,
-          type: addr.isPrimaryAddress ? "primary" : "secondary",
-          address: addr.address, 
-          state: addr.state,
-          district: addr.district,
-          zipCode: addr.zipCode,
-          emailAddress: addr.emailAddress,
-          mobileNumber: addr.mobileNumber,
-          fullName: addr.fullName,
-          walletAmount: addr.walletAmount,
-        }));            
-        setAddresses(formattedAddresses);
-        // console.log(JSON.stringify(data));
-        const apiFullName = addresses[0]?.fullName ?? "";
-          setFullName(apiFullName);
-          const wallet = addresses[0]?.walletAmount ?? 0;
-          setWalletAmount(Number(wallet));
-        if (!apiFullName || isGuestName(apiFullName)) {
-          setIsNewUser(true);
-        } else {
-          setIsNewUser(false);
-        }
-      } catch (error) {
-        console.error("Error fetching customer data:", error);
+    try {
+      const response = await fetch(
+        `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/Address/GetAddressById/${userId}`,
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch customer profile data");
       }
-    }, [userId]);
+      const data = await response.json();
+      console.log(data);
+      const addresses = Array.isArray(data) ? data : [data];
+      const formattedAddresses = addresses.map((addr) => ({
+        id: addr.addressId,
+        type: addr.isPrimaryAddress ? "primary" : "secondary",
+        address: addr.address,
+        state: addr.state,
+        district: addr.district,
+        zipCode: addr.zipCode,
+        emailAddress: addr.emailAddress,
+        mobileNumber: addr.mobileNumber,
+        fullName: addr.fullName,
+        walletAmount: addr.walletAmount,
+      }));
+      setAddresses(formattedAddresses);
+      // console.log(JSON.stringify(data));
+      const apiFullName = addresses[0]?.fullName ?? "";
+      setFullName(apiFullName);
+      const wallet = addresses[0]?.walletAmount ?? 0;
+      setWalletAmount(Number(wallet));
+      if (!apiFullName || isGuestName(apiFullName)) {
+        setIsNewUser(true);
+      } else {
+        setIsNewUser(false);
+      }
+    } catch (error) {
+      console.error("Error fetching customer data:", error);
+    }
+  }, [userId]);
 
-useEffect(() => {
-  if (userId) {
-    fetchCustomerData();
-  }
-}, [userId, fetchCustomerData]);
+  useEffect(() => {
+    if (userId) {
+      fetchCustomerData();
+    }
+  }, [userId, fetchCustomerData]);
 
   useEffect(() => {
     const safeParse = (key) => {
@@ -232,7 +230,7 @@ useEffect(() => {
         return [];
       }
     };
-    
+
     const saved0 = safeParse("allCategories");
     if (!saved0.length) {
       const activeOrderId = localStorage.getItem("activeOrderId");
@@ -243,15 +241,15 @@ useEffect(() => {
     const saved = safeParse("allCategories");
     const rawItems = mapSavedToItems(saved);
 
-const clampedItems = rawItems.map((it) => ({
-  ...it,
-  qty: clampQty(it, Number(it.qty || 0)),
-}));
+    const clampedItems = rawItems.map((it) => ({
+      ...it,
+      qty: clampQty(it, Number(it.qty || 0)),
+    }));
 
-writeBackToStorage(clampedItems);
-setCartItems(clampedItems);
-setGrandSummary(computeTotals(clampedItems));
- }, []);
+    writeBackToStorage(clampedItems);
+    setCartItems(clampedItems);
+    setGrandSummary(computeTotals(clampedItems));
+  }, []);
 
   useEffect(() => {
     const onStorage = (e) => {
@@ -261,8 +259,7 @@ setGrandSummary(computeTotals(clampedItems));
         const allItems = mapSavedToItems(saved);
         setCartItems(allItems);
         setGrandSummary(computeTotals(allItems));
-      } catch {
-      }
+      } catch {}
     };
     window.addEventListener("storage", onStorage);
     return () => window.removeEventListener("storage", onStorage);
@@ -274,8 +271,8 @@ setGrandSummary(computeTotals(clampedItems));
         cartItems
           .map((i) => i.imageFilename)
           .filter(Boolean)
-          .filter((fn) => !(fn in imageBlobMap))
-      )
+          .filter((fn) => !(fn in imageBlobMap)),
+      ),
     );
     if (!filenames.length) return;
 
@@ -285,7 +282,7 @@ setGrandSummary(computeTotals(clampedItems));
         const results = await Promise.allSettled(
           filenames.map(async (fn) => {
             const res = await fetch(
-              `${IMAGE_DOWNLOAD}${encodeURIComponent(fn)}`
+              `${IMAGE_DOWNLOAD}${encodeURIComponent(fn)}`,
             );
             const contentType = res.headers.get("content-type") || "";
             if (contentType.includes("application/json")) {
@@ -293,8 +290,7 @@ setGrandSummary(computeTotals(clampedItems));
               if (!data?.imageData) throw new Error("No imageData");
               const byte = atob(data.imageData);
               const arr = new Uint8Array(byte.length);
-              for (let i = 0; i < byte.length; i++)
-                arr[i] = byte.charCodeAt(i);
+              for (let i = 0; i < byte.length; i++) arr[i] = byte.charCodeAt(i);
               const blob = new Blob([arr], { type: "image/*" });
               const blobUrl = URL.createObjectURL(blob);
               return { fn, url: blobUrl };
@@ -304,7 +300,7 @@ setGrandSummary(computeTotals(clampedItems));
                 url: `${IMAGE_DOWNLOAD}${encodeURIComponent(fn)}`,
               };
             }
-          })
+          }),
         );
         if (cancelled) return;
         const mapUpdate = {};
@@ -325,181 +321,166 @@ setGrandSummary(computeTotals(clampedItems));
     };
   }, [cartItems, imageBlobMap]);
 
-const handleQtyChange = async (rowId, delta) => {
-  const item = cartItems.find((i) => i.id === rowId);
-  if (!item) return;
-  const latest = await fetchLatestStock(item.name);
-  setCartItems((prev) => {
-    const updated = prev
-      .map((it) => {
-        if (it.id !== rowId) return it;
-        const limitMax =
-          latest.limit > 0 ? latest.limit : Infinity;
-        const maxAllowed = Math.min(
-          latest.stockLeft,
-          limitMax
+  const handleQtyChange = async (rowId, delta) => {
+    const item = cartItems.find((i) => i.id === rowId);
+    if (!item) return;
+    const latest = await fetchLatestStock(item.name);
+    setCartItems((prev) => {
+      const updated = prev
+        .map((it) => {
+          if (it.id !== rowId) return it;
+          const limitMax = latest.limit > 0 ? latest.limit : Infinity;
+          const maxAllowed = Math.min(latest.stockLeft, limitMax);
+          const proposedQty = Number(it.qty || 0) + delta;
+          if (latest.stockLeft === null) {
+            return it;
+          }
+
+          if (latest.stockLeft <= 0) {
+            return null;
+          }
+          if (proposedQty <= 0) {
+            return null;
+          }
+          return {
+            ...it,
+            stockLeft: latest.stockLeft,
+            limit: latest.limit,
+            qty: Math.min(proposedQty, maxAllowed),
+          };
+        })
+        .filter(Boolean);
+      writeBackToStorage(updated);
+      setGrandSummary(computeTotals(updated));
+      return updated;
+    });
+  };
+
+  const fetchLatestStock = useCallback(async (productName) => {
+    try {
+      const res = await fetch(
+        `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(productName)}`,
+      );
+      const data = await res.json();
+      const normalizedInput = normalizeName(productName);
+      const exactMatch = (Array.isArray(data) ? data : []).filter(
+        (x) => normalizeName(x.name) === normalizedInput,
+      );
+      const latest = exactMatch.sort(
+        (a, b) => Date.parse(b?.date || 0) - Date.parse(a?.date || 0),
+      )[0];
+      if (!latest) {
+        return {
+          stockLeft: null,
+          limit: null,
+        };
+      }
+      return {
+        stockLeft: Number(latest.stockLeft),
+        limit: Number(latest.limit || 0),
+      };
+    } catch (err) {
+      console.error(err);
+      return {
+        stockLeft: null,
+        limit: null,
+      };
+    }
+  }, []);
+
+  const refreshAllCartStocks = useCallback(async () => {
+    const currentItems = cartItemsRef.current;
+    if (!currentItems.length) return;
+
+    const stockResults = await Promise.all(
+      currentItems.map(async (item) => ({
+        name: item.name,
+        latest: await fetchLatestStock(item.name),
+      })),
+    );
+
+    const updated = currentItems
+      .map((item) => {
+        const match = stockResults.find(
+          (x) => normalizeName(x.name) === normalizeName(item.name),
         );
-        const proposedQty = Number(it.qty || 0) + delta;
-        if (latest.stockLeft === null) {
-          return it;
+        if (!match) return item;
+        const latestStock = match.latest.stockLeft;
+        const latestLimit =
+          match.latest.limit > 0 ? match.latest.limit : Infinity;
+        if (latestStock === null) {
+          return item;
         }
 
-        if (latest.stockLeft <= 0) {
-          return null;
-        }
-        if (proposedQty <= 0) {
+        if (latestStock <= 0) {
           return null;
         }
         return {
-          ...it,
-          stockLeft: latest.stockLeft,
-          limit: latest.limit,
-          qty: Math.min(proposedQty, maxAllowed),
+          ...item,
+          stockLeft: latestStock,
+          limit: latestLimit,
+          qty: Math.min(item.qty, latestStock, latestLimit),
         };
       })
       .filter(Boolean);
+    setCartItems(updated);
     writeBackToStorage(updated);
     setGrandSummary(computeTotals(updated));
-    return updated;
-  });
-};
+  }, [fetchLatestStock]);
 
-const fetchLatestStock = useCallback(async (productName) => {
-  try {
-    const res = await fetch(
-      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(productName)}`
-    );
-    const data = await res.json();
-    const normalizedInput = normalizeName(productName);
-    const exactMatch = (Array.isArray(data) ? data : []).filter(
-      (x) => normalizeName(x.name) === normalizedInput
-    );
-    const latest = exactMatch.sort(
-      (a, b) => Date.parse(b?.date || 0) - Date.parse(a?.date || 0)
-    )[0];
-   if (!latest) {
-    return {
-      stockLeft: null,
-      limit: null,
-    };
-  }
-  return {
-    stockLeft: Number(latest.stockLeft),
-    limit: Number(latest.limit || 0),
-  };
-  } catch (err) {
-    console.error(err);
-    return {
-      stockLeft: null,
-      limit: null,
-    };
-  }
-}, []);
+  useEffect(() => {
+    refreshAllCartStocks();
+  }, [refreshAllCartStocks]);
 
-const refreshAllCartStocks = useCallback(async () => {
-  const currentItems = cartItemsRef.current;
-  if (!currentItems.length) return;
-
-  const stockResults = await Promise.all(
-    currentItems.map(async (item) => ({
-      name: item.name,
-      latest: await fetchLatestStock(item.name),
-    }))
-  );
-
-  const updated = currentItems
-    .map((item) => {
-      const match = stockResults.find(
-        (x) =>
-          normalizeName(x.name) === normalizeName(item.name)
-      );
-      if (!match) return item;
-      const latestStock = match.latest.stockLeft;
-      const latestLimit =
-        match.latest.limit > 0
-          ? match.latest.limit
-          : Infinity;
-      if (latestStock === null) {
-        return item;
+  useEffect(() => {
+    const handleFocus = () => refreshAllCartStocks();
+    const handleOnline = () => refreshAllCartStocks();
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        refreshAllCartStocks();
       }
+    };
+    window.addEventListener("focus", handleFocus);
+    window.addEventListener("online", handleOnline);
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+      window.removeEventListener("online", handleOnline);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
+  }, [refreshAllCartStocks]);
 
-      if (latestStock <= 0) {
-        return null;
-      }
-      return {
-        ...item,
-        stockLeft: latestStock,
-        limit: latestLimit,
-        qty: Math.min(item.qty, latestStock, latestLimit),
-      };
-    })
-    .filter(Boolean);
-  setCartItems(updated);
-  writeBackToStorage(updated);
-  setGrandSummary(computeTotals(updated));
-}, [fetchLatestStock]);
-
-useEffect(() => {
-  refreshAllCartStocks();
-}, [refreshAllCartStocks]);
-
-useEffect(() => {
-  const handleFocus = () => refreshAllCartStocks();
-  const handleOnline = () => refreshAllCartStocks();
-  const handleVisibility = () => {
-    if (document.visibilityState === "visible") {
-      refreshAllCartStocks();
+  const validateCartStockBeforeCheckout = async () => {
+    const checks = await Promise.all(
+      cartItems.map(async (item) => ({
+        name: item.name,
+        requestedQty: item.qty,
+        latest: await fetchLatestStock(item.name),
+      })),
+    );
+    const invalidItems = checks.filter(
+      (x) => x.latest.stockLeft <= 0 || x.requestedQty > x.latest.stockLeft,
+    );
+    if (invalidItems.length > 0) {
+      await refreshAllCartStocks();
+      alert("Some items are out of stock. Cart updated.");
+      return false;
     }
+    return true;
   };
-  window.addEventListener("focus", handleFocus);
-  window.addEventListener("online", handleOnline);
-  document.addEventListener(
-    "visibilitychange",
-    handleVisibility
-  );
-  return () => {
-    window.removeEventListener("focus", handleFocus);
-    window.removeEventListener("online", handleOnline);
-    document.removeEventListener(
-      "visibilitychange",
-      handleVisibility
-    );
-  };
-}, [refreshAllCartStocks]);
-
-const validateCartStockBeforeCheckout = async () => {
-  const checks = await Promise.all(
-    cartItems.map(async (item) => ({
-      name: item.name,
-      requestedQty: item.qty,
-      latest: await fetchLatestStock(item.name),
-    }))
-  );
-  const invalidItems = checks.filter(
-    (x) =>
-      x.latest.stockLeft <= 0 ||
-      x.requestedQty > x.latest.stockLeft
-  );
-  if (invalidItems.length > 0) {
-    await refreshAllCartStocks();
-    alert("Some items are out of stock. Cart updated.");
-    return false;
-  }
-  return true;
-};
 
   // ----- Proceed -----
   const handleGroceryProceed = async (event) => {
     const valid = await validateCartStockBeforeCheckout();
     if (!valid) return;
     const allCategories =
-          JSON.parse(localStorage.getItem("allCategories")) || [];
+      JSON.parse(localStorage.getItem("allCategories")) || [];
     //  const firstOrderData = await CheckFirstOrder(mobileNumber);
     //   // If null → new user
     //   const isNewUser = !firstOrderData;
     //   // ✅ SIMPLE WALLET LOGIC
     //   const walletValue = isNewUser ? "50" : "0";
-    
+
     const payload = {
       id: "string",
       martId: "string",
@@ -526,25 +507,23 @@ const validateCartStockBeforeCheckout = async () => {
       isPickUp: false,
       isDelivered: false,
 
-      totalWalletAmount:"",
-      availedAmount :"",
-     remainingAmount :"",
+      totalWalletAmount: "",
+      availedAmount: "",
+      remainingAmount: "",
 
       deliveryAssignedTime: "",
       deliverySubmitTime: "",
       GrandTotal: String(grandSummary.total),
       TotalItemsSelected: String(grandSummary.items),
       categories: allCategories.map((cat) => {
-        const products = (cat.products || [])   
+        const products = (cat.products || [])
           .map((p) => {
             const persisted = p.image ?? p.productImage ?? "";
             const filename = getImageFilename(persisted);
             const safeImage =
               filename || (typeof persisted === "string" ? persisted : "");
             const qty = Number(p.qty || p.noOfQuantity || 0);
-            const price = Number(
-              p.afterDiscountPrice || p.price || 0
-            );
+            const price = Number(p.afterDiscountPrice || p.price || 0);
             const mrp = Number(p.mrp || 0);
 
             if (
@@ -562,9 +541,7 @@ const validateCartStockBeforeCheckout = async () => {
               mrp: String(mrp),
               discount: String(p.discount || 0),
               afterDiscountPrice: String(price),
-              stockLeft: String(
-                (Number(p.stockLeft) || 0) - qty
-              ),
+              stockLeft: String((Number(p.stockLeft) || 0) - qty),
               code: String(p.code || ""),
               units: String(p.units || ""),
             };
@@ -574,16 +551,14 @@ const validateCartStockBeforeCheckout = async () => {
           categoryName: cat.categoryName,
           numberOfItemsSelected: products.reduce(
             (sum, p) => sum + Number(p.noOfQuantity),
-            0
+            0,
           ),
           totalAmount: Math.round(
             products.reduce(
               (sum, p) =>
-                sum +
-                Number(p.afterDiscountPrice) *
-                  Number(p.noOfQuantity),
-              0
-            )
+                sum + Number(p.afterDiscountPrice) * Number(p.noOfQuantity),
+              0,
+            ),
           ),
           products,
         };
@@ -591,33 +566,29 @@ const validateCartStockBeforeCheckout = async () => {
     };
     try {
       const response = await fetch(
-        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UploadProductDetails`,
+        `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/Mart/UploadProductDetails`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
-        }
+        },
       );
       if (response.ok) {
         const data = await response.json();
         const extractedId = data.id;
         if (extractedId) {
-          const currentCart =
-            localStorage.getItem("allCategories") || "[]";
-          localStorage.setItem(
-            `cartSnapshot_${extractedId}`,
-            currentCart
-          );
+          const currentCart = localStorage.getItem("allCategories") || "[]";
+          localStorage.setItem(`cartSnapshot_${extractedId}`, currentCart);
           localStorage.setItem("activeOrderId", extractedId);
           localStorage.setItem(
             `cartMeta_${extractedId}`,
             JSON.stringify({
               items: grandSummary.items,
               total: grandSummary.total,
-            })
+            }),
           );
           navigate(
-            `/groceryPaymentMethod/${userType}/${userId}/${extractedId}`
+            `/groceryPaymentMethod/${userType}/${userId}/${extractedId}`,
           );
         }
       } else {
@@ -630,11 +601,11 @@ const validateCartStockBeforeCheckout = async () => {
     }
   };
 
-const cartItemsRef = useRef([]);
+  const cartItemsRef = useRef([]);
 
-useEffect(() => {
-  cartItemsRef.current = cartItems;
-}, [cartItems]);
+  useEffect(() => {
+    cartItemsRef.current = cartItems;
+  }, [cartItems]);
 
   const handleImageClick = (imageSrc) => {
     setZoomImage(imageSrc);
@@ -648,8 +619,8 @@ useEffect(() => {
         (Number(it.mrp) > 0
           ? Number(it.mrp) * Number(it.qty)
           : Number(it.price) * Number(it.qty)),
-      0
-    )
+      0,
+    ),
   );
 
   return (
@@ -673,9 +644,7 @@ useEffect(() => {
         </div>
         <IconButton>
           <CloseIcon
-            onClick={() =>
-              navigate(`/profilePage/${userType}/${userId}`)
-            }
+            onClick={() => navigate(`/profilePage/${userType}/${userId}`)}
             style={{
               cursor: "pointer",
               fontSize: "30px",
@@ -707,22 +676,18 @@ useEffect(() => {
               {/* Product Image */}
               <img
                 src={
-                  (item.imageFilename &&
-                    imageBlobMap[item.imageFilename]) ||
-                  (item.imageFilename &&
-                    fileToUrl(item.imageFilename)) ||
+                  (item.imageFilename && imageBlobMap[item.imageFilename]) ||
+                  (item.imageFilename && fileToUrl(item.imageFilename)) ||
                   item.imageUrl ||
                   "/placeholder.png"
                 }
                 alt={item.name}
                 onClick={() =>
                   handleImageClick(
-                    (item.imageFilename &&
-                      imageBlobMap[item.imageFilename]) ||
-                      (item.imageFilename &&
-                        fileToUrl(item.imageFilename)) ||
+                    (item.imageFilename && imageBlobMap[item.imageFilename]) ||
+                      (item.imageFilename && fileToUrl(item.imageFilename)) ||
                       item.imageUrl ||
-                      "/placeholder.png"
+                      "/placeholder.png",
                   )
                 }
                 style={{
@@ -757,16 +722,12 @@ useEffect(() => {
                     </>
                   )}
                   {item.units && (
-                    <span
-                      style={{ color: "dark", marginLeft: "5px" }}
-                    >
+                    <span style={{ color: "dark", marginLeft: "5px" }}>
                       {item.units}
                     </span>
                   )}
-                   </div>
-                <div
-                  style={{ fontWeight: "600", fontSize: "12px" }}
-                >
+                </div>
+                <div style={{ fontWeight: "600", fontSize: "12px" }}>
                   ₹{Math.round(item.price)}
                 </div>
               </div>
@@ -783,9 +744,7 @@ useEffect(() => {
               >
                 <IconButton
                   size="small"
-                  onClick={() =>
-                    handleQtyChange(item.id, -1)
-                  }
+                  onClick={() => handleQtyChange(item.id, -1)}
                   style={{ color: "white", padding: "2px" }}
                 >
                   <RemoveIcon fontSize="small" />
@@ -800,27 +759,22 @@ useEffect(() => {
                 </span>
                 <IconButton
                   size="small"
-                  onClick={() =>
-                    canAdd && handleQtyChange(item.id, +1)
-                  }
+                  onClick={() => canAdd && handleQtyChange(item.id, +1)}
                   style={{
                     color: "white",
                     padding: "2px",
                     opacity: canAdd ? 1 : 0.5,
-                    cursor: canAdd
-                      ? "pointer"
-                      : "not-allowed",
+                    cursor: canAdd ? "pointer" : "not-allowed",
                   }}
                   disabled={!canAdd}
                   title={
                     canAdd
                       ? "Add one"
-                      : item.qty >= stockMax &&
-                        stockMax !== Infinity
-                      ? "No more stock"
-                      : Number.isFinite(limit)
-                      ? `Limit ${limit} per customer`
-                      : "No more allowed"
+                      : item.qty >= stockMax && stockMax !== Infinity
+                        ? "No more stock"
+                        : Number.isFinite(limit)
+                          ? `Limit ${limit} per customer`
+                          : "No more allowed"
                   }
                 >
                   <AddIcon fontSize="small" />
@@ -837,18 +791,14 @@ useEffect(() => {
         <div className="d-flex justify-content-between align-items-center">
           <span>📋 Items total</span>
           <span>
-            <s className="text-muted">₹{itemsTotal}</s>{" "}
-            ₹{grandSummary.total}
+            <s className="text-muted">₹{itemsTotal}</s> ₹{grandSummary.total}
           </span>
         </div>
         <div className="d-flex justify-content-between align-items-center">
           <span>
             🚲 Delivery charge <InfoIcon fontSize="small" />
           </span>
-          <span
-            className="text-danger fw-bold"
-            style={{ fontSize: "10px" }}
-          >
+          <span className="text-danger fw-bold" style={{ fontSize: "10px" }}>
             FREE
           </span>
         </div>
@@ -856,10 +806,7 @@ useEffect(() => {
           <span>
             👜 Handling charge <InfoIcon fontSize="small" />
           </span>
-          <span
-            className="text-danger fw-bold"
-            style={{ fontSize: "10px" }}
-          >
+          <span className="text-danger fw-bold" style={{ fontSize: "10px" }}>
             FREE
           </span>
         </div>
@@ -879,9 +826,9 @@ useEffect(() => {
             marginTop: "0px",
           }}
         >
-          Minimum order is ₹{MIN_ORDER_TOTAL} and above  
-    {walletAmount === 50 && " (Wallet applied)"}  
-    {referralAmount > 0 && " (Referral applied)"}
+          Minimum order is ₹{MIN_ORDER_TOTAL} and above
+          {walletAmount === 50 && " (Wallet applied)"}
+          {referralAmount > 0 && " (Referral applied)"}
         </p>
       )}
 
@@ -896,9 +843,7 @@ useEffect(() => {
         }}
       >
         <div>
-          <span style={{ fontSize: "12px" }}>
-            {grandSummary.items} items
-          </span>
+          <span style={{ fontSize: "12px" }}>{grandSummary.items} items</span>
           <div
             style={{
               fontWeight: "500",
@@ -914,11 +859,8 @@ useEffect(() => {
             fontWeight: "500",
             fontSize: "15px",
             cursor:
-              grandSummary.total < MIN_ORDER_TOTAL
-                ? "not-allowed"
-                : "pointer",
-            opacity:
-              grandSummary.total < MIN_ORDER_TOTAL ? 0.6 : 1,
+              grandSummary.total < MIN_ORDER_TOTAL ? "not-allowed" : "pointer",
+            opacity: grandSummary.total < MIN_ORDER_TOTAL ? 0.6 : 1,
           }}
           onClick={
             grandSummary.total >= MIN_ORDER_TOTAL
@@ -935,9 +877,7 @@ useEffect(() => {
       <div className="text-start">
         <button
           className="btn btn-warning mt-1 mb-1"
-          onClick={() =>
-            navigate(`/profilePage/${userType}/${userId}`)
-          }
+          onClick={() => navigate(`/profilePage/${userType}/${userId}`)}
         >
           Back
         </button>
@@ -958,11 +898,7 @@ useEffect(() => {
         </button>
         <Modal.Body className="text-center">
           <div className="zoom-container">
-            <img
-              src={zoomImage}
-              alt="Zoomed Product"
-              className="zoom-image"
-            />
+            <img src={zoomImage} alt="Zoomed Product" className="zoom-image" />
           </div>
         </Modal.Body>
       </Modal>

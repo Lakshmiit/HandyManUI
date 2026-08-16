@@ -5,17 +5,17 @@ const CART_KEY = "allCategories";
 export const fileToUrl = (fn) => {
   if (!fn) return null;
   if (fn.startsWith("http")) return fn;
-  return `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(fn)}`;
+  return `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(fn)}`;
 };
 
 /* ---------------- CLEAN DATA ---------------- */
 function cleanedCategories(all) {
   return (all || [])
-    .map(c => ({
+    .map((c) => ({
       categoryName: c.categoryName,
-      products: (c.products || []).filter(p => Number(p?.qty) > 0)
+      products: (c.products || []).filter((p) => Number(p?.qty) > 0),
     }))
-    .filter(c => c.products.length > 0);
+    .filter((c) => c.products.length > 0);
 }
 
 /* ---------------- CART STORAGE ---------------- */
@@ -42,17 +42,19 @@ export const CartStorage = {
   /* ---------- UPSERT CATEGORY ---------- */
   upsertCategory(categoryName, productList) {
     let all = this.getAll();
-    const idx = all.findIndex(c => c.categoryName === categoryName);
-    const cleanedProducts = (productList || []).filter(p => Number(p.qty) > 0);
+    const idx = all.findIndex((c) => c.categoryName === categoryName);
+    const cleanedProducts = (productList || []).filter(
+      (p) => Number(p.qty) > 0,
+    );
     if (idx >= 0) {
       all[idx] = {
         categoryName,
-        products: cleanedProducts
+        products: cleanedProducts,
       };
     } else {
       all.push({
         categoryName,
-        products: cleanedProducts
+        products: cleanedProducts,
       });
     }
     this.save(all);
@@ -61,10 +63,10 @@ export const CartStorage = {
   /* ---------- FLAT ITEMS FOR CART PAGE ---------- */
   flatItems() {
     const all = this.getAll();
-    return all.flatMap(cat =>
-      (cat.products || []).map(p => {
+    return all.flatMap((cat) =>
+      (cat.products || []).map((p) => {
         const imageFile = p.image
-          ? (String(p.image).split("generatedfilename=")[1] || p.image)
+          ? String(p.image).split("generatedfilename=")[1] || p.image
           : null;
         return {
           id: `${cat.categoryName}-${p.productId}`,
@@ -77,23 +79,25 @@ export const CartStorage = {
           price: Number(p.afterDiscountPrice || 0),
           stockLeft: Number(p.stockLeft || 0),
           imageFilename: imageFile,
-          img: fileToUrl(imageFile)
+          img: fileToUrl(imageFile),
         };
-      })
+      }),
     );
   },
 
   /* ---------- WRITE BACK FROM CART PAGE ---------- */
   writeBackFromFlatItems(items) {
     const grouped = {};
-    (items || []).forEach(it => {
+    (items || []).forEach((it) => {
       if (!grouped[it.category]) {
         grouped[it.category] = [];
       }
 
       const imageFile = it.imageFilename
         ? it.imageFilename
-        : (it.img ? (String(it.img).split("generatedfilename=")[1] || it.img) : null);
+        : it.img
+          ? String(it.img).split("generatedfilename=")[1] || it.img
+          : null;
       grouped[it.category].push({
         productId: it.productId,
         productName: it.name,
@@ -102,12 +106,12 @@ export const CartStorage = {
         discount: Number(it.discount || 0),
         afterDiscountPrice: Number(it.price || 0),
         stockLeft: Number(it.stockLeft || 0),
-        image: imageFile
+        image: imageFile,
       });
     });
     const all = Object.entries(grouped).map(([categoryName, products]) => ({
       categoryName,
-      products: products.filter(p => Number(p.qty) > 0)
+      products: products.filter((p) => Number(p.qty) > 0),
     }));
     this.save(all);
   },
@@ -117,20 +121,20 @@ export const CartStorage = {
     const all = this.getAll();
     let items = 0;
     let total = 0;
-    all.forEach(cat =>
-      (cat.products || []).forEach(p => {
+    all.forEach((cat) =>
+      (cat.products || []).forEach((p) => {
         const qty = Number(p.qty || 0);
         const price = Number(p.afterDiscountPrice || 0);
         items += qty;
         total += price * qty;
-      })
+      }),
     );
     return {
       items,
-      total: Math.round(total)
+      total: Math.round(total),
     };
   },
   clear() {
     localStorage.removeItem(CART_KEY);
-  }
+  },
 };

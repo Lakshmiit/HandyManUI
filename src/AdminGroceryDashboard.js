@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback} from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar";
 import {
@@ -6,45 +6,58 @@ import {
   ArrowBack as ArrowBackIcon,
   NotificationsNone as NotificationsNoneIcon,
 } from "@mui/icons-material";
-import Footer from './Footer.js';
-import { Button } from "react-bootstrap";    
-import "./App.css";   
+import Footer from "./Footer.js";
+import { Button } from "react-bootstrap";
+import "./App.css";
 // import { appConfig } from "./config";
 
 const NotificationsList = ({ notifications, highlightedItem }) => {
   const navigate = useNavigate();
   const raiseTicketNotifications = notifications.filter(
-    (item) => item.internalStatus === "Open" && item.assignedTo === "Customer Care" 
+    (item) =>
+      item.internalStatus === "Open" && item.assignedTo === "Customer Care",
   );
 
-const bookTechnicianNotifications = notifications.filter(
-  (item) => item.status === "Open" && item.assignedTo !== "Customer Care"  && item.bookTechnicianId != null
-);
-const buyProductNotifications = notifications.filter(
-  (item) => item.status === "Open" && item.assignedTo === "Customer Care" && item.buyProductId != null
-);
-const groceryItemNotifications = notifications.filter(
-  (item) => item.status === "Delivered" && item.martId != null
-);
-const lakshmiCollectionsNotifications = notifications.filter(
-  (item) => item.status === "Open" && item.lakshmiCollectionId != null
-);
+  const bookTechnicianNotifications = notifications.filter(
+    (item) =>
+      item.status === "Open" &&
+      item.assignedTo !== "Customer Care" &&
+      item.bookTechnicianId != null,
+  );
+  const buyProductNotifications = notifications.filter(
+    (item) =>
+      item.status === "Open" &&
+      item.assignedTo === "Customer Care" &&
+      item.buyProductId != null,
+  );
+  const groceryItemNotifications = notifications.filter(
+    (item) => item.status === "Delivered" && item.martId != null,
+  );
+  const lakshmiCollectionsNotifications = notifications.filter(
+    (item) => item.status === "Open" && item.lakshmiCollectionId != null,
+  );
   const handleTicketClick = (ticketId) => {
     navigate(`/raiseTicketActionView/${ticketId}`, { state: { ticketId } });
   };
-  
+
   const handleTechnicianClick = (bookTechnicianId) => {
-    navigate(`/bookTechnicianActionView/${bookTechnicianId}`, { state: { bookTechnicianId}});
+    navigate(`/bookTechnicianActionView/${bookTechnicianId}`, {
+      state: { bookTechnicianId },
+    });
   };
   const handleBuyProductClick = (buyProductId) => {
-    navigate(`/adminBuyProductOrders/${buyProductId}`, { state: { buyProductId}});
+    navigate(`/adminBuyProductOrders/${buyProductId}`, {
+      state: { buyProductId },
+    });
   };
 
-   const handleGroceryClick = (martId) => {
+  const handleGroceryClick = (martId) => {
     navigate(`/adminGroceryClosedOrders/${martId}`, { state: { martId } });
   };
   const handleCollectionsClick = (lakshmiCollectionId) => {
-    navigate(`/adminLakshmiCollectionsOrders/${lakshmiCollectionId}`, { state: { lakshmiCollectionId } });
+    navigate(`/adminLakshmiCollectionsOrders/${lakshmiCollectionId}`, {
+      state: { lakshmiCollectionId },
+    });
   };
   return (
     <div>
@@ -76,7 +89,8 @@ const lakshmiCollectionsNotifications = notifications.filter(
               <strong>Details:</strong> {notification.details}
             </div>
             <div className="notification-date">
-              <strong>Date:</strong> {new Date(notification.date).toLocaleString()}
+              <strong>Date:</strong>{" "}
+              {new Date(notification.date).toLocaleString()}
             </div>
           </div>
         ))}
@@ -87,7 +101,9 @@ const lakshmiCollectionsNotifications = notifications.filter(
           <div
             key={notification.bookTechnicianId}
             className={`notification-item ${
-              notification.bookTechnicianId === highlightedItem ? "highlight" : ""
+              notification.bookTechnicianId === highlightedItem
+                ? "highlight"
+                : ""
             }`}
           >
             <div className="notification-header">
@@ -110,7 +126,8 @@ const lakshmiCollectionsNotifications = notifications.filter(
               <strong>Category:</strong> {notification.category}
             </div>
             <div className="notification-date">
-              <strong>Date:</strong> {new Date(notification.date).toLocaleString()}
+              <strong>Date:</strong>{" "}
+              {new Date(notification.date).toLocaleString()}
             </div>
           </div>
         ))}
@@ -144,13 +161,14 @@ const lakshmiCollectionsNotifications = notifications.filter(
               <strong>Category:</strong> {notification.category}
             </div>
             <div className="notification-date">
-              <strong>Date:</strong> {new Date(notification.date).toLocaleString()}
+              <strong>Date:</strong>{" "}
+              {new Date(notification.date).toLocaleString()}
             </div>
           </div>
         ))}
       </div>
 
-        <div className="notification-list">
+      <div className="notification-list">
         {groceryItemNotifications.map((notification) => (
           <div
             key={notification.martId}
@@ -175,17 +193,28 @@ const lakshmiCollectionsNotifications = notifications.filter(
               <strong>Customer Name:</strong> {notification.customerName}
             </div>
             <div>
-              <strong>Address:</strong> {notification.address}, {notification.district}, {notification.state}, {notification.zipCode}, {notification.customerPhoneNumber}
+              <strong>Address:</strong> {notification.address},{" "}
+              {notification.district}, {notification.state},{" "}
+              {notification.zipCode}, {notification.customerPhoneNumber}
             </div>
-             <div><strong>Delivery Partner Name:</strong>{notification.assignedTo}</div>
-            <div><strong>Customer Paid Amount:</strong> Rs {notification.paidAmount} /-</div>
-            <div><strong>Payment Mode:</strong> {notification.paymentMode}</div>
-    
+            <div>
+              <strong>Delivery Partner Name:</strong>
+              {notification.assignedTo}
+            </div>
+            <div>
+              <strong>Customer Paid Amount:</strong> Rs{" "}
+              {notification.paidAmount} /-
+            </div>
+            <div>
+              <strong>Payment Mode:</strong> {notification.paymentMode}
+            </div>
+
             {/* <div>
               <strong>Location:</strong> {notification.location}
             </div> */}
             <div className="notification-date">
-              <strong>Date:</strong> {new Date(notification.date).toLocaleString()}
+              <strong>Date:</strong>{" "}
+              {new Date(notification.date).toLocaleString()}
             </div>
             <div className="notification-date">
               <strong>Grand Total:</strong> {`Rs ${notification.grandTotal} /-`}
@@ -199,7 +228,9 @@ const lakshmiCollectionsNotifications = notifications.filter(
           <div
             key={notification.lakshmiCollectionId}
             className={`notification-item ${
-              notification.lakshmiCollectionId === highlightedItem ? "highlight" : ""
+              notification.lakshmiCollectionId === highlightedItem
+                ? "highlight"
+                : ""
             }`}
           >
             <div className="notification-header">
@@ -216,13 +247,16 @@ const lakshmiCollectionsNotifications = notifications.filter(
               </span>
             </div>
             <div>
-              <strong>Collection Name:</strong> {notification.categoriess?.[0]?.productName}
-            </div> 
+              <strong>Collection Name:</strong>{" "}
+              {notification.categoriess?.[0]?.productName}
+            </div>
             <div>
-              <strong>Category:</strong> {notification.categoriess?.[0]?.categoryName}
+              <strong>Category:</strong>{" "}
+              {notification.categoriess?.[0]?.categoryName}
             </div>
             <div className="notification-date">
-              <strong>Date:</strong> {new Date(notification.date).toLocaleString()}
+              <strong>Date:</strong>{" "}
+              {new Date(notification.date).toLocaleString()}
             </div>
           </div>
         ))}
@@ -235,21 +269,21 @@ const Notification = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [ticketNotifications, setTicketNotifications] = useState([]);
- const [technicianNotifications, setTechnicianNotifications] = useState([]);
- const [productNotifications, setProductNotifications] = useState([]);
+  const [technicianNotifications, setTechnicianNotifications] = useState([]);
+  const [productNotifications, setProductNotifications] = useState([]);
   const [groceryNotifications, setGroceryItemNotifications] = useState([]);
   const [collectionNotifications, setCollectionNotifications] = useState([]);
-  const [newTicketCount, setNewTicketCount] = useState(0); 
+  const [newTicketCount, setNewTicketCount] = useState(0);
   const [newTechnicianCount, setNewTechnicianCount] = useState(0);
   const [newProductCount, setNewProductCount] = useState(0);
   const [newNotificationCount, setNewNotificationCount] = useState(0);
-  const [newGroceryCount, setNewGroceryCount] = useState(0); 
-  const [newCollectionCount, setNewCollectionCount] = useState(0); 
+  const [newGroceryCount, setNewGroceryCount] = useState(0);
+  const [newCollectionCount, setNewCollectionCount] = useState(0);
   const [glow, setGlow] = useState(false);
-  const [glowTicket, setGlowTicket] = useState(false);   
-   const [glowTechnician, setGlowTechnician] = useState(false);
+  const [glowTicket, setGlowTicket] = useState(false);
+  const [glowTechnician, setGlowTechnician] = useState(false);
   const [glowProduct, setGlowProduct] = useState(false);
- const [glowGrocery, setGlowGrocery] = useState(false);
+  const [glowGrocery, setGlowGrocery] = useState(false);
   const [glowCollection, setGlowCollection] = useState(false);
   const [highlightedTicket, setHighlightedTicket] = useState(null);
   const [highlightedTechnician, setHighlightedTechnician] = useState(null);
@@ -258,29 +292,43 @@ const Notification = () => {
   const [highlightedCollection, setHighlightedCollection] = useState(null);
   const [activeTab, setActiveTab] = useState("");
   const navigate = useNavigate();
-   
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-    
+
   const fetchNotifications = useCallback(async () => {
-    try { 
-      const [raiseTicketResponse, BookTechnicianResponse, buyProductResponse, groceryItemResponse, collectionsResponse] = await Promise.all([
+    try {
+      const [
+        raiseTicketResponse,
+        BookTechnicianResponse,
+        buyProductResponse,
+        groceryItemResponse,
+        collectionsResponse,
+      ] = await Promise.all([
+        fetch(`https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications`),
         fetch(
-        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/RaiseTicket/GetTicketsNotifications`
+          `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/BookTechnician/GetBookTechnicianForAdminList`,
         ),
-        fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/BookTechnician/GetBookTechnicianForAdminList`),
-        fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForAdminList`),
-        fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetAllMartItems`),
-        fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/LakshmiCollection/GetAllLakshmiCollectionsOpen`),
+        fetch(
+          `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/BuyProduct/GetBuyProductDetailsForAdminList`,
+        ),
+        fetch(`https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/Mart/GetAllMartItems`),
+        fetch(
+          `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/LakshmiCollection/GetAllLakshmiCollectionsOpen`,
+        ),
       ]);
 
       const raiseTicketData = await raiseTicketResponse.json();
-      const raiseTicketFiltered = raiseTicketData.filter(
-        (item) => item.internalStatus === "Open" && item.assignedTo === "Customer Care")
+      const raiseTicketFiltered = raiseTicketData
+        .filter(
+          (item) =>
+            item.internalStatus === "Open" &&
+            item.assignedTo === "Customer Care",
+        )
         .sort((a, b) => new Date(b.date) - new Date(a.date));
       const raiseTicketCount = raiseTicketFiltered.length;
       setTicketNotifications(raiseTicketFiltered);
@@ -290,32 +338,43 @@ const Notification = () => {
         setHighlightedTicket(raiseTicketFiltered[0].raiseTicketId);
       }
 
-     const bookTechnicianData = await BookTechnicianResponse.json();
-   const bookTechnicianFiltered = bookTechnicianData.filter((item) => item.status === "Open" && item.assignedTo !== "Customer Care" && item.bookTechnicianId != null)
-   .sort((a, b) => new Date(b.date) - new Date(a.date));
-   const bookTechnicianCount = bookTechnicianFiltered.length;
-     setTechnicianNotifications(bookTechnicianFiltered);
-     setNewTechnicianCount(bookTechnicianCount);
-     setGlowTechnician(bookTechnicianCount > 0);
-     if (bookTechnicianCount > 0) {
-      setHighlightedTechnician(bookTechnicianFiltered[0].bookTechnicianId);
-     }
+      const bookTechnicianData = await BookTechnicianResponse.json();
+      const bookTechnicianFiltered = bookTechnicianData
+        .filter(
+          (item) =>
+            item.status === "Open" &&
+            item.assignedTo !== "Customer Care" &&
+            item.bookTechnicianId != null,
+        )
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
+      const bookTechnicianCount = bookTechnicianFiltered.length;
+      setTechnicianNotifications(bookTechnicianFiltered);
+      setNewTechnicianCount(bookTechnicianCount);
+      setGlowTechnician(bookTechnicianCount > 0);
+      if (bookTechnicianCount > 0) {
+        setHighlightedTechnician(bookTechnicianFiltered[0].bookTechnicianId);
+      }
 
-   const buyProductData = await buyProductResponse.json();
-   const buyProductFiltered = buyProductData.filter((item) => 
-    item.status === "Open" && item.assignedTo === "Customer Care" && item.buyProductId != null)
-   .sort((a, b) => new Date(b.date) - new Date(a.date));
-   const buyProductCount = buyProductFiltered.length;
-     setProductNotifications(buyProductFiltered);
-     setNewProductCount(buyProductCount);
-     setGlowProduct(buyProductCount > 0);
-     if (buyProductCount > 0) {
-      setHighlightedProduct(buyProductFiltered[0].buyProductId);
-     }
+      const buyProductData = await buyProductResponse.json();
+      const buyProductFiltered = buyProductData
+        .filter(
+          (item) =>
+            item.status === "Open" &&
+            item.assignedTo === "Customer Care" &&
+            item.buyProductId != null,
+        )
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
+      const buyProductCount = buyProductFiltered.length;
+      setProductNotifications(buyProductFiltered);
+      setNewProductCount(buyProductCount);
+      setGlowProduct(buyProductCount > 0);
+      if (buyProductCount > 0) {
+        setHighlightedProduct(buyProductFiltered[0].buyProductId);
+      }
 
       const groceryItemData = await groceryItemResponse.json();
-      const groceryItemFiltered = groceryItemData.filter(
-        (item) => item.status === "Delivered"  && item.martId != null)
+      const groceryItemFiltered = groceryItemData
+        .filter((item) => item.status === "Delivered" && item.martId != null)
         .sort((a, b) => new Date(b.date) - new Date(a.date));
       const groceryItemCount = groceryItemFiltered.length;
       setGroceryItemNotifications(groceryItemFiltered);
@@ -326,8 +385,10 @@ const Notification = () => {
       }
 
       const collectionsData = await collectionsResponse.json();
-      const collectionsFiltered = collectionsData.filter(
-        (item) => item.status === "Open"  && item.lakshmiCollectionId != null)
+      const collectionsFiltered = collectionsData
+        .filter(
+          (item) => item.status === "Open" && item.lakshmiCollectionId != null,
+        )
         .sort((a, b) => new Date(b.date) - new Date(a.date));
       const collectionsCount = collectionsFiltered.length;
       setCollectionNotifications(collectionsFiltered);
@@ -335,9 +396,14 @@ const Notification = () => {
       setGlowCollection(collectionsCount > 0);
       if (collectionsCount > 0) {
         setHighlightedCollection(collectionsFiltered[0].lakshmiCollectionId);
-      } 
-const totalNotifications = raiseTicketCount + bookTechnicianCount + buyProductCount + groceryItemCount + collectionsCount; 
-      setNewNotificationCount(totalNotifications);        
+      }
+      const totalNotifications =
+        raiseTicketCount +
+        bookTechnicianCount +
+        buyProductCount +
+        groceryItemCount +
+        collectionsCount;
+      setNewNotificationCount(totalNotifications);
       console.log("newNotificationCount:", newNotificationCount);
       setGlow(totalNotifications > 0);
     } catch (error) {
@@ -346,11 +412,11 @@ const totalNotifications = raiseTicketCount + bookTechnicianCount + buyProductCo
   }, [newNotificationCount]);
 
   useEffect(() => {
-  fetchNotifications();
-  const interval = setInterval(fetchNotifications, 10000);
-  return () => clearInterval(interval);
-}, [fetchNotifications]);
-  
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 10000);
+    return () => clearInterval(interval);
+  }, [fetchNotifications]);
+
   const handleClearTicketNotifications = () => {
     setNewTicketCount(0);
     setGlowTicket(false);
@@ -370,7 +436,7 @@ const totalNotifications = raiseTicketCount + bookTechnicianCount + buyProductCo
 
   //  const handleClearGroceryNotifications = () => {
   //   setNewGroceryCount(0);
-  //   setGlowGrocery(false);                                                                                                      
+  //   setGlowGrocery(false);
   //   setHighlightedGrocery(null);
   // };
 
@@ -380,225 +446,243 @@ const totalNotifications = raiseTicketCount + bookTechnicianCount + buyProductCo
     setHighlightedCollection(null);
   };
 
-const handleTabClick = (tab) => {
-  setActiveTab(tab);
-};
-  return ( 
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
+  };
+  return (
     <>
-    <div className="d-flex flex-row justify-content-start align-items-start mt-mob-50">
-      {!isMobile && (
-        <div className="ml-0 p-0 adm_mnu">
-          <AdminSidebar />
-        </div>
-      )}
-      {isMobile && (
-        <div className="floating-menu">
-          <Button
-            variant="primary"
-            className="rounded-circle shadow"
-            onClick={() => setShowMenu(!showMenu)}
-          >
-            <MoreVertIcon />
-          </Button>
-          {showMenu && (
-            <div className="sidebar-container">
-              <AdminSidebar />
-            </div>
-          )}   
-        </div>
-      )}
-      <div className={`container m-1  ${isMobile ? "w-100" : "w-75"}`}>
-        <h2 className="text-start mb-1 fs-20">
-          <ArrowBackIcon fontSize="large" />{" "}
-          <NotificationsNoneIcon
-            fontSize="large"
-            className={glow ? "glow" : ""}
-          />{" "}
-          Notifications{" "}
-          {newNotificationCount > 0 && (
-            <span className="badge bg-danger">{newNotificationCount}</span>
-          )}
-        </h2>
-<div className="notifications-container1 d-flex bg-white">
-{isMobile ? (
-  <div className="tabs-mobile d-flex flex-column">
-    {["Raise Ticket", "Book Technician", "Buy Products", "Grocery Items", "Lakshmi Collections"
-    ].map((tab) => (
-      <div
-        key={tab}
-        className={`tab-item ${activeTab === tab ? "active" : ""} 
+      <div className="d-flex flex-row justify-content-start align-items-start mt-mob-50">
+        {!isMobile && (
+          <div className="ml-0 p-0 adm_mnu">
+            <AdminSidebar />
+          </div>
+        )}
+        {isMobile && (
+          <div className="floating-menu">
+            <Button
+              variant="primary"
+              className="rounded-circle shadow"
+              onClick={() => setShowMenu(!showMenu)}
+            >
+              <MoreVertIcon />
+            </Button>
+            {showMenu && (
+              <div className="sidebar-container">
+                <AdminSidebar />
+              </div>
+            )}
+          </div>
+        )}
+        <div className={`container m-1  ${isMobile ? "w-100" : "w-75"}`}>
+          <h2 className="text-start mb-1 fs-20">
+            <ArrowBackIcon fontSize="large" />{" "}
+            <NotificationsNoneIcon
+              fontSize="large"
+              className={glow ? "glow" : ""}
+            />{" "}
+            Notifications{" "}
+            {newNotificationCount > 0 && (
+              <span className="badge bg-danger">{newNotificationCount}</span>
+            )}
+          </h2>
+          <div className="notifications-container1 d-flex bg-white">
+            {isMobile ? (
+              <div className="tabs-mobile d-flex flex-column">
+                {[
+                  "Raise Ticket",
+                  "Book Technician",
+                  "Buy Products",
+                  "Grocery Items",
+                  "Lakshmi Collections",
+                ].map((tab) => (
+                  <div
+                    key={tab}
+                    className={`tab-item ${activeTab === tab ? "active" : ""} 
           ${tab === "Raise Ticket" && glowTicket ? "glow" : ""} 
           ${tab === "Book Technician" && glowTechnician ? "glow" : ""}
           ${tab === "Buy Products" && glowProduct ? "glow" : ""}
           ${tab === "Grocery Items" && glowGrocery ? "glow" : ""}
           ${tab === "Lakshmi Collections" && glowCollection ? "glow" : ""}
           `}
-        onClick={() => handleTabClick(tab)}
-        style={{ cursor: "pointer" }}
-      >
-        {tab}{" "}
-        {tab === "Raise Ticket" && newTicketCount > 0 && (
-          <span className="badge bg-danger">{newTicketCount}</span>
-        )}
-         {tab === "Book Technician" && newTechnicianCount > 0 && (
-          <span className="badge bg-danger">{newTechnicianCount}</span>
-        )}
-        {tab === "Buy Products" && newProductCount > 0 && (
-          <span className="badge bg-danger">{newProductCount}</span>
-        )}
-        {tab === "Grocery Items" && newGroceryCount > 0 && (
-          <span className="badge bg-danger">{newGroceryCount}</span>
-        )}
-        {tab === "Lakshmi Collections" && newCollectionCount > 0 && (
-          <span className="badge bg-danger">{newCollectionCount}</span>
-        )}
-      </div>
-    ))}
-  </div>
-) : (
-  <div className="tabs d-flex">
-    {["Raise Ticket",  "Book Technician", "Buy Products", "Grocery Items", "Lakshmi Collections"
-    ].map((tab) => (
-      <span
-        key={tab}
-        className={`tab-item ${activeTab === tab ? "active" : ""} 
+                    onClick={() => handleTabClick(tab)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    {tab}{" "}
+                    {tab === "Raise Ticket" && newTicketCount > 0 && (
+                      <span className="badge bg-danger">{newTicketCount}</span>
+                    )}
+                    {tab === "Book Technician" && newTechnicianCount > 0 && (
+                      <span className="badge bg-danger">
+                        {newTechnicianCount}
+                      </span>
+                    )}
+                    {tab === "Buy Products" && newProductCount > 0 && (
+                      <span className="badge bg-danger">{newProductCount}</span>
+                    )}
+                    {tab === "Grocery Items" && newGroceryCount > 0 && (
+                      <span className="badge bg-danger">{newGroceryCount}</span>
+                    )}
+                    {tab === "Lakshmi Collections" &&
+                      newCollectionCount > 0 && (
+                        <span className="badge bg-danger">
+                          {newCollectionCount}
+                        </span>
+                      )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="tabs d-flex">
+                {[
+                  "Raise Ticket",
+                  "Book Technician",
+                  "Buy Products",
+                  "Grocery Items",
+                  "Lakshmi Collections",
+                ].map((tab) => (
+                  <span
+                    key={tab}
+                    className={`tab-item ${activeTab === tab ? "active" : ""} 
           ${tab === "Raise Ticket" && glowTicket ? "glow" : ""} 
           ${tab === "Book Technician" && glowTechnician ? "glow" : ""} 
           ${tab === "Buy Products" && glowProduct ? "glow" : ""} 
           ${tab === "Grocery Items" && glowGrocery ? "glow" : ""}
-          ${tab === "Lakshmi Collections" && glowCollection? "glow" : ""}
+          ${tab === "Lakshmi Collections" && glowCollection ? "glow" : ""}
           `}
-        onClick={() => handleTabClick(tab)}
-        style={{ cursor: "pointer", marginRight: "15px" }}
-      >
-        {tab}{" "}
-        {tab === "Raise Ticket" && newTicketCount > 0 && (
-          <span className="badge bg-danger">{newTicketCount}</span>
-        )}
-       {tab === "Book Technician" && newTechnicianCount > 0 && (
-          <span className="badge bg-danger">{newTechnicianCount}</span>
-        )}
-        {tab === "Buy Products" && newProductCount > 0 && (
-          <span className="badge bg-danger">{newProductCount}</span>
-        )}
-         {tab === "Grocery Items" && newGroceryCount > 0 && (
-          <span className="badge bg-danger">{newGroceryCount}</span>
-        )}
-         {tab === "Lakshmi Collections" && newCollectionCount > 0 && (
-          <span className="badge bg-danger">{newCollectionCount}</span>
-        )}
-        </span>
-    ))}
-  </div>
-)}
-        <div>
-          {activeTab === "Raise Ticket" && (
-            <>
-              <NotificationsList
-                notifications={ticketNotifications}
-                highlightedItem={highlightedTicket}
-              />
-              <div
-                className="view-notifications text-info mx-2"
-                onClick={() => {
-                  navigate(`/raiseTicketNotification`);
-                  handleClearTicketNotifications();
-                }}
-                style={{ cursor: "pointer" }}
-              > 
-                View All Notifications
+                    onClick={() => handleTabClick(tab)}
+                    style={{ cursor: "pointer", marginRight: "15px" }}
+                  >
+                    {tab}{" "}
+                    {tab === "Raise Ticket" && newTicketCount > 0 && (
+                      <span className="badge bg-danger">{newTicketCount}</span>
+                    )}
+                    {tab === "Book Technician" && newTechnicianCount > 0 && (
+                      <span className="badge bg-danger">
+                        {newTechnicianCount}
+                      </span>
+                    )}
+                    {tab === "Buy Products" && newProductCount > 0 && (
+                      <span className="badge bg-danger">{newProductCount}</span>
+                    )}
+                    {tab === "Grocery Items" && newGroceryCount > 0 && (
+                      <span className="badge bg-danger">{newGroceryCount}</span>
+                    )}
+                    {tab === "Lakshmi Collections" &&
+                      newCollectionCount > 0 && (
+                        <span className="badge bg-danger">
+                          {newCollectionCount}
+                        </span>
+                      )}
+                  </span>
+                ))}
               </div>
-            </>
-          )}
+            )}
+            <div>
+              {activeTab === "Raise Ticket" && (
+                <>
+                  <NotificationsList
+                    notifications={ticketNotifications}
+                    highlightedItem={highlightedTicket}
+                  />
+                  <div
+                    className="view-notifications text-info mx-2"
+                    onClick={() => {
+                      navigate(`/raiseTicketNotification`);
+                      handleClearTicketNotifications();
+                    }}
+                    style={{ cursor: "pointer" }}
+                  >
+                    View All Notifications
+                  </div>
+                </>
+              )}
+            </div>
+            <div>
+              {activeTab === "Book Technician" && (
+                <>
+                  <NotificationsList
+                    notifications={technicianNotifications}
+                    highlightedItem={highlightedTechnician}
+                  />
+                  <div
+                    className="view-notifications text-info mx-2"
+                    onClick={() => {
+                      navigate(`/bookTechnicianNotificationGrid`);
+                      handleClearTechnicianNotifications();
+                    }}
+                    style={{ cursor: "pointer" }}
+                  >
+                    View All Notifications
+                  </div>
+                </>
+              )}
+            </div>
+            <div>
+              {activeTab === "Buy Products" && (
+                <>
+                  <NotificationsList
+                    notifications={productNotifications}
+                    highlightedItem={highlightedProduct}
+                  />
+                  <div
+                    className="view-notifications text-info mx-2"
+                    onClick={() => {
+                      navigate(`/buyProductNotificationGrid`);
+                      handleClearProductNotifications();
+                    }}
+                    style={{ cursor: "pointer" }}
+                  >
+                    View All Notifications
+                  </div>
+                </>
+              )}
+            </div>
+            <div>
+              {activeTab === "Grocery Items" && (
+                <>
+                  <NotificationsList
+                    notifications={groceryNotifications}
+                    highlightedItem={highlightedGrocery}
+                  />
+                  <div
+                    className="view-notifications text-info mx-2"
+                    // onClick={() => {
+                    //    navigate(`/groceryItemsNotificationGrid`);
+                    //   handleClearGroceryNotifications();
+                    // }}
+                    style={{ cursor: "pointer" }}
+                  >
+                    View All Notifications
+                  </div>
+                </>
+              )}
+            </div>
+            <div>
+              {activeTab === "Lakshmi Collections" && (
+                <>
+                  <NotificationsList
+                    notifications={collectionNotifications}
+                    highlightedItem={highlightedCollection}
+                  />
+                  <div
+                    className="view-notifications text-info mx-2"
+                    onClick={() => {
+                      navigate(`/lakshmiCollectionsNotificationGrid`);
+                      handleClearCollectionNotifications();
+                    }}
+                    style={{ cursor: "pointer" }}
+                  >
+                    View All Notifications
+                  </div>
+                </>
+              )}
+            </div>
           </div>
-          <div>
-{activeTab === "Book Technician" && (
-            <>
-              <NotificationsList
-                notifications={technicianNotifications}
-                highlightedItem={highlightedTechnician}
-              />
-              <div
-                className="view-notifications text-info mx-2"
-                onClick={() => {
-                  navigate(`/bookTechnicianNotificationGrid`);
-                  handleClearTechnicianNotifications();
-                }} 
-                style={{ cursor: "pointer" }}
-              >
-                View All Notifications
-              </div>
-            </>
-          )}
-          </div>
-          <div>
-          {activeTab === "Buy Products" && (
-            <>
-              <NotificationsList
-                notifications={productNotifications}
-                highlightedItem={highlightedProduct}
-              />
-              <div
-                className="view-notifications text-info mx-2"
-                onClick={() => {
-                  navigate(`/buyProductNotificationGrid`);
-                  handleClearProductNotifications();
-                }} 
-                style={{ cursor: "pointer" }}
-              >
-                View All Notifications
-              </div>
-            </>
-          )}
-          </div>
-         <div>
-          {activeTab === "Grocery Items" && (
-            <>
-              <NotificationsList
-                notifications={groceryNotifications}
-                highlightedItem={highlightedGrocery}
-              />
-              <div
-                className="view-notifications text-info mx-2"
-                // onClick={() => {
-                //    navigate(`/groceryItemsNotificationGrid`);
-                //   handleClearGroceryNotifications();
-                // }}
-                style={{ cursor: "pointer" }}
-              > 
-                View All Notifications
-              </div>
-            </>
-          )}
-          </div>
-         <div>
-          {activeTab === "Lakshmi Collections" && (
-            <>
-              <NotificationsList
-                notifications={collectionNotifications}
-                highlightedItem={highlightedCollection}
-              />
-              <div
-                className="view-notifications text-info mx-2"
-                onClick={() => {
-                 navigate(`/lakshmiCollectionsNotificationGrid`);
-                 handleClearCollectionNotifications();
-                }}
-                style={{ cursor: "pointer" }}
-              > 
-                View All Notifications
-              </div>
-            </>
-          )}
-          </div> 
-        </div>
         </div>
       </div>
-         <Footer /> 
-        </>  
+      <Footer />
+    </>
   );
-}; 
+};
 
 export default Notification;
-
-       

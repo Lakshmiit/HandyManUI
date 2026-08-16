@@ -45,7 +45,7 @@ const DeliveryPartnerPaymentDashboard = () => {
   });
 
   // API
-  const MART_API = "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetAllMartItems";
+  const MART_API = "https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/Mart/GetAllMartItems";
 
   // FETCH API
   useEffect(() => {
@@ -320,7 +320,7 @@ const DeliveryPartnerPaymentDashboard = () => {
                     fromDate: "",
                   });
 
-                  return;  
+                  return;
                 }
 
                 setFilters({

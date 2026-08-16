@@ -4,7 +4,7 @@
  * and the existing Handyman API for storing notification records.
  */
 
-const API = "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api";
+const API = "https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api";
 
 const PushNotificationService = {
   _onMessageCallback: null,
@@ -16,7 +16,10 @@ const PushNotificationService = {
   async initialize(userId) {
     try {
       if (!("Notification" in window))
-        return { granted: false, reason: "Browser does not support notifications" };
+        return {
+          granted: false,
+          reason: "Browser does not support notifications",
+        };
 
       const permission = await Notification.requestPermission();
       if (permission !== "granted")
@@ -27,7 +30,13 @@ const PushNotificationService = {
         await fetch(`${API}/ProfileMessage/RegisterPushUser`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: "string", userId, platform: "web", isActive: true, registeredAt: new Date().toISOString() }),
+          body: JSON.stringify({
+            id: "string",
+            userId,
+            platform: "web",
+            isActive: true,
+            registeredAt: new Date().toISOString(),
+          }),
         });
       } catch {
         // API endpoint may not exist yet — that is fine
@@ -42,7 +51,8 @@ const PushNotificationService = {
 
   /** Show a browser notification */
   show(title, body, options = {}) {
-    if (!("Notification" in window) || Notification.permission !== "granted") return;
+    if (!("Notification" in window) || Notification.permission !== "granted")
+      return;
     try {
       const n = new Notification(title || "Handyman", {
         body: body || "",
@@ -50,8 +60,13 @@ const PushNotificationService = {
         badge: "/logo192.png",
         ...options,
       });
-      n.onclick = () => { window.focus(); n.close(); };
-    } catch { /* silent */ }
+      n.onclick = () => {
+        window.focus();
+        n.close();
+      };
+    } catch {
+      /* silent */
+    }
   },
 
   /** Check if notifications are enabled */
@@ -60,7 +75,9 @@ const PushNotificationService = {
   },
 
   /** Set callback for in-app message display */
-  onForegroundMessage(callback) { this._onMessageCallback = callback; },
+  onForegroundMessage(callback) {
+    this._onMessageCallback = callback;
+  },
 };
 
 export default PushNotificationService;

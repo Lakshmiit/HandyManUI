@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react'; 
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { FaEdit, FaTrash, FaEye } from 'react-icons/fa';
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { FaEdit, FaTrash, FaEye } from "react-icons/fa";
 // import { appConfig } from "./config";
 
 const AdminProductList = () => {
   const [productData, setProductData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [catalogues, setCatalogues] = useState([]); 
+  const [catalogues, setCatalogues] = useState([]);
   const [status, setStatus] = useState([]);
   const [category, setCategory] = useState("");
   const [productstatus, setproductstatus] = useState("");
@@ -18,12 +18,13 @@ const AdminProductList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const rowsPerPage = 15;
   const navigate = useNavigate();
-  
+
   // Fetch product data, categories, and catalogues
   useEffect(() => {
     setLoading(true);
-    const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Product/GetAdminProductList?ProductOwnedBy=Admin`;
-    axios.get(url)
+    const url = `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/Product/GetAdminProductList?ProductOwnedBy=Admin`;
+    axios
+      .get(url)
       .then((response) => {
         const products = response.data.map((product) => ({
           ...product,
@@ -33,11 +34,17 @@ const AdminProductList = () => {
         }));
         setProductData(products);
         setFilteredData(products);
-  
+
         // Extract unique categories, catalogues, and status
-        const uniqueCategories = [...new Set(products.map((product) => product.category))];
-        const uniqueCatalogues = [...new Set(products.map((product) => product.catalogue))];
-        const uniqueStatus = [...new Set(products.map((product) => product.productStatus))];
+        const uniqueCategories = [
+          ...new Set(products.map((product) => product.category)),
+        ];
+        const uniqueCatalogues = [
+          ...new Set(products.map((product) => product.catalogue)),
+        ];
+        const uniqueStatus = [
+          ...new Set(products.map((product) => product.productStatus)),
+        ];
         setCategories(uniqueCategories);
         setCatalogues(uniqueCatalogues);
         setStatus(uniqueStatus);
@@ -48,18 +55,25 @@ const AdminProductList = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, []); 
+  }, []);
 
   // Handle delete functionality
   const handleDelete = (productId) => {
-    const confirmDelete = window.confirm('Are you sure you want to delete this product?');
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this product?",
+    );
     if (confirmDelete) {
-      axios.delete(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Product/${productId}`)
+      axios
+        .delete(`https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/Product/${productId}`)
         .then(() => {
-          setProductData(prevData => prevData.filter(product => product.id !== productId));
-          setFilteredData(prevData => prevData.filter(product => product.id !== productId));
+          setProductData((prevData) =>
+            prevData.filter((product) => product.id !== productId),
+          );
+          setFilteredData((prevData) =>
+            prevData.filter((product) => product.id !== productId),
+          );
         })
-        .catch(error => {
+        .catch((error) => {
           console.error("Error deleting product:", error);
         });
     }
@@ -67,38 +81,43 @@ const AdminProductList = () => {
 
   // Filter data based on selected category and catalogue
   useEffect(() => {
-  let filtered = productData;
-  if (category) {
-    filtered = filtered.filter(product => product.category === category);
-  }
-  if (catalogue) {
-    filtered = filtered.filter(product => product.catalogue === catalogue);
-  }
-  if (productstatus) {
-    filtered = filtered.filter(product => product.productStatus === productstatus);
-  }
-  if (searchTerm) {
-    filtered = filtered.filter(product =>
-      product.productName.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }
-  setFilteredData(filtered);
-  setCurrentPage(1); 
-}, [category, catalogue, productstatus, searchTerm, productData]);
+    let filtered = productData;
+    if (category) {
+      filtered = filtered.filter((product) => product.category === category);
+    }
+    if (catalogue) {
+      filtered = filtered.filter((product) => product.catalogue === catalogue);
+    }
+    if (productstatus) {
+      filtered = filtered.filter(
+        (product) => product.productStatus === productstatus,
+      );
+    }
+    if (searchTerm) {
+      filtered = filtered.filter((product) =>
+        product.productName.toLowerCase().includes(searchTerm.toLowerCase()),
+      );
+    }
+    setFilteredData(filtered);
+    setCurrentPage(1);
+  }, [category, catalogue, productstatus, searchTerm, productData]);
 
   const indexOfLastProduct = currentPage * rowsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - rowsPerPage;
-  const currentProducts = filteredData.slice(indexOfFirstProduct, indexOfLastProduct);
+  const currentProducts = filteredData.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct,
+  );
 
-  if (loading) {    
-    return <div>Loading...</div>; 
+  if (loading) {
+    return <div>Loading...</div>;
   }
 
   return (
     <div className="container mt-mob-50">
       <h2 className="text-center">All Products</h2>
-       {/* Search Bar */}
-        <div className="form-group col-md-3">
+      {/* Search Bar */}
+      <div className="form-group col-md-3">
         <label>Search Products Here</label>
         <input
           type="text"
@@ -162,14 +181,14 @@ const AdminProductList = () => {
 
         {/* Add New Product Button */}
         <div className="d-flex justify-content-end col-md-6 mb-1 gap-2">
-  <button
-    className="btn btn-success"
-    onClick={() => navigate(`/adminUploadForm/Admin`)}
-  >
-    Add New Product
-  </button> 
-</div>
-      </div> 
+          <button
+            className="btn btn-success"
+            onClick={() => navigate(`/adminUploadForm/Admin`)}
+          >
+            Add New Product
+          </button>
+        </div>
+      </div>
 
       {filteredData.length === 0 ? (
         <div className="text-center my-5">
@@ -194,31 +213,52 @@ const AdminProductList = () => {
                 <tr key={index}>
                   <td className="product-name-cell">{product.productName}</td>
                   <td>₹{product.rate}</td>
-                  <td>{product.discount ? `${Math.round(product.discount)}%` : "No discount"}</td>
-                  <td>₹{product.afterDiscountPrice.toFixed(0) || 'N/A'}</td>
+                  <td>
+                    {product.discount
+                      ? `${Math.round(product.discount)}%`
+                      : "No discount"}
+                  </td>
+                  <td>₹{product.afterDiscountPrice.toFixed(0) || "N/A"}</td>
                   <td>
                     {product.productOwnedBy ? (
                       <span
-                        style={{ textDecoration: 'underline', color: 'blue', cursor: 'pointer' }}
+                        style={{
+                          textDecoration: "underline",
+                          color: "blue",
+                          cursor: "pointer",
+                        }}
                         title={product.productOwnedBy}
                       >
                         {product.productOwnedBy}
                       </span>
                     ) : (
-                      'N/A'
+                      "N/A"
                     )}
                   </td>
-                  <td>{product.numberOfStockAvailable <= 0 ? 'No Stock' : product.numberOfStockAvailable}</td>
+                  <td>
+                    {product.numberOfStockAvailable <= 0
+                      ? "No Stock"
+                      : product.numberOfStockAvailable}
+                  </td>
                   <td className="actions-cell">
-                    <Link to={`/adminUpdateProduct/${product.id}/Admin`} className="btn btn-warning" title="Edit">
+                    <Link
+                      to={`/adminUpdateProduct/${product.id}/Admin`}
+                      className="btn btn-warning"
+                      title="Edit"
+                    >
                       <FaEdit />
                     </Link>
-                    <Link to={`/adminProductApproval/${product.id}/Admin`} className="btn btn-info mx-2" title="View">
+                    <Link
+                      to={`/adminProductApproval/${product.id}/Admin`}
+                      className="btn btn-info mx-2"
+                      title="View"
+                    >
                       <FaEye />
-                    </Link>       
+                    </Link>
                     <button
                       onClick={() => handleDelete(product.id)}
-                      className="btn btn-danger" title="Delete"
+                      className="btn btn-danger"
+                      title="Delete"
                     >
                       <FaTrash />
                     </button>
@@ -230,73 +270,87 @@ const AdminProductList = () => {
 
           {/* Pagination */}
           <div className="d-flex justify-content-center mt-3">
-                    <nav aria-label="Page navigation">
-                      <ul className="pagination">
-                        <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                          <button
-                            className="page-link"
-                            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+            <nav aria-label="Page navigation">
+              <ul className="pagination">
+                <li
+                  className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
+                >
+                  <button
+                    className="page-link"
+                    onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                  >
+                    &laquo;
+                  </button>
+                </li>
+                {Array.from(
+                  { length: Math.ceil(filteredData.length / rowsPerPage) },
+                  (_, i) => i + 1,
+                )
+                  .filter(
+                    (page) =>
+                      page === 1 ||
+                      page === Math.ceil(filteredData.length / rowsPerPage) ||
+                      (page >= currentPage - 2 && page <= currentPage + 2),
+                  )
+                  .map((page, i, arr) => {
+                    const prevPage = arr[i - 1];
+                    if (prevPage && page - prevPage > 1) {
+                      return (
+                        <React.Fragment key={page}>
+                          <li className="page-item disabled">
+                            <span className="page-link">...</span>
+                          </li>
+                          <li
+                            className={`page-item ${page === currentPage ? "active" : ""}`}
                           >
-                            &laquo;
-                          </button>
-                        </li>
-                        {Array.from({ length: Math.ceil(filteredData.length / rowsPerPage) }, (_, i) => i + 1)
-                          .filter(
-                            (page) =>
-                              page === 1 ||
-                              page === Math.ceil(filteredData.length / rowsPerPage) ||
-                              (page >= currentPage - 2 && page <= currentPage + 2)
-                          )
-                          .map((page, i, arr) => {
-                            const prevPage = arr[i - 1];
-                            if (prevPage && page - prevPage > 1) {
-                              return (
-                                <React.Fragment key={page}>
-                                  <li className="page-item disabled">
-                                    <span className="page-link">...</span>
-                                  </li>
-                                  <li
-                                    className={`page-item ${page === currentPage ? "active" : ""}`}
-                                  >
-                                    <button className="page-link" onClick={() => setCurrentPage(page)}>
-                                      {page}
-                                    </button>
-                                  </li>
-                                </React.Fragment>
-                              );
-                            }
-                            return (
-                              <li
-                                key={page}
-                                className={`page-item ${page === currentPage ? "active" : ""}`}
-                              >
-                                <button className="page-link" onClick={() => setCurrentPage(page)}>
-                                  {page}
-                                </button>
-                              </li>
-                            );
-                          })}
-                        <li
-                          className={`page-item ${
-                            currentPage === Math.ceil(filteredData.length / rowsPerPage)
-                              ? "disabled"
-                              : ""
-                          }`}
+                            <button
+                              className="page-link"
+                              onClick={() => setCurrentPage(page)}
+                            >
+                              {page}
+                            </button>
+                          </li>
+                        </React.Fragment>
+                      );
+                    }
+                    return (
+                      <li
+                        key={page}
+                        className={`page-item ${page === currentPage ? "active" : ""}`}
+                      >
+                        <button
+                          className="page-link"
+                          onClick={() => setCurrentPage(page)}
                         >
-                          <button
-                            className="page-link"
-                            onClick={() =>
-                              setCurrentPage((p) =>
-                                Math.min(p + 1, Math.ceil(filteredData.length / rowsPerPage))
-                              )
-                            }
-                          >
-                            &raquo;
-                          </button>
-                        </li>
-                      </ul>
-                    </nav>
-                  </div>
+                          {page}
+                        </button>
+                      </li>
+                    );
+                  })}
+                <li
+                  className={`page-item ${
+                    currentPage === Math.ceil(filteredData.length / rowsPerPage)
+                      ? "disabled"
+                      : ""
+                  }`}
+                >
+                  <button
+                    className="page-link"
+                    onClick={() =>
+                      setCurrentPage((p) =>
+                        Math.min(
+                          p + 1,
+                          Math.ceil(filteredData.length / rowsPerPage),
+                        ),
+                      )
+                    }
+                  >
+                    &raquo;
+                  </button>
+                </li>
+              </ul>
+            </nav>
+          </div>
         </>
       )}
     </div>

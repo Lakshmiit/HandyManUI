@@ -1,5 +1,5 @@
 export const IMAGE_DOWNLOAD_URL =
-  "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=";
+  "https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=";
 
 const isDirectUrl = (value) => /^(?:https?:|data:|blob:)/i.test(value);
 
@@ -9,7 +9,9 @@ export const getImageFilename = (value) => {
 
   const parameterIndex = raw.indexOf("generatedfilename=");
   if (parameterIndex >= 0) {
-    const encoded = raw.slice(parameterIndex + "generatedfilename=".length).split("&")[0];
+    const encoded = raw
+      .slice(parameterIndex + "generatedfilename=".length)
+      .split("&")[0];
     try {
       return decodeURIComponent(encoded);
     } catch {

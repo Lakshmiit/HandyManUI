@@ -16,7 +16,7 @@ const AdminGroceryList = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const rowsPerPage = 15;
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const toInt = (v) => {
     const n = parseInt(v, 10);
     return Number.isFinite(n) ? n : 0;
@@ -27,7 +27,7 @@ const AdminGroceryList = () => {
     (async () => {
       setLoading(true);
       try {
-        const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetAllGroceryItemsForAdmin`;
+        const url = `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/UploadGrocery/GetAllGroceryItemsForAdmin`;
         const { data } = await axios.get(url);
         const groceries = (Array.isArray(data) ? data : []).map((g) => ({
           ...g,
@@ -45,8 +45,12 @@ const AdminGroceryList = () => {
         if (cancelled) return;
         setFinalGroceries(groceries);
         setFilteredData(groceries);
-        setCategories([...new Set(groceries.map((p) => p.category).filter(Boolean))].sort());
-        setStatusList([...new Set(groceries.map((p) => p.status).filter(Boolean))].sort());
+        setCategories(
+          [...new Set(groceries.map((p) => p.category).filter(Boolean))].sort(),
+        );
+        setStatusList(
+          [...new Set(groceries.map((p) => p.status).filter(Boolean))].sort(),
+        );
       } catch (e) {
         console.error("Error fetching grocery data:", e);
       } finally {
@@ -54,13 +58,18 @@ const AdminGroceryList = () => {
       }
     })();
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const handleDelete = async (groceryId) => {
-    if (!window.confirm("Are you sure you want to delete this grocery?")) return;
+    if (!window.confirm("Are you sure you want to delete this grocery?"))
+      return;
     try {
-      await axios.delete(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery?id=${groceryId}`);
+      await axios.delete(
+        `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/UploadGrocery?id=${groceryId}`,
+      );
       const prune = (arr) => arr.filter((g) => g.id !== groceryId);
       setFinalGroceries((prev) => prune(prev));
       setFilteredData((prev) => prune(prev));
@@ -89,7 +98,7 @@ const AdminGroceryList = () => {
   const indexOfFirst = indexOfLast - rowsPerPage;
   const currentGrocery = useMemo(
     () => filteredData.slice(indexOfFirst, indexOfLast),
-    [filteredData, indexOfFirst, indexOfLast]
+    [filteredData, indexOfFirst, indexOfLast],
   );
 
   if (loading) return <div>Loading...</div>;
@@ -183,12 +192,18 @@ const AdminGroceryList = () => {
                 <tr key={g.id ?? index}>
                   <td className="product-name-cell">{g.name}</td>
                   <td>₹{Math.round(g.mrp)}</td>
-                  <td className="fw-bold">{g.discount ? `${Math.round(g.discount)}%` : "No discount"}</td>
+                  <td className="fw-bold">
+                    {g.discount ? `${Math.round(g.discount)}%` : "No discount"}
+                  </td>
                   <td>₹{Math.round(g.afterDiscount)}</td>
                   <td>
                     {g.requestedBy ? (
                       <span
-                        style={{ textDecoration: "underline", color: "blue", cursor: "pointer" }}
+                        style={{
+                          textDecoration: "underline",
+                          color: "blue",
+                          cursor: "pointer",
+                        }}
                         title={g.requestedBy}
                       >
                         {g.requestedBy}
@@ -199,16 +214,29 @@ const AdminGroceryList = () => {
                   </td>
                   <td>{g.manufactureDate}</td>
                   <td>{g.expireDate}</td>
-                  <td>{(Number(g.stockLeft) || 0) <= 0 ? "No Stock" : Number(g.stockLeft)}</td>
+                  <td>
+                    {(Number(g.stockLeft) || 0) <= 0
+                      ? "No Stock"
+                      : Number(g.stockLeft)}
+                  </td>
                   <td>{g.code}</td>
                   <td className="d-flex">
-                    <Link to={`/adminUpdateGrocery/${g.id}/Admin`} className="btn btn-warning m-1">
+                    <Link
+                      to={`/adminUpdateGrocery/${g.id}/Admin`}
+                      className="btn btn-warning m-1"
+                    >
                       <FaEdit />
                     </Link>
-                    <Link to={`/adminGroceryApproval/${g.id}/Admin`} className="btn btn-info m-1">
+                    <Link
+                      to={`/adminGroceryApproval/${g.id}/Admin`}
+                      className="btn btn-info m-1"
+                    >
                       <FaEye />
                     </Link>
-                    <button onClick={() => handleDelete(g.id)} className="btn btn-danger m-1">
+                    <button
+                      onClick={() => handleDelete(g.id)}
+                      className="btn btn-danger m-1"
+                    >
                       <FaTrash />
                     </button>
                   </td>
@@ -218,74 +246,88 @@ const AdminGroceryList = () => {
           </table>
 
           {/* Pagination */}
-        <div className="d-flex justify-content-center mt-3">
-          <nav aria-label="Page navigation">
-            <ul className="pagination">
-              <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                <button
-                  className="page-link"
-                  onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+          <div className="d-flex justify-content-center mt-3">
+            <nav aria-label="Page navigation">
+              <ul className="pagination">
+                <li
+                  className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
                 >
-                  &laquo;
-                </button>
-              </li>
-              {Array.from({ length: Math.ceil(filteredData.length / rowsPerPage) }, (_, i) => i + 1)
-                .filter(
-                  (page) =>
-                    page === 1 ||
-                    page === Math.ceil(filteredData.length / rowsPerPage) ||
-                    (page >= currentPage - 2 && page <= currentPage + 2)
+                  <button
+                    className="page-link"
+                    onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                  >
+                    &laquo;
+                  </button>
+                </li>
+                {Array.from(
+                  { length: Math.ceil(filteredData.length / rowsPerPage) },
+                  (_, i) => i + 1,
                 )
-                .map((page, i, arr) => {
-                  const prevPage = arr[i - 1];
-                  if (prevPage && page - prevPage > 1) {
+                  .filter(
+                    (page) =>
+                      page === 1 ||
+                      page === Math.ceil(filteredData.length / rowsPerPage) ||
+                      (page >= currentPage - 2 && page <= currentPage + 2),
+                  )
+                  .map((page, i, arr) => {
+                    const prevPage = arr[i - 1];
+                    if (prevPage && page - prevPage > 1) {
+                      return (
+                        <React.Fragment key={page}>
+                          <li className="page-item disabled">
+                            <span className="page-link">...</span>
+                          </li>
+                          <li
+                            className={`page-item ${page === currentPage ? "active" : ""}`}
+                          >
+                            <button
+                              className="page-link"
+                              onClick={() => setCurrentPage(page)}
+                            >
+                              {page}
+                            </button>
+                          </li>
+                        </React.Fragment>
+                      );
+                    }
                     return (
-                      <React.Fragment key={page}>
-                        <li className="page-item disabled">
-                          <span className="page-link">...</span>
-                        </li>
-                        <li
-                          className={`page-item ${page === currentPage ? "active" : ""}`}
+                      <li
+                        key={page}
+                        className={`page-item ${page === currentPage ? "active" : ""}`}
+                      >
+                        <button
+                          className="page-link"
+                          onClick={() => setCurrentPage(page)}
                         >
-                          <button className="page-link" onClick={() => setCurrentPage(page)}>
-                            {page}
-                          </button>
-                        </li>
-                      </React.Fragment>
+                          {page}
+                        </button>
+                      </li>
                     );
-                  }
-                  return (
-                    <li
-                      key={page}
-                      className={`page-item ${page === currentPage ? "active" : ""}`}
-                    >
-                      <button className="page-link" onClick={() => setCurrentPage(page)}>
-                        {page}
-                      </button>
-                    </li>
-                  );
-                })}
-              <li
-                className={`page-item ${
-                  currentPage === Math.ceil(filteredData.length / rowsPerPage)
-                    ? "disabled"
-                    : ""
-                }`}
-              >
-                <button
-                  className="page-link"
-                  onClick={() =>
-                    setCurrentPage((p) =>
-                      Math.min(p + 1, Math.ceil(filteredData.length / rowsPerPage))
-                    )
-                  }
+                  })}
+                <li
+                  className={`page-item ${
+                    currentPage === Math.ceil(filteredData.length / rowsPerPage)
+                      ? "disabled"
+                      : ""
+                  }`}
                 >
-                  &raquo;
-                </button>
-              </li>
-            </ul>
-          </nav>
-        </div>
+                  <button
+                    className="page-link"
+                    onClick={() =>
+                      setCurrentPage((p) =>
+                        Math.min(
+                          p + 1,
+                          Math.ceil(filteredData.length / rowsPerPage),
+                        ),
+                      )
+                    }
+                  >
+                    &raquo;
+                  </button>
+                </li>
+              </ul>
+            </nav>
+          </div>
         </>
       )}
     </div>

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import "./App.css"; 
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import UploadIcon from '@mui/icons-material/Upload';
-import AdminSidebar from './AdminSidebar';
-import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
-import {  Button } from 'react-bootstrap';
-import { useParams, useNavigate } from 'react-router-dom';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./App.css";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import UploadIcon from "@mui/icons-material/Upload";
+import AdminSidebar from "./AdminSidebar";
+import { Dashboard as MoreVertIcon } from "@mui/icons-material";
+import { Button } from "react-bootstrap";
+import { useParams, useNavigate } from "react-router-dom";
 // import { appConfig } from "./config";
 
 const AdminLakshmiCollectionsUpload = () => {
@@ -14,87 +14,89 @@ const AdminLakshmiCollectionsUpload = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [productName, setProductName] = useState("");
-  const [category, setCategory] = useState("");    
+  const [category, setCategory] = useState("");
   const [catalogue, setCatalogue] = useState("");
   const [productSize, setProductSize] = useState("");
-  const [productPhotos, setProductPhotos] = useState([]); 
+  const [productPhotos, setProductPhotos] = useState([]);
   const [rate, setRate] = useState("");
   const [discount, setDiscount] = useState("");
-  const [specifications, setSpecifications] = useState([{ label: "", value: "" }]); 
-  const [moreInfo, setMoreInfo] = useState("");    
-  const [deliveryInDays,setDeliveryInDays] =useState("");
-  const [loading, setLoading] = useState(false); 
-  const [uploadedFiles, setUploadedFiles] = useState([]); 
+  const [specifications, setSpecifications] = useState([
+    { label: "", value: "" },
+  ]);
+  const [moreInfo, setMoreInfo] = useState("");
+  const [deliveryInDays, setDeliveryInDays] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
   const [color, setColor] = useState("");
   const [specificationDesc, setSpecificationDesc] = useState("");
-  const { selectedUserType} = useParams();
-  const [stockLeft, setStockLeft] = useState('');
-const [productVideos, setProductVideos] = useState([]);
-const [uploadedVideos, setUploadedVideos] = useState([]);
-const [showPhotoAlert, setShowPhotoAlert] = useState(false);
-const [showVideoAlert, setShowVideoAlert] = useState(false);
+  const { selectedUserType } = useParams();
+  const [stockLeft, setStockLeft] = useState("");
+  const [productVideos, setProductVideos] = useState([]);
+  const [uploadedVideos, setUploadedVideos] = useState([]);
+  const [showPhotoAlert, setShowPhotoAlert] = useState(false);
+  const [showVideoAlert, setShowVideoAlert] = useState(false);
 
-// For videos
-const handleVideoChange = (event) => {
-  const selectedFiles = Array.from(event.target.files);
-  if (selectedFiles.length + productVideos.length > 3) {
-    alert("You can only upload up to 3 videos.");
-    return;
-  }
-  setProductVideos([...productVideos, ...selectedFiles]);
-  setShowVideoAlert(true); 
-};
-
-// Upload videos
-const handleUploadVideos = async () => {
-  setLoading(true);
-  setShowVideoAlert(false);
-  const uploadedVideosList = [];
-
-  for (let i = 0; i < productVideos.length; i++) {
-    const file = productVideos[i];
-    const fileName = file.name;
-    const mimeType = file.type;
-    const byteArray = await getFileByteArray(file);
-
-    const response = await uploadFile(byteArray, fileName, mimeType, file);
-    if (response) {
-      uploadedVideosList.push({
-        src: response, 
-        alt: fileName
-      });
-      alert("Video Uploaded Successfully");
-    } else {
-      alert("Failed to Upload Video");
+  // For videos
+  const handleVideoChange = (event) => {
+    const selectedFiles = Array.from(event.target.files);
+    if (selectedFiles.length + productVideos.length > 3) {
+      alert("You can only upload up to 3 videos.");
+      return;
     }
-  }
+    setProductVideos([...productVideos, ...selectedFiles]);
+    setShowVideoAlert(true);
+  };
 
-  setUploadedVideos(uploadedVideosList);
-  setLoading(false);
-};
+  // Upload videos
+  const handleUploadVideos = async () => {
+    setLoading(true);
+    setShowVideoAlert(false);
+    const uploadedVideosList = [];
 
-const handleFileChange = (event) => {
-  const selectedFiles = Array.from(event.target.files);
-  if (selectedFiles.length + productPhotos.length > 5) {
-    alert("You can only upload up to 5 files.");
-    return;
-  }
-  setProductPhotos([...productPhotos, ...selectedFiles]);
-  setShowPhotoAlert(true);
-};
+    for (let i = 0; i < productVideos.length; i++) {
+      const file = productVideos[i];
+      const fileName = file.name;
+      const mimeType = file.type;
+      const byteArray = await getFileByteArray(file);
+
+      const response = await uploadFile(byteArray, fileName, mimeType, file);
+      if (response) {
+        uploadedVideosList.push({
+          src: response,
+          alt: fileName,
+        });
+        alert("Video Uploaded Successfully");
+      } else {
+        alert("Failed to Upload Video");
+      }
+    }
+
+    setUploadedVideos(uploadedVideosList);
+    setLoading(false);
+  };
+
+  const handleFileChange = (event) => {
+    const selectedFiles = Array.from(event.target.files);
+    if (selectedFiles.length + productPhotos.length > 5) {
+      alert("You can only upload up to 5 files.");
+      return;
+    }
+    setProductPhotos([...productPhotos, ...selectedFiles]);
+    setShowPhotoAlert(true);
+  };
 
   // Detect screen size for responsiveness
-useEffect(() => {
-  const handleResize = () => setIsMobile(window.innerWidth <= 768);
-  handleResize(); 
-  window.addEventListener('resize', handleResize);
-  return () => window.removeEventListener('resize', handleResize);
-}, []);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Handle file upload
   const handleUploadFiles = async () => {
     setLoading(true);
-    setShowPhotoAlert(false); 
+    setShowPhotoAlert(false);
     const uploadedFilesList = [];
 
     // Loop through selected files and upload each one
@@ -110,12 +112,11 @@ useEffect(() => {
       const response = await uploadFile(byteArray, fileName, mimeType, file);
       if (response) {
         uploadedFilesList.push({
-          src: response, 
-          alt: fileName  
+          src: response,
+          alt: fileName,
         });
-        alert("Image Uploaded Sucessfully"); 
-      }
-      else {
+        alert("Image Uploaded Sucessfully");
+      } else {
         alert("Failed Upload Image");
       }
     }
@@ -140,31 +141,38 @@ useEffect(() => {
   const uploadFile = async (byteArray, fileName, mimeType, file) => {
     try {
       const formData = new FormData();
-      formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
-      formData.append('fileName', fileName);
+      formData.append(
+        "file",
+        new Blob([byteArray], { type: mimeType }),
+        fileName,
+      );
+      formData.append("fileName", fileName);
 
-      const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/upload?filename=` + fileName, {
-        method: 'POST',
-        headers: {
-          'Accept': 'text/plain',
+      const response = await fetch(
+        `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/FileUpload/upload?filename=` + fileName,
+        {
+          method: "POST",
+          headers: {
+            Accept: "text/plain",
+          },
+          body: formData,
         },
-        body: formData,
-      });
+      );
 
       const responseData = await response.text();
-      return responseData || ''; 
+      return responseData || "";
     } catch (error) {
-      console.error('Error uploading file:', error);
-      return '';
+      console.error("Error uploading file:", error);
+      return "";
     }
   };
 
   // Handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
-   
+
     const payload = {
-      id: "string",   
+      id: "string",
       lakshmicollectionId: "string",
       date: "string",
       productName: productName,
@@ -172,17 +180,20 @@ useEffect(() => {
       catalogue: catalogue,
       size: productSize,
       colour: color,
-      images: uploadedFiles.map(file => file.src),
-      videos: uploadedVideos.map(v => v.src),
+      images: uploadedFiles.map((file) => file.src),
+      videos: uploadedVideos.map((v) => v.src),
       rate: parseFloat(rate).toString(),
       discount: parseFloat(discount).toString(),
-      afterDiscount: (parseFloat(rate) - (parseFloat(rate) * parseFloat(discount) / 100)).toString(),
-      descriptions: specifications.map(spec => ({
+      afterDiscount: (
+        parseFloat(rate) -
+        (parseFloat(rate) * parseFloat(discount)) / 100
+      ).toString(),
+      descriptions: specifications.map((spec) => ({
         name: spec.label,
         value: spec.value,
       })),
       optional: specificationDesc,
-      moreInfo:moreInfo,
+      moreInfo: moreInfo,
       deliveryInDays: deliveryInDays,
       stockLeft: stockLeft,
       RequestedBy: "Admin",
@@ -190,13 +201,16 @@ useEffect(() => {
     };
 
     try {
-      const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadLakshmiCollection/UploadLakshmiCollection`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
+      const response = await fetch(
+        `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/UploadLakshmiCollection/UploadLakshmiCollection`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
         },
-        body: JSON.stringify(payload)
-      });
+      );
 
       if (response.ok) {
         alert("Collection uploaded successfully!");
@@ -219,7 +233,7 @@ useEffect(() => {
 
   const handleSpecificationDescChange = (value) => {
     setSpecificationDesc(value);
-  }
+  };
 
   // Handle removal of a specification
   const handleRemoveSpecification = (index) => {
@@ -233,15 +247,15 @@ useEffect(() => {
   };
 
   return (
-      <div className="d-flex flex-row justify-content-start align-items-start">
-          {/* Sidebar */}
-          {!isMobile && (
-          <div className="ml-0 m-4 p-0 adm_mnu">
-          <AdminSidebar userType={selectedUserType}/>
-         </div>
-          )}
-          
-          {/* Floating menu for mobile */}
+    <div className="d-flex flex-row justify-content-start align-items-start">
+      {/* Sidebar */}
+      {!isMobile && (
+        <div className="ml-0 m-4 p-0 adm_mnu">
+          <AdminSidebar userType={selectedUserType} />
+        </div>
+      )}
+
+      {/* Floating menu for mobile */}
       {isMobile && (
         <div className="floating-menu">
           <Button
@@ -253,20 +267,22 @@ useEffect(() => {
           </Button>
 
           {showMenu && (
-              <div className="sidebar-container">
-                <AdminSidebar userType={selectedUserType} />
-              </div>
+            <div className="sidebar-container">
+              <AdminSidebar userType={selectedUserType} />
+            </div>
           )}
         </div>
       )}
 
-       <div className={`container m-3 ${isMobile ? 'w-100' : 'w-75'}`}>
+      <div className={`container m-3 ${isMobile ? "w-100" : "w-75"}`}>
         <h3 className="mb-3 text-center">Lakshmi Collections</h3>
         <div className="bg-white rounded-3 p-3 bx_sdw w-60 m-auto">
           <form onSubmit={handleSubmit}>
             {/* Product Name */}
             <div className="form-group">
-              <label>Product Name <span className="req_star">*</span></label>
+              <label>
+                Product Name <span className="req_star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -277,7 +293,9 @@ useEffect(() => {
             </div>
             {/* Category */}
             <div className="form-group">
-              <label>Category <span className="req_star">*</span></label>
+              <label>
+                Category <span className="req_star">*</span>
+              </label>
               <select
                 className="form-control"
                 value={category}
@@ -291,7 +309,9 @@ useEffect(() => {
 
             {/* Catalogue */}
             <div className="form-group">
-              <label>Catalogue <span className="req_star">*</span></label>
+              <label>
+                Catalogue <span className="req_star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -303,7 +323,9 @@ useEffect(() => {
 
             {/* Product Size */}
             <div className="form-group">
-              <label>Size <span className="req_star">*</span></label>
+              <label>
+                Size <span className="req_star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -315,7 +337,9 @@ useEffect(() => {
 
             {/* Color */}
             <div className="form-group">
-              <label>Color <span className="req_star">*</span></label>
+              <label>
+                Color <span className="req_star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -327,16 +351,19 @@ useEffect(() => {
 
             {/* Product Photos */}
             <div className="form-group">
-              <label>Product Photos <span className="req_star">*</span></label>
+              <label>
+                Product Photos <span className="req_star">*</span>
+              </label>
               <input
                 type="file"
                 className="form-control"
                 multiple
                 onChange={handleFileChange}
               />
-              {showPhotoAlert   && (
+              {showPhotoAlert && (
                 <div className="alert alert-danger  mt-2">
-                  Please click the <strong>Upload Files</strong> button to upload the selected images.
+                  Please click the <strong>Upload Files</strong> button to
+                  upload the selected images.
                 </div>
               )}
               <div className="mt-2">
@@ -350,43 +377,48 @@ useEffect(() => {
                 onClick={handleUploadFiles}
                 disabled={loading || productPhotos.length === 0}
               >
-                {loading ? 'Uploading...' : 'Upload Files'}
+                {loading ? "Uploading..." : "Upload Files"}
               </button>
             </div>
 
             {/* Product Videos */}
             <div className="form-group">
-            <label>Product Videos <span className="req_star">*</span></label>
-            <input
+              <label>
+                Product Videos <span className="req_star">*</span>
+              </label>
+              <input
                 type="file"
                 className="form-control"
                 multiple
                 accept="video/*"
                 onChange={handleVideoChange}
-            />
-            {showVideoAlert   && (
+              />
+              {showVideoAlert && (
                 <div className="alert alert-danger mt-2">
-                Please click the <strong>Upload Videos</strong> button to upload the selected videos.
+                  Please click the <strong>Upload Videos</strong> button to
+                  upload the selected videos.
                 </div>
-            )}
-            <div className="mt-2">
+              )}
+              <div className="mt-2">
                 {productVideos.map((file, index) => (
-                <p key={index}>{file.name}</p>
+                  <p key={index}>{file.name}</p>
                 ))}
-            </div>
-            <button
+              </div>
+              <button
                 type="button"
                 className="btn btn-primary mt-2"
                 onClick={handleUploadVideos}
                 disabled={loading || productVideos.length === 0}
-            >
+              >
                 {loading ? "Uploading..." : "Upload Videos"}
-            </button>
+              </button>
             </div>
 
             {/* Rate */}
             <div className="form-group">
-              <label>Rate <span className="req_star">*</span> </label>
+              <label>
+                Rate <span className="req_star">*</span>{" "}
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -398,7 +430,9 @@ useEffect(() => {
 
             {/* Discount */}
             <div className="form-group">
-              <label>Discount <span className="req_star">*</span></label>
+              <label>
+                Discount <span className="req_star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -410,18 +444,27 @@ useEffect(() => {
 
             {/* After Discount Price */}
             <div className="form-group">
-              <label>After Discount Price <span className="req_star">*</span></label>
+              <label>
+                After Discount Price <span className="req_star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
-                value={Math.round(Number(rate || 0) - (Number(rate || 0) * Number((discount || "0").toString().replace("%", "")) / 100))}
+                value={Math.round(
+                  Number(rate || 0) -
+                    (Number(rate || 0) *
+                      Number((discount || "0").toString().replace("%", ""))) /
+                      100,
+                )}
                 placeholder="If any Discount Enter Percentage"
               />
-            </div>   
+            </div>
 
             {/* Description */}
             <div className="form-group">
-              <label>Description <span className="req_star">*</span></label>
+              <label>
+                Description <span className="req_star">*</span>
+              </label>
               {specifications.map((spec, index) => (
                 <div key={index} className="d-flex gap-3">
                   <input
@@ -429,14 +472,18 @@ useEffect(() => {
                     className="form-control mb-1"
                     placeholder="Name"
                     value={spec.label}
-                    onChange={(e) => handleSpecificationChange(index, "label", e.target.value)}
+                    onChange={(e) =>
+                      handleSpecificationChange(index, "label", e.target.value)
+                    }
                   />
                   <input
                     type="text"
                     className="form-control mb-1"
                     placeholder="Value"
                     value={spec.value}
-                    onChange={(e) => handleSpecificationChange(index, "value", e.target.value)}
+                    onChange={(e) =>
+                      handleSpecificationChange(index, "value", e.target.value)
+                    }
                   />
                   <button
                     type="button"
@@ -449,20 +496,26 @@ useEffect(() => {
               ))}
 
               <textarea
-                  type="text"
-                  className="form-control mt-2"
-                  placeholder="Optional"  
-                  value={specificationDesc}
-                  onChange={(e) => handleSpecificationDescChange(e.target.value)}           
+                type="text"
+                className="form-control mt-2"
+                placeholder="Optional"
+                value={specificationDesc}
+                onChange={(e) => handleSpecificationDescChange(e.target.value)}
               />
-              <button type="button" className="btn btn-primary m-1" onClick={handleAddSpecification}>
+              <button
+                type="button"
+                className="btn btn-primary m-1"
+                onClick={handleAddSpecification}
+              >
                 Add Description
               </button>
             </div>
 
             {/* Additional Info */}
             <div className="form-group">
-              <label>More Info <span className="req_star">*</span></label>
+              <label>
+                More Info <span className="req_star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -474,7 +527,9 @@ useEffect(() => {
 
             {/* Delivery In Days */}
             <div className="form-group">
-              <label>Delivery In Days <span className="req_star">*</span></label>
+              <label>
+                Delivery In Days <span className="req_star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -484,9 +539,11 @@ useEffect(() => {
               />
             </div>
 
-             {/* Stock Left */}
+            {/* Stock Left */}
             <div className="form-group">
-              <label>Stock Left <span className="req_star">*</span></label>
+              <label>
+                Stock Left <span className="req_star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -498,25 +555,25 @@ useEffect(() => {
 
             {/* Submit Button */}
             <div className="d-flex justify-content-between gap-3 mt-3">
-      {/* Upload Product Button */}
-      <button
-        type="submit"
-        className="btn btn-success w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
-      >
-        <UploadIcon className="me-2" />
-        <span>Upload Collection</span>
-      </button>
+              {/* Upload Product Button */}
+              <button
+                type="submit"
+                className="btn btn-success w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
+              >
+                <UploadIcon className="me-2" />
+                <span>Upload Collection</span>
+              </button>
 
-      {/* View Single Product Button */}
-      <button
-        type="button"
-        className="btn btn-primary w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
-        onClick={() => navigate(`/adminCollectionsList/Admin`)}
-      >
-        <VisibilityIcon className="me-2" />
-        <span>View Collection</span>
-      </button>
-    </div>
+              {/* View Single Product Button */}
+              <button
+                type="button"
+                className="btn btn-primary w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
+                onClick={() => navigate(`/adminCollectionsList/Admin`)}
+              >
+                <VisibilityIcon className="me-2" />
+                <span>View Collection</span>
+              </button>
+            </div>
           </form>
         </div>
       </div>

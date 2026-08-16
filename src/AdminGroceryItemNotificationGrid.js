@@ -1,64 +1,91 @@
 import React, { useState, useEffect } from "react";
-import axios from 'axios';
-import Footer from './Footer.js';
+import axios from "axios";
+import Footer from "./Footer.js";
 import { Link } from "react-router-dom";
 import { FaTrash, FaEye } from "react-icons/fa";
-import { Forward as ForwardIcon,} from "@mui/icons-material";
-import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
+import { Forward as ForwardIcon } from "@mui/icons-material";
+import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
 import "./App.css";
 // import { appConfig } from "./config";
-            
+
 const AdminGroceryItemNotificationGrid = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [groceryData, setGroceryData] = useState([]);
   const [state, setState] = useState("");
-  const [district, setDistrict] = useState(""); 
+  const [district, setDistrict] = useState("");
   const [zipCode, setZipcode] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [states, setStates] = useState([]);
-  const [districts, setDistricts] = useState([]); 
+  const [districts, setDistricts] = useState([]);
   const [pinCodes, setPinCodes] = useState([]);
   const rowsPerPage = 15;
-const [activeTab, setActiveTab] = useState("Open");
+  const [activeTab, setActiveTab] = useState("Open");
 
   const sortNewestFirst = (a, b) => {
     const aDate =
-      a.createdAt || a.created_on || a.createdOn || a.createdDate || a.date || a.created || a.timestamp;
+      a.createdAt ||
+      a.created_on ||
+      a.createdOn ||
+      a.createdDate ||
+      a.date ||
+      a.created ||
+      a.timestamp;
     const bDate =
-      b.createdAt || b.created_on || b.createdOn || b.createdDate || b.date || b.created || b.timestamp;
+      b.createdAt ||
+      b.created_on ||
+      b.createdOn ||
+      b.createdDate ||
+      b.date ||
+      b.created ||
+      b.timestamp;
     const aTime = aDate ? new Date(aDate).getTime() : NaN;
     const bTime = bDate ? new Date(bDate).getTime() : NaN;
 
     if (!isNaN(aTime) && !isNaN(bTime)) {
-      return bTime - aTime; 
+      return bTime - aTime;
     }
-    const aId = Number.isFinite(+a.id) ? +a.id : Number.isFinite(+a.martId) ? +a.martId : 0;
-    const bId = Number.isFinite(+b.id) ? +b.id : Number.isFinite(+b.martId) ? +b.martId : 0;
+    const aId = Number.isFinite(+a.id)
+      ? +a.id
+      : Number.isFinite(+a.martId)
+        ? +a.martId
+        : 0;
+    const bId = Number.isFinite(+b.id)
+      ? +b.id
+      : Number.isFinite(+b.martId)
+        ? +b.martId
+        : 0;
     return bId - aId;
   };
 
   useEffect(() => {
     setLoading(true);
-    const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetAllMartItems`;
+    const url = `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/Mart/GetAllMartItems`;
 
-    axios.get(url)
-      .then(response => {
-        const groceries = response.data.map(g => ({ ...g }));
+    axios
+      .get(url)
+      .then((response) => {
+        const groceries = response.data.map((g) => ({ ...g }));
         // const groceriesStatus = groceries.filter((g) =>  (g.status === "Open" || g.status === "Closed"));
         const sorted = [...groceries].sort(sortNewestFirst);
         setGroceryData(sorted);
         setFilteredData(sorted);
-        const uniqueStates = [...new Set(sorted.map(g => g.state).filter(Boolean))];
-        const uniqueDistricts = [...new Set(sorted.map(g => g.district).filter(Boolean))];
-        const uniquePinCodes = [...new Set(sorted.map(g => g.zipCode).filter(Boolean))];
+        const uniqueStates = [
+          ...new Set(sorted.map((g) => g.state).filter(Boolean)),
+        ];
+        const uniqueDistricts = [
+          ...new Set(sorted.map((g) => g.district).filter(Boolean)),
+        ];
+        const uniquePinCodes = [
+          ...new Set(sorted.map((g) => g.zipCode).filter(Boolean)),
+        ];
         setStates(uniqueStates);
         setDistricts(uniqueDistricts);
         setPinCodes(uniquePinCodes);
         setCurrentPage(1);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Error fetching grocery data:", error);
       })
       .finally(() => {
@@ -67,45 +94,46 @@ const [activeTab, setActiveTab] = useState("Open");
   }, []);
 
   const handleDelete = (groceryId) => {
-    const confirmDelete = window.confirm('Are you sure you want to delete this grocery?');
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this grocery?",
+    );
     if (confirmDelete) {
-      axios.delete(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/RaiseTicket/${groceryId}`)
+      axios
+        .delete(`https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/RaiseTicket/${groceryId}`)
         .then(() => {
-          setGroceryData(prev => prev.filter(g => g.id !== groceryId));
-          setFilteredData(prev => prev.filter(g => g.id !== groceryId));
-          setCurrentPage(1); 
+          setGroceryData((prev) => prev.filter((g) => g.id !== groceryId));
+          setFilteredData((prev) => prev.filter((g) => g.id !== groceryId));
+          setCurrentPage(1);
         })
-        .catch(error => {
+        .catch((error) => {
           console.error("Error deleting grocery:", error);
         });
-    } 
+    }
   };
 
   useEffect(() => {
     let filtered = groceryData;
     if (activeTab === "Open") {
-    filtered = filtered.filter(g => g.status === "Open");
-  } 
-  else if (activeTab === "Closed") {
-    filtered = filtered.filter(g => g.status === "Closed");
-  } 
-  else if (activeTab === "Delivered") {
-    filtered = filtered.filter(g => g.isDeliver === true);
-  }
+      filtered = filtered.filter((g) => g.status === "Open");
+    } else if (activeTab === "Closed") {
+      filtered = filtered.filter((g) => g.status === "Closed");
+    } else if (activeTab === "Delivered") {
+      filtered = filtered.filter((g) => g.isDeliver === true);
+    }
     if (state) {
-      filtered = filtered.filter(g => g.state === state);
+      filtered = filtered.filter((g) => g.state === state);
     }
     if (district) {
-      filtered = filtered.filter(g => g.district === district);
+      filtered = filtered.filter((g) => g.district === district);
     }
     if (zipCode) {
-      filtered = filtered.filter(g => g.zipCode === zipCode);
+      filtered = filtered.filter((g) => g.zipCode === zipCode);
     }
 
     const resorted = [...filtered].sort(sortNewestFirst);
     setFilteredData(resorted);
     setCurrentPage(1);
-  }, [activeTab,state, district, zipCode, groceryData]);
+  }, [activeTab, state, district, zipCode, groceryData]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -118,7 +146,10 @@ const [activeTab, setActiveTab] = useState("Open");
   // Paginate after sorting newest-first
   const indexOfLastTicket = currentPage * rowsPerPage;
   const indexOfFirstTicket = indexOfLastTicket - rowsPerPage;
-  const currentProduct = filteredData.slice(indexOfFirstTicket, indexOfLastTicket);
+  const currentProduct = filteredData.slice(
+    indexOfFirstTicket,
+    indexOfLastTicket,
+  );
 
   if (loading) {
     return <div>Loading...</div>;
@@ -176,8 +207,12 @@ const [activeTab, setActiveTab] = useState("Open");
               Delivered Tickets
             </button>
           </div>
-          <div className={`d-flex ${isMobile ? "flex-column" : "flex-wrap"} align-items-center justify-content-between`}>
-            <div className={`form-group ${isMobile ? "col-12" : "col-12 col-md-2"} m-2`}>
+          <div
+            className={`d-flex ${isMobile ? "flex-column" : "flex-wrap"} align-items-center justify-content-between`}
+          >
+            <div
+              className={`form-group ${isMobile ? "col-12" : "col-12 col-md-2"} m-2`}
+            >
               <label>State</label>
               <select
                 className="form-control"
@@ -186,7 +221,9 @@ const [activeTab, setActiveTab] = useState("Open");
               >
                 <option value="">All States</option>
                 {states.map((stateOption, index) => (
-                  <option key={index} value={stateOption}>{stateOption}</option>
+                  <option key={index} value={stateOption}>
+                    {stateOption}
+                  </option>
                 ))}
               </select>
             </div>
@@ -199,7 +236,9 @@ const [activeTab, setActiveTab] = useState("Open");
               >
                 <option value="">All Districts</option>
                 {districts.map((districtOption, index) => (
-                  <option key={index} value={districtOption}>{districtOption}</option>
+                  <option key={index} value={districtOption}>
+                    {districtOption}
+                  </option>
                 ))}
               </select>
             </div>
@@ -213,7 +252,9 @@ const [activeTab, setActiveTab] = useState("Open");
               >
                 <option value="">Select Pincode</option>
                 {pinCodes.map((pinCodeOption, index) => (
-                  <option key={index} value={pinCodeOption}>{pinCodeOption}</option>
+                  <option key={index} value={pinCodeOption}>
+                    {pinCodeOption}
+                  </option>
                 ))}
               </select>
             </div>
@@ -252,8 +293,10 @@ const [activeTab, setActiveTab] = useState("Open");
                             <ol style={{ paddingLeft: "20px", margin: 0 }}>
                               {grocery.categories.flatMap((cat) =>
                                 (cat.products || []).map((p, j) => (
-                                  <li key={`${cat.categoryName}-${j}`}>{p.productName}</li>
-                                ))
+                                  <li key={`${cat.categoryName}-${j}`}>
+                                    {p.productName}
+                                  </li>
+                                )),
                               )}
                             </ol>
                           )}
@@ -296,7 +339,8 @@ const [activeTab, setActiveTab] = useState("Open");
                         <div className="mb-2">
                           <strong>Category:</strong>
                           <div className="mt-1">
-                            {grocery.categories && grocery.categories.length > 0 ? (
+                            {grocery.categories &&
+                            grocery.categories.length > 0 ? (
                               grocery.categories.map((cat, i) => (
                                 <div key={i}>{cat.categoryName}</div>
                               ))
@@ -309,12 +353,15 @@ const [activeTab, setActiveTab] = useState("Open");
                         <div className="mb-2">
                           <strong>Product Name:</strong>
                           <div className="mt-1">
-                            {grocery.categories && grocery.categories.length > 0 ? (
+                            {grocery.categories &&
+                            grocery.categories.length > 0 ? (
                               <ol style={{ paddingLeft: "20px", margin: 0 }}>
                                 {grocery.categories.flatMap((cat) =>
                                   (cat.products || []).map((p, j) => (
-                                    <li key={`${cat.categoryName}-${j}`}>{p.productName}</li>
-                                  ))
+                                    <li key={`${cat.categoryName}-${j}`}>
+                                      {p.productName}
+                                    </li>
+                                  )),
                                 )}
                               </ol>
                             ) : (
@@ -351,80 +398,98 @@ const [activeTab, setActiveTab] = useState("Open");
           </>
 
           <div className="mt-4 text-end">
-            <Link to='/adminNotifications' className="btn btn-warning text-white mx-2" title='Back'>
+            <Link
+              to="/adminNotifications"
+              className="btn btn-warning text-white mx-2"
+              title="Back"
+            >
               <ArrowLeftIcon />
             </Link>
           </div>
 
           {/* Pagination */}
           <div className="d-flex justify-content-center mt-3">
-                    <nav aria-label="Page navigation">
-                      <ul className="pagination">
-                        <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                          <button
-                            className="page-link"
-                            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+            <nav aria-label="Page navigation">
+              <ul className="pagination">
+                <li
+                  className={`page-item ${currentPage === 1 ? "disabled" : ""}`}
+                >
+                  <button
+                    className="page-link"
+                    onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                  >
+                    &laquo;
+                  </button>
+                </li>
+                {Array.from(
+                  { length: Math.ceil(filteredData.length / rowsPerPage) },
+                  (_, i) => i + 1,
+                )
+                  .filter(
+                    (page) =>
+                      page === 1 ||
+                      page === Math.ceil(filteredData.length / rowsPerPage) ||
+                      (page >= currentPage - 2 && page <= currentPage + 2),
+                  )
+                  .map((page, i, arr) => {
+                    const prevPage = arr[i - 1];
+                    if (prevPage && page - prevPage > 1) {
+                      return (
+                        <React.Fragment key={page}>
+                          <li className="page-item disabled">
+                            <span className="page-link">...</span>
+                          </li>
+                          <li
+                            className={`page-item ${page === currentPage ? "active" : ""}`}
                           >
-                            &laquo;
-                          </button>
-                        </li>
-                        {Array.from({ length: Math.ceil(filteredData.length / rowsPerPage) }, (_, i) => i + 1)
-                          .filter(
-                            (page) =>
-                              page === 1 ||
-                              page === Math.ceil(filteredData.length / rowsPerPage) ||
-                              (page >= currentPage - 2 && page <= currentPage + 2)
-                          )
-                          .map((page, i, arr) => {
-                            const prevPage = arr[i - 1];
-                            if (prevPage && page - prevPage > 1) {
-                              return (
-                                <React.Fragment key={page}>
-                                  <li className="page-item disabled">
-                                    <span className="page-link">...</span>
-                                  </li>
-                                  <li
-                                    className={`page-item ${page === currentPage ? "active" : ""}`}
-                                  >
-                                    <button className="page-link" onClick={() => setCurrentPage(page)}>
-                                      {page}
-                                    </button>
-                                  </li>
-                                </React.Fragment>
-                              );
-                            }
-                            return (
-                              <li
-                                key={page}
-                                className={`page-item ${page === currentPage ? "active" : ""}`}
-                              >
-                                <button className="page-link" onClick={() => setCurrentPage(page)}>
-                                  {page}
-                                </button>
-                              </li>
-                            );
-                          })}
-                        <li
-                          className={`page-item ${
-                            currentPage === Math.ceil(filteredData.length / rowsPerPage)
-                              ? "disabled"
-                              : ""
-                          }`}
+                            <button
+                              className="page-link"
+                              onClick={() => setCurrentPage(page)}
+                            >
+                              {page}
+                            </button>
+                          </li>
+                        </React.Fragment>
+                      );
+                    }
+                    return (
+                      <li
+                        key={page}
+                        className={`page-item ${page === currentPage ? "active" : ""}`}
+                      >
+                        <button
+                          className="page-link"
+                          onClick={() => setCurrentPage(page)}
                         >
-                          <button
-                            className="page-link"
-                            onClick={() =>
-                              setCurrentPage((p) =>
-                                Math.min(p + 1, Math.ceil(filteredData.length / rowsPerPage))
-                              )
-                            }
-                          >
-                            &raquo;
-                          </button>
-                        </li>
-                      </ul>
-                    </nav>
-                  </div>
+                          {page}
+                        </button>
+                      </li>
+                    );
+                  })}
+                <li
+                  className={`page-item ${
+                    currentPage === Math.ceil(filteredData.length / rowsPerPage)
+                      ? "disabled"
+                      : ""
+                  }`}
+                >
+                  <button
+                    className="page-link"
+                    onClick={() =>
+                      setCurrentPage((p) =>
+                        Math.min(
+                          p + 1,
+                          Math.ceil(filteredData.length / rowsPerPage),
+                        ),
+                      )
+                    }
+                  >
+                    &raquo;
+                  </button>
+                </li>
+              </ul>
+            </nav>
+          </div>
           {/* <div className="d-flex justify-content-center mt-3">
             <nav aria-label="Page navigation">
               <ul className="pagination">
@@ -462,7 +527,7 @@ const [activeTab, setActiveTab] = useState("Open");
           }
         `}</style>
       </div>
-      <Footer /> 
+      <Footer />
     </>
   );
 };

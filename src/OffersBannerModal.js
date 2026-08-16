@@ -1,24 +1,24 @@
-import React, { useEffect, useState, useRef} from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Modal, Button, Carousel } from "react-bootstrap";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import Banner1 from './img/BannerModal.jpg';
-import './App.css';  
+import Banner1 from "./img/BannerModal.jpg";
+import "./App.css";
 import ImageCache from "./utils/ImageCache";
 
 const IMAGE_API =
-  "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=";
+  "https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=";
 
 const OffersBannerModal = () => {
   const [showOffersModal, setShowOffersModal] = useState(false);
   const [offersData, setOffersData] = useState([]);
-const [offerImages, setOfferImages] = useState({});
+  const [offerImages, setOfferImages] = useState({});
   const [currentTime] = useState(new Date());
   const hasClosedRef = useRef(false);
   const [imagesLoading, setImagesLoading] = useState(true);
-  useEffect(() => {       
-    setShowOffersModal(true);    
+  useEffect(() => {
+    setShowOffersModal(true);
   }, []);
 
   // 🔹 Fetch banners
@@ -26,7 +26,7 @@ const [offerImages, setOfferImages] = useState({});
     const fetchOffers = async () => {
       try {
         const res = await axios.get(
-          "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UpLoadBannners/GetBanners"
+          "https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/UpLoadBannners/GetBanners",
         );
         setOffersData(res.data);
       } catch (err) {
@@ -36,85 +36,84 @@ const [offerImages, setOfferImages] = useState({});
     fetchOffers();
   }, []);
 
- useEffect(() => {
-  if (!offersData.length) return;
-  const fetchImages = async () => {
-    try {
-      setImagesLoading(true);
-      const imagesMap = {};
-      await Promise.all(
-        offersData.map(async (offer) => {
-          const imgs = await Promise.all(
-            (offer.image || []).map(async (imgObj) => {
-              const filename = imgObj.images;
-              try {
-                const cachedBlob = ImageCache.getBlobUrl(filename);
-                if (cachedBlob) {
-                  return cachedBlob;
+  useEffect(() => {
+    if (!offersData.length) return;
+    const fetchImages = async () => {
+      try {
+        setImagesLoading(true);
+        const imagesMap = {};
+        await Promise.all(
+          offersData.map(async (offer) => {
+            const imgs = await Promise.all(
+              (offer.image || []).map(async (imgObj) => {
+                const filename = imgObj.images;
+                try {
+                  const cachedBlob = ImageCache.getBlobUrl(filename);
+                  if (cachedBlob) {
+                    return cachedBlob;
+                  }
+
+                  const cachedBase64 = await ImageCache.getBase64(filename);
+                  if (cachedBase64) {
+                    const base64Url = `data:image/jpeg;base64,${cachedBase64}`;
+                    ImageCache.setBlobUrl(filename, base64Url);
+                    return base64Url;
+                  }
+
+                  const response = await axios.get(
+                    `${IMAGE_API}${encodeURIComponent(filename)}`,
+                  );
+                  if (response.data?.imageData) {
+                    const base64 = response.data.imageData;
+                    const base64Url = `data:image/jpeg;base64,${base64}`;
+
+                    await ImageCache.setBase64(filename, base64);
+                    ImageCache.setBlobUrl(filename, base64Url);
+                    return base64Url;
+                  }
+                  return null;
+                } catch (err) {
+                  console.error("Image fetch failed:", err);
+                  return null;
                 }
-
-                const cachedBase64 = await ImageCache.getBase64(filename);
-                if (cachedBase64) {
-                  const base64Url = `data:image/jpeg;base64,${cachedBase64}`;
-                  ImageCache.setBlobUrl(filename, base64Url);
-                  return base64Url;
-                }
-
-                const response = await axios.get(
-                  `${IMAGE_API}${encodeURIComponent(filename)}`
-                );
-                if (response.data?.imageData) {
-                  const base64 = response.data.imageData;
-                  const base64Url = `data:image/jpeg;base64,${base64}`;
-
-                  await ImageCache.setBase64(filename, base64);
-                  ImageCache.setBlobUrl(filename, base64Url);
-                  return base64Url;
-                }
-                return null;
-              } catch (err) {
-                console.error("Image fetch failed:", err);
-                return null;
-              }
-            })
-          );
-          imagesMap[String(offer.id)] = imgs.filter(Boolean);
-        })
-      );
-      setOfferImages(imagesMap);
-    } catch (err) {
-      console.error("Error loading images:", err);
-    } finally {
-      setImagesLoading(false);
-    }
-  };
-  fetchImages();
-}, [offersData]);
-
+              }),
+            );
+            imagesMap[String(offer.id)] = imgs.filter(Boolean);
+          }),
+        );
+        setOfferImages(imagesMap);
+      } catch (err) {
+        console.error("Error loading images:", err);
+      } finally {
+        setImagesLoading(false);
+      }
+    };
+    fetchImages();
+  }, [offersData]);
 
   // 🔹 Active offers filter
- const activeOffers = offersData.filter((offer) => {
-  const start = new Date(offer.startDate);
-  const end = new Date(offer.endDate);
-  return currentTime >= start && currentTime <= end;
-});
+  const activeOffers = offersData.filter((offer) => {
+    const start = new Date(offer.startDate);
+    const end = new Date(offer.endDate);
+    return currentTime >= start && currentTime <= end;
+  });
 
   const handleClose = () => {
-  hasClosedRef.current = true;    
-  setShowOffersModal(false);
-};
+    hasClosedRef.current = true;
+    setShowOffersModal(false);
+  };
 
   // 🔹 Control modal visibility
   useEffect(() => {
-  if (offersData.length > 0 && !hasClosedRef.current) {
-    const hasActive = offersData.some((offer) => {
-      const start = new Date(offer.startDate);
-      const end = new Date(offer.endDate);
-      return currentTime >= start && currentTime <= end;
-    });
-    setShowOffersModal(hasActive);
-  }
-}, [offersData, currentTime]);
+    if (offersData.length > 0 && !hasClosedRef.current) {
+      const hasActive = offersData.some((offer) => {
+        const start = new Date(offer.startDate);
+        const end = new Date(offer.endDate);
+        return currentTime >= start && currentTime <= end;
+      });
+      setShowOffersModal(hasActive);
+    }
+  }, [offersData, currentTime]);
 
   const formatDateTime = (dateString) => {
     return new Date(dateString).toLocaleString("en-IN", {
@@ -137,19 +136,20 @@ const [offerImages, setOfferImages] = useState({});
     >
       <Modal.Header closeButton>
         <Modal.Title style={{ fontSize: "15px", fontWeight: "bold" }}>
-          🎉  {activeOffers[0]?.title || "Special Offers"}
+          🎉 {activeOffers[0]?.title || "Special Offers"}
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
         {imagesLoading ? (
-        <div
+          <div
             style={{
               height: "300px",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              background: "linear-gradient(135deg, #fff8f0 0%, #fff3e0 50%, #fce4ec 100%)",
+              background:
+                "linear-gradient(135deg, #fff8f0 0%, #fff3e0 50%, #fce4ec 100%)",
               borderRadius: "10px",
               position: "relative",
               overflow: "hidden",
@@ -158,16 +158,33 @@ const [offerImages, setOfferImages] = useState({});
             {/* Top shimmer bar */}
             <div
               className="banner-shimmer-bar"
-              style={{ position: "absolute", top: 0, left: 0, right: 0, height: "4px" }}
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                height: "4px",
+              }}
             />
 
             {/* Background shimmer skeleton rows */}
-            <div style={{ position: "absolute", inset: 0, opacity: 0.10, padding: "10px" }}>
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                opacity: 0.1,
+                padding: "10px",
+              }}
+            >
               {[...Array(5)].map((_, i) => (
                 <div
                   key={i}
                   className="banner-shimmer-bar"
-                  style={{ height: "50px", marginBottom: "8px", animationDelay: `${i * 0.15}s` }}
+                  style={{
+                    height: "50px",
+                    marginBottom: "8px",
+                    animationDelay: `${i * 0.15}s`,
+                  }}
                 />
               ))}
             </div>
@@ -219,7 +236,12 @@ const [offerImages, setOfferImages] = useState({});
               <img
                 src={Banner1}
                 alt="Loading Logo"
-                style={{ width: "76px", height: "76px", objectFit: "contain", borderRadius: "50%" }}
+                style={{
+                  width: "76px",
+                  height: "76px",
+                  objectFit: "contain",
+                  borderRadius: "50%",
+                }}
               />
             </div>
 
@@ -232,30 +254,51 @@ const [offerImages, setOfferImages] = useState({});
                 color: "#fff",
                 fontWeight: "700",
                 fontSize: "12px",
-                letterSpacing: "2px",       
+                letterSpacing: "2px",
                 padding: "5px 16px",
-                borderRadius: "20px",     
+                borderRadius: "20px",
                 boxShadow: "0 4px 14px rgba(255,87,34,0.35)",
                 position: "relative",
-                zIndex: 2,         
-              }}  
+                zIndex: 2,
+              }}
             >
               🎉 Please Wait Offers Loading ..
             </div>
 
             {/* Bouncing dots */}
-            <div style={{ marginTop: "14px", display: "flex", alignItems: "flex-end", height: "28px", position: "relative", zIndex: 2 }}>
+            <div
+              style={{
+                marginTop: "14px",
+                display: "flex",
+                alignItems: "flex-end",
+                height: "28px",
+                position: "relative",
+                zIndex: 2,
+              }}
+            >
               <span className="banner-dot" style={{ background: "#ff5722" }} />
-              <span className="banner-dot" style={{ background: "#ff9800", animationDelay: "0.16s" }} />
-              <span className="banner-dot" style={{ background: "#ffc107", animationDelay: "0.32s" }} />
+              <span
+                className="banner-dot"
+                style={{ background: "#ff9800", animationDelay: "0.16s" }}
+              />
+              <span
+                className="banner-dot"
+                style={{ background: "#ffc107", animationDelay: "0.32s" }}
+              />
             </div>
 
             {/* Bottom shimmer bar */}
             <div
               className="banner-shimmer-bar"
-              style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "4px" }}
+              style={{
+                position: "absolute",
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: "4px",
+              }}
             />
-          </div>   
+          </div>
         ) : activeOffers.length === 0 ? (
           <div
             style={{
@@ -273,7 +316,7 @@ const [offerImages, setOfferImages] = useState({});
         ) : (
           (() => {
             const allImages = activeOffers.flatMap(
-              (offer) => offerImages[String(offer.id)] || []
+              (offer) => offerImages[String(offer.id)] || [],
             );
 
             return (
@@ -313,8 +356,7 @@ const [offerImages, setOfferImages] = useState({});
                     marginTop: "10px",
                   }}
                 >
-                  Offer valid till:{" "}
-                  {formatDateTime(activeOffers[0]?.endDate)}
+                  Offer valid till: {formatDateTime(activeOffers[0]?.endDate)}
                 </p>
 
                 <p

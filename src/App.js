@@ -84,6 +84,10 @@ import VendorLoginPage from './VendorLoginPage.js';
 import VendorRegisterPage from './VendorRegisterPage.js';
 import VendorStockUpdatePage from './VendorStockUpdatePage.js';
 import VendorPreviewPage from './VendorPreviewPage.js';
+import VendorOrdersPage from './VendorOrdersPage.js';
+import SuperAdminVendorsPage from './SuperAdminVendorsPage.js';
+import SuperAdminVendorProductsPage from './SuperAdminVendorProductsPage.js';
+import SuperAdminGuard from './SuperAdminGuard.js';
 import UserIdLogin from './UserIdLogin.js';
 import CustomerRaiseTicketGridView from './CustomerRaiseTicketGridView.js';
 import OTPVerificationPage from './OTPVerificationPage.js';
@@ -244,6 +248,23 @@ function App() {
             <Route path="/vendor/register" element={<VendorRegisterPage />} />
             <Route path="/vendor/stock-update/:vendorId" element={<VendorStockUpdatePage />} />
             <Route path="/vendor/preview/:vendorId" element={<VendorPreviewPage />} />
+            <Route path="/vendor/orders/:vendorId" element={<VendorOrdersPage />} />
+            <Route
+              path="/superadmin/vendors"
+              element={
+                <SuperAdminGuard>
+                  <SuperAdminVendorsPage />
+                </SuperAdminGuard>
+              }
+            />
+            <Route
+              path="/superadmin/vendor/:vendorId/products"
+              element={
+                <SuperAdminGuard>
+                  <SuperAdminVendorProductsPage />
+                </SuperAdminGuard>
+              }
+            />
             <Route path="/" element={<HandyManLogo />} /> 
             <Route path="/loginnew" element={<LoginPage />} />
             <Route path="/otpVerification" element={<OTPVerificationPage />} />

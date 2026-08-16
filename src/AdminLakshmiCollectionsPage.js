@@ -36,7 +36,7 @@ const AdminLakshmiCollectionsPage = () => {
   useEffect(() => {
     console.log(collectionDetails, error);
   }, [collectionDetails, error]);
-  
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     handleResize();
@@ -51,9 +51,9 @@ const AdminLakshmiCollectionsPage = () => {
   const downloadImage = async (fileName) => {
     if (!fileName) return null;
     const res = await fetch(
-      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
-        fileName
-      )}`
+      `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(
+        fileName,
+      )}`,
     );
     if (!res.ok) {
       throw new Error(`Image fetch failed: ${res.status} ${res.statusText}`);
@@ -68,7 +68,8 @@ const AdminLakshmiCollectionsPage = () => {
       }
       const byteChars = atob(b64);
       const byteNums = new Array(byteChars.length);
-      for (let i = 0; i < byteChars.length; i++) byteNums[i] = byteChars.charCodeAt(i);
+      for (let i = 0; i < byteChars.length; i++)
+        byteNums[i] = byteChars.charCodeAt(i);
       const blob = new Blob([new Uint8Array(byteNums)], { type: "image/jpeg" });
       return URL.createObjectURL(blob);
     }
@@ -87,7 +88,7 @@ const AdminLakshmiCollectionsPage = () => {
         }
         setImageLoading(true);
         const response = await fetch(
-          `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/LakshmiCollection/GetLakshmicollectionsById?id=${collectionId}`
+          `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/LakshmiCollection/GetLakshmicollectionsById?id=${collectionId}`,
         );
         if (!response.ok) throw new Error("Failed to fetch collection details");
         const data = await response.json();
@@ -125,12 +126,12 @@ const AdminLakshmiCollectionsPage = () => {
               if (url && url.startsWith("blob:")) {
                 blobUrls.push(url);
               }
-              return [it.id, url ? [url] : []]; 
+              return [it.id, url ? [url] : []];
             } catch (e) {
               console.warn("Image fetch failed for", it.productImage, e);
               return [it.id, []];
             }
-          })
+          }),
         );
         const nextMap = {};
         for (const r of results) {
@@ -331,9 +332,14 @@ const AdminLakshmiCollectionsPage = () => {
                   <div className="col-md-6">
                     {/* IMAGE: same UX as list page */}
                     {collectionItems[0] && (
-                      <div className="mb-3 d-flex justify-content-center align-items-center position-relative" style={{ minHeight: 130 }}>
+                      <div
+                        className="mb-3 d-flex justify-content-center align-items-center position-relative"
+                        style={{ minHeight: 130 }}
+                      >
                         {imageLoading ? (
-                          <span className="text-muted small">Loading Image</span>
+                          <span className="text-muted small">
+                            Loading Image
+                          </span>
                         ) : imageUrls[collectionItems[0].id]?.[0] ? (
                           <img
                             src={imageUrls[collectionItems[0].id][0]}
@@ -346,14 +352,19 @@ const AdminLakshmiCollectionsPage = () => {
                               objectFit: "cover",
                               cursor: "pointer",
                             }}
-                            onClick={() => openZoom(imageUrls[collectionItems[0].id][0])}
+                            onClick={() =>
+                              openZoom(imageUrls[collectionItems[0].id][0])
+                            }
                             onError={(e) => {
-                              console.error("IMG render failed:", e.currentTarget.src);
+                              console.error(
+                                "IMG render failed:",
+                                e.currentTarget.src,
+                              );
                               e.currentTarget.replaceWith(
                                 Object.assign(document.createElement("div"), {
                                   innerText: "Image failed to load",
                                   style: "font-size:12px;color:#666;",
-                                })
+                                }),
                               );
                             }}
                           />
@@ -446,7 +457,11 @@ const AdminLakshmiCollectionsPage = () => {
       </div>
 
       {/* Zoom Modal — same feel as list page */}
-      <Modal show={showZoomModal} onHide={() => setShowZoomModal(false)} centered>
+      <Modal
+        show={showZoomModal}
+        onHide={() => setShowZoomModal(false)}
+        centered
+      >
         <button
           className="close-button text-end mt-0"
           onClick={() => setShowZoomModal(false)}

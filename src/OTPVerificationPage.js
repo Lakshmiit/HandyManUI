@@ -99,7 +99,7 @@ const OTPVerificationPage = () => {
       setCanResend(false);
 
       const response = await fetch(
-        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Auth/bhashsmssendotp`,
+        `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/Auth/bhashsmssendotp`,
         {
           method: "POST",
           headers: {
@@ -134,7 +134,7 @@ const OTPVerificationPage = () => {
 
     try {
       const response1 = await fetch(
-        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UserOnBoarding/GuestUserUpload`,
+        `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/UserOnBoarding/GuestUserUpload`,
         {
           method: "POST",
           headers: {
@@ -181,7 +181,7 @@ const OTPVerificationPage = () => {
       };
 
       const response2 = await fetch(
-        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Customer/GuestCustomerUpload`,
+        `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/Customer/GuestCustomerUpload`,
         {
           method: "POST",
           headers: {
@@ -212,7 +212,7 @@ const OTPVerificationPage = () => {
       // };
       // console.log("Payload3:", payload3);
       // const response3 = await fetch(
-      //   `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/OffersTransactions/UploadOffersTransactionsDetails`,
+      //   `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/OffersTransactions/UploadOffersTransactionsDetails`,
       //   {
       //     method: "POST",
       //     headers: {
@@ -257,7 +257,7 @@ const OTPVerificationPage = () => {
       };
 
       const otpResponse = await fetch(
-        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Auth/validateotp`,
+        `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/Auth/validateotp`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -272,7 +272,7 @@ const OTPVerificationPage = () => {
 
       // STEP 2 — Check if user exists
       const verifyUserRes = await fetch(
-        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UserOnBoarding/GuestUserVerificationByMobileNo?mobileNo=${mobile}`,
+        `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/UserOnBoarding/GuestUserVerificationByMobileNo?mobileNo=${mobile}`,
       );
 
       if (verifyUserRes.status === 200) {
@@ -511,7 +511,7 @@ export default OTPVerificationPage;
 //       setCanResend(false);
 
 //       const response = await fetch(
-//         `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Auth/bhashsmssendotp`,
+//         `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/Auth/bhashsmssendotp`,
 //         {
 //           method: "POST",
 //           headers: {
@@ -546,7 +546,7 @@ export default OTPVerificationPage;
 
 //     try {
 //       const response1 = await fetch(
-//         `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UserOnBoarding/GuestUserUpload`,
+//         `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/UserOnBoarding/GuestUserUpload`,
 //         {
 //           method: "POST",
 //           headers: {
@@ -593,7 +593,7 @@ export default OTPVerificationPage;
 //       };
 
 //       const response2 = await fetch(
-//         `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Customer/GuestCustomerUpload`,
+//         `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/Customer/GuestCustomerUpload`,
 //         {
 //           method: "POST",
 //           headers: {
@@ -616,7 +616,7 @@ export default OTPVerificationPage;
 //   const handleOTPVerification = async (e) => {
 //     e.preventDefault();
 
-//     if (isLoading) return; 
+//     if (isLoading) return;
 
 //     const enteredOtp = otp.join("");
 
@@ -631,12 +631,12 @@ export default OTPVerificationPage;
 //     try {
 //       // STEP 1 — Validate OTP
 //       const payload = {
-//         SenderValue: mobile, 
+//         SenderValue: mobile,
 //         Otp: enteredOtp,
-//       };   
+//       };
 
 //       const otpResponse = await fetch(
-//         `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Auth/validateotp`,
+//         `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/Auth/validateotp`,
 //         {
 //           method: "POST",
 //           headers: { "Content-Type": "application/json" },
@@ -651,7 +651,7 @@ export default OTPVerificationPage;
 
 //       // STEP 2 — Check if user exists
 //       const verifyUserRes = await fetch(
-//         `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UserOnBoarding/GuestUserVerificationByMobileNo?mobileNo=${mobile}`,
+//         `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/UserOnBoarding/GuestUserVerificationByMobileNo?mobileNo=${mobile}`,
 //       );
 
 //       if (verifyUserRes.status === 200) {
@@ -680,12 +680,11 @@ export default OTPVerificationPage;
 //     }
 //   };
 
-  
 //   useEffect(() => {
 //     if (inputsRef.current[0]) {
 //       inputsRef.current[0].focus();
 //     }
-//   }, []); 
+//   }, []);
 
 //   return (
 //     <div className="h-90  mt-2 d-flex align-items-center py-2 flex-column">
