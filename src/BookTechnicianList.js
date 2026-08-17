@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { confirmDialog } from "./DialogSystem";
 import Footer from "./Footer.js";
 import AdminSidebar from "./AdminSidebar";
 import { Dashboard as MoreVertIcon } from "@mui/icons-material";
@@ -67,8 +68,8 @@ const BookTechnicianList = () => {
   }, []);
 
   // Handle delete functionality
-  const handleDelete = (technicianId) => {
-    const confirmDelete = window.confirm(
+  const handleDelete = async (technicianId) => {
+    const confirmDelete = await confirmDialog(
       "Are you sure you want to delete this Job Description?",
     );
     if (confirmDelete) {

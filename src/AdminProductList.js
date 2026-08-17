@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { confirmDialog } from "./DialogSystem";
 import { FaEdit, FaTrash, FaEye } from "react-icons/fa";
 // import { appConfig } from "./config";
 
@@ -58,8 +59,8 @@ const AdminProductList = () => {
   }, []);
 
   // Handle delete functionality
-  const handleDelete = (productId) => {
-    const confirmDelete = window.confirm(
+  const handleDelete = async (productId) => {
+    const confirmDelete = await confirmDialog(
       "Are you sure you want to delete this product?",
     );
     if (confirmDelete) {

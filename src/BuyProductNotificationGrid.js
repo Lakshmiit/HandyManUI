@@ -3,6 +3,7 @@ import { Button } from "react-bootstrap";
 import axios from "axios";
 import Footer from "./Footer.js";
 import AdminSidebar from "./AdminSidebar";
+import { confirmDialog } from "./DialogSystem";
 import { Link } from "react-router-dom";
 import { FaTrash, FaEye } from "react-icons/fa";
 import {
@@ -73,8 +74,8 @@ const BuyProductNotificationGrid = () => {
       });
   }, []);
 
-  const handleDelete = (productId) => {
-    const confirmDelete = window.confirm(
+  const handleDelete = async (productId) => {
+    const confirmDelete = await confirmDialog(
       "Are you sure you want to delete this product?",
     );
     if (confirmDelete) {

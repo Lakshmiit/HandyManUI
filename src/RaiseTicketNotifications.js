@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import axios from "axios";
+import { confirmDialog } from "./DialogSystem";
 import AdminSidebar from "./AdminSidebar";
 import Footer from "./Footer.js";
 
@@ -70,8 +71,8 @@ const RaiseTicketNotification = () => {
       });
   }, []);
 
-  const handleDelete = (ticketId) => {
-    const confirmDelete = window.confirm(
+  const handleDelete = async (ticketId) => {
+    const confirmDelete = await confirmDialog(
       "Are you sure you want to delete this ticket?",
     );
     if (confirmDelete) {

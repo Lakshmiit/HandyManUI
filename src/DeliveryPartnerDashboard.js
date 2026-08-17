@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
-import notificationSound from "./Bell.mp3";
+import { playNotificationSound } from "./notificationSound";
 
 // Same API host the rest of the live app (ProfilePage's delivery-partner
 // check, VendorOrdersPage, etc.) already talks to — keep this in sync so
@@ -133,7 +133,7 @@ const DeliveryPartnerDashboard = () => {
         if (arrived.length && !silent) {
           setHasNewOrder(true);
           try {
-            new Audio(notificationSound).play().catch(() => {});
+            playNotificationSound();
           } catch {
             // audio playback blocked/unsupported — the bell still rings visually
           }

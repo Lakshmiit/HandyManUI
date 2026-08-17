@@ -19,7 +19,7 @@ import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import DeliveryDiningIcon from "@mui/icons-material/DeliveryDining";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
-import notificationSound from "./Bell.mp3";
+import { playNotificationSound } from "./notificationSound";
 import { useNavigate, useParams } from "react-router-dom";
 import Logo from "./img/Hm_Logo 1.png";
 import SearchIcon from "@mui/icons-material/Search";
@@ -394,6 +394,7 @@ const ProfilePage = () => {
     () => sessionStorage.getItem("hm_push_dismissed") === "true",
   );
   const [pushLoading, setPushLoading] = useState(false);
+  const pushSupported = PushNotificationService.isSupported();
   const [deliveryTicketsLoading, setDeliveryTicketsLoading] = useState(false);
   const [showTrackModal, setShowTrackModal] = useState(false);
   const [trackLoading, setTrackLoading] = useState(false);
@@ -588,7 +589,7 @@ const ProfilePage = () => {
           if (arrivedOrders.length) {
             setVendorHasNewOrder(true);
             try {
-              new Audio(notificationSound).play().catch(() => {});
+              playNotificationSound();
             } catch {
               // audio playback blocked/unsupported — the bell still rings visually
             }
@@ -790,7 +791,7 @@ const ProfilePage = () => {
           if (arrivedOrders.length) {
             setDeliveryHasNewOrder(true);
             try {
-              new Audio(notificationSound).play().catch(() => {});
+              playNotificationSound();
             } catch {
               // audio playback blocked/unsupported — the bell still rings visually
             }
@@ -4674,8 +4675,12 @@ const ProfilePage = () => {
         </Modal.Footer>
       </Modal>
 
-      {/* Push Notification Opt-in Banner */}
-      {!pushEnabled && !pushDismissed && userId && (
+      {/* Push Notification Opt-in Banner — only shown where the browser/WebView
+          actually supports it. Plain Android WebView (used by webview-to-APK
+          builders) never implements the Notification API, so this banner is
+          hidden there; the in-app order-update popup and bell sound already
+          work regardless of this permission. */}
+      {pushSupported && !pushEnabled && !pushDismissed && userId && (
         <div className="push-notification-banner">
           <div className="push-notification-banner-content">
             <NotificationsActiveIcon

@@ -8,6 +8,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar";
+import { confirmDialog } from "./DialogSystem";
 import {
   ArrowBack as ArrowBackIcon,
   Send as SendIcon,
@@ -248,8 +249,8 @@ const AdminLiveChat = () => {
     }).catch(() => {});
   };
 
-  const closeChat = (sid) => {
-    if (!window.confirm("Close?")) return;
+  const closeChat = async (sid) => {
+    if (!(await confirmDialog("Close?"))) return;
     fetch(`${API}/LiveChat/CloseSession?sessionId=${sid}`, {
       method: "PUT",
     }).catch(() => {});

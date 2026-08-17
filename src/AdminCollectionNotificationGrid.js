@@ -3,6 +3,7 @@ import axios from "axios";
 import Footer from "./Footer.js";
 import { Link } from "react-router-dom";
 import { FaTrash, FaEye } from "react-icons/fa";
+import { confirmDialog } from "./DialogSystem";
 import { Forward as ForwardIcon } from "@mui/icons-material";
 import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
 import "./App.css";
@@ -63,8 +64,8 @@ const AdminCollectionNotificationGrid = () => {
       });
   }, []);
 
-  const handleDelete = (collectionId) => {
-    const confirmDelete = window.confirm(
+  const handleDelete = async (collectionId) => {
+    const confirmDelete = await confirmDialog(
       "Are you sure you want to delete this collection?",
     );
     if (confirmDelete) {

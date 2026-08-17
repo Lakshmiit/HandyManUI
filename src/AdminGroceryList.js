@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaEdit, FaTrash, FaEye } from "react-icons/fa";
+import { confirmDialog } from "./DialogSystem";
 // import { appConfig } from "./config";
 
 const AdminGroceryList = () => {
@@ -64,7 +65,7 @@ const AdminGroceryList = () => {
   }, []);
 
   const handleDelete = async (groceryId) => {
-    if (!window.confirm("Are you sure you want to delete this grocery?"))
+    if (!(await confirmDialog("Are you sure you want to delete this grocery?")))
       return;
     try {
       await axios.delete(

@@ -1023,7 +1023,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
-import notificationSound from "./Bell.mp3";
+import { playNotificationSound } from "./notificationSound";
 import { getGroceryItems } from "./utils/groceryStore";
 import {
   getVendorProductsByVendorId,
@@ -1133,7 +1133,7 @@ const VendorPreviewPage = () => {
           if (arrived) {
             setHasNewOrder(true);
             try {
-              new Audio(notificationSound).play().catch(() => {});
+              playNotificationSound();
             } catch {
               // audio playback blocked/unsupported — highlight still shows
             }

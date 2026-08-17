@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import './App.css';
+import DialogHost from './DialogSystem';
 import { useNavigate, useLocation,BrowserRouter as Router, Route, Routes} from 'react-router-dom'; 
 import RaiseTicket from './RaiseTicket';
 import BuyProducts from './BuyProducts';
@@ -183,6 +184,7 @@ function App() {
   return ( 
     <Router>   
        <PreventBackNavigation />   
+      <DialogHost />
       <div className="App"> 
         <main>
           {/* className="mt-100" */}       

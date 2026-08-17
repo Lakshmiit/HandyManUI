@@ -3,6 +3,7 @@ import { Button } from "react-bootstrap";
 import axios from "axios";
 import AdminSidebar from "./AdminSidebar";
 import Footer from "./Footer.js";
+import { confirmDialog } from "./DialogSystem";
 import { Link } from "react-router-dom";
 import { FaTrash, FaEye } from "react-icons/fa";
 import {
@@ -78,8 +79,8 @@ const BookTechnicianNotification = () => {
       });
   }, []);
 
-  const handleDelete = (technicianId) => {
-    const confirmDelete = window.confirm(
+  const handleDelete = async (technicianId) => {
+    const confirmDelete = await confirmDialog(
       "Are you sure you want to delete this ticket?",
     );
     if (confirmDelete) {

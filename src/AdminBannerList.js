@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import axios from "axios";
+import { confirmDialog } from "./DialogSystem";
 import {
   Table,
   Button,
@@ -172,7 +173,7 @@ const BannerList = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Delete this banner?")) return;
+    if (!(await confirmDialog("Delete this banner?"))) return;
     try {
       await axios.delete(
         `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/UpLoadBannners/DeleteBanner/${id}`,

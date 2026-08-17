@@ -74,6 +74,11 @@ const PushNotificationService = {
     return "Notification" in window && Notification.permission === "granted";
   },
 
+  /** Check if the browser/WebView supports push notifications at all */
+  isSupported() {
+    return "Notification" in window;
+  },
+
   /** Set callback for in-app message display */
   onForegroundMessage(callback) {
     this._onMessageCallback = callback;
