@@ -20,6 +20,7 @@ import StorefrontIcon from "@mui/icons-material/Storefront";
 import DeliveryDiningIcon from "@mui/icons-material/DeliveryDining";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import { playNotificationSound } from "./notificationSound";
+import { speakAlert } from "./speechAlert";
 import { useNavigate, useParams } from "react-router-dom";
 import Logo from "./img/Hm_Logo 1.png";
 import SearchIcon from "@mui/icons-material/Search";
@@ -518,23 +519,12 @@ const ProfilePage = () => {
   // browser's built-in Speech Synthesis API, so there's nothing new to
   // install; it just silently no-ops on browsers that don't support it.
   const speakNewOrderAlert = useCallback((order) => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
-      return;
-    }
     const customerName = order?.customerName?.trim() || "a customer";
     const zip = order?.zipCode?.toString().trim();
     const message = zip
       ? `New order received from ${customerName}, zip code ${zip}.`
       : `New order received from ${customerName}.`;
-    try {
-      const utterance = new SpeechSynthesisUtterance(message);
-      utterance.rate = 1;
-      utterance.pitch = 1;
-      window.speechSynthesis.speak(utterance);
-    } catch {
-      // speech synthesis unsupported/blocked — the bell sound and visual
-      // badge still cover the notification
-    }
+    speakAlert(message);
   }, []);
 
   // Speaks a short voice alert when one of this vendor's own orders is
@@ -543,19 +533,9 @@ const ProfilePage = () => {
   // polled order list, so only the specific vendor who is logged in
   // hears it, never a broadcast to every vendor.
   const speakOrderDeliveredAlert = useCallback((order) => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
-      return;
-    }
     const orderLabel = order?.martId || "your order";
     const message = `Order ${orderLabel} has been delivered.`;
-    try {
-      const utterance = new SpeechSynthesisUtterance(message);
-      utterance.rate = 1;
-      utterance.pitch = 1;
-      window.speechSynthesis.speak(utterance);
-    } catch {
-      // speech synthesis unsupported/blocked — nothing else to fall back to
-    }
+    speakAlert(message);
   }, []);
 
   // Poll for the logged-in vendor's orders so the Vendor Portal icon can
@@ -702,20 +682,9 @@ const ProfilePage = () => {
   // delivery partner — mirrors speakNewOrderAlert above, scoped to this
   // userId's own polled assignments only.
   const speakNewDeliveryAssignmentAlert = useCallback((order) => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
-      return;
-    }
     const orderLabel = order?.martId || "a new order";
     const message = `New order assigned to you, order ${orderLabel}.`;
-    try {
-      const utterance = new SpeechSynthesisUtterance(message);
-      utterance.rate = 1;
-      utterance.pitch = 1;
-      window.speechSynthesis.speak(utterance);
-    } catch {
-      // speech synthesis unsupported/blocked — the bell sound and visual
-      // badge still cover the notification
-    }
+    speakAlert(message);
   }, []);
 
   // Silently check, on page load, whether this logged-in user is already
