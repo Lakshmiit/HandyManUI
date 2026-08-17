@@ -1,119 +1,113 @@
 /*
  * speechAlert.js
  *
- * WHY THE VOICE ALERTS WEREN'T SPEAKING ON MOBILE:
- * The existing code called `window.speechSynthesis.speak(...)` directly
- * from a background poll/listener (no click involved). Mobile WebViews
- * apply the same "needs a user gesture" restriction to speech synthesis
- * that they apply to audio playback — a speak() call fired without a
- * prior tap is silently ignored on most Android WebViews.
+ * WHY speechSynthesis DIDN'T WORK ON ANDROID (BUT DID IN A REAL BROWSER):
+ * A real browser tab has speechSynthesis wired to the OS's own
+ * text-to-speech engine. A plain Android WebView (the kind used by
+ * no-code "website to APK" builders) is NOT wired to that engine at
+ * all — calling speak() runs without error but produces no sound,
+ * because there's no voice behind it. No JS-only fix can add a voice
+ * engine that isn't there; this is a WebView platform limitation, not
+ * a bug in the app's code.
  *
- * There are two other common mobile/WebView speech-synthesis gotchas
- * this file also works around:
- *   1. Voices load asynchronously — speak() called before the voice
- *      list is ready can silently no-op on some devices.
- *   2. A long-standing Android Chrome/WebView bug where speech just
- *      stops after ~15 seconds unless you periodically call
- *      pause()/resume() to keep it alive.
+ * FIX: stop depending on the in-WebView TTS engine entirely. Instead,
+ * fetch an actual spoken-word MP3 for the message from a text-to-speech
+ * web service and play it with a normal <audio> element — the same
+ * playback mechanism already confirmed to work for the bell sound in
+ * this APK (see notificationSound.js). Audio playback isn't blocked
+ * the way speechSynthesis is.
+ *
+ * This uses StreamElements' free public TTS endpoint (no API key,
+ * widely used for this exact purpose). It's an unofficial/best-effort
+ * service with no uptime guarantee — if you want a guaranteed SLA
+ * later, swap ttsUrlFor() below for Azure Cognitive Services Speech
+ * (you already use Azure elsewhere) using a subscription key.
  *
  * USAGE:
  *   import { speakAlert } from "./speechAlert";
  *   speakAlert("New order received from John, zip code 12345.");
  */
 
+let audioEl = null;
 let unlocked = false;
-let voicesReady = false;
 
-function primeVoices() {
-  if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-  const existing = window.speechSynthesis.getVoices();
-  if (existing.length > 0) {
-    voicesReady = true;
-    return;
+function getAudio() {
+  if (!audioEl) {
+    audioEl = new Audio();
+    audioEl.preload = "auto";
   }
-  window.speechSynthesis.onvoiceschanged = () => {
-    voicesReady = window.speechSynthesis.getVoices().length > 0;
-  };
+  return audioEl;
 }
 
-function unlockSpeech() {
+function ttsUrlFor(message) {
+  return `https://api.streamelements.com/kappa/v2/speech?voice=Brian&text=${encodeURIComponent(
+    message,
+  )}`;
+}
+
+function unlockAudio() {
   if (unlocked) return;
-  if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-  try {
-    // A near-silent, near-instant utterance spoken directly inside a
-    // user-gesture handler. This "unlocks" speechSynthesis on mobile
-    // WebViews so later automatic (non-gesture) speak() calls are
-    // allowed for the rest of the session.
-    const unlockUtterance = new SpeechSynthesisUtterance(" ");
-    unlockUtterance.volume = 0;
-    window.speechSynthesis.speak(unlockUtterance);
-    unlocked = true;
-  } catch {
-    // will retry on the next gesture
-  }
+  const audio = getAudio();
+  const prevSrc = audio.src;
+  const prevMuted = audio.muted;
+  // Unlock with a tiny silent clip inside the user gesture so later
+  // automatic (non-gesture) plays are allowed for the rest of the
+  // session — same trick used for the bell sound.
+  audio.src =
+    "data:audio/mpeg;base64,//uQxAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAACcQCA";
+  audio.muted = true;
+  audio
+    .play()
+    .then(() => {
+      audio.pause();
+      audio.currentTime = 0;
+      audio.muted = prevMuted;
+      audio.src = prevSrc || "";
+      unlocked = true;
+    })
+    .catch(() => {
+      audio.muted = prevMuted;
+      audio.src = prevSrc || "";
+    });
 }
 
 if (typeof document !== "undefined") {
-  primeVoices();
   ["touchstart", "click"].forEach((evt) =>
-    document.addEventListener(evt, unlockSpeech, { passive: true })
+    document.addEventListener(evt, unlockAudio, { passive: true }),
   );
 }
 
-// Android Chrome/WebView bug workaround: speech stops after ~15s unless
-// kept alive. While anything is speaking, nudge it every 10s.
-let keepAliveTimer = null;
-function startKeepAlive() {
-  stopKeepAlive();
-  keepAliveTimer = setInterval(() => {
-    if (!window.speechSynthesis.speaking) {
-      stopKeepAlive();
-      return;
-    }
-    window.speechSynthesis.pause();
-    window.speechSynthesis.resume();
-  }, 10000);
-}
-function stopKeepAlive() {
-  if (keepAliveTimer) {
-    clearInterval(keepAliveTimer);
-    keepAliveTimer = null;
+// Native speechSynthesis fallback, only used when the device is offline
+// and the TTS request can't be fetched at all.
+function speakWithBrowserTTS(message) {
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+  try {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(message);
+    utterance.rate = 1;
+    utterance.pitch = 1;
+    window.speechSynthesis.speak(utterance);
+  } catch {
+    // no speech available at all — the bell sound and visual badge
+    // still cover the notification
   }
 }
 
 /**
- * Speak a short voice alert. Safe to call from background pollers —
- * silently no-ops on browsers/WebViews without speech support at all,
- * but on ones that support it (including most Android WebViews, once
- * unlocked by a tap) it will actually speak instead of failing silently.
+ * Speak a short voice alert out loud. Fetches real spoken audio for the
+ * exact message text (so customer names, zip codes, order IDs etc. all
+ * come through correctly) and plays it as a normal audio clip.
  */
-export function speakAlert(message, { rate = 1, pitch = 1 } = {}) {
-  if (typeof window === "undefined" || !("speechSynthesis" in window)) {
-    return;
-  }
-  if (!voicesReady) {
-    // Voices may still load in time for speak() to work anyway on some
-    // devices — this only affects the console warning, not whether we
-    // attempt to speak.
-    console.warn("speechSynthesis voices not loaded yet; attempting to speak anyway.");
-  }
-  try {
-    // Clear any stuck/queued utterances first — Android WebView's queue
-    // can get stuck, silently blocking every future speak() call.
-    window.speechSynthesis.cancel();
-
-    const utterance = new SpeechSynthesisUtterance(message);
-    utterance.rate = rate;
-    utterance.pitch = pitch;
-    utterance.onstart = startKeepAlive;
-    utterance.onend = stopKeepAlive;
-    utterance.onerror = stopKeepAlive;
-
-    window.speechSynthesis.speak(utterance);
-  } catch {
-    // speech synthesis unsupported/blocked — the bell sound and visual
-    // badge still cover the notification
-  }
+export function speakAlert(message) {
+  const audio = getAudio();
+  audio.src = ttsUrlFor(message);
+  audio.play().catch((err) => {
+    console.warn(
+      "Voice alert audio blocked or unreachable, falling back to on-device speech:",
+      err && err.message ? err.message : err,
+    );
+    speakWithBrowserTTS(message);
+  });
 }
 
 export default speakAlert;
