@@ -301,6 +301,7 @@ const ProfilePage = () => {
   const [vendorOrderCount, setVendorOrderCount] = useState(0);
   const [vendorHasNewOrder, setVendorHasNewOrder] = useState(false);
   const vendorKnownOrderIdsRef = useRef(null);
+  const vendorKnownOrderStatusRef = useRef(null);
   const { userId } = useParams();
   const { userType } = useParams();
   const [category, setCategory] = useState("");
@@ -345,6 +346,12 @@ const ProfilePage = () => {
   const clickLock = useRef(false);
   const [isRegistered, setIsRegistered] = useState(false);
   const [partnerStatus, setPartnerStatus] = useState("");
+  // Order count + "new order just came in" state for the Delivery
+  // Partner tile's bell badge — same pattern as the Vendor Portal bell
+  // below, but scoped to this delivery partner's own userId.
+  const [deliveryOrderCount, setDeliveryOrderCount] = useState(0);
+  const [deliveryHasNewOrder, setDeliveryHasNewOrder] = useState(false);
+  const deliveryKnownOrderIdsRef = useRef(null);
   const [paidAmount] = useState("");
   const [items] = useState("");
   const HEADER_H = 0;
@@ -529,6 +536,27 @@ const ProfilePage = () => {
     }
   }, []);
 
+  // Speaks a short voice alert when one of this vendor's own orders is
+  // marked Delivered by the delivery partner. Scoped the same way as
+  // speakNewOrderAlert above — only ever fired from this vendor's own
+  // polled order list, so only the specific vendor who is logged in
+  // hears it, never a broadcast to every vendor.
+  const speakOrderDeliveredAlert = useCallback((order) => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+      return;
+    }
+    const orderLabel = order?.martId || "your order";
+    const message = `Order ${orderLabel} has been delivered.`;
+    try {
+      const utterance = new SpeechSynthesisUtterance(message);
+      utterance.rate = 1;
+      utterance.pitch = 1;
+      window.speechSynthesis.speak(utterance);
+    } catch {
+      // speech synthesis unsupported/blocked — nothing else to fall back to
+    }
+  }, []);
+
   // Poll for the logged-in vendor's orders so the Vendor Portal icon can
   // show a live count and ring the bell (sound + highlight) when a brand
   // new order arrives, even while browsing the rest of the app.
@@ -536,6 +564,7 @@ const ProfilePage = () => {
     if (!vendorSessionId) {
       setVendorOrderCount(0);
       vendorKnownOrderIdsRef.current = null;
+      vendorKnownOrderStatusRef.current = null;
       return;
     }
     let cancelled = false;
@@ -551,6 +580,7 @@ const ProfilePage = () => {
         setVendorOrderCount(list.length);
 
         const ids = new Set(list.map((o) => o.id));
+        const previousStatusById = vendorKnownOrderStatusRef.current;
         if (vendorKnownOrderIdsRef.current) {
           const arrivedOrders = list.filter(
             (o) => !vendorKnownOrderIdsRef.current.has(o.id),
@@ -569,8 +599,29 @@ const ProfilePage = () => {
               arrivedOrders.forEach((order) => speakNewOrderAlert(order));
             }, 600);
           }
+
+          // Same idea, but for an existing order flipping to Delivered —
+          // that's the delivery partner marking it complete, and this
+          // vendor (and only this vendor, since the poll is scoped to
+          // their own vendorId) should hear about it.
+          if (previousStatusById) {
+            const justDelivered = list.filter((o) => {
+              const prevStatus = previousStatusById.get(o.id);
+              const nowDelivered = String(o.status).toLowerCase() === "delivered";
+              const wasDelivered = String(prevStatus || "").toLowerCase() === "delivered";
+              return prevStatus !== undefined && nowDelivered && !wasDelivered;
+            });
+            if (justDelivered.length) {
+              setTimeout(() => {
+                justDelivered.forEach((order) => speakOrderDeliveredAlert(order));
+              }, 600);
+            }
+          }
         }
         vendorKnownOrderIdsRef.current = ids;
+        vendorKnownOrderStatusRef.current = new Map(
+          list.map((o) => [o.id, o.status]),
+        );
       } catch (err) {
         console.error("Failed to poll vendor orders:", err);
       }
@@ -582,7 +633,7 @@ const ProfilePage = () => {
       cancelled = true;
       clearInterval(interval);
     };
-  }, [vendorSessionId, speakNewOrderAlert]);
+  }, [vendorSessionId, speakNewOrderAlert, speakOrderDeliveredAlert]);
 
   const handleVendorOrdersBellClick = (e) => {
     e.stopPropagation();
@@ -643,6 +694,164 @@ const ProfilePage = () => {
             transform-origin: 50% 0%;
           }
         `}</style>
+      </>
+    ) : null;
+
+  // Speaks a short voice alert when a new order is assigned to this
+  // delivery partner — mirrors speakNewOrderAlert above, scoped to this
+  // userId's own polled assignments only.
+  const speakNewDeliveryAssignmentAlert = useCallback((order) => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+      return;
+    }
+    const orderLabel = order?.martId || "a new order";
+    const message = `New order assigned to you, order ${orderLabel}.`;
+    try {
+      const utterance = new SpeechSynthesisUtterance(message);
+      utterance.rate = 1;
+      utterance.pitch = 1;
+      window.speechSynthesis.speak(utterance);
+    } catch {
+      // speech synthesis unsupported/blocked — the bell sound and visual
+      // badge still cover the notification
+    }
+  }, []);
+
+  // Silently check, on page load, whether this logged-in user is already
+  // an approved delivery partner — same idea as the vendor session check
+  // above, just via an API call instead of localStorage since there's no
+  // separate delivery-partner login. This is what lets the Delivery
+  // Partner tile show the partner's name + a live bell right away,
+  // instead of only after the tile is clicked.
+  useEffect(() => {
+    if (!userId) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await axios.get(
+          `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/DeliveryPartner/GetDeliveryPartnerDetailsByUserId?userId=${userId}`,
+        );
+        if (cancelled) return;
+        const raw = res?.data ?? null;
+        const profile = Array.isArray(raw)
+          ? raw.length > 0
+            ? raw[0]
+            : null
+          : raw && typeof raw === "object" && Object.keys(raw).length > 0
+            ? raw
+            : null;
+        setDeliveryProfile(profile);
+        setIsRegistered(profile?.isRegistered === true);
+        setPartnerStatus((profile?.status || "").toLowerCase());
+      } catch (err) {
+        // Not a delivery partner (or lookup failed) — tile just stays as
+        // the plain "Delivery Partner" registration link, same as before.
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [userId]);
+
+  // Poll this delivery partner's own assigned orders so the Delivery
+  // Partner tile's bell can show a live count and ring/speak when a new
+  // order is assigned — scoped entirely to this userId, so only the
+  // delivery partner who is actually logged in here hears it.
+  useEffect(() => {
+    if (!(isRegistered && partnerStatus === "open")) {
+      setDeliveryOrderCount(0);
+      deliveryKnownOrderIdsRef.current = null;
+      return;
+    }
+    let cancelled = false;
+
+    const pollDeliveryOrders = async () => {
+      try {
+        const response = await fetch(
+          `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/Mart/GetMartTicketsByUserId?userId=${userId}`,
+        );
+        if (!response.ok || cancelled) return;
+        const data = await response.json();
+        const tickets = Array.isArray(data)
+          ? data
+          : data && typeof data === "object"
+            ? [data]
+            : [];
+        const assigned = tickets.filter(
+          (item) => String(item?.status || "").toLowerCase() === "in progress",
+        );
+        setDeliveryOrderCount(assigned.length);
+
+        const ids = new Set(assigned.map((o) => o.id));
+        if (deliveryKnownOrderIdsRef.current) {
+          const arrivedOrders = assigned.filter(
+            (o) => !deliveryKnownOrderIdsRef.current.has(o.id),
+          );
+          if (arrivedOrders.length) {
+            setDeliveryHasNewOrder(true);
+            try {
+              new Audio(notificationSound).play().catch(() => {});
+            } catch {
+              // audio playback blocked/unsupported — the bell still rings visually
+            }
+            setTimeout(() => {
+              arrivedOrders.forEach((order) => speakNewDeliveryAssignmentAlert(order));
+            }, 600);
+          }
+        }
+        deliveryKnownOrderIdsRef.current = ids;
+      } catch (err) {
+        console.error("Failed to poll delivery partner orders:", err);
+      }
+    };
+
+    pollDeliveryOrders();
+    const interval = setInterval(pollDeliveryOrders, VENDOR_ORDERS_POLL_INTERVAL_MS);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [isRegistered, partnerStatus, userId, speakNewDeliveryAssignmentAlert]);
+
+  const handleDeliveryOrdersBellClick = (e) => {
+    e.stopPropagation();
+    setDeliveryHasNewOrder(false);
+    navigate(`/deliveryPartnerDashboard/${userType}/${userId}`);
+  };
+
+  // Bell badge overlaid on the Delivery Partner tile's corner — same
+  // pattern as renderVendorOrderBell, only shown once this user is an
+  // approved delivery partner.
+  const renderDeliveryOrderBell = () =>
+    isRegistered && partnerStatus === "open" ? (
+      <>
+        <span
+          onClick={handleDeliveryOrdersBellClick}
+          title="View assigned orders"
+          className={`d-inline-flex align-items-center justify-content-center rounded-circle bg-white position-absolute${
+            deliveryHasNewOrder ? " vendor-bell-ring" : ""
+          }`}
+          style={{
+            width: 20,
+            height: 20,
+            top: -4,
+            right: -4,
+            color: "#10301F",
+            boxShadow: "0 1px 4px rgba(0,0,0,.35)",
+            cursor: "pointer",
+            zIndex: 2,
+          }}
+        >
+          <NotificationsActiveIcon style={{ fontSize: 12 }} />
+          {deliveryOrderCount > 0 && (
+            <span
+              className="badge rounded-pill bg-danger position-absolute"
+              style={{ top: -6, right: -6, fontSize: 9, padding: "2px 4px" }}
+            >
+              {deliveryOrderCount}
+            </span>
+          )}
+        </span>
       </>
     ) : null;
 
@@ -1490,7 +1699,12 @@ const ProfilePage = () => {
       const st = (profile?.status || "").toLowerCase();
       setIsRegistered(reg);
       setPartnerStatus(st);
-      if (reg) {
+      if (reg && st === "open") {
+        // Approved delivery partner — go straight to their dashboard
+        // (name + bell + voice alerts) instead of the old ticket-list
+        // modal.
+        navigate(`/deliveryPartnerDashboard/${userType}/${userId}`);
+      } else if (reg) {
         await loadDeliveryPartnerTickets();
         setShowNotificationModal(true);
       } else {
@@ -4071,15 +4285,36 @@ const ProfilePage = () => {
                                   >
                                     {getVendorIcon(vendorProfile?.name)}
                                   </span>
+                                ) : menu.MenuTitle === "Delivery Partner" &&
+                                  isRegistered &&
+                                  partnerStatus === "open" ? (
+                                  <span
+                                    className="d-inline-flex align-items-center justify-content-center rounded-circle"
+                                    style={{
+                                      width: 40,
+                                      height: 40,
+                                      backgroundColor: "#10301F",
+                                      color: "#fff",
+                                      fontSize: 16,
+                                      fontWeight: "bold",
+                                    }}
+                                  >
+                                    {getVendorIcon(deliveryProfile?.deliveryPartnerName)}
+                                  </span>
                                 ) : (
                                   menu.MenuIcon
                                 )}
                                 {menu.MenuTitle === "Vendor Portal" && renderVendorOrderBell()}
+                                {menu.MenuTitle === "Delivery Partner" && renderDeliveryOrderBell()}
                               </span>
                               <span className="fs-6">
                                 {menu.MenuTitle === "Vendor Portal" && vendorSessionId
                                   ? vendorProfile?.name || menu.MenuTitle
-                                  : menu.MenuTitle}
+                                  : menu.MenuTitle === "Delivery Partner" &&
+                                      isRegistered &&
+                                      partnerStatus === "open"
+                                    ? deliveryProfile?.deliveryPartnerName || menu.MenuTitle
+                                    : menu.MenuTitle}
                               </span>
                             </div>
                           </div>

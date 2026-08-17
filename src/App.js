@@ -145,7 +145,8 @@ import GroceryComboOffer from './GroceryComboOffer.js';
 import AdminPushNotifications from './AdminPushNotifications.js';
 import AdminLiveChat from './AdminLiveChat.js';
 import MilkSubscriptionPreview from './MilkSubscriptionPreview.js';
-// import DeliveryPartnerDashboard from './DeliveryPartnerDashboard.js';
+import DeliveryPartnerDashboard from './DeliveryPartnerDashboard.js';
+import DeliveryOrderDetailsPage from './DeliveryOrderDetailsPage.js';
 // import OneRupeeGroceryItems from './OneRupeeGroceryItems.js';
 // import CustomerLocation from "./CustomerLocation.js";
 const PreventBackNavigation = () => {
@@ -191,7 +192,8 @@ function App() {
             <Route path="/adminLiveChat/Admin" element={<AdminLiveChat />} />
             <Route path="/adminRegistrations/Admin" element={<AdminRegistrationNumbers />} />
             <Route path= "/deliverypartnerPaymentMethod" element={<DeliveryPartnerPaymentMethod />} />
-            {/* <Route path="/deliveryPartnerDashboard/:userType/:userId" element={<DeliveryPartnerDashboard />} /> */}
+            <Route path="/deliveryPartnerDashboard/:userType/:userId" element={<DeliveryPartnerDashboard />} />
+            <Route path="/deliveryOrderDetails/:userType/:userId/:orderId" element={<DeliveryOrderDetailsPage />} />
             <Route path="/adminGroceryZoneDashboard" element={<AdminGroceryZoneDashboard />} />
             <Route path="/adminGroceryClosedOrders/:groceryItemId" element={<AdminGroceryClosedOrders />} /> 
             <Route path="/adminGroceryDashboard" element={<AdminGroceryDashboard />} />

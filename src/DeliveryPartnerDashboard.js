@@ -1,12 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
+import notificationSound from "./Bell.mp3";
 
-const API_BASE =
-  "https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net/api";
+// Same API host the rest of the live app (ProfilePage's delivery-partner
+// check, VendorOrdersPage, etc.) already talks to — keep this in sync so
+// GetDeliveryPartnerDetailsByUserId / Mart endpoints resolve the same way
+// everywhere.
+const API_BASE = "https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api";
+const ASSIGNED_ORDERS_POLL_INTERVAL_MS = 20000;
 
 const DeliveryPartnerDashboard = () => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const { userId } = useParams();
   const { userType } = useParams();
 
@@ -18,10 +24,14 @@ const DeliveryPartnerDashboard = () => {
   const [partnerStatus, setPartnerStatus] = useState("");        
 
   const [orders, setOrders] = useState([]);
-  const [selectedOrder, setSelectedOrder] = useState(null);
 
-  const [showOrderModal, setShowOrderModal] = useState(false);
-  const [showDetails, setShowDetails] = useState(false);
+  // Bell badge state — mirrors the Vendor Portal bell pattern on
+  // ProfilePage.js: highlight + sound + a spoken line whenever an order
+  // this delivery partner hasn't seen before shows up in their assigned
+  // list. Scoped entirely to this userId's own polled orders, so it only
+  // ever alerts the delivery partner who is actually logged in here.
+  const [hasNewOrder, setHasNewOrder] = useState(false);
+  const knownOrderIdsRef = useRef(null);
 
   const [stats, setStats] = useState({
     total: 0,
@@ -57,7 +67,27 @@ const DeliveryPartnerDashboard = () => {
     });
   };
 
-  const fetchAssignedOrders = async () => {
+  // Speaks a short voice alert for a newly-assigned order — same
+  // speechSynthesis approach used for the vendor's new-order alert, so
+  // it silently no-ops on browsers that don't support it.
+  const speakNewAssignmentAlert = (order) => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+      return;
+    }
+    const orderLabel = order?.martId || "a new order";
+    const message = `New order assigned to you, order ${orderLabel}.`;
+    try {
+      const utterance = new SpeechSynthesisUtterance(message);
+      utterance.rate = 1;
+      utterance.pitch = 1;
+      window.speechSynthesis.speak(utterance);
+    } catch {
+      // speech synthesis unsupported/blocked — the bell sound and visual
+      // badge still cover the notification
+    }
+  };
+
+  const fetchAssignedOrders = async ({ silent } = {}) => {
     try {
       const response = await fetch(
         `${API_BASE}/Mart/GetMartTicketsByUserId?userId=${userId}`
@@ -84,6 +114,35 @@ const DeliveryPartnerDashboard = () => {
       setOrders(filteredOrders);
 
       calculateStats(filteredOrders);
+
+      // Detect brand-new assignments (in-progress orders this delivery
+      // partner hasn't seen before) and ring/speak — but only once we
+      // already have a known baseline, so the very first load doesn't
+      // announce every existing order as "new".
+      const assignedIds = new Set(
+        filteredOrders
+          .filter((o) => String(o.status).toLowerCase() === "in progress")
+          .map((o) => o.id),
+      );
+      if (knownOrderIdsRef.current) {
+        const arrived = filteredOrders.filter(
+          (o) =>
+            String(o.status).toLowerCase() === "in progress" &&
+            !knownOrderIdsRef.current.has(o.id),
+        );
+        if (arrived.length && !silent) {
+          setHasNewOrder(true);
+          try {
+            new Audio(notificationSound).play().catch(() => {});
+          } catch {
+            // audio playback blocked/unsupported — the bell still rings visually
+          }
+          setTimeout(() => {
+            arrived.forEach((order) => speakNewAssignmentAlert(order));
+          }, 600);
+        }
+      }
+      knownOrderIdsRef.current = assignedIds;
     } catch (error) {
       console.error(error);
       setOrders([]);
@@ -91,237 +150,68 @@ const DeliveryPartnerDashboard = () => {
     }
   };
 
-  // const fetchDeliveryProfile = async () => {
-  //   try {
-  //     setLoading(true);
-
-  //     const res = await axios.get(
-  //       `${API_BASE}/DeliveryPartner/GetDeliveryPartnerDetailsByUserId?userId=${userId}`
-  //     );
-
-  //     const raw = res?.data ?? null;
-
-  //     const profile = Array.isArray(raw)
-  //       ? raw.length > 0
-  //         ? raw[0]
-  //         : null
-  //       : raw && typeof raw === "object" && Object.keys(raw).length > 0
-  //       ? raw
-  //       : null;
-
-  //     setDeliveryProfile(profile);
-
-  //     const reg = profile?.isRegistered === true;
-  //     const status = (profile?.status || "").toLowerCase();
-
-  //     setIsRegistered(reg);
-  //     setPartnerStatus(status);
-
-  //     if (reg && status === "open") {
-  //       await fetchAssignedOrders();
-  //     } else {
-  //       setOrders([]);
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //     setDeliveryProfile(null);
-  //     setIsRegistered(false);
-  //     setPartnerStatus("");
-  //     setOrders([]);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  useEffect(() => {
-    fetchDeliveryProfile();
-  }, [userId]);
-
-//   const handleJoinNow = () => {
-//     navigate(`/deliveryPartner/${userType}/${userId}`);
-//   };
-
-  const handleViewDetails = async (order) => {
+  const fetchDeliveryProfile = async () => {
     try {
       setLoading(true);
 
-      const response = await fetch(
-        `${API_BASE}/Mart/GetProductDetails?id=${order.id}`
+      const res = await axios.get(
+        `${API_BASE}/DeliveryPartner/GetDeliveryPartnerDetailsByUserId?userId=${userId}`
       );
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch details");
+      const raw = res?.data ?? null;
+
+      const profile = Array.isArray(raw)
+        ? raw.length > 0
+          ? raw[0]
+          : null
+        : raw && typeof raw === "object" && Object.keys(raw).length > 0
+        ? raw
+        : null;
+
+      setDeliveryProfile(profile);
+
+      const reg = profile?.isRegistered === true;
+      const status = (profile?.status || "").toLowerCase();
+
+      setIsRegistered(reg);
+      setPartnerStatus(status);
+
+      if (reg && status === "open") {
+        await fetchAssignedOrders({ silent: true });
+      } else {
+        setOrders([]);
       }
-
-      const data = await response.json();
-
-      setSelectedOrder({
-        ...data,
-        paymentType: data.paymentType || "",
-        receivedAmount: "",
-        cashAmount: "",
-        onlineAmount: "",
-      });
-
-      setShowDetails(false);
-      setShowOrderModal(true);
     } catch (error) {
       console.error(error);
-      alert("Failed to load order details");
+      setDeliveryProfile(null);
+      setIsRegistered(false);
+      setPartnerStatus("");
+      setOrders([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCashChange = (value) => {
-    const cash = Number(value || 0);
-    const online = Number(selectedOrder?.onlineAmount || 0);
+  useEffect(() => {
+    fetchDeliveryProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId]);
 
-    setSelectedOrder((prev) => ({
-      ...prev,
-      cashAmount: cash,
-      receivedAmount: cash + online,
-    }));
-  };
+  // Poll for newly-assigned orders so the header bell can ring/speak even
+  // while the delivery partner is just sitting on this dashboard.
+  useEffect(() => {
+    if (!(isRegistered && partnerStatus === "open")) return;
+    const interval = setInterval(
+      () => fetchAssignedOrders(),
+      ASSIGNED_ORDERS_POLL_INTERVAL_MS,
+    );
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isRegistered, partnerStatus, userId]);
 
-  const handleOnlineChange = (value) => {
-    const online = Number(value || 0);
-    const cash = Number(selectedOrder?.cashAmount || 0);
-
-    setSelectedOrder((prev) => ({
-      ...prev,
-      onlineAmount: online,
-      receivedAmount: cash + online,
-    }));
-  };
-
-    const handleDeclineOrder = async (ticket) => {
-    try {
-      const detailsResponse = await fetch(
-        `${API_BASE}/Mart/GetProductDetails?id=${ticket.id}`
-      );
-
-      if (!detailsResponse.ok) {
-        throw new Error("Failed to fetch order details");
-      }
-
-      const currentOrderData = await detailsResponse.json();
-
-      const payload = {
-        ...currentOrderData,
-        id: ticket.id,
-        userId: userId,
-        martId: ticket.martId,
-        date: ticket.date,
-        status: "Open",
-        PaymentMode: "",
-        utrTransactionNumber:
-          currentOrderData.utrTransactionNumber || "",
-        transactionNumber:
-          currentOrderData.transactionNumber || "",
-        transactionStatus:
-          currentOrderData.transactionStatus || "",
-        PaidAmount: "",
-        AssignedTo: "",
-        DeliveryPartnerUserId: "",
-        deliveryAssignedTime: "",
-        deliverySubmitTime: new Date().toISOString(),
-        latitude: currentOrderData.latitude,
-        longitude: currentOrderData.longitude,
-        isDelivered: true,
-      };
-
-      const response = await fetch(
-        `${API_BASE}/Mart/UpdateProductDetails/${ticket.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Decline failed");
-      }
-
-      alert("Order declined successfully");
-
-      setShowOrderModal(false);
-
-      await fetchAssignedOrders();
-    } catch (error) {
-      console.error(error);
-      alert("Failed to decline order");
-    }
-  };
-
-  const handleSubmitDelivery = async (ticket) => {
-    try {
-      const detailsResponse = await fetch(
-        `${API_BASE}/Mart/GetProductDetails?id=${ticket.id}`
-      );
-
-      if (!detailsResponse.ok) {
-        throw new Error("Failed to fetch order details");
-      }
-
-      const currentOrderData = await detailsResponse.json();
-
-      const payload = {
-        ...currentOrderData,
-        id: ticket.id,
-        userId: userId,
-        martId: ticket.martId,
-        date: ticket.date,
-        status: "Delivered",
-        utrTransactionNumber:
-          currentOrderData.utrTransactionNumber || "",
-        transactionNumber:
-          currentOrderData.transactionNumber || "",
-        transactionStatus:
-          currentOrderData.transactionStatus || "",
-        PaymentMode: ticket.paymentType,
-        PaidAmount:
-          ticket.paymentType?.toLowerCase() === "cash&online"
-            ? `cash=${ticket.cashAmount || 0}, online=${ticket.onlineAmount || 0}`
-            : String(ticket.receivedAmount || 0),
-        AssignedTo: currentOrderData.assignedTo,
-        DeliveryPartnerUserId:
-          currentOrderData.deliveryPartnerUserId,
-        deliveryAssignedTime:
-          currentOrderData.deliveryAssignedTime,
-        deliverySubmitTime: new Date().toISOString(),
-        latitude: currentOrderData.latitude,
-        longitude: currentOrderData.longitude,
-        isDelivered: true,
-      };
-
-      const response = await fetch(
-        `${API_BASE}/Mart/UpdateProductDetails/${ticket.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Delivery update failed");
-      }
-
-      alert("Order delivered successfully");
-
-      setShowOrderModal(false);
-
-      await fetchAssignedOrders();
-    } catch (error) {
-      console.error(error);
-      alert("Failed to submit delivery");
-    }
+  const handleViewDetails = (order) => {
+    setHasNewOrder(false);
+    navigate(`/deliveryOrderDetails/${userType}/${userId}/${order.id}`);
   };
 
   if (loading) {
@@ -364,9 +254,54 @@ const DeliveryPartnerDashboard = () => {
             color: "#fff",
           }}
         >
-          <h2 style={{  fontSize: isMobile ? "20px" : "34px",  fontWeight: "600",}}>
+          <h2
+            className="d-flex align-items-center gap-2"
+            style={{ fontSize: isMobile ? "20px" : "34px", fontWeight: "600" }}
+          >
             🚚 Delivery Partner Dashboard
+            {isRegistered && partnerStatus === "open" && (
+              <span
+                onClick={() => setHasNewOrder(false)}
+                title="Assigned orders"
+                className={`d-inline-flex align-items-center justify-content-center rounded-circle bg-white position-relative${
+                  hasNewOrder ? " delivery-bell-ring" : ""
+                }`}
+                style={{
+                  width: 30,
+                  height: 30,
+                  color: "#10301F",
+                  boxShadow: "0 1px 4px rgba(0,0,0,.35)",
+                  cursor: "pointer",
+                }}
+              >
+                <NotificationsActiveIcon style={{ fontSize: 18 }} />
+                {stats.inProgress > 0 && (
+                  <span
+                    className="badge rounded-pill bg-danger position-absolute"
+                    style={{ top: -6, right: -6, fontSize: 10, padding: "3px 5px" }}
+                  >
+                    {stats.inProgress}
+                  </span>
+                )}
+              </span>
+            )}
           </h2>
+          <style>{`
+            @keyframes deliveryBellRing {
+              0%, 100% { transform: rotate(0deg); }
+              10% { transform: rotate(-18deg); }
+              20% { transform: rotate(16deg); }
+              30% { transform: rotate(-14deg); }
+              40% { transform: rotate(12deg); }
+              50% { transform: rotate(-8deg); }
+              60% { transform: rotate(6deg); }
+              70%, 100% { transform: rotate(0deg); }
+            }
+            .delivery-bell-ring {
+              animation: deliveryBellRing 1s ease-in-out infinite;
+              transform-origin: 50% 0%;
+            }
+          `}</style>
 
           <h5  style={{    fontSize: isMobile ? "15px" : "20px",  }}>
             Welcome,{" "}
@@ -625,379 +560,6 @@ const DeliveryPartnerDashboard = () => {
           </>
         )}
       </div>
-            {/* ORDER DETAILS MODAL */}
-      {showOrderModal && selectedOrder && (
-        <div
-          className="modal fade show d-block"
-          style={{
-            backgroundColor: "rgba(0,0,0,0.6)",
-            overflowY: "auto",
-          }}
-        >
-          <div
-            className={`modal-dialog ${
-              isMobile
-                ? "modal-fullscreen"
-                : "modal-xl modal-dialog-centered"
-            }`}
-          >
-            <div
-              className="modal-content border-0"
-              style={{
-                borderRadius: isMobile ? "0px" : "20px",
-              }}
-            >
-              {/* MODAL HEADER */}
-              <div
-                className="modal-header text-white"
-                style={{
-                  background:
-                    "linear-gradient(135deg, #198754, #0d6efd)",
-                }}
-              >
-                <h5
-                  className="modal-title"
-                  style={{
-                    fontWeight: "700",
-                  }}
-                >
-                  Order Details
-                </h5>
-
-                <button
-                  className="btn-close btn-close-white"
-                  onClick={() =>
-                    setShowOrderModal(false)
-                  }
-                />
-              </div>
-
-              {/* MODAL BODY */}
-              <div
-                className="modal-body"
-                style={{
-                  padding: isMobile ? "18px" : "30px",
-                }}
-              >
-                {/* CUSTOMER INFO */}
-                <div className="mb-4">
-                  <h5 className="mb-3">
-                    Customer Information
-                  </h5>
-
-                  <p>
-                    <strong>Name:</strong>{" "}
-                    {selectedOrder.customerName}
-                  </p>
-
-                  <p>
-                    <strong>Phone:</strong>{" "}
-                    {selectedOrder.customerPhoneNumber}
-                  </p>
-
-                  <p>
-                    <strong>Address:</strong>{" "}
-                    {[
-                      selectedOrder.address,
-                      selectedOrder.district,
-                      selectedOrder.state,
-                      selectedOrder.zipCode,
-                    ]
-                      .filter(Boolean)
-                      .join(", ")}
-                  </p>
-                </div>
-
-                {/* VIEW ITEMS */}
-                <button
-                  className="btn btn-outline-primary mb-3"
-                  onClick={() =>
-                    setShowDetails(!showDetails)
-                  }
-                >
-                  {showDetails
-                    ? "Hide Order Items"
-                    : "View Order Items"}
-                </button>
-
-                {/* PRODUCT TABLE */}
-                {showDetails && (
-                  <div className="table-responsive">
-                    <table className="table table-bordered text-center">
-                      <thead className="table-success">
-                        <tr>
-                          <th>S.No</th>
-                          <th>Product</th>
-                          <th>Qty</th>
-                          <th>Price</th>
-                        </tr>
-                      </thead>
-
-                      <tbody>
-                        {selectedOrder.categories
-                          ?.flatMap(
-                            (cat) => cat.products
-                          )
-                          ?.map((item, index) => (
-                            <tr key={index}>
-                              <td>{index + 1}</td>
-
-                              <td>
-                                {item.productName}
-                              </td>
-
-                              <td>
-                                {item.noOfQuantity}
-                              </td>
-
-                              <td>
-                                ₹
-                                {Number(
-                                  item.afterDiscountPrice
-                                ).toFixed(0)}
-                              </td>
-                            </tr>
-                          ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-
-                {/* TOTALS */}
-                <div className="text-center mt-4">
-                  <h5>
-                    Total Amount : ₹
-                    {selectedOrder.categories?.reduce(
-                      (sum, cat) =>
-                        sum +
-                        Number(
-                          cat.totalAmount || 0
-                        ),
-                      0
-                    )}
-                  </h5>
-
-                  <h3 className="text-danger fw-bold">
-                    Grand Total : ₹
-                    {selectedOrder.grandTotal}
-                  </h3>
-                </div>
-
-                {/* PAYMENT SECTION */}
-                {String(
-                  selectedOrder.status
-                ).toLowerCase() !==
-                  "delivered" && (
-                  <div className="mt-5">
-                    <h5 className="mb-3">
-                      Select Payment Mode
-                    </h5>
-
-                    {/* PAYMENT RADIOS */}
-                    <div
-                      className={`d-flex ${
-                        isMobile
-                          ? "flex-column"
-                          : "flex-row"
-                      } gap-3 mb-4`}
-                    >
-                      <label>
-                        <input
-                          type="radio"
-                          checked={
-                            selectedOrder.paymentType ===
-                            "cash"
-                          }
-                          onChange={() =>
-                            setSelectedOrder(
-                              (prev) => ({
-                                ...prev,
-                                paymentType: "cash",
-                                receivedAmount: "",
-                                cashAmount: "",
-                                onlineAmount: "",
-                              })
-                            )
-                          }
-                        />{" "}
-                        Cash
-                      </label>
-
-                      <label>
-                        <input
-                          type="radio"
-                          checked={
-                            selectedOrder.paymentType ===
-                            "online"
-                          }
-                          onChange={() =>
-                            setSelectedOrder(
-                              (prev) => ({
-                                ...prev,
-                                paymentType:
-                                  "online",
-                                receivedAmount: "",
-                                cashAmount: "",
-                                onlineAmount: "",
-                              })
-                            )
-                          }
-                        />{" "}
-                        Online
-                      </label>
-
-                      <label>
-                        <input
-                          type="radio"
-                          checked={
-                            selectedOrder.paymentType ===
-                            "Cash&Online"
-                          }
-                          onChange={() =>
-                            setSelectedOrder(
-                              (prev) => ({
-                                ...prev,
-                                paymentType:
-                                  "Cash&Online",
-                                receivedAmount: "",
-                                cashAmount: "",
-                                onlineAmount: "",
-                              })
-                            )
-                          }
-                        />{" "}
-                        Cash + Online
-                      </label>
-                    </div>
-
-                    {/* CASH + ONLINE */}
-                    {selectedOrder.paymentType ===
-                    "Cash&Online" ? (
-                      <div className="row g-3">
-                        <div className="col-12 col-md-4">
-                          <label>
-                            Cash Amount
-                          </label>
-
-                          <input
-                            type="number"
-                            className="form-control"
-                            value={
-                              selectedOrder.cashAmount
-                            }
-                            onChange={(e) =>
-                              handleCashChange(
-                                e.target.value
-                              )
-                            }
-                          />
-                        </div>
-
-                        <div className="col-12 col-md-4">
-                          <label>
-                            Online Amount
-                          </label>
-
-                          <input
-                            type="number"
-                            className="form-control"
-                            value={
-                              selectedOrder.onlineAmount
-                            }
-                            onChange={(e) =>
-                              handleOnlineChange(
-                                e.target.value
-                              )
-                            }
-                          />
-                        </div>
-
-                        <div className="col-12 col-md-4">
-                          <label>Total</label>
-
-                          <input
-                            className="form-control"
-                            readOnly
-                            value={
-                              selectedOrder.receivedAmount
-                            }
-                          />
-                        </div>
-                      </div>
-                    ) : (
-                      selectedOrder.paymentType && (
-                        <div className="mt-3">
-                          <label>
-                            Enter Amount
-                          </label>
-
-                          <input
-                            type="number"
-                            className="form-control"
-                            value={
-                              selectedOrder.receivedAmount
-                            }
-                            onChange={(e) =>
-                              setSelectedOrder(
-                                (prev) => ({
-                                  ...prev,
-                                  receivedAmount:
-                                    e.target.value,
-                                })
-                              )
-                            }
-                          />
-                        </div>
-                      )
-                    )}
-
-                    {/* ACTION BUTTONS */}
-                    <div
-                      className={`d-flex ${
-                        isMobile
-                          ? "flex-column"
-                          : "flex-row"
-                      } gap-3 mt-4`}
-                    >
-                      <button
-                        className="btn btn-success w-100"
-                        style={{
-                          padding: "12px",
-                          borderRadius: "12px",
-                          fontWeight: "700",
-                        }}
-                        onClick={() =>
-                          handleSubmitDelivery(
-                            selectedOrder
-                          )
-                        }
-                      >
-                        Submit Delivery
-                      </button>
-
-                      <button
-                        className="btn btn-danger w-100"
-                        style={{
-                          padding: "12px",
-                          borderRadius: "12px",
-                          fontWeight: "700",
-                        }}
-                        onClick={() =>
-                          handleDeclineOrder(
-                            selectedOrder
-                          )
-                        }
-                      >
-                        Decline Order
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 };
