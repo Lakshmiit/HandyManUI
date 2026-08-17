@@ -505,6 +505,30 @@ const ProfilePage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Speaks a short voice alert for a newly-arrived order — customer name
+  // and delivery zip code — right after the bell sound plays. Uses the
+  // browser's built-in Speech Synthesis API, so there's nothing new to
+  // install; it just silently no-ops on browsers that don't support it.
+  const speakNewOrderAlert = useCallback((order) => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+      return;
+    }
+    const customerName = order?.customerName?.trim() || "a customer";
+    const zip = order?.zipCode?.toString().trim();
+    const message = zip
+      ? `New order received from ${customerName}, zip code ${zip}.`
+      : `New order received from ${customerName}.`;
+    try {
+      const utterance = new SpeechSynthesisUtterance(message);
+      utterance.rate = 1;
+      utterance.pitch = 1;
+      window.speechSynthesis.speak(utterance);
+    } catch {
+      // speech synthesis unsupported/blocked — the bell sound and visual
+      // badge still cover the notification
+    }
+  }, []);
+
   // Poll for the logged-in vendor's orders so the Vendor Portal icon can
   // show a live count and ring the bell (sound + highlight) when a brand
   // new order arrives, even while browsing the rest of the app.
@@ -528,14 +552,22 @@ const ProfilePage = () => {
 
         const ids = new Set(list.map((o) => o.id));
         if (vendorKnownOrderIdsRef.current) {
-          const arrived = [...ids].some((id) => !vendorKnownOrderIdsRef.current.has(id));
-          if (arrived) {
+          const arrivedOrders = list.filter(
+            (o) => !vendorKnownOrderIdsRef.current.has(o.id),
+          );
+          if (arrivedOrders.length) {
             setVendorHasNewOrder(true);
             try {
               new Audio(notificationSound).play().catch(() => {});
             } catch {
               // audio playback blocked/unsupported — the bell still rings visually
             }
+            // Slight delay so the ringtone and the voice line don't talk
+            // over each other; each order gets its own spoken line and
+            // speechSynthesis queues them automatically.
+            setTimeout(() => {
+              arrivedOrders.forEach((order) => speakNewOrderAlert(order));
+            }, 600);
           }
         }
         vendorKnownOrderIdsRef.current = ids;
@@ -550,7 +582,7 @@ const ProfilePage = () => {
       cancelled = true;
       clearInterval(interval);
     };
-  }, [vendorSessionId]);
+  }, [vendorSessionId, speakNewOrderAlert]);
 
   const handleVendorOrdersBellClick = (e) => {
     e.stopPropagation();
