@@ -1326,14 +1326,7 @@ const VendorStockUpdatePage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vendor]);
 
-  // Pull in whatever this vendor already has on record with the backend
-  // (a previously submitted Pending/Approved batch — same data
-  // VendorPreviewPage shows via getVendorProductsByVendorId) so that
-  // reopening a category shows the real quantity/discount instead of 0,
-  // even on a fresh browser with no localStorage draft yet. This is the
-  // BASE layer — the localStorage draft effect below runs after and
-  // overlays on top, so an in-progress local edit for a product always
-  // wins over the last-synced backend value for that same product.
+  
   useEffect(() => {
     if (!vendor || hydratedBackendRef.current) return;
     hydratedBackendRef.current = true;
@@ -2192,7 +2185,7 @@ const VendorStockUpdatePage = () => {
                       className={`vsu-product-card position-relative ${isSelectedForSubmission(item.id) ? "border-success border-2" : ""}`}
                       style={{ opacity: isOutOfStock ? 0.85 : 1 }}
                     >
-                      <span
+                      {/* <span
                         className="badge position-absolute"
                         style={{
                           top: 6,
@@ -2208,7 +2201,7 @@ const VendorStockUpdatePage = () => {
                         }}
                       >
                         {item.status || "—"}
-                      </span>
+                      </span> */}
                       <label
                         className="position-absolute d-flex align-items-center justify-content-center"
                         style={{
@@ -2258,7 +2251,7 @@ const VendorStockUpdatePage = () => {
                             backgroundColor: "#f5f5f5",
                           }}
                         />
-                        {isOutOfStock && (
+                        {/* {isOutOfStock && (
                           <div
                             className="position-absolute d-flex justify-content-center align-items-center"
                             style={{
@@ -2284,7 +2277,7 @@ const VendorStockUpdatePage = () => {
                               Out of Stock
                             </span>
                           </div>
-                        )}
+                        )} */}
                       </div>
 
                       <h6
