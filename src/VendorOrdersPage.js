@@ -12,16 +12,13 @@ import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import ImageCache from "./utils/ImageCache";
 import { getImageFilename, imageValueToUrl } from "./utils/imageSource";
 
-// NOTE: every other file in this project talks to
-// "https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api". This page instead points at the QA host
-// below because that's the exact endpoint given for
-// GetVendorOrdersByVendorId. If your local/dev backend also serves this
-// route (and DeliveryPartner/GetAllDeliveryPartners + Mart/UpdateProductDetails),
-// swap API_BASE back to the localhost one to match the rest of the app.
-const API_BASE = "https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api";
+const API_BASE = "https://localhost:7091/api";
 const GET_VENDOR_ORDERS = `${API_BASE}/Mart/GetVendorOrdersByVendorId`;
 const GET_ALL_DELIVERY_PARTNERS = `${API_BASE}/DeliveryPartner/GetAllDeliveryPartners`;
 const UPDATE_ORDER = `${API_BASE}/Mart/UpdateProductDetails`;
@@ -44,6 +41,116 @@ const formatDate = (value) => {
     hour: "2-digit",
     minute: "2-digit",
   });
+};
+
+// Figures out the image "type" string jsPDF's addImage() wants, based on
+// the data URL's mime prefix. Falls back to JPEG since that's what
+// ImageCache stores product photos as.
+const pdfImageFormat = (dataUrl) => {
+  if (typeof dataUrl !== "string") return null;
+  if (dataUrl.startsWith("data:image/png")) return "PNG";
+  if (dataUrl.startsWith("data:image/jpeg") || dataUrl.startsWith("data:image/jpg")) return "JPEG";
+  if (dataUrl.startsWith("data:image/webp")) return "WEBP";
+  // addImage can't embed a remote (non-base64) URL synchronously, so
+  // anything that isn't a data: URL is skipped rather than left broken.
+  return null;
+};
+
+// Builds and triggers download of a single-order PDF: header with the
+// vendor/order/customer info, an items table (including each product's
+// thumbnail when we already have it cached in imageUrls), and a
+// totals/assignment footer. imageUrls is the same {productImage -> data
+// URL} map the page keeps in state for rendering thumbnails on screen,
+// passed in so the PDF can reuse it without re-fetching anything.
+const downloadOrderPdf = (order, vendor, imageUrls = {}) => {
+  const doc = new jsPDF({ unit: "pt", format: "a4" });
+  const marginX = 40;
+  let cursorY = 50;
+
+  const orderIdLabel = order.martId || order.id;
+
+  doc.setFontSize(16);
+  doc.setFont(undefined, "bold");
+  doc.text(vendor?.storeName || vendor?.name || "Order Details", marginX, cursorY);
+
+  doc.setFontSize(10);
+  doc.setFont(undefined, "normal");
+  cursorY += 18;
+  doc.text(`Order: ${orderIdLabel}`, marginX, cursorY);
+  doc.text(`Date: ${formatDate(order.date)}`, 400, cursorY);
+
+  cursorY += 24;
+  doc.setFont(undefined, "bold");
+  doc.text("Customer", marginX, cursorY);
+  doc.setFont(undefined, "normal");
+  cursorY += 16;
+  doc.text(order.customerName || "Customer", marginX, cursorY);
+  cursorY += 14;
+  doc.text(`Phone: ${order.customerPhoneNumber || "—"}`, marginX, cursorY);
+  cursorY += 14;
+
+  const addressLine = [order.address, order.district, order.state]
+    .filter(Boolean)
+    .join(", ");
+  const addressText = `${addressLine}${order.zipCode ? ` — ${order.zipCode}` : ""}`;
+  const wrappedAddress = doc.splitTextToSize(addressText || "—", 515);
+  doc.text(wrappedAddress, marginX, cursorY);
+  cursorY += wrappedAddress.length * 14 + 10;
+
+  const items = (order.categories || []).flatMap((cat) => cat.products || []);
+  // First column is left blank in the data — the thumbnail is painted
+  // on top of that cell in didDrawCell below, since autoTable cells only
+  // hold text/strings, not images.
+  const rows = items.map((p) => [
+    "",
+    p.productName || "",
+    String(p.noOfQuantity ?? ""),
+    `Rs ${p.afterDiscountPrice ?? 0}`,
+    `Rs ${(Number(p.afterDiscountPrice) || 0) * (Number(p.noOfQuantity) || 0)}`,
+  ]);
+
+  autoTable(doc, {
+    startY: cursorY,
+    margin: { left: marginX, right: marginX },
+    head: [["", "Item", "Qty", "Price", "Subtotal"]],
+    body: rows,
+    styles: { fontSize: 9, cellPadding: 6, minCellHeight: 32, valign: "middle" },
+    headStyles: { fillColor: [67, 56, 202] },
+    columnStyles: { 0: { cellWidth: 34 } },
+    didDrawCell: (data) => {
+      if (data.section !== "body" || data.column.index !== 0) return;
+      const product = items[data.row.index];
+      const dataUrl = product && imageUrls[product.productImage];
+      const format = pdfImageFormat(dataUrl);
+      if (!dataUrl || !format) return;
+      try {
+        const size = Math.min(data.cell.height, data.cell.width) - 6;
+        const x = data.cell.x + (data.cell.width - size) / 2;
+        const y = data.cell.y + (data.cell.height - size) / 2;
+        doc.addImage(dataUrl, format, x, y, size, size);
+      } catch (err) {
+        // A single bad/corrupt image shouldn't break the rest of the PDF.
+        console.error("Failed to embed product image in PDF:", err);
+      }
+    },
+  });
+
+  let afterTableY = doc.lastAutoTable.finalY + 24;
+
+  doc.setFont(undefined, "bold");
+  doc.text(`Grand Total: Rs ${order.grandTotal ?? 0} /-`, marginX, afterTableY);
+  doc.setFont(undefined, "normal");
+
+  if (order.assignedTo) {
+    afterTableY += 16;
+    doc.text(`Assigned to: ${order.assignedTo}`, marginX, afterTableY);
+    if (order.deliveryAssignedTime) {
+      afterTableY += 14;
+      doc.text(`Assigned on: ${formatDate(order.deliveryAssignedTime)}`, marginX, afterTableY);
+    }
+  }
+
+  doc.save(`order-${orderIdLabel}.pdf`);
 };
 
 const VendorOrdersPage = () => {
@@ -281,70 +388,96 @@ const VendorOrdersPage = () => {
       {error && <div className="alert alert-danger">{error}</div>}
 
       {/* ---- Graphical summary ---- */}
-      <style>{`
-        .vendor-stats-grid {
-          display: grid;
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-          gap: 12px;
-        }
-        @media (min-width: 768px) {
-          .vendor-stats-grid {
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-          }
-        }
-      `}</style>
-      <div className="vendor-stats-grid mb-4">
-        {[
-          {
-            key: "total",
-            icon: <Inventory2Icon style={{ color: "#4338ca" }} fontSize="small" />,
-            bg: "rgba(67,56,202,.1)",
-            value: summary.total,
-            label: "Total orders",
-          },
-          {
-            key: "open",
-            icon: <PendingActionsIcon className="text-warning" fontSize="small" />,
-            bg: "rgba(255,193,7,.15)",
-            value: summary.open,
-            label: "Open",
-          },
-          {
-            key: "delivered",
-            icon: <CheckCircleIcon className="text-success" fontSize="small" />,
-            bg: "rgba(25,135,84,.12)",
-            value: summary.delivered,
-            label: "Delivered",
-          },
-          {
-            key: "unassigned",
-            icon: <TwoWheelerIcon className="text-info" fontSize="small" />,
-            bg: "rgba(13,202,240,.15)",
-            value: summary.unassigned,
-            label: "Unassigned",
-          },
-        ].map((stat) => (
-          <div className="card border shadow-sm h-100" key={stat.key} style={{ minWidth: 0 }}>
-            <div className="card-body p-3 d-flex flex-column align-items-start gap-2">
-              <div className="d-flex align-items-center gap-2">
-                <div
-                  className="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
-                  style={{ width: 36, height: 36, backgroundColor: stat.bg }}
-                >
-                  {stat.icon}
-                </div>
-                <div className="fs-5 fw-bold lh-1">{stat.value}</div>
-              </div>
-              <div
-                className="text-muted text-uppercase"
-                style={{ fontSize: 11, letterSpacing: ".04em", lineHeight: 1.2 }}
-              >
-                {stat.label}
-              </div>
-            </div>
+<style>{`
+  .vendor-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    width: 100%;
+  }
+  @media (min-width: 768px) {
+    .vendor-stats-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+  }
+  .vendor-stat-card {
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+  .vendor-stat-card .card-body {
+    min-width: 0;
+  }
+  .vendor-stat-top {
+    min-width: 0;
+    width: 100%;
+  }
+  .vendor-stat-value {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .vendor-stat-label {
+    min-width: 0;
+    white-space: normal;
+    word-break: break-word;
+  }
+`}</style>
+<div className="vendor-stats-grid mb-4">
+  {[
+    {
+      key: "total",
+      icon: <Inventory2Icon style={{ color: "#4338ca" }} fontSize="small" />,
+      bg: "rgba(67,56,202,.1)",
+      value: summary.total,
+      label: "Total orders",
+    },
+    {
+      key: "open",
+      icon: <PendingActionsIcon className="text-warning" fontSize="small" />,
+      bg: "rgba(255,193,7,.15)",
+      value: summary.open,
+      label: "Open",
+    },
+    {
+      key: "delivered",
+      icon: <CheckCircleIcon className="text-success" fontSize="small" />,
+      bg: "rgba(25,135,84,.12)",
+      value: summary.delivered,
+      label: "Delivered",
+    },
+    {
+      key: "unassigned",
+      icon: <TwoWheelerIcon className="text-info" fontSize="small" />,
+      bg: "rgba(13,202,240,.15)",
+      value: summary.unassigned,
+      label: "Unassigned",
+    },
+  ].map((stat) => (
+    <div className="card border shadow-sm h-100 vendor-stat-card" key={stat.key}>
+      <div className="card-body p-2 p-md-3 d-flex flex-column align-items-start gap-1 gap-md-2">
+        <div className="d-flex align-items-center gap-2 vendor-stat-top">
+          <div
+            className="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
+            style={{ width: 32, height: 32, backgroundColor: stat.bg }}
+          >
+            {stat.icon}
           </div>
-        ))}
+          <div className="fs-6 fs-md-5 fw-bold lh-1 vendor-stat-value">{stat.value}</div>
+        </div>
+        <div
+          className="text-muted text-uppercase vendor-stat-label"
+          style={{ fontSize: 10, letterSpacing: ".03em", lineHeight: 1.2 }}
+        >
+          {stat.label}
+        </div>
       </div>
+    </div>
+  ))}
+</div>
 
       {summary.total > 0 && (
         <div className="card border shadow-sm mb-4">
@@ -426,23 +559,38 @@ const VendorOrdersPage = () => {
                         {order.customerName || "Customer"} &middot; {formatDate(order.date)}
                       </div>
                     </div>
-                    <button
-                      type="button"
-                      className="btn btn-sm btn-light d-inline-flex align-items-center justify-content-center rounded-circle flex-shrink-0"
-                      style={{ width: 32, height: 32 }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleOrderExpanded(order.id);
-                      }}
-                      aria-label={isExpanded ? "Collapse order details" : "Expand order details"}
-                      title={isExpanded ? "Collapse" : "Expand"}
-                    >
-                      {isExpanded ? (
-                        <ExpandLessIcon fontSize="small" />
-                      ) : (
-                        <ExpandMoreIcon fontSize="small" />
-                      )}
-                    </button>
+                    <div className="d-flex align-items-center gap-1 flex-shrink-0">
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-light d-inline-flex align-items-center justify-content-center rounded-circle"
+                        style={{ width: 32, height: 32 }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          downloadOrderPdf(order, vendor, imageUrls);
+                        }}
+                        aria-label="Download order as PDF"
+                        title="Download PDF"
+                      >
+                        <PictureAsPdfIcon fontSize="small" style={{ color: "#dc2626" }} />
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-light d-inline-flex align-items-center justify-content-center rounded-circle"
+                        style={{ width: 32, height: 32 }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleOrderExpanded(order.id);
+                        }}
+                        aria-label={isExpanded ? "Collapse order details" : "Expand order details"}
+                        title={isExpanded ? "Collapse" : "Expand"}
+                      >
+                        {isExpanded ? (
+                          <ExpandLessIcon fontSize="small" />
+                        ) : (
+                          <ExpandMoreIcon fontSize="small" />
+                        )}
+                      </button>
+                    </div>
                   </div>
 
                   {isExpanded && (
@@ -544,6 +692,12 @@ const VendorOrdersPage = () => {
                           {assigning[order.id] ? "Assigning…" : "Assign"}
                         </button>
                       </div>
+                      {order.assignedTo && (
+                        <div className="alert alert-success py-1 px-2 small mt-2 mb-0 d-flex align-items-center gap-1">
+                          <CheckCircleIcon fontSize="inherit" />
+                          Order is assigned to <strong>{order.assignedTo}</strong>
+                        </div>
+                      )}
                       {order.deliveryAssignedTime && (
                         <div className="small text-muted mt-1">
                           Assigned {formatDate(order.deliveryAssignedTime)}
