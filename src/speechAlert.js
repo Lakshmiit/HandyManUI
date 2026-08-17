@@ -91,6 +91,12 @@ export function speakAlert(message, { rate = 1, pitch = 1 } = {}) {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) {
     return;
   }
+  if (!voicesReady) {
+    // Voices may still load in time for speak() to work anyway on some
+    // devices — this only affects the console warning, not whether we
+    // attempt to speak.
+    console.warn("speechSynthesis voices not loaded yet; attempting to speak anyway.");
+  }
   try {
     // Clear any stuck/queued utterances first — Android WebView's queue
     // can get stuck, silently blocking every future speak() call.
