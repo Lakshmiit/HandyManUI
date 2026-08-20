@@ -11,11 +11,31 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder"; 
 import { CartStorage } from "./CartStorage";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ImageCache from "./utils/ImageCache";
+// import ImageCache from "./utils/ImageCache";
 import Footer from "./Footer.js";
-import { getImageFilename, imageValueToUrl } from "./utils/imageSource";
-
 // import { appConfig } from "./config";
+
+const BLOB_BASE_URL =
+  "https://lmartfiles.blob.core.windows.net/userattechements";
+
+const getAzureImageUrl = (imageValue) => {
+  if (!imageValue) return "";
+
+  const value = String(imageValue).trim();
+
+  if (!value) return "";
+
+  // If API already returns a complete URL
+  if (/^https?:\/\//i.test(value)) {
+    return value;
+  }
+
+  // Remove leading slash
+  const cleanName = value.replace(/^\/+/, "");
+
+  // Encode spaces, brackets, etc.
+  return `${BLOB_BASE_URL}/${encodeURIComponent(cleanName)}`;
+};
 
 const MartHomeAppliances = () => { 
   const navigate = useNavigate();
@@ -76,7 +96,7 @@ useEffect(() => {
     code: product?.code || "",
     units: product?.units || "",
   };
-});
+});  
   CartStorage.upsertCategory(selectedCategory, current);
   setGrandSummary(CartStorage.grandSummary());
 }, [cart, selectedCategory, products]);
@@ -178,121 +198,72 @@ const mapApiProductToUI = (p) => {
 };
 
  useEffect(() => {
-  if (!encodedCategory) return;
-  const decodedCat = decodeURIComponent(encodedCategory);
-  setSelectedCategory(decodedCat);
-  let cancelled = false;
-  const controller = new AbortController();
-
-  async function fetchProductsAndFirstImages(warm = false, signal) {
-    try {
-      if (!warm) setImageLoading(true);
-      const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Product/GetProductsByCategory?Category=${encodeURIComponent(
-        selectedCategory
-      )}`;
-      const { data } = await axios.get(url, { signal });
-      const safeItems = Array.isArray(data) ? data.map(mapApiProductToUI) : [];
-      const sorted = [...safeItems].sort((a, b) => {
-        const stockA = Number(a.stockLeft || 0);
-        const stockB = Number(b.stockLeft || 0);
-        if (stockA <= 0 && stockB > 0) return 1;
-        if (stockA > 0 && stockB <= 0) return -1;
-        const timeA = getItemTime(a);
-        const timeB = getItemTime(b);
-        return timeB - timeA;
-      });
-      setProducts(sorted);
-      if (warm) return;
-
-      // Resolve a filename (if any) for every product image up front
-      const allImages = safeItems
-        .flatMap((p) =>
-          (p.images || []).map((photo) => ({
-            productId: p.id,
-            photo,
-            filename: getImageFilename(photo),
-          }))
-        )
-        .filter((x) => !!x.photo);
-
-      const cachedMap = {};
-      const misses = [];
-
-      await Promise.all(
-        allImages.map(async ({ productId, photo, filename }) => {
-          // No filename means `photo` is already a usable direct URL
-          if (!filename) {
-            const directUrl = imageValueToUrl(photo);
-            if (directUrl) {
-              if (!cachedMap[productId]) cachedMap[productId] = [];
-              cachedMap[productId].push(directUrl);
-            }
-            return;
-          }
-          const cached = await ImageCache.getBase64(filename);
-          if (cached) {
-            if (!cachedMap[productId]) cachedMap[productId] = [];
-            cachedMap[productId].push(`data:image/jpeg;base64,${cached}`);
-          } else {
-            misses.push({ productId, filename });
-          }
-        })
-      );
-
-      if (Object.keys(cachedMap).length) {
-        setImageUrls((prev) => {
-          const merged = { ...prev };
-          for (const id in cachedMap) {
-            merged[id] = [...(merged[id] || []), ...cachedMap[id]];
-          }
-          return merged;
+    if (!encodedCategory) return;
+    const decodedCat = decodeURIComponent(encodedCategory);
+    setSelectedCategory(decodedCat);
+    let cancelled = false;
+    const controller = new AbortController();
+    // const POLL_MS = 2000; 
+    // let pollId = null;
+    async function fetchProductsAndFirstImages(warm = false, signal) {
+      try {   
+        if (!warm) setImageLoading(true);
+        const url = `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/Product/GetProductsByCategory?Category=${encodeURIComponent(
+          decodedCat
+        )}`;
+        const { data } = await axios.get(url, { signal });
+        const safeItems = Array.isArray(data) ? data.map(mapApiProductToUI) : [];
+        const sorted = [...safeItems].sort((a, b) => {
+          const stockA = Number(a.stockLeft || 0);
+          const stockB = Number(b.stockLeft || 0);
+          if (stockA <= 0 && stockB > 0) return 1;
+          if (stockA > 0 && stockB <= 0) return -1;
+          const timeA = getItemTime(a);
+          const timeB = getItemTime(b);
+          return timeB - timeA;
         });
-      }
+         if (cancelled) return;
+        setProducts(sorted);
+        const directImageUrls = {};
 
-      if (cancelled) return;
+sorted.forEach((product) => {
+  const photos = Array.isArray(product.images)
+    ? product.images
+    : [];
 
-      const fetchOne = async ({ productId, filename }) => {
-        try {
-          const res = await fetch(imageValueToUrl(filename), { signal });
-          if (!res.ok) throw new Error(`Image request failed: ${res.status}`);
-          const json = await res.json();
-          const b64 = json?.imageData || "";
-          if (!b64) return;
-          await ImageCache.setBase64(filename, b64);
-          const dataUrl = `data:image/jpeg;base64,${b64}`;
-          if (!cancelled) {
-            setImageUrls((prev) => {
-              const existing = prev[productId] || [];
-              if (existing.includes(dataUrl)) return prev;
-              return {
-                ...prev,
-                [productId]: [...existing, dataUrl],
-              };
-            });
-          }
-        } catch {}
-      };
-
-      await Promise.allSettled(misses.map(fetchOne));
-    } catch (err) {
-      if (err?.name !== "CanceledError" && err?.name !== "AbortError") {
-        console.error("Error fetching grocery products:", err);
-        if (!warm) {
-          setProducts([]);
-          setImageUrls({});
-        }
-      }
-    } finally {
-      if (!cancelled && !warm) setImageLoading(false);
-    }
+  if (photos.length > 0) {
+    directImageUrls[product.id] = photos.map((photo) =>
+      getAzureImageUrl(photo)
+    );
   }
+});
 
-  fetchProductsAndFirstImages(false, controller.signal);
-  return () => {
-    cancelled = true;
-    controller.abort();
-  };
-}, [encodedCategory, selectedCategory]);
+setImageUrls(directImageUrls);
+      } catch (err) {
+        if (err?.name !== "CanceledError" && err?.name !== "AbortError") {
+          console.error("Error fetching grocery products:", err);
+          if (!warm) {
+            setProducts([]);
+            setImageUrls({});
+          }
+        }
+      } finally {
+        if (!cancelled) setImageLoading(false);
+      }
+    }
+    fetchProductsAndFirstImages( controller.signal);
+    // pollId = setInterval(() => {
+    //   const pollController = new AbortController();
+    //   fetchProductsAndFirstImages(true, pollController.signal);
+    // }, POLL_MS);      
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+      // if (pollId) clearInterval(pollId);
+    };
+  }, [encodedCategory]);
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     handleResize();
@@ -500,13 +471,13 @@ const mapApiProductToUI = (p) => {
     className="d-flex justify-content-center align-items-center position-relative"
     style={{ height: "90px" }}
   >
-    
+    {imageUrls[product.id]?.[0] ? (
       <img
         src={imageUrls[product.id]?.[0]}
         alt={product.name}
-      //  decoding="async"
-      //   loading="eager" 
-      //   fetchpriority="high"
+        decoding="async"
+        loading="eager"
+        fetchpriority="high"
         style={{
           maxHeight: "80px",
           maxWidth: "100%",
@@ -516,7 +487,9 @@ const mapApiProductToUI = (p) => {
         }}
         onClick={() => !isOutOfStock && handleImageClick(imageUrls[product.id][0], product)}
       />
-    
+    ) : (
+      <span className="text-muted small">Loading Image</span>
+    )}
 
     {isOutOfStock && (
       <div

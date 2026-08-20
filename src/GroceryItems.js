@@ -11,10 +11,30 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder"; 
 import { CartStorage } from "./CartStorage";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ImageCache from "./utils/ImageCache";
-import { getImageFilename, imageValueToUrl } from "./utils/imageSource";
+// import ImageCache from "./utils/ImageCache";
+// import { getImageFilename, imageValueToUrl } from "./utils/imageSource";
 import Footer from "./Footer.js";
 // import { appConfig } from "./config";
+
+const BLOB_BASE_URL =
+  "https://lmartfiles.blob.core.windows.net/userattechements";
+
+const getAzureImageUrl = (imageName) => {
+  if (!imageName) return "";
+
+  if (
+    typeof imageName === "string" &&
+    (imageName.startsWith("http://") ||
+      imageName.startsWith("https://"))
+  ) {
+    return imageName;
+  }
+
+  const cleanName = String(imageName).replace(/^\/+/, "");
+
+  return `${BLOB_BASE_URL}/${encodeURIComponent(cleanName)}`;
+};
+
 const GroceryCard = () => {
 const navigate = useNavigate();
 // const location = useLocation();
@@ -28,7 +48,7 @@ const [showMenu, setShowMenu] = useState(false);
 const [products, setProducts] = useState([]);
 const [imageUrls, setImageUrls] = useState({});
 // const [imageLoading, setImageLoading] = useState(true);
-const [, setLoadingImages] = useState({}); 
+// const [, setLoadingImages] = useState({}); 
 const [showZoomModal, setShowZoomModal] = useState(false);
 const [zoomImage, setZoomImage] = useState("");
 const [cart, setCart] = useState({});
@@ -273,60 +293,36 @@ useEffect(() => {
       });
 
       setProducts(sorted);
+// Azure images
+      const directImageUrls = {};
 
-      const imageProducts = sorted
-        .map((product) => ({
-          product,
-          photo: Array.isArray(product.images) ? product.images[0] : null,
-        }))
-        .filter(({ photo }) => Boolean(photo));
+      sorted.forEach((product) => {
+        const photo = Array.isArray(product.images)
+          ? product.images[0]
+          : product.images;
 
-      setImageUrls({});
-      setLoadingImages(
-        Object.fromEntries(imageProducts.map(({ product }) => [product.id, true]))
-      );
+        if (photo) {
+          directImageUrls[product.id] =
+            getAzureImageUrl(photo);
+        }
+      });
 
-      await Promise.allSettled(
-        imageProducts.map(async ({ product, photo }) => {
-          const filename = getImageFilename(photo);
-          if (!filename) {
-            const directUrl = imageValueToUrl(photo);
-            if (directUrl) {
-              setImageUrls((prev) => ({ ...prev, [product.id]: directUrl }));
-            }
-            return;
-          }
-
-          let imageData = await ImageCache.getBase64(filename);
-          if (!imageData) {
-            const response = await fetch(imageValueToUrl(filename), {
-              signal: controller.signal,
-            });
-            if (!response.ok) throw new Error(`Image request failed: ${response.status}`);
-            const data = await response.json();
-            imageData = data?.imageData || "";
-            if (!imageData) throw new Error("Image response did not contain imageData");
-            await ImageCache.setBase64(filename, imageData);
-          }
-
-          setImageUrls((prev) => ({
-            ...prev,
-            [product.id]: `data:image/jpeg;base64,${imageData}`,
-          }));
-        })
-      );
-
-      if (!controller.signal.aborted) setLoadingImages({});
+      setImageUrls(directImageUrls);
 
     } catch (err) {
-      if (err?.name !== "CanceledError" && err?.name !== "AbortError") {
+      if (
+        err?.name !== "CanceledError" &&
+        err?.name !== "AbortError"
+      ) {
         console.error("Error fetching products:", err);
         setProducts([]);
+        setImageUrls({});
       }
     }
   };
 
   fetchProducts();
+
   return () => controller.abort();
 }, [encodedCategory]);
 

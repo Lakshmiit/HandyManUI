@@ -5,36 +5,217 @@ const DeliveryPartnerPaymentDashboard = () => {
   const [martItems, setMartItems] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const downloadExcel = () => {
+  const downloadExcelData = () => {
     const excelData = summaryData.map((item, index) => ({
       "S.No": index + 1,
       "Delivery Partner": item.deliveryPartnerName,
       "Mart Id": item.martId,
-      "Grand Total": Number(item.grandTotal || 0).toFixed(2),
+      // "Grand Total": Number(item.grandTotal || 0).toFixed(2),
+
+      "Grand Total":
+        Number(item.grandTotal || 0) % 1 === 0
+          ? Number(item.grandTotal || 0)
+          : Number(item.grandTotal || 0).toFixed(2),
+
       Date: item.date,
       Cash: Number(item.cash || 0).toFixed(2),
       Online: Number(item.online || 0).toFixed(2),
       "Cash & Online": Number(item.cashAndOnline || 0).toFixed(2),
       "Total Orders": item.totalOrders,
+
       "Total Amount Received":
         filters.paymentType === "cash"
-          ? Number(item.cash || 0).toFixed(2)
+          ? item.cash.toFixed(2)
           : filters.paymentType === "online"
-            ? Number(item.online || 0).toFixed(2)
+            ? item.online.toFixed(2)
             : filters.paymentType === "cash&online"
-              ? Number(item.cashAndOnline || 0).toFixed(2)
-              : Number(item.totalAmount || 0).toFixed(2),
+              ? item.cashAndOnline.toFixed(2)
+              : (
+                  Number(item.cash || 0) +
+                  Number(item.online || 0) +
+                  Number(item.cashAndOnline || 0)
+                ).toFixed(2),
     }));
+
+    // Gross Total
+    const grossTotal = summaryData.reduce((sum, item) => {
+      const amount =
+        filters.paymentType === "cash"
+          ? Number(item.cash || 0)
+          : filters.paymentType === "online"
+            ? Number(item.online || 0)
+            : filters.paymentType === "cash&online"
+              ? Number(item.cashAndOnline || 0)
+              : Number(item.cash || 0) +
+                Number(item.online || 0) +
+                Number(item.cashAndOnline || 0);
+
+      return sum + amount;
+    }, 0);
+
+    excelData.push({
+      "S.No": "",
+      "Delivery Partner": "Gross Total",
+      "Mart Id": "",
+      "Grand Total": "",
+      Date: "",
+      Cash: "",
+      Online: "",
+      "Cash & Online": "",
+      "Total Orders": "",
+      "Total Amount Received": grossTotal.toFixed(),
+    });
+
+    // Create worksheet
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+
+    // Create workbook
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Payment Report");
+
+    // Download file
+    XLSX.writeFile(workbook, `OrdersPaymentReport${filters.fromDate}.xlsx`);
+  };
+
+  const formatExcelDate = (value) => {
+    if (!value) return "";
+
+    // Firestore Timestamp
+    if (typeof value === "object" && value.seconds !== undefined) {
+      return new Date(value.seconds * 1000).toLocaleDateString("en-CA");
+    }
+
+    // Firestore Timestamp with toDate()
+    if (typeof value?.toDate === "function") {
+      return value.toDate().toLocaleDateString("en-CA");
+    }
+
+    const date = new Date(value);
+
+    if (isNaN(date.getTime())) {
+      return "";
+    }
+
+    return date.toLocaleDateString("en-CA");
+  };
+
+  // const downloadExcel = () => {
+  //   const excelData = martItems
+  //     .filter((item) => {
+  //       const status = (item.Status || item.status || "").trim();
+
+  //       // Status filter
+  //       if (
+  //         !["Delivered", "Return", "In Progress", "Open", "Cancel"].includes(
+  //           status,
+  //         )
+  //       )
+  //         return false;
+
+  //       // Date filter
+  //       const itemDate = item.Date || item.date;
+  //       if (!itemDate) return false;
+
+  //       const localDate = new Date(itemDate).toLocaleDateString("en-CA");
+
+  //       const fromDateValid = filters.fromDate
+  //         ? localDate >= filters.fromDate
+  //         : true;
+
+  //       const toDateValid = filters.toDate ? localDate <= filters.toDate : true;
+
+  //       return fromDateValid && toDateValid;
+  //     })
+  //     .map((item, index) => ({
+  //       "S.No": index + 1,
+  //       "Payment Mode": item.paymentMode || "",
+  //       "Mart Id": item.martId || "",
+  //       "Customer Name": item.customerName || "",
+  //       // "Grand Total": Number(item.grandTotal || 0).toFixed(2),
+
+  //       "Grand Total":
+  //         Number(item.grandTotal || 0) % 1 === 0
+  //           ? Number(item.grandTotal || 0)
+  //           : Number(item.grandTotal || 0).toFixed(2),
+
+  //       "Paid Amount":
+  //         (item.paymentMode || "") === "Cash&Online"
+  //           ? item.paidAmount
+  //           : Number(item.paidAmount || 0) % 1 === 0
+  //             ? Number(item.paidAmount || 0)
+  //             : Number(item.paidAmount || 0).toFixed(2),
+
+  //       Status: item.status,
+  //       Date: new Date(item.date).toLocaleDateString("en-CA"),
+
+  //       DeliverdDate: new Date(item.DeliverySubmitTime).toLocaleDateString(
+  //         "en-CA",
+  //       ),
+  //     }));
+
+  //   const worksheet = XLSX.utils.json_to_sheet(excelData);
+  //   const workbook = XLSX.utils.book_new();
+  //   XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
+  //   XLSX.writeFile(workbook, `OrdersPaymentsData(${filters.fromDate}).xlsx`);
+  // };
+
+  const downloadExcel = () => {
+    const excelData = martItems
+      .filter((item) => {
+        const status = (item.Status || item.status || "").trim();
+
+        if (
+          !["Delivered", "Return", "In Progress", "Open", "Cancel"].includes(
+            status,
+          )
+        ) {
+          return false;
+        }
+
+        const itemDate = item.Date || item.date;
+        if (!itemDate) return false;
+
+        const localDate = formatExcelDate(itemDate);
+
+        const fromDateValid = filters.fromDate
+          ? localDate >= filters.fromDate
+          : true;
+
+        const toDateValid = filters.toDate ? localDate <= filters.toDate : true;
+
+        return fromDateValid && toDateValid;
+      })
+      .map((item, index) => ({
+        "S.No": index + 1,
+        "Payment Mode": item.paymentMode || "",
+        "Mart Id": item.martId || "",
+        "Customer Name": item.customerName || "",
+
+        "Grand Total":
+          Number(item.grandTotal || 0) % 1 === 0
+            ? Number(item.grandTotal || 0)
+            : Number(item.grandTotal || 0).toFixed(2),
+
+        "Paid Amount":
+          (item.paymentMode || "") === "Cash&Online"
+            ? item.paidAmount
+            : Number(item.paidAmount || 0) % 1 === 0
+              ? Number(item.paidAmount || 0)
+              : Number(item.paidAmount || 0).toFixed(2),
+
+        Status: item.status,
+
+        Date: formatExcelDate(item.date),
+
+        DeliveredDate: formatExcelDate(item.deliverySubmitTime),
+      }));
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
     const workbook = XLSX.utils.book_new();
 
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Payment Summary");
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
 
-    XLSX.writeFile(
-      workbook,
-      `Payment_Summary_${new Date().toISOString().split("T")[0]}.xlsx`,
-    );
+    XLSX.writeFile(workbook, `OrdersPaymentsData(${filters.fromDate}).xlsx`);
   };
 
   const [filters, setFilters] = useState({
@@ -45,7 +226,8 @@ const DeliveryPartnerPaymentDashboard = () => {
   });
 
   // API
-  const MART_API = "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetAllMartItems";
+  const MART_API =
+    "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetAllMartItems";
 
   // FETCH API
   useEffect(() => {
@@ -192,7 +374,11 @@ const DeliveryPartnerPaymentDashboard = () => {
         };
       }
 
-      // SAFE AMOUNT
+      const paymentType = (item.PaymentMode ?? item.paymentMode ?? "")
+        .toString()
+        .trim()
+        .toLowerCase();
+
       const rawAmount =
         item.PaidAmount ??
         item.paidAmount ??
@@ -204,36 +390,21 @@ const DeliveryPartnerPaymentDashboard = () => {
         item.amount ??
         0;
 
-      // CONVERT NUMBER
-      const amount = Number(rawAmount) || 0;
+      if (paymentType === "cash") {
+        grouped[key].cash += Number(rawAmount) || 0;
+      } else if (paymentType === "online") {
+        grouped[key].online += Number(rawAmount) || 0;
+      } else if (paymentType === "cash&online") {
+        const cash = Number(rawAmount.match(/cash=(\d+)/i)?.[1] || 0);
+        const online = Number(rawAmount.match(/online=(\d+)/i)?.[1] || 0);
 
-      // PAYMENT MODE
-      const paymentType = (item.PaymentMode ?? item.paymentMode ?? "")
-        .toString()
-        .trim()
-        .toLowerCase();
+        // DON'T add to cash
+        // DON'T add to online
 
-      // CASH
-      if (paymentType.includes("cash") && !paymentType.includes("online")) {
-        grouped[key].cash += amount;
-      }
-
-      // ONLINE
-      else if (
-        paymentType.includes("online") &&
-        !paymentType.includes("cash")
-      ) {
-        grouped[key].online += amount;
-      }
-
-      // CASH & ONLINE
-      else if (paymentType.includes("cash") && paymentType.includes("online")) {
-        grouped[key].cashAndOnline += amount;
+        grouped[key].cashAndOnline += cash + online;
       }
 
       grouped[key].totalOrders += 1;
-
-      grouped[key].totalAmount += amount;
     });
 
     return Object.values(grouped);
@@ -320,7 +491,7 @@ const DeliveryPartnerPaymentDashboard = () => {
                     fromDate: "",
                   });
 
-                  return;  
+                  return;
                 }
 
                 setFilters({
@@ -516,7 +687,6 @@ const DeliveryPartnerPaymentDashboard = () => {
                   {/* TOTAL ORDERS */}
                   <td>{item.totalOrders}</td>
 
-                  {/* GRAND TOTAL */}
                   <td className="bold-text">
                     ₹
                     {filters.paymentType === "cash"
@@ -525,7 +695,11 @@ const DeliveryPartnerPaymentDashboard = () => {
                         ? item.online.toFixed(2)
                         : filters.paymentType === "cash&online"
                           ? item.cashAndOnline.toFixed(2)
-                          : item.totalAmount.toFixed(2)}
+                          : (
+                              Number(item.cash || 0) +
+                              Number(item.online || 0) +
+                              Number(item.cashAndOnline || 0)
+                            ).toFixed(2)}
                   </td>
                 </tr>
               ))
@@ -536,7 +710,13 @@ const DeliveryPartnerPaymentDashboard = () => {
 
       <div className="table-header">
         <button onClick={downloadExcel} className="download-btn">
-          Download Excel
+          Download_DailyOrders_PaymentData
+        </button>
+      </div>
+
+      <div className="table-headers">
+        <button onClick={downloadExcelData} className="download-btns">
+          Download_OrdersPaymentReport_deliveryPartner
         </button>
       </div>
 
@@ -714,8 +894,31 @@ const DeliveryPartnerPaymentDashboard = () => {
         }
 
 
+.table-header {
+  display: flex;
+justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.table-headers {
+  display: flex;
+
+  margin-bottom: 10px;
+}
+
 .download-btn {
   background: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+
+.download-btns {
+  background: #2835a7;
   color: white;
   border: none;
   padding: 10px 16px;

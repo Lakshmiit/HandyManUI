@@ -2580,55 +2580,7 @@ const filteredGroceryData = groceryData.filter((t) =>
   
         <div className="col-md-9">
           {/* HOME APPLIANCES */}
-    <div
-      className="shadow-lg rounded-4 p-3 mb-2"
-      style={{
-      color: "#000",
-      }}
-    >
-      <h6 className="fw-bold text-center mb-2" style={{ letterSpacing: "1px", color: "#ff5722", fontSize: "20px"}}>
-        Home Appliances
-      </h6>    
-      <div className="d-flex justify-content-around align-items-center row row-cols-3 row-cols-md-6">
-         {[
-          { label: "Electrical", value: "Electrical Products", image: HomeElectricalImg,},
-          { label: "Plumbing", value: "Plumbing Products", image: HomePlumbingImg, },
-          { label: "Kitchenware", value: "Kitchenware Appliances", image: KitchenImg,},
-          {  label: "Home Decors",  value: "Home Decors", image: HomeDecor,},
-          // { label: 'Home Appliances', value: 'Home Appliances', image: HomeAppliances },   
-          // { label: 'Electrical Items', value: 'Electrical items', image: Electrical }, 
-          { label: 'Electronics Appliances', value: 'Electronics appliances', image: Electronics },   
-          // { label: 'Plumbing & Sanitary', value: 'Sanitary items', image: Plumbing },         
-          { label: 'Hardware Items', value: 'Hardware items', image: Hardware },  
-        ].map((item) => (
-          <div
-            key={item.value}
-            onClick={() => handleGroceryCategoryClick(item)}
-            style={{
-              cursor: "pointer",
-              textAlign: "center",
-              width: "90px",
-            }}
-          >
-              <img
-                src={item.image}
-                alt={item.label}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "contain",
-                }}
-              />
-            <small
-              className="d-block mt-2 fw-semibold"
-              style={{ fontSize: "12px" }}
-            >
-              {item.label}
-            </small>
-          </div>
-        ))}
-      </div>
-    </div>
+   
 
 <div className="container"  style={{
    minHeight: "100vh",
@@ -2744,7 +2696,55 @@ const filteredGroceryData = groceryData.filter((t) =>
   ))}
 </div>
   </div>
-  
+   <div
+      className="shadow-lg rounded-4 p-3 mb-2"
+      style={{
+      color: "#000",
+      }}
+    >
+      <h6 className="fw-bold text-center mb-2" style={{ letterSpacing: "1px", color: "#ff5722", fontSize: "20px"}}>
+        Home Appliances
+      </h6>    
+      <div className="d-flex justify-content-around align-items-center row row-cols-3 row-cols-md-6">
+         {[
+          { label: "Electrical", value: "Electrical Products", image: HomeElectricalImg,},
+          { label: "Plumbing", value: "Plumbing Products", image: HomePlumbingImg, },
+          { label: "Kitchenware", value: "Kitchenware Appliances", image: KitchenImg,},
+          {  label: "Home Decors",  value: "Home Decors", image: HomeDecor,},
+          // { label: 'Home Appliances', value: 'Home Appliances', image: HomeAppliances },   
+          // { label: 'Electrical Items', value: 'Electrical items', image: Electrical }, 
+          { label: 'Electronics Appliances', value: 'Electronics appliances', image: Electronics },   
+          // { label: 'Plumbing & Sanitary', value: 'Sanitary items', image: Plumbing },         
+          { label: 'Hardware Items', value: 'Hardware items', image: Hardware },  
+        ].map((item) => (
+          <div
+            key={item.value}
+            onClick={() => handleGroceryCategoryClick(item)}
+            style={{
+              cursor: "pointer",
+              textAlign: "center",
+              width: "90px",
+            }}
+          >
+              <img
+                src={item.image}
+                alt={item.label}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "contain",
+                }}
+              />
+            <small
+              className="d-block mt-2 fw-semibold"
+              style={{ fontSize: "12px" }}
+            >
+              {item.label}
+            </small>
+          </div>
+        ))}
+      </div>
+    </div>
   {/* Home Products Section */}
   {/* <div className="shadow-lg p-2 mb-1 rounded-5 bg-transparent border-0">
     <h5 className="text-center fw-bold mb-3" style={{color: "#ff5722", fontSize: "20px"}}>Home Products</h5>

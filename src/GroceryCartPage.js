@@ -11,11 +11,57 @@ import "./App.css";
 import CartImg from "./img/Cart.jpeg";
 import { useNavigate, useParams } from "react-router-dom";
 import Footer from "./Footer.js";
-import { getImageFilename, imageValueToUrl } from "./utils/imageSource";
+// import { getImageFilename, imageValueToUrl } from "./utils/imageSource";
 // import { appConfig } from "./config";
 // import { useLocation } from "react-router-dom";
  
 const HANDYMAN_CATEGORIES = ["electrical products", "plumbing products"];
+
+const BLOB_BASE_URL =
+  "https://lmartfiles.blob.core.windows.net/userattechements";
+
+const getAzureImageUrl = (imageValue) => {
+  if (!imageValue) return "";
+
+  if (
+    typeof imageValue === "string" &&
+    (imageValue.startsWith("http://") ||
+      imageValue.startsWith("https://"))
+  ) {
+    return imageValue;
+  }
+
+  const cleanName = String(imageValue).replace(/^\/+/, "");
+
+  return `${BLOB_BASE_URL}/${encodeURIComponent(cleanName)}`;
+};
+
+const getImageFilename = (imageValue) => {
+  if (!imageValue) return "";
+
+  const value = String(imageValue).trim();
+
+  if (!value) return "";
+
+  // If it is already an Azure/direct URL
+  if (
+    value.startsWith("http://") ||
+    value.startsWith("https://")
+  ) {
+    try {
+      const url = new URL(value);
+      return decodeURIComponent(
+        url.pathname.split("/").filter(Boolean).pop() || ""
+      );
+    } catch {
+      return value.split("/").pop()?.split("?")[0] || "";
+    }
+  }
+
+  // If it is only a filename
+  return value.split("/").pop() || "";
+};
+
 
 const GroceryCartPage = () => {
   const navigate = useNavigate();
@@ -26,7 +72,7 @@ const GroceryCartPage = () => {
   const [showZoomModal, setShowZoomModal] = useState(false);
   const [zoomImage, setZoomImage] = useState("");
   const [grandSummary, setGrandSummary] = useState({ items: 0, total: 0 });
-  const [imageBlobMap, setImageBlobMap] = useState({});
+  // const [imageBlobMap, setImageBlobMap] = useState({});
   const [limitMap, setLimitMap] = useState({});
   const [addresses, setAddresses] = useState([]);
   const [fullName, setFullName] = useState("");
@@ -36,6 +82,8 @@ const GroceryCartPage = () => {
 // const MIN_ORDER_TOTAL = Number(walletAmount) === 50 ? 150 : 100;  
    const [comboInfo, setComboInfo] = useState(null);
 const [comboImages, setComboImages] = useState({});
+  const [isProceeding, setIsProceeding] = useState(false);
+
   useEffect(() => {
     console.log(addresses, fullName, isNewUser);
   }, [addresses, fullName, isNewUser]);
@@ -50,30 +98,19 @@ useEffect(() => {
 
 useEffect(() => {
   if (!comboInfo?.items?.length) return;
-  let cancelled = false;
-  (async () => {
-    const map = {};
-    await Promise.allSettled(
-      comboInfo.items.map(async ({ productName, image }) => {
-        const filename = getImageFilename(image);
-        if (!filename) return;
-        try {
-          const res = await fetch(imageValueToUrl(filename));
-          const contentType = res.headers.get("content-type") || "";
-          if (contentType.includes("application/json")) {
-            const data = await res.json();
-            if (data?.imageData) {
-              map[productName] = `data:image/jpeg;base64,${data.imageData}`;
-            }
-          } else {
-            map[productName] = res.url;
-          }
-        } catch {}
-      })
-    );
-    if (!cancelled) setComboImages(map);
-  })();
-  return () => { cancelled = true; };
+
+  const map = {};
+
+  comboInfo.items.forEach(({ productName, image }) => {
+    if (!image) return;
+
+    const filename = getImageFilename(image);
+
+    if (filename) {
+      map[productName] = getAzureImageUrl(filename);
+    }
+  });
+  setComboImages(map);
 }, [comboInfo]);
 
   const fetchCustomerData = useCallback(async () => {
@@ -207,9 +244,9 @@ useEffect(() => {
     return limitMapRef.current[key] ?? Infinity;
   };
   
- const fileToUrl = useCallback((filenameOrUrl) => {
-  return imageValueToUrl(filenameOrUrl);
-}, []);
+//  const fileToUrl = useCallback((filenameOrUrl) => {
+//   return imageValueToUrl(filenameOrUrl);
+// }, []);
 
   const buildCartFromStorage = React.useCallback(() => {
     const saved = JSON.parse(localStorage.getItem("allCategories") || "[]");
@@ -219,7 +256,7 @@ useEffect(() => {
         .map((p, idx) => {
           const persisted = p.image ?? p.productImage ?? "";
           const imageFilename = getImageFilename(persisted);
-          const imageUrl = imageValueToUrl(persisted);
+          const imageUrl = getAzureImageUrl(persisted);
           const rawQty = Number(p.qty);
           const limit = getDynamicLimitRef(p.productName ?? p.name ?? "");
           const stock = Number(p.stockLeft || Infinity);
@@ -252,56 +289,56 @@ useEffect(() => {
     });
   }, [buildCartFromStorage]);
 
-  useEffect(() => {
-    const filenames = Array.from(
-      new Set(
-        cartItems
-          .map((i) => i.imageFilename)
-          .filter(Boolean)
-          .filter((fn) => !(fn in imageBlobMap)),
-      ),
-    );
-    if (!filenames.length) return;
+  // useEffect(() => {
+  //   const filenames = Array.from(
+  //     new Set(
+  //       cartItems
+  //         .map((i) => i.imageFilename)
+  //         .filter(Boolean)
+  //         .filter((fn) => !(fn in imageBlobMap)),
+  //     ),
+  //   );
+  //   if (!filenames.length) return;
 
-    let cancelled = false;
-    (async () => {
-      try {
-        const results = await Promise.allSettled(
-          filenames.map(async (fn) => {
-            const res = await fetch(fileToUrl(fn));
-            const contentType = res.headers.get("content-type") || "";
-            if (contentType.includes("application/json")) {
-              const data = await res.json();
-              if (!data?.imageData) throw new Error("No imageData");
-              const byte = atob(data.imageData);
-              const arr = new Uint8Array(byte.length);
-              for (let i = 0; i < byte.length; i++) arr[i] = byte.charCodeAt(i);
-              const blob = new Blob([arr], { type: "image/*" });
-              const blobUrl = URL.createObjectURL(blob);
-              return { fn, url: blobUrl };
-            } else {
-              return { fn, url: `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(fn)}` };
-            }
-          }),
-        );
-        if (cancelled) return;
-        const mapUpdate = {};
-        results.forEach((r) => {
-          if (r.status === "fulfilled" && r.value?.fn && r.value?.url) {
-            mapUpdate[r.value.fn] = r.value.url;
-          }
-        });
-        if (Object.keys(mapUpdate).length) {
-          setImageBlobMap((prev) => ({ ...prev, ...mapUpdate }));
-        }
-      } catch (e) {
-        console.error("prefetch images failed", e);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [cartItems, imageBlobMap, fileToUrl]);
+  //   let cancelled = false;
+  //   (async () => {
+  //     try {
+  //       const results = await Promise.allSettled(
+  //         filenames.map(async (fn) => {
+  //           const res = await fetch(fileToUrl(fn));
+  //           const contentType = res.headers.get("content-type") || "";
+  //           if (contentType.includes("application/json")) {
+  //             const data = await res.json();
+  //             if (!data?.imageData) throw new Error("No imageData");
+  //             const byte = atob(data.imageData);
+  //             const arr = new Uint8Array(byte.length);
+  //             for (let i = 0; i < byte.length; i++) arr[i] = byte.charCodeAt(i);
+  //             const blob = new Blob([arr], { type: "image/*" });
+  //             const blobUrl = URL.createObjectURL(blob);
+  //             return { fn, url: blobUrl };
+  //           } else {
+  //             return { fn, url: `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(fn)}` };
+  //           }
+  //         }),
+  //       );
+  //       if (cancelled) return;
+  //       const mapUpdate = {};
+  //       results.forEach((r) => {
+  //         if (r.status === "fulfilled" && r.value?.fn && r.value?.url) {
+  //           mapUpdate[r.value.fn] = r.value.url;
+  //         }
+  //       });
+  //       if (Object.keys(mapUpdate).length) {
+  //         setImageBlobMap((prev) => ({ ...prev, ...mapUpdate }));
+  //       }
+  //     } catch (e) {
+  //       console.error("prefetch images failed", e);
+  //     }
+  //   })();
+  //   return () => {
+  //     cancelled = true;
+  //   };
+  // }, [cartItems, imageBlobMap, fileToUrl]);
 
   const writeBackToStorage = useCallback((items) => {
     const grouped = items.reduce((acc, it) => {
@@ -436,70 +473,70 @@ const normalizeName = (name) =>
     .toLowerCase();
 
 const refreshAllCartStocks = useCallback(async () => {
-  const saved =
-    JSON.parse(localStorage.getItem("allCategories")) || [];
+    const saved = JSON.parse(localStorage.getItem("allCategories")) || [];
 
-  const currentItems = saved.flatMap((cat) =>
-    (cat.products || []).map((p, idx) => ({
-      id: `${cat.categoryName}-${p.productId ?? p.id ?? idx}`,
-      productId: p.productId ?? p.id ?? idx,
-      name: p.productName ?? p.name ?? "",
-      category: cat.categoryName,
-      qty: Number(p.qty || 0),
-      mrp: Number(p.mrp || 0),
-      discount: Number(p.discount || 0),
-      price: Number(p.afterDiscountPrice || p.price || 0),
-      stockLeft: Number(p.stockLeft || 0),
-      code: p.code,
-      units: p.units,
-      imageFilename: getImageFilename(p.image ?? p.productImage ?? ""),
-      imageUrl: imageValueToUrl(p.image ?? p.productImage ?? ""),
-    }))
-  );
+    const currentItems = saved.flatMap((cat) =>
+      (cat.products || []).map((p, idx) => ({
+        id: `${cat.categoryName}-${p.productId ?? p.id ?? idx}`,
+        productId: p.productId ?? p.id ?? idx,
+        name: p.productName ?? p.name ?? "",
+        category: cat.categoryName,
+        qty: Number(p.qty || 0),
+        mrp: Number(p.mrp || 0),
+        discount: Number(p.discount || 0),
+        price: Number(p.afterDiscountPrice || p.price || 0),
+        stockLeft: Number(p.stockLeft || 0),
+        code: p.code,
+        units: p.units,
+       imageFilename: getImageFilename(p.image ?? p.productImage ?? ""),
+       imageUrl: getAzureImageUrl(p.image ?? p.productImage ?? ""),
+      })),
+    );
 
-  if (!currentItems.length) return;
+    if (!currentItems.length) return;
 
-  const stockResults = await Promise.all(
-    currentItems.map(async (item) => ({
-      name: item.name,
-       category: item.category,
-      stockLeft: await fetchLatestStock(item.name, item.category),
-    }))
-  );
+    const stockResults = await Promise.all(
+      currentItems.map(async (item) => ({
+        name: item.name,
+        category: item.category,
+        stockLeft: await fetchLatestStock(item.name, item.category),
+      })),
+    );
 
-  const updated = currentItems
-    .map((item) => {
-      const latest = stockResults.find(
-        (x) => normalizeName(x.name) === normalizeName(item.name)
-      );
+    const updated = currentItems
+      .map((item) => {
+        const latest = stockResults.find(
+          (x) => normalizeName(x.name) === normalizeName(item.name),
+        );
 
-      if (!latest) return item;
+        if (!latest) return item;
 
-      const limit = getDynamicLimit(item.name);
+        const limit = getDynamicLimit(item.name);
 
-      if (latest.stockLeft <= 0) {
+        if (latest.stockLeft <= 0) {
+          return {
+            ...item,
+            stockLeft: 0,
+            outOfStock: true,
+            qty: 0,
+          };
+        }
+
         return {
           ...item,
-          stockLeft: 0,
-          outOfStock: true,
-          qty: 0,
+          stockLeft: latest.stockLeft,
+          qty:
+            limit === Infinity
+              ? Math.min(item.qty, latest.stockLeft)
+              : Math.min(item.qty, latest.stockLeft, limit),
         };
-      }
+      })
+      .filter(Boolean);
 
-      return {
-        ...item,
-        stockLeft: latest.stockLeft,
-        qty: limit === Infinity
-    ? Math.min(item.qty, latest.stockLeft)
-    : Math.min(item.qty, latest.stockLeft, limit),
-      };
-    })
-    .filter(Boolean);
-
-  setCartItems(updated);
-  writeBackToStorage(updated);
-  setGrandSummary(computeTotals(updated));
-}, [fetchLatestStock, getDynamicLimit, writeBackToStorage]);
+    setCartItems(updated);
+    writeBackToStorage(updated);
+    setGrandSummary(computeTotals(updated));
+  }, [fetchLatestStock, getDynamicLimit, writeBackToStorage]);
 
 useEffect(() => {
   refreshAllCartStocks();
@@ -699,6 +736,7 @@ const activeItems = cartItems.filter(
 
   const handleGroceryProceed = async (event) => {
   event.preventDefault();
+  if (isProceeding) return;
   const hasCombo =
   comboInfo?.items?.length > 0;
 
@@ -706,10 +744,13 @@ if (activeItems.length === 0 && !hasCombo) {
   alert("Your cart is empty");
   return;
 }
+setIsProceeding(true);
   await createWelcomeWalletIfEligible();
   const valid = await validateCartStockBeforeCheckout();
-  if (!valid) return;
-
+if (!valid) {
+      setIsProceeding(false);
+      return;
+    }
   const allCategories = JSON.parse(localStorage.getItem("allCategories")) || [];
 
   const comboRaw = localStorage.getItem("comboSelectedItems");
@@ -876,6 +917,7 @@ if (activeItems.length === 0 && !hasCombo) {
   } catch (error) {
     console.error("API Error:", error);
     alert("An error occurred while uploading the order.");
+    setIsProceeding(false);
   }
 };
 
@@ -1076,44 +1118,31 @@ const totalItemCount =
               }}
             >
               {/* Product Image */}
-              <img
-              src={
-                item.isCombo
-                  ? item.imageUrl
-                  : (
-                      (item.imageFilename &&
-                        imageBlobMap[item.imageFilename]) ||
-                      (item.imageFilename &&
-                        fileToUrl(item.imageFilename)) ||
-                      item.imageUrl ||
-                      "/placeholder.png"
-                    )
-              }
-                // src={
-                //   (item.imageFilename && imageBlobMap[item.imageFilename]) ||
-                //   (item.imageFilename && fileToUrl(item.imageFilename)) ||
-                //   item.imageUrl ||
-                //   "/placeholder.png"
-                // }
-                alt={item.name}
-                onClick={() =>
-                  handleImageClick(
-                    (item.imageFilename && imageBlobMap[item.imageFilename]) ||
-                      (item.imageFilename && fileToUrl(item.imageFilename)) ||
-                      item.imageUrl ||
-                      "/placeholder.png"
-                  )
-                }
-                style={{
-                  height: 50,
-                  width: 30,
-                  borderRadius: 6,
-                  cursor: "pointer",
-                  // filter: isOutOfStock
-                  //   ? "grayscale(100%)"
-                  //   : "none",
-                }}
-              />
+             <img
+  src={
+    item.imageUrl ||
+    (item.imageFilename
+      ? getAzureImageUrl(item.imageFilename)
+      : "") ||
+    "/placeholder.png"
+  }
+  alt={item.name}
+  onClick={() =>
+    handleImageClick(
+      item.imageUrl ||
+        (item.imageFilename
+          ? getAzureImageUrl(item.imageFilename)
+          : "") ||
+        "/placeholder.png"
+    )
+  }
+  style={{
+    height: 50,
+    width: 30,
+    borderRadius: 6,
+    cursor: "pointer",
+  }}
+/>
 
               {/* Product Details */}
               <div
@@ -1410,20 +1439,43 @@ const totalItemCount =
           </div>
         </div>
 
-        <div
-          style={{
-            fontWeight: "500",
-            fontSize: "15px",
-            cursor: activeItems.length === 0 ? "not-allowed" : "pointer", 
-            opacity: activeItems.length === 0 ? 0.5 : 1,
-          }}
-          onClick={
-            activeItems.length > 0
-              ? handleGroceryProceed
-              : undefined
-          }
-        >
-          Proceed →
+        <div>
+          <button
+            type="button"
+            style={{
+              fontWeight: "500",
+              fontSize: "15px",
+              cursor:
+                activeItems.length === 0 || isProceeding
+                  ? "not-allowed"
+                  : "pointer",
+              opacity: 
+                activeItems.length === 0 || isProceeding
+                  ? 0.6
+                  : 1,
+              minWidth: "100px",
+            }}
+            className="btn btn-warning mt-1 mb-1"
+            onClick={
+              activeItems.length > 0 && !isProceeding
+                ? handleGroceryProceed
+                : undefined
+            }
+            disabled={activeItems.length === 0 || isProceeding}
+          >
+            {isProceeding ? (
+              <>
+                <span
+                  className="spinner-border spinner-border-sm me-2"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+                Processing...
+              </>
+            ) : (
+              "Proceed →"
+            )}
+          </button>
         </div>
       </div>
 
