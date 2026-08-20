@@ -208,7 +208,7 @@ const mapApiProductToUI = (p) => {
     async function fetchProductsAndFirstImages(warm = false, signal) {
       try {   
         if (!warm) setImageLoading(true);
-        const url = `https://apiqa-b5cyfzbhhah5adc9.westus2-01.azurewebsites.net/api/Product/GetProductsByCategory?Category=${encodeURIComponent(
+        const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Product/GetProductsByCategory?Category=${encodeURIComponent(
           decodedCat
         )}`;
         const { data } = await axios.get(url, { signal });
