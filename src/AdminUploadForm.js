@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import "./App.css"; 
-import { useNavigate } from 'react-router-dom';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import UploadIcon from '@mui/icons-material/Upload';
-import AdminSidebar from './AdminSidebar';
-import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
-import {  Button } from 'react-bootstrap';
-import { useParams } from 'react-router-dom';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./App.css";
+import { useNavigate } from "react-router-dom";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import UploadIcon from "@mui/icons-material/Upload";
+import AdminSidebar from "./AdminSidebar";
+import { Dashboard as MoreVertIcon } from "@mui/icons-material";
+import { Button } from "react-bootstrap";
+import { useParams } from "react-router-dom";
 // import { appConfig } from "./config";
 
 const AdminProductUpload = () => {
@@ -21,18 +21,20 @@ const AdminProductUpload = () => {
   const [productPhotos, setProductPhotos] = useState([]);
   const [rate, setRate] = useState("");
   const [discount, setDiscount] = useState("");
-  const [specifications, setSpecifications] = useState([{ label: "", value: "" }]); 
+  const [specifications, setSpecifications] = useState([
+    { label: "", value: "" },
+  ]);
   const [warranty, setWarranty] = useState("");
   const [moreInfo, setMoreInfo] = useState("");
-  const [deliveryInDays,setDeliveryInDays] =useState("");
-  const [loading, setLoading] = useState(false); 
-  const [uploadedFiles, setUploadedFiles] = useState([]); 
+  const [deliveryInDays, setDeliveryInDays] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
   const [color, setColor] = useState("");
   const [specificationDesc, setSpecificationDesc] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const navigate = useNavigate(); // Hook to programmatically navigate
-  const { selectedUserType} = useParams();
-  const [stockLeft, setStockLeft] = useState('');
+  const { selectedUserType } = useParams();
+  const [stockLeft, setStockLeft] = useState("");
 
   const handleFileChange = (event) => {
     const selectedFiles = Array.from(event.target.files);
@@ -45,12 +47,12 @@ const AdminProductUpload = () => {
   };
 
   // Detect screen size for responsiveness
-useEffect(() => {
-  const handleResize = () => setIsMobile(window.innerWidth <= 768);
-  handleResize(); 
-  window.addEventListener('resize', handleResize);
-  return () => window.removeEventListener('resize', handleResize);
-}, []);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Handle file upload
   const handleUploadFiles = async () => {
@@ -71,12 +73,11 @@ useEffect(() => {
       const response = await uploadFile(byteArray, fileName, mimeType, file);
       if (response) {
         uploadedFilesList.push({
-          src: response, 
-          alt: fileName  
+          src: response,
+          alt: fileName,
         });
-        alert("Image Uploaded Sucessfully"); 
-      }
-      else {
+        alert("Image Uploaded Sucessfully");
+      } else {
         alert("Failed Upload Image");
       }
     }
@@ -101,62 +102,75 @@ useEffect(() => {
   const uploadFile = async (byteArray, fileName, mimeType, file) => {
     try {
       const formData = new FormData();
-      formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
-      formData.append('fileName', fileName);
-      const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/upload?filename=` + fileName, {
-        method: 'POST',
-        headers: {
-          'Accept': 'text/plain',
+      formData.append(
+        "file",
+        new Blob([byteArray], { type: mimeType }),
+        fileName,
+      );
+      formData.append("fileName", fileName);
+      const response = await fetch(
+        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/upload?filename=` + fileName,
+        {
+          method: "POST",
+          headers: {
+            Accept: "text/plain",
+          },
+          body: formData,
         },
-        body: formData,
-      });
+      );
 
       const responseData = await response.text();
-      return responseData || ''; 
+      return responseData || "";
     } catch (error) {
-      console.error('Error uploading file:', error);
-      return '';
+      console.error("Error uploading file:", error);
+      return "";
     }
   };
 
   // Handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
-   
+
     const payload = {
-      id: "unique-id",   
+      id: "unique-id",
       productId: "string",
       numberOfStockAvailable: stockLeft,
       deliveryInDays: deliveryInDays,
       productName: productName,
-      ProductPhotos: uploadedFiles.map(file => file.src),
+      ProductPhotos: uploadedFiles.map((file) => file.src),
       Catalogue: catalogue,
       ProductSize: productSize,
-      Color: color, 
+      Color: color,
       Units: units,
       rate: parseFloat(rate),
       discount: parseFloat(discount),
-      afterDiscount: (parseFloat(rate) - (parseFloat(rate) * parseFloat(discount) / 100)).toString(),
-      specifications: specifications.map(spec => ({
+      afterDiscount: (
+        parseFloat(rate) -
+        (parseFloat(rate) * parseFloat(discount)) / 100
+      ).toString(),
+      specifications: specifications.map((spec) => ({
         label: spec.label,
         value: spec.value,
       })),
       specificationDesc: specificationDesc,
       warranty: warranty,
       Category: category,
-      AdditionalInformation:moreInfo,
-      ProductOwnedBy:"Admin",
+      AdditionalInformation: moreInfo,
+      ProductOwnedBy: "Admin",
       ProductStatus: "Pending Approval",
     };
 
     try {
-      const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Product/ProductUpload`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
+      const response = await fetch(
+        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Product/ProductUpload`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
         },
-        body: JSON.stringify(payload)
-      });
+      );
 
       if (response.ok) {
         alert("Product uploaded successfully!");
@@ -179,7 +193,7 @@ useEffect(() => {
 
   const handleSpecificationDescChange = (value) => {
     setSpecificationDesc(value);
-  }
+  };
 
   // Handle removal of a specification
   const handleRemoveSpecification = (index) => {
@@ -193,15 +207,15 @@ useEffect(() => {
   };
 
   return (
-      <div className="d-flex flex-row justify-content-start align-items-start mt-mob-50">
-          {/* Sidebar */}
-          {!isMobile && (
-          <div className="ml-0 m-4 p-0 adm_mnu">
-          <AdminSidebar userType={selectedUserType}/>
-         </div>
-          )}
-          
-          {/* Floating menu for mobile */}
+    <div className="d-flex flex-row justify-content-start align-items-start mt-mob-50">
+      {/* Sidebar */}
+      {!isMobile && (
+        <div className="ml-0 m-4 p-0 adm_mnu">
+          <AdminSidebar userType={selectedUserType} />
+        </div>
+      )}
+
+      {/* Floating menu for mobile */}
       {isMobile && (
         <div className="floating-menu">
           <Button
@@ -213,20 +227,22 @@ useEffect(() => {
           </Button>
 
           {showMenu && (
-              <div className="sidebar-container">
-                <AdminSidebar userType={selectedUserType} />
-              </div>
+            <div className="sidebar-container">
+              <AdminSidebar userType={selectedUserType} />
+            </div>
           )}
         </div>
       )}
 
-       <div className={`container m-3 ${isMobile ? 'w-100' : 'w-75'}`}>
+      <div className={`container m-3 ${isMobile ? "w-100" : "w-75"}`}>
         <h3 className="mb-3 text-center">Upload Products</h3>
         <div className="bg-white rounded-3 p-3 bx_sdw w-60 m-auto">
           <form onSubmit={handleSubmit}>
             {/* Product Name */}
             <div className="form-group">
-              <label>Product Name <span className="req_star">*</span></label>
+              <label>
+                Product Name <span className="req_star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -259,7 +275,9 @@ useEffect(() => {
 
             {/* Catalogue */}
             <div className="form-group">
-              <label>Catalogue<span className="req_star">*</span></label>
+              <label>
+                Catalogue<span className="req_star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -271,7 +289,9 @@ useEffect(() => {
 
             {/* Product Size */}
             <div className="form-group">
-              <label>Size<span className="req_star">*</span></label>
+              <label>
+                Size<span className="req_star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -295,17 +315,23 @@ useEffect(() => {
 
             {/* Units */}
             <div className="form-group">
-              <label>Units <span className="req_star">*</span></label>
-              <input type="text"
-              className="form-control"
-              value={units}
-              onChange={(e) => setUnits(e.target.value)}
-              placeholder="Enter Units" />
+              <label>
+                Units <span className="req_star">*</span>
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                value={units}
+                onChange={(e) => setUnits(e.target.value)}
+                placeholder="Enter Units"
+              />
             </div>
 
             {/* Product Photos */}
             <div className="form-group">
-              <label>Product Photos <span className="req_star">*</span></label>
+              <label>
+                Product Photos <span className="req_star">*</span>
+              </label>
               <input
                 type="file"
                 className="form-control"
@@ -314,7 +340,8 @@ useEffect(() => {
               />
               {showAlert && (
                 <div className="alert alert-danger  mt-2">
-                  Please click the <strong>Upload Files</strong> button to upload the selected images.
+                  Please click the <strong>Upload Files</strong> button to
+                  upload the selected images.
                 </div>
               )}
               <div className="mt-2">
@@ -328,7 +355,7 @@ useEffect(() => {
                 onClick={handleUploadFiles}
                 disabled={loading || productPhotos.length === 0}
               >
-                {loading ? 'Uploading...' : 'Upload Files'}
+                {loading ? "Uploading..." : "Upload Files"}
               </button>
             </div>
 
@@ -362,14 +389,21 @@ useEffect(() => {
               <input
                 type="text"
                 className="form-control"
-                value={Math.round(Number(rate || 0) - (Number(rate || 0) * Number((discount || "0").toString().replace("%", "")) / 100))}
+                value={Math.round(
+                  Number(rate || 0) -
+                    (Number(rate || 0) *
+                      Number((discount || "0").toString().replace("%", ""))) /
+                      100,
+                )}
                 placeholder="If any Discount Enter Percentage"
               />
-            </div>   
+            </div>
 
             {/* Product Specifications */}
             <div className="form-group">
-              <label>Product Specifications <span className="req_star">*</span></label>
+              <label>
+                Product Specifications <span className="req_star">*</span>
+              </label>
               {specifications.map((spec, index) => (
                 <div key={index} className="d-flex gap-3">
                   <input
@@ -377,14 +411,18 @@ useEffect(() => {
                     className="form-control"
                     placeholder="Specification Name"
                     value={spec.label}
-                    onChange={(e) => handleSpecificationChange(index, "label", e.target.value)}
+                    onChange={(e) =>
+                      handleSpecificationChange(index, "label", e.target.value)
+                    }
                   />
                   <input
                     type="text"
                     className="form-control"
                     placeholder="Specification Value"
                     value={spec.value}
-                    onChange={(e) => handleSpecificationChange(index, "value", e.target.value)}
+                    onChange={(e) =>
+                      handleSpecificationChange(index, "value", e.target.value)
+                    }
                   />
                   <button
                     type="button"
@@ -397,13 +435,17 @@ useEffect(() => {
               ))}
 
               <textarea
-                  type="text"
-                  className="form-control mt-2"
-                  placeholder="Optional"  
-                  value={specificationDesc}
-                  onChange={(e) => handleSpecificationDescChange(e.target.value)}           
+                type="text"
+                className="form-control mt-2"
+                placeholder="Optional"
+                value={specificationDesc}
+                onChange={(e) => handleSpecificationDescChange(e.target.value)}
               />
-              <button type="button" className="btn btn-primary" onClick={handleAddSpecification}>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleAddSpecification}
+              >
                 Add Specification
               </button>
             </div>
@@ -433,7 +475,9 @@ useEffect(() => {
 
             {/* Delivery In Days */}
             <div className="form-group">
-              <label>Delivery In Days <span className="req_star">*</span></label>
+              <label>
+                Delivery In Days <span className="req_star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -443,9 +487,11 @@ useEffect(() => {
               />
             </div>
 
-             {/* Stock Left */}
+            {/* Stock Left */}
             <div className="form-group">
-              <label>Stock Left <span className="req_star">*</span></label>
+              <label>
+                Stock Left <span className="req_star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -457,26 +503,25 @@ useEffect(() => {
 
             {/* Submit Button */}
             <div className="d-flex justify-content-between gap-3 mt-3">
-      {/* Upload Product Button */}
-      <button
-        type="submit"
-        className="btn btn-success w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
-      >
-        <UploadIcon className="me-2" />
-        <span>Upload Product</span>
-      </button>
+              {/* Upload Product Button */}
+              <button
+                type="submit"
+                className="btn btn-success w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
+              >
+                <UploadIcon className="me-2" />
+                <span>Upload Product</span>
+              </button>
 
-      {/* View Single Product Button */}
-      <button
-        type="button"
-        className="btn btn-primary w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
-       
-          onClick={() => navigate(`/adminProductList/Admin`)}
-      >
-        <VisibilityIcon className="me-2" />
-        <span>View Product</span>
-      </button>
-    </div>
+              {/* View Single Product Button */}
+              <button
+                type="button"
+                className="btn btn-primary w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
+                onClick={() => navigate(`/adminProductList/Admin`)}
+              >
+                <VisibilityIcon className="me-2" />
+                <span>View Product</span>
+              </button>
+            </div>
           </form>
         </div>
       </div>

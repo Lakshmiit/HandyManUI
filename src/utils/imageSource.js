@@ -9,7 +9,9 @@ export const getImageFilename = (value) => {
 
   const parameterIndex = raw.indexOf("generatedfilename=");
   if (parameterIndex >= 0) {
-    const encoded = raw.slice(parameterIndex + "generatedfilename=".length).split("&")[0];
+    const encoded = raw
+      .slice(parameterIndex + "generatedfilename=".length)
+      .split("&")[0];
     try {
       return decodeURIComponent(encoded);
     } catch {

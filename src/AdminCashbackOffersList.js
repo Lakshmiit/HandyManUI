@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Table, Button, Modal, Form, Row, Col } from "react-bootstrap";
 import Header from "./Header";
 import Footer from "./Footer";
+import { confirmDialog } from "./DialogSystem";
 import { useNavigate } from "react-router-dom";
 import {
   CASHBACK_CONFIG_HEADER,
@@ -117,8 +118,8 @@ const AdminCashbackOffersList = () => {
     setShowEditModal(true);
   };
 
-  const handleDelete = (id) => {
-    if (!window.confirm("Delete this cashback offer?")) return;
+  const handleDelete = async (id) => {
+    if (!(await confirmDialog("Delete this cashback offer?"))) return;
     try {
       deleteLocalCashbackOffer(id);
       alert("Cashback offer deleted successfully");

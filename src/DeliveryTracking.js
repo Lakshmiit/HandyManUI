@@ -6,9 +6,9 @@ import {
 } from "@react-google-maps/api";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useParams } from "react-router-dom";
-import Header from "./Header";  
+import Header from "./Header";
 import Footer from "./Footer";
-import CloseIcon from '@mui/icons-material/Close';
+import CloseIcon from "@mui/icons-material/Close";
 // import { appConfig } from "./config";
 
 export default function HandymanTrackingMap() {
@@ -28,20 +28,19 @@ export default function HandymanTrackingMap() {
   // ✅ Directions API state
   const [directions, setDirections] = useState(null);
   const [routeStarted, setRouteStarted] = useState(false);
-const [customerPhoneNumber, setCustomerPhoneNumber] = useState('');
-const [deliveryPartnerUserId, setDeliveryPartnerUserId] = useState('');
+  const [customerPhoneNumber, setCustomerPhoneNumber] = useState("");
+  const [deliveryPartnerUserId, setDeliveryPartnerUserId] = useState("");
 
   useEffect(() => {
     console.log(loading, groceryData);
-  }, [loading, groceryData]); 
-
+  }, [loading, groceryData]);
 
   // 🔹 Fetch destination data
   useEffect(() => {
-    const fetchGroceryData = async () => {     
+    const fetchGroceryData = async () => {
       try {
         const response = await fetch(
-          `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetProductDetails?id=${id}`
+          `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetProductDetails?id=${id}`,
         );
         if (!response.ok) throw new Error("Failed to fetch ticket data");
         const data = await response.json();
@@ -49,18 +48,19 @@ const [deliveryPartnerUserId, setDeliveryPartnerUserId] = useState('');
         const tickets = Array.isArray(data)
           ? data
           : data && typeof data === "object"
-          ? [data]
-          : [];
+            ? [data]
+            : [];
 
         setGroceryData(tickets);
 
         const first = tickets[0] || {};
         setLatitude(first.latitude ? parseFloat(first.latitude) : null);
         setLongitude(first.longitude ? parseFloat(first.longitude) : null);
-         const phone = first.customerPhoneNumber || first.customer?.phoneNumber || "N/A";
-          setCustomerPhoneNumber(phone);
-          console.log("Phone from API:", phone);       
-          setDeliveryPartnerUserId(first.deliveryPartnerUserId || "N/A");
+        const phone =
+          first.customerPhoneNumber || first.customer?.phoneNumber || "N/A";
+        setCustomerPhoneNumber(phone);
+        console.log("Phone from API:", phone);
+        setDeliveryPartnerUserId(first.deliveryPartnerUserId || "N/A");
       } catch (error) {
         console.error("Error fetching ticket data:", error);
         setGroceryData([]);
@@ -72,8 +72,7 @@ const [deliveryPartnerUserId, setDeliveryPartnerUserId] = useState('');
   }, [id]);
 
   const destination = useMemo(() => {
-    const lat =
-      typeof latitude === "number" ? latitude : parseFloat(latitude);
+    const lat = typeof latitude === "number" ? latitude : parseFloat(latitude);
     const lng =
       typeof longitude === "number" ? longitude : parseFloat(longitude);
     if (Number.isFinite(lat) && Number.isFinite(lng)) {
@@ -135,7 +134,7 @@ const [deliveryPartnerUserId, setDeliveryPartnerUserId] = useState('');
         enableHighAccuracy: true,
         maximumAge: 0,
         timeout: 5000,
-      }
+      },
     );
 
     return () => {
@@ -162,7 +161,7 @@ const [deliveryPartnerUserId, setDeliveryPartnerUserId] = useState('');
         } else {
           console.error("Directions request failed due to " + status);
         }
-      }
+      },
     );
   };
 
@@ -172,23 +171,23 @@ const [deliveryPartnerUserId, setDeliveryPartnerUserId] = useState('');
     <>
       <Header />
       <div
-  className="d-flex align-items-center gap-2"
-  style={{
-    position: "fixed",
-    top: "90px",
-    right: "20px", 
-    zIndex: 1000,
-    cursor: "pointer",
-  }}
-  onClick={() =>
-    window.location.href = `/profilePage/customer/${deliveryPartnerUserId}`
-  }
->
-  <p className="text-dark mb-0">
-    Customer Phone Number: {customerPhoneNumber || "N/A"}
-  </p>
-  <CloseIcon style={{ fontSize: "28px", color: "red" }} />
-</div>
+        className="d-flex align-items-center gap-2"
+        style={{
+          position: "fixed",
+          top: "90px",
+          right: "20px",
+          zIndex: 1000,
+          cursor: "pointer",
+        }}
+        onClick={() =>
+          (window.location.href = `/profilePage/customer/${deliveryPartnerUserId}`)
+        }
+      >
+        <p className="text-dark mb-0">
+          Customer Phone Number: {customerPhoneNumber || "N/A"}
+        </p>
+        <CloseIcon style={{ fontSize: "28px", color: "red" }} />
+      </div>
       <div className="container m-1">
         <div style={{ position: "relative", marginTop: "150px" }}>
           {/* ✅ Distance Display */}

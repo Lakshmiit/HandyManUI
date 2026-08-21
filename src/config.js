@@ -4,4 +4,4 @@ export const appConfig = {
 
 
 // ${appConfig.apiBaseUrl}
-// https://handymanapiv15-cmhuc3b9fcd0eeb9.canadacentral-01.azurewebsites.net
+// https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net

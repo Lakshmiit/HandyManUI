@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import axios from "axios";
+import { confirmDialog } from "./DialogSystem";
 import {
   Table,
   Button,
@@ -23,7 +24,9 @@ const createEmptyCashbackRule = () => ({
 });
 
 const isCashbackConfigBanner = (banner) =>
-  String(banner?.header || "").trim().toLowerCase() === CASHBACK_CONFIG_HEADER;
+  String(banner?.header || "")
+    .trim()
+    .toLowerCase() === CASHBACK_CONFIG_HEADER;
 
 const parseCashbackRules = (value) => {
   if (!value) return [];
@@ -63,7 +66,7 @@ const serializeCashbackRules = (rules) =>
 
 const BannerList = () => {
   const navigate = useNavigate();
-const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 15;
   const [bannersList, setBannersList] = useState([]);
   const [selectedBanner, setSelectedBanner] = useState(null);
@@ -82,7 +85,7 @@ const [currentPage, setCurrentPage] = useState(1);
     createdDate: "",
     updatedDate: "",
     startDate: "",
-    endDate: "",   
+    endDate: "",
     image: [],
   });
 
@@ -90,7 +93,7 @@ const [currentPage, setCurrentPage] = useState(1);
     try {
       setLoading(true);
       const res = await axios.get(
-        "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UpLoadBannners/GetBanners"
+        "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UpLoadBannners/GetBanners",
       );
       setBannersList(res.data || []);
     } catch (err) {
@@ -98,31 +101,31 @@ const [currentPage, setCurrentPage] = useState(1);
       alert("Failed to fetch banners");
     } finally {
       setLoading(false);
-    }                 
+    }
   };
 
   useEffect(() => {
     fetchBanners();
   }, []);
 
-const indexOfLast = currentPage * rowsPerPage;
+  const indexOfLast = currentPage * rowsPerPage;
   const indexOfFirst = indexOfLast - rowsPerPage;
   const currentBanners = useMemo(
     () => bannersList.slice(indexOfFirst, indexOfLast),
-    [bannersList, indexOfFirst, indexOfLast]
+    [bannersList, indexOfFirst, indexOfLast],
   );
 
   const fetchBannerImages = async (banner) => {
     const imageRequests =
       banner.image?.map((photo) =>
         fetch(
-          `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo.images}`
+          `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${photo.images}`,
         )
           .then((res) => res.json())
           .then((data) => ({
             src: photo.images,
             imageData: data.imageData,
-          }))
+          })),
       ) || [];
 
     return await Promise.all(imageRequests);
@@ -170,10 +173,10 @@ const indexOfLast = currentPage * rowsPerPage;
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Delete this banner?")) return;
+    if (!(await confirmDialog("Delete this banner?"))) return;
     try {
       await axios.delete(
-        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UpLoadBannners/DeleteBanner/${id}`
+        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UpLoadBannners/DeleteBanner/${id}`,
       );
       alert("Banner deleted successfully");
       fetchBanners();
@@ -213,7 +216,9 @@ const indexOfLast = currentPage * rowsPerPage;
   const handleUpdate = async () => {
     try {
       const isCashbackConfig = editBanner.offerType === "cashback-config";
-      const serializedRules = serializeCashbackRules(editBanner.cashbackRules || []);
+      const serializedRules = serializeCashbackRules(
+        editBanner.cashbackRules || [],
+      );
       if (isCashbackConfig && !serializedRules) {
         alert("Please add at least one cashback rule.");
         return;
@@ -222,9 +227,13 @@ const indexOfLast = currentPage * rowsPerPage;
       const payload = {
         id: editBanner.id,
         title: isCashbackConfig ? CASHBACK_CONFIG_TITLE : editBanner.title,
-        description: isCashbackConfig ? serializedRules : editBanner.description,
+        description: isCashbackConfig
+          ? serializedRules
+          : editBanner.description,
         header: isCashbackConfig ? CASHBACK_CONFIG_HEADER : editBanner.header,
-        footer: isCashbackConfig ? "Admin-managed cashback thresholds" : editBanner.footer,
+        footer: isCashbackConfig
+          ? "Admin-managed cashback thresholds"
+          : editBanner.footer,
         createdDate: editBanner.createdDate,
         updatedDate: new Date(),
         startDate: editBanner.startDate,
@@ -234,7 +243,7 @@ const indexOfLast = currentPage * rowsPerPage;
 
       await axios.put(
         `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UpLoadBannners/UpdateBannerDetails?id=${editBanner.id}`,
-        payload
+        payload,
       );
 
       alert("Banner updated successfully");
@@ -270,7 +279,7 @@ const indexOfLast = currentPage * rowsPerPage;
           <button
             className="btn btn-success"
             style={{ position: "absolute", right: 0 }}
-            onClick={() => navigate('/adminOfferModal/Admin')}
+            onClick={() => navigate("/adminOfferModal/Admin")}
           >
             Upload Poster
           </button>
@@ -362,18 +371,22 @@ const indexOfLast = currentPage * rowsPerPage;
                       </tr>
                     </thead>
                     <tbody>
-                      {parseCashbackRules(selectedBanner.description).map((rule, index) => (
-                        <tr key={`view-rule-${index}`}>
-                          <td>{rule.minAmount}</td>
-                          <td>{rule.maxAmount || "No limit"}</td>
-                          <td>{rule.cashback}</td>
-                        </tr>
-                      ))}
+                      {parseCashbackRules(selectedBanner.description).map(
+                        (rule, index) => (
+                          <tr key={`view-rule-${index}`}>
+                            <td>{rule.minAmount}</td>
+                            <td>{rule.maxAmount || "No limit"}</td>
+                            <td>{rule.cashback}</td>
+                          </tr>
+                        ),
+                      )}
                     </tbody>
                   </Table>
                 </div>
               ) : (
-                <p><strong>Description:</strong> {selectedBanner.description}</p>
+                <p>
+                  <strong>Description:</strong> {selectedBanner.description}
+                </p>
               )}
               <p>
                 <strong>Start:</strong>{" "}
@@ -420,56 +433,88 @@ const indexOfLast = currentPage * rowsPerPage;
             <Form.Group>
               <Form.Label>Title</Form.Label>
               <Form.Control
-                value={editBanner.offerType === "cashback-config" ? CASHBACK_CONFIG_TITLE : editBanner.title}
+                value={
+                  editBanner.offerType === "cashback-config"
+                    ? CASHBACK_CONFIG_TITLE
+                    : editBanner.title
+                }
                 readOnly={editBanner.offerType === "cashback-config"}
                 onChange={(e) =>
                   setEditBanner({ ...editBanner, title: e.target.value })
                 }
               />
-            </Form.Group>   
+            </Form.Group>
 
             {editBanner.offerType === "cashback-config" ? (
               <div className="border rounded p-2 my-3 bg-light">
                 <div className="d-flex justify-content-between align-items-center mb-2">
-                  <Form.Label className="fw-bold mb-0">Cashback Slabs</Form.Label>
-                  <Button type="button" size="sm" variant="success" onClick={addCashbackRule}>
+                  <Form.Label className="fw-bold mb-0">
+                    Cashback Slabs
+                  </Form.Label>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="success"
+                    onClick={addCashbackRule}
+                  >
                     Add Row
                   </Button>
                 </div>
                 {editBanner.cashbackRules.map((rule, index) => (
-                  <Row key={`edit-cashback-rule-${index}`} className="g-2 align-items-end mb-2">
+                  <Row
+                    key={`edit-cashback-rule-${index}`}
+                    className="g-2 align-items-end mb-2"
+                  >
                     <Form.Group as={Col} xs={4}>
-                      <Form.Label className="small fw-bold">Min Amount</Form.Label>
+                      <Form.Label className="small fw-bold">
+                        Min Amount
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         inputMode="numeric"
                         value={rule.minAmount}
                         onChange={(e) =>
-                          handleCashbackRuleChange(index, "minAmount", e.target.value)
+                          handleCashbackRuleChange(
+                            index,
+                            "minAmount",
+                            e.target.value,
+                          )
                         }
                         placeholder="300"
                       />
                     </Form.Group>
                     <Form.Group as={Col} xs={4}>
-                      <Form.Label className="small fw-bold">Max Amount</Form.Label>
+                      <Form.Label className="small fw-bold">
+                        Max Amount
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         inputMode="numeric"
                         value={rule.maxAmount}
                         onChange={(e) =>
-                          handleCashbackRuleChange(index, "maxAmount", e.target.value)
+                          handleCashbackRuleChange(
+                            index,
+                            "maxAmount",
+                            e.target.value,
+                          )
                         }
                         placeholder="Optional"
                       />
                     </Form.Group>
                     <Form.Group as={Col} xs={3}>
-                      <Form.Label className="small fw-bold">Cashback</Form.Label>
+                      <Form.Label className="small fw-bold">
+                        Cashback
+                      </Form.Label>
                       <Form.Control
                         type="text"
                         inputMode="numeric"
                         value={rule.cashback}
                         onChange={(e) =>
-                          handleCashbackRuleChange(index, "cashback", e.target.value)
+                          handleCashbackRuleChange(
+                            index,
+                            "cashback",
+                            e.target.value,
+                          )
                         }
                         placeholder="20"
                       />
@@ -559,78 +604,90 @@ const indexOfLast = currentPage * rowsPerPage;
           </Button>
         </Modal.Footer>
       </Modal>
- {/* Pagination */}
-        <div className="d-flex justify-content-center mt-3">
-          <nav aria-label="Page navigation">
-            <ul className="pagination">
-              <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-                <button
-                  className="page-link"
-                  onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-                >
-                  &laquo;
-                </button>
-              </li>
-              {Array.from({ length: Math.ceil(bannersList.length / rowsPerPage) }, (_, i) => i + 1)
-                .filter(
-                  (page) =>
-                    page === 1 ||
-                    page === Math.ceil(bannersList.length / rowsPerPage) ||
-                    (page >= currentPage - 2 && page <= currentPage + 2)
-                )
-                .map((page, i, arr) => {
-                  const prevPage = arr[i - 1];
-                  if (prevPage && page - prevPage > 1) {
-                    return (
-                      <React.Fragment key={page}>
-                        <li className="page-item disabled">
-                          <span className="page-link">...</span>
-                        </li>
-                        <li
-                          className={`page-item ${page === currentPage ? "active" : ""}`}
-                        >
-                          <button className="page-link" onClick={() => setCurrentPage(page)}>
-                            {page}
-                          </button>
-                        </li>
-                      </React.Fragment>
-                    );
-                  }
-                  return (
-                    <li
-                      key={page}
-                      className={`page-item ${page === currentPage ? "active" : ""}`}
-                    >
-                      <button className="page-link" onClick={() => setCurrentPage(page)}>
-                        {page}
-                      </button>
-                    </li>
-                  );
-                })}
-              <li
-                className={`page-item ${
-                  currentPage === Math.ceil(bannersList.length / rowsPerPage)
-                    ? "disabled"
-                    : ""
-                }`}
+      {/* Pagination */}
+      <div className="d-flex justify-content-center mt-3">
+        <nav aria-label="Page navigation">
+          <ul className="pagination">
+            <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+              <button
+                className="page-link"
+                onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
               >
-                <button
-                  className="page-link"
-                  onClick={() =>
-                    setCurrentPage((p) =>
-                      Math.min(p + 1, Math.ceil(bannersList.length / rowsPerPage))
-                    )
-                  }
-                >
-                  &raquo;
-                </button>
-              </li>
-            </ul>
-          </nav>
-        </div>
+                &laquo;
+              </button>
+            </li>
+            {Array.from(
+              { length: Math.ceil(bannersList.length / rowsPerPage) },
+              (_, i) => i + 1,
+            )
+              .filter(
+                (page) =>
+                  page === 1 ||
+                  page === Math.ceil(bannersList.length / rowsPerPage) ||
+                  (page >= currentPage - 2 && page <= currentPage + 2),
+              )
+              .map((page, i, arr) => {
+                const prevPage = arr[i - 1];
+                if (prevPage && page - prevPage > 1) {
+                  return (
+                    <React.Fragment key={page}>
+                      <li className="page-item disabled">
+                        <span className="page-link">...</span>
+                      </li>
+                      <li
+                        className={`page-item ${page === currentPage ? "active" : ""}`}
+                      >
+                        <button
+                          className="page-link"
+                          onClick={() => setCurrentPage(page)}
+                        >
+                          {page}
+                        </button>
+                      </li>
+                    </React.Fragment>
+                  );
+                }
+                return (
+                  <li
+                    key={page}
+                    className={`page-item ${page === currentPage ? "active" : ""}`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() => setCurrentPage(page)}
+                    >
+                      {page}
+                    </button>
+                  </li>
+                );
+              })}
+            <li
+              className={`page-item ${
+                currentPage === Math.ceil(bannersList.length / rowsPerPage)
+                  ? "disabled"
+                  : ""
+              }`}
+            >
+              <button
+                className="page-link"
+                onClick={() =>
+                  setCurrentPage((p) =>
+                    Math.min(
+                      p + 1,
+                      Math.ceil(bannersList.length / rowsPerPage),
+                    ),
+                  )
+                }
+              >
+                &raquo;
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </div>
       <Footer />
     </>
   );
 };
 
-export default BannerList;   
+export default BannerList;

@@ -1,34 +1,34 @@
 import React, { useState, useEffect } from "react";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import "./App.css"; 
-import { useNavigate } from 'react-router-dom';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import UploadIcon from '@mui/icons-material/Upload';
-import AdminSidebar from './AdminSidebar';
-import { Dashboard as MoreVertIcon,} from '@mui/icons-material';
-import {  Button } from 'react-bootstrap';
-import { useParams } from 'react-router-dom';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./App.css";
+import { useNavigate } from "react-router-dom";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import UploadIcon from "@mui/icons-material/Upload";
+import AdminSidebar from "./AdminSidebar";
+import { Dashboard as MoreVertIcon } from "@mui/icons-material";
+import { Button } from "react-bootstrap";
+import { useParams } from "react-router-dom";
 // import { appConfig } from "./config";
 
 const AdminUploadGrocery = () => {
-  const [isMobile, setIsMobile] = useState(false);   
+  const [isMobile, setIsMobile] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [groceryName, setGroceryName] = useState("");
   const [category, setCategory] = useState("");
-  const [groceryPhotos, setGroceryPhotos] = useState([]); 
+  const [groceryPhotos, setGroceryPhotos] = useState([]);
   const [rate, setRate] = useState("");
   const [discount, setDiscount] = useState("");
-  const [deliveryInDays,setDeliveryInDays] =useState("");
+  const [deliveryInDays, setDeliveryInDays] = useState("");
   const [loading, setLoading] = useState(false);
-  const [uploadedFiles, setUploadedFiles] = useState([]); 
+  const [uploadedFiles, setUploadedFiles] = useState([]);
   const [showAlert, setShowAlert] = useState(false);
-  const navigate = useNavigate(); 
-  const { selectedUserType} = useParams();
-  const [stockLeft, setStockLeft] = useState('');
-  const [code, setCode] = useState('');
-  const [units, setUnits] = useState('');
-  const [manufactureDate,setManufactureDate] =useState('');
-  const [expireDate,setExpireDate]=useState('');
+  const navigate = useNavigate();
+  const { selectedUserType } = useParams();
+  const [stockLeft, setStockLeft] = useState("");
+  const [code, setCode] = useState("");
+  const [units, setUnits] = useState("");
+  const [manufactureDate, setManufactureDate] = useState("");
+  const [expireDate, setExpireDate] = useState("");
   const [limit, setLimit] = useState("");
   const handleFileChange = (event) => {
     const selectedFiles = Array.from(event.target.files);
@@ -41,12 +41,12 @@ const AdminUploadGrocery = () => {
   };
 
   // Detect screen size for responsiveness
-useEffect(() => {
-  const handleResize = () => setIsMobile(window.innerWidth <= 768);
-  handleResize(); 
-  window.addEventListener('resize', handleResize);
-  return () => window.removeEventListener('resize', handleResize);
-}, []);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleUploadFiles = async () => {
     setLoading(true);
@@ -61,12 +61,11 @@ useEffect(() => {
       const response = await uploadFile(byteArray, fileName, mimeType, file);
       if (response) {
         uploadedFilesList.push({
-          src: response, 
-          alt: fileName  
+          src: response,
+          alt: fileName,
         });
-        alert("Image Uploaded Sucessfully"); 
-      }
-      else {
+        alert("Image Uploaded Sucessfully");
+      } else {
         alert("Failed Upload Image");
       }
     }
@@ -88,57 +87,68 @@ useEffect(() => {
   const uploadFile = async (byteArray, fileName, mimeType, file) => {
     try {
       const formData = new FormData();
-      formData.append('file', new Blob([byteArray], { type: mimeType }), fileName);
-      formData.append('fileName', fileName);
-     
-      const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/upload?filename=` + fileName, {
-        method: 'POST',
-        headers: {
-          'Accept': 'text/plain',
+      formData.append(
+        "file",
+        new Blob([byteArray], { type: mimeType }),
+        fileName,
+      );
+      formData.append("fileName", fileName);
+
+      const response = await fetch(
+        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/upload?filename=` + fileName,
+        {
+          method: "POST",
+          headers: {
+            Accept: "text/plain",
+          },
+          body: formData,
         },
-        body: formData,
-      });
+      );
 
       const responseData = await response.text();
-      return responseData || ''; 
+      return responseData || "";
     } catch (error) {
-      console.error('Error uploading file:', error);
-      return '';
+      console.error("Error uploading file:", error);
+      return "";
     }
   };
 
   const validateForm = () => {
-  if (!groceryName.trim()) return "Product Name is required";
-  if (!category || category === "Choose Category") return "Category is required";
-  if (!units.trim()) return "Units are required";
-  if (!code.trim()) return "Code is required";
-  if (!rate || isNaN(rate)) return "Valid Rate is required";
-  if (discount === "" || isNaN(discount)) return "Valid Discount is required";
-  if (!deliveryInDays.trim()) return "Delivery In Minutes is required";
-  if (!stockLeft.trim()) return "Stock Left is required";
-  if (uploadedFiles.length === 0) {
-    return "Please upload product photo";
-  }
-  return null; 
-};
+    if (!groceryName.trim()) return "Product Name is required";
+    if (!category || category === "Choose Category")
+      return "Category is required";
+    if (!units.trim()) return "Units are required";
+    if (!code.trim()) return "Code is required";
+    if (!rate || isNaN(rate)) return "Valid Rate is required";
+    if (discount === "" || isNaN(discount)) return "Valid Discount is required";
+    if (!deliveryInDays.trim()) return "Delivery In Minutes is required";
+    if (!stockLeft.trim()) return "Stock Left is required";
+    if (uploadedFiles.length === 0) {
+      return "Please upload product photo";
+    }
+    return null;
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-      const errorMessage = validateForm();
-      if (errorMessage) {
-        alert(errorMessage);
-        return;
-      }
+    const errorMessage = validateForm();
+    if (errorMessage) {
+      alert(errorMessage);
+      return;
+    }
     const payload = {
-      id: "unique-id",   
+      id: "unique-id",
       date: "string",
       GroceryItemId: "string",
       name: groceryName,
       category: category,
-      images: uploadedFiles.map(file => file.src),
+      images: uploadedFiles.map((file) => file.src),
       mrp: parseFloat(rate).toString(),
       discount: parseFloat(discount).toString(),
-      afterDiscount: (parseFloat(rate) - (parseFloat(rate) * parseFloat(discount) / 100)).toString(),
+      afterDiscount: (
+        parseFloat(rate) -
+        (parseFloat(rate) * parseFloat(discount)) / 100
+      ).toString(),
       stockLeft: stockLeft,
       deliveryIn: deliveryInDays,
       status: "Pending Approval",
@@ -146,17 +156,20 @@ useEffect(() => {
       Code: code,
       Units: units,
       ManufactureDate: manufactureDate,
-      ExpireDate : expireDate,
-      Limit: limit ? limit.toString() : "",    
-    };   
+      ExpireDate: expireDate,
+      Limit: limit ? limit.toString() : "",
+    };
     try {
-      const response = await fetch(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/UploadGrocery`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
+      const response = await fetch(
+        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/UploadGrocery`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
         },
-        body: JSON.stringify(payload)   
-      });
+      );
 
       if (response.ok) {
         alert("Grocery Uploaded Successfully!");
@@ -171,14 +184,14 @@ useEffect(() => {
   };
 
   return (
-      <div className="d-flex flex-row justify-content-start align-items-start mt-mob-50">
-          {/* Sidebar */}
-          {!isMobile && (
-          <div className="ml-0 m-4 p-0 adm_mnu">
-          <AdminSidebar userType={selectedUserType}/>
-         </div>
-          )}
-          {/* Floating menu for mobile */}
+    <div className="d-flex flex-row justify-content-start align-items-start mt-mob-50">
+      {/* Sidebar */}
+      {!isMobile && (
+        <div className="ml-0 m-4 p-0 adm_mnu">
+          <AdminSidebar userType={selectedUserType} />
+        </div>
+      )}
+      {/* Floating menu for mobile */}
       {isMobile && (
         <div className="floating-menu">
           <Button
@@ -190,20 +203,22 @@ useEffect(() => {
           </Button>
 
           {showMenu && (
-              <div className="sidebar-container">
-                <AdminSidebar userType={selectedUserType} />
-              </div>
+            <div className="sidebar-container">
+              <AdminSidebar userType={selectedUserType} />
+            </div>
           )}
         </div>
       )}
 
-       <div className={`container m-3 ${isMobile ? 'w-100' : 'w-75'}`}>
+      <div className={`container m-3 ${isMobile ? "w-100" : "w-75"}`}>
         <h3 className="mb-3 text-center">Upload Grocery</h3>
         <div className="bg-white rounded-3 p-3 bx_sdw w-60 m-auto">
           <form onSubmit={handleSubmit}>
             {/* Product Name */}
             <div className="form-group">
-              <label>Product Name <span className="req_star">*</span></label>
+              <label>
+                Product Name <span className="req_star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -220,15 +235,16 @@ useEffect(() => {
                 className="form-control"
                 value={category}
                 required
-                onChange={(e) => setCategory(e.target.value)}>
+                onChange={(e) => setCategory(e.target.value)}
+              >
                 <option>Choose Category</option>
-                <option>LMart Special</option>   
+                <option>LMart Special</option>
                 <option>DWCRA</option>
                 <option>Grocery Value Combo Packs</option>
-                <option>Unbeatable Offers</option>     
+                <option>Unbeatable Offers</option>
                 <option>Vegetables</option>
                 <option>Fruits</option>
-                <option>Rice & Ravva</option>      
+                <option>Rice & Ravva</option>
                 <option>Atta & Flours</option>
                 <option>Oils & Dals</option>
                 <option>Sugar, Salt & Jaggery</option>
@@ -238,7 +254,7 @@ useEffect(() => {
                 <option>Instant Food, Chips & Namkeen</option>
                 <option>Biscuits & Chocolates</option>
                 <option>Drinks & Juices</option>
-                <option>Ice Creams</option>   
+                <option>Ice Creams</option>
                 <option>Sweets & Snacks</option>
                 <option>Dry Fruits & Bakery</option>
                 <option>Soups & Sauces</option>
@@ -255,8 +271,8 @@ useEffect(() => {
                 <option>Kitchenware Appliances</option>
                 <option>Home Decors</option>
                 <option>Stationary</option>
-                </select>
-            </div> 
+              </select>
+            </div>
 
             {/* Units */}
             <div className="form-group">
@@ -286,7 +302,9 @@ useEffect(() => {
 
             {/* Product Photos */}
             <div className="form-group">
-              <label>Product Photos <span className="req_star">*</span></label>
+              <label>
+                Product Photos <span className="req_star">*</span>
+              </label>
               <input
                 type="file"
                 className="form-control"
@@ -295,7 +313,8 @@ useEffect(() => {
               />
               {showAlert && (
                 <div className="alert alert-danger  mt-2">
-                  Please click the <strong>Upload Files</strong> button to upload the selected images.
+                  Please click the <strong>Upload Files</strong> button to
+                  upload the selected images.
                 </div>
               )}
               <div className="mt-2">
@@ -309,7 +328,7 @@ useEffect(() => {
                 onClick={handleUploadFiles}
                 disabled={loading || groceryPhotos.length === 0}
               >
-                {loading ? 'Uploading...' : 'Upload Files'}
+                {loading ? "Uploading..." : "Upload Files"}
               </button>
             </div>
 
@@ -339,19 +358,21 @@ useEffect(() => {
               />
             </div>
 
-             {/* After Discount Price */}
+            {/* After Discount Price */}
             <div className="form-group">
               <label>After Discount Price</label>
               <input
                 type="text"
                 className="form-control"
-                value={`${Math.round(Number(rate || 0) * (1 - (Number((discount || "0").toString().replace("%", "")) / 100)))} /-`}
-                />
+                value={`${Math.round(Number(rate || 0) * (1 - Number((discount || "0").toString().replace("%", "")) / 100))} /-`}
+              />
             </div>
-            
+
             {/* Manufacturing Date Left */}
             <div className="form-group">
-              <label>Manufacture Date <span className="req_star">*</span></label>
+              <label>
+                Manufacture Date <span className="req_star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -363,17 +384,19 @@ useEffect(() => {
 
             {/* Expire Date Left */}
             <div className="form-group">
-              <label>Expire Date <span className="req_star">*</span></label>
+              <label>
+                Expire Date <span className="req_star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
                 value={expireDate}
                 onChange={(e) => setExpireDate(e.target.value)}
                 placeholder="Expire Date"
-              />  
+              />
             </div>
-            
-             {/* Limit */}
+
+            {/* Limit */}
             <div className="form-group">
               <label>Limit</label>
               <input
@@ -382,12 +405,14 @@ useEffect(() => {
                 value={limit}
                 onChange={(e) => setLimit(e.target.value)}
                 placeholder="Limit"
-              />  
+              />
             </div>
 
             {/* Delivery In Days */}
             <div className="form-group">
-              <label>Delivery In Minutes <span className="req_star">*</span></label>
+              <label>
+                Delivery In Minutes <span className="req_star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -398,9 +423,11 @@ useEffect(() => {
               />
             </div>
 
-             {/* Stock Left */}
+            {/* Stock Left */}
             <div className="form-group">
-              <label>Stock Left <span className="req_star">*</span></label>
+              <label>
+                Stock Left <span className="req_star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -413,26 +440,26 @@ useEffect(() => {
 
             {/* Submit Button */}
             <div className="d-flex justify-content-between gap-3 mt-3">
-      {/* Upload Product Button */}
-      <button
-        type="submit"
-        className="btn btn-success w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
-        disabled={uploadedFiles.length === 0}
-      >
-        <UploadIcon className="me-2" />
-        <span>Upload Grocery</span>
-      </button>
+              {/* Upload Product Button */}
+              <button
+                type="submit"
+                className="btn btn-success w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
+                disabled={uploadedFiles.length === 0}
+              >
+                <UploadIcon className="me-2" />
+                <span>Upload Grocery</span>
+              </button>
 
-      {/* View Single Product Button */}
-      <button
-        type="button"
-        className="btn btn-primary w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
-          onClick={() => navigate(`/adminGroceryList/Admin`)}
-      >
-        <VisibilityIcon className="me-2" />
-        <span>View Product</span>
-      </button>
-    </div>
+              {/* View Single Product Button */}
+              <button
+                type="button"
+                className="btn btn-primary w-100 d-flex justify-content-center align-items-center p-3 shadow-lg"
+                onClick={() => navigate(`/adminGroceryList/Admin`)}
+              >
+                <VisibilityIcon className="me-2" />
+                <span>View Product</span>
+              </button>
+            </div>
           </form>
         </div>
       </div>

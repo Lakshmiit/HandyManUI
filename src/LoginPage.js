@@ -13,7 +13,7 @@ const LoginPage = () => {
   const [submitted, setSubmitted] = useState(false);
   const [isChecked, setIsChecked] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const handleMobileChange = (e) => {   
+  const handleMobileChange = (e) => {
     const value = e.target.value;
     if (/^\d{0,10}$/.test(value)) {
         setMobile(value);   

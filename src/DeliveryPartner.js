@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from "react"; 
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Form from "react-bootstrap/Form";
-import Header from './Header';
-import Footer from './Footer';
+import Header from "./Header";
+import Footer from "./Footer";
 import { useNavigate, useParams } from "react-router-dom";
 // import { appConfig } from "./config";
 
 const FILE_FIELDS = [
   { label: "Passport Size Photo (PDF)", name: "passportPhoto" },
-  { label: "Driving License (PDF)",  name: "drivingLicense" },
-  { label: "Aadhar Card (PDF)",      name: "aadharCard" },
-  { label: "Pan Card (PDF)",         name: "panCard" },
+  { label: "Driving License (PDF)", name: "drivingLicense" },
+  { label: "Aadhar Card (PDF)", name: "aadharCard" },
+  { label: "Pan Card (PDF)", name: "panCard" },
 ];
 const DeliveryPartner = () => {
   const navigate = useNavigate();
@@ -34,7 +34,7 @@ const DeliveryPartner = () => {
     passportPhoto: "",
     drivingLicense: "",
     aadharCard: "",
-    panCard: ""
+    panCard: "",
   });
 
   const [showAlert, setShowAlert] = useState({});
@@ -59,7 +59,8 @@ const DeliveryPartner = () => {
   }, []);
 
   useEffect(() => {
-    axios.get(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getStates`)
+    axios
+      .get(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getStates`)
       .then((res) => {
         setStateList(res.data || []);
         setStateId("");
@@ -68,8 +69,12 @@ const DeliveryPartner = () => {
   }, []);
 
   useEffect(() => {
-    if (!stateId) { setDistrictList([]); return; }
-    axios.get(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
+    if (!stateId) {
+      setDistrictList([]);
+      return;
+    }
+    axios
+      .get(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
       .then((res) => setDistrictList(res.data || []))
       .catch((err) => console.error("Error fetching districts:", err));
   }, [stateId]);
@@ -108,27 +113,30 @@ const DeliveryPartner = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     let v = value;
-    if (name === "phone")         
-      v = value.replace(/\D/g, "").slice(0, 10);
-    else if (name === "pincode")  
-      v = value.replace(/\D/g, "").slice(0, 6);
-    else if (name === "aadharNumber")
-      v = value.replace(/\D/g, "").slice(0, 12);
+    if (name === "phone") v = value.replace(/\D/g, "").slice(0, 10);
+    else if (name === "pincode") v = value.replace(/\D/g, "").slice(0, 6);
+    else if (name === "aadharNumber") v = value.replace(/\D/g, "").slice(0, 12);
     else if (name === "licenseNumber")
       v = value.replace(/[^a-zA-Z0-9]/g, "").slice(0, 15);
     else if (name === "panNumber")
-      v = value.replace(/[^a-zA-Z0-9]/g, "").slice(0, 10).toUpperCase();
+      v = value
+        .replace(/[^a-zA-Z0-9]/g, "")
+        .slice(0, 10)
+        .toUpperCase();
     setFormData((prev) => ({ ...prev, [name]: v }));
     validateField(name, v);
   };
 
   const validateAll = () => {
     const errors = {};
-    Object.keys(formData).forEach((k) => { errors[k] = validateField(k, formData[k]); });
+    Object.keys(formData).forEach((k) => {
+      errors[k] = validateField(k, formData[k]);
+    });
     if (!stateId || !state) errors.state = "Please select a State.";
     if (!districtId || !district) errors.district = "Please select a District.";
     FILE_FIELDS.forEach(({ name }) => {
-      if (!uploadedNames[name]) errors[name] = `Please upload ${name} (click Upload).`;
+      if (!uploadedNames[name])
+        errors[name] = `Please upload ${name} (click Upload).`;
     });
     setFormErrors(errors);
     return Object.values(errors).every((e) => !e);
@@ -150,13 +158,16 @@ const DeliveryPartner = () => {
         preview: URL.createObjectURL(file),
       },
     }));
-    setShowAlert((prev) => ({ ...prev, [name]: true })); 
-    setFormErrors((prev) => ({ ...prev, [name]: "" })); 
+    setShowAlert((prev) => ({ ...prev, [name]: true }));
+    setFormErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const uploadOne = async (field) => {
     const f = files[field]?.file;
-    if (!f) { alert(`Please choose a PDF for ${field}`); return; }
+    if (!f) {
+      alert(`Please choose a PDF for ${field}`);
+      return;
+    }
     try {
       setLoading((p) => ({ ...p, [field]: true }));
       const fd = new FormData();
@@ -164,16 +175,18 @@ const DeliveryPartner = () => {
       fd.append("fileName", f.name);
       const resp = await fetch(
         `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/upload?filename=${f.name}`,
-        { method: "POST", headers: { Accept: "text/plain" }, body: fd }
+        { method: "POST", headers: { Accept: "text/plain" }, body: fd },
       );
       if (!resp.ok) {
         const txt = await resp.text();
         throw new Error(`Upload failed (${resp.status}): ${txt}`);
       }
-      const storedName = (await resp.text()).trim(); 
+      const storedName = (await resp.text()).trim();
       setUploadedNames((prev) => ({ ...prev, [field]: storedName }));
-      setShowAlert((prev) => ({ ...prev, [field]: false })); 
-      alert(`${FILE_FIELDS.find(fld => fld.name === field)?.label || field} uploaded.`);
+      setShowAlert((prev) => ({ ...prev, [field]: false }));
+      alert(
+        `${FILE_FIELDS.find((fld) => fld.name === field)?.label || field} uploaded.`,
+      );
     } catch (err) {
       console.error("Upload error:", err);
       alert(`Failed to upload ${field}.`);
@@ -184,7 +197,9 @@ const DeliveryPartner = () => {
 
   useEffect(() => {
     return () => {
-      Object.values(files).forEach((f) => f?.preview && URL.revokeObjectURL(f.preview));
+      Object.values(files).forEach(
+        (f) => f?.preview && URL.revokeObjectURL(f.preview),
+      );
     };
   }, [files]);
 
@@ -214,14 +229,19 @@ const DeliveryPartner = () => {
         isDelivered: false,
         assignedTo: "",
         photo: uploadedNames.passportPhoto ? [uploadedNames.passportPhoto] : [],
-        drivingLicense: uploadedNames.drivingLicense ? [uploadedNames.drivingLicense] : [],
-        aadharAttachment: uploadedNames.aadharCard ? [uploadedNames.aadharCard] : [],
+        drivingLicense: uploadedNames.drivingLicense
+          ? [uploadedNames.drivingLicense]
+          : [],
+        aadharAttachment: uploadedNames.aadharCard
+          ? [uploadedNames.aadharCard]
+          : [],
         pancardAttachment: uploadedNames.panCard ? [uploadedNames.panCard] : [],
       };
 
-      const { status } = await axios.post(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/DeliveryPartner/UploadDeliveryPartnerDetails`,
+      const { status } = await axios.post(
+        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/DeliveryPartner/UploadDeliveryPartnerDetails`,
         payload,
-        { headers: { "Content-Type": "application/json" } }
+        { headers: { "Content-Type": "application/json" } },
       );
       if (status >= 200 && status < 300) {
         alert("Registration Successful!");
@@ -238,16 +258,21 @@ const DeliveryPartner = () => {
 
   return (
     <>
-    <Header />
+      <Header />
       <div className={`container ${isMobile ? "w-100" : "w-100"}`}>
-        <h2 className="text-center text-dark fw-bold" style={{ fontFamily: "'Baloo 2'", marginTop: "80px" }}>
+        <h2
+          className="text-center text-dark fw-bold"
+          style={{ fontFamily: "'Baloo 2'", marginTop: "80px" }}
+        >
           Delivery Partner Registration
         </h2>
 
         <form className="p-3 rounded shadow" noValidate onSubmit={handleSubmit}>
           <div className="row">
             <div className="col-md-6">
-              <label>Full Name <span className="req_star">*</span></label>
+              <label>
+                Full Name <span className="req_star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -256,10 +281,14 @@ const DeliveryPartner = () => {
                 onChange={handleChange}
                 required
               />
-              {formErrors.firstName && <small className="text-danger">{formErrors.firstName}</small>}
+              {formErrors.firstName && (
+                <small className="text-danger">{formErrors.firstName}</small>
+              )}
             </div>
             <div className="col-md-6">
-              <label>Phone Number <span className="req_star">*</span></label>
+              <label>
+                Phone Number <span className="req_star">*</span>
+              </label>
               <input
                 type="tel"
                 className="form-control"
@@ -269,14 +298,18 @@ const DeliveryPartner = () => {
                 onChange={handleChange}
                 required
               />
-              {formErrors.phone && <small className="text-danger">{formErrors.phone}</small>}
+              {formErrors.phone && (
+                <small className="text-danger">{formErrors.phone}</small>
+              )}
             </div>
           </div>
 
           {/* Address */}
           <div className="row">
             <div className="col-md-6">
-              <label>Address <span className="req_star">*</span></label>
+              <label>
+                Address <span className="req_star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -285,41 +318,57 @@ const DeliveryPartner = () => {
                 onChange={handleChange}
                 required
               />
-              {formErrors.address && <small className="text-danger">{formErrors.address}</small>}
+              {formErrors.address && (
+                <small className="text-danger">{formErrors.address}</small>
+              )}
             </div>
 
             <Form.Group className="col-md-6">
-              <Form.Label>State <span className="req_star">*</span></Form.Label>
+              <Form.Label>
+                State <span className="req_star">*</span>
+              </Form.Label>
               <Form.Select
                 value={stateId || ""}
                 onChange={(e) => {
                   const selectedId = e.target.value;
                   setStateId(selectedId);
-                  const selectedState = stateList.find((s) => s?.StateId?.toString() === selectedId);
+                  const selectedState = stateList.find(
+                    (s) => s?.StateId?.toString() === selectedId,
+                  );
                   setState(selectedState ? selectedState.StateName : "");
                 }}
                 required
               >
                 <option value="">Select State</option>
                 {Array.isArray(stateList) &&
-                  stateList.filter((s) => s && s.StateId && s.StateName).map((s) => (
-                    <option key={s.StateId} value={s.StateId.toString()}>
-                      {s.StateName}
-                    </option>
-                  ))}
+                  stateList
+                    .filter((s) => s && s.StateId && s.StateName)
+                    .map((s) => (
+                      <option key={s.StateId} value={s.StateId.toString()}>
+                        {s.StateName}
+                      </option>
+                    ))}
               </Form.Select>
-              {formErrors.state && <small className="text-danger">{formErrors.state}</small>}
+              {formErrors.state && (
+                <small className="text-danger">{formErrors.state}</small>
+              )}
             </Form.Group>
 
             <Form.Group className="col-md-6">
-              <Form.Label>District <span className="req_star">*</span></Form.Label>
+              <Form.Label>
+                District <span className="req_star">*</span>
+              </Form.Label>
               <Form.Select
                 value={districtId || ""}
                 onChange={(e) => {
                   const selectedId = e.target.value;
                   setDistrictId(selectedId);
-                  const selectedDistrict = districtList.find((d) => d.districtId.toString() === selectedId);
-                  setDistrict(selectedDistrict ? selectedDistrict.districtName : "");
+                  const selectedDistrict = districtList.find(
+                    (d) => d.districtId.toString() === selectedId,
+                  );
+                  setDistrict(
+                    selectedDistrict ? selectedDistrict.districtName : "",
+                  );
                 }}
                 required
                 disabled={!stateId}
@@ -331,11 +380,15 @@ const DeliveryPartner = () => {
                   </option>
                 ))}
               </Form.Select>
-              {formErrors.district && <small className="text-danger">{formErrors.district}</small>}
+              {formErrors.district && (
+                <small className="text-danger">{formErrors.district}</small>
+              )}
             </Form.Group>
 
             <div className="col-md-6">
-              <label>Pincode <span className="req_star">*</span></label>
+              <label>
+                Pincode <span className="req_star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -344,7 +397,9 @@ const DeliveryPartner = () => {
                 onChange={handleChange}
                 required
               />
-              {formErrors.pincode && <small className="text-danger">{formErrors.pincode}</small>}
+              {formErrors.pincode && (
+                <small className="text-danger">{formErrors.pincode}</small>
+              )}
             </div>
           </div>
 
@@ -352,7 +407,9 @@ const DeliveryPartner = () => {
           <h5 className="mt-1">Identity Documents</h5>
           <div className="row">
             <div className="col-md-6">
-              <label>Driving License Number <span className="req_star">*</span></label>
+              <label>
+                Driving License Number <span className="req_star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -361,10 +418,16 @@ const DeliveryPartner = () => {
                 onChange={handleChange}
                 required
               />
-              {formErrors.licenseNumber && <small className="text-danger">{formErrors.licenseNumber}</small>}
+              {formErrors.licenseNumber && (
+                <small className="text-danger">
+                  {formErrors.licenseNumber}
+                </small>
+              )}
             </div>
             <div className="col-md-6">
-              <label>Aadhar Number <span className="req_star">*</span></label>
+              <label>
+                Aadhar Number <span className="req_star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -373,10 +436,14 @@ const DeliveryPartner = () => {
                 onChange={handleChange}
                 required
               />
-              {formErrors.aadharNumber && <small className="text-danger">{formErrors.aadharNumber}</small>}
+              {formErrors.aadharNumber && (
+                <small className="text-danger">{formErrors.aadharNumber}</small>
+              )}
             </div>
             <div className="col-md-6">
-              <label>PAN Number <span className="req_star">*</span></label>
+              <label>
+                PAN Number <span className="req_star">*</span>
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -385,7 +452,9 @@ const DeliveryPartner = () => {
                 onChange={handleChange}
                 required
               />
-              {formErrors.panNumber && <small className="text-danger">{formErrors.panNumber}</small>}
+              {formErrors.panNumber && (
+                <small className="text-danger">{formErrors.panNumber}</small>
+              )}
             </div>
           </div>
 
@@ -402,10 +471,16 @@ const DeliveryPartner = () => {
                   onChange={handleFileChange}
                   required
                 />
-                {formErrors[name] && <p className="text-danger">{formErrors[name]}</p>}
+                {formErrors[name] && (
+                  <p className="text-danger">{formErrors[name]}</p>
+                )}
                 {showAlert[name] && (
-                  <div className="alert alert-warning mt-1" style={{fontSize: "10px"}}>
-                    <strong>Note:</strong> After selecting, click <strong>Upload {label}</strong> to confirm.
+                  <div
+                    className="alert alert-warning mt-1"
+                    style={{ fontSize: "10px" }}
+                  >
+                    <strong>Note:</strong> After selecting, click{" "}
+                    <strong>Upload {label}</strong> to confirm.
                   </div>
                 )}
 
@@ -431,10 +506,10 @@ const DeliveryPartner = () => {
                 >
                   {loading[name] ? "Uploading..." : `Upload ${label}`}
                 </button>
-              </div>       
+              </div>
             ))}
           </div>
-         <div className="d-flex justify-content-between">
+          <div className="d-flex justify-content-between">
             <button
               type="submit"
               className="btn btn-danger w-50 mt-1 me-2"
@@ -443,7 +518,7 @@ const DeliveryPartner = () => {
               {submitting ? "Submitting..." : "Register"}
             </button>
 
-            <button     
+            <button
               type="button"
               className="btn btn-warning w-50 mt-1 ms-2"
               onClick={() => navigate(`/profilePage/${userType}/${userId}`)}

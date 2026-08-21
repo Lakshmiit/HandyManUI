@@ -17,7 +17,7 @@ const AdminRegistrationNumbers = () => {
   const [walletLoading, setWalletLoading] = useState(false);
   const [walletSuccess, setWalletSuccess] = useState(null);
   const [walletError, setWalletError] = useState(null);
-  const [isNewTransaction, setIsNewTransaction] = useState(false); 
+  const [isNewTransaction, setIsNewTransaction] = useState(false);
 
   const resetAll = () => {
     setCheckStatus(null);
@@ -39,9 +39,9 @@ const AdminRegistrationNumbers = () => {
     setCheckLoading(true);
     resetAll();
 
-    try {  
+    try {
       const res = await axios.get(
-        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Customer/GuestUserExistingVerification/${mobileNumber}`
+        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Customer/GuestUserExistingVerification/${mobileNumber}`,
       );
       console.log("[Step 1] Response:", res.data);
 
@@ -56,7 +56,8 @@ const AdminRegistrationNumbers = () => {
     } catch (err) {
       console.error("[Step 1] Error:", err?.response || err);
       setCheckError(
-        err?.response?.data?.message || "Error checking mobile number. See console."
+        err?.response?.data?.message ||
+          "Error checking mobile number. See console.",
       );
     } finally {
       setCheckLoading(false);
@@ -70,7 +71,7 @@ const AdminRegistrationNumbers = () => {
 
     try {
       const txRes = await axios.get(
-        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/OffersTransactions/GetOfferTransactionByUserId?userId=${userId}`
+        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/OffersTransactions/GetOfferTransactionByUserId?userId=${userId}`,
       );
       console.log("[Step 2] Response:", txRes.data);
 
@@ -106,9 +107,13 @@ const AdminRegistrationNumbers = () => {
     }
 
     // PUT guard — wallet already has balance
-    if (!isNewTransaction && transactionData && transactionData.totalWalletAmount !== "0") {
+    if (
+      !isNewTransaction &&
+      transactionData &&
+      transactionData.totalWalletAmount !== "0"
+    ) {
       setWalletError(
-        `Wallet already has ₹${transactionData.totalWalletAmount}. Cannot add again.`
+        `Wallet already has ₹${transactionData.totalWalletAmount}. Cannot add again.`,
       );
       return;
     }
@@ -120,26 +125,26 @@ const AdminRegistrationNumbers = () => {
 
       if (isNewTransaction) {
         // ───── POST ─────
-        const postPayload = {  
+        const postPayload = {
           id: "string",
           UserId: customerData.userId,
           CreatedDate: new Date().toISOString(),
           UpdatedDate: new Date().toISOString(),
           TicketId: "",
-          TotalWalletAmount: amount,   
+          TotalWalletAmount: amount,
           AvailedAmount: "0",
           RemainingAmount: amount,
-        };    
-     
+        };
+
         console.log("[Step 3] POST payload:", postPayload);
         const postRes = await axios.post(
           `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/OffersTransactions/UploadOffersTransactionsDetails`,
-          postPayload
+          postPayload,
         );
         console.log("[Step 3] POST response:", postRes.data);
 
         setWalletSuccess(
-          `₹${walletAmount} wallet created successfully for ${customerData.firstName} ${customerData.lastName}!`
+          `₹${walletAmount} wallet created successfully for ${customerData.firstName} ${customerData.lastName}!`,
         );
         setTransactionData({
           totalWalletAmount: amount,
@@ -149,7 +154,6 @@ const AdminRegistrationNumbers = () => {
           updatedDate: postPayload.UpdatedDate,
         });
         setIsNewTransaction(false);
-
       } else {
         // ───── PUT ─────
         if (!transactionData) {
@@ -171,12 +175,12 @@ const AdminRegistrationNumbers = () => {
         console.log("[Step 3] PUT payload:", putPayload);
         const putRes = await axios.put(
           `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/OffersTransactions/UpdateOffersTransactionsDetails/${transactionData.id}`,
-          putPayload
+          putPayload,
         );
         console.log("[Step 3] PUT response:", putRes.data);
 
         setWalletSuccess(
-          `₹${walletAmount} added successfully to ${customerData.firstName} ${customerData.lastName}'s wallet!`
+          `₹${walletAmount} added successfully to ${customerData.firstName} ${customerData.lastName}'s wallet!`,
         );
         setTransactionData((prev) => ({
           ...prev,
@@ -191,8 +195,8 @@ const AdminRegistrationNumbers = () => {
       console.error("[Step 3] Error:", err?.response || err);
       setWalletError(
         err?.response?.data?.message ||
-        err?.response?.statusText ||
-        "Failed to process wallet amount. See console."
+          err?.response?.statusText ||
+          "Failed to process wallet amount. See console.",
       );
     } finally {
       setWalletLoading(false);
@@ -200,7 +204,9 @@ const AdminRegistrationNumbers = () => {
   };
 
   const walletAlreadyFilled =
-    !isNewTransaction && transactionData && transactionData.totalWalletAmount !== "0";
+    !isNewTransaction &&
+    transactionData &&
+    transactionData.totalWalletAmount !== "0";
 
   return (
     <>
@@ -255,34 +261,71 @@ const AdminRegistrationNumbers = () => {
           </Form.Group>
 
           {checkError && (
-            <div className="mb-2 p-2 rounded" style={{ background: "#fee2e2", border: "1px solid #fca5a5", color: "#991b1b", fontWeight: 600 }}>
+            <div
+              className="mb-2 p-2 rounded"
+              style={{
+                background: "#fee2e2",
+                border: "1px solid #fca5a5",
+                color: "#991b1b",
+                fontWeight: 600,
+              }}
+            >
               ⚠️ {checkError}
             </div>
           )}
 
           {/* Registration Status */}
           {checkStatus === "registered" && customerData && (
-            <div className="mb-2 p-2 rounded" style={{ background: "#d1fae5", border: "1px solid #6ee7b7" }}>
-              <span style={{ color: "#065f46", fontWeight: 600 }}>✅ Registered</span>
+            <div
+              className="mb-2 p-2 rounded"
+              style={{ background: "#d1fae5", border: "1px solid #6ee7b7" }}
+            >
+              <span style={{ color: "#065f46", fontWeight: 600 }}>
+                ✅ Registered
+              </span>
             </div>
           )}
           {checkStatus === "not_registered" && (
-            <div className="mb-3 p-2 rounded" style={{ background: "#fee2e2", border: "1px solid #fca5a5" }}>
-              <span style={{ color: "#991b1b", fontWeight: 600 }}>❌ Not Registered</span>
+            <div
+              className="mb-3 p-2 rounded"
+              style={{ background: "#fee2e2", border: "1px solid #fca5a5" }}
+            >
+              <span style={{ color: "#991b1b", fontWeight: 600 }}>
+                ❌ Not Registered
+              </span>
             </div>
           )}
 
           {/* Wallet Info */}
           {txError && (
-            <div className="mb-2 p-2 rounded" style={{ background: "#fff7ed", border: "1px solid #fdba74", color: "#92400e", fontWeight: 600 }}>
+            <div
+              className="mb-2 p-2 rounded"
+              style={{
+                background: "#fff7ed",
+                border: "1px solid #fdba74",
+                color: "#92400e",
+                fontWeight: 600,
+              }}
+            >
               ⚠️ {txError}
             </div>
           )}
 
           {transactionData && (
-            <div className="mb-3 p-3 rounded" style={{ background: "#f0f9ff", border: "1px solid #bae6fd" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                <span style={{ color: "#0369a1", fontWeight: 600 }}>Total Wallet</span>
+            <div
+              className="mb-3 p-3 rounded"
+              style={{ background: "#f0f9ff", border: "1px solid #bae6fd" }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginBottom: 4,
+                }}
+              >
+                <span style={{ color: "#0369a1", fontWeight: 600 }}>
+                  Total Wallet
+                </span>
                 <span style={{ color: "#0369a1", fontWeight: 700 }}>
                   ₹{transactionData.totalWalletAmount}
                 </span>
@@ -292,55 +335,94 @@ const AdminRegistrationNumbers = () => {
 
           {/* New transaction badge */}
           {isNewTransaction && checkStatus === "registered" && (
-            <div className="mb-2 p-2 rounded" style={{ background: "#eff6ff", border: "1px solid #93c5fd", color: "#1e40af", fontWeight: 600 }}>
+            <div
+              className="mb-2 p-2 rounded"
+              style={{
+                background: "#eff6ff",
+                border: "1px solid #93c5fd",
+                color: "#1e40af",
+                fontWeight: 600,
+              }}
+            >
               🆕 No existing wallet — a new one will be created.
             </div>
           )}
 
           {walletAlreadyFilled && (
-            <div className="mb-3 p-2 rounded text-center" style={{ background: "#fefce8", border: "1px solid #fde047", color: "#854d0e", fontWeight: 600 }}>
-              ⚠️ Wallet already has ₹{transactionData.totalWalletAmount}. Cannot add again.
+            <div
+              className="mb-3 p-2 rounded text-center"
+              style={{
+                background: "#fefce8",
+                border: "1px solid #fde047",
+                color: "#854d0e",
+                fontWeight: 600,
+              }}
+            >
+              ⚠️ Wallet already has ₹{transactionData.totalWalletAmount}. Cannot
+              add again.
             </div>
           )}
 
           {/* Wallet Amount input — show if registered and wallet not already filled */}
-          {checkStatus === "registered" && customerData && !walletAlreadyFilled && (
-            <>
-              <Form.Group className="mb-2">
-                <Form.Label className="fw-bold">Wallet Amount (₹)</Form.Label>
-                <div className="d-flex gap-2">
-                  <Form.Control
-                    type="number"
-                    placeholder="e.g. 20, 50, 100"
-                    value={walletAmount}
-                    min={1}
-                    onChange={(e) => {
-                      setWalletAmount(e.target.value);
-                      setWalletSuccess(null);
-                      setWalletError(null);
-                    }}
-                  />
-                  <Button
-                    variant="success"
-                    onClick={handleAddWallet}
-                    disabled={walletLoading}
-                    style={{ whiteSpace: "nowrap", minWidth: "80px" }}
-                  >
-                    {walletLoading ? "Adding..." : isNewTransaction ? "Create" : "Add"}
-                  </Button>
-                </div>
-              </Form.Group>
+          {checkStatus === "registered" &&
+            customerData &&
+            !walletAlreadyFilled && (
+              <>
+                <Form.Group className="mb-2">
+                  <Form.Label className="fw-bold">Wallet Amount (₹)</Form.Label>
+                  <div className="d-flex gap-2">
+                    <Form.Control
+                      type="number"
+                      placeholder="e.g. 20, 50, 100"
+                      value={walletAmount}
+                      min={1}
+                      onChange={(e) => {
+                        setWalletAmount(e.target.value);
+                        setWalletSuccess(null);
+                        setWalletError(null);
+                      }}
+                    />
+                    <Button
+                      variant="success"
+                      onClick={handleAddWallet}
+                      disabled={walletLoading}
+                      style={{ whiteSpace: "nowrap", minWidth: "80px" }}
+                    >
+                      {walletLoading
+                        ? "Adding..."
+                        : isNewTransaction
+                          ? "Create"
+                          : "Add"}
+                    </Button>
+                  </div>
+                </Form.Group>
 
-              {walletError && (
-                <div className="mb-2 p-2 rounded" style={{ background: "#fee2e2", border: "1px solid #fca5a5", color: "#991b1b", fontWeight: 600 }}>
-                  ⚠️ {walletError}
-                </div>
-              )}
-            </>
-          )}
+                {walletError && (
+                  <div
+                    className="mb-2 p-2 rounded"
+                    style={{
+                      background: "#fee2e2",
+                      border: "1px solid #fca5a5",
+                      color: "#991b1b",
+                      fontWeight: 600,
+                    }}
+                  >
+                    ⚠️ {walletError}
+                  </div>
+                )}
+              </>
+            )}
 
           {walletSuccess && (
-            <div className="mb-2 p-2 rounded text-center" style={{ background: "#d1fae5", border: "1px solid #6ee7b7", color: "#065f46", fontWeight: 600 }}>
+            <div
+              className="mb-2 p-2 rounded text-center"
+              style={{
+                background: "#d1fae5",
+                border: "1px solid #6ee7b7",
+                color: "#065f46",
+                fontWeight: 600,
+              }}
+            >
               ✅ {walletSuccess}
             </div>
           )}
@@ -376,7 +458,7 @@ export default AdminRegistrationNumbers;
 
 // useEffect(() => {
 //   const handleResize = () => setIsMobile(window.innerWidth <= 768);
-//   handleResize(); 
+//   handleResize();
 //   window.addEventListener('resize', handleResize);
 //   return () => window.removeEventListener('resize', handleResize);
 // }, []);
@@ -384,7 +466,7 @@ export default AdminRegistrationNumbers;
 //  const handleSubmit = async () => {
 //   if (!mobileNumber || mobileNumber.length !== 10) {
 //     setErrorMessage("Please enter a valid 10-digit phone number.");
-//     setUserData(null); 
+//     setUserData(null);
 //     return;
 //   }
 
@@ -398,7 +480,7 @@ export default AdminRegistrationNumbers;
 //     }
 //     const result = await response.json();
 //     if (result && result.length > 0) {
-//       const user = result[0]; 
+//       const user = result[0];
 //       setUserData(user);
 //     } else {
 //       setErrorMessage("User not found.");
@@ -421,7 +503,7 @@ export default AdminRegistrationNumbers;
 //           <AdminSidebar userType={selectedUserType}/>
 //          </div>
 //           )}
-          
+
 //           {/* Floating menu for mobile */}
 //       {isMobile && (
 //         <div className="floating-menu">
@@ -459,7 +541,7 @@ export default AdminRegistrationNumbers;
 //                     const value = e.target.value;
 //                     if (/^\d{0,10}$/.test(value)) {
 //                         setMobileNumber(value);
-//                         setUserData(null); 
+//                         setUserData(null);
 //                     }
 //                     }}
 //                   placeholder="Enter 10-digit Phone Number"
@@ -488,5 +570,5 @@ export default AdminRegistrationNumbers;
 //     </div>
 //   );
 // };
-   
+
 // export default AdminRegistrationNumbers;

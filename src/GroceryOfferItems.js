@@ -236,7 +236,7 @@ const GroceryOfferItems = () => {
   }
 
   useEffect(() => {
-    if (!selectedCategory) return;     
+    if (!selectedCategory) return;
     let cancelled = false;
     const controller = new AbortController();
     async function fetchProductsAndFirstImages(warm = false, signal) {
@@ -278,7 +278,7 @@ const GroceryOfferItems = () => {
           const cached = await ImageCache.getBase64(photo);
           if (cached) {
             const dataUrl = `data:image/jpeg;base64,${cached}`;
-            ImageCache.setBlobUrl(photo, dataUrl); 
+            ImageCache.setBlobUrl(photo, dataUrl);
             cachedMap[productId] = [dataUrl];
           } else {
             misses.push({ productId, photo });
@@ -292,7 +292,7 @@ const GroceryOfferItems = () => {
           try {
             const res = await fetch(
               `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=${encodeURIComponent(photo)}`,
-              { signal },  
+              { signal },
             );
             const json = await res.json();
             const b64 = json?.imageData || "";
@@ -310,7 +310,7 @@ const GroceryOfferItems = () => {
               });
             }
           } catch (err) {
-            console.error("fetchOne failed:", err); 
+            console.error("fetchOne failed:", err);
           }
         };
         await Promise.allSettled(misses.map(fetchOne));
@@ -328,11 +328,11 @@ const GroceryOfferItems = () => {
     }
 
     fetchProductsAndFirstImages(false, controller.signal);
- return () => {
+    return () => {
       cancelled = true;
       controller.abort();
     };
-  }, [selectedCategory]);         
+  }, [selectedCategory]);
 
   useEffect(() => {
     let savedCategories = [];
@@ -574,19 +574,21 @@ const GroceryOfferItems = () => {
                             style={{ height: "90px" }}
                           >
                             {!imageUrls[product.id]?.[0] ? (
-                                <div style={{
+                              <div
+                                style={{
                                   position: "relative",
                                   width: "54px",
                                   height: "54px",
                                   display: "flex",
                                   alignItems: "center",
                                   justifyContent: "center",
-                                }}>
-                                  <div className="img-outer-ring" />
-                                  <div className="img-inner-ring" />
-                                  <div className="img-center-dot" />
-                                </div>
-                              ) : (   
+                                }}
+                              >
+                                <div className="img-outer-ring" />
+                                <div className="img-inner-ring" />
+                                <div className="img-center-dot" />
+                              </div>
+                            ) : (
                               <img
                                 src={imageUrls[product.id][0]}
                                 alt={product.name}
@@ -602,17 +604,18 @@ const GroceryOfferItems = () => {
                                 onClick={() => {
                                   if (isOutOfStock) return;
                                   navigate(
-                                    `/groceryComboOffer/${userType}/${userId}/${product.id}`,   
+                                    `/groceryComboOffer/${userType}/${userId}/${product.id}`,
                                     {
                                       state: {
-                                        product,                              
-                                        imageUrl: imageUrls[product.id]?.[0] ?? null,  
+                                        product,
+                                        imageUrl:
+                                          imageUrls[product.id]?.[0] ?? null,
                                       },
-                                    }
+                                    },
                                   );
                                 }}
                               />
-                           )}
+                            )}
 
                             {isOutOfStock && (
                               <div
@@ -644,7 +647,7 @@ const GroceryOfferItems = () => {
                             )}
                           </div>
 
-                          {/* Product Name */}   
+                          {/* Product Name */}
                           <h6
                             className="text-start fw-bold m-0"
                             style={{
@@ -683,7 +686,7 @@ const GroceryOfferItems = () => {
                                   {product.units}
                                 </b>
                               )}
-                          {/* <p className="blinking-icon mb-0" style={{color: "#db1818", fontSize: "9px", fontWeight: "bold"}}>Click on the image to see more</p> */}
+                              {/* <p className="blinking-icon mb-0" style={{color: "#db1818", fontSize: "9px", fontWeight: "bold"}}>Click on the image to see more</p> */}
 
                               {(() => {
                                 const limit = getLimit(product);
@@ -724,43 +727,47 @@ const GroceryOfferItems = () => {
                                     handleAddClick(product.id);
                                   }
                                 }}
-                              />   
+                              />
                             </div>
                           )}
 
-                       {/* Add / Counter */}
-                        {!isOutOfStock && (
-                          <div
-                            style={{
-                              position: "absolute",
-                              bottom: "8px",
-                              right: "8px",
-                            }}
-                          >
-                            <button
-                              className="btn fw-bold"
+                          {/* Add / Counter */}
+                          {!isOutOfStock && (
+                            <div
                               style={{
-                                border: "1px solid green",
-                                color: "white",
-                                backgroundColor: "green",
-                                borderRadius: "8px",
-                                padding: "2px 8px",
-                                fontSize: "11px",
-                              }}
-                              onClick={() => {
-                                handleAddClick(product.id);
-                                navigate(`/groceryComboOffer/${userType}/${userId}/${product.id}`, {
-                                  state: {
-                                    product,
-                                    imageUrl: imageUrls[product.id]?.[0] ?? null,
-                                  },
-                                });
+                                position: "absolute",
+                                bottom: "8px",
+                                right: "8px",
                               }}
                             >
-                              ADD
-                            </button>
-                          </div>
-                        )}
+                              <button
+                                className="btn fw-bold"
+                                style={{
+                                  border: "1px solid green",
+                                  color: "white",
+                                  backgroundColor: "green",
+                                  borderRadius: "8px",
+                                  padding: "2px 8px",
+                                  fontSize: "11px",
+                                }}
+                                onClick={() => {
+                                  handleAddClick(product.id);
+                                  navigate(
+                                    `/groceryComboOffer/${userType}/${userId}/${product.id}`,
+                                    {
+                                      state: {
+                                        product,
+                                        imageUrl:
+                                          imageUrls[product.id]?.[0] ?? null,
+                                      },
+                                    },
+                                  );
+                                }}
+                              >
+                                ADD
+                              </button>
+                            </div>
+                          )}
                         </div>
                       );
                     })}
