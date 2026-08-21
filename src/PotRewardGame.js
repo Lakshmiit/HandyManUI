@@ -2,9 +2,10 @@ import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { showToast } from "./toast";
 
-// ================= API URLS =================
+// ======================================================
+// API URLS
+// ======================================================
 
-// Change this to localhost if you are testing locally
 const API_BASE =
   "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api";
 
@@ -17,9 +18,19 @@ const CREATE_OFFER_TRANSACTION_URL =
 const UPDATE_OFFER_TRANSACTION_URL =
   `${API_BASE}/OffersTransactions/UpdateOffersTransactionsDetails`;
 
-// ================= REWARDS =================
+// ======================================================
+// GAME SETTINGS
+// ======================================================
 
-const REWARD_POOL = [5, 10, 15];
+// Exactly ONE ₹10 pot and TWO ₹0 pots
+const REWARD_POOL = [10, 0, 0];
+
+// Random cooldown after playing
+const COOLDOWN_HOURS = [3, 6, 8, 12, 18];
+
+// ======================================================
+// CREATE RANDOM POTS
+// ======================================================
 
 const shuffledRewards = () => {
   const arr = [...REWARD_POOL];
@@ -30,28 +41,76 @@ const shuffledRewards = () => {
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
 
-  return arr.map((amount, idx) => ({
-    id: idx,
+  return arr.map((amount, index) => ({
+    id: index,
     amount,
   }));
 };
 
-// ================= DAILY GAME LOCK =================
+// ======================================================
+// RANDOM COOLDOWN
+// ======================================================
 
-const todayKey = () => new Date().toISOString().slice(0, 10);
+const getRandomCooldownHours = () => {
+  const index = Math.floor(
+    Math.random() * COOLDOWN_HOURS.length
+  );
 
-const lockKey = (userId) =>
-  `potRewardGame_${userId}_${todayKey()}`;
+  return COOLDOWN_HOURS[index];
+};
 
-// ================= CREDIT WALLET =================
+// ======================================================
+// STORAGE
+// ======================================================
+
+const gameStorageKey = (userId) =>
+  `potRewardGame_${userId}`;
+
+// ======================================================
+// FORMAT TIMER
+// ======================================================
+
+const formatTimeLeft = (milliseconds) => {
+  if (milliseconds <= 0) {
+    return "00:00:00";
+  }
+
+  const totalSeconds = Math.ceil(
+    milliseconds / 1000
+  );
+
+  const hours = Math.floor(
+    totalSeconds / 3600
+  );
+
+  const minutes = Math.floor(
+    (totalSeconds % 3600) / 60
+  );
+
+  const seconds =
+    totalSeconds % 60;
+
+  return (
+    `${String(hours).padStart(2, "0")}:` +
+    `${String(minutes).padStart(2, "0")}:` +
+    `${String(seconds).padStart(2, "0")}`
+  );
+};
+
+// ======================================================
+// CREDIT WALLET
+// ======================================================
 
 async function creditWallet(userId, amount) {
   try {
-    console.log("🎁 Pot Reward Amount:", amount);
+    console.log(
+      "🎁 Pot Reward Amount:",
+      amount
+    );
 
-    // ---------------------------------------
-    // GET EXISTING WALLET TRANSACTION
-    // ---------------------------------------
+    // ------------------------------------------
+    // GET EXISTING WALLET
+    // ------------------------------------------
 
     const response = await axios.get(
       GET_OFFER_TRANSACTION_URL,
@@ -69,24 +128,28 @@ async function creditWallet(userId, amount) {
       data
     );
 
-    // ---------------------------------------
-    // NO RECORD -> CREATE NEW WALLET
-    // ---------------------------------------
+    // ------------------------------------------
+    // CREATE NEW WALLET
+    // ------------------------------------------
 
     if (!data || data.length === 0) {
       const payload = {
         id: "string",
         UserId: userId,
-        CreatedDate: new Date().toISOString(),
-        UpdatedDate: new Date().toISOString(),
+        CreatedDate:
+          new Date().toISOString(),
+        UpdatedDate:
+          new Date().toISOString(),
         TicketId: "",
-        TotalWalletAmount: String(amount),
+        TotalWalletAmount:
+          String(amount),
         AvailedAmount: "0",
-        RemainingAmount: String(amount),
+        RemainingAmount:
+          String(amount),
       };
 
       console.log(
-        "📤 Creating Offer Transaction:",
+        "📤 Creating wallet:",
         payload
       );
 
@@ -102,260 +165,437 @@ async function creditWallet(userId, amount) {
       return Number(amount);
     }
 
-    // ---------------------------------------
-    // EXISTING RECORD
-    // ---------------------------------------
+    // ------------------------------------------
+    // EXISTING WALLET
+    // ------------------------------------------
 
     const existing = data[0];
 
-    const existingWalletAmount = Number(
-      existing.remainingAmount || 0
-    );
+    const existingWalletAmount =
+      Number(
+        existing.remainingAmount || 0
+      );
 
-    const existingTotalWalletAmount = Number(
-      existing.totalWalletAmount || 0
-    );
+    const existingTotalWalletAmount =
+      Number(
+        existing.totalWalletAmount || 0
+      );
 
-    const existingAvailedAmount = Number(
-      existing.availedAmount || 0
-    );
+    const existingAvailedAmount =
+      Number(
+        existing.availedAmount || 0
+      );
 
-    const rewardAmount = Number(amount);
-
-    // ---------------------------------------
-    // ADD POT REWARD TO EXISTING WALLET
-    //
-    // Example:
-    //
-    // Existing Wallet = 50
-    // Reward = 15
-    //
-    // Updated Wallet = 65
-    // ---------------------------------------
+    const rewardAmount =
+      Number(amount);
 
     const updatedWalletAmount =
-      existingWalletAmount + rewardAmount;
+      existingWalletAmount +
+      rewardAmount;
 
     const updatedTotalWalletAmount =
-      existingTotalWalletAmount + rewardAmount;
+      existingTotalWalletAmount +
+      rewardAmount;
 
-    // ---------------------------------------
-    // PUT PAYLOAD
-    // ---------------------------------------
+    // ------------------------------------------
+    // UPDATE WALLET
+    // ------------------------------------------
 
-    const offersTransactionPayload = {
+    const payload = {
       id: existing.id,
-
       userId: userId,
+      createdDate:
+        existing.createdDate,
+      updatedDate:
+        new Date().toISOString(),
 
-      createdDate: existing.createdDate,
+      totalWalletAmount:
+        String(
+          updatedTotalWalletAmount
+        ),
 
-      updatedDate: new Date().toISOString(),
+      availedAmount:
+        String(
+          existingAvailedAmount
+        ),
 
-      totalWalletAmount: String(
-        updatedTotalWalletAmount
-      ),
-
-      // Do not change spent/availed amount
-      availedAmount: String(
-        existingAvailedAmount
-      ),
-
-      // Current wallet amount
-      remainingAmount: String(
-        updatedWalletAmount
-      ),
+      remainingAmount:
+        String(
+          updatedWalletAmount
+        ),
     };
 
     console.log(
-      "📤 PUT Offers Transaction Payload:",
-      offersTransactionPayload
+      "📤 Updating wallet:",
+      payload
     );
 
-    console.log(
-      "📤 PUT URL:",
-      `${UPDATE_OFFER_TRANSACTION_URL}/${existing.id}`
-    );
-
-    // ---------------------------------------
-    // UPDATE WALLET
-    // ---------------------------------------
-
-    const updateResponse = await axios.put(
+    await axios.put(
       `${UPDATE_OFFER_TRANSACTION_URL}/${existing.id}`,
-      offersTransactionPayload
+      payload
     );
 
     console.log(
-      "✅ Wallet Updated Successfully:",
-      updateResponse.data
+      `✅ Wallet updated to ₹${updatedWalletAmount}`
     );
 
-    console.log(`
-      💰 Previous Wallet: ₹${existingWalletAmount}
-      🎁 Pot Reward: ₹${rewardAmount}
-      💵 Updated Wallet: ₹${updatedWalletAmount}
-    `);
-
-    // Return latest wallet amount
     return updatedWalletAmount;
 
   } catch (error) {
     console.error(
-      "❌ Pot Reward Wallet Error:",
-      error.response?.data || error.message
+      "❌ Wallet credit error:",
+      error.response?.data ||
+        error.message
     );
 
     throw error;
   }
 }
 
-// ================= POT REWARD GAME =================
+// ======================================================
+// POT REWARD GAME
+// ======================================================
 
 const PotRewardGame = ({
   userId,
   onWalletCredited,
 }) => {
-  const [pots, setPots] = useState(() =>
-    shuffledRewards()
+
+  // ----------------------------------------------------
+  // STATE
+  // ----------------------------------------------------
+
+  const [pots, setPots] = useState(
+    () => shuffledRewards()
   );
 
+  const [showPopup, setShowPopup] =
+    useState(true);
+
   const [crackingId, setCrackingId] =
-    useState(null);
-
-  const [revealed, setRevealed] =
-    useState(false);
-
-  const [wonAmount, setWonAmount] =
     useState(null);
 
   const [crediting, setCrediting] =
     useState(false);
 
-  const [alreadyPlayed, setAlreadyPlayed] =
-    useState(false);
+  const [gameResult, setGameResult] =
+    useState(null);
 
-  // ==========================================
-  // CHECK IF USER ALREADY PLAYED TODAY
-  // ==========================================
+  const [cooldownUntil, setCooldownUntil] =
+    useState(null);
+
+  const [timeLeft, setTimeLeft] =
+    useState(0);
+
+  const [cooldownHours, setCooldownHours] =
+    useState(null);
+
+  // ====================================================
+  // LOAD SAVED GAME
+  // ====================================================
 
   useEffect(() => {
-    if (!userId) return;
+    if (!userId) {
+      return;
+    }
 
     try {
-      const saved = localStorage.getItem(
-        lockKey(userId)
-      );
+      const key =
+        gameStorageKey(userId);
 
-      if (saved) {
-        const parsed = JSON.parse(saved);
+      const saved =
+        localStorage.getItem(key);
 
+      // ------------------------------------------
+      // FIRST TIME
+      // ------------------------------------------
+
+      if (!saved) {
         setPots(
-          parsed.pots || shuffledRewards()
+          shuffledRewards()
         );
 
-        setWonAmount(
-          parsed.wonAmount ?? null
-        );
+        setGameResult(null);
+        setCooldownUntil(null);
+        setCooldownHours(null);
 
-        setRevealed(true);
-
-        setAlreadyPlayed(true);
-      } else {
-        // Reset game if user changes
-        setPots(shuffledRewards());
-        setWonAmount(null);
-        setRevealed(false);
-        setAlreadyPlayed(false);
-        setCrackingId(null);
-      }
-    } catch (error) {
-      console.error(
-        "Error reading pot reward:",
-        error
-      );
-    }
-  }, [userId]);
-
-  // ==========================================
-  // BREAK POT
-  // ==========================================
-
-  const handleBreakPot = useCallback(
-    async (pot) => {
-      if (
-        !userId ||
-        alreadyPlayed ||
-        crediting ||
-        crackingId !== null
-      ) {
         return;
       }
 
-      // Start animation
-      setCrackingId(pot.id);
+      const parsed =
+        JSON.parse(saved);
 
-      // Wait for hammer animation
-      setTimeout(async () => {
+      const savedCooldown =
+        Number(
+          parsed.cooldownUntil || 0
+        );
+
+      // ------------------------------------------
+      // COOLDOWN ACTIVE
+      // ------------------------------------------
+
+      if (
+        savedCooldown >
+        Date.now()
+      ) {
+        setPots(
+          Array.isArray(parsed.pots) &&
+            parsed.pots.length === 3
+            ? parsed.pots
+            : shuffledRewards()
+        );
+
+        setGameResult(
+          parsed.gameResult || null
+        );
+
+        setCooldownUntil(
+          savedCooldown
+        );
+
+        setCooldownHours(
+          parsed.cooldownHours ||
+            null
+        );
+
+        return;
+      }
+
+      // ------------------------------------------
+      // COOLDOWN FINISHED
+      // ------------------------------------------
+
+      const newPots =
+        shuffledRewards();
+
+      setPots(newPots);
+      setGameResult(null);
+      setCooldownUntil(null);
+      setCooldownHours(null);
+
+      localStorage.removeItem(key);
+
+    } catch (error) {
+      console.error(
+        "Error loading pot game:",
+        error
+      );
+
+      setPots(
+        shuffledRewards()
+      );
+
+      setGameResult(null);
+      setCooldownUntil(null);
+      setCooldownHours(null);
+    }
+
+  }, [userId]);
+
+  // ====================================================
+  // COUNTDOWN TIMER
+  // ====================================================
+
+  useEffect(() => {
+    if (!cooldownUntil) {
+      setTimeLeft(0);
+      return;
+    }
+
+    const updateTimer = () => {
+      const remaining =
+        Math.max(
+          0,
+          cooldownUntil -
+            Date.now()
+        );
+
+      setTimeLeft(
+        remaining
+      );
+
+      // ------------------------------------------
+      // COOLDOWN FINISHED
+      // ------------------------------------------
+
+      if (remaining <= 0) {
+
+        const newPots =
+          shuffledRewards();
+
+        setPots(newPots);
+        setGameResult(null);
+        setCooldownUntil(null);
+        setCooldownHours(null);
+
+        localStorage.removeItem(
+          gameStorageKey(userId)
+        );
+      }
+    };
+
+    updateTimer();
+
+    const timer =
+      setInterval(
+        updateTimer,
+        1000
+      );
+
+    return () =>
+      clearInterval(timer);
+
+  }, [
+    cooldownUntil,
+    userId,
+  ]);
+
+  // ====================================================
+  // BREAK POT
+  // ====================================================
+
+  const handleBreakPot =
+    useCallback(
+      async (pot) => {
+
+        // ------------------------------------------
+        // PROTECTION
+        // ------------------------------------------
+
+        if (
+          !userId ||
+          !pot ||
+          crediting ||
+          crackingId !== null ||
+          cooldownUntil
+        ) {
+          return;
+        }
+
+        // ------------------------------------------
+        // START BREAK ANIMATION
+        // ------------------------------------------
+
+        setCrackingId(
+          pot.id
+        );
+
+        await new Promise(
+          (resolve) =>
+            setTimeout(
+              resolve,
+              750
+            )
+        );
+
         setCrediting(true);
 
         try {
-          // --------------------------------
-          // CREDIT POT AMOUNT TO WALLET
-          // --------------------------------
 
-          const newRemaining =
-            await creditWallet(
-              userId,
-              pot.amount
+          const amount =
+            Number(
+              pot.amount || 0
             );
 
-          // --------------------------------
-          // SHOW REWARD
-          // --------------------------------
+          let newRemaining =
+            null;
 
-          setWonAmount(pot.amount);
+          // ----------------------------------------
+          // ONLY ₹10 GETS CREDITED
+          // ----------------------------------------
 
-          setRevealed(true);
+          if (amount === 10) {
 
-          setAlreadyPlayed(true);
+            newRemaining =
+              await creditWallet(
+                userId,
+                amount
+              );
 
-          // --------------------------------
-          // SAVE DAILY LOCK
-          // --------------------------------
-
-          try {
-            localStorage.setItem(
-              lockKey(userId),
-              JSON.stringify({
-                pots,
-                wonAmount: pot.amount,
-              })
-            );
-          } catch (error) {
-            console.error(
-              "Local storage error:",
-              error
-            );
+            if (
+              onWalletCredited
+            ) {
+              onWalletCredited(
+                newRemaining
+              );
+            }
           }
 
-          // --------------------------------
-          // SUCCESS MESSAGE
-          // --------------------------------
+          // ----------------------------------------
+          // RANDOM NEXT PLAY TIME
+          // ----------------------------------------
 
-          showToast(
-            `🎉 You won ₹${pot.amount}! Your wallet balance is now ₹${newRemaining}.`
+          const selectedHours =
+            getRandomCooldownHours();
+
+          const nextCooldown =
+            Date.now() +
+            selectedHours *
+              60 *
+              60 *
+              1000;
+
+          // ----------------------------------------
+          // RESULT
+          // ----------------------------------------
+
+          const result =
+            amount === 10
+              ? "WIN"
+              : "LOSE";
+
+          setGameResult(
+            result
           );
 
-          // --------------------------------
-          // SEND UPDATED WALLET TO PARENT
-          // --------------------------------
+          setCooldownUntil(
+            nextCooldown
+          );
 
-          if (onWalletCredited) {
-            onWalletCredited(newRemaining);
+          setCooldownHours(
+            selectedHours
+          );
+
+          // ----------------------------------------
+          // SAVE GAME
+          // ----------------------------------------
+
+          const savedData = {
+            pots,
+            gameResult:
+              result,
+            cooldownUntil:
+              nextCooldown,
+            cooldownHours:
+              selectedHours,
+          };
+
+          localStorage.setItem(
+            gameStorageKey(userId),
+            JSON.stringify(
+              savedData
+            )
+          );
+
+          // ----------------------------------------
+          // MESSAGE
+          // ----------------------------------------
+
+          if (amount === 10) {
+
+            showToast(
+              `🎉 Congratulations! You won ₹10! Your wallet balance is now ₹${newRemaining}.`
+            );
+
+          } else {
+
+            showToast(
+              "😔 Better luck next time! You got ₹0."
+            );
           }
 
         } catch (error) {
+
           console.error(
             "Pot reward crediting failed:",
             error
@@ -366,676 +606,573 @@ const PotRewardGame = ({
           );
 
           // Allow retry
-          setCrackingId(null);
+          setCrackingId(
+            null
+          );
+
+          setCrediting(
+            false
+          );
+
+          return;
 
         } finally {
-          setCrediting(false);
 
-          setCrackingId(null);
+          setCrediting(
+            false
+          );
+
+          setCrackingId(
+            null
+          );
         }
-      }, 750);
-    },
-    [
-      userId,
-      alreadyPlayed,
-      crediting,
-      crackingId,
-      pots,
-      onWalletCredited,
-    ]
-  );
 
-  // ==========================================
+      },
+      [
+        userId,
+        crediting,
+        crackingId,
+        cooldownUntil,
+        pots,
+        onWalletCredited,
+      ]
+    );
+
+  // ====================================================
   // NO USER
-  // ==========================================
+  // ====================================================
 
   if (!userId) {
     return null;
   }
 
-  // ==========================================
-  // UI
-  // ==========================================
+  // ====================================================
+  // COMPONENT
+  // ====================================================
 
   return (
-    <div
-      className="shadow-lg rounded-4 p-3 mb-2"
-      style={{
-        background:
-          "radial-gradient(circle at 30% 20%, #fff8e1 0%, #ffe8b3 60%, #ffdd94 100%)",
-        border: "2px solid #ffc107",
-        textAlign: "center",
-        position: "relative",
-        overflow: "hidden",
-      }}
-    >
-      {/* ================= ANIMATIONS ================= */}
+    <>
+      {/* ==================================================
+          PROFILE BUTTON
+      ================================================== */}
 
-      <style>{`
-
-        /* ---------------- Hammer ---------------- */
-
-        @keyframes hammerSwing {
-          0% {
-            transform: rotate(-55deg) translateY(0);
-            opacity: 1;
-          }
-
-          45% {
-            transform: rotate(-55deg) translateY(0);
-            opacity: 1;
-          }
-
-          60% {
-            transform: rotate(10deg) translateY(2px);
-            opacity: 1;
-          }
-
-          70% {
-            transform: rotate(18deg) translateY(4px);
-            opacity: 1;
-          }
-
-          85% {
-            transform: rotate(10deg) translateY(1px);
-            opacity: 1;
-          }
-
-          100% {
-            transform: rotate(-25deg) translateY(0);
-            opacity: 0;
-          }
+      <button
+        type="button"
+        className="blinking-text"
+        onClick={() =>
+          setShowPopup(true)
         }
-
-        .hammer-swing {
-          animation:
-            hammerSwing 0.75s
-            cubic-bezier(.36,.07,.19,.97)
-            forwards;
-
-          transform-origin: 80% 15%;
-        }
-
-        @keyframes hammerIdle {
-          0%,
-          100% {
-            transform:
-              rotate(-32deg)
-              translateY(0);
-          }
-
-          50% {
-            transform:
-              rotate(-40deg)
-              translateY(-2px);
-          }
-        }
-
-        .hammer-idle {
-          animation:
-            hammerIdle 1.6s
-            ease-in-out
-            infinite;
-
-          transform-origin: 80% 15%;
-        }
-
-
-        /* ---------------- Pot Impact ---------------- */
-
-        @keyframes potImpact {
-
-          0% {
-            transform:
-              scale(1)
-              rotate(0deg);
-          }
-
-          14% {
-            transform:
-              scale(0.94)
-              rotate(-3deg);
-          }
-
-          22% {
-            transform:
-              scale(1.05)
-              rotate(4deg);
-          }
-
-          30% {
-            transform:
-              scale(0.96)
-              rotate(-5deg);
-          }
-
-          40% {
-            transform:
-              scale(1.04)
-              rotate(5deg);
-          }
-
-          50% {
-            transform:
-              scale(0.9)
-              rotate(-4deg);
-          }
-
-          62% {
-            transform:
-              scale(1.1)
-              rotate(2deg);
-          }
-
-          75% {
-            transform:
-              scale(0.3)
-              rotate(8deg);
-
-            opacity: 0.4;
-          }
-
-          100% {
-            transform:
-              scale(0)
-              rotate(15deg);
-
-            opacity: 0;
-          }
-        }
-
-        .pot-impact {
-          animation:
-            potImpact 0.75s
-            cubic-bezier(.36,.07,.19,.97)
-            forwards;
-        }
-
-
-        /* ---------------- Crack ---------------- */
-
-        @keyframes crackFlash {
-
-          0% {
-            opacity: 0;
-            transform: scale(0.6);
-          }
-
-          55% {
-            opacity: 0;
-          }
-
-          65% {
-            opacity: 1;
-            transform: scale(1.1);
-          }
-
-          100% {
-            opacity: 0;
-            transform: scale(1.3);
-          }
-        }
-
-        .crack-flash {
-          animation:
-            crackFlash 0.75s
-            ease-out
-            forwards;
-        }
-
-
-        /* ---------------- Shatter ---------------- */
-
-        @keyframes shatterPiece {
-
-          0% {
-            transform:
-              translate(0,0)
-              rotate(0deg)
-              scale(1);
-
-            opacity: 1;
-          }
-
-          100% {
-            transform:
-              translate(var(--dx), var(--dy))
-              rotate(var(--rot))
-              scale(0.3);
-
-            opacity: 0;
-          }
-        }
-
-        .shatter-piece {
-          animation:
-            shatterPiece 0.6s
-            ease-out
-            forwards;
-
-          animation-delay: 0.5s;
-        }
-
-
-        /* ---------------- Coins ---------------- */
-
-        @keyframes coinBurst {
-
-          0% {
-            transform:
-              translate(-50%, 0)
-              scale(0)
-              rotate(0deg);
-
-            opacity: 0;
-          }
-
-          35% {
-            transform:
-              translate(
-                calc(-50% + var(--cx)),
-                var(--cy)
-              )
-              scale(1.25)
-              rotate(var(--crot));
-
-            opacity: 1;
-          }
-
-          100% {
-            transform:
-              translate(
-                calc(-50% + var(--cx)),
-                calc(var(--cy) - 10px)
-              )
-              scale(1)
-              rotate(var(--crot));
-
-            opacity: 1;
-          }
-        }
-
-        .coin-burst-piece {
-          position: absolute;
-          left: 50%;
-          bottom: 38px;
-          font-size: 20px;
-
-          animation:
-            coinBurst 0.6s
-            cubic-bezier(.17,.67,.53,1.4)
-            forwards;
-        }
-
-
-        @keyframes coinFloat {
-
-          0%,
-          100% {
-            transform:
-              translateY(0);
-          }
-
-          50% {
-            transform:
-              translateY(-4px);
-          }
-        }
-
-        .coin-float {
-          animation:
-            coinFloat 1.6s
-            ease-in-out
-            infinite;
-        }
-
-
-        /* ---------------- Amount ---------------- */
-
-        @keyframes amountPop {
-
-          0% {
-            transform: scale(0);
-            opacity: 0;
-          }
-
-          65% {
-            transform: scale(1.25);
-            opacity: 1;
-          }
-
-          100% {
-            transform: scale(1);
-            opacity: 1;
-          }
-        }
-
-        .amount-pop {
-          animation:
-            amountPop 0.4s
-            ease-out
-            forwards;
-        }
-
-
-        /* ---------------- Winner Glow ---------------- */
-
-        @keyframes glowPulse {
-
-          0%,
-          100% {
-            box-shadow:
-              0 0 0 0
-              rgba(255,193,7,0.5);
-          }
-
-          50% {
-            box-shadow:
-              0 0 0 8px
-              rgba(255,193,7,0);
-          }
-        }
-
-        .winner-glow {
-          animation:
-            glowPulse 1.6s
-            ease-in-out
-            infinite;
-        }
-
-      `}</style>
-
-      {/* ================= HEADING ================= */}
-
-      <h6
-        className="fw-bold mb-1"
         style={{
-          letterSpacing: "0.5px",
-          color: "#7a4e00",
+          width: "100%",
+          border: "none",
+          borderRadius: "14px",
+          padding: "12px 16px",
+          background:
+            "linear-gradient(135deg,#ff9800,#ff5722)",
+          color: "#fff",
+          fontWeight: "800",
+          fontSize: "15px",
+          cursor: "pointer",
+          boxShadow:
+            "0 5px 15px rgba(0,0,0,.18)",
         }}
       >
-        🏺 Break a Pot, Win Instant Cashback!
-      </h6>
+        🏺 Daily Pot Reward Game Hurry Up!
+      </button>
 
-      <p
-        className="text-muted mb-3"
-        style={{
-          fontSize: "12px",
-        }}
-      >
-        {alreadyPlayed
-          ? "You've broken today's pot — come back tomorrow for another!"
-          : "Tap any pot — win ₹5, ₹10 or ₹15. Amount goes directly to your wallet."}
-      </p>
+      {/* ==================================================
+          POPUP
+      ================================================== */}
 
-      {/* ================= POTS ================= */}
-
-      <div
-        className="d-flex justify-content-center align-items-end"
-        style={{
-          gap: "22px",
-        }}
-      >
-        {pots.map((pot) => {
-          const isBreaking =
-            crackingId === pot.id;
-
-          const showReward =
-            revealed;
-
-          const isWinner =
-            revealed &&
-            wonAmount === pot.amount;
-
-          const clickable =
-            !alreadyPlayed &&
-            !crediting &&
-            crackingId === null;
-
-          return (
-            <div
-              key={pot.id}
-              onClick={() =>
-                clickable &&
-                handleBreakPot(pot)
-              }
-              className={
-                isWinner && showReward
-                  ? "winner-glow rounded-circle"
-                  : ""
-              }
-              style={{
-                cursor:
-                  clickable
-                    ? "pointer"
-                    : "default",
-
-                width: "84px",
-
-                position: "relative",
-
-                paddingTop: "26px",
-              }}
-            >
-
-              {/* Hammer */}
-
-              {!alreadyPlayed &&
-                !revealed && (
-                  <span
-                    className={
-                      isBreaking
-                        ? "hammer-swing"
-                        : "hammer-idle"
-                    }
-                    style={{
-                      position: "absolute",
-                      top: "-6px",
-                      right: "6px",
-                      fontSize: "26px",
-                      zIndex: 3,
-                      display: "inline-block",
-                    }}
-                  >
-                    🔨
-                  </span>
-                )}
-
-              {/* Pot Area */}
-
-              <div
-                style={{
-                  height: "58px",
-
-                  display: "flex",
-
-                  alignItems: "flex-end",
-
-                  justifyContent: "center",
-
-                  position: "relative",
-                }}
-              >
-
-                {/* Crack */}
-
-                {isBreaking && (
-                  <span
-                    className="crack-flash"
-                    style={{
-                      position: "absolute",
-                      fontSize: "40px",
-                      zIndex: 2,
-                    }}
-                  >
-                    💥
-                  </span>
-                )}
-
-                {/* Pot */}
-
-                {!(
-                  showReward &&
-                  !isBreaking
-                ) && (
-                  <span
-                    className={
-                      isBreaking
-                        ? "pot-impact"
-                        : ""
-                    }
-                    style={{
-                      fontSize: "46px",
-
-                      lineHeight: "1",
-
-                      display: "inline-block",
-                    }}
-                  >
-                    🏺
-                  </span>
-                )}
-
-                {/* Shatter Pieces */}
-
-                {isBreaking &&
-                  ["-1", "0", "1"].map(
-                    (n, i) => (
-                      <span
-                        key={i}
-                        className="shatter-piece"
-                        style={{
-                          position: "absolute",
-
-                          fontSize: "14px",
-
-                          "--dx":
-                            `${Number(n) * 26}px`,
-
-                          "--dy":
-                            `${-18 - i * 6}px`,
-
-                          "--rot":
-                            `${Number(n) * 90}deg`,
-                        }}
-                      >
-                        🟤
-                      </span>
-                    )
-                  )}
-
-                {/* Coins */}
-
-                {showReward &&
-                  !isBreaking && (
-                    <>
-                      {[
-                        {
-                          cx: "-22px",
-                          cy: "-30px",
-                          crot: "-15deg",
-                        },
-                        {
-                          cx: "0px",
-                          cy: "-42px",
-                          crot: "10deg",
-                        },
-                        {
-                          cx: "22px",
-                          cy: "-28px",
-                          crot: "20deg",
-                        },
-                      ].map(
-                        (coin, i) => (
-                          <span
-                            key={i}
-                            className="coin-burst-piece"
-                            style={{
-                              "--cx":
-                                coin.cx,
-
-                              "--cy":
-                                coin.cy,
-
-                              "--crot":
-                                coin.crot,
-
-                              animationDelay:
-                                `${i * 0.06}s`,
-                            }}
-                          >
-                            🪙
-                          </span>
-                        )
-                      )}
-                    </>
-                  )}
-
-              </div>
-
-              {/* ================= REWARD AMOUNT ================= */}
-
-              <div
-                className={
-                  showReward
-                    ? "amount-pop"
-                    : ""
-                }
-                style={{
-                  marginTop: "4px",
-
-                  fontSize: "14px",
-
-                  fontWeight: "bold",
-
-                  color:
-                    isWinner
-                      ? "#28a745"
-                      : "#888",
-
-                  minHeight: "18px",
-                }}
-              >
-                {showReward
-                  ? `₹${pot.amount}`
-                  : ""}
-              </div>
-
-              {/* Winner Text */}
-
-              {isWinner && (
-                <div
-                  style={{
-                    fontSize: "10px",
-
-                    color: "#28a745",
-
-                    fontWeight: 600,
-                  }}
-                >
-                  Your reward!
-                </div>
-              )}
-
-            </div>
-          );
-        })}
-      </div>
-
-      {/* ================= LOADING ================= */}
-
-      {crediting && (
-        <p
-          className="mt-2 mb-0"
+      {showPopup && (
+        <div
           style={{
-            fontSize: "12px",
+            position: "fixed",
+            inset: 0,
+            background:
+              "rgba(0,0,0,.65)",
+            zIndex: 99999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "15px",
+          }}
+          onClick={(event) => {
+
+            if (
+              event.target ===
+                event.currentTarget &&
+              !crediting &&
+              crackingId === null
+            ) {
+              setShowPopup(false);
+            }
+
           }}
         >
-          🪙 Adding your reward to wallet...
-        </p>
+
+          {/* ==================================================
+              POPUP CARD
+          ================================================== */}
+
+          <div
+            style={{
+              width: "100%",
+              maxWidth: "500px",
+              maxHeight: "90vh",
+              overflowY: "auto",
+              background: "#fff",
+              borderRadius: "22px",
+              padding: "22px 18px",
+              position: "relative",
+              textAlign: "center",
+              boxShadow:
+                "0 15px 50px rgba(0,0,0,.4)",
+            }}
+          >
+
+            {/* CLOSE */}
+
+            <button
+              type="button"
+              disabled={
+                crediting ||
+                crackingId !== null
+              }
+              onClick={() =>
+                setShowPopup(false)
+              }
+              style={{
+                position: "absolute",
+                top: "10px",
+                right: "10px",
+                width: "34px",
+                height: "34px",
+                borderRadius: "50%",
+                border: "none",
+                background:
+                  "#f1f1f1",
+                fontSize: "22px",
+                cursor:
+                  crediting ||
+                  crackingId !== null
+                    ? "not-allowed"
+                    : "pointer",
+              }}
+            >
+              ×
+            </button>
+
+            {/* TITLE */}
+
+            <div
+              style={{
+                fontSize: "42px",
+                marginBottom: "2px",
+              }}
+            >
+              🏺
+            </div>
+
+            <h3
+              style={{
+                margin: "0",
+                fontWeight: "900",
+                color: "#7a4e00",
+              }}
+            >
+              Break the Pot!
+            </h3>
+
+            <p
+              style={{
+                fontSize: "13px",
+                color: "#666",
+                marginTop: "6px",
+                marginBottom: "18px",
+              }}
+            >
+              One pot contains
+              <strong> ₹10</strong>.
+              <br />
+              The other two contain ₹0.
+            </p>
+
+            {/* ==================================================
+                COOLDOWN / RESULT
+            ================================================== */}
+
+            {cooldownUntil &&
+            timeLeft > 0 ? (
+
+              <div
+                style={{
+                  padding: "22px",
+                  borderRadius: "18px",
+                  background:
+                    gameResult === "WIN"
+                      ? "#e8f5e9"
+                      : "#f5f5f5",
+                }}
+              >
+
+                {gameResult ===
+                "WIN" ? (
+
+                  <>
+                    <div
+                      style={{
+                        fontSize: "60px",
+                      }}
+                    >
+                      🎉
+                    </div>
+
+                    <h3
+                      style={{
+                        color:
+                          "#2e7d32",
+                        fontWeight:
+                          "900",
+                        marginBottom:
+                          "5px",
+                      }}
+                    >
+                      You Won ₹10!
+                    </h3>
+
+                    <p
+                      style={{
+                        color:
+                          "#555",
+                      }}
+                    >
+                      ₹10 has been
+                      added to your
+                      wallet.
+                    </p>
+                  </>
+
+                ) : (
+
+                  <>
+                    <div
+                      style={{
+                        fontSize: "60px",
+                      }}
+                    >
+                      😔
+                    </div>
+
+                    <h3
+                      style={{
+                        color:
+                          "#777",
+                        fontWeight:
+                          "900",
+                        marginBottom:
+                          "5px",
+                      }}
+                    >
+                      Better Luck
+                      Next Time!
+                    </h3>
+
+                    <p
+                      style={{
+                        color:
+                          "#555",
+                      }}
+                    >
+                      You got ₹0.
+                      <br />
+                      Please try again
+                      later.
+                    </p>
+                  </>
+
+                )}
+
+                {/* COUNTDOWN */}
+
+                <div
+                  style={{
+                    background:
+                      "#fff",
+                    borderRadius:
+                      "14px",
+                    padding: "14px",
+                    marginTop:
+                      "15px",
+                    border:
+                      "1px solid #ddd",
+                  }}
+                >
+
+                  <div
+                    style={{
+                      fontSize:
+                        "12px",
+                      color:
+                        "#777",
+                    }}
+                  >
+                    You can play
+                    again in
+                  </div>
+
+                  <div
+                    style={{
+                      fontSize:
+                        "32px",
+                      fontWeight:
+                        "900",
+                      color:
+                        "#ff5722",
+                      letterSpacing:
+                        "2px",
+                      marginTop:
+                        "4px",
+                    }}
+                  >
+                    {formatTimeLeft(
+                      timeLeft
+                    )}
+                  </div>
+
+                  <div
+                    style={{
+                      fontSize:
+                        "11px",
+                      color:
+                        "#999",
+                    }}
+                  >
+                    Time remaining
+                  </div>
+
+                </div>
+
+                {cooldownHours && (
+                  <p
+                    style={{
+                      marginTop:
+                        "10px",
+                      marginBottom:
+                        "0",
+                      fontSize:
+                        "11px",
+                      color:
+                        "#999",
+                    }}
+                  >
+                    Next attempt:
+                    after{" "}
+                    <strong>
+                      {cooldownHours} hours
+                    </strong>
+                  </p>
+                )}
+
+              </div>
+
+            ) : (
+
+              <>
+                {/* ==================================================
+                    POTS
+                ================================================== */}
+
+                <div
+                  style={{
+                    display:
+                      "flex",
+                    justifyContent:
+                      "center",
+                    gap: "14px",
+                    marginTop:
+                      "10px",
+                  }}
+                >
+
+                  {pots.map(
+                    (pot) => {
+
+                      const breaking =
+                        crackingId ===
+                        pot.id;
+
+                      return (
+                        <button
+                          key={pot.id}
+                          type="button"
+                          disabled={
+                            crediting ||
+                            crackingId !==
+                              null
+                          }
+                          onClick={() =>
+                            handleBreakPot(
+                              pot
+                            )
+                          }
+                          style={{
+                            border:
+                              "none",
+                            background:
+                              "transparent",
+                            padding:
+                              "5px",
+                            cursor:
+                              crediting ||
+                              crackingId !==
+                                null
+                                ? "not-allowed"
+                                : "pointer",
+                          }}
+                        >
+
+                          {/* POT */}
+
+                          <div
+                            style={{
+                              width:
+                                "95px",
+                              height:
+                                "110px",
+                              borderRadius:
+                                "18px",
+                              background:
+                                breaking
+                                  ? "#ddd"
+                                  : "linear-gradient(145deg,#ffcc80,#ff7043)",
+                              display:
+                                "flex",
+                              alignItems:
+                                "center",
+                              justifyContent:
+                                "center",
+                              fontSize:
+                                "58px",
+                              boxShadow:
+                                "0 7px 15px rgba(0,0,0,.2)",
+                              transform:
+                                breaking
+                                  ? "scale(.82) rotate(-10deg)"
+                                  : "scale(1)",
+                              transition:
+                                "all .25s ease",
+                            }}
+                          >
+                            {breaking
+                              ? "💥"
+                              : "🏺"}
+                          </div>
+
+                          <div
+                            style={{
+                              marginTop:
+                                "7px",
+                              fontWeight:
+                                "800",
+                              fontSize:
+                                "13px",
+                              color:
+                                "#555",
+                            }}
+                          >
+                            Pot{" "}
+                            {pot.id + 1}
+                          </div>
+
+                        </button>
+                      );
+                    }
+                  )}
+
+                </div>
+
+                <p
+                  style={{
+                    marginTop:
+                      "18px",
+                    marginBottom:
+                      "0",
+                    fontSize:
+                      "12px",
+                    color:
+                      "#888",
+                  }}
+                >
+                  👆 Choose one pot
+                  and break it!
+                </p>
+
+              </>
+            )}
+
+            {/* ==================================================
+                CREDITING
+            ================================================== */}
+
+            {crediting && (
+              <div
+                style={{
+                  marginTop:
+                    "15px",
+                  padding:
+                    "10px",
+                  borderRadius:
+                    "10px",
+                  background:
+                    "#fff3e0",
+                  color:
+                    "#e65100",
+                  fontSize:
+                    "13px",
+                  fontWeight:
+                    "700",
+                }}
+              >
+                🪙 Adding your
+                reward to wallet...
+              </div>
+            )}
+
+          </div>
+        </div>
       )}
 
-    </div>
+      {/* ======================================================
+          INLINE ANIMATION
+      ====================================================== */}
+
+      <style>
+        {`
+          @keyframes potShake {
+            0% {
+              transform: rotate(0deg);
+            }
+
+            25% {
+              transform: rotate(-8deg);
+            }
+
+            50% {
+              transform: rotate(8deg);
+            }
+
+            75% {
+              transform: rotate(-5deg);
+            }
+
+            100% {
+              transform: rotate(0deg);
+            }
+          }
+        `}
+      </style>
+    </>
   );
 };
 

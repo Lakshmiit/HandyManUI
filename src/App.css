@@ -1851,7 +1851,7 @@ max-width: none;
 }
 
 .blinking-text {
-  animation: blink-animation 2s infinite;
+  animation: blink-animation 3s infinite;
 }
 
 @keyframes blink-animation {

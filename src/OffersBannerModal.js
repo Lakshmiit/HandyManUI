@@ -5,10 +5,27 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import Banner1 from "./img/BannerModal.jpg";
 import "./App.css";
-import ImageCache from "./utils/ImageCache";
 
-const IMAGE_API =
-  "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=";
+const BLOB_BASE_URL =
+  "https://lmartfiles.blob.core.windows.net/userattechements";
+
+const getAzureImageUrl = (imageName) => {
+  if (!imageName) return "";
+
+  // Already a complete URL
+  if (
+    typeof imageName === "string" &&
+    (imageName.startsWith("http://") ||
+      imageName.startsWith("https://"))
+  ) {
+    return imageName;
+  }
+
+  // Remove leading /
+  const cleanName = String(imageName).replace(/^\/+/, "");
+
+  return `${BLOB_BASE_URL}/${encodeURIComponent(cleanName)}`;
+};
 
 const OffersBannerModal = () => {
   const [showOffersModal, setShowOffersModal] = useState(false);
@@ -37,59 +54,34 @@ const OffersBannerModal = () => {
   }, []);
 
   useEffect(() => {
-    if (!offersData.length) return;
-    const fetchImages = async () => {
-      try {
-        setImagesLoading(true);
-        const imagesMap = {};
-        await Promise.all(
-          offersData.map(async (offer) => {
-            const imgs = await Promise.all(
-              (offer.image || []).map(async (imgObj) => {
-                const filename = imgObj.images;
-                try {
-                  const cachedBlob = ImageCache.getBlobUrl(filename);
-                  if (cachedBlob) {
-                    return cachedBlob;
-                  }
+  if (!offersData.length) return;
 
-                  const cachedBase64 = await ImageCache.getBase64(filename);
-                  if (cachedBase64) {
-                    const base64Url = `data:image/jpeg;base64,${cachedBase64}`;
-                    ImageCache.setBlobUrl(filename, base64Url);
-                    return base64Url;
-                  }
+  setImagesLoading(true);
 
-                  const response = await axios.get(
-                    `${IMAGE_API}${encodeURIComponent(filename)}`,
-                  );
-                  if (response.data?.imageData) {
-                    const base64 = response.data.imageData;
-                    const base64Url = `data:image/jpeg;base64,${base64}`;
+  const imagesMap = {};
 
-                    await ImageCache.setBase64(filename, base64);
-                    ImageCache.setBlobUrl(filename, base64Url);
-                    return base64Url;
-                  }
-                  return null;
-                } catch (err) {
-                  console.error("Image fetch failed:", err);
-                  return null;
-                }
-              }),
-            );
-            imagesMap[String(offer.id)] = imgs.filter(Boolean);
-          }),
-        );
-        setOfferImages(imagesMap);
-      } catch (err) {
-        console.error("Error loading images:", err);
-      } finally {
-        setImagesLoading(false);
-      }
-    };
-    fetchImages();
-  }, [offersData]);
+  offersData.forEach((offer) => {
+    const images = Array.isArray(offer.image)
+      ? offer.image
+      : [];
+
+    const imageUrls = images
+      .map((imgObj) => {
+        const filename =
+          typeof imgObj === "string"
+            ? imgObj
+            : imgObj?.images;
+
+        return getAzureImageUrl(filename);
+      })
+      .filter(Boolean);
+
+    imagesMap[String(offer.id)] = imageUrls;
+  });
+
+  setOfferImages(imagesMap);
+  setImagesLoading(false);
+}, [offersData]);
 
   // 🔹 Active offers filter
   const activeOffers = offersData.filter((offer) => {
@@ -334,6 +326,8 @@ const OffersBannerModal = () => {
                       <img
                         src={img}
                         alt={`offer-${index}`}
+                          loading="lazy"
+                          decoding="async"
                         style={{
                           width: "100%",
                           height: window.innerWidth <= 768 ? "400px" : "500px",

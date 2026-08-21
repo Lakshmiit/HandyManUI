@@ -249,6 +249,8 @@ const VENDOR_ORDERS_API_BASE = "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.a
 const GET_VENDOR_ORDERS_URL = `${VENDOR_ORDERS_API_BASE}/Mart/GetVendorOrdersByVendorId`;
 const VENDOR_ORDERS_POLL_INTERVAL_MS = 25000;
 
+const DEFAULT_PINCODE = "530048";
+
 const ProfilePage = () => {
   const [allProducts, setAllProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -342,12 +344,12 @@ const ProfilePage = () => {
   const [state, setState] = useState("");
   const [address, setAddress] = useState("");
   const [district, setDistrict] = useState("");
-  const [zipCode, setZipCode] = useState("");
+  const [zipCode, setZipCode] = useState(DEFAULT_PINCODE);
   const [approvedVendorListJson, setApprovedVendorListJson] = useState([]);
   const [mobileNumber, setMobileNumber] = useState("");
   const [status, setStatus] = useState("");
   const [id, setId] = useState("");
-  const [pinCode, setPinCode] = useState("");
+  const [pinCode, setPinCode] = useState(DEFAULT_PINCODE);
   const [martId, setMartId] = useState("");
   const [paymentMode, setPaymentMode] = useState("");
   const clickLock = useRef(false);
@@ -447,28 +449,74 @@ const ProfilePage = () => {
   // sessionStorage until the cache expires, so switching tabs or navigating
   // back doesn't re-fetch every time.
   useEffect(() => {
-    if (!zipCode) {
-      setApprovedVendorListJson([]);
-      return;
-    }
+    const effectivePincode =
+      String(zipCode || pinCode || DEFAULT_PINCODE).trim() ||
+      DEFAULT_PINCODE;
+
     let cancelled = false;
+
     (async () => {
       try {
-        const vendors = await getVendorsByPincode(zipCode);
-        if (!cancelled) {
-          setApprovedVendorListJson(
-            vendors.filter((v) => v.status === "Approved"),
+        const vendors = await getVendorsByPincode(
+          effectivePincode,
+        );
+
+        if (cancelled) return;
+
+        const approvedVendors = vendors.filter(
+          (v) => v.status === "Approved",
+        );
+
+        setApprovedVendorListJson(
+          approvedVendors,
+        );
+
+        // By default, make the first approved vendor active/clickable.
+        if (approvedVendors.length > 0) {
+          setSelectedMartTab((current) => {
+            const currentExists =
+              approvedVendors.some(
+                (v) =>
+                  v.vendorId === current,
+              );
+
+            const nextVendorId =
+              currentExists
+                ? current
+                : approvedVendors[0]
+                    .vendorId;
+
+            if (nextVendorId) {
+              localStorage.setItem(
+                "selectedVendorId",
+                nextVendorId,
+              );
+            }
+
+            return nextVendorId || "";
+          });
+        } else {
+          setSelectedMartTab("");
+          localStorage.removeItem(
+            "selectedVendorId",
           );
         }
       } catch (error) {
-        console.error("Error fetching vendors for pincode:", error);
-        if (!cancelled) setApprovedVendorListJson([]);
+        console.error(
+          "Error fetching vendors for pincode:",
+          error,
+        );
+        if (!cancelled) {
+          setApprovedVendorListJson([]);
+          setSelectedMartTab("");
+        }
       }
     })();
+
     return () => {
       cancelled = true;
     };
-  }, [zipCode]);
+  }, [zipCode, pinCode]);
 
   const getVendorFromJson = (vendorId) =>
     approvedVendorListJson.find((v) => v.vendorId === vendorId);
@@ -2144,11 +2192,11 @@ const ProfilePage = () => {
   useEffect(() => {
     const intervalId = window.setInterval(() => {
       fetchAllTickets({ silent: true });
-    }, 300000);
+    }, 60000);
     return () => window.clearInterval(intervalId);
   }, [fetchAllTickets]);
 
-  const calculateCashback = (ticket) => {                     
+  const calculateCashback = (ticket) => {
     if (!ticket || !ticket.categories) return 0;
 
     let totalAmountFromApi = 0;
@@ -2264,7 +2312,7 @@ const ProfilePage = () => {
         setProfile(response.data);
         setCategory(response.data.category);
         setDistrict(response.data.district);
-        setZipCode(response.data.zipCode);
+        setZipCode(String(response.data.zipCode || response.data.pinCode || DEFAULT_PINCODE).trim() || DEFAULT_PINCODE);
         setFullName(response.data.fullName);
         if (response.data.photoAttachmentId) {
           fetchImageUrl(response.data.photoAttachmentId);
@@ -2275,7 +2323,7 @@ const ProfilePage = () => {
             userId,
             response.data.category,
             response.data.district,
-            response.data.zipCode,
+            String(response.data.zipCode || response.data.pinCode || DEFAULT_PINCODE).trim() || DEFAULT_PINCODE,
             response.data.fullName,
             isMobile,
           ),
