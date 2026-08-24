@@ -182,7 +182,7 @@ const groceryCategories = [
   { label: "LMart Products", value: "LMart Special", image: RoyalImg },
   {
     label: "Unbeatable 10 Offers",
-    value: "Unbeatable Offers",
+    value: "1Unbeatable Offers",
     image: UnbeatableImg,
   },
   { label: "Rice & Ravva", value: "Rice & Ravva", image: RavvaImg },
