@@ -78,19 +78,53 @@ if (typeof document !== "undefined") {
 }
 
 // Native speechSynthesis fallback, only used when the device is offline
-// and the TTS request can't be fetched at all.
-function speakWithBrowserTTS(message) {
+// and the TTS request can't be fetched at all. `lang` (e.g. "te-IN") picks
+// a matching installed voice when one is available; browsers/devices
+// without a Telugu voice installed will silently fall back to the default
+// voice reading the same (Telugu-script) text.
+function speakWithBrowserTTS(message, lang) {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
   try {
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(message);
     utterance.rate = 1;
     utterance.pitch = 1;
+    if (lang) utterance.lang = lang;
     window.speechSynthesis.speak(utterance);
   } catch {
     // no speech available at all — the bell sound and visual badge
     // still cover the notification
   }
+}
+
+// StreamElements (Amazon Polly under the hood) has no Telugu voice, so
+// Telugu alerts use Google Translate's public/unofficial TTS endpoint
+// instead (same "fetch a real spoken-word clip, play it as normal audio"
+// approach as ttsUrlFor() above — just a different provider because this
+// one supports the "te" language code). Unofficial + no uptime guarantee,
+// same caveat as the English endpoint above.
+function googleTranslateTtsUrlFor(message, lang) {
+  return `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=${lang}&q=${encodeURIComponent(
+    message,
+  )}`;
+}
+
+/**
+ * Speak a short voice alert out loud in Telugu. `message` should already
+ * be Telugu-script text (e.g. "కొత్త టికెట్ వచ్చింది, కస్టమర్ పేరు రామ్,
+ * పిన్ కోడ్ 530001."). Falls back to on-device speech synthesis (with
+ * lang="te-IN") if the network request is blocked or unreachable.
+ */
+export function speakTeluguAlert(message) {
+  const audio = getAudio();       
+  audio.src = googleTranslateTtsUrlFor(message, "te");
+  audio.play().catch((err) => {
+    console.warn(
+      "Telugu voice alert audio blocked or unreachable, falling back to on-device speech:",
+      err && err.message ? err.message : err,
+    );
+    speakWithBrowserTTS(message, "te-IN");
+  });
 }
 
 /**
