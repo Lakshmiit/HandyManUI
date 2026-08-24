@@ -182,7 +182,7 @@ const groceryCategories = [
   { label: "LMart Products", value: "LMart Special", image: RoyalImg },
   {
     label: "Unbeatable 10 Offers",
-    value: "1Unbeatable Offers",
+    value: "Unbeatable Offers",
     image: UnbeatableImg,
   },
   { label: "Rice & Ravva", value: "Rice & Ravva", image: RavvaImg },
@@ -436,7 +436,21 @@ const ProfilePage = () => {
     const vendor = approvedVendorListJson.find(
       (v) => v.vendorId === selectedMartTab,
     );
-    setSelectedVendorJsonCategory(vendor?.categories?.[0]?.category || "");
+    // Default to whichever category renders first in the tile list below:
+    // "Unbeatable Offers" if present (it's pinned to the top), otherwise
+    // the highest-ranked category (descending).
+    const normalizeCategoryName = (str) =>
+      (str ?? "").toString().trim().toLowerCase();
+    const vendorCategories = vendor?.categories || [];
+    const unbeatableCategory = vendorCategories.find((c) =>
+      normalizeCategoryName(c?.category).includes("unbeatable"),
+    );
+    const topCategory =
+      unbeatableCategory ||
+      [...vendorCategories].sort(
+        (a, b) => (b?.rank ?? -Infinity) - (a?.rank ?? -Infinity),
+      )[0];
+    setSelectedVendorJsonCategory(topCategory?.category || "");
   }, [selectedMartTab, approvedVendorListJson]);
 
   const scrollVendorTabs = (direction) => {
@@ -4095,10 +4109,44 @@ const ProfilePage = () => {
                         (v) => v.vendorId === selectedMartTab,
                       );
                       if (!vendor) return null;
+                      // For now: "Unbeatable Offers" is pinned as a static
+                      // top category regardless of its rank (the vendor
+                      // API's rank for it hasn't lined up reliably yet).
+                      // Every other category is ordered by rank, highest
+                      // first (descending); categories without a rank fall
+                      // to the end, in their original order.
+                      // NOTE: assumes each category object carries a
+                      // numeric `rank` field from the vendor API — adjust
+                      // the field name below if it differs (e.g. `order`,
+                      // `displayOrder`, `sortOrder`).
+                      const normalizeCategoryName = (str) =>
+                        (str ?? "").toString().trim().toLowerCase();
+                      const isUnbeatableCategory = (catObj) =>
+                        normalizeCategoryName(catObj?.category).includes(
+                          "unbeatable",
+                        );
+
+                      const rawCategories = vendor.categories || [];
+                      const unbeatableCategory = rawCategories.find(
+                        isUnbeatableCategory,
+                      );
+                      const otherCategories = rawCategories.filter(
+                        (c) => !isUnbeatableCategory(c),
+                      );
+                      const sortedOtherCategories = [...otherCategories].sort(
+                        (a, b) => {
+                          const rankA = a?.rank ?? -Infinity;
+                          const rankB = b?.rank ?? -Infinity;
+                          return rankB - rankA; // descending
+                        },
+                      );
+                      const sortedVendorCategories = unbeatableCategory
+                        ? [unbeatableCategory, ...sortedOtherCategories]
+                        : sortedOtherCategories;
                       return (
                         <>
                           <div className="row row-cols-3 row-cols-md-6 g-1">
-                            {vendor.categories.map((catObj) => {
+                            {sortedVendorCategories.map((catObj) => {
                               const isActive =
                                 selectedVendorJsonCategory === catObj.category;
                               return (     
