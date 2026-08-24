@@ -4,6 +4,7 @@ import { getVendorProductsByVendorId, updateVendorProductsValues, zoneData } fro
 import { getGroceryItems } from "./utils/groceryStore";
 import ImageCache from "./utils/ImageCache";
 import { getImageFilename, imageValueToUrl } from "./utils/imageSource";
+import SuperAdminNav from "./SuperAdminNav";
 
 const SuperAdminVendorProductsPage = () => {
   const { vendorId } = useParams();
@@ -22,6 +23,14 @@ const SuperAdminVendorProductsPage = () => {
   // and sent back as "pincodes" on approve/reject.
   const [selectedPincodes, setSelectedPincodes] = useState([]);
 
+  // Display order of this vendor's categories, editable by the admin with
+  // the up/down arrows below. Seeded from record.categorie — sorted by
+  // whatever "rank" the backend already has (falling back to the order the
+  // API returned them in for records with no rank yet) — then kept in
+  // local state so re-ordering is instant, with rank 1..N re-assigned
+  // every time the order changes and saved back explicitly.
+  const [orderedCategories, setOrderedCategories] = useState([]);
+
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -38,6 +47,16 @@ const SuperAdminVendorProductsPage = () => {
         setSelectedPincodes(
           Array.isArray(productRecord?.pincodes) ? productRecord.pincodes : [],
         );
+        const cats = Array.isArray(productRecord?.categorie) ? productRecord.categorie : [];
+        const sorted = [...cats].sort((a, b) => {
+          const rankA = Number(a.rank);
+          const rankB = Number(b.rank);
+          if (Number.isFinite(rankA) && Number.isFinite(rankB)) return rankA - rankB;
+          if (Number.isFinite(rankA)) return -1;
+          if (Number.isFinite(rankB)) return 1;
+          return 0;
+        });
+        setOrderedCategories(sorted.map((cat, idx) => ({ ...cat, rank: String(idx + 1) })));
         const byId = {};
         (Array.isArray(catalog) ? catalog : []).forEach((item) => {
           if (item?.id) byId[String(item.id)] = item;
@@ -127,6 +146,50 @@ const SuperAdminVendorProductsPage = () => {
     });
   };
 
+  // Move a category up (-1) or down (+1) in the display order and
+  // re-number every category's rank 1..N to match the new order.
+  const moveCategory = (index, direction) => {
+    setOrderedCategories((prev) => {
+      const targetIndex = index + direction;
+      if (targetIndex < 0 || targetIndex >= prev.length) return prev;
+      const next = [...prev];
+      [next[index], next[targetIndex]] = [next[targetIndex], next[index]];
+      return next.map((cat, idx) => ({ ...cat, rank: String(idx + 1) }));
+    });
+  };
+
+  // Whether the admin has reordered categories since the record was
+  // loaded (or last saved) — same on/off pattern as pincodesChanged,
+  // shown as a "Save category order" action.
+  const categoryOrderChanged = useMemo(() => {
+    if (!record) return false;
+    const original = (record.categorie || []).map((cat) => cat.categoryName);
+    const current = orderedCategories.map((cat) => cat.categoryName);
+    return JSON.stringify(original) !== JSON.stringify(current);
+  }, [record, orderedCategories]);
+
+  const handleSaveCategoryOrder = async () => {
+    if (!record) return;
+    setSaving(true);
+    setError("");
+    setMessage("");
+    try {
+      const payload = {
+        ...record,
+        updatedDate: new Date().toISOString(),
+        categorie: orderedCategories,
+      };
+      await updateVendorProductsValues(payload);
+      setRecord(payload);
+      setMessage("Category order updated.");
+    } catch (err) {
+      console.error("Failed to update category order", err);
+      setError("Unable to save the category order. Please try again.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const statusBadgeClass = (status) => {
     if (status === "Approved") return "bg-success";
     if (status === "Reject" || status === "Rejected") return "bg-danger";
@@ -193,9 +256,12 @@ const SuperAdminVendorProductsPage = () => {
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "60vh" }}>
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
+      <div className="container py-4">
+        <SuperAdminNav active="/superadmin/vendors" />
+        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "50vh" }}>
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
         </div>
       </div>
     );
@@ -203,6 +269,8 @@ const SuperAdminVendorProductsPage = () => {
 
   return (
     <div className="container py-4">
+      <SuperAdminNav active="/superadmin/vendors" />
+
       <button className="btn btn-link px-0 mb-3" onClick={() => navigate("/superadmin/vendors")}>
         &larr; Back to vendors
       </button>
@@ -289,9 +357,47 @@ const SuperAdminVendorProductsPage = () => {
             </div>
           </div>
 
-          {(record.categorie || []).map((cat) => (
+          {orderedCategories.length > 0 && (
+            <div className="d-flex justify-content-between align-items-center mb-2">
+              <h6 className="mb-0">Category order (as shown to customers)</h6>
+              {categoryOrderChanged && (
+                <button
+                  className="btn btn-sm btn-outline-primary"
+                  disabled={saving}
+                  onClick={handleSaveCategoryOrder}
+                >
+                  {saving ? "Saving..." : "Save category order"}
+                </button>
+              )}
+            </div>
+          )}
+
+          {orderedCategories.map((cat, index) => (
             <div key={cat.categoryName} className="mb-4">
-              <h6 className="mb-2">{cat.categoryName}</h6>
+              <div className="d-flex align-items-center gap-2 mb-2">
+                <span className="badge bg-secondary">#{cat.rank}</span>
+                <h6 className="mb-0">{cat.categoryName}</h6>
+                <div className="btn-group btn-group-sm ms-auto" role="group">
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary"
+                    title="Move up"
+                    disabled={index === 0}
+                    onClick={() => moveCategory(index, -1)}
+                  >
+                    &uarr;
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary"
+                    title="Move down"
+                    disabled={index === orderedCategories.length - 1}
+                    onClick={() => moveCategory(index, 1)}
+                  >
+                    &darr;
+                  </button>
+                </div>
+              </div>
               <div className="row g-2">
                 {(cat.products || []).map((p) => {
                   const master = catalogById[String(p.productIds)];

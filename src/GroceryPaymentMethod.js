@@ -3295,7 +3295,7 @@ const GroceryPaymentmethod = () => {
                 </div>
               )}
               <button
-                className="btn-grocery"
+                className="btn btn-warning blinking-text"
                 disabled={loading || isOrderDisabled}
                 onClick={handlePaymentAndSms}
                 title={

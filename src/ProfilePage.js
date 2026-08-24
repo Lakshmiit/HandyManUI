@@ -414,6 +414,7 @@ const ProfilePage = () => {
   const [selectedMartTab, setSelectedMartTab] = useState("Lakshmi Mart");
   const [selectedVendorJsonCategory, setSelectedVendorJsonCategory] =
     useState("");
+    const [preferLMartDefault, setPreferLMartDefault] = useState(false);
   const vendorTabsRef = useRef(null);
 
   useEffect(() => {
@@ -442,6 +443,8 @@ const ProfilePage = () => {
     if (!vendorTabsRef.current) return;
     vendorTabsRef.current.scrollBy({ left: direction * 180, behavior: "smooth" });
   };
+
+  const LMART_FALLBACK_PINCODE = DEFAULT_PINCODE; 
   // Vendors are pincode-specific and come from the live API now (replaces
   // the old static vendorlist.json import). getVendorsByPincode caches the
   // response per pincode — the first mount/pincode change hits the server,
@@ -463,10 +466,38 @@ const ProfilePage = () => {
 
         if (cancelled) return;
 
-        const approvedVendors = vendors.filter(
+        let approvedVendors = vendors.filter(
           (v) => v.status === "Approved",
         );
 
+        const isDistrictVisakhapatnam =
+        (district || "").trim().toLowerCase() === "visakhapatnam";
+
+      let usedFallback = false;
+
+      if (approvedVendors.length === 0 && isDistrictVisakhapatnam) {
+        try {
+          const fallbackVendors = await getVendorsByPincode(
+            LMART_FALLBACK_PINCODE,
+          );
+          const fallbackApproved = (fallbackVendors || []).filter(
+            (v) => v.status === "Approved",
+          );
+          const lmartVendor = fallbackApproved.find(
+            (v) =>
+              String(v.storeName || "")
+                .trim()
+                .toLowerCase()
+                .replace(/\s+/g, "") === "lmart",
+          );
+          if (lmartVendor) {
+            approvedVendors = [lmartVendor];
+            usedFallback = true;
+          }
+        } catch (fallbackErr) {
+          console.error("LMart fallback fetch failed:", fallbackErr);
+        }
+      }
         setApprovedVendorListJson(
           approvedVendors,
         );
@@ -480,27 +511,37 @@ const ProfilePage = () => {
                   v.vendorId === current,
               );
 
-            const nextVendorId =
-              currentExists
-                ? current
-                : approvedVendors[0]
-                    .vendorId;
+           let nextVendorId;
+    if (currentExists && !usedFallback) {
+      nextVendorId = current;
+    } else if (usedFallback) {
+      nextVendorId = approvedVendors[0].vendorId;
+          } else if (preferLMartDefault) {
+      // Visakhapatnam + no pincode from API → default to the LMart vendor
+      // if it's in the approved list for this pincode, else fall back
+      // to the normal "first approved vendor" behavior.
+      const lmartVendor = approvedVendors.find(
+        (v) =>
+          String(v.storeName || "")
+            .trim()
+            .toLowerCase()
+            .replace(/\s+/g, "") === "lmart",
+      );
+      nextVendorId = lmartVendor ? lmartVendor.vendorId : approvedVendors[0].vendorId;
+    } else {
+      nextVendorId = approvedVendors[0].vendorId;
+    }
 
-            if (nextVendorId) {
-              localStorage.setItem(
-                "selectedVendorId",
-                nextVendorId,
-              );
-            }
+    if (nextVendorId) {
+      localStorage.setItem("selectedVendorId", nextVendorId);
+    }
 
-            return nextVendorId || "";
-          });
-        } else {
-          setSelectedMartTab("");
-          localStorage.removeItem(
-            "selectedVendorId",
-          );
-        }
+    return nextVendorId || "";
+  });
+} else {
+  setSelectedMartTab("");
+  localStorage.removeItem("selectedVendorId");
+}
       } catch (error) {
         console.error(
           "Error fetching vendors for pincode:",
@@ -516,7 +557,8 @@ const ProfilePage = () => {
     return () => {
       cancelled = true;
     };
-  }, [zipCode, pinCode]);
+     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [zipCode, pinCode, preferLMartDefault, district]);
 
   const getVendorFromJson = (vendorId) =>
     approvedVendorListJson.find((v) => v.vendorId === vendorId);
@@ -2311,8 +2353,20 @@ const ProfilePage = () => {
         const response = await axios.get(apiUrl);
         setProfile(response.data);
         setCategory(response.data.category);
-        setDistrict(response.data.district);
-        setZipCode(String(response.data.zipCode || response.data.pinCode || DEFAULT_PINCODE).trim() || DEFAULT_PINCODE);
+        const apiDistrict = (response.data.district || "").trim();
+        const apiPincode = (response.data.zipCode || response.data.pinCode || "").toString().trim();
+
+        setDistrict(apiDistrict);
+
+        // If the API gave us no pincode, but the customer's district is
+        // Visakhapatnam, default the vendor tabs to the "LMart" store instead
+        // of just falling back to DEFAULT_PINCODE's first vendor.
+        const isVisakhapatnamNoPincode =
+          !apiPincode && apiDistrict.toLowerCase() === "visakhapatnam";
+        setPreferLMartDefault(isVisakhapatnamNoPincode);
+
+        const resolvedZip = apiPincode || DEFAULT_PINCODE;
+        setZipCode(resolvedZip);
         setFullName(response.data.fullName);
         if (response.data.photoAttachmentId) {
           fetchImageUrl(response.data.photoAttachmentId);
@@ -2321,9 +2375,9 @@ const ProfilePage = () => {
           getMenuList(
             userType,
             userId,
-            response.data.category,
-            response.data.district,
-            String(response.data.zipCode || response.data.pinCode || DEFAULT_PINCODE).trim() || DEFAULT_PINCODE,
+            response.data.category,   
+            apiDistrict,
+            resolvedZip,
             response.data.fullName,
             isMobile,
           ),
@@ -2399,7 +2453,7 @@ const ProfilePage = () => {
         productId: product.id,
         productName: product.name || product.productName,
         qty,
-        mrp: product.mrp,
+        mrp: product.mrp,         
         discount: product.discount,
         afterDiscountPrice: product.afterDiscount,
         stockLeft: product.stockLeft,
@@ -2420,6 +2474,13 @@ const ProfilePage = () => {
   const filteredGroceryData = groceryData.filter((t) =>
     t.martId?.toString().toLowerCase().includes(searchOrderId.toLowerCase()),
   );
+// const sortedCategories = [...(categories ?? [])].sort((a, b) =>
+//   String(b?.category || b?.categoryName || "").localeCompare(
+//     String(a?.category || a?.categoryName || ""),
+//     undefined,
+//     { sensitivity: "base" }
+//   )
+// );
 
   return (
     <>
@@ -4040,7 +4101,7 @@ const ProfilePage = () => {
                             {vendor.categories.map((catObj) => {
                               const isActive =
                                 selectedVendorJsonCategory === catObj.category;
-                              return (
+                              return (     
                                 <div
                                   className="col"
                                   key={catObj.category}

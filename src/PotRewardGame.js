@@ -18,7 +18,7 @@ const CREATE_OFFER_TRANSACTION_URL =
 const UPDATE_OFFER_TRANSACTION_URL =
   `${API_BASE}/OffersTransactions/UpdateOffersTransactionsDetails`;
 
-// ======================================================
+// ======================================================               
 // GAME SETTINGS
 // ======================================================
 
@@ -751,7 +751,7 @@ const PotRewardGame = ({
                 borderRadius: "50%",
                 border: "none",
                 background:
-                  "#f1f1f1",
+                  "#e70f0f",
                 fontSize: "22px",
                 cursor:
                   crediting ||

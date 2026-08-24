@@ -15,6 +15,10 @@ const AddressPage = () => {
   const [districtId, setDistrictId] = useState("");
   const [savingAddress, setSavingAddress] = useState(false);
   const [addressData, setAddressData] = useState(null);
+  const [districtList, setDistrictList] = useState([]);
+  const [stateList, setStateList] = useState([]);
+  const [district, setDistrict] = useState("");
+  const [state, setState] = useState("");
   const [addressForm, setAddressForm] = useState({
     fullName: "",
     mobileNumber: "",
@@ -23,6 +27,11 @@ const AddressPage = () => {
     district: "",
     zipCode: "",
   });
+
+
+  useEffect(() => {
+    console.log(state, district);
+  }, [state, district]);
 
   const PINCODE_LIST = [
   "530001", "530002", "530003", "530004", "530005", "530013",
@@ -33,14 +42,9 @@ const AddressPage = () => {
   "530014", "530041", "530043", "530045", "530048",
   "531162", "531163", "531173",
 ];
- const [pincodeOptions, setPincodeOptions] = useState(PINCODE_LIST);
+ const [pincodeOptions] = useState(PINCODE_LIST);
   const [showManualPincode, setShowManualPincode] = useState(false);
   const [manualPincode, setManualPincode] = useState("");
-
-const STATE_NAME = "Andhra Pradesh";
-const DISTRICT_NAME = "Visakhapatnam";
-const STATE_ID = "1";
-const DISTRICT_ID = "1";
  
   const hasAddress = Boolean(  
     addressData?.address &&
@@ -65,7 +69,7 @@ const isFormValid = Boolean(
       const data = Array.isArray(response.data) ? response.data[0] : response.data;
       if (data) {
         setAddressData(data);
-        setAddressForm({
+        setAddressForm({       
           fullName: (data.fullName || "").trim(),
           mobileNumber: data.mobileNumber || "",
           address: data.address || "",
@@ -87,71 +91,73 @@ const isFormValid = Boolean(
 
   useEffect(() => {
     if (addressForm.state) {
-      setStateId(STATE_ID);
+      setStateId(stateId);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addressForm.state]);
  
   useEffect(() => {
     if (addressForm.district) {
-      setDistrictId(DISTRICT_ID);
+      setDistrictId(districtId);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addressForm.district]);
  
-  // useEffect(() => {
-  //   axios
-  //     .get(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getStates`)
-  //     .then((response) => setStateList(response.data))
-  //     .catch((error) => console.error("Error fetching states:", error));
-  // }, []);
+  useEffect(() => {
+    axios
+      .get(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getStates`)
+      .then((response) => setStateList(response.data))
+      .catch((error) => console.error("Error fetching states:", error));
+  }, []);
 
-  // useEffect(() => {
-  //   if (stateId) {
-  //     axios
-  //       .get(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
-  //       .then((response) => setDistrictList(response.data))
-  //       .catch((error) => console.error("Error fetching districts:", error));
-  //   } else {
-  //     setDistrictList([]);
-  //   }
-  // }, [stateId]);
+  useEffect(() => {
+    if (stateId) {
+      axios
+        .get(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
+        .then((response) => setDistrictList(response.data))
+        .catch((error) => console.error("Error fetching districts:", error));
+    } else {
+      setDistrictList([]);
+    }
+  }, [stateId]);
 
-  // useEffect(() => {
-  //   if (addressForm.state && stateList.length) {
-  //     const matched = stateList.find(
-  //       (s) => s.StateName?.toLowerCase() === addressForm.state.toLowerCase()
-  //     );
-  //     if (matched) setStateId(String(matched.StateId));
-  //   }
-  // }, [addressForm.state, stateList]);
+  useEffect(() => {
+    if (addressForm.state && stateList.length) {
+      const matched = stateList.find(
+        (s) => s.StateName?.toLowerCase() === addressForm.state.toLowerCase()
+      );
+      if (matched) setStateId(String(matched.StateId));
+    }
+  }, [addressForm.state, stateList]);
 
-  // useEffect(() => {
-  //   if (addressForm.district && districtList.length) {
-  //     const matched = districtList.find(
-  //       (d) => d.districtName?.toLowerCase() === addressForm.district.toLowerCase()
-  //     );
-  //     if (matched) setDistrictId(String(matched.districtId));
-  //   }
-  // }, [addressForm.district, districtList]);
+  useEffect(() => {
+    if (addressForm.district && districtList.length) {
+      const matched = districtList.find(
+        (d) => d.districtName?.toLowerCase() === addressForm.district.toLowerCase()
+      );
+      if (matched) setDistrictId(String(matched.districtId));
+    }
+  }, [addressForm.district, districtList]);
 
-   const handleStateChange = (e) => {
-    const selectedId = e.target.value;
-    setStateId(selectedId);
-    setDistrictId("");
-    setAddressForm((p) => ({
-      ...p,
-      state: selectedId ? STATE_NAME : "",
-      district: "",
-    }));
-  };
+  //  const handleStateChange = (e) => {
+  //   const selectedId = e.target.value;
+  //   setStateId(selectedId);
+  //   setDistrictId("");
+  //   setAddressForm((p) => ({
+  //     ...p,
+  //     state: selectedId ? stateId : "",
+  //     district: "",
+  //   }));
+  // };
  
-  const handleDistrictChange = (e) => {
-    const selectedId = e.target.value;
-    setDistrictId(selectedId);
-    setAddressForm((p) => ({
-      ...p,
-      district: selectedId ? DISTRICT_NAME : "",
-    }));
-  };
+  // const handleDistrictChange = (e) => {
+  //   const selectedId = e.target.value;
+  //   setDistrictId(selectedId);
+  //   setAddressForm((p) => ({
+  //     ...p,
+  //     district: selectedId ? DISTRICT_NAME : "",
+  //   }));
+  // };
  
   const handlePincodeSelect = (e) => {
     const value = e.target.value;
@@ -171,11 +177,6 @@ const isFormValid = Boolean(
     setAddressForm((p) => ({ ...p, zipCode: v }));
   };
  
-  const handleManualPincodeBlur = () => {
-    if (manualPincode.length === 6 && !pincodeOptions.includes(manualPincode)) {
-      setPincodeOptions((prev) => [...prev, manualPincode]);
-    }
-  };
   const handleSaveAddress = async () => {
     const { fullName, mobileNumber, address, state, district, zipCode } = addressForm;
 
@@ -289,34 +290,112 @@ const isFormValid = Boolean(
               />
             </Form.Group>
                 
-                 <Form.Group className="mb-2">
-                  <Form.Label>
-                    State <span className="text-danger">*</span>
-                  </Form.Label>
-                  <Form.Select value={stateId} onChange={handleStateChange}>
-                    <option value="">Select State</option>
-                    <option value={STATE_ID}>{STATE_NAME}</option>
-                  </Form.Select>
-                </Form.Group>
- 
-                <Form.Group className="mb-2">
-                  <Form.Label>
-                    District <span className="text-danger">*</span>
-                  </Form.Label>
-                  <Form.Select
-                    value={districtId}
-                    disabled={!stateId}
-                    onChange={handleDistrictChange}
-                  >
-                    <option value="">Select District</option>
-                    <option value={DISTRICT_ID}>{DISTRICT_NAME}</option>
-                  </Form.Select>
-                  {/* {isNonServiceableDistrict && (
+<Form.Group className="mb-3">
+                    <Form.Label>
+                      State <span className="req_star">*</span>
+                    </Form.Label>
+                    <Form.Select
+                      value={stateId || ""}
+                      onChange={(e) => {
+                        const selectedId = e.target.value;
+
+                        setStateId(selectedId);
+                        setDistrictId("");
+
+                        const selectedState = stateList.find(
+                          (s) => s?.StateId?.toString() === selectedId
+                        );
+
+                        if (selectedState) {
+                          const selectedStateName = selectedState.StateName;
+
+                          setState(selectedStateName);
+
+                          setAddressForm((p) => ({
+                            ...p,
+                            state: selectedStateName,
+                            district: "",
+                            zipCode: "",
+                          }));
+
+                          setShowManualPincode(false);
+                          setManualPincode("");
+                        }
+                      }}
+                      required
+                    >
+                      <option value="">Select State</option>
+                      {Array.isArray(stateList) &&
+                        stateList
+                          .filter((s) => s && s.StateId && s.StateName)
+                          .map((s) => (
+                            <option
+                              key={s.StateId}
+                              value={s.StateId.toString()}
+                            >
+                              {s.StateName}
+                            </option>
+                          ))}
+                    </Form.Select>
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label>
+                      District <span className="req_star">*</span>
+                    </Form.Label>
+                    <Form.Select
+                      value={districtId || ""}
+                      onChange={(e) => {
+                        const selectedId = e.target.value;
+
+                        setDistrictId(selectedId);
+
+                        const selectedDistrict = districtList.find(
+                          (d) => d.districtId.toString() === selectedId
+                        );
+
+                        if (selectedDistrict) {
+                          const selectedDistrictName = selectedDistrict.districtName;
+
+                          setDistrict(selectedDistrictName);
+
+                          setAddressForm((p) => ({
+                            ...p,
+                            district: selectedDistrictName,
+                            zipCode: "",
+                          }));
+
+                          if (
+                            selectedDistrictName.trim().toLowerCase() ===
+                            "visakhapatnam"
+                          ) {
+                            // Visakhapatnam → pincode dropdown
+                            setShowManualPincode(false);
+                            setManualPincode("");
+                          } else {
+                            // Other districts → manual pincode only
+                            setShowManualPincode(true);
+                            setManualPincode("");
+                          }
+                        }
+                      }}
+                      required
+                    >
+                      <option value="">Select District</option>
+                      {districtList.map((d) => (
+                        <option
+                          key={d.districtId}
+                          value={d.districtId.toString()}
+                        >
+                          {d.districtName}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
+                                    {/* {isNonServiceableDistrict && (
                     <div className="text-danger small mt-1">
                       Service available in only <strong>Visakhapatnam</strong> location.
-                    </div>
+                    </div>    
                   )} */}
-                </Form.Group>
         
             <div className="row">
               <div className="col-6">
@@ -332,34 +411,36 @@ const isFormValid = Boolean(
               <Form.Label>
                 Pincode <span className="text-danger">*</span>
               </Form.Label>
-              <Form.Select
-                value={
-                  showManualPincode
-                    ? "others"
-                    : pincodeOptions.includes(addressForm.zipCode)
-                    ? addressForm.zipCode
-                    : ""
-                }
-                onChange={handlePincodeSelect}
-              >
-                <option value="">Select Pincode</option>
-                {pincodeOptions.map((pin) => (
-                  <option key={pin} value={pin}>
-                    {pin}
-                  </option>
-                ))}
-                <option value="others">Others (Enter Manually)</option>
-              </Form.Select>
-              {showManualPincode && (
+
+              {showManualPincode ? (
                 <Form.Control
-                  className="mt-2"
                   type="text"
                   maxLength={6}
                   placeholder="Enter 6-digit pincode"
                   value={manualPincode}
                   onChange={handleManualPincodeChange}
-                  onBlur={handleManualPincodeBlur}
                 />
+              ) : (
+                <Form.Select
+                  value={
+                    pincodeOptions.includes(addressForm.zipCode)
+                      ? addressForm.zipCode
+                      : ""
+                  }
+                  onChange={handlePincodeSelect}
+                >
+                  <option value="">Select Pincode</option>
+
+                  {pincodeOptions.map((pin) => (
+                    <option key={pin} value={pin}>
+                      {pin}
+                    </option>
+                  ))}
+
+                  <option value="others">
+                    Others (Enter Manually)
+                  </option>
+                </Form.Select>
               )}
             </Form.Group>
             </div>
