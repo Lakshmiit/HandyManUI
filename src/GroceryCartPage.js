@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { Divider, IconButton } from "@mui/material";
 import { Modal } from "react-bootstrap";
@@ -25,8 +26,7 @@ const getAzureImageUrl = (imageValue) => {
 
   if (
     typeof imageValue === "string" &&
-    (imageValue.startsWith("http://") ||
-      imageValue.startsWith("https://"))
+    (imageValue.startsWith("http://") || imageValue.startsWith("https://"))
   ) {
     return imageValue;
   }
@@ -44,14 +44,11 @@ const getImageFilename = (imageValue) => {
   if (!value) return "";
 
   // If it is already an Azure/direct URL
-  if (
-    value.startsWith("http://") ||
-    value.startsWith("https://")
-  ) {
+  if (value.startsWith("http://") || value.startsWith("https://")) {
     try {
       const url = new URL(value);
       return decodeURIComponent(
-        url.pathname.split("/").filter(Boolean).pop() || ""
+        url.pathname.split("/").filter(Boolean).pop() || "",
       );
     } catch {
       return value.split("/").pop()?.split("?")[0] || "";
@@ -85,8 +82,6 @@ const GroceryCartPage = () => {
     console.log(addresses, fullName, isNewUser);
   }, [addresses, fullName, isNewUser]);
 
-
-
   const cartStore = CartStorage.getStore();
   const selectedVendorId =
     cartStore?.storeId && cartStore.storeId !== MAIN_STORE_ID
@@ -110,22 +105,22 @@ const GroceryCartPage = () => {
   }, []);
 
   useEffect(() => {
-  if (!comboInfo?.items?.length) return;
+    if (!comboInfo?.items?.length) return;
 
-  const map = {};
+    const map = {};
 
-  comboInfo.items.forEach(({ productName, image }) => {
-    if (!image) return;
+    comboInfo.items.forEach(({ productName, image }) => {
+      if (!image) return;
 
-    const filename = getImageFilename(image);
+      const filename = getImageFilename(image);
 
-    if (filename) {
-      map[productName] = getAzureImageUrl(filename);
-    }
-  });
+      if (filename) {
+        map[productName] = getAzureImageUrl(filename);
+      }
+    });
 
-  setComboImages(map);
-}, [comboInfo]);
+    setComboImages(map);
+  }, [comboInfo]);
 
   const fetchCustomerData = useCallback(async () => {
     try {
@@ -171,25 +166,18 @@ const GroceryCartPage = () => {
     }
   }, [userId, fetchCustomerData]);
 
-  // function toNum(v, f = 0) {
-  //   const n = Number(v);
-  //   return Number.isFinite(n) ? n : f;
-  // }
-
-  // Vendor-specific per-product limits (GroceryItems.js writes/enforces
-  // these via GetVendorProductsvalues while the customer is adding
-  // items). Keyed by productId, same as GroceryItems.js, since a
-  // vendor's limit is set per product, not per product name. Without
-  // this, the cart page falls back to the *master catalog's* limit
-  // (looked up by name below), which either doesn't reflect what the
-  // vendor actually configured or is simply absent — letting the +/-
-  // controls here ignore the limit the customer was shown/enforced
-  // against on the grocery listing page.
+  // Vendor-specific per-product limits AND stock (GroceryItems.js writes/enforces
+  // these via GetVendorProductsvalues while the customer is adding items).
+  // Keyed by productId. We now also read stock from this same response instead
+  // of calling GetGroceryItemsByProductName, since the vendor endpoint already
+  // has both limit and stock for every product it returns.
   const [vendorLimitMap, setVendorLimitMap] = useState({});
+  const [vendorStockMap, setVendorStockMap] = useState({});
 
   useEffect(() => {
     if (!selectedVendorId) {
       setVendorLimitMap({});
+      setVendorStockMap({});
       return;
     }
     const controller = new AbortController();
@@ -204,28 +192,49 @@ const GroceryCartPage = () => {
         if (!res.ok) return;
         const data = await res.json();
         const vendorResponse = Array.isArray(data) ? data : [];
-        const map = {};
+        const limitMapNew = {};
+        const stockMapNew = {};
         vendorResponse.forEach((vendor) => {
           vendor?.categorie?.forEach((category) => {
             category?.products?.forEach((vendorProduct) => {
               const productId = String(vendorProduct.productIds);
+
               const rawLimit =
-                vendorProduct.limit !== null && vendorProduct.limit !== undefined
+                vendorProduct.limit !== null &&
+                vendorProduct.limit !== undefined
                   ? Number(vendorProduct.limit)
                   : null;
               // 0 = vendor never explicitly chose a limit -> unlimited,
               // same convention used on the grocery listing page.
-              map[productId] =
+              limitMapNew[productId] =
                 rawLimit !== null && Number.isFinite(rawLimit) && rawLimit > 0
                   ? rawLimit
+                  : Infinity;
+
+              // TODO: confirm the real field name for stock in this API's
+              // response and trim this fallback chain down to just that one.
+              const rawStock =
+                vendorProduct.stockLeft ??
+                vendorProduct.stock ??
+                vendorProduct.availableStock ??
+                vendorProduct.quantity ??
+                null;
+              const numericStock =
+                rawStock !== null && rawStock !== undefined
+                  ? Number(rawStock)
+                  : null;
+              stockMapNew[productId] =
+                numericStock !== null && Number.isFinite(numericStock)
+                  ? numericStock
                   : Infinity;
             });
           });
         });
-        setVendorLimitMap(map);
+        setVendorLimitMap(limitMapNew);
+        setVendorStockMap(stockMapNew);
       } catch (e) {
         if (e?.name !== "AbortError") {
-          console.warn("Vendor limit fetch failed", e);
+          console.warn("Vendor limit/stock fetch failed", e);
         }
       }
     })();
@@ -286,7 +295,7 @@ const GroceryCartPage = () => {
 
             const limitValue = Number(best?.limit);
             return {
-              name,         
+              name,
               limit:
                 Number.isFinite(limitValue) && limitValue > 0
                   ? limitValue
@@ -323,6 +332,11 @@ const GroceryCartPage = () => {
   useEffect(() => {
     vendorLimitMapRef.current = vendorLimitMap;
   }, [vendorLimitMap]);
+
+  const vendorStockMapRef = useRef({});
+  useEffect(() => {
+    vendorStockMapRef.current = vendorStockMap;
+  }, [vendorStockMap]);
 
   const getDynamicLimitRef = (name, productId) => {
     if (selectedVendorId && productId !== undefined && productId !== null) {
@@ -415,7 +429,11 @@ const GroceryCartPage = () => {
     const item = cartItems.find((i) => i.id === rowId);
     if (!item) return;
 
-    const latestStock = await fetchLatestStock(item.name, item.category);
+    const latestStock = await fetchLatestStock(
+      item.name,
+      item.category,
+      item.productId,
+    );
 
     setCartItems((prev) => {
       const updated = prev
@@ -481,8 +499,12 @@ const GroceryCartPage = () => {
     }
   }, []);
 
+  // Non-handyman stock now comes from vendorStockMap (populated from
+  // GetVendorProductsvalues) instead of GetGroceryItemsByProductName.
+  // If no vendor is selected (or the product isn't in the vendor's
+  // response), we fall back to Infinity — i.e. no stock cap applied.
   const fetchLatestStock = useCallback(
-    async (productName, category = "") => {
+    async (productName, category = "", productId) => {
       const isHandymanCategory = HANDYMAN_CATEGORIES.includes(
         String(category || "")
           .trim()
@@ -492,27 +514,17 @@ const GroceryCartPage = () => {
       if (isHandymanCategory) {
         return fetchLatestStockForHandyman(productName);
       }
-      try {
-        const res = await fetch(
-          `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/UploadGrocery/GetGroceryItemsByProductName?productName=${encodeURIComponent(productName)}`,
-        );
-        if (!res.ok) return Infinity;
-        const data = await res.json();
-        const normalizedInput = normalizeName(productName);
-        const exactMatch = (Array.isArray(data) ? data : []).filter(
-          (x) => normalizeName(x.name) === normalizedInput,
-        );
-        const latest = exactMatch.sort(
-          (a, b) => Date.parse(b?.date || 0) - Date.parse(a?.date || 0),
-        )[0];
-        if (!latest) return Infinity;
-        return Number(latest?.stockLeft || 0);
-      } catch (err) {
-        console.error(err);
-        return Infinity;
+
+      if (selectedVendorId && productId !== undefined && productId !== null) {
+        const vendorStock = vendorStockMapRef.current[String(productId)];
+        if (vendorStock !== undefined) {
+          return vendorStock;
+        }
       }
+
+      return Infinity;
     },
-    [fetchLatestStockForHandyman],
+    [fetchLatestStockForHandyman, selectedVendorId],
   );
 
   const normalizeName = (name) =>
@@ -537,8 +549,8 @@ const GroceryCartPage = () => {
         stockLeft: Number(p.stockLeft || 0),
         code: p.code,
         units: p.units,
-       imageFilename: getImageFilename(p.image ?? p.productImage ?? ""),
-       imageUrl: getAzureImageUrl(p.image ?? p.productImage ?? ""),
+        imageFilename: getImageFilename(p.image ?? p.productImage ?? ""),
+        imageUrl: getAzureImageUrl(p.image ?? p.productImage ?? ""),
       })),
     );
 
@@ -548,7 +560,11 @@ const GroceryCartPage = () => {
       currentItems.map(async (item) => ({
         name: item.name,
         category: item.category,
-        stockLeft: await fetchLatestStock(item.name, item.category),
+        stockLeft: await fetchLatestStock(
+          item.name,
+          item.category,
+          item.productId,
+        ),
       })),
     );
 
@@ -618,7 +634,11 @@ const GroceryCartPage = () => {
       cartItems.map(async (item) => ({
         name: item.name,
         requestedQty: item.qty,
-        stockLeft: await fetchLatestStock(item.name, item.category),
+        stockLeft: await fetchLatestStock(
+          item.name,
+          item.category,
+          item.productId,
+        ),
       })),
     );
 
@@ -676,14 +696,14 @@ const GroceryCartPage = () => {
 
   const handleGroceryProceed = async (event) => {
     event.preventDefault();
-     if (isProceeding) return;
+    if (isProceeding) return;
     const hasCombo = comboInfo?.items?.length > 0;
 
     if (activeItems.length === 0 && !hasCombo) {
       alert("Your cart is empty");
       return;
     }
-     setIsProceeding(true);
+    setIsProceeding(true);
     await createWelcomeWalletIfEligible();
     const valid = await validateCartStockBeforeCheckout();
     if (!valid) {
@@ -703,7 +723,11 @@ const GroceryCartPage = () => {
           const comboStocks = await Promise.all(
             comboData.items.map(async (item) => ({
               productName: item.productName,
-              stockLeft: await fetchLatestStock(item.productName),
+              stockLeft: await fetchLatestStock(
+                item.productName,
+                item.category,
+                item.productId,
+              ),
             })),
           );
           console.log("Combo live stocks:", comboStocks);
@@ -745,8 +769,7 @@ const GroceryCartPage = () => {
               const persisted = p.image ?? p.productImage ?? "";
               const filename = getImageFilename(persisted);
               const safeImage =
-                filename ||
-                (typeof persisted === "string" ? persisted : "");
+                filename || (typeof persisted === "string" ? persisted : "");
               return {
                 productName: p.productName?.trim() || p.name?.trim() || "",
                 noOfQuantity: String(p.qty),
@@ -781,10 +804,10 @@ const GroceryCartPage = () => {
         ]
       : allCategories.map((cat) => {
           const products = (cat.products || []).map((p) => {
-          const persisted = p.image ?? p.productImage ?? "";
-          const filename = getImageFilename(persisted);
-          const safeImage =
-            filename || (typeof persisted === "string" ? persisted : "");
+            const persisted = p.image ?? p.productImage ?? "";
+            const filename = getImageFilename(persisted);
+            const safeImage =
+              filename || (typeof persisted === "string" ? persisted : "");
             return {
               productName: p.productName?.trim() || p.name?.trim() || "",
               noOfQuantity: String(p.qty),
@@ -895,22 +918,6 @@ const GroceryCartPage = () => {
 
   const createWelcomeWalletIfEligible = async () => {
     try {
-      // const primaryAddress = addresses.find((addr) => addr.type === "primary");
-      // const mobileNumber = primaryAddress?.mobileNumber;
-      // if (!mobileNumber) return;
-
-      // // Step 1: Verify Guest User
-      // const guestResponse = await fetch(
-      //   `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Customer/GuestUserExistingVerification/${mobileNumber}`,
-      // );
-      // if (!guestResponse.ok) return;
-      // const guestData = await guestResponse.json();
-      // if (!Array.isArray(guestData) || guestData.length === 0) return;
-
-      // const customer = guestData[0];
-      // const isGuest = customer?.firstName?.trim().toLowerCase() === "guest";
-
-      // Step 2: Check if wallet transaction already exists
       const offerResponse = await fetch(
         `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/OffersTransactions/GetOfferTransactionByUserId?userId=${userId}`,
       );
@@ -923,8 +930,6 @@ const GroceryCartPage = () => {
           return;
         }
       }
-
-      // const walletValue = isGuest ? "50" : "0";
 
       const payload3 = {
         id: "string",
@@ -967,16 +972,6 @@ const GroceryCartPage = () => {
     setZoomImage(imageSrc);
     setShowZoomModal(true);
   };
-
-  // const handleRestore = (id) => {
-  //   clearTimeout(removalTimers.current[id]);
-  //   delete removalTimers.current[id];
-  //   setCartItems((prev) =>
-  //     prev.map((item) =>
-  //       item.id === id ? { ...item, qty: 1, removing: false } : item,
-  //     ),
-  //   );
-  // };
 
   const itemsTotal = Math.round(
     cartItems.reduce((s, it) => s + it.mrp * it.qty, 0),
@@ -1035,14 +1030,14 @@ const GroceryCartPage = () => {
           />
         </IconButton>
       </div>
-            {cartStoreName && (
-              <div
-                className="d-flex align-items-center"
-                style={{ fontSize: "12px", color: "#666", padding: "0 4px 4px" }}
-              >
-                Ordering from <b style={{ marginLeft: 4 }}>{cartStoreName}</b>
-              </div>
-            )}
+      {cartStoreName && (
+        <div
+          className="d-flex align-items-center"
+          style={{ fontSize: "12px", color: "#666", padding: "0 4px 4px" }}
+        >
+          Ordering from <b style={{ marginLeft: 4 }}>{cartStoreName}</b>
+        </div>
+      )}
       <Divider />
 
       {/* Cart Items */}
@@ -1098,30 +1093,30 @@ const GroceryCartPage = () => {
               >
                 {/* Product Image */}
                 <img
-  src={
-    item.imageUrl ||
-    (item.imageFilename
-      ? getAzureImageUrl(item.imageFilename)
-      : "") ||
-    "/placeholder.png"
-  }
-  alt={item.name}
-  onClick={() =>
-    handleImageClick(
-      item.imageUrl ||
-        (item.imageFilename
-          ? getAzureImageUrl(item.imageFilename)
-          : "") ||
-        "/placeholder.png"
-    )
-  }
-  style={{
-    height: 50,
-    width: 30,
-    borderRadius: 6,
-    cursor: "pointer",
-  }}
-/>
+                  src={
+                    item.imageUrl ||
+                    (item.imageFilename
+                      ? getAzureImageUrl(item.imageFilename)
+                      : "") ||
+                    "/placeholder.png"
+                  }
+                  alt={item.name}
+                  onClick={() =>
+                    handleImageClick(
+                      item.imageUrl ||
+                        (item.imageFilename
+                          ? getAzureImageUrl(item.imageFilename)
+                          : "") ||
+                        "/placeholder.png",
+                    )
+                  }
+                  style={{
+                    height: 50,
+                    width: 30,
+                    borderRadius: 6,
+                    cursor: "pointer",
+                  }}
+                />
 
                 {/* Product Details */}
                 <div
@@ -1444,10 +1439,7 @@ const GroceryCartPage = () => {
                 activeItems.length === 0 || isProceeding
                   ? "not-allowed"
                   : "pointer",
-              opacity: 
-                activeItems.length === 0 || isProceeding
-                  ? 0.6
-                  : 1,
+              opacity: activeItems.length === 0 || isProceeding ? 0.6 : 1,
               minWidth: "100px",
             }}
             className="btn btn-warning mt-1 mb-1"
