@@ -544,7 +544,8 @@ import AddressPage from "./AddressPage.js";
 import SuperAdminDeliveryPartnersPage from "./SuperAdminDeliveryPartnersPage.js";
 
 import SuperAdminOrdersPage from "./SuperAdminOrdersPage.js";
-
+import AdminOrderCloseDashboard  from "./AdminOrderCloseDashboard.js";
+import AdminOrderClose from "./AdminOrderClose.js";
 // import OneRupeeGroceryItems from './OneRupeeGroceryItems.js';
 // import CustomerLocation from "./CustomerLocation.js";
 const PreventBackNavigation = () => {
@@ -1005,6 +1006,17 @@ function App() {
               path="/customerBookTechnicianQuotationView/:userType/:userId/:raiseTicketId"
               element={<CustomerBookTechnicianQuotationView />}
             />
+            <Route
+              path="/adminOrderCloseDashboard"
+              element={<AdminOrderCloseDashboard />}
+            />
+
+         
+            <Route
+              path="/adminOrderClose/:groceryItemId"
+              element={<AdminOrderClose />}
+            />
+
             <Route
               path="/buyProductPaymentPage/:userType/:userId/:buyProductId"
               element={<BuyProductPaymentPage />}

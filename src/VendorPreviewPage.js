@@ -969,6 +969,116 @@ const VendorPreviewPage = () => {
   // arranged position, brand-new ones are appended at the end, and ones
   // that dropped out of pendingCart (qty back to 0) are dropped here too.
   const [categoryOrder, setCategoryOrder] = useState([]);
+const [expandedCategories, setExpandedCategories] = useState({});
+const [searchQuery, setSearchQuery] = useState("");
+
+// Case-insensitive filter by product name (falls back to product id if no
+// catalog name is available yet) or category name. When searching, a
+// category is kept if either its own name matches or at least one of its
+// products matches; only the matching products are shown inside it.
+const normalizedQuery = searchQuery.trim().toLowerCase();
+
+const matchesQuery = (value) =>
+  !normalizedQuery || (value || "").toLowerCase().includes(normalizedQuery);
+
+const orderedPendingCategories = useMemo(() => {
+    const cats = pendingCart?.categorie || [];
+    const byName = new Map(cats.map((cat) => [cat.categoryName, cat]));
+    const ordered = categoryOrder
+      .map((name) => byName.get(name))
+      .filter(Boolean);
+    cats.forEach((cat) => {
+      if (!categoryOrder.includes(cat.categoryName)) ordered.push(cat);
+    });
+    return ordered.map((cat, idx) => ({ ...cat, rank: String(idx + 1) }));
+  }, [pendingCart, categoryOrder]);
+
+  const statusByProductId = useMemo(() => {
+    const map = {};
+    (myProducts?.categories || []).forEach((cat) => {
+      (cat.products || []).forEach((p) => {
+        map[String(p.productId)] = p.status || "Pending";
+      });
+    });
+    return map;
+  }, [myProducts]);
+
+const readyToSubmitCategories = useMemo(() => {
+    return orderedPendingCategories
+      .map((cat) => ({
+        ...cat,
+        products: (cat.products || []).filter(
+          (p) => statusByProductId[String(p.productIds)] !== "Approved",
+        ),
+      }))
+      .filter((cat) => cat.products.length > 0);
+  }, [orderedPendingCategories, statusByProductId]);
+
+    const productNameById = useMemo(() => {
+    const map = {};
+    catalogItems.forEach((item) => {
+      map[String(item.id)] = item.name;
+    });
+    return map;
+  }, [catalogItems]);
+
+const searchedReadyToSubmitCategories = useMemo(() => {
+  if (!normalizedQuery) return readyToSubmitCategories;
+  return readyToSubmitCategories
+    .map((cat) => {
+      const categoryMatches = matchesQuery(cat.categoryName);
+      const products = (cat.products || []).filter((p) => {
+        const name = productNameById[p.productIds] || `Product ${p.productIds}`;
+        return categoryMatches || matchesQuery(name);
+      });
+      return { ...cat, products };
+    })
+    .filter((cat) => cat.products.length > 0);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [readyToSubmitCategories, normalizedQuery, productNameById]);
+
+const approvedCategories = (myProducts?.categories || [])
+    .map((cat) => ({
+      ...cat,
+      products: (cat.products || []).filter((p) => p.status === "Approved"),
+    }))
+    .filter((cat) => cat.products.length > 0);
+
+const searchedApprovedCategories = useMemo(() => {
+  if (!normalizedQuery) return approvedCategories;
+  return approvedCategories
+    .map((cat) => {
+      const categoryMatches = matchesQuery(cat.category);
+      const products = (cat.products || []).filter((p) => {
+        const name = p.name || productNameById[p.productId] || `Product ${p.productId}`;
+        return categoryMatches || matchesQuery(name);
+      });
+      return { ...cat, products };
+    })
+    .filter((cat) => cat.products.length > 0);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [approvedCategories, normalizedQuery, productNameById]);
+
+useEffect(() => {
+  if (!normalizedQuery) return;
+  setExpandedCategories((prev) => {
+    const next = { ...prev };
+    searchedReadyToSubmitCategories.forEach((cat) => {
+      next[cat.categoryName] = true;
+    });
+    searchedApprovedCategories.forEach((cat) => {
+      next[`approved-${cat.category}`] = true;
+    });
+    return next;
+  });
+}, [normalizedQuery, searchedReadyToSubmitCategories, searchedApprovedCategories]);
+
+const toggleCategoryExpanded = (categoryName) => {
+  setExpandedCategories((prev) => ({
+    ...prev,
+    [categoryName]: !prev[categoryName],
+  }));
+};
 
   useEffect(() => {
     const sessionId = localStorage.getItem("vendorSession");
@@ -1067,13 +1177,9 @@ const VendorPreviewPage = () => {
     };
   }, [vendor]);
 
-  const productNameById = useMemo(() => {
-    const map = {};
-    catalogItems.forEach((item) => {
-      map[String(item.id)] = item.name;
-    });
-    return map;
-  }, [catalogItems]);
+  // productId -> status ("Approved" | "Pending" | etc), sourced from the
+  // vendor's real server record. Used to keep "Products ready to submit"
+  // and "Your submitted products" mutually exclusive by status.
 
   useEffect(() => {
     if (!vendorId) return;
@@ -1212,31 +1318,30 @@ const VendorPreviewPage = () => {
 
   // pendingCart.categorie re-sorted to match the vendor's arranged order,
   // with each category's 1-based position attached as "rank" — this is
-  // what's rendered below and what gets sent on final submission.
-  const orderedPendingCategories = useMemo(() => {
-    const cats = pendingCart?.categorie || [];
-    const byName = new Map(cats.map((cat) => [cat.categoryName, cat]));
-    const ordered = categoryOrder
-      .map((name) => byName.get(name))
-      .filter(Boolean);
-    cats.forEach((cat) => {
-      if (!categoryOrder.includes(cat.categoryName)) ordered.push(cat);
-    });
-    return ordered.map((cat, idx) => ({ ...cat, rank: String(idx + 1) }));
-  }, [pendingCart, categoryOrder]);
-
+  // the base list "ready to submit" is filtered from below.
+  // Only products that are NOT already approved belong in the
+  // "ready to submit" card — an approved product sitting in the local
+  // pendingCart (carried over from Stock Update's backend hydration)
+  // has nothing left to submit.
+  
   const pendingProductCount = useMemo(
     () =>
-      (pendingCart?.categorie || []).reduce(
+      readyToSubmitCategories.reduce(
         (sum, cat) => sum + (cat.products?.length || 0),
         0,
       ),
-    [pendingCart],
+    [readyToSubmitCategories],
   );
-  const finalSelectedCount = useMemo(
-    () => Object.values(finalSelected).filter(Boolean).length,
-    [finalSelected],
-  );
+
+  const finalSelectedCount = useMemo(() => {
+    let count = 0;
+    readyToSubmitCategories.forEach((cat) => {
+      (cat.products || []).forEach((p) => {
+        if (finalSelected[`${cat.categoryName}||${p.productIds}`]) count++;
+      });
+    });
+    return count;
+  }, [readyToSubmitCategories, finalSelected]);
 
   const toggleFinalSelected = (categoryName, productId) => {
     const key = `${categoryName}||${productId}`;
@@ -1262,7 +1367,7 @@ const VendorPreviewPage = () => {
   // merged list already in the PascalCase shape UpdateVendorProductsValues
   // expects.
   const mergeIntoExistingCategorie = (existingVendor, newCategorie) => {
-    // existingCats: categoryName -> Map(productId -> {quantity, discount})
+    // existingCats: categoryName -> Map(productId -> {quantity, discount, limit})
     const existingCats = new Map();
     const order = [];
     (existingVendor?.categories || []).forEach((cat) => {
@@ -1286,13 +1391,13 @@ const VendorPreviewPage = () => {
         order.push(cat.categoryName);
       }
       (cat.products || []).forEach((p) => {
-        // Upsert: overwrites quantity/discount if this product was already
-        // on the record, adds it if it wasn't — everything else in the
-        // category (and every other category) is left untouched.
+        // Upsert: overwrites quantity/discount/limit if this product was
+        // already on the record, adds it if it wasn't — everything else in
+        // the category (and every other category) is left untouched.
         productMap.set(String(p.productIds), {
           quantity: String(p.quantity),
           discount: String(p.discount),
-          limit: String(p.limit),
+          limit: String(p.limit ?? 0),
         });
       });
     });
@@ -1319,7 +1424,7 @@ const VendorPreviewPage = () => {
           ProductIds: productId,
           Quantity: v.quantity,
           Discount: v.discount,
-          limit: v.limit,
+          Limit: v.limit,
         }),
       ),
     }));
@@ -1327,13 +1432,18 @@ const VendorPreviewPage = () => {
 
   const handleSubmitFinal = async () => {
     if (!pendingCart) return;
-    const categorie = orderedPendingCategories
+    const categorie = readyToSubmitCategories
       .map((cat) => ({
         categoryName: cat.categoryName,
         rank: cat.rank,
-        products: (cat.products || []).filter(
-          (p) => finalSelected[`${cat.categoryName}||${p.productIds}`],
-        ),
+        products: (cat.products || [])
+          .filter(
+            (p) => finalSelected[`${cat.categoryName}||${p.productIds}`],
+          )
+          .map((p) => ({
+            ...p,
+            limit: p.limit ?? "0",
+          })),
       }))
       .filter((cat) => cat.products.length > 0)
       // Re-number after dropping unselected categories so rank stays a
@@ -1471,8 +1581,12 @@ const VendorPreviewPage = () => {
     }
   };
 
+  // Only categories that have at least one Approved product show in
+  // "Your submitted products".
+  
+
   return (
-    <div className="container py-4 pb-5">
+    <div className="container py-4 pb-5" style={{maxWidth: "1140px"}}>
       <button
         type="button"
         className="btn btn-outline-secondary btn-sm mb-3 d-inline-flex align-items-center gap-1"
@@ -1480,7 +1594,7 @@ const VendorPreviewPage = () => {
       >
         <ArrowBackIcon fontSize="small" /> Back to Profile
       </button>
-
+      
       <div className="card border-0 shadow-sm mb-4 overflow-hidden">
         <div
           className="card-body p-4 d-flex flex-column flex-md-row align-items-md-center gap-3"
@@ -1606,8 +1720,18 @@ const VendorPreviewPage = () => {
       {message && <div className="alert alert-success">{message}</div>}
       {error && <div className="alert alert-danger">{error}</div>}
 
-      {/* ---- Products picked on the Stock Update page, awaiting final submission ---- */}
-      <div className="card border-0 shadow-sm mb-4">
+      {/* ---- Products picked on the Stock Update page, awaiting final submission (non-approved only) ---- */}
+      <div className="card border-0 shadow-sm">
+        {/* ---- Search box: filters both "ready to submit" and "approved" lists below ---- */}
+        <div>
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Search products or categories…"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />   
+        </div>
         <div className="card-body p-4">
           <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
             <h3 className="mb-0">Products ready to submit</h3>
@@ -1637,76 +1761,79 @@ const VendorPreviewPage = () => {
                 Use the arrows to arrange the order these categories appear in
                 on your storefront.
               </p>
-              {orderedPendingCategories.map((cat, index) => (
-                <div key={cat.categoryName} className="mb-3">
-                  <div className="d-flex align-items-center gap-2 mb-2">
-                    <span className="badge bg-secondary">#{cat.rank}</span>
-                    <h6 className="mb-0">{cat.categoryName}</h6>
-                    <div
-                      className="btn-group btn-group-sm ms-auto"
-                      role="group"
-                    >
-                      <button
-                        type="button"
-                        className="btn btn-outline-secondary"
-                        title="Move up"
-                        disabled={index === 0}
-                        onClick={() => moveCategory(index, -1)}
-                      >
-                        &uarr;
-                      </button>
-                      <button
-                        type="button"
-                        className="btn btn-outline-secondary"
-                        title="Move down"
-                        disabled={index === orderedPendingCategories.length - 1}
-                        onClick={() => moveCategory(index, 1)}
-                      >
-                        &darr;
-                      </button>
+              {readyToSubmitCategories.map((cat, index) => {
+  const isExpanded = !!expandedCategories[cat.categoryName];
+  return (
+    <div key={cat.categoryName} className="mb-3">
+      <div className="d-flex align-items-center gap-2 mb-2">
+        <span className="badge bg-secondary">#{cat.rank}</span>
+        <h6
+          className="mb-0"
+          role="button"
+          style={{ cursor: "pointer", userSelect: "none" }}
+          onClick={() => toggleCategoryExpanded(cat.categoryName)}
+        >
+          {cat.categoryName}{" "}
+          <span style={{ fontSize: "0.75em" }}>
+            {isExpanded ? "▲" : "▼"}
+          </span>
+        </h6>
+        <div className="btn-group btn-group-sm ms-auto" role="group">
+          <button
+            type="button"
+            className="btn btn-outline-secondary"
+            title="Move up"
+            disabled={index === 0}
+            onClick={() => moveCategory(index, -1)}
+          >
+            &uarr;
+          </button>
+          <button
+            type="button"
+            className="btn btn-outline-secondary"
+            title="Move down"
+            disabled={index === readyToSubmitCategories.length - 1}
+            onClick={() => moveCategory(index, 1)}
+          >
+            &darr;
+          </button>
+        </div>
+      </div>
+
+      {isExpanded && (
+        <div className="row g-2">
+          {cat.products.map((p) => {
+            const key = `${cat.categoryName}||${p.productIds}`;
+            const checked = !!finalSelected[key];
+            return (
+              <div className="col-12 col-sm-6 col-lg-4 col-xl-8" key={p.productIds}>
+                <label
+                  className={`border rounded p-2 small d-flex align-items-start gap-2 w-100 ${checked ? "border-success border-2" : ""}`}
+                  style={{ cursor: "pointer" }}
+                >
+                  <input
+                    type="checkbox"
+                    className="form-check-input mt-1"
+                    checked={checked}
+                    onChange={() => toggleFinalSelected(cat.categoryName, p.productIds)}
+                  />
+                  <div>
+                    <div className="fw-bold">
+                      {productNameById[p.productIds] || `Product ${p.productIds}`}
+                    </div>
+                    <div className="text-muted">
+                      Qty: {p.quantity} &middot; Discount: {p.discount}% &middot; Limit: {p.limit ?? 0}
                     </div>
                   </div>
-                  <div className="row g-2">
-                    {cat.products.map((p) => {
-                      const key = `${cat.categoryName}||${p.productIds}`;
-                      const checked = !!finalSelected[key];
-                      return (
-                        <div
-                          className="col-12 col-sm-6 col-lg-4"
-                          key={p.productIds}
-                        >
-                          <label
-                            className={`border rounded p-2 small d-flex align-items-start gap-2 w-100 ${checked ? "border-success border-2" : ""}`}
-                            style={{ cursor: "pointer" }}
-                          >
-                            <input
-                              type="checkbox"
-                              className="form-check-input mt-1"
-                              checked={checked}
-                              onChange={() =>
-                                toggleFinalSelected(
-                                  cat.categoryName,
-                                  p.productIds,
-                                )
-                              }
-                            />
-                            <div>
-                              <div className="fw-bold">
-                                {productNameById[p.productIds] ||
-                                  `Product ${p.productIds}`}
-                              </div>
-                              <div className="text-muted">
-                                Qty: {p.quantity} &middot; Discount:{" "}
-                                {p.discount}%
-                              </div>
-                            </div>
-                          </label>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
+                </label>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+})}
 
               <div className="d-flex justify-content-end mt-3">
                 <button
@@ -1724,7 +1851,7 @@ const VendorPreviewPage = () => {
         </div>
       </div>
 
-      {/* ---- Vendor's already-submitted products, from the server ---- */}
+      {/* ---- Vendor's already-submitted products, from the server (Approved only) ---- */}
       <div className="card border-0 shadow-sm mb-4">
         <div className="card-body p-4">
           <h3 className="mb-3">Your submitted products</h3>
@@ -1733,51 +1860,47 @@ const VendorPreviewPage = () => {
               <div className="spinner-border text-success" />
               <p className="mt-2 mb-0">Loading your products…</p>
             </div>
-          ) : myProducts ? (
+          ) : approvedCategories.length > 0 ? (
             <>
-              <span
-                className={`badge mb-3 ${myProducts.status === "Approved" ? "bg-success" : "bg-warning text-dark"}`}
-              >
-                {myProducts.status || "Pending Approval"}
-              </span>
-              {myProducts.categories.map((cat) => (
-                <div key={cat.category} className="mb-3">
-                  <h6 className="mb-2">{cat.category}</h6>
-                  <div className="row g-2">
-                    {cat.products.map((p) => (
-                      <div
-                        className="col-12 col-sm-6 col-lg-4"
-                        key={p.productId}
-                      >
-                        <div className="border rounded p-2 small">
-                          <div className="d-flex justify-content-between align-items-start gap-2">
-                            <div>
-                              {p.name ||
-                                productNameById[p.productId] ||
-                                `Product ${p.productId}`}
-                            </div>
-                            <span
-                              className={`badge ${p.status === "Approved" ? "bg-success" : "bg-warning text-dark"}`}
-                              style={{ fontSize: "10px" }}
-                            >
-                              {p.status || "Pending"}
-                            </span>
-                          </div>
-                          <div>
-                            Qty: {p.qty} &middot; Discount: {p.discount}%
-                            &middot; Limit: {p.limit}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+              <span className="badge mb-3 bg-success">Approved</span>
+              {approvedCategories.map((cat) => {
+  const isExpanded = !!expandedCategories[`approved-${cat.category}`];
+  return (
+    <div key={cat.category} className="mb-3">
+      <h6
+        className="mb-2"
+        role="button"
+        style={{ cursor: "pointer", userSelect: "none" }}
+        onClick={() => toggleCategoryExpanded(`approved-${cat.category}`)}
+      >
+        {cat.category}{" "}
+        <span style={{ fontSize: "0.75em" }}>{isExpanded ? "▲" : "▼"}</span>
+      </h6>
+      {isExpanded && (
+        <div className="row g-2">
+          {cat.products.map((p) => (
+            <div className="col-12 col-sm-6 col-lg-4 col-xl-8" key={p.productId}>
+              <div className="border rounded p-2 small">
+                <div className="d-flex justify-content-between align-items-start gap-2">
+                  <div>{p.name || productNameById[p.productId] || `Product ${p.productId}`}</div>
+                  <span className="badge bg-success" style={{ fontSize: "10px" }}>Approved</span>
                 </div>
-              ))}
+                <div>
+                  Qty: {p.qty} &middot; Discount: {p.discount}% &middot; Limit: {p.limit}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+})}
             </>
           ) : (
             <div className="text-center py-3">
               <p className="text-muted mb-0">
-                No products submitted yet — Pending
+                No approved products yet — still pending review.
               </p>
             </div>
           )}
@@ -1787,4 +1910,4 @@ const VendorPreviewPage = () => {
   );
 };
 
-export default VendorPreviewPage;
+export default VendorPreviewPage;    
