@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import { playNotificationSound } from "./notificationSound";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 // Same API host the rest of the live app (ProfilePage's delivery-partner
 // check, VendorOrdersPage, etc.) already talks to — keep this in sync so
@@ -255,37 +256,64 @@ const DeliveryPartnerDashboard = () => {
           }}
         >
           <h2
-            className="d-flex align-items-center gap-2"
-            style={{ fontSize: isMobile ? "20px" : "34px", fontWeight: "600" }}
-          >
-            🚚 Delivery Partner Dashboard
-            {isRegistered && partnerStatus === "open" && (
-              <span
-                onClick={() => setHasNewOrder(false)}
-                title="Assigned orders"
-                className={`d-inline-flex align-items-center justify-content-center rounded-circle bg-white position-relative${
-                  hasNewOrder ? " delivery-bell-ring" : ""
-                }`}
-                style={{
-                  width: 30,
-                  height: 30,
-                  color: "#10301F",
-                  boxShadow: "0 1px 4px rgba(0,0,0,.35)",
-                  cursor: "pointer",
-                }}
-              >
-                <NotificationsActiveIcon style={{ fontSize: 18 }} />
-                {stats.inProgress > 0 && (
-                  <span
-                    className="badge rounded-pill bg-danger position-absolute"
-                    style={{ top: -6, right: -6, fontSize: 10, padding: "3px 5px" }}
-                  >
-                    {stats.inProgress}
-                  </span>
-                )}
-              </span>
-            )}
-          </h2>
+  className="d-flex align-items-center gap-2"
+  style={{
+    fontSize: isMobile ? "20px" : "34px",
+    fontWeight: "600",
+  }}
+>
+  {/* Back Arrow */}
+  <span
+    onClick={() => navigate(`/profilepage/customer/${userId}`)}
+    title="Back to Profile"
+    className="d-inline-flex align-items-center justify-content-center rounded-circle bg-white"
+    style={{
+      width: 34,
+      height: 34,
+      color: "#10301F",
+      boxShadow: "0 1px 4px rgba(0,0,0,.35)",
+      cursor: "pointer",
+      flexShrink: 0,
+    }}
+  >
+    <ArrowBackIcon style={{ fontSize: 22 }} />
+  </span>
+
+  🚚 Delivery Partner Dashboard
+
+  {isRegistered && partnerStatus === "open" && (
+    <span
+      onClick={() => setHasNewOrder(false)}
+      title="Assigned orders"
+      className={`d-inline-flex align-items-center justify-content-center rounded-circle bg-white position-relative${
+        hasNewOrder ? " delivery-bell-ring" : ""
+      }`}
+      style={{
+        width: 30,
+        height: 30,
+        color: "#10301F",
+        boxShadow: "0 1px 4px rgba(0,0,0,.35)",
+        cursor: "pointer",
+      }}
+    >
+      <NotificationsActiveIcon style={{ fontSize: 18 }} />
+
+      {stats.inProgress > 0 && (
+        <span
+          className="badge rounded-pill bg-danger position-absolute"
+          style={{
+            top: -6,
+            right: -6,
+            fontSize: 10,
+            padding: "3px 5px",
+          }}
+        >
+          {stats.inProgress}
+        </span>
+      )}
+    </span>
+  )}
+</h2>
           <style>{`
             @keyframes deliveryBellRing {
               0%, 100% { transform: rotate(0deg); }

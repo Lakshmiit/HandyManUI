@@ -9,7 +9,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "./App.css";
 import { Modal, Button } from "react-bootstrap";
-// import Confetti from "react-confetti";
 import ImageCache from "./utils/ImageCache";
 import { getGroceryItems } from "./utils/groceryStore";
 import axios from "axios";
@@ -109,11 +108,11 @@ const getMenuList = (
       MenuTitle: "Book Technician",
       TargetUrl: `/bookTechnician/${userType}/${userId}`,
     },
-    {
-      MenuIcon: <StorefrontIcon sx={{ fontSize: 40 }} />,
-      MenuTitle: "Buy Products",
-      TargetUrl: `/buyProducts/${userType}/${userId}`,
-    },
+    // {
+    //   MenuIcon: <StorefrontIcon sx={{ fontSize: 40 }} />,
+    //   MenuTitle: "Buy Products",
+    //   TargetUrl: `/buyProducts/${userType}/${userId}`,
+    // },
     ...(!isMobile
       ? [
           {
@@ -233,8 +232,13 @@ const groceryCategories = [
   { label: "Kids Zone", value: "Kids Zone", image: KidsImg },
   { label: "DWCRA Products", value: "DWCRA", image: DwakraProducts },
   { label: "Chicken", value: "Chicken", image: ChickenImg },
+  { label: "Electrical", value: "Electrical Products", image: HomeElectricalImg,},
+  { label: "Plumbing", value: "Plumbing Products", image: HomePlumbingImg, },
+  { label: "Kitchenware", value: "Kitchenware Appliances", image: KitchenImg,},
+  {  label: "Home Decors",  value: "Home Decors", image: HomeDecor,},
+  { label: 'Electronics Appliances', value: 'Electronics appliances', image: Electronics },   
+  { label: 'Hardware Items', value: 'Hardware items', image: Hardware },  
 ];
-// ${appConfig.apiBaseUrl}
 const collectionsCategories = [
   { label: "Dupatta Sets", value: "Dupatta Sets", image: setkurti },
   { label: "Kurta Sets", value: "Kurta Sets", image: kurti },
@@ -242,9 +246,6 @@ const collectionsCategories = [
 
 const IMAGE_API = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
 
-// Vendor Portal icon's order bell polls the same endpoint VendorOrdersPage
-// reads from. NOTE: this is the QA host, not the "lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net" base
-// used elsewhere in this file — see VendorOrdersPage.js for why.
 const VENDOR_ORDERS_API_BASE = "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api";
 const GET_VENDOR_ORDERS_URL = `${VENDOR_ORDERS_API_BASE}/Mart/GetVendorOrdersByVendorId`;
 const VENDOR_ORDERS_POLL_INTERVAL_MS = 25000;
@@ -260,11 +261,7 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const handleVendorPortal = () => {
-    // A vendor is already logged in on this device — skip the login
-    // screen entirely and go straight to their dashboard. This stays
-    // true until they log out (VendorPreviewPage/VendorStockUpdatePage
-    // clear "vendorSession" on logout).
-    const vendorId = localStorage.getItem("vendorSession");
+     const vendorId = localStorage.getItem("vendorSession");
     if (vendorId) {
       navigate(`/vendor/preview/${vendorId}`);
       return;
@@ -280,14 +277,12 @@ const ProfilePage = () => {
       localStorage.setItem("vendorReturnUserId", userId);
       localStorage.setItem("vendorReturnUserType", userType);
     }
-    // Save mobile number
     if (customerMobile) {
       localStorage.setItem("vendorRegistrationMobileNumber", customerMobile);
 
       console.log("Vendor registration mobile saved:", customerMobile);
     }
 
-    // Save return URL
     if (userType && userId) {
       localStorage.setItem(
         "vendorReturnProfile",
@@ -305,9 +300,7 @@ const ProfilePage = () => {
   const [vendorSelectedCategories, setVendorSelectedCategories] = useState([]);
   const [activeVendorCategoryTab, setActiveVendorCategoryTab] = useState("");
 
-  // Order count + "new order just came in" state for the Vendor Portal
-  // icon's bell badge.
-  const [vendorOrderCount, setVendorOrderCount] = useState(0);
+ const [vendorOrderCount, setVendorOrderCount] = useState(0);
   const [vendorHasNewOrder, setVendorHasNewOrder] = useState(false);
   const vendorKnownOrderIdsRef = useRef(null);
   const vendorKnownOrderStatusRef = useRef(null);
@@ -326,16 +319,12 @@ const ProfilePage = () => {
   const [allTickets, setAllTickets] = useState([]);
   const menuRef = useRef(null);
   const ticketScrollRef = useRef(null);
-  // const [error, setError] = useState("");
   const [products] = useState([]);
-  // const [selectedCategory, setSelectedCategory] = useState("");
-  // const [grocery, setGrocery] = useState([]);
   const [cartSummary, setCartSummary] = useState({
     items: 0,
     total: 0,
     products: [],
   });
-  // const [dress, setDress] = useState([]);
   const [deliveryProfile, setDeliveryProfile] = useState(null);
   const [showInterestModal, setShowInterestModal] = useState(false);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
@@ -355,10 +344,7 @@ const ProfilePage = () => {
   const clickLock = useRef(false);
   const [isRegistered, setIsRegistered] = useState(false);
   const [partnerStatus, setPartnerStatus] = useState("");
-  // Order count + "new order just came in" state for the Delivery
-  // Partner tile's bell badge — same pattern as the Vendor Portal bell
-  // below, but scoped to this delivery partner's own userId.
-  const [deliveryOrderCount, setDeliveryOrderCount] = useState(0);
+   const [deliveryOrderCount, setDeliveryOrderCount] = useState(0);
   const [deliveryHasNewOrder, setDeliveryHasNewOrder] = useState(false);
   const deliveryKnownOrderIdsRef = useRef(null);
   const [paidAmount] = useState("");
@@ -368,8 +354,6 @@ const ProfilePage = () => {
   const MOBILE_EXTRA = 0;
   const MOBILE_PADDING_TOP = HEADER_H + MOBILE_ICONS_H + MOBILE_EXTRA;
   const [cartImages, setCartImages] = useState({});
-  // const [showCashbackModal, setShowCashbackModal] = useState(false);
-  // const [showConfetti, setShowConfetti] = useState(false);
   const [windowSize, setWindowSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -381,12 +365,9 @@ const ProfilePage = () => {
   const [zoomProduct, setZoomProduct] = useState(null);
   const displayProducts =
     searchQuery.trim().length > 0 ? filteredProducts : products;
-  const [imageLoading] = useState(true); // no longer set anywhere — kept only because it's read in the debug log below
+  const [imageLoading] = useState(true); 
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
-  // const firstCategories = groceryCategories.slice(0, 6);
-  // const secondCategories = groceryCategories.slice(6, 31);
   const [showOffersModal, setShowOffersModal] = useState(false);
-  // const [showCoinsModal, setShowCoinsModal] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showOrderModal, setShowOrderModal] = useState(false);
@@ -436,21 +417,7 @@ const ProfilePage = () => {
     const vendor = approvedVendorListJson.find(
       (v) => v.vendorId === selectedMartTab,
     );
-    // Default to whichever category renders first in the tile list below:
-    // "Unbeatable Offers" if present (it's pinned to the top), otherwise
-    // the highest-ranked category (descending).
-    const normalizeCategoryName = (str) =>
-      (str ?? "").toString().trim().toLowerCase();
-    const vendorCategories = vendor?.categories || [];
-    const unbeatableCategory = vendorCategories.find((c) =>
-      normalizeCategoryName(c?.category).includes("unbeatable"),
-    );
-    const topCategory =
-      unbeatableCategory ||
-      [...vendorCategories].sort(
-        (a, b) => (b?.rank ?? -Infinity) - (a?.rank ?? -Infinity),
-      )[0];
-    setSelectedVendorJsonCategory(topCategory?.category || "");
+    setSelectedVendorJsonCategory(vendor?.categories?.[0]?.category || "");
   }, [selectedMartTab, approvedVendorListJson]);
 
   const scrollVendorTabs = (direction) => {
@@ -459,12 +426,6 @@ const ProfilePage = () => {
   };
 
   const LMART_FALLBACK_PINCODE = DEFAULT_PINCODE; 
-  // Vendors are pincode-specific and come from the live API now (replaces
-  // the old static vendorlist.json import). getVendorsByPincode caches the
-  // response per pincode — the first mount/pincode change hits the server,
-  // every call after that (this page, this tab) is served from memory /
-  // sessionStorage until the cache expires, so switching tabs or navigating
-  // back doesn't re-fetch every time.
   useEffect(() => {
     const effectivePincode =
       String(zipCode || pinCode || DEFAULT_PINCODE).trim() ||
@@ -516,7 +477,6 @@ const ProfilePage = () => {
           approvedVendors,
         );
 
-        // By default, make the first approved vendor active/clickable.
         if (approvedVendors.length > 0) {
           setSelectedMartTab((current) => {
             const currentExists =
@@ -531,9 +491,6 @@ const ProfilePage = () => {
     } else if (usedFallback) {
       nextVendorId = approvedVendors[0].vendorId;
           } else if (preferLMartDefault) {
-      // Visakhapatnam + no pincode from API → default to the LMart vendor
-      // if it's in the approved list for this pincode, else fall back
-      // to the normal "first approved vendor" behavior.
       const lmartVendor = approvedVendors.find(
         (v) =>
           String(v.storeName || "")
@@ -580,9 +537,6 @@ const ProfilePage = () => {
   const getVendorCategoriesFromJson = (vendorId) =>
     (getVendorFromJson(vendorId)?.categories || []).map((c) => c.category);
 
-  // const getVendorProductsFromJson = (vendorId, category) =>
-  //   getVendorFromJson(vendorId)?.categories?.find((c) => c.category === category)?.products || [];
-
   useEffect(() => {
     const loadVendorSession = () => {
       const currentVendorId = localStorage.getItem("vendorSession") || "";
@@ -624,10 +578,6 @@ const ProfilePage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Speaks a short voice alert for a newly-arrived order — customer name
-  // and delivery zip code — right after the bell sound plays. Uses the
-  // browser's built-in Speech Synthesis API, so there's nothing new to
-  // install; it just silently no-ops on browsers that don't support it.
   const speakNewOrderAlert = useCallback((order) => {
     const customerName = order?.customerName?.trim() || "a customer";
     const zip = order?.zipCode?.toString().trim();
@@ -637,20 +587,12 @@ const ProfilePage = () => {
     speakAlert(message);
   }, []);
 
-  // Speaks a short voice alert when one of this vendor's own orders is
-  // marked Delivered by the delivery partner. Scoped the same way as
-  // speakNewOrderAlert above — only ever fired from this vendor's own
-  // polled order list, so only the specific vendor who is logged in
-  // hears it, never a broadcast to every vendor.
-  const speakOrderDeliveredAlert = useCallback((order) => {
+ const speakOrderDeliveredAlert = useCallback((order) => {
     const orderLabel = order?.martId || "your order";
     const message = `Order ${orderLabel} has been delivered.`;
     speakAlert(message);
   }, []);
 
-  // Poll for the logged-in vendor's orders so the Vendor Portal icon can
-  // show a live count and ring the bell (sound + highlight) when a brand
-  // new order arrives, even while browsing the rest of the app.
   useEffect(() => {
     if (!vendorSessionId) {
       setVendorOrderCount(0);
@@ -681,20 +623,12 @@ const ProfilePage = () => {
             try {
               playNotificationSound();
             } catch {
-              // audio playback blocked/unsupported — the bell still rings visually
             }
-            // Slight delay so the ringtone and the voice line don't talk
-            // over each other; each order gets its own spoken line and
-            // speechSynthesis queues them automatically.
-            setTimeout(() => {
+             setTimeout(() => {
               arrivedOrders.forEach((order) => speakNewOrderAlert(order));
             }, 600);
           }
 
-          // Same idea, but for an existing order flipping to Delivered —
-          // that's the delivery partner marking it complete, and this
-          // vendor (and only this vendor, since the poll is scoped to
-          // their own vendorId) should hear about it.
           if (previousStatusById) {
             const justDelivered = list.filter((o) => {
               const prevStatus = previousStatusById.get(o.id);
@@ -736,10 +670,7 @@ const ProfilePage = () => {
     }
   };
 
-  // Bell badge overlaid on the Vendor Portal icon's corner — only shown
-  // once a vendor is actually logged in (there's nothing to count
-  // otherwise). Clicking it goes straight to that vendor's orders page.
-  const renderVendorOrderBell = () =>
+   const renderVendorOrderBell = () =>
     vendorSessionId ? (
       <>
         <span
@@ -788,21 +719,12 @@ const ProfilePage = () => {
       </>
     ) : null;
 
-  // Speaks a short voice alert when a new order is assigned to this
-  // delivery partner — mirrors speakNewOrderAlert above, scoped to this
-  // userId's own polled assignments only.
-  const speakNewDeliveryAssignmentAlert = useCallback((order) => {
+ const speakNewDeliveryAssignmentAlert = useCallback((order) => {
     const orderLabel = order?.martId || "a new order";
     const message = `New order assigned to you, order ${orderLabel}.`;
     speakAlert(message);
   }, []);
 
-  // Silently check, on page load, whether this logged-in user is already
-  // an approved delivery partner — same idea as the vendor session check
-  // above, just via an API call instead of localStorage since there's no
-  // separate delivery-partner login. This is what lets the Delivery
-  // Partner tile show the partner's name + a live bell right away,
-  // instead of only after the tile is clicked.
   useEffect(() => {
     if (!userId) return;
     let cancelled = false;
@@ -824,20 +746,14 @@ const ProfilePage = () => {
         setIsRegistered(profile?.isRegistered === true);
         setPartnerStatus((profile?.status || "").toLowerCase());
       } catch (err) {
-        // Not a delivery partner (or lookup failed) — tile just stays as
-        // the plain "Delivery Partner" registration link, same as before.
-      }
+         }
     })();
     return () => {
       cancelled = true;
     };
   }, [userId]);
 
-  // Poll this delivery partner's own assigned orders so the Delivery
-  // Partner tile's bell can show a live count and ring/speak when a new
-  // order is assigned — scoped entirely to this userId, so only the
-  // delivery partner who is actually logged in here hears it.
-  useEffect(() => {
+ useEffect(() => {
     if (!(isRegistered && partnerStatus === "open")) {
       setDeliveryOrderCount(0);
       deliveryKnownOrderIdsRef.current = null;
@@ -872,7 +788,6 @@ const ProfilePage = () => {
             try {
               playNotificationSound();
             } catch {
-              // audio playback blocked/unsupported — the bell still rings visually
             }
             setTimeout(() => {
               arrivedOrders.forEach((order) => speakNewDeliveryAssignmentAlert(order));
@@ -899,9 +814,6 @@ const ProfilePage = () => {
     navigate(`/deliveryPartnerDashboard/${userType}/${userId}`);
   };
 
-  // Bell badge overlaid on the Delivery Partner tile's corner — same
-  // pattern as renderVendorOrderBell, only shown once this user is an
-  // approved delivery partner.
   const renderDeliveryOrderBell = () =>
     isRegistered && partnerStatus === "open" ? (
       <>
@@ -1054,8 +966,6 @@ const ProfilePage = () => {
     return () => window.removeEventListener("storage", loadVendorSession);
   }, []);
 
-  /* Products (from the already-fetched grocery catalog) that fall under the
-   vendor's locally-selected categories — grouped by category for display. */
   const vendorSelectedProducts = useMemo(() => {
     if (!vendorSessionId || vendorSelectedCategories.length === 0) return {};
     return vendorSelectedCategories.reduce((acc, cat) => {
@@ -3654,135 +3564,136 @@ const ProfilePage = () => {
             )}
 
             {/* Mobile Dashboard Icons */}
-            {isMobile && (
-              <div
-                className="mobile-top-icons position-fixed start-0 end-0 bg-white border-bottom shadow-sm"
-                style={{
-                  top: "80px",
-                  zIndex: 1050,
-                  height: "90px",
-                  padding: "8px",
-                  overflowY: "hidden",
-                }}
-              >
-                <div className="d-flex flex-wrap justify-content-around align-items-center">
-                  {menuList.map((menu, index) =>
-                    menu.MenuTitle === "Vendor Portal" ? (
-                      <button
-                        key={index}
-                        type="button"
-                        onClick={handleVendorPortal}
-                        className="btn p-0 border-0 bg-transparent d-flex flex-column align-items-center justify-content-center text-decoration-none text-dark ms-1"
-                        style={{ minWidth: "10px", flex: "0 0 auto" }}
-                      >
-                        <div
-                          style={{
-                            backgroundColor: "#ffc107",
-                            borderRadius: "50%",
-                            padding: "8px",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            width: "40px",
-                            height: "40px",
-                            boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
-                            position: "relative",
-                          }}
-                        >
-                          {vendorSessionId ? (
-                            <span
-                              style={{
-                                fontSize: 14,
-                                fontWeight: "bold",
-                                color: "#000",
-                              }}
-                            >
-                              {getVendorIcon(vendorProfile?.name)}
-                            </span>
-                          ) : (
-                            React.cloneElement(menu.MenuIcon, {
-                              sx: { fontSize: 22, color: "#000" },
-                            })
-                          )}
-                          {renderVendorOrderBell()}
-                        </div>
-                        <small
-                          style={{
-                            fontSize: "12px",
-                            fontFamily: "Roboto",
-                            fontWeight: "bold",
-                            textAlign: "center",
-                            lineHeight: "14px",
-                            marginTop: "4px",
-                            color: "#333",
-                            letterSpacing: "0.5px",
-                          }}
-                        >
-                          {(vendorSessionId
-                            ? vendorProfile?.name || menu.MenuTitle
-                            : menu.MenuTitle
-                          )
-                            .split(" ")
-                            .map((word, idx, arr) => (
-                              <React.Fragment key={idx}>
-                                {word}
-                                {idx !== arr.length - 1 && <br />}
-                              </React.Fragment>
-                            ))}
-                        </small>
-                      </button>
-                    ) : (
-                      <a
-                        key={index}
-                        href={menu.TargetUrl}
-                        className="d-flex flex-column align-items-center justify-content-center text-decoration-none text-dark ms-1"
-                        style={{ minWidth: "10px", flex: "0 0 auto" }}
-                      >
-                        <div
-                          style={{
-                            backgroundColor: "#ffc107",
-                            borderRadius: "50%",
-                            padding: "8px",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            width: "40px",
-                            height: "40px",
-                            boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
-                          }}
-                        >
-                          {React.cloneElement(menu.MenuIcon, {
-                            sx: { fontSize: 22, color: "#000" },
-                          })}
-                        </div>
-                        <small
-                          style={{
-                            fontSize: "12px",
-                            fontFamily: "Roboto",
-                            fontWeight: "bold",
-                            textAlign: "center",
-                            lineHeight: "14px",
-                            marginTop: "4px",
-                            color: "#333",
-                            letterSpacing: "0.5px",
-                          }}
-                        >
-                          {menu.MenuTitle.split(" ").map((word, idx) => (
-                            <React.Fragment key={idx}>
-                              {word}
-                              {idx !== menu.MenuTitle.split(" ").length - 1 && (
-                                <br />
-                              )}
-                            </React.Fragment>
-                          ))}
-                        </small>
-                      </a>
-                    ),
+            {/* Mobile Dashboard Icons */}
+{/* Mobile Dashboard Icons */}
+{isMobile && (
+  <div
+    className="mobile-top-icons position-fixed start-0 end-0 bg-white border-bottom shadow-sm"
+    style={{
+      top: "80px",
+      zIndex: 1050,
+      height: "90px",
+      padding: "8px",
+      overflowY: "hidden",
+    }}
+  >
+    <div className="d-flex flex-wrap justify-content-around align-items-center">
+      {menuList.map((menu, index) =>
+        menu.MenuTitle === "Vendor Portal" ? (
+          <button
+            key={index}
+            type="button"
+            onClick={handleVendorPortal}
+            className="btn p-0 border-0 bg-transparent d-flex flex-column align-items-center justify-content-center text-decoration-none text-dark ms-1"
+            style={{ minWidth: "10px", flex: "0 0 auto" }}
+          >
+            <div
+              style={{
+                backgroundColor: "#dc3545",
+                borderRadius: "50%",
+                padding: "8px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "40px",
+                height: "40px",
+                boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+                position: "relative",
+              }}
+            >
+              {vendorSessionId ? (
+                <span
+                  style={{
+                    fontSize: 14,
+                    fontWeight: "bold",
+                    color: "#fff",
+                  }}
+                >
+                  {getVendorIcon(vendorProfile?.name)}
+                </span>
+              ) : (
+                React.cloneElement(menu.MenuIcon, {
+                  sx: { fontSize: 22, color: "#fff" },
+                })
+              )}
+              {renderVendorOrderBell()}
+            </div>
+            <small
+              style={{
+                fontSize: "12px",
+                fontFamily: "Roboto",
+                fontWeight: "bold",
+                textAlign: "center",
+                lineHeight: "14px",
+                marginTop: "4px",
+                color: "#333",
+                letterSpacing: "0.5px",
+              }}
+            >
+              {(vendorSessionId
+                ? vendorProfile?.name || menu.MenuTitle
+                : menu.MenuTitle
+              )
+                .split(" ")
+                .map((word, idx, arr) => (
+                  <React.Fragment key={idx}>
+                    {word}
+                    {idx !== arr.length - 1 && <br />}
+                  </React.Fragment>
+                ))}
+            </small>
+          </button>
+        ) : (
+          <a
+            key={index}
+            href={menu.TargetUrl}
+            className="d-flex flex-column align-items-center justify-content-center text-decoration-none text-dark ms-1"
+            style={{ minWidth: "10px", flex: "0 0 auto" }}
+          >
+            <div
+              style={{
+                backgroundColor: "#ffc107",
+                borderRadius: "50%",
+                padding: "8px",
+                display: "flex",       
+                alignItems: "center",
+                justifyContent: "center",
+                width: "40px",
+                height: "40px",
+                boxShadow: "0 2px 6px rgba(131, 122, 122, 0.15)",
+              }}
+            >
+              {React.cloneElement(menu.MenuIcon, {
+                sx: { fontSize: 22, color: "#000" },
+              })}
+            </div>
+            <small
+              style={{
+                fontSize: "12px",
+                fontFamily: "Roboto",
+                fontWeight: "bold",
+                textAlign: "center",
+                lineHeight: "14px",
+                marginTop: "4px",
+                color: "#333",
+                letterSpacing: "0.5px",
+              }}
+            >
+              {menu.MenuTitle.split(" ").map((word, idx) => (
+                <React.Fragment key={idx}>
+                  {word}
+                  {idx !== menu.MenuTitle.split(" ").length - 1 && (
+                    <br />
                   )}
-                </div>
-              </div>
-            )}
-      
+                </React.Fragment>
+              ))}
+            </small>
+          </a>
+        )
+      )}
+    </div>
+  </div>
+)}      
             <div className="col-md-9">
                {/* 🥚 DAILY POT REWARD GAME */}
               <PotRewardGame
@@ -4109,44 +4020,10 @@ const ProfilePage = () => {
                         (v) => v.vendorId === selectedMartTab,
                       );
                       if (!vendor) return null;
-                      // For now: "Unbeatable Offers" is pinned as a static
-                      // top category regardless of its rank (the vendor
-                      // API's rank for it hasn't lined up reliably yet).
-                      // Every other category is ordered by rank, highest
-                      // first (descending); categories without a rank fall
-                      // to the end, in their original order.
-                      // NOTE: assumes each category object carries a
-                      // numeric `rank` field from the vendor API — adjust
-                      // the field name below if it differs (e.g. `order`,
-                      // `displayOrder`, `sortOrder`).
-                      const normalizeCategoryName = (str) =>
-                        (str ?? "").toString().trim().toLowerCase();
-                      const isUnbeatableCategory = (catObj) =>
-                        normalizeCategoryName(catObj?.category).includes(
-                          "unbeatable",
-                        );
-
-                      const rawCategories = vendor.categories || [];
-                      const unbeatableCategory = rawCategories.find(
-                        isUnbeatableCategory,
-                      );
-                      const otherCategories = rawCategories.filter(
-                        (c) => !isUnbeatableCategory(c),
-                      );
-                      const sortedOtherCategories = [...otherCategories].sort(
-                        (a, b) => {
-                          const rankA = a?.rank ?? -Infinity;
-                          const rankB = b?.rank ?? -Infinity;
-                          return rankB - rankA; // descending
-                        },
-                      );
-                      const sortedVendorCategories = unbeatableCategory
-                        ? [unbeatableCategory, ...sortedOtherCategories]
-                        : sortedOtherCategories;
                       return (
                         <>
                           <div className="row row-cols-3 row-cols-md-6 g-1">
-                            {sortedVendorCategories.map((catObj) => {
+                            {vendor.categories.map((catObj) => {
                               const isActive =
                                 selectedVendorJsonCategory === catObj.category;
                               return (     
