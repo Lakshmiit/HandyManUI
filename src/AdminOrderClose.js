@@ -291,7 +291,7 @@ const AdminOrderClose = () => {
       //await handleIncreaseVendorProductQuantities();
 
       alert("Ticket has been  Deleted successfully");
-      navigate(`/adminGroceryZoneDashboard`);
+      navigate(`/adminOrderCloseDashboard`);
     } catch (error) {
       console.error("Cancel Error:", error);
       alert("Failed to cancel order. Try again.");

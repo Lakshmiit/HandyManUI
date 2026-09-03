@@ -1523,7 +1523,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "./App.css";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { Modal, Button, Form } from "react-bootstrap";
 import Footer from "./Footer.js";
 import { getLocalCashbackOffers } from "./utils/localCashbackOffers";
@@ -1713,11 +1712,11 @@ const GroceryPaymentmethod = () => {
   const [addresses, setAddresses] = useState([]);
   const [newAddress, setNewAddress] = useState("");
   const [state, setState] = useState("");
-  const [districtList, setDistrictList] = useState([]);
-  const [stateList, setStateList] = useState([]);
+  // const [districtList, setDistrictList] = useState([]);
+  // const [stateList, setStateList] = useState([]);
   const [district, setDistrict] = useState("");
-  const [districtId, setDistrictId] = useState("");
-  const [stateId, setStateId] = useState(null);
+  // const [districtId, setDistrictId] = useState("");
+  // const [stateId, setStateId] = useState(null);
   const [fullName, setFullName] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [showModals, setShowModals] = useState(false);
@@ -1742,11 +1741,12 @@ const GroceryPaymentmethod = () => {
   const [offerTransactionId, setOfferTransactionId] = useState("");
   const [offerTransaction, setOfferTransaction] = useState(null);
   const [cashbackRules, setCashbackRules] = useState(DEFAULT_CASHBACK_RULES);
-
+  const [selectedStateId, setSelectedStateId] = useState("");
+  const [selectedDistrictId, setSelectedDistrictId ] = useState("");
   // const readServerPoints = (record) => {
   // const raw =
-  // record?.referralPoints ??
-  // record?.referralpoints ??
+  // record?.referralPoints ??      
+  // record?.referralpoints ??      
   // record?.ReferralPoints ??
   // 0;
   // const n = Number(raw);
@@ -1974,7 +1974,9 @@ const GroceryPaymentmethod = () => {
         type: addr.isPrimaryAddress ? "primary" : "secondary",
         address: addr.address,
         state: addr.state,
+        stateId: addr.stateId ?? addr.StateId ?? "",
         district: addr.district,
+        districtId: addr.districtId ?? addr.DistrictId ?? "",
         zipCode: addr.zipCode,
         emailAddress: addr.emailAddress,
         mobileNumber: addr.mobileNumber,
@@ -2050,35 +2052,6 @@ const GroceryPaymentmethod = () => {
 
   console.log("Wallet Amount:", offerWalletAmount);
 
-  useEffect(() => {
-    axios
-      .get(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getStates`)
-      .then((response) => {
-        const data = response.data;
-        console.log("States API Response:", data);
-        setStateList(data);
-        setStateId("");
-      })
-      .catch((error) => {
-        console.error("Error fetching states:", error);
-      });
-  }, []);
-  console.log("Wallet Amount:", walletAmount);
-  useEffect(() => {
-    if (stateId) {
-      axios
-        .get(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
-        .then((response) => {
-          setDistrictList(response.data);
-        })
-        .catch((error) => {
-          console.error("Error fetching districts:", error);
-        });
-    } else {
-      setDistrictList([]);
-    }
-  }, [stateId]);
-
   // Reset address form fields
   const resetAddressForm = () => {
     setFullName("");
@@ -2129,8 +2102,8 @@ const GroceryPaymentmethod = () => {
       address: newAddress,
       state: state,
       district: district,
-      StateId: stateId,
-      DistrictId: districtId,
+      StateId: selectedStateId,
+      DistrictId: selectedDistrictId,
       zipCode: zipCode,
       mobileNumber: mobileNumber,
       emailAddress: "emailAddress",
@@ -2883,21 +2856,26 @@ const GroceryPaymentmethod = () => {
                     <Form.Label>
                       State <span className="req_star">*</span>
                     </Form.Label>
-                    <Form.Select
+                    <Form.Control
+                      type="text"
+                      value={state}
+                      readOnly
+                    />
+                    {/* <Form.Select
                       value={stateId || ""}
-                      onChange={(e) => {
-                        const selectedId = e.target.value;
-                        setStateId(selectedId);
-                        const selectedState = stateList.find(
-                          (s) => s?.StateId?.toString() === selectedId,
-                        );
-                        if (selectedState) {
-                          setState(selectedState.StateName);
-                        }
-                      }}
-                      required
+                      // onChange={(e) => {
+                      //   const selectedId = e.target.value;
+                      //   setStateId(selectedId);
+                      //   const selectedState = stateList.find(
+                      //     (s) => s?.StateId?.toString() === selectedId,
+                      //   );
+                      //   if (selectedState) {
+                      //     setState(selectedState.StateName);
+                      //   }
+                      // }}
+                      readOnly
                     >
-                      <option value="">Select State</option>
+                      {/* <option value="">Select State</option>
                       {Array.isArray(stateList) &&
                         stateList
                           .filter((s) => s && s.StateId && s.StateName)
@@ -2908,28 +2886,33 @@ const GroceryPaymentmethod = () => {
                             >
                               {s.StateName}
                             </option>
-                          ))}
-                    </Form.Select>
+                          ))} 
+                    </Form.Select> */}
                   </Form.Group>
                   <Form.Group className="mb-3">
                     <Form.Label>
                       District <span className="req_star">*</span>
                     </Form.Label>
-                    <Form.Select
-                      value={districtId || ""}
-                      onChange={(e) => {
-                        const selectedId = e.target.value;
-                        setDistrictId(selectedId);
-                        const selectedDistrict = districtList.find(
-                          (d) => d.districtId.toString() === selectedId,
-                        );
-                        if (selectedDistrict) {
-                          setDistrict(selectedDistrict.districtName);
-                        }
-                      }}
-                      required
+                    <Form.Control
+                      type="text"
+                      value={district}
+                      readOnly
+                    />
+                    {/* <Form.Select
+                      value={districtId}
+                      // onChange={(e) => {
+                      //   const selectedId = e.target.value;
+                      //   setDistrictId(selectedId);
+                      //   const selectedDistrict = districtList.find(
+                      //     (d) => d.districtId.toString() === selectedId,
+                      //   );
+                      //   if (selectedDistrict) {
+                      //     setDistrict(selectedDistrict.districtName);
+                      //   }
+                      // }}
+                       readOnly
                     >
-                      <option value="">Select District</option>
+                      {/* <option value="">Select District</option>
                       {districtList.map((d) => (
                         <option
                           key={d.districtId}
@@ -2937,8 +2920,8 @@ const GroceryPaymentmethod = () => {
                         >
                           {d.districtName}
                         </option>
-                      ))}
-                    </Form.Select>
+                      ))} 
+                    </Form.Select> */}
                   </Form.Group>
                   <Form.Group className="mb-3">
                     <Form.Label>
@@ -2947,14 +2930,14 @@ const GroceryPaymentmethod = () => {
                     <Form.Control
                       type="text"
                       value={zipCode}
-                      onChange={(e) => {
-                        const numericValue = e.target.value.replace(/\D/g, "");
-                        if (numericValue.length <= 6) {
-                          setZipCode(numericValue);
-                        }
-                      }}
-                      placeholder="Enter pincode"
-                      required
+                      // onChange={(e) => {
+                      //   const numericValue = e.target.value.replace(/\D/g, "");
+                      //   if (numericValue.length <= 6) {
+                      //     setZipCode(numericValue);
+                      //   }
+                      // }}
+                      // placeholder="Enter pincode"
+                      readOnly
                     />
                   </Form.Group>
                   <Button
@@ -3010,7 +2993,9 @@ const GroceryPaymentmethod = () => {
                       setMobileNumber(address.mobileNumber);
                       setNewAddress(address.address);
                       setState(address.state);
+                      setSelectedStateId(address.stateId); 
                       setDistrict(address.district);
+                      setSelectedDistrictId(address.districtId);
                       setZipCode(address.zipCode);
                       setIsEditing(true);
                       setShowModal(true);

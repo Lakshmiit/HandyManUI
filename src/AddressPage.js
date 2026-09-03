@@ -15,37 +15,29 @@ const AddressPage = () => {
   const [districtId, setDistrictId] = useState("");
   const [savingAddress, setSavingAddress] = useState(false);
   const [addressData, setAddressData] = useState(null);
-  const [districtList, setDistrictList] = useState([]);
-  const [stateList, setStateList] = useState([]);
-  const [district, setDistrict] = useState("");
-  const [state, setState] = useState("");
+  // const [district, setDistrict] = useState("");
+  // const [state, setState] = useState("");
   const [addressForm, setAddressForm] = useState({
     fullName: "",
     mobileNumber: "",
     address: "",
     state: "",
+    stateId: "",
     district: "",
+    districtId: "",
     zipCode: "",
   });
+const [districtList, setDistrictList] = useState([]);
+const [stateList, setStateList] = useState([]);
+const [statesLoading, setStatesLoading] = useState(false);
+const [districtsLoading, setDistrictsLoading] =  useState(false);
+const [pincodeList, setPincodeList] =  useState([]);
+const [pincodesLoading, setPincodesLoading] =  useState(false);
 
+  // useEffect(() => {
+  //   console.log(state, district);
+  // }, [state, district]);
 
-  useEffect(() => {
-    console.log(state, district);
-  }, [state, district]);
-
-  const PINCODE_LIST = [
-  "530001", "530002", "530003", "530004", "530005", "530013",
-  "530016", "530020", "530024", "530022", "530017",
-  "530007", "530008", "530009", "530012", "530018",
-  "530011", "530031", "530029", "530026", "530032", "530049",
-  "530027", "530028", "530040",
-  "530014", "530041", "530043", "530045", "530048",
-  "531162", "531163", "531173",
-];
- const [pincodeOptions] = useState(PINCODE_LIST);
-  const [showManualPincode, setShowManualPincode] = useState(false);
-  const [manualPincode, setManualPincode] = useState("");
- 
   const hasAddress = Boolean(  
     addressData?.address &&
       addressData?.district &&
@@ -104,79 +96,178 @@ const isFormValid = Boolean(
   }, [addressForm.district]);
  
   useEffect(() => {
-    axios
-      .get(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getStates`)
-      .then((response) => setStateList(response.data))
-      .catch((error) => console.error("Error fetching states:", error));
-  }, []);
-
-  useEffect(() => {
-    if (stateId) {
+      setStatesLoading(true);
       axios
-        .get(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
-        .then((response) => setDistrictList(response.data))
-        .catch((error) => console.error("Error fetching districts:", error));
-    } else {
+        .get(
+          "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getStates"
+        )
+        .then((response) => {
+          setStateList(response.data);
+        })
+        .catch((error) => {
+          console.error(
+            "Error fetching states:",
+            error
+          );
+  
+          // setError(
+          //   "Could not load states. Please refresh and try again."
+          // );
+        })
+        .finally(() => {
+          setStatesLoading(false);
+        });
+    }, []);
+  
+    // ============================================================
+    // Load Districts using State ID
+    // ============================================================
+    useEffect(() => {
+      if (!addressForm.stateId) {
+        setDistrictList([]);
+        return;
+      }
+  
+      setDistrictsLoading(true);
       setDistrictList([]);
-    }
-  }, [stateId]);
+  
+      axios
+        .get(
+          `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getDistricts/${addressForm.stateId}`
+        )
+        .then((response) => {
+          setDistrictList(response.data);
+        })
+        .catch((error) => {
+          console.error(
+            "Error fetching districts:",
+            error
+          );
+  
+          // setError(
+          //   "Could not load districts. Please try again."
+          // );
+  
+          setDistrictList([]);
+        })
+        .finally(() => {
+          setDistrictsLoading(false);
+        });
+    }, [addressForm.stateId]);
+  
+    // ============================================================
+    // Load Pincodes using District ID
+    // ============================================================
+    useEffect(() => {
+      if (!addressForm.districtId) {
+        setPincodeList([]);
+        setPincodesLoading(false);
+        return;
+      }
+  
+      setPincodesLoading(true);
+      setPincodeList([]);
+  
+      axios
+        .get(
+          `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getPincodes/${addressForm.districtId}`
+        )
+        .then((response) => {
+          setPincodeList(response.data);
+        })
+        .catch((error) => {
+          console.error(
+            "Error fetching pincodes:",
+            error
+          );
+  
+          // setError(
+          //   "Could not load pincodes. Please try again."
+          // );
+  
+          setPincodeList([]);
+        })
+        .finally(() => {
+          setPincodesLoading(false);
+        });
+    }, [addressForm.districtId]);
 
-  useEffect(() => {
-    if (addressForm.state && stateList.length) {
-      const matched = stateList.find(
-        (s) => s.StateName?.toLowerCase() === addressForm.state.toLowerCase()
+    const handleStateChange = (e) => {
+    const selectedStateId =
+      String(e.target.value);
+
+    const selectedState =
+      stateList.find(
+        (s) =>
+          String(s.StateId) ===
+          selectedStateId
       );
-      if (matched) setStateId(String(matched.StateId));
-    }
-  }, [addressForm.state, stateList]);
 
-  useEffect(() => {
-    if (addressForm.district && districtList.length) {
-      const matched = districtList.find(
-        (d) => d.districtName?.toLowerCase() === addressForm.district.toLowerCase()
+    setAddressForm((prev) => ({
+      ...prev,
+
+      stateId: selectedStateId,
+
+      state: selectedState
+        ? selectedState.StateName
+        : "",
+
+      // Reset district
+      districtId: "",
+      district: "",
+
+      // Reset pincode
+      zipCode: "",
+    }));
+
+    setDistrictList([]);
+    setPincodeList([]);
+  };
+
+  // ============================================================
+  // District Change
+  // ============================================================
+  const handleDistrictChange = (e) => {
+    const selectedDistrictId =
+      String(e.target.value);
+
+    const selectedDistrict =
+      districtList.find(
+        (d) =>
+          String(d.districtId) ===
+          selectedDistrictId
       );
-      if (matched) setDistrictId(String(matched.districtId));
-    }
-  }, [addressForm.district, districtList]);
 
-  //  const handleStateChange = (e) => {
-  //   const selectedId = e.target.value;
-  //   setStateId(selectedId);
-  //   setDistrictId("");
-  //   setAddressForm((p) => ({
-  //     ...p,
-  //     state: selectedId ? stateId : "",
-  //     district: "",
-  //   }));
-  // };
- 
-  // const handleDistrictChange = (e) => {
-  //   const selectedId = e.target.value;
-  //   setDistrictId(selectedId);
-  //   setAddressForm((p) => ({
-  //     ...p,
-  //     district: selectedId ? DISTRICT_NAME : "",
-  //   }));
-  // };
- 
-  const handlePincodeSelect = (e) => {
-    const value = e.target.value;
-    if (value === "others") {
-      setShowManualPincode(true);
-      setManualPincode("");
-      setAddressForm((p) => ({ ...p, zipCode: "" }));
-    } else {
-      setShowManualPincode(false);
-      setAddressForm((p) => ({ ...p, zipCode: value }));
-    }
+    setAddressForm((prev) => ({
+      ...prev,
+
+      districtId:
+        selectedDistrictId,
+
+      district: selectedDistrict
+        ? selectedDistrict.districtName
+        : "",
+
+      // Reset pincode
+      zipCode: "",
+    }));
+
+    setPincodeList([]);
   };
- 
-  const handleManualPincodeChange = (e) => {
-    const v = e.target.value.replace(/\D/g, "").slice(0, 6);
-    setManualPincode(v);
-    setAddressForm((p) => ({ ...p, zipCode: v }));
+
+  // ============================================================
+  // Pincode Radio Change
+  // ============================================================
+  const handlePincodeChange = (e) => {
+    const selectedPincode =
+      String(e.target.value);
+    setAddressForm((prev) => ({
+      ...prev,
+      zipCode:
+        selectedPincode,
+    }));
   };
- 
+
   const handleSaveAddress = async () => {
     const { fullName, mobileNumber, address, state, district, zipCode } = addressForm;
 
@@ -289,113 +380,94 @@ const isFormValid = Boolean(
                 }
               />
             </Form.Group>
-                
-<Form.Group className="mb-3">
-                    <Form.Label>
-                      State <span className="req_star">*</span>
-                    </Form.Label>
-                    <Form.Select
-                      value={stateId || ""}
-                      onChange={(e) => {
-                        const selectedId = e.target.value;
-
-                        setStateId(selectedId);
-                        setDistrictId("");
-
-                        const selectedState = stateList.find(
-                          (s) => s?.StateId?.toString() === selectedId
-                        );
-
-                        if (selectedState) {
-                          const selectedStateName = selectedState.StateName;
-
-                          setState(selectedStateName);
-
-                          setAddressForm((p) => ({
-                            ...p,
-                            state: selectedStateName,
-                            district: "",
-                            zipCode: "",
-                          }));
-
-                          setShowManualPincode(false);
-                          setManualPincode("");
+                 <div className="vr-row">
+              {/* State */}
+              <div className="vr-field">
+                <label className="vr-label">
+                  State
+                </label>
+                <select
+                  className="vr-input"
+                  value={
+                    addressForm.stateId
+                  }
+                  onChange={
+                    handleStateChange
+                  }
+                  required
+                  disabled={
+                    statesLoading
+                  }
+                >
+                  <option value="">
+                    {statesLoading
+                      ? "Loading states..."
+                      : "Select state"}
+                  </option>
+                  {stateList.map(
+                    (s) => (
+                      <option
+                        key={
+                          s.StateId
                         }
-                      }}
-                      required
-                    >
-                      <option value="">Select State</option>
-                      {Array.isArray(stateList) &&
-                        stateList
-                          .filter((s) => s && s.StateId && s.StateName)
-                          .map((s) => (
-                            <option
-                              key={s.StateId}
-                              value={s.StateId.toString()}
-                            >
-                              {s.StateName}
-                            </option>
-                          ))}
-                    </Form.Select>
-                  </Form.Group>
-                  <Form.Group className="mb-3">
-                    <Form.Label>
-                      District <span className="req_star">*</span>
-                    </Form.Label>
-                    <Form.Select
-                      value={districtId || ""}
-                      onChange={(e) => {
-                        const selectedId = e.target.value;
-
-                        setDistrictId(selectedId);
-
-                        const selectedDistrict = districtList.find(
-                          (d) => d.districtId.toString() === selectedId
-                        );
-
-                        if (selectedDistrict) {
-                          const selectedDistrictName = selectedDistrict.districtName;
-
-                          setDistrict(selectedDistrictName);
-
-                          setAddressForm((p) => ({
-                            ...p,
-                            district: selectedDistrictName,
-                            zipCode: "",
-                          }));
-
-                          if (
-                            selectedDistrictName.trim().toLowerCase() ===
-                            "visakhapatnam"
-                          ) {
-                            // Visakhapatnam → pincode dropdown
-                            setShowManualPincode(false);
-                            setManualPincode("");
-                          } else {
-                            // Other districts → manual pincode only
-                            setShowManualPincode(true);
-                            setManualPincode("");
-                          }
+                        value={String(
+                          s.StateId
+                        )}
+                      >
+                        {
+                          s.StateName
                         }
-                      }}
-                      required
-                    >
-                      <option value="">Select District</option>
-                      {districtList.map((d) => (
-                        <option
-                          key={d.districtId}
-                          value={d.districtId.toString()}
-                        >
-                          {d.districtName}
-                        </option>
-                      ))}
-                    </Form.Select>
-                  </Form.Group>
-                                    {/* {isNonServiceableDistrict && (
-                    <div className="text-danger small mt-1">
-                      Service available in only <strong>Visakhapatnam</strong> location.
-                    </div>    
-                  )} */}
+                      </option>
+                    )
+                  )}
+                </select>
+              </div>
+
+              {/* District */}
+              <div className="vr-field">
+                <label className="vr-label">
+                  District
+                </label>
+                <select
+                  className="vr-input"
+                  value={
+                    addressForm.districtId
+                  }
+                  onChange={
+                    handleDistrictChange
+                  }
+                  required
+                  disabled={
+                    !addressForm.stateId ||
+                    districtsLoading
+                  }
+                >
+                  <option value="">
+                    {!addressForm.stateId
+                      ? "Select state first"
+                      : districtsLoading
+                      ? "Loading districts..."
+                      : "Select district"}
+                  </option>
+                  {districtList.map(
+                    (d) => (
+                      <option
+                        key={
+                          d.districtId
+                        }
+                        value={String(
+                          d.districtId
+                        )}
+                      >
+                        {
+                          d.districtName
+                        }
+                      </option>
+                    )
+                  )}
+                </select>
+              </div>
+            </div>
         
             <div className="row">
               <div className="col-6">
@@ -406,44 +478,93 @@ const isFormValid = Boolean(
               <Form.Control type="text" value={addressForm.mobileNumber} readOnly />
             </Form.Group>
              </div>
-              <div className="col-6">
-             <Form.Group className="mb-3">
-              <Form.Label>
-                Pincode <span className="text-danger">*</span>
-              </Form.Label>
+             <div className="vr-field">
 
-              {showManualPincode ? (
-                <Form.Control
-                  type="text"
-                  maxLength={6}
-                  placeholder="Enter 6-digit pincode"
-                  value={manualPincode}
-                  onChange={handleManualPincodeChange}
-                />
-              ) : (
-                <Form.Select
-                  value={
-                    pincodeOptions.includes(addressForm.zipCode)
-                      ? addressForm.zipCode
-                      : ""
-                  }
-                  onChange={handlePincodeSelect}
-                >
-                  <option value="">Select Pincode</option>
+                <label className="vr-label">
+                  ZipCode / PIN Code
+                </label>
 
-                  {pincodeOptions.map((pin) => (
-                    <option key={pin} value={pin}>
-                      {pin}
-                    </option>
-                  ))}
+                {!addressForm.stateId ? (
+                  <div className="vr-radio-message">
+                    Please select a state first
+                  </div>
+                ) : !addressForm.districtId ? (
+                  <div className="vr-radio-message">
+                    Please select a district first
+                  </div>
+                ) : pincodesLoading ? (
+                  <div className="vr-radio-message">
+                    Loading pincodes...
+                  </div>
+                ) : pincodeList.length ===
+                  0 ? (
+                  <div className="vr-radio-message">
+                    No pincodes available for this district
+                  </div>
+                ) : (
+                  <div className="vr-pincode-list">
 
-                  <option value="others">
-                    Others (Enter Manually)
-                  </option>
-                </Form.Select>
-              )}
-            </Form.Group>
-            </div>
+                    {pincodeList.map(
+                      (
+                        pincode,
+                        index
+                      ) => {
+
+                        const pincodeValue =
+                          typeof pincode ===
+                          "string"
+                            ? pincode
+                            : String(
+                                pincode.pincode ??
+                                  pincode.Pincode ??
+                                  pincode.pinCode ??
+                                  pincode.PinCode ??
+                                  ""
+                              );
+
+                        if (
+                          !pincodeValue
+                        ) {
+                          return null;
+                        }
+
+                        return (
+                          <label
+                            key={`${pincodeValue}-${index}`}
+                            className="vr-pincode-option"
+                          >
+
+                            <input
+                              type="radio"
+                              name="vendorPincode"
+                              value={
+                                pincodeValue
+                              }
+                              checked={
+                                addressForm.zipCode ===
+                                pincodeValue
+                              }
+                              onChange={
+                                handlePincodeChange
+                              }
+                              required
+                            />
+
+                            <span>
+                              {
+                                pincodeValue
+                              }
+                            </span>
+
+                          </label>
+                        );
+                      }
+                    )}
+
+                  </div>
+                )}
+
+              </div>
             </div>
             <Button
               style={{ backgroundColor: "#008000", borderColor: "#008000" }}

@@ -987,7 +987,7 @@ const GroceryCartPage = () => {
   const roundedItemsTotal = Math.round(itemsTotal);
   const roundedGrandTotal = Math.round(grandTotal);
   const deliveryCharge = roundedGrandTotal >= 150 ? 0 : 15;
-  const handlingCharge = roundedGrandTotal >= 150 ? 0 : 5;
+  const handlingCharge = roundedGrandTotal >= 150 ? 5 : 5;
   const extraCharges = deliveryCharge + handlingCharge;
   const finalGrandTotal = roundedGrandTotal + extraCharges;
   const FREE_DELIVERY_LIMIT = 150;
