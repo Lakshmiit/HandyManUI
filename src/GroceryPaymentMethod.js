@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 // import React, { useEffect, useState, useCallback } from "react";
 // import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 // import "bootstrap/dist/css/bootstrap.min.css";
@@ -1517,8 +1516,7 @@
 // };
 
 // export default GroceryPaymentmethod;
-=======
->>>>>>> 644aed1242bff2e3648b850b4a6a9363d32c6bc4
+
 import React, { useEffect, useState, useCallback } from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -2221,7 +2219,6 @@ const primary = addresses.find((addr) => addr.type === "primary");
     district: finalDistrict,
     districtId: finalDistrictId,
     zipCode: finalZipCode,
-<<<<<<< HEAD
   };
       
   // API payload
@@ -2319,7 +2316,6 @@ const primary = addresses.find((addr) => addr.type === "primary");
   }
 };
 
-
   const getUserLocation = () => {
     return new Promise((resolve, reject) => {
       if (!navigator.geolocation) {
@@ -2336,8 +2332,6 @@ const primary = addresses.find((addr) => addr.type === "primary");
         );
       }
     });
-=======
->>>>>>> 644aed1242bff2e3648b850b4a6a9363d32c6bc4
   };
       
   // API payload
