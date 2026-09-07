@@ -988,7 +988,7 @@ const AddressManager = () => {
         }
       `}</style>
     </div>
-  );
+  );    
 };
 
 export default AddressManager;
