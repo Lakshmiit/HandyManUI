@@ -1,4 +1,3 @@
-
 // import React, { useEffect, useState, useCallback } from "react";
 // import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 // import "bootstrap/dist/css/bootstrap.min.css";
@@ -1517,7 +1516,6 @@
 // };
 
 // export default GroceryPaymentmethod;
-
 import React, { useEffect, useState, useCallback } from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -1615,7 +1613,7 @@ const parseCashbackRules = (value) => {
         });
       })
       .filter(Boolean);
-    }
+  }
   return [];
 };
 
@@ -1632,7 +1630,6 @@ const isCashbackConfigBanner = (banner) => {
     .filter(Boolean)
     .join(" ")
     .toLowerCase();
-
   return CASHBACK_CONFIG_TOKENS.some((token) => haystack.includes(token));
 };
 
@@ -2367,6 +2364,7 @@ const primary = addresses.find((addr) => addr.type === "primary");
     const existingWallet = Number(offerWalletAmount || 0);
     const walletAfterUsage = existingWallet - walletToUse;
     const updatedWalletAmount = walletAfterUsage + cashback;
+    const location = await getUserLocation();
     const payload = {
       ...cartData,
       customerName: addressData.fullName || fullName,
@@ -2390,10 +2388,8 @@ const primary = addresses.find((addr) => addr.type === "primary");
       paidAmount: "",
       AssignedTo: "",
       DeliveryPartnerUserId: "",
-      latitude: location.latitude,
-      longitude: location.longitude,
-      latitude: 0,
-      longitude: 0,
+      latitude: location.latitude || 0,
+      longitude: location.longitude || 0,
       isPickUp: false,
       isDelivered: false,
       totalWalletAmount: String(updatedWalletAmount),
@@ -3409,4 +3405,4 @@ const hasPincode = Boolean(zipCode?.trim());
   );
 };
 
-export default GroceryPaymentmethod;
+export default GroceryPaymentmethod;      
