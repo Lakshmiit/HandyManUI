@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // import React, { useEffect, useState, useCallback } from "react";
 // import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 // import "bootstrap/dist/css/bootstrap.min.css";
@@ -526,34 +527,34 @@
 
 //   console.log("Wallet Amount:", offerWalletAmount);
 
-//   useEffect(() => {
-//     axios
-//       .get(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getStates`)
-//       .then((response) => {
-//         const data = response.data;
-//         console.log("States API Response:", data);
-//         setStateList(data);
-//         setStateId("");
-//       })
-//       .catch((error) => {
-//         console.error("Error fetching states:", error);
-//       });
-//   }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getStates`)
+  //     .then((response) => {
+  //       const data = response.data;
+  //       console.log("States API Response:", data);
+  //       setStateList(data);
+  //       setStateId("");
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching states:", error);
+  //     });
+  // }, []);
 //   console.log("Wallet Amount:", walletAmount);
-//   useEffect(() => {
-//     if (stateId) {
-//       axios
-//         .get(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
-//         .then((response) => {
-//           setDistrictList(response.data);
-//         })
-//         .catch((error) => {
-//           console.error("Error fetching districts:", error);
-//         });
-//     } else {
-//       setDistrictList([]);
-//     }
-//   }, [stateId]);
+  // useEffect(() => {
+  //   if (stateId) {
+  //     axios
+  //       .get(`https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getDistricts/${stateId}`)
+  //       .then((response) => {
+  //         setDistrictList(response.data);
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error fetching districts:", error);
+  //       });
+  //   } else {
+  //     setDistrictList([]);
+  //   }
+  // }, [stateId]);
 
 //   // Reset address form fields
 //   const resetAddressForm = () => {
@@ -1516,11 +1517,13 @@
 // };
 
 // export default GroceryPaymentmethod;
-
+=======
+>>>>>>> 644aed1242bff2e3648b850b4a6a9363d32c6bc4
 import React, { useEffect, useState, useCallback } from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import axios from "axios";
 import "./App.css";
 import { useParams, useNavigate } from "react-router-dom";
 import { Modal, Button, Form } from "react-bootstrap";
@@ -1529,7 +1532,7 @@ import { getLocalCashbackOffers } from "./utils/localCashbackOffers";
 import { CartStorage } from "./CartStorage";
 import { invalidateVendorProductsCache } from "./utils/vendorListStore";
 // import { appConfig } from "./config";
-
+  
 const GET_VENDOR_PRODUCTS_URL =
   "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/VendorUploadProducts/GetVendorProductsvalues";
 const UPDATE_VENDOR_PRODUCTS_URL =
@@ -1587,7 +1590,6 @@ const parseCashbackRules = (value) => {
   if (typeof value === "string") {
     const trimmed = value.trim();
     if (!trimmed) return [];
-
     try {
       const parsed = JSON.parse(trimmed);
       const jsonRules = parseCashbackRules(parsed);
@@ -1615,7 +1617,6 @@ const parseCashbackRules = (value) => {
       })
       .filter(Boolean);
   }
-
   return [];
 };
 
@@ -1632,7 +1633,6 @@ const isCashbackConfigBanner = (banner) => {
     .filter(Boolean)
     .join(" ")
     .toLowerCase();
-
   return CASHBACK_CONFIG_TOKENS.some((token) => haystack.includes(token));
 };
 
@@ -1712,11 +1712,9 @@ const GroceryPaymentmethod = () => {
   const [addresses, setAddresses] = useState([]);
   const [newAddress, setNewAddress] = useState("");
   const [state, setState] = useState("");
-  // const [districtList, setDistrictList] = useState([]);
-  // const [stateList, setStateList] = useState([]);
+  const [districtList, setDistrictList] = useState([]);
+  const [stateList, setStateList] = useState([]);
   const [district, setDistrict] = useState("");
-  // const [districtId, setDistrictId] = useState("");
-  // const [stateId, setStateId] = useState(null);
   const [fullName, setFullName] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [showModals, setShowModals] = useState(false);
@@ -1741,8 +1739,15 @@ const GroceryPaymentmethod = () => {
   const [offerTransactionId, setOfferTransactionId] = useState("");
   const [offerTransaction, setOfferTransaction] = useState(null);
   const [cashbackRules, setCashbackRules] = useState(DEFAULT_CASHBACK_RULES);
-  const [selectedStateId, setSelectedStateId] = useState("");
-  const [selectedDistrictId, setSelectedDistrictId ] = useState("");
+  const [pincodeList, setPincodeList] = useState([]);
+const [pincodesLoading, setPincodesLoading] = useState(false);
+const [tempStateId, setTempStateId] = useState("");
+const [tempState, setTempState] = useState("");
+
+const [tempDistrictId, setTempDistrictId] = useState("");
+const [tempDistrict, setTempDistrict] = useState("");
+
+const [tempZipCode, setTempZipCode] = useState("");
   // const readServerPoints = (record) => {
   // const raw =
   // record?.referralPoints ??      
@@ -1917,99 +1922,181 @@ const GroceryPaymentmethod = () => {
     fetchCart();
   }, [groceryItemId]);
 
-  // const getReferralRecord = async (userId) => {
-  // if (!userId) return null;
-  // const url = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/ReferralPoints/GetReferralPointsByUserId?referreId=${encodeURIComponent(userId)}`;
-  // const res = await fetch(url);
-  // const text = await res.text();
-  // let data = [];
-  // try { data = text ? JSON.parse(text) : []; } catch { data = []; }
-  // if (Array.isArray(data) && data.length > 0) {
-  // data.sort((a, b) => new Date(b.date) - new Date(a.date));
-  // return data[0];
-  // }
-  // return null;
-  // };
-
-  // useEffect(() => {
-  // let cancelled = false;
-  // (async () => {
-  // try {
-  // const rec = await getReferralRecord(userId);
-  // if (cancelled) return;
-  // setReferralRec(rec);
-  // setReferralPoints(readServerPoints(rec));
-  // } catch (e) {
-  // console.error("Failed to load referral points:", e);
-  // if (!cancelled) {
-  // setReferralRec(null);
-  // setReferralPoints(0);
-  // }
-  // }
-  // })();
-  // return () => { cancelled = true; };
-  // }, [userId]);
-
-  // useEffect(() => {
-  // const gt = Number(grandTotal) || 0;
-  // const pts = Number(referralPoints) || 0;
-  // const applied = Math.min(pts, gt);
-  // setReferralAmount(applied);
-  // setNetPayable(Math.max(0, gt - applied));
-  // }, [grandTotal, referralPoints]);
-
   const fetchCustomerData = useCallback(async () => {
-    try {
-      const response = await fetch(
-        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Address/GetAddressById/${userId}`,
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch customer profile data");
-      }
-      const data = await response.json();
-      console.log(data);
-      const addresses = Array.isArray(data) ? data : [data];
-      const formattedAddresses = addresses.map((addr) => ({
-        id: addr.addressId,
-        type: addr.isPrimaryAddress ? "primary" : "secondary",
-        address: addr.address,
-        state: addr.state,
-        stateId: addr.stateId ?? addr.StateId ?? "",
-        district: addr.district,
-        districtId: addr.districtId ?? addr.DistrictId ?? "",
-        zipCode: addr.zipCode,
-        emailAddress: addr.emailAddress,
-        mobileNumber: addr.mobileNumber,
-        fullName: addr.fullName,
-        walletAmount: addr.walletAmount,
-      }));
-      setAddresses(formattedAddresses);
+  try {
+    const response = await fetch(
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Address/GetAddressById/${userId}`
+    );
 
-      const apiFullName = addresses[0]?.fullName ?? "";
-      setFullName(apiFullName);
-      if (!apiFullName || isGuestName(apiFullName)) {
-        setIsNewUser(true);
-      } else {
-        setIsNewUser(false);
-      }
-    } catch (error) {
-      console.error("Error fetching customer data:", error);
+    if (!response.ok) {
+      throw new Error("Failed to fetch customer profile data");
     }
-  }, [userId]);
 
-  // useEffect(() => {
-  //   const primary = addresses.find((addr) => addr.type === "primary");
-  //   const district = primary?.district?.toLowerCase();
-  //   if (district && district !== "visakhapatnam") {
-  //     setServiceUnavailable(true);
-  //   } else {
-  //     setServiceUnavailable(false);
-  //   }
-  // }, [addresses]);
+    const data = await response.json();
+
+    console.log("Customer Address API Response:", data);
+
+    const apiAddresses = Array.isArray(data) ? data : [data];
+
+    const formattedAddresses = apiAddresses.map((addr) => ({
+      id: addr.id,
+      addressId: addr.addressId,
+      type: addr.isPrimaryAddress ? "primary" : "secondary",
+
+      address: addr.address || "",
+
+      state: addr.state || "",
+
+      stateId: addr.stateId ?? addr.StateId ?? "",
+
+      district: addr.district || "",
+
+      districtId: addr.districtId ?? addr.DistrictId ?? "",
+
+      zipCode: addr.zipCode || "",
+
+      emailAddress: addr.emailAddress || "",
+
+      mobileNumber: addr.mobileNumber || "",
+
+      fullName: addr.fullName || "",
+
+      walletAmount: addr.walletAmount,
+    }));
+
+    console.log("Formatted Addresses:", formattedAddresses);
+
+    setAddresses(formattedAddresses);
+
+    const primary =
+      formattedAddresses.find((addr) => addr.type === "primary") ||
+      formattedAddresses[0];
+
+    if (primary) {
+      // Existing values
+      setFullName(primary.fullName || "");
+      setMobileNumber(primary.mobileNumber || "");
+      setNewAddress(primary.address || "");
+
+      setState(primary.state || "");
+setDistrict(primary.district || "");
+setZipCode(primary.zipCode || "");
+
+// Initialize temporary values from saved address
+setTempStateId(primary.stateId || "");
+setTempState(primary.state || "");
+
+setTempDistrictId(primary.districtId || "");
+setTempDistrict(primary.district || "");
+
+setTempZipCode(primary.zipCode || "");
+      // Address data
+      setAddressData({
+        fullName: primary.fullName || "",
+        mobileNumber: primary.mobileNumber || "",
+        address: primary.address || "",
+        state: primary.state || "",
+        district: primary.district || "",
+        zipCode: primary.zipCode || "",
+        walletAmount: primary.walletAmount || "",
+      });
+      setGuestCustomerId(primary.id );
+      setEditingAddressId(primary.addressId);
+    }
+
+    const apiFullName = primary?.fullName ?? "";
+
+    if (!apiFullName || isGuestName(apiFullName)) {
+      setIsNewUser(true);
+    } else {
+      setIsNewUser(false);
+    }
+  } catch (error) {
+    console.error("Error fetching customer data:", error);
+  }
+}, [userId]);
 
   useEffect(() => {
     fetchCustomerData();
   }, [fetchCustomerData]);
+
+// GET STATES
+useEffect(() => {
+  axios
+    .get(
+      "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getStates"
+    )
+    .then((response) => {
+      const data = Array.isArray(response.data) ? response.data : [];
+      console.log("States API Response:", data);
+      setStateList(data);
+    })
+    .catch((error) => {
+      console.error("Error fetching states:", error);
+      setStateList([]);
+    });
+}, []);
+
+// GET DISTRICTS WHEN TEMPORARY STATE CHANGES
+useEffect(() => {
+  // No state selected
+  if (!tempStateId) {
+    setDistrictList([]);
+    return;
+  }
+
+  console.log("Loading districts for StateId:", tempStateId);
+
+  axios
+    .get(
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getDistricts/${tempStateId}`
+    )
+    .then((response) => {
+      const data = Array.isArray(response.data) ? response.data : [];
+
+      console.log("District API Response:", data);
+
+      setDistrictList(data);
+    })
+    .catch((error) => {
+      console.error("Error fetching districts:", error);
+      setDistrictList([]);
+    });
+}, [tempStateId]);
+
+
+// GET PINCODES WHEN TEMPORARY DISTRICT CHANGES
+useEffect(() => {
+  if (!tempDistrictId) {
+    setPincodeList([]);
+    setPincodesLoading(false);
+    return;
+  }
+
+  console.log("Loading pincodes for DistrictId:", tempDistrictId);
+
+  setPincodesLoading(true);
+  setPincodeList([]);
+
+  axios
+    .get(
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData/getPincodes/${tempDistrictId}`
+    )
+    .then((response) => {
+      const data = Array.isArray(response.data) ? response.data : [];
+
+      console.log("Pincode API Response:", data);
+
+      setPincodeList(data);
+    })
+    .catch((error) => {
+      console.error("Error fetching pincodes:", error);
+      setPincodeList([]);
+    })
+    .finally(() => {
+      setPincodesLoading(false);
+    });
+}, [tempDistrictId]);
 
   useEffect(() => {
     const fetchOfferWalletAmount = async () => {
@@ -2062,96 +2149,296 @@ const GroceryPaymentmethod = () => {
     setZipCode("");
   };
 
+  const openAddAddress = () => {
+  setFullName("");
+  setMobileNumber("");
+  setNewAddress("");
+const primary = addresses.find((addr) => addr.type === "primary");
+  setMobileNumber(primary?.mobileNumber || "");
+  setFullName(primary?.fullName || "");
+  // Clear permanent values
+  setState(""); 
+  setDistrict("");
+  setZipCode("");
+
+  // Clear temporary values
+  setTempStateId("");
+  setTempState("");
+  setTempDistrictId("");
+  setTempDistrict("");
+  setTempZipCode("");
+
+  // Clear dependent lists
+  setDistrictList([]);
+  setPincodeList([]);
+
+  setIsEditing(false);
+  setShowModal(true);
+};
+
   // Handle address editing
   const handleAddressEdit = async () => {
-    if (
-      !fullName ||
-      !newAddress ||
-      !zipCode ||
-      !mobileNumber ||
-      !state ||
-      !district
-    ) {
-      alert("Please fill in all required fields.");
-      return;
-    }
-    if (fullName.trim().toLowerCase() === "guest") {
+  // Temporary values selected by the user
+  const finalState = tempState;
+  const finalStateId = tempStateId;
+
+  const finalDistrict = tempDistrict;
+  const finalDistrictId = tempDistrictId;
+
+  const finalZipCode = tempZipCode;
+
+  // Validate required fields
+  if (
+    !fullName?.trim() ||
+    !newAddress?.trim() ||
+    !finalState?.trim() ||
+    !finalDistrict?.trim() ||
+    !finalZipCode?.trim() ||
+    !mobileNumber?.trim()
+  ) {
+    alert("Please fill in all required fields.");
+    return;
+  }
+ if (fullName.trim().toLowerCase() === "guest") {
       alert("Please Change Your Full Name.");
       return;
     }
-    if (!/^\d{6}$/.test(zipCode)) {
-      alert("Pincode must be exactly 6 digits.");
-      return;
-    }
+  // Validate pincode
+  if (!/^\d{6}$/.test(finalZipCode)) {
+    alert("Pincode must be exactly 6 digits.");
+    return;
+  }
 
-    const updatedAddress = {
-      id: guestCustomerId,
-      fullName,
-      mobileNumber,
-      address: newAddress,
-      state,
-      district,
-      zipCode,
-    };
-
-    const payload3 = {
-      id: guestCustomerId,
-      profileType: "profileType",
-      addressId: guestCustomerId,
-      isPrimaryAddress: true,
-      address: newAddress,
-      state: state,
-      district: district,
-      StateId: selectedStateId,
-      DistrictId: selectedDistrictId,
-      zipCode: zipCode,
-      mobileNumber: mobileNumber,
-      emailAddress: "emailAddress",
-      userId: userId,
-      firstName: fullName,
-      lastName: "lastName",
-      fullName: fullName,
-      WalletAmount: "",
-    };
-
-    try {
-      const response = await fetch(
-        `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Customer/CustomerAddressEdit`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload3),
-        },
-      );
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Error Response:", errorText);
-        throw new Error("Failed to edit address.");
-      }
-      setAddresses((prev) =>
-        prev.map((addr) =>
-          addr.id === guestCustomerId ? updatedAddress : addr,
-        ),
-      );
-      setAddressData(updatedAddress);
-      await fetchCustomerData();
-      alert("Address Updated Successfully!");
-      setShowModal(false);
-      resetAddressForm();
-      setIsEditing(false);
-      setEditingAddressId(null);
-    } catch (error) {
-      console.error("Error editing address:", error);
-      alert("Failed to edit address. Please try again later.");
-    }
+  // Address object for local state
+  const updatedAddress = {
+    id: guestCustomerId,
+    addressId: editingAddressId,
+    fullName,
+    mobileNumber,
+    address: newAddress,
+    state: finalState,
+    stateId: finalStateId,
+    district: finalDistrict,
+    districtId: finalDistrictId,
+    zipCode: finalZipCode,
+<<<<<<< HEAD
   };
+      
+  // API payload
+  const payload3 = {
+    id: guestCustomerId,
+    profileType: "profileType",
+    addressId: editingAddressId,
+    isPrimaryAddress: true,
+
+    address: newAddress,
+
+    state: finalState,
+    district: finalDistrict,
+
+    StateId: finalStateId,
+    DistrictId: finalDistrictId,
+
+    zipCode: finalZipCode,
+
+    mobileNumber: mobileNumber,
+    emailAddress: "emailAddress",
+    userId: userId,
+    firstName: fullName,
+    lastName: "lastName",
+    fullName: fullName,
+    WalletAmount: "",
+  };
+
+  try {
+    // Save address to API
+    const response = await fetch(
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Customer/CustomerAddressEdit`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload3),
+      }
+    );
+
+    // IMPORTANT:
+    // fetch() uses response.ok, NOT response.data
+    if (!response.ok) {
+      const errorText = await response.text();
+
+      console.error("Error Response:", errorText);
+
+      throw new Error("Failed to edit address.");
+    }
+
+    // =====================================================
+    // API SUCCESS
+    // ONLY NOW bind temporary values to permanent state
+    // =====================================================
+
+    setState(finalState);
+
+    setDistrict(finalDistrict);
+
+    setZipCode(finalZipCode);
+
+    // Update address list locally
+    setAddresses((prev) =>
+      prev.map((addr) =>
+        addr.id === guestCustomerId
+          ? updatedAddress
+          : addr
+      )
+    );
+
+    // Update selected address data
+    setAddressData(updatedAddress);
+
+    // Refresh data from API
+    await fetchCustomerData();
+
+    // Close modal
+    setShowModal(false);
+    setIsEditing(false);
+    setEditingAddressId(null);
+
+    // Reset form
+    resetAddressForm();
+
+    alert("Address Updated Successfully!");
+
+  } catch (error) {
+    console.error("Error editing address:", error);
+
+    alert(
+      error.message ||
+      "Failed to edit address. Please try again later."
+    );
+  }
+};
+
+
+  const getUserLocation = () => {
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) {
+        reject("Geolocation is not supported");
+      } else {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            resolve({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            });
+          },
+          (error) => reject(error),
+        );
+      }
+    });
+=======
+>>>>>>> 644aed1242bff2e3648b850b4a6a9363d32c6bc4
+  };
+      
+  // API payload
+  const payload3 = {
+    id: guestCustomerId,
+    profileType: "profileType",
+    addressId: editingAddressId,
+    isPrimaryAddress: true,
+
+    address: newAddress,
+
+    state: finalState,
+    district: finalDistrict,
+
+    StateId: finalStateId,
+    DistrictId: finalDistrictId,
+
+    zipCode: finalZipCode,
+
+    mobileNumber: mobileNumber,
+    emailAddress: "emailAddress",
+    userId: userId,
+    firstName: fullName,
+    lastName: "lastName",
+    fullName: fullName,
+    WalletAmount: "",
+  };
+
+  try {
+    // Save address to API
+    const response = await fetch(
+      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Customer/CustomerAddressEdit`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload3),
+      }
+    );
+
+    // IMPORTANT:
+    // fetch() uses response.ok, NOT response.data
+    if (!response.ok) {
+      const errorText = await response.text();
+
+      console.error("Error Response:", errorText);
+
+      throw new Error("Failed to edit address.");
+    }
+
+    // =====================================================
+    // API SUCCESS
+    // ONLY NOW bind temporary values to permanent state
+    // =====================================================
+
+    setState(finalState);
+
+    setDistrict(finalDistrict);
+
+    setZipCode(finalZipCode);
+
+    // Update address list locally
+    setAddresses((prev) =>
+      prev.map((addr) =>
+        addr.id === guestCustomerId
+          ? updatedAddress
+          : addr
+      )
+    );
+
+    // Update selected address data
+    setAddressData(updatedAddress);
+
+    // Refresh data from API
+    await fetchCustomerData();
+
+    // Close modal
+    setShowModal(false);
+    setIsEditing(false);
+    setEditingAddressId(null);
+
+    // Reset form
+    resetAddressForm();
+
+    alert("Address Updated Successfully!");
+
+  } catch (error) {
+    console.error("Error editing address:", error);
+
+    alert(
+      error.message ||
+      "Failed to edit address. Please try again later."
+    );
+  }
+};
 
   console.log("Address:", primaryAddress);
 
-  const isAddressInvalid =
-    !primaryAddress || !primaryAddress.address || !primaryAddress.zipCode;
+  const isAddressInvalid = !primaryAddress || !newAddress?.trim() || !state?.trim() || !district?.trim() || !zipCode?.trim();
+  
   const isOrderDisabled =
     isAddressInvalid || isFirstOrderMinNotReached;
   useEffect(() => {
@@ -2162,6 +2449,7 @@ const GroceryPaymentmethod = () => {
     }
   }, [isAddressInvalid]);
 
+ 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     handleResize();
@@ -2169,192 +2457,16 @@ const GroceryPaymentmethod = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  //   const handleUpdatePaymentMethod = async () => {
-  //     // try {
-  //     //   // let lat = 0;
-  //     //   // let lng = 0;
-
-  //     //   try {
-  //     //     // const location = await getUserLocation();
-  //     //     // lat = location.latitude;
-  //     //     // lng = location.longitude;
-  //     //   } catch (error) {
-  //     //     if (error === "User denied location access") {
-  //     //       // showLocationPopup();
-  //     //       //return;
-  //     //     } else {
-  //     //       console.log("Location error:", error);
-  //     //       return; // also stop for other errors
-  //     //     }
-  //     //   }
-  // const primaryAddress = addresses.find((addr) => addr.type === "primary");
-  // const state = primaryAddress?.state;
-  // const district = primaryAddress?.district || "";
-  // const pincode = primaryAddress?.zipCode || primaryAddress?.pincode;
-  // const mobileNumber =
-  // primaryAddress?.mobileNumber || primaryAddress?.mobileNumber;
-
-  // const payload = {
-  // ...cartData,
-  // customerName: addressData.fullName || fullName,
-  // address: addressData.address || primaryAddress?.address,
-  // state: addressData.state || state,
-  // district: addressData.district || district,
-  // zipCode: addressData.zipCode || pincode,
-  // customerPhoneNumber: addressData.mobileNumber || mobileNumber,
-  // id: groceryItemId,
-  // userId: userId,
-  // martId: martId,
-  // date: new Date(),
-  // grandTotal: String(netPayables),
-  // totalItemsSelected: totalItemsSelected,
-  // status:  "Open",
-  // paymentMode: "",
-  // utrTransactionNumber: "",
-  // transactionNumber: "",
-  // transactionStatus: "",
-  // paidAmount: "",
-  // AssignedTo: "",
-  // DeliveryPartnerUserId: "",
-  // latitude: 0,
-  // longitude: 0,
-  // isPickUp: false,
-  // isDelivered: false,
-  // walletAmount: walletAmount,
-  // deliveryAssignedTime: "",
-  // deliverySubmitTime: "",
-  // // location: `https://www.google.com/maps?q=${lat},${lng}`,
-  // };
-
-  // let response = await fetch(
-  // `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
-  // {
-  // method: "PUT",
-  // headers: { "Content-Type": "application/json" },
-  // body: JSON.stringify(payload),
-  // },
-  // );
-
-  // if (!response.ok) {
-  // throw new Error("Failed to update order.");
-  // }
-
-  // // if (referralAmount > 0 && referralRec?.id) {
-  // // try {
-  // // const id = String(referralRec.id).trim();
-  // // const payloadPut = {
-  // // id,
-  // // date: referralRec.date ?? new Date().toISOString(),
-  // // referralNumbers: referralRec.referralNumbers ?? "",
-  // // referreId: referralRec.referreId ?? userId ?? "",
-  // // IsReferralUsed: true,
-  // // referralPoints: "0",
-  // // };
-
-  // // let resp = await fetch(
-  // // `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints?id=${encodeURIComponent(id)}`,
-  // // {
-  // // method: "PUT",
-  // // headers: { "Content-Type": "application/json; charset=utf-8" },
-  // // body: JSON.stringify(payloadPut),
-  // // },
-  // // );
-
-  // // if (!resp.ok) {
-  // // resp = await fetch(
-  // // `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/ReferralPoints/UpdateReferralPoints/${encodeURIComponent(id)}`,
-  // // {
-  // // method: "PUT",
-  // // headers: { "Content-Type": "application/json; charset=utf-8" },
-  // // body: JSON.stringify(payloadPut),
-  // // },
-  // // );
-  // // }
-
-  // // if (!resp.ok) {
-  // // const t = await resp.text().catch(() => "");
-  // // console.error("Referral PUT failed:", resp.status, t);
-  // // } else {
-  // // setReferralPoints(0);
-  // // }
-  // // } catch (e) {
-  // // console.error("Referral PUT error:", e);
-  // // }
-  // // }
-  // localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
-  // localStorage.removeItem("activeOrderId");
-  // localStorage.removeItem("allCategories");
-  // localStorage.removeItem(`cartMeta_${groceryItemId}`);
-
-  // // if (selectedPayment === "online") {
-  // // response = await fetch(
-  // // `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
-  // // {
-  // // method: "PUT",
-  // // headers: {
-  // // "Content-Type": "application/json",
-  // // },
-  // // body: JSON.stringify(payload),
-  // // },
-  // // );
-
-  // // if (!response.ok) {
-  // // throw new Error("Failed to Update Payment.");
-  // // }
-  // // localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
-  // // localStorage.removeItem("activeOrderId");
-  // // localStorage.removeItem("allCategories");
-  // // localStorage.removeItem(`cartMeta_${groceryItemId}`);
-  // // window.alert(
-  // // `We are Redirecting to the Payment Page! Your reference number is ${martId}.`,
-  // // );
-  // // window.location.href = `/groceryOnlinePayment/${groceryItemId}`;
-  // // } else if (selectedPayment === "cash") {
-  // // response = await fetch(
-  // // `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/UpdateProductDetails/${groceryItemId}`,
-  // // {
-  // // method: "PUT",
-  // // headers: {
-  // // "Content-Type": "application/json",
-  // // },
-  // // body: JSON.stringify(payload),
-  // // },
-  // // );
-
-  // if (!response.ok) {
-  // }
-  // localStorage.removeItem(`cartSnapshot_${groceryItemId}`);
-  // localStorage.removeItem("activeOrderId");
-  // localStorage.removeItem("allCategories");
-  // localStorage.removeItem(`cartMeta_${groceryItemId}`);
-  // const primary = addresses.find((a) => a.type === "primary");
-  // console.log("ZipCode:", primary?.zipCode);
-  // if (primary?.zipCode === "530048" || primary?.zipCode === "530045") {
-  // window.alert(
-  // `Thank You for Choosing the Handyman App Lakshmi Mart Services! Your Reference Order Number is ${martId}. Delivery Time Intimated Shortly!.`,
-  // );
-  // } else {
-  // window.alert(
-  // `Thank You for Choosing the Handyman App Lakshmi Mart Services! Your Reference Order Number is ${martId}. Delivery Time Intimated Shortly!.`,
-  // );
-  // }
-  // window.location.href = `/profilePage/${userType}/${userId}`;
-  // } catch (error) {
-  // console.error("Error:", error);
-  // }
-  // };
-
   const handleUpdateMartOrder = async () => {
     const primaryAddress = addresses.find((addr) => addr.type === "primary");
     const state = primaryAddress?.state;
     const district = primaryAddress?.district || "";
     const pincode = primaryAddress?.zipCode || primaryAddress?.pincode;
     const mobileNumber = primaryAddress?.mobileNumber;
-
     const existingWallet = Number(offerWalletAmount || 0);
     const walletAfterUsage = existingWallet - walletToUse;
     const updatedWalletAmount = walletAfterUsage + cashback;
-
+    const location = await getUserLocation();
     const payload = {
       ...cartData,
       customerName: addressData.fullName || fullName,
@@ -2378,8 +2490,8 @@ const GroceryPaymentmethod = () => {
       paidAmount: "",
       AssignedTo: "",
       DeliveryPartnerUserId: "",
-      latitude: 0,
-      longitude: 0,
+      latitude: location.latitude,
+      longitude: location.longitude,
       isPickUp: false,
       isDelivered: false,
       totalWalletAmount: String(updatedWalletAmount),
@@ -2556,13 +2668,6 @@ const GroceryPaymentmethod = () => {
     }
   };
 
-  // Decrement each ordered product's Quantity on the vendor's
-  // VendorProducts record. ProductIds on that record is the same id as
-  // the grocery catalog item's id (see VendorPreviewPage.js, where
-  // ProductIds/productNameById are built from getGroceryItems()'s
-  // item.id), so we reuse buildProductMapFromCart to find how many of
-  // each catalog item id were ordered, then subtract that from the
-  // vendor's stored Quantity for the matching ProductIds entry.
   const handleUpdateVendorProductQuantities = async () => {
     try {
       if (!vendorId) {
@@ -2734,17 +2839,9 @@ const GroceryPaymentmethod = () => {
     }
   };
 
-  // const handleCheckboxChange = (value) => {
-  // const newValue = selectedPayment === value ? null : value;
-  // setSelectedPayment(newValue);
-  // setError("");
-
-  // if (newValue) {
-  // setIsChecked(true);
-  // } else {
-  // setIsChecked(false);
-  // }
-  // };
+  const hasState = Boolean(state?.trim());
+const hasDistrict = Boolean(district?.trim());
+const hasPincode = Boolean(zipCode?.trim());
 
   return (
     <div>
@@ -2856,89 +2953,159 @@ const GroceryPaymentmethod = () => {
                     <Form.Label>
                       State <span className="req_star">*</span>
                     </Form.Label>
-                    <Form.Control
-                      type="text"
-                      value={state}
-                      readOnly
-                    />
-                    {/* <Form.Select
-                      value={stateId || ""}
-                      // onChange={(e) => {
-                      //   const selectedId = e.target.value;
-                      //   setStateId(selectedId);
-                      //   const selectedState = stateList.find(
-                      //     (s) => s?.StateId?.toString() === selectedId,
-                      //   );
-                      //   if (selectedState) {
-                      //     setState(selectedState.StateName);
-                      //   }
-                      // }}
-                      readOnly
-                    >
-                      {/* <option value="">Select State</option>
-                      {Array.isArray(stateList) &&
-                        stateList
-                          .filter((s) => s && s.StateId && s.StateName)
-                          .map((s) => (
-                            <option
-                              key={s.StateId}
-                              value={s.StateId.toString()}
-                            >
-                              {s.StateName}
-                            </option>
-                          ))} 
-                    </Form.Select> */}
+                    {hasState ? (                   
+                      <Form.Control
+                        type="text"
+                        value={state}
+                        readOnly
+                        disabled
+                        style={{
+                          backgroundColor: "#f5f5f5",
+                          cursor: "not-allowed",
+                        }}
+                      />
+                    ) : (
+                     <Form.Select
+  value={tempStateId || ""}
+  onChange={(e) => {
+    const selectedId = e.target.value;
+
+    const selectedState = stateList.find(
+      (s) => String(s?.StateId) === String(selectedId)
+    );
+
+    setTempStateId(selectedId);
+    setTempState(selectedState?.StateName || "");
+
+    // Reset dependent temporary values
+    setTempDistrictId("");
+    setTempDistrict("");
+    setTempZipCode("");
+
+    // Clear old dependent lists
+    setDistrictList([]);
+    setPincodeList([]);
+  }}
+>
+  <option value="">Select State</option>
+
+  {stateList
+    .filter((s) => s?.StateId && s?.StateName)
+    .map((s) => (
+      <option
+        key={s.StateId}
+        value={String(s.StateId)}
+      >
+        {s.StateName}
+      </option>
+    ))}
+</Form.Select>
+                    )}
                   </Form.Group>
                   <Form.Group className="mb-3">
                     <Form.Label>
                       District <span className="req_star">*</span>
                     </Form.Label>
-                    <Form.Control
-                      type="text"
-                      value={district}
-                      readOnly
-                    />
-                    {/* <Form.Select
-                      value={districtId}
-                      // onChange={(e) => {
-                      //   const selectedId = e.target.value;
-                      //   setDistrictId(selectedId);
-                      //   const selectedDistrict = districtList.find(
-                      //     (d) => d.districtId.toString() === selectedId,
-                      //   );
-                      //   if (selectedDistrict) {
-                      //     setDistrict(selectedDistrict.districtName);
-                      //   }
-                      // }}
-                       readOnly
-                    >
-                      {/* <option value="">Select District</option>
-                      {districtList.map((d) => (
-                        <option
-                          key={d.districtId}
-                          value={d.districtId.toString()}
-                        >
-                          {d.districtName}
-                        </option>
-                      ))} 
-                    </Form.Select> */}
+                    {hasDistrict ? (
+                     <Form.Control
+                        type="text"
+                        value={district}
+                        readOnly
+                        disabled
+                        style={{
+                          backgroundColor: "#f5f5f5",
+                          cursor: "not-allowed",
+                        }}
+                      />
+                    ) : (
+                     <Form.Select
+  value={tempDistrictId || ""}
+  disabled={!tempStateId}
+  onChange={(e) => {
+    const selectedId = e.target.value;
+
+    const selectedDistrict = districtList.find(
+      (d) => String(d?.districtId) === String(selectedId)
+    );
+
+    setTempDistrictId(selectedId);
+    setTempDistrict(selectedDistrict?.districtName || "");
+
+    // Reset pincode
+    setTempZipCode("");
+    setPincodeList([]);
+  }}
+>
+  <option value="">
+    {!tempStateId
+      ? "Select State First"
+      : "Select District"}
+  </option>
+
+  {districtList.map((d) => (
+    <option
+      key={d.districtId}
+      value={String(d.districtId)}
+    >
+      {d.districtName}
+    </option>
+  ))}
+</Form.Select>
+                    )}
                   </Form.Group>
                   <Form.Group className="mb-3">
                     <Form.Label>
                       Pincode <span className="req_star">*</span>
                     </Form.Label>
-                    <Form.Control
-                      type="text"
-                      value={zipCode}
-                      // onChange={(e) => {
-                      //   const numericValue = e.target.value.replace(/\D/g, "");
-                      //   if (numericValue.length <= 6) {
-                      //     setZipCode(numericValue);
-                      //   }
-                      // }}
-                      // placeholder="Enter pincode"
-                      readOnly
-                    />
+                    {hasPincode ? (
+                       <Form.Control
+                        type="text"
+                        value={zipCode}
+                        readOnly
+                        disabled
+                        style={{
+                          backgroundColor: "#f5f5f5",
+                          cursor: "not-allowed",
+                        }}
+                      />
+                    ) : (
+                      <Form.Select
+  value={tempZipCode || ""}
+  disabled={!tempDistrictId || pincodesLoading}
+  onChange={(e) => {
+    setTempZipCode(e.target.value);
+  }}
+>
+  <option value="">
+    {pincodesLoading
+      ? "Loading Pincodes..."
+      : !tempDistrictId
+        ? "Select District First"
+        : "Select Pincode"}
+  </option>
+
+  {pincodeList.map((pincode, index) => {
+    const value =
+      pincode?.pincode ??
+      pincode?.Pincode ??
+      pincode?.pinCode ??
+      pincode?.PinCode ??
+      pincode?.zipCode ??
+      pincode?.ZipCode ??
+      pincode?.code ??
+      pincode;
+
+    return (
+      <option
+        key={`${value}-${index}`}
+        value={String(value)}
+      >
+        {String(value)}
+      </option>
+    );
+  })}
+</Form.Select>
+                    )}
                   </Form.Group>
                   <Button
                     type="button"
@@ -2987,19 +3154,33 @@ const GroceryPaymentmethod = () => {
                     className={`text-white mx-1 ${
                       shouldBlink ? "blinking-button" : ""
                     }`}
-                    onClick={() => {
-                      setGuestCustomerId(address.id);
-                      setFullName(address.fullName);
-                      setMobileNumber(address.mobileNumber);
-                      setNewAddress(address.address);
-                      setState(address.state);
-                      setSelectedStateId(address.stateId); 
-                      setDistrict(address.district);
-                      setSelectedDistrictId(address.districtId);
-                      setZipCode(address.zipCode);
-                      setIsEditing(true);
-                      setShowModal(true);
-                    }}
+                   onClick={() => {
+                     setGuestCustomerId(address.id);
+                    setEditingAddressId(address.addressId);
+                      console.log("=================================");
+                      console.log("GET API Address Object:", address);
+                      console.log("ID:", address.id);
+                      console.log("Address ID:", address.addressId);
+                      console.log("=================================");
+
+                      if (address.address === "") {
+                        openAddAddress();
+                        return;
+                      }
+                    setFullName(address.fullName || "");
+                    setMobileNumber(address.mobileNumber || "");
+                    setNewAddress(address.address || "");
+                    setTempStateId(address.stateId || "");
+                    setTempState(address.state || "");
+                    setTempDistrictId(address.districtId || "");
+                    setTempDistrict(address.district || "");
+                    setTempZipCode(address.zipCode || "");
+                    setState(address.state || "");
+                    setDistrict(address.district || "");
+                    setZipCode(address.zipCode || "");
+                    setIsEditing(true);
+                    setShowModal(true);
+                  }}
                   >
                     {address.address === "" ? "Add Address" : "Edit Address"}
                   </Button>
@@ -3283,9 +3464,7 @@ const GroceryPaymentmethod = () => {
                 disabled={loading || isOrderDisabled}
                 onClick={handlePaymentAndSms}
                 title={
-                  isAddressInvalid
-                    ? "Please add a valid address"
-                      : isFirstOrderMinNotReached
+                  isFirstOrderMinNotReached
                         ? "Minimum order value ₹150 required on your first order to get ₹50 cashback."
                         : ""
                 }
