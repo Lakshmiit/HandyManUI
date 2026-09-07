@@ -1516,7 +1516,6 @@
 // };
 
 // export default GroceryPaymentmethod;
-
 import React, { useEffect, useState, useCallback } from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -2333,101 +2332,6 @@ const primary = addresses.find((addr) => addr.type === "primary");
       }
     });
   };
-      
-  // API payload
-  const payload3 = {
-    id: guestCustomerId,
-    profileType: "profileType",
-    addressId: editingAddressId,
-    isPrimaryAddress: true,
-
-    address: newAddress,
-
-    state: finalState,
-    district: finalDistrict,
-
-    StateId: finalStateId,
-    DistrictId: finalDistrictId,
-
-    zipCode: finalZipCode,
-
-    mobileNumber: mobileNumber,
-    emailAddress: "emailAddress",
-    userId: userId,
-    firstName: fullName,
-    lastName: "lastName",
-    fullName: fullName,
-    WalletAmount: "",
-  };
-
-  try {
-    // Save address to API
-    const response = await fetch(
-      `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Customer/CustomerAddressEdit`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload3),
-      }
-    );
-
-    // IMPORTANT:
-    // fetch() uses response.ok, NOT response.data
-    if (!response.ok) {
-      const errorText = await response.text();
-
-      console.error("Error Response:", errorText);
-
-      throw new Error("Failed to edit address.");
-    }
-
-    // =====================================================
-    // API SUCCESS
-    // ONLY NOW bind temporary values to permanent state
-    // =====================================================
-
-    setState(finalState);
-
-    setDistrict(finalDistrict);
-
-    setZipCode(finalZipCode);
-
-    // Update address list locally
-    setAddresses((prev) =>
-      prev.map((addr) =>
-        addr.id === guestCustomerId
-          ? updatedAddress
-          : addr
-      )
-    );
-
-    // Update selected address data
-    setAddressData(updatedAddress);
-
-    // Refresh data from API
-    await fetchCustomerData();
-
-    // Close modal
-    setShowModal(false);
-    setIsEditing(false);
-    setEditingAddressId(null);
-
-    // Reset form
-    resetAddressForm();
-
-    alert("Address Updated Successfully!");
-
-  } catch (error) {
-    console.error("Error editing address:", error);
-
-    alert(
-      error.message ||
-      "Failed to edit address. Please try again later."
-    );
-  }
-};
 
   console.log("Address:", primaryAddress);
 
@@ -3501,4 +3405,4 @@ const hasPincode = Boolean(zipCode?.trim());
   );
 };
 
-export default GroceryPaymentmethod;
+export default GroceryPaymentmethod;      
