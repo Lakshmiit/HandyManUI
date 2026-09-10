@@ -28,7 +28,7 @@ const AdminOrderClose = () => {
   const [customerName, setCustomerName] = useState("");
   const [date, setDate] = useState("");
   const [items, setItems] = useState([]);
-  const [selectedPartner] = useState("");
+  //const [selectedPartner] = useState("");
   const [longitude, setLongitude] = useState("");
   const [latitude, setLatitude] = useState("");
   const [grandTotal, setGrandTotal] = useState("");
