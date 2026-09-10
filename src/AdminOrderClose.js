@@ -971,7 +971,8 @@ const AdminOrderClose = () => {
                   style={{ background: "red" }}
                   onClick={handleCancelOrder}
                   title="Cancel Order"
-                  disabled={selectedPartner}
+                  //disabled={selectedPartner}
+                    disabled={status !== "Delivered"}
                 >
                   Delete
                 </Button>
