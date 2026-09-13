@@ -182,6 +182,12 @@ const DeliveryOrderDetailsPage = () => {
     (sum, cat) => sum + Number(cat.totalAmount || 0),
     0,
   );
+  const latitude = Number(order.latitude);
+  const longitude = Number(order.longitude);
+  const hasDeliveryLocation = Number.isFinite(latitude) && Number.isFinite(longitude);
+  const navigationUrl = hasDeliveryLocation
+    ? `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`
+    : "";
 
   return (
     <div
@@ -225,6 +231,16 @@ const DeliveryOrderDetailsPage = () => {
               .filter(Boolean)
               .join(", ")}
           </p>
+          {hasDeliveryLocation && (
+            <a
+              className="btn btn-outline-success"
+              href={navigationUrl}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <span aria-hidden="true">📍</span> Navigate to delivery location
+            </a>
+          )}
         </div>
 
         {/* Items */}
