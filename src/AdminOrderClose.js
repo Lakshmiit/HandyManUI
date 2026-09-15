@@ -268,10 +268,20 @@ const AdminOrderClose = () => {
         ...latestData,
         id: groceryItemId,
         status: "Completed",
-        AssignedTo: "",
-        DeliveryPartnerUserId: "",
-        deliveryAssignedTime: "",
-        deliverySubmitTime: "",
+
+
+
+
+        VendorId: latestData.VendorId,
+        AssignedTo: latestData.AssignedTo,
+        DeliveryPartnerUserId: latestData.DeliveryPartnerUserId,
+        deliveryAssignedTime: latestData.deliveryAssignedTime,
+        deliverySubmitTime: latestData.deliverySubmitTime,
+        
+        // AssignedTo: "",
+        // DeliveryPartnerUserId: "",
+        // deliveryAssignedTime: "",
+        // deliverySubmitTime: "",
       };
 
       const cancelResponse = await fetch(
