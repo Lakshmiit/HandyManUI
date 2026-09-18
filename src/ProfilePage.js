@@ -36,6 +36,7 @@ import HomeDecor from "./img/HomeDecor.jpeg";
 import HomeAppliances from "./img/Kitchenware.jpeg";
 import BabyKidsImg from "./img/BabyKids.jpeg";
 import PoojaImg from "./img/Pooja.jpeg";
+import FoodImg from "./img/food.jpg";
 import HairImg from "./img/HairCare.jpeg";
 import BathBodyImg from "./img/BathBody.jpeg";
 import RavvaImg from "./img/RiceRavva.jpeg";
@@ -220,6 +221,7 @@ const groceryCategories = [
     value: "Dry Fruits & Bakery",
     image: DryfruitsImg,
   },
+  { label: "Food Hub", value: "Food Hub", image: FoodImg },
   { label: "Pooja Essentials", value: "Puja Essentials", image: PoojaImg },
   { label: "Health Care", value: "Health Care", image: HealthImg },
   { label: "Drinks & Juices", value: "Drinks & Juices", image: DrinkImg },
@@ -237,17 +239,44 @@ const groceryCategories = [
   { label: "Kitchenware", value: "Kitchenware Appliances", image: KitchenImg,},
   {  label: "Home Decors",  value: "Home Decors", image: HomeDecor,},
   { label: 'Electronics Appliances', value: 'Electronics appliances', image: Electronics },   
-  { label: 'Hardware Items', value: 'Hardware items', image: Hardware },  
+  { label: 'Hardware Items', value: 'Hardware items', image: Hardware },
+  // { label: 'Hangers & Hooks', value: 'Hangers & Hooks', image: Hardware },  
 ];
 const collectionsCategories = [
   { label: "Dupatta Sets", value: "Dupatta Sets", image: setkurti },
   { label: "Kurta Sets", value: "Kurta Sets", image: kurti },
 ];
 
-const IMAGE_API = `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/FileUpload/download?generatedfilename=`;
+const BLOB_BASE_URL =
+  "https://lmartfiles.blob.core.windows.net/userattechements";
+
+const getAzureImageUrl = (imageName) => {
+  if (!imageName) return "";
+
+  const value = String(imageName).trim();
+
+  // API already returned a complete URL
+  if (
+    value.startsWith("http://") ||
+    value.startsWith("https://")
+  ) {
+    return value;
+  }
+
+  // API returned Base64 image directly
+  if (value.startsWith("data:image/")) {
+    return value;
+  }
+
+  // Otherwise use Azure Blob Storage
+  const cleanName = value.replace(/^\/+/, "");
+
+  return `${BLOB_BASE_URL}/${encodeURIComponent(cleanName)}`;
+};
 
 const VENDOR_ORDERS_API_BASE = "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api";
 const GET_VENDOR_ORDERS_URL = `${VENDOR_ORDERS_API_BASE}/Mart/GetVendorOrdersByVendorId`;
+const GET_VENDOR_CATEGORIES_URL = `${VENDOR_ORDERS_API_BASE}/Categorie/GetCategorieDetailsByVendorId`;
 const VENDOR_ORDERS_POLL_INTERVAL_MS = 25000;
 
 const DEFAULT_PINCODE = "530048";
@@ -259,6 +288,8 @@ const ProfilePage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [listening, setListening] = useState(false);
   const [loading, setLoading] = useState(false);
+  // vendorId -> [{ id, categoryName, image }]  (Approved only)
+const [vendorCategoryDetails, setVendorCategoryDetails] = useState({});
   const navigate = useNavigate();
   const handleVendorPortal = () => {
      const vendorId = localStorage.getItem("vendorSession");
@@ -335,6 +366,7 @@ const ProfilePage = () => {
   const [district, setDistrict] = useState("");
   const [zipCode, setZipCode] = useState(DEFAULT_PINCODE);
   const [approvedVendorListJson, setApprovedVendorListJson] = useState([]);
+  const [vendorStoreImages, setVendorStoreImages] = useState({});
   const [mobileNumber, setMobileNumber] = useState("");
   const [status, setStatus] = useState("");
   const [id, setId] = useState("");
@@ -347,6 +379,7 @@ const ProfilePage = () => {
    const [deliveryOrderCount, setDeliveryOrderCount] = useState(0);
   const [deliveryHasNewOrder, setDeliveryHasNewOrder] = useState(false);
   const deliveryKnownOrderIdsRef = useRef(null);
+   const locationRequestRef = useRef(false);
   const [paidAmount] = useState("");
   const [items] = useState("");
   const HEADER_H = 0;
@@ -530,6 +563,186 @@ const ProfilePage = () => {
     };
      // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [zipCode, pinCode, preferLMartDefault, district]);
+
+  useEffect(() => {
+  if (!approvedVendorListJson.length) {
+    setVendorStoreImages({});
+    return;
+  }
+
+  let cancelled = false;
+
+  const loadVendorStoreImages = async () => {
+    try {
+      const results = await Promise.all(
+        approvedVendorListJson.map(async (vendor) => {
+          const currentVendorId = vendor?.vendorId;
+
+          if (!currentVendorId) {
+            return {
+              vendorId: "",
+              imageUrl: "",
+            };
+          }
+
+          try {
+            const response = await axios.get(
+              "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/VendorUploadProducts/GetVendorProductsvalues",
+              {
+                params: {
+                  vendorId: currentVendorId,
+                },
+              }
+            );
+
+            const data = Array.isArray(response?.data)
+              ? response.data[0]
+              : response?.data;
+
+            if (!data) {
+              return {
+                vendorId: currentVendorId,
+                imageUrl: "",
+              };
+            }
+
+            /*
+             * API response:
+             *
+             * image: [
+             *   "data:image/jpeg;base64,/9j/4AAQ..."
+             * ]
+             *
+             * Use the actual image returned by the API.
+             */
+            const imageValue =
+              Array.isArray(data?.image) && data.image.length > 0
+                ? data.image[0]
+                : data?.image || data?.imageName || data?.ImageName || "";
+
+            const imageUrl = getAzureImageUrl(imageValue);
+
+            console.log(
+              "Vendor:",
+              data?.storeName,
+              "VendorId:",
+              currentVendorId,
+              "Image:",
+              imageUrl ? "FOUND" : "NOT FOUND"
+            );
+
+            return {
+              vendorId: currentVendorId,
+              imageUrl,
+            };
+          } catch (error) {
+            console.error(
+              `Failed to load store image for vendor ${currentVendorId}:`,
+              error
+            );
+
+            return {
+              vendorId: currentVendorId,
+              imageUrl: "",
+            };
+          }
+        })
+      );
+
+      if (cancelled) return;
+
+      const imageMap = {};
+
+      results.forEach((item) => {
+        if (item.vendorId && item.imageUrl) {
+          imageMap[item.vendorId] = item.imageUrl;
+        }
+      });
+
+      console.log("Vendor Store Images:", imageMap);
+
+      setVendorStoreImages(imageMap);
+    } catch (error) {
+      console.error("Failed to load vendor store images:", error);
+
+      if (!cancelled) {
+        setVendorStoreImages({});
+      }
+    }
+  };
+
+  loadVendorStoreImages();
+
+  return () => {
+    cancelled = true;
+  };
+}, [approvedVendorListJson]);
+
+useEffect(() => {
+  if (!approvedVendorListJson.length) {
+    setVendorCategoryDetails({});
+    return;
+  }
+
+  let cancelled = false;
+
+  const loadVendorCategoryDetails = async () => {
+    try {
+      const results = await Promise.all(
+        approvedVendorListJson.map(async (vendor) => {
+          const currentVendorId = vendor?.vendorId;
+          if (!currentVendorId) return { vendorId: "", categories: [] };
+
+          try {
+            const response = await axios.get(GET_VENDOR_CATEGORIES_URL, {
+              params: { vendorId: currentVendorId },
+            });
+
+            const data = Array.isArray(response?.data) ? response.data : [];
+
+            // Only bind categories the admin has actually approved
+            const approvedCategories = data
+              .filter((c) => String(c?.status).toLowerCase() === "approved")
+              .map((c) => ({
+                id: c.id,
+                categoryName: c.categoryName || "",
+                image:
+                  Array.isArray(c.images) && c.images.length > 0
+                    ? getAzureImageUrl(c.images[0])
+                    : "",
+              }));
+
+            return { vendorId: currentVendorId, categories: approvedCategories };
+          } catch (error) {
+            console.error(
+              `Failed to load categories for vendor ${currentVendorId}:`,
+              error,
+            );
+            return { vendorId: currentVendorId, categories: [] };
+          }
+        }),
+      );
+
+      if (cancelled) return;
+
+      const map = {};
+      results.forEach((item) => {
+        if (item.vendorId) map[item.vendorId] = item.categories;
+      });
+
+      setVendorCategoryDetails(map);
+    } catch (error) {
+      console.error("Failed to load vendor category details:", error);
+      if (!cancelled) setVendorCategoryDetails({});
+    }
+  };
+
+  loadVendorCategoryDetails();
+
+  return () => {
+    cancelled = true;
+  };
+}, [approvedVendorListJson]);
 
   const getVendorFromJson = (vendorId) =>
     approvedVendorListJson.find((v) => v.vendorId === vendorId);
@@ -985,58 +1198,55 @@ const ProfilePage = () => {
     return makePlaceholderImage(cat, "ff5722", "ffffff");
   };
 
+  const getVendorCategoryImageFromApi = (vendorId, categoryName) => {
+  const apiCategories = vendorCategoryDetails[vendorId] || [];
+  const match = apiCategories.find((c) => c.categoryName === categoryName);
+  if (match?.image) return match.image;
+  // Fallback to the existing static/placeholder logic if this vendor's
+  // category has no approved image yet (e.g. "Pending Approval")
+  return getVendorCategoryImage(categoryName);
+};
+
+const VENDOR_PALETTES = [
+  { gradient: "linear-gradient(135deg,#ff6b35,#d84315)", solid: "#d84315", light: "#ffd1c2", shadow: "rgba(216,67,21,0.35)" },
+  { gradient: "linear-gradient(135deg,#9c6cff,#4527a0)", solid: "#4527a0", light: "#ddd0ff", shadow: "rgba(69,39,160,0.35)" },
+  { gradient: "linear-gradient(135deg,#00d4c7,#00695c)", solid: "#00695c", light: "#b8eee9", shadow: "rgba(0,105,92,0.35)" },
+  { gradient: "linear-gradient(135deg,#7ed957,#1b5e20)", solid: "#1b5e20", light: "#c9efbd", shadow: "rgba(27,94,32,0.35)" },
+  { gradient: "linear-gradient(135deg,#ff4f9a,#880e4f)", solid: "#880e4f",  light: "#f8c4dd", shadow: "rgba(136,14,79,0.35)" },
+  { gradient: "linear-gradient(135deg,#ffd54f,#e65100)", solid: "#e65100", light: "#ffe8a3", shadow: "rgba(230,81,0,0.35)" },
+];
+
+const getVendorGradient = (name = "") => {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  const idx = Math.abs(hash) % VENDOR_PALETTES.length;
+  return VENDOR_PALETTES[idx];
+};
+
   useEffect(() => {
-    const allVendorProducts = Object.values(vendorSelectedProducts).flat();
-    if (!allVendorProducts.length) return;
-    let cancelled = false;
-    const controller = new AbortController();
+  const allVendorProducts = Object.values(vendorSelectedProducts).flat();
 
-    const targets = allVendorProducts
-      .map((p) => ({
-        productId: p.id,
-        photo: Array.isArray(p.images) ? p.images[0] : null,
-      }))
-      .filter((x) => x.photo && !imageUrls[x.productId]);
+  if (!allVendorProducts.length) return;
 
-    const cachedMap = {};
-    const misses = [];
-    for (const { productId, photo } of targets) {
-      const cached = ImageCache.getBase64(photo);
-      if (cached) {
-        cachedMap[productId] = `data:image/jpeg;base64,${cached}`;
-      } else {
-        misses.push({ productId, photo });
-      }
+  const imageMap = {};
+
+  allVendorProducts.forEach((p) => {
+    const photo = Array.isArray(p.images) ? p.images[0] : "";
+
+    if (photo && !imageUrls[p.id]) {
+      imageMap[p.id] = getAzureImageUrl(photo);
     }
-    if (Object.keys(cachedMap).length) {
-      setImageUrls((prev) => ({ ...prev, ...cachedMap }));
-    }
+  });
 
-    const fetchOne = async ({ productId, photo }) => {
-      try {
-        const res = await fetch(`${IMAGE_API}${encodeURIComponent(photo)}`, {
-          signal: controller.signal,
-        });
-        const json = await res.json();
-        const b64 = json?.imageData || "";
-        if (!b64 || cancelled) return;
-        ImageCache.setBase64(photo, b64);
-        setImageUrls((prev) =>
-          prev[productId]
-            ? prev
-            : { ...prev, [productId]: `data:image/jpeg;base64,${b64}` },
-        );
-      } catch {}
-    };
+  if (Object.keys(imageMap).length) {
+    setImageUrls((prev) => ({
+      ...prev,
+      ...imageMap,
+    }));
+  }
 
-    Promise.allSettled(misses.map(fetchOne));
-
-    return () => {
-      cancelled = true;
-      controller.abort();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [vendorSelectedProducts]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [vendorSelectedProducts]);
 
   const placeholderSuggestions = [
     'Search "Milk"',
@@ -1134,19 +1344,17 @@ const ProfilePage = () => {
         if (cartImages[p.id]) return;
         if (!p.imageFile || cartImages[p.id]) return;
         try {
-          const res = await fetch(
-            `${IMAGE_API}${encodeURIComponent(p.imageFile)}`,
-          );
-          const json = await res.json();
-          if (json?.imageData) {
-            setCartImages((prev) => ({
-              ...prev,
-              [p.id]: `data:image/jpeg;base64,${json.imageData}`,
-            }));
-          }
-        } catch (err) {
-          console.error("Cart image load failed", err);
+        const imageUrl = getAzureImageUrl(p.imageFile);
+
+        if (imageUrl) {
+          setCartImages((prev) => ({
+            ...prev,
+            [p.id]: imageUrl,
+          }));
         }
+      } catch (err) {
+        console.error("Cart image load failed", err);
+      }
       });
     });
   }, [cartImages]);
@@ -1159,19 +1367,17 @@ const ProfilePage = () => {
       cat.products.forEach(async (item) => {
         if (!item.imageFile || cartImages[item.id]) return;
         try {
-          const res = await fetch(
-            `${IMAGE_API}${encodeURIComponent(item.imageFile)}`,
-          );
-          const json = await res.json();
-          if (json?.imageData) {
-            setCartImages((prev) => ({
-              ...prev,
-              [item.id]: `data:image/jpeg;base64,${json.imageData}`,
-            }));
-          }
-        } catch (e) {
-          console.error("Cart image fetch failed", e);
+        const imageUrl = getAzureImageUrl(item.imageFile);
+
+        if (imageUrl) {
+          setCartImages((prev) => ({
+            ...prev,
+            [item.id]: imageUrl,
+          }));
         }
+      } catch (e) {
+        console.error("Cart image fetch failed", e);
+      }
       });
     });
   }, [cartImages]);
@@ -1222,30 +1428,10 @@ const ProfilePage = () => {
   });
 
   useEffect(() => {
-    // let cancelled = false;
-    // const sendLog = async () => {
-    //   try {
-    //     const payload = {
-    //       id: "1",
-    //       date: "string",
-    //       mobileNumber: profile.mobileNumber,
-    //       message: "User fetching grocery items in profile page"
-    //     };
-    //     await axios.post(
-    //       `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/LmartLogs/UploadlogsDetails`,
-    //       payload
-    //     );
-    //   } catch (err) {
-    //     console.error("Log API failed", err);
-    //   }
-    // };
     const fetchProducts = async (showLoader = false) => {
-      // sendLog();
       if (showLoader) setLoading(true);
       try {
-        // Shared across pages: first caller (Profile, Vendor preview, Vendor
-        // stock update...) hits the API, everyone else reuses the cached copy.
-        const items = await getGroceryItems();
+       const items = await getGroceryItems();
         const normalized = items
           .map(normalizeProduct)
           .filter((p) => p.status === "Approved");
@@ -1292,16 +1478,14 @@ const ProfilePage = () => {
     filteredProducts.forEach(async (p) => {
       if (!p.images?.[0] || imageUrls[p.id]) return;
       try {
-        const res = await fetch(
-          `${IMAGE_API}${encodeURIComponent(p.images[0])}`,
-          { signal: controller.signal },
-        );
-        const json = await res.json();
-        if (!json?.imageData) return;
-        setImageUrls((prev) => ({
-          ...prev,
-          [p.id]: `data:image/jpeg;base64,${json.imageData}`,
-        }));
+        const imageUrl = getAzureImageUrl(p.images[0]);
+
+      if (!imageUrl) return;
+
+      setImageUrls((prev) => ({
+        ...prev,
+        [p.id]: imageUrl,
+      }));
       } catch {}
     });
     return () => controller.abort();
@@ -1536,82 +1720,6 @@ const ProfilePage = () => {
     );
   };
 
-  // useEffect(() => {
-  //   const fetchDeliveryData = async () => {
-  //     try {
-  //       const response = await fetch(
-  //         `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Mart/GetProductDetails?id=${id}`
-  //       );
-  //       if (!response.ok) {
-  //         throw new Error("Failed to fetch grocery product data");
-  //       }
-  //       const data = await response.json();
-  //       console.log("Fetched Grocery Data:", data);
-  //       setCartData(data);
-  //       setId(data.id);
-  //       setMartId(data.martId);
-  //       setDate(data.date);
-  //       setMobileNumber(data.customerPhoneNumber);
-  //       setAddress(data.address);
-  //       setState(data.state);
-  //       setCity(data.district);
-  //       setPinCode(data.zipCode);
-  //       setPaymentMode(data.paymentMode);
-  //       setTransactionDetails(data.utrTransactionNumber);
-  //       setLongitude(data.longitude);
-  //       setLatitude(data.latitude);
-  //       setGrandTotal(data.grandTotal);
-  //       setPaymentMode(data.paymentMode);
-  //       setTotalItemsSelected(data.totalItemsSelected);
-  //       setTransactionStatus(data.transactionStatus);
-  //       setPaidAmount(data.paidAmount);
-  //       setTransactionNumber(data.transactionNumber);
-  //       setLatitude(data.latitude);
-  //       setLongitude(data.longitude);
-  //       setTotalItemsSelected(data.totalItemsSelected);
-  //       setDeliveryPartnerUserId(data.deliveryPartnerUserId);
-  //       setAssignedDateTime(data.deliveryAssignedTime);
-  //       setAssignedTo(data.assignedTo);
-  //       let allProducts = [];
-  //       let totalAmountFromApi = 0;
-
-  //       if (data.categories && Array.isArray(data.categories)) {
-  //         data.categories.forEach((cat) => {
-  //           totalAmountFromApi += Number(cat.totalAmount) || 0;
-  //           cat.products.forEach((p, idx) => {
-  //             allProducts.push({
-  //               serial: allProducts.length + 1,
-  //               name: p.productName,
-  //               category: cat.categoryName,
-  //               mrp: p.mrp,
-  //               discount: p.discount,
-  //               afterDiscountPrice: p.afterDiscountPrice,
-  //               quantity: p.noOfQuantity,
-  //               total: p.afterDiscountPrice * p.noOfQuantity,
-  //             });
-  //           });
-  //         });
-  //         setItems(allProducts);
-  //       }
-  //       const grandTotalNumeric = Number(data.grandTotal) || 0;
-  //       const cashback = totalAmountFromApi - grandTotalNumeric;
-  //       if ((cashback >= 49 && cashback <= 51) ||(cashback >= 99 && cashback <= 101) || (cashback >= 199 && cashback <= 201))
-  //       {
-  //         setCashbackAmount(cashback);
-  //       } else {
-  //         setCashbackAmount(0);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching grocery product data:", error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   if (id) {
-  //     fetchDeliveryData();
-  //   }
-  // }, [id]);
-
   const loadDeliveryPartnerTickets = useCallback(async () => {
     try {
       setDeliveryTicketsLoading(true);
@@ -1675,9 +1783,6 @@ const ProfilePage = () => {
       setIsRegistered(reg);
       setPartnerStatus(st);
       if (reg && st === "open") {
-        // Approved delivery partner — go straight to their dashboard
-        // (name + bell + voice alerts) instead of the old ticket-list
-        // modal.
         navigate(`/deliveryPartnerDashboard/${userType}/${userId}`);
       } else if (reg) {
         await loadDeliveryPartnerTickets();
@@ -1846,56 +1951,13 @@ const ProfilePage = () => {
       alert("Failed to update. Please try again.");
     }
   };
-  // useEffect(() => {
-  //   const autoOpenForNewUser = async () => {
-  //     if (!userId) return;
-  //     try {
-  //       const rec = await getReferralRecord(userId);
-  //       const REFERRAL_LOCK_KEY = `hm_referral_lock_${userId}`;
-  //       const lock = localStorage.getItem(REFERRAL_LOCK_KEY);
-  //       const hasNumbers = Boolean((rec?.referralNumbers || "").trim());
-  //       // ✅ FINAL CONDITION
-  //       if (!lock && !hasNumbers) {
-  //         setRedeemOpen(true);
-  //       } else {
-  //         setRedeemOpen(false);
-  //       }
-  //     } catch (e) {
-  //       console.error(e);
-  //       setRedeemOpen(true);
-  //     }
-  //   };
-  //   autoOpenForNewUser();
-  // }, [userId]);
-
-  // const handleCategoryClick = async (category) => {
-  //   const { value } = category;
-  //   try {
-  //     setSelectedCategory(category);
-  //     setProducts([]);
-  //     setError("");
-  //     const encodedCategory = encodeURIComponent(value);
-  //     localStorage.setItem("encodedCategory", encodedCategory);
-  //     navigate(`/offers/${userType}/${userId}`, {
-  //       state: { encodedCategory },
-  //     });
-  //   } catch (error) {
-  //     console.error("Error fetching products:", error);
-  //     setProducts([]);
-  //     setError(`Oops! No products found for ${value} category.`);
-  //   }
-  // };
 
   const handleVendorCategoryClick = (vendor, category) => {
     const mobileNumber = profile?.mobileNumber || "";
 
     const encodedCategory = encodeURIComponent(category.category);
 
-    // vendorlist.json only carries productId + discount + qty per vendor
-    // product — resolve each one against the grocery catalog this page has
-    // already fetched (allProducts), so the grocery listing page doesn't
-    // need to make any API call of its own for a vendor's products.
-    const resolvedProducts = (category.products || [])
+   const resolvedProducts = (category.products || [])
       .map((entry) => {
         const base = allProducts.find(
           (p) => String(p.id) === String(entry.productId),
@@ -1949,13 +2011,7 @@ const ProfilePage = () => {
     const mobileNumber = profile?.mobileNumber || "";
     const encodedCategory = encodeURIComponent(value);
     localStorage.setItem("encodedCategory", encodedCategory);
-    // This is a normal (non-vendor) grocery category. If the user previously
-    // opened a vendor's category tab, "vendorGrocerySelection" is still
-    // sitting in localStorage from that visit — GroceryItems.js falls back to
-    // it whenever the current navigation state doesn't say otherwise, which
-    // skips the real GetGroceryItemsBycategory fetch entirely and shows stale/
-    // empty results. Clear it so this click goes through the live API.
-    localStorage.removeItem("vendorGrocerySelection");
+     localStorage.removeItem("vendorGrocerySelection");
     if (value === "Kitchenware Appliances") {
       navigate(`/grocery/${userType}/${userId}`, {
         state: { mobileNumber },
@@ -1978,28 +2034,8 @@ const ProfilePage = () => {
         state: { mobileNumber },
       });
     }
-    //   navigate(`/grocery/${userType}/${userId}`, {
-    //   state: { mobileNumber },
-    // });
   };
 
-  // const handleDressCategoryClick = async (category) => {
-  //   const { value } = category;
-  //   try {
-  //     setSelectedCategory(category);
-  //     setDress([]);
-  //     setError("");
-  //     const encodedCategory = encodeURIComponent(value);
-  //     localStorage.setItem("encodedCategory", encodedCategory);
-  //     navigate(`/lakshmiCollections/${userType}/${userId}`, {
-  //       state: { encodedCategory },
-  //     });
-  //   } catch (error) {
-  //     console.error("Error fetching collections:", error);
-  //     setGrocery([]);
-  //     setError(`Oops! No collections found for ${value} category.`);
-  //   }
-  // };
   const buildMartUpdateSignature = (ticket) =>
     [
       ticket?.status || "",
@@ -2282,10 +2318,7 @@ const ProfilePage = () => {
 
         setDistrict(apiDistrict);
 
-        // If the API gave us no pincode, but the customer's district is
-        // Visakhapatnam, default the vendor tabs to the "LMart" store instead
-        // of just falling back to DEFAULT_PINCODE's first vendor.
-        const isVisakhapatnamNoPincode =
+       const isVisakhapatnamNoPincode =
           !apiPincode && apiDistrict.toLowerCase() === "visakhapatnam";
         setPreferLMartDefault(isVisakhapatnamNoPincode);
 
@@ -2314,6 +2347,101 @@ const ProfilePage = () => {
     };
     fetchProfileData();
   }, [userType, userId, isMobile]);
+
+   useEffect(() => {
+    if (!userId || userType !== "customer") return;
+
+    let cachedLocation = null;
+    try {
+      cachedLocation = JSON.parse(
+        localStorage.getItem(`deliveryLocation-${userId}`) || "null",
+      );
+    } catch {
+      localStorage.removeItem(`deliveryLocation-${userId}`);
+    }
+    if (cachedLocation?.latitude && cachedLocation?.longitude) {
+      setProfile((previousProfile) => ({
+        ...previousProfile,
+        latitude: cachedLocation.latitude,
+        longitude: cachedLocation.longitude,
+      }));
+    }
+
+    const fetchCustomerAddress = async () => {
+      try {
+        const response = await axios.get(
+          `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Address/GetAddressById/${userId}`,
+        );
+        const data = Array.isArray(response.data)
+          ? response.data[0]
+          : response.data;
+        if (!data) return;
+
+        setProfile((previousProfile) => ({
+          ...previousProfile,
+          ...data,
+          latitude:
+            data.latitude ||
+            data.Latitude ||
+            data.userLatitude ||
+            data.UserLatitude ||
+            previousProfile.latitude ||
+            cachedLocation?.latitude ||
+            "",
+          longitude:
+            data.longitude ||
+            data.Longitude ||
+            data.userLongitude ||
+            data.UserLongitude ||
+            previousProfile.longitude ||
+            cachedLocation?.longitude ||
+            "",
+        }));
+      } catch (error) {
+        console.error("Error fetching customer address:", error);
+      }
+    };
+
+    fetchCustomerAddress();
+  }, [userId, userType]);
+
+  useEffect(() => {
+    if (!userId || userType !== "customer") return;
+
+    const locationKey = `deliveryLocation-${userId}`;
+    if (localStorage.getItem(locationKey) || locationRequestRef.current) {
+      return;
+    }
+
+    const latitude = profile.latitude ?? profile.Latitude;
+    const longitude = profile.longitude ?? profile.Longitude;
+    const hasLatitude = latitude !== undefined && latitude !== null && String(latitude).trim();
+    const hasLongitude = longitude !== undefined && longitude !== null && String(longitude).trim();
+    if (hasLatitude && hasLongitude) return;
+
+    if (!navigator.geolocation) return;
+
+    locationRequestRef.current = true;
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        const location = {
+          latitude: String(coords.latitude),
+          longitude: String(coords.longitude),
+        };
+        localStorage.setItem(locationKey, JSON.stringify(location));
+        setProfile((previousProfile) => ({
+          ...previousProfile,
+          ...location,
+        }));
+      },
+      (error) => {
+        locationRequestRef.current = false;
+        console.error("Unable to capture delivery location:", error);
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
+    );
+  }, [profile.latitude, profile.longitude, profile.Latitude, profile.Longitude, userId, userType]);
+
 
   useEffect(() => {
     if (category && district) {
@@ -2398,13 +2526,40 @@ const ProfilePage = () => {
   const filteredGroceryData = groceryData.filter((t) =>
     t.martId?.toString().toLowerCase().includes(searchOrderId.toLowerCase()),
   );
-// const sortedCategories = [...(categories ?? [])].sort((a, b) =>
-//   String(b?.category || b?.categoryName || "").localeCompare(
-//     String(a?.category || a?.categoryName || ""),
-//     undefined,
-//     { sensitivity: "base" }
-//   )
-// );
+
+   let cachedProfileLocation = null;
+  try {
+    cachedProfileLocation = JSON.parse(
+      localStorage.getItem(`deliveryLocation-${userId}`) || "null",
+    );
+  } catch {
+    cachedProfileLocation = null;
+  }
+  const profileLatitude =
+    profile.latitude || profile.Latitude || cachedProfileLocation?.latitude;
+  const profileLongitude =
+    profile.longitude || profile.Longitude || cachedProfileLocation?.longitude;
+  const hasProfileLocation =
+    String(profileLatitude).trim() !== "" &&
+    String(profileLongitude).trim() !== "" &&
+    Number.isFinite(Number(profileLatitude)) &&
+    Number.isFinite(Number(profileLongitude));
+  const renderProfileMap = () =>
+    hasProfileLocation ? (
+      <iframe
+        title="Saved delivery location"
+        src={`https://www.google.com/maps?q=${encodeURIComponent(
+          `${profileLatitude},${profileLongitude}`,
+        )}&z=15&output=embed`}
+        width="100%"
+        height="220"
+        style={{ border: 0, borderRadius: "8px" }}
+        loading="lazy"
+        allowFullScreen
+      />
+    ) : (
+      <small className="text-muted">Delivery location not captured yet.</small>
+    );
 
   return (
     <>
@@ -2511,16 +2666,6 @@ const ProfilePage = () => {
                 ></small>
               </div>
               <div className="d-flex align-items-center">
-                {/* Coins (Clickable) */}
-                {/* <div 
-              className="coin-wrap"
-              style={{ marginLeft: 10, cursor: "pointer" }}
-              onClick={() => setShowCoinsModal(true)}
-            >
-              <span className="coin-value">
-                {pointsLoading ? "0" : userPoints}
-              </span>
-            </div> */}
               </div>
 
               {/* Wallet Amount */}
@@ -2576,76 +2721,6 @@ const ProfilePage = () => {
           </div>
         </div>
       )}
-      {/* <Modal
-  show={showCoinsModal}
-  onHide={() => setShowCoinsModal(false)}
-  centered
->
-  <Modal.Header closeButton>
-    <Modal.Title>🎁 Redeem Coins</Modal.Title>
-  </Modal.Header>
-  <Modal.Body> */}
-      {/* Coins Display */}
-      {/* <div className="text-center mb-3"> */}
-      {/* <h5 className="gold-shine-text">{pointsLoading ? "0" : userPoints} Coins</h5> */}
-      {/* </div> */}
-      {/* Get Coins Button */}
-      {/* {shouldShowGetCoins && !isReferralUsed && (
-      <button
-        onClick={handleGetCoins}
-        disabled={pointsLoading || userPoints >= 100 || !claimAvailable}
-        className="bg-primary w-100"
-        style={{
-          fontSize: 14,
-          borderRadius: 6,
-          color: "white",
-          padding: "8px",
-          border: "none",
-        }}
-      >
-        {pointsLoading ? "Checking..." : "Get Coins"}
-      </button>
-    )} */}
-      {/* Confetti overlay */}
-      {/* {showConfetti && (
-                      <Confetti width={windowSize.width} height={windowSize.height} />
-                    )} */}
-      {/* Toast-like “Congrats” message */}
-      {/* {showMessage && (
-                      <div
-                        style={{
-                          position: "fixed",
-                          top: "40%",
-                          left: "50%",
-                          transform: "translate(-50%, -50%)",
-                          backgroundColor: "#fff",
-                          color: "#000",
-                          padding: "20px 40px",
-                          borderRadius: "12px",
-                          boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
-                          fontSize: 18,
-                          fontWeight: "bold",
-                          zIndex: 9999,
-                          animation: "fadeInUp 0.5s ease",
-                        }}
-                      >
-                        🎉 Congrats! You got <span style={{ color: "#007bff" }}>100</span> points!
-                      </div>
-                    )} */}
-      {/* Referral Numbers */}
-      {/* <div style={{ fontSize: "12px" }}>
-          {refLoading ? (
-            "Loading..."
-          ) : (
-            displayNumbers.split(",").map((item, index) => (
-              <div key={index}>
-                {item.trim()}
-              </div>
-            ))
-          )}
-      </div> */}
-      {/* </Modal.Body>
-</Modal> */}
 
       <div className="pt-1 mt-100">
         <div
@@ -2707,6 +2782,7 @@ const ProfilePage = () => {
                               Address
                             </div>
                             <p className="value">{profile.address}</p>
+                            <div className="mt-2 mb-2">{renderProfileMap()}</div>
                             <hr />
                             <p
                               className="logout-btn m-1"
@@ -2749,6 +2825,7 @@ const ProfilePage = () => {
                     <hr style={{ margin: "4px 0" }} />
                     <div className="fw-bold">Address</div>
                     <p className="mb-2">{profile.address}</p>
+                      <div className="mt-2 mb-2">{renderProfileMap()}</div>
                     <hr style={{ margin: "4px 0" }} />
                     <div
                       className="d-flex align-items-start"
@@ -2996,6 +3073,23 @@ const ProfilePage = () => {
                         .filter(Boolean)
                         .join(", ")}
                     </div>
+                     {Number.isFinite(Number(selectedOrder.latitude)) &&
+                      Number.isFinite(Number(selectedOrder.longitude)) && (
+                        <div className="mb-2">
+                          <strong>Delivery Location:</strong>
+                          <iframe
+                            title="Customer delivery location"
+                            src={`https://www.google.com/maps?q=${encodeURIComponent(
+                              `${selectedOrder.latitude},${selectedOrder.longitude}`,
+                            )}&z=15&output=embed`}
+                            width="100%"
+                            height="220"
+                            style={{ border: 0, borderRadius: "8px" }}
+                            loading="lazy"
+                            allowFullScreen
+                          />
+                        </div>
+                      )}
                     {/* View Details Link */}
                     <div className="mb-1">
                       <span
@@ -3316,24 +3410,7 @@ const ProfilePage = () => {
                 )}
               </Modal.Body>
             </Modal>
-            {/* {showRedeem && (
-            <ReedemCode
-              openOverride={true}     
-              showTrigger={false} 
-              initialOpen={true}
-              userPoints={userPoints}
-              onSendRef={handleSendRef}
-              onRedeem={handleRedeemCoins}
-              referrerId={userId}
-              customerName={profile.fullName}
-             onInviteSuccess={(data) => {
-              setShowCoinsModal(true);
-              setRefRecord(data.refRecord);
-              setUserPoints(data.points || 0);
-            }}
-            />
-        )} */}
-
+      
             {isMobile && (
               <div>
                 <div
@@ -3712,7 +3789,7 @@ const ProfilePage = () => {
               >
                 <div className="shadow-lg p-2 rounded-5 text-center bg-transparent border-0">
                   {/* Vendor Tabs */}
-                  <div className="d-flex align-items-center mb-3" style={{ gap: "6px", marginBottom: "12px" }}>
+                  <div className="d-flex align-items-center mb-3" style={{ gap: "6px", marginBottom: "10px" }}>
                   <button
                     type="button"
                     onClick={() => scrollVendorTabs(-1)}
@@ -3745,7 +3822,7 @@ const ProfilePage = () => {
                       overflowY: "hidden",
                       WebkitOverflowScrolling: "touch",
                       scrollbarWidth: "none",
-                      padding: "5px 8px 8px",
+                      padding: "5px 5px 8px",
                     }}
                   >
                     <div
@@ -3754,130 +3831,106 @@ const ProfilePage = () => {
                         width: "max-content",
                       }}
                     >
-                      {/* Lakshmi Mart */}
-                      {/* <button
-                        type="button"
-                        onClick={() => setSelectedMartTab("Lakshmi Mart")}
-                        className="vendor-tab d-flex flex-column align-items-center bg-transparent border-0"
-                        style={{
-                          flex: "0 0 auto",
-                          padding: "2px 4px",
-                          width: "64px",
-                        }}
-                      >
-                        <div
+                      {/* Vendors */}
+                    {approvedVendorListJson.map((v) => {
+                      const isActive = selectedMartTab === v.vendorId;
+                      const palette = getVendorGradient(v.storeName);
+                      const vendorImage = vendorStoreImages[v.vendorId];
+
+                      return (
+                        <button
+                          type="button"
+                          key={v.vendorId}
+                          data-vendor-id={v.vendorId}
+                          onClick={() => {
+                            setSelectedMartTab(v.vendorId);
+                            localStorage.setItem("selectedVendorId", v.vendorId);
+                          }}
+                          className="vendor-tab-v2 d-flex flex-column align-items-center bg-transparent border-0"
                           style={{
-                            width: "44px",
-                            height: "44px",
-                            borderRadius: "50%",
+                            flex: "0 0 auto",
+                            padding: "4px 6px",
+                            width: "90px",
+                          }}
+                        >
+                          {/* Vendor Image Card */}
+                          <div
+                            className={
+                              isActive
+                                ? "vendor-avatar-card active"
+                                : "vendor-avatar-card"
+                            }
+                            style={{
+                            width: "90px",
+                            height: "90px",
+                            borderRadius: "15px",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
-                            fontSize: "16px",
-                            fontWeight: "800",
-                            border:
-                              selectedMartTab === "Lakshmi Mart"
-                                ? "2px solid #ff5722"
-                                : "1px solid #ffddcc",
-                            background:
-                              selectedMartTab === "Lakshmi Mart"
-                                ? "#ff5722"
-                                : "#fff3ed",
-                            color:
-                              selectedMartTab === "Lakshmi Mart"
-                                ? "#fff"
-                                : "#ff5722",
-                            transition: "all 0.2s ease",
-                          }}
-                        >
-                          LM
-                        </div>
-                        <span
-                          style={{
-                            fontSize: "10px",
-                            fontWeight:
-                              selectedMartTab === "Lakshmi Mart"
-                                ? "700"
-                                : "600",
-                            color:
-                              selectedMartTab === "Lakshmi Mart"
-                                ? "#ff5722"
-                                : "#555",
-                            marginTop: "4px",
-                            whiteSpace: "nowrap",
                             overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            maxWidth: "64px",
+                            flexShrink: 0,
+                            gap: "2px",
+                            border: isActive
+                              ? `2px solid ${palette.solid}`
+                              : "1px solid #FFFFFF",
+                            backgroundImage: isActive
+                              ? `linear-gradient(#FFFFFF, #FFFFFF), linear-gradient(135deg, ${palette.solid}, ${palette.light})`
+                              : "none",
+                            backgroundColor: "#FFFFFF",
+                            backgroundOrigin: "border-box",
+                            backgroundClip: "padding-box, border-box",
+                            boxShadow: isActive
+                              ? `0 6px 16px ${palette.shadow}`
+                              : "0 4px 20px rgba(0, 0, 0, 0.05)",
                           }}
-                        >
-                          Lakshmi Mart
-                        </span>
-                      </button> */}
+                          >
+                            {vendorImage ? (
+                              <img
+                                src={vendorImage}
+                                alt={v.storeName || "Vendor"}
+                                loading="lazy"
+                                decoding="async"
+                                style={{
+                                  width: "100%",
+                                  height: "100%",
+                                  borderRadius: "9px",
+                                  objectFit: "contain",
+                                  display: "block",
+                                }}
+                                onError={(e) => {
+                                  console.error(
+                                    "Vendor image failed:",
+                                    vendorImage
+                                  );
+                                  e.currentTarget.style.display = "none";
+                                }}
+                              />
+                            ) : null}
+                          </div>
 
-                      {/* Vendors */}
-                      {approvedVendorListJson.map((v) => {
-                        const isActive = selectedMartTab === v.vendorId;
-
-                        return (
-                          <button
-                            type="button"
-                            key={v.vendorId}
-                            data-vendor-id={v.vendorId}
-                            onClick={() => {
-                              setSelectedMartTab(v.vendorId);
-                              localStorage.setItem(
-                                "selectedVendorId",
-                                v.vendorId,
-                              );
-                              console.log(
-                                "selectedVendorId (localStorage):",
-                                localStorage.getItem("selectedVendorId"),
-                              );
-                            }}
-                            className="vendor-tab d-flex flex-column align-items-center bg-transparent border-0"
+                          {/* Vendor Store Name */}
+                          <span
+                            className="vendor-label"
                             style={{
-                              flex: "0 0 auto",
-                              padding: "2px 4px",
-                              width: "64px",
+                              color: isActive ? palette.solid : "#000",
+                              fontWeight: isActive ? 800 : 600,
+                              marginTop: "2px",
+                              fontSize: "12px",
+                              textAlign: "center",
+                              lineHeight: "1.2",
+                              width: "90px",
+                              whiteSpace: "normal",
+                              overflow: "visible",
+                              textOverflow: "clip",
+                              wordBreak: "break-word",
+                              fontFamily: "Roboto",  
                             }}
                           >
-                            <div
-                              style={{
-                                width: "44px",
-                                height: "44px",
-                                borderRadius: "50%",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                fontSize: "16px",
-                                fontWeight: "800",
-                                border: isActive
-                                  ? "2px solid #ff5722"
-                                  : "1px solid #ffddcc",
-                                background: isActive ? "#ff5722" : "#fff3ed",
-                                color: isActive ? "#fff" : "#ff5722",
-                                transition: "all 0.2s ease",
-                              }}
-                            >
-                              {getVendorIcon(v.storeName)}
-                            </div>
-                            <span
-                              style={{
-                                fontSize: "10px",
-                                fontWeight: isActive ? "700" : "600",
-                                color: isActive ? "#ff5722" : "#555",
-                                marginTop: "4px",
-                                whiteSpace: "nowrap",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                maxWidth: "64px",
-                              }}
-                            >
-                              {v.storeName}
-                            </span>
-                          </button>
-                        );
-                      })}
+                            {v.storeName}
+                          </span>
+                        </button>
+                      );
+                    })}
                     </div>
                   </div>
                     
@@ -3905,113 +3958,6 @@ const ProfilePage = () => {
                  <ArrowForwardIcon style={{ fontSize: 16 }} />
                 </button>
               </div>
-                                {/* ── Lakshmi Mart's own categories (unchanged) ── */}
-                  {/* {selectedMartTab === "Lakshmi Mart" && (
-                    <>
-                      <div className="row row-cols-3 row-cols-md-6 g-1">
-                        {firstCategories.map((cat) => (
-                          <div
-                            className="col"
-                            key={cat.label}
-                            onClick={() => handleGroceryCategoryClick(cat)}
-                            style={{ cursor: "pointer" }}
-                          >
-                            <div
-                              className="groceryIcon-card border-0 shadow-sm text-center d-flex flex-column align-items-center justify-content-between"
-                              style={{
-                                height: isMobile ? "130px" : "140px",
-                                width: isMobile ? "90px" : "120px",
-                                cursor: "pointer",
-                                padding: "6px",
-                                margin: "5px",
-                              }}
-                            >
-                              <img
-                                loading="lazy"
-                                decoding="async"
-                                src={cat.image}
-                                alt={cat.label}
-                                style={{
-                                  height: "80px",
-                                  width: "80px",
-                                  borderRadius: "8px",
-                                  marginTop: "2px",
-                                  objectFit: "cover",
-                                }}
-                              />
-                              <span
-                                style={{
-                                  fontSize: "12px",
-                                  fontWeight: "bold",
-                                  marginTop: "6px",
-                                  minHeight: "24px",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  textAlign: "center",
-                                  lineHeight: "1.2",
-                                }}
-                              >
-                                {cat.label}
-                              </span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-
-                      <div className="row row-cols-3 row-cols-md-5 g-1">
-                        {secondCategories.map((cat) => (
-                          <div
-                            className="col"
-                            key={cat.label}
-                            onClick={() => handleGroceryCategoryClick(cat)}
-                            style={{ cursor: "pointer" }}
-                          >
-                            <div
-                              className="groceryIcon-card border-0 shadow-sm text-center d-flex flex-column align-items-center justify-content-between"
-                              style={{
-                                height: isMobile ? "120px" : "140px",
-                                width: isMobile ? "90px" : "120px",
-                                cursor: "pointer",
-                                padding: "6px",
-                                margin: "5px",
-                              }}
-                            >
-                              <img
-                                loading="lazy"
-                                decoding="async"
-                                src={cat.image}
-                                alt={cat.label}
-                                style={{
-                                  height: "80px",
-                                  width: "80px",
-                                  borderRadius: "8px",
-                                  marginTop: "2px",
-                                  objectFit: "cover",
-                                }}
-                              />
-                              <span
-                                style={{
-                                  fontSize: "12px",
-                                  fontWeight: "bold",
-                                  marginBottom: "3px",
-                                  marginTop: "5px",
-                                  minHeight: "24px",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  textAlign: "center",
-                                  lineHeight: "1.2",
-                                }}
-                              >
-                                {cat.label}
-                              </span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </>
-                  )} */}
 
                   {/* ── Selected Vendor's categories + products (from vendorlist.json) ── */}
                   {selectedMartTab !== "Lakshmi Mart" &&
@@ -4050,9 +3996,7 @@ const ProfilePage = () => {
                                     <img
                                       loading="lazy"
                                       decoding="async"
-                                      src={getVendorCategoryImage(
-                                        catObj.category,
-                                      )}
+                                       src={getVendorCategoryImageFromApi(vendor.vendorId, catObj.category)}
                                       alt={catObj.category}
                                       style={{
                                         height: "80px",
@@ -4083,20 +4027,6 @@ const ProfilePage = () => {
                               );
                             })}
                           </div>
-
-                          {/* {selectedVendorJsonCategory && (
-          <div className="grocery-row flex flex-wrap justify-content-center gap-1 mt-2" style={{ marginBottom: "5px" }}>
-            {(vendor.categories.find((c) => c.category === selectedVendorJsonCategory)?.products || []).length === 0 ? (
-              <small className="text-muted d-block my-2">
-                No products found for "{selectedVendorJsonCategory}".
-              </small>
-            ) : (
-              vendor.categories
-                .find((c) => c.category === selectedVendorJsonCategory)
-                .products.map((p) => renderVendorJsonProductCard(p))
-            )}
-          </div>
-        )} */}
                         </>
                       );
                     })()}
@@ -4152,134 +4082,6 @@ const ProfilePage = () => {
                   ))}
                 </div>
               </div>
-
-                {/* Home Products Section */}
-                {/* <div className="shadow-lg p-2 mb-1 rounded-5 bg-transparent border-0">
-                  <h5
-                    className="text-center fw-bold mb-3"
-                    style={{ color: "#ff5722", fontSize: "20px" }}
-                  >
-                    Home Products
-                  </h5>
-                  <div className="row row-cols-3 row-cols-md-5 g-2 align-items-stretch">
-                    {categories.map((cat) => (
-                      <div
-                        className="col"
-                        key={cat.label}
-                        onClick={() => handleCategoryClick(cat)}
-                      >
-                        <div
-                          className="card border-0 shadow-sm text-center"
-                          style={{
-                            height: isMobile ? "120px" : "140px",
-                            width: isMobile ? "90px" : "120px",
-                            cursor: "pointer",
-                            padding: "8px",
-                            marginTop: "5px",
-                          }}
-                        >
-                          <img
-                            loading="lazy"
-                            decoding="async"
-                            src={cat.image}
-                            alt={cat.label}
-                            style={{
-                              height: "70px",
-                              width: "70px",
-                              borderRadius: "8px",
-                              objectFit: "cover",
-                            }}
-                          />
-                          <span
-                            style={{
-                              fontSize: "12px",
-                              fontWeight: "bold",
-                              marginTop: "5px",
-                              minHeight: "24px",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              textAlign: "center",
-                              lineHeight: "1.2",
-                            }}
-                          >
-                            {cat.label}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div> */}
-
-                {/* Collections Section */}
-                {/* <div className="shadow-lg p-2 rounded-5 text-center bg-transparent border-0">
-                  <span
-                    style={{
-                      background:
-                        "linear-gradient(45deg, #ff4081, #ff9800, #ff5722)",
-                      backgroundClip: "text",
-                      WebkitBackgroundClip: "text",
-                      color: "transparent",
-                      WebkitTextFillColor: "transparent",
-                      fontSize: "20px",
-                      fontWeight: "bold",
-                      fontFamily: "'Poppins', sans-serif",
-                      display: "inline-block",
-                    }}
-                  >
-                    Lakshmi Collections
-                  </span>
-                  <div className="row row-cols-3 row-cols-md-5 g-2">
-                    {collectionsCategories.map((cat) => (
-                      <div
-                        className="col"
-                        key={cat.label}
-                        onClick={() => handleDressCategoryClick(cat)}
-                      >
-                        <div
-                          className="groceryIcon-card border-0 shadow-sm text-center d-flex flex-column align-items-center justify-content-between"
-                          style={{
-                            height: isMobile ? "120px" : "140px",
-                            width: isMobile ? "90px" : "120px",
-                            cursor: "pointer",
-                            padding: "8px",
-                            margin: "5px",
-                          }}
-                        >
-                          <img
-                            loading="lazy"
-                            decoding="async"
-                            src={cat.image}
-                            alt={cat.label}
-                            style={{
-                              height: "80px",
-                              width: "80px",
-                              borderRadius: "8px",
-                              marginTop: "2px",
-                              objectFit: "cover",
-                            }}
-                          />
-                          <span
-                            style={{
-                              fontSize: "12px",
-                              fontWeight: "bold",
-                              marginBottom: "3px",
-                              marginTop: "5px",
-                              minHeight: "24px",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              textAlign: "center",
-                              lineHeight: "1.2",
-                            }}
-                          >
-                            {cat.label}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div> */}
               </div>
 
               {/* Dashboard Desktop */}
@@ -4708,12 +4510,7 @@ const ProfilePage = () => {
         </Modal.Footer>
       </Modal>
 
-      {/* Push Notification Opt-in Banner — only shown where the browser/WebView
-          actually supports it. Plain Android WebView (used by webview-to-APK
-          builders) never implements the Notification API, so this banner is
-          hidden there; the in-app order-update popup and bell sound already
-          work regardless of this permission. */}
-      {pushSupported && !pushEnabled && !pushDismissed && userId && (
+     {pushSupported && !pushEnabled && !pushDismissed && userId && (
         <div className="push-notification-banner">
           <div className="push-notification-banner-content">
             <NotificationsActiveIcon

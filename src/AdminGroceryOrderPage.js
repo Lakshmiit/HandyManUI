@@ -960,7 +960,7 @@ const handleImageClick = (imageSrc, product) => {
 
   const deliveryCharge = itemsTotal >= 150 ? 0 : 15;
 
-  const handlingCharge = itemsTotal >= 150 ? 0 : 5;
+  const handlingCharge = itemsTotal >= 150 ? 5 : 5;
 
   return (
   <>
@@ -1095,11 +1095,11 @@ const handleImageClick = (imageSrc, product) => {
   <tfoot>
      <tr>
   <td colSpan="5" className="text-end fw-bold text-danger">
-    Delivery Charge: {deliveryCharge === 0 ? "FREE" : `Rs ${deliveryCharge}`}
+    Delivery Charge: {deliveryCharge === 0 ? "FREE" : `Rs ${deliveryCharge} /-`}
   </td>
   
   <td colSpan="5" className="text-end fw-bold text-danger">
-    Handling Charge: {handlingCharge === 0 ? "FREE" : `Rs ${handlingCharge}`}
+    Handling Charge: {handlingCharge === 0 ? "FREE" : `Rs ${handlingCharge} /-`}
   </td>      
 </tr>
 {availedAmount > 0 && (

@@ -255,23 +255,23 @@ const AddressManager = () => {
     }
   };
 
-  const getUserLocation = () => {
-    return new Promise((resolve, reject) => {
-      if (!navigator.geolocation) {
-        reject("Geolocation is not supported");
-      } else {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            resolve({
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-            });
-          },
-          (error) => reject(error),
-        );
-      }
-    });
-  };
+  // const getUserLocation = () => {
+  //   return new Promise((resolve, reject) => {
+  //     if (!navigator.geolocation) {
+  //       reject("Geolocation is not supported");
+  //     } else {
+  //       navigator.geolocation.getCurrentPosition(
+  //         (position) => {
+  //           resolve({
+  //             latitude: position.coords.latitude,
+  //             longitude: position.coords.longitude,
+  //           });
+  //         },
+  //         (error) => reject(error),
+  //       );
+  //     }
+  //   });
+  // };
 
   const handleSaveTicket = async (e) => {
     e.preventDefault();
@@ -295,7 +295,7 @@ const AddressManager = () => {
     const mobileNumber =
       primaryAddress?.mobileNumber || primaryAddress?.mobileNumber || "";
 
-    const location = await getUserLocation();
+    // const location = await getUserLocation();
 
     const payload = {
       RaiseTicketId: "string",
@@ -343,8 +343,8 @@ const AddressManager = () => {
       TransactionType: "",
       InvoiceId: "",
       InvoiceURL: "",
-      latitude: location.latitude,
-      longitude: location.longitude,
+      latitude: "0",
+      longitude: "0",
 
       CustomerPhoneNumber: addressData.mobileNumber || mobileNumber,
       PaymentMode: "",

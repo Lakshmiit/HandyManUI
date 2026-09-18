@@ -9,10 +9,6 @@ const GET_ALL_DELIVERY_PARTNERS = `${API_BASE}/DeliveryPartner/GetAllDeliveryPar
 const UPDATE_DELIVERY_PARTNER_DETAILS = `${API_BASE}/DeliveryPartner/UpdateDeliveryPartnerDetails`;
 const GET_ALL_MART_ITEMS = `${API_BASE}/Mart/GetAllMartItems`;
 
-// ---- Zones ----
-// Reference pincode->zone map for Visakhapatnam service areas. Used to
-// label a vendor's serviceable pincodes with their zone on the super
-// admin review page.
 export const zoneData = {
   A: ["530001", "530002", "530003", "530004"],
   B: ["530005", "530013", "530016", "530020", "530024", "530022", "530017"],
@@ -96,7 +92,7 @@ export async function getVendorProductsByVendorId(vendorId) {
   });
   const record = Array.isArray(data) ? data[0] : data;
   return record && typeof record === "object" ? record : null;
-}
+}           
 
 // The endpoint takes an array of vendor-submission records, so a single
 // approve/reject action still gets wrapped in one.

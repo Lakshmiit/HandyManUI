@@ -13,22 +13,34 @@ import {
   getVendorProfileById,
   updateVendorProfile,
 } from "./utils/vendorStorage";
-import ImageCache from "./utils/ImageCache";
 import { getGroceryItems } from "./utils/groceryStore";
 
 // Same backend the customer-facing Profile page (and Admin grocery pages) use.
 const API_BASE = "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api";
 const ADD_GROCERY_ITEM = `${API_BASE}/UploadGrocery/UploadGrocery`;
-const IMAGE_DOWNLOAD = `${API_BASE}/FileUpload/download?generatedfilename=`;
 const IMAGE_UPLOAD = `${API_BASE}/FileUpload/upload?filename=`;
-// Called directly here (bypassing utils/vendorListStore.js's cached
-// normalizeVendor) so the limit-binding logic below is guaranteed to be
-// the code actually running, regardless of any stale build/cache
-// upstream. Same endpoint vendorListStore.js points at.
+const ADD_CATEGORY = `${API_BASE}/Categorie/UploadCategories`;
 const GET_VENDOR_PRODUCTS_BY_VENDOR_ID = `${API_BASE}/VendorUploadProducts/GetVendorProductsvalues`;
 
-// Same key VendorPreviewPage reads to show the "ready to submit" list —
-// keep this string identical in both files.
+const BLOB_BASE_URL =
+  "https://lmartfiles.blob.core.windows.net/userattechements";
+
+const getAzureImageUrl = (imageName) => {
+  if (!imageName) return "";
+
+  if (
+    typeof imageName === "string" &&
+    (imageName.startsWith("http://") ||
+      imageName.startsWith("https://"))
+  ) {
+    return imageName;
+  }
+
+  const cleanName = String(imageName).replace(/^\/+/, "");
+
+  return `${BLOB_BASE_URL}/${encodeURIComponent(cleanName)}`;
+};
+
 const pendingCartKey = (vendorId) => `vendorPendingProducts_${vendorId}`;
 
 const BARCODE_FORMATS = [
@@ -41,8 +53,6 @@ const BARCODE_FORMATS = [
   "qr_code",
 ];
 
-// Earthy, market-ledger palette used to color-code category ribbons —
-// deterministic per category name so the same category always gets the same tone.
 const CATEGORY_PALETTE = [
   "#2F6B4F",
   "#C08A2E",
@@ -61,9 +71,6 @@ const colorForCategory = (name) => {
   return CATEGORY_PALETTE[hash % CATEGORY_PALETTE.length];
 };
 
-// Locally-generated fallback image (inline SVG data URI) — used only until
-// the real photo loads, or if a product has no image at all. No external
-// network call, so it never shows up broken.
 const makePlaceholder = (text, bg = "adb5bd", fg = "ffffff") => {
   const safeText = String(text || "?").slice(0, 22);
   const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='320' height='220'>
@@ -83,18 +90,6 @@ const normalizeItem = (p) => ({
   afterDiscount: Number(p.afterDiscount || 0),
 });
 
-// Reads the RAW response from GetVendorProductsvalues directly — this page
-// now fetches that endpoint itself (see fetchVendorProductsDirect below)
-// instead of going through utils/vendorListStore.js's normalizeVendor, so
-// there's no intermediate caching/normalization layer that could still be
-// running stale code. Handles both a bare vendor object and an array
-// containing one (some backends wrap a single result in an array).
-// Field names match the confirmed live response exactly:
-// { categorie: [{ categoryName, products: [{ productIds, quantity, limit, discount }] }] }
-// but also tolerates the capitalized variants (Categorie/Products/
-// ProductIds/Quantity/Limit/Discount) just in case the API casing ever
-// changes. This is what feeds `pendingLimit`, which the "Per-customer
-// limit" input below reads via getPendingLimit().
 const extractSelectionFromVendorProducts = (vendorProductsRaw) => {
   const map = {};
   const qtyMap = {};
@@ -134,10 +129,6 @@ const priceMap = {};
   return { map, qtyMap, limitMap, mrpMap, priceMap };
 };
 
-// Direct fetch, bypassing utils/vendorListStore.js's cache/normalizeVendor
-// layer entirely — this guarantees the code above is what actually runs
-// against the real response, independent of any stale cached bundle,
-// sessionStorage entry, or service worker elsewhere in the app.
 const fetchVendorProductsDirect = async (vendorId) => {
   const res = await fetch(
     `${GET_VENDOR_PRODUCTS_BY_VENDOR_ID}?vendorId=${encodeURIComponent(vendorId)}`,
@@ -154,10 +145,10 @@ const EMPTY_ADD_FORM = {
   newCategory: "",
   code: "",
   mrp: "",
-  discount: "0",
+  discount: "",
   units: "",
-  deliveryIn: "30",
-  stockLeft: "0",
+  deliveryIn: "",
+  stockLeft: "",
   limit: "",
 };
 
@@ -173,30 +164,31 @@ const VendorStockUpdatePage = () => {
   const [error, setError] = useState("");
   const [pendingLimit, setPendingLimit] = useState({});
 
-  // null = show categories only. Set to a category name (or "All") to view products.
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-
-  // Locally tracked submission quantities — start at 0. As soon as a
-  // product's quantity goes above 0 it's automatically added to the
-  // submit-for-approval payload; dropping it back to 0 automatically
-  // removes it again. No separate "save" step needed.
+ // ---- Visual / barcode-photo product finder ----
+  // matchIds: null = no image search active, Set = ids to show as matches.
+  const [viewModeOverride, setViewModeOverride] = useState(null);
+  const [imageSearchMatchIds, setImageSearchMatchIds] = useState(null);
+  const [imageSearchBusy, setImageSearchBusy] = useState(false);
+  const [imageSearchError, setImageSearchError] = useState("");
+  const [imageSearchLabel, setImageSearchLabel] = useState("");
+  const photoSearchInputRef = useRef(null);
+  const barcodePhotoInputRef = useRef(null);
   const [pendingQty, setPendingQty] = useState({});
   const [showVendorMenu, setShowVendorMenu] = useState(false);
 
-  // ---- Edit vendor info modal state ----
   const [showEditVendorModal, setShowEditVendorModal] = useState(false);
   const [editVendorForm, setEditVendorForm] = useState(null);
   const [editVendorSaving, setEditVendorSaving] = useState(false);
   const [editVendorError, setEditVendorError] = useState("");
 
-  // ---- Add New Product modal state ----
   const [showAddModal, setShowAddModal] = useState(false);
   const [addForm, setAddForm] = useState(EMPTY_ADD_FORM);
   const [addPhoto, setAddPhoto] = useState(null);
   const [addSaving, setAddSaving] = useState(false);
   const [addError, setAddError] = useState("");
-  const [codeMode, setCodeMode] = useState("manual"); // "manual" | "scan"
+  const [codeMode, setCodeMode] = useState("manual"); 
   const [scanning, setScanning] = useState(false);
   const [scanError, setScanError] = useState("");
   const videoRef = useRef(null);
@@ -204,30 +196,50 @@ const VendorStockUpdatePage = () => {
   const scanFrameRef = useRef(null);
 const [pendingMrp, setPendingMrp] = useState({});     
 const [pendingPrice, setPendingPrice] = useState({}); 
-const [mrpInputText, setMrpInputText] = useState({});   
-// const [priceInputText, setPriceInputText] = useState({});
+const [mrpInputText, setMrpInputText] = useState({});
   const [selection, setSelection] = useState({});
   const hydratedSelectionRef = useRef(false);
   const hydratedBackendRef = useRef(false);
   const [qtyInputText, setQtyInputText] = useState({}); 
 const originalValuesRef = useRef({}); 
+const addPhotoInputRef = useRef(null);
   const getPendingMrp = (item) =>
   Number(pendingMrp[item.id] ?? item.mrp ?? 0);
 
-// const getPendingPrice = (item) =>
-//   Number(pendingPrice[item.id] ?? item.afterDiscount ?? item.mrp ?? 0);
-    
-const handleMrpInputChange = (itemId, rawValue) => {
-  setMrpInputText((prev) => ({ ...prev, [itemId]: rawValue }));
-  const next = Math.max(0, Number(rawValue) || 0);
-  setPendingMrp((prev) => ({ ...prev, [itemId]: next }));
-};
+    // ---- Add New Category modal state ----
+  const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [addCategorySaving, setAddCategorySaving] = useState(false);
+  const [addCategoryError, setAddCategoryError] = useState("");
+  // Categories created via the popup, before any product uses them yet —
+  // merged into the dropdown so they're selectable immediately.
+  const [customCategories, setCustomCategories] = useState([]);
 
-// const handlePriceInputChange = (itemId, rawValue) => {
-//   setPriceInputText((prev) => ({ ...prev, [itemId]: rawValue }));
-//   const next = Math.max(0, Number(rawValue) || 0);
-//   setPendingPrice((prev) => ({ ...prev, [itemId]: next }));
-// };
+const handleMrpInputChange = (itemId, rawValue) => {
+  setMrpInputText((prev) => ({
+    ...prev,
+    [itemId]: rawValue,
+  }));
+
+  if (rawValue === "") {
+    setPendingMrp((prev) => ({
+      ...prev,
+      [itemId]: 0,
+    }));
+    return;
+  }
+
+  if (!/^\d*(\.\d{0,2})?$/.test(rawValue)) {
+    return;
+  }
+
+  const next = Number(rawValue);
+
+  setPendingMrp((prev) => ({
+    ...prev,
+    [itemId]: next,
+  }));
+};
 
 const getCalculatedSellingPrice = (item) => {
   const mrp = Number(pendingMrp[item.id] ?? item.mrp ?? 0);
@@ -244,12 +256,6 @@ const getMrpDisplayValue = (item) => {
   const mrp = getPendingMrp(item);
   return mrp === 0 ? "" : mrp;
 };
-
-// const getPriceDisplayValue = (item) => {
-//   if (priceInputText[item.id] !== undefined) return priceInputText[item.id];
-//   const price = getPendingPrice(item);
-//   return price === 0 ? "" : price;
-// };
 
   // Vendor session check.
   useEffect(() => {
@@ -320,15 +326,10 @@ const getMrpDisplayValue = (item) => {
     if (showLoader) setLoading(true);
     setError("");
     try {
-      // Shared cache with Profile/Vendor-preview pages. Pass force=true
-      // after a mutation (add/update stock) so this page — and every page
-      // that reads the catalog afterward — gets the fresh data.
-      const data = await getGroceryItems({ force });
+       const data = await getGroceryItems({ force });
       const normalized = (Array.isArray(data) ? data : []).map(normalizeItem);
       setItems(normalized);
-      // Submission quantities/limits are a standing selection, not a delta
-      // against live stock, so they deliberately survive a catalog refresh.
-    } catch (err) {
+       } catch (err) {
       console.error("Failed to fetch grocery items", err);
       setError("Unable to load products right now. Please try again.");
     } finally {
@@ -378,9 +379,7 @@ const getMrpDisplayValue = (item) => {
         if (Object.keys(mrpMap).length) setPendingMrp((prev) => ({ ...mrpMap, ...prev }));
         if (Object.keys(priceMap).length) setPendingPrice((prev) => ({ ...priceMap, ...prev }));
       } catch (err) {
-        // No submission yet (404) or a network hiccup — fine, just start
-        // from whatever the localStorage draft below provides (or blank).
-        console.error(
+         console.error(
           "Failed to load vendor's existing submitted products",
           err,
         );
@@ -388,11 +387,6 @@ const getMrpDisplayValue = (item) => {
     })();
   }, [vendor, vendorId]);
 
-  // A product is "updated" if either:
-//  (a) it's a brand-new selection not present in the backend's last
-//      submitted record, OR
-//  (b) it IS in the backend record but at least one editable field
-//      (quantity/discount/limit/mrp/price) differs from that baseline.
 const isProductUpdated = (item) => {
   const baseline = originalValuesRef.current[item.id];
 
@@ -404,7 +398,7 @@ const isProductUpdated = (item) => {
     price: String(pendingPrice[item.id] ?? item.afterDiscount ?? item.mrp ?? 0),
   };
 
-  if (!baseline) return true; // never submitted before -> it's new/updated
+  if (!baseline) return true; 
 
   return (
     current.quantity !== baseline.quantity ||
@@ -415,10 +409,6 @@ const isProductUpdated = (item) => {
   );
 };
 
-  // Restore any products the vendor already checked/discounted/limited last
-  // time they were on this page, so the cart survives navigation/reloads.
-  // This is the OVERLAY layer: it merges on top of (and, for shared product
-  // ids, overrides) whatever the backend hydration above already set.
   useEffect(() => {
     if (hydratedSelectionRef.current || !items.length) return;
     hydratedSelectionRef.current = true;
@@ -458,11 +448,6 @@ if (Object.keys(priceMap).length) setPendingPrice((prev) => ({ ...priceMap, ...p
     }
   }, [items, vendorId]);
 
-  // Auto-construct the submission payload from whichever products currently
-  // have a quantity greater than 0, and auto-save it to localStorage in the
-  // exact shape vendorUploadProducts expects — every time quantity,
-  // discount, or limit changes, no separate "save" step. Dropping a
-  // product's quantity back to 0 drops it out of this payload automatically.
   useEffect(() => {
   if (!vendor) return;
   const selectedItems = items.filter(
@@ -501,77 +486,97 @@ if (Object.keys(priceMap).length) setPendingPrice((prev) => ({ ...priceMap, ...p
       // eslint-disable-next-line react-hooks/exhaustive-deps
 }, [selection, pendingQty, pendingLimit, pendingMrp, pendingPrice, items, vendor, vendorId]);
 
-  // Same image-loading pattern as GroceryItems.js / ProfilePage.js:
-  // check IndexedDB cache first, otherwise download + cache.
+
   useEffect(() => {
     if (!items.length) return;
-    const controller = new AbortController();
-    let cancelled = false;
+    const directImageUrls = {};
 
-    (async () => {
-      for (const item of items) {
-        const filename = Array.isArray(item.images) ? item.images[0] : null;
-        if (!filename || imageUrls[item.id]) continue;
-        try {
-          const cached = await ImageCache.getBase64(filename);
-          if (cancelled) return;
-          if (cached) {
-            setImageUrls((prev) => ({
-              ...prev,
-              [item.id]: `data:image/jpeg;base64,${cached}`,
-            }));
-            continue;
-          }
-          const res = await fetch(
-            `${IMAGE_DOWNLOAD}${encodeURIComponent(filename)}`,
-            {
-              signal: controller.signal,
-            },
-          );
-          const json = await res.json();
-          const b64 = json?.imageData || "";
-          if (!b64 || cancelled) continue;
-          await ImageCache.setBase64(filename, b64);
-          if (!cancelled) {
-            setImageUrls((prev) => ({
-              ...prev,
-              [item.id]: `data:image/jpeg;base64,${b64}`,
-            }));
-          }
-        } catch (e) {
-          // ignore aborted/failed image fetch — card falls back to a placeholder
-        }
+    items.forEach((item) => {
+      const photo = Array.isArray(item.images)
+        ? item.images[0]
+        : item.images;
+
+      if (photo) {
+        directImageUrls[item.id] = getAzureImageUrl(photo);
       }
-    })();
+    });
 
-    return () => {
-      cancelled = true;
-      controller.abort();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setImageUrls(directImageUrls);
   }, [items]);
 
   const categories = useMemo(() => {
-    const unique = Array.from(
-      new Set(items.map((i) => i.category || "Unspecified")),
+     const unique = Array.from(
+      new Set([
+        ...items.map((i) => i.category || "Unspecified"),
+        ...customCategories,
+      ]),
     ).sort();
     return unique;
-  }, [items]);
+  }, [items, customCategories]);
+
+    const mySelectedCount = useMemo(
+    () => Object.values(selection).filter((s) => s?.checked).length,
+    [selection],
+  );
+
+  // Default view: "selected" (My Products) once the vendor already has
+  // approved/submitted products, so returning vendors aren't re-shown the
+  // entire master catalog every time. First-time vendors with nothing
+  // picked yet default to "all" so they have something to choose from.
+  // A manual toggle click (viewModeOverride) always wins.
+  const effectiveViewMode =
+    viewModeOverride || (mySelectedCount > 0 ? "selected" : "all");
+
+  // A photo/barcode-photo match takes priority: it searches the ENTIRE
+  // catalog regardless of category or the My Products/All Products toggle,
+  // since the vendor is trying to locate one specific item.
 
   const displayedItems = useMemo(() => {
     if (!selectedCategory) return [];
+      if (imageSearchMatchIds) {
+      return items.filter((i) => imageSearchMatchIds.has(i.id));
+    }
+
     let list =
       selectedCategory === "All"
         ? items
         : items.filter(
             (i) => (i.category || "Unspecified") === selectedCategory,
           );
+           if (effectiveViewMode === "selected") {
+      list = list.filter((i) => !!selection[i.id]?.checked);
+    }
+
     if (searchQuery.trim()) {
       const q = searchQuery.trim().toLowerCase();
-      list = list.filter((i) => i.name?.toLowerCase().includes(q));
+      list = list.filter((i) => i.name?.toLowerCase().includes(q)||
+          i.code?.toLowerCase?.().includes(q),
+      );
     }
     return list;
-  }, [items, selectedCategory, searchQuery]);
+  
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    items,
+    selectedCategory,
+    searchQuery,
+    effectiveViewMode,
+    selection,
+    imageSearchMatchIds,
+  ]);
+
+  // Counts scoped to whichever category (or "All") is currently open, used
+  // to label the My Products / All Products toggle pills.
+  const categoryScopedItems = useMemo(() => {
+    if (!selectedCategory) return [];
+    return selectedCategory === "All"
+      ? items
+      : items.filter((i) => (i.category || "Unspecified") === selectedCategory);
+  }, [items, selectedCategory]);
+  const categoryMineCount = useMemo(
+    () => categoryScopedItems.filter((i) => !!selection[i.id]?.checked).length,
+    [categoryScopedItems, selection],
+  );
 
   const totalProducts = items.length;
   const totalStock = items.reduce(
@@ -605,6 +610,106 @@ if (Object.keys(priceMap).length) setPendingPrice((prev) => ({ ...priceMap, ...p
   const getPendingLimit = (item) =>
     Number(pendingLimit[item.id] ?? item.limit ?? 0);
 
+ const getProductValidationError = (item) => {
+  if (!isSelectedForSubmission(item.id)) {
+    return "";
+  }
+
+  const quantityText =
+    qtyInputText[item.id] !== undefined
+      ? qtyInputText[item.id]
+      : pendingQty[item.id];
+
+  const mrpText =
+    mrpInputText[item.id] !== undefined
+      ? mrpInputText[item.id]
+      : pendingMrp[item.id] ?? item.mrp;
+
+  const discountText =
+    selection[item.id]?.discount ?? item.discount ?? "";
+
+  // Quantity
+  if (
+    quantityText === "" ||
+    quantityText === undefined ||
+    Number(quantityText) <= 0 ||
+    !Number.isFinite(Number(quantityText))
+  ) {
+    return "Quantity is required and must be greater than 0.";
+  }
+
+  // MRP
+  if (
+    mrpText === "" ||
+    mrpText === undefined ||
+    Number(mrpText) <= 0 ||
+    !Number.isFinite(Number(mrpText))
+  ) {
+    return "MRP is required and must be greater than 0.";
+  }
+
+  // Discount
+  if (
+    discountText === "" ||
+    discountText === undefined
+  ) {
+    return "Discount is required. Enter 0% if there is no discount.";
+  }
+
+  const discount = Number(discountText);
+
+  if (!Number.isFinite(discount)) {
+    return "Please enter a valid discount.";
+  }
+
+  if (discount < 0 || discount > 95) {
+    return "Discount must be between 0% and 95%.";
+  }
+
+  return "";
+};
+
+
+const validateSelectedProducts = () => {
+  const selectedItems = items.filter(
+    (item) => selection[item.id]?.checked
+  );
+
+  if (selectedItems.length === 0) {
+    return "Please select at least one product.";
+  }
+
+  for (const item of selectedItems) {
+    const quantityRaw =
+      qtyInputText[item.id] !== undefined
+        ? qtyInputText[item.id]
+        : pendingQty[item.id];
+    const mrp = Number(pendingMrp[item.id] ?? item.mrp ?? 0);
+    const discount = Number(
+      selection[item.id]?.discount ?? item.discount ?? 0
+    );
+
+    if (
+      quantityRaw === "" ||
+      quantityRaw === undefined ||
+      quantityRaw === null ||
+      !Number.isFinite(Number(quantityRaw)) ||
+      Number(quantityRaw) < 0
+    ) {
+      return `"${item.name}" needs a quantity (0 or more).`;
+    }
+
+    if (!Number.isFinite(mrp) || mrp <= 0) {
+      return `"${item.name}" requires a valid MRP greater than 0.`;
+    }
+
+    if (!Number.isFinite(discount) || discount < 0 || discount > 95) {
+      return `"${item.name}" discount must be between 0% and 95%.`;
+    }
+  }
+  return null;
+};               
+
 const toggleSelectForSubmission = (item) => {
   const currentlyChecked = !!selection[item.id]?.checked;
 
@@ -621,8 +726,6 @@ const toggleSelectForSubmission = (item) => {
     return next;
   });
 } else {
-    // Check: mark it selected for submission — do NOT force quantity to 1.
-    // Quantity stays whatever it currently is (0 if untouched).
     setSelection((prev) => ({
       ...prev,
       [item.id]: {
@@ -681,29 +784,53 @@ const toggleCategorySelection = (category) => {
 
   // ---- Direct-typing handlers for the plain number inputs ----
   const handleQtyInputChange = (itemId, rawValue, item) => {
-  // Keep exactly what the user typed for display (allows "0", "", "05" while typing)
-  setQtyInputText((prev) => ({ ...prev, [itemId]: rawValue }));
+  // Keep exactly what the user types
+  setQtyInputText((prev) => ({
+    ...prev,
+    [itemId]: rawValue,
+  }));
 
-  const next = Math.max(0, Number(rawValue) || 0);
-  setPendingQty((prev) => ({ ...prev, [itemId]: next }));
+  if (rawValue === "") {
+    setPendingQty((prev) => ({
+      ...prev,
+      [itemId]: 0,
+    }));
+    return;
+  }
+
+  // Quantity should be whole numbers
+  if (!/^\d*$/.test(rawValue)) {
+    return;
+  }
+
+  const next = Number(rawValue);
+
+  setPendingQty((prev) => ({
+    ...prev,
+    [itemId]: next,
+  }));
+
   setSelection((prevSel) => {
     if (next > 0) {
       const current = prevSel[itemId];
+
       return {
         ...prevSel,
         [itemId]: {
           checked: true,
-          discount: current?.discount ?? String(item?.discount ?? 0),
+          discount:
+            current?.discount ??
+            String(item?.discount ?? ""),
         },
       };
     }
-    if (!prevSel[itemId]) return prevSel;
+
+     if (!prevSel[itemId]) return prevSel;
     const nextSel = { ...prevSel };
     delete nextSel[itemId];
     return nextSel;
   });
 };
-
 const getQtyDisplayValue = (itemId) => {
   // If the user has typed something (even "0"), show exactly that.
   if (qtyInputText[itemId] !== undefined) return qtyInputText[itemId];
@@ -720,10 +847,41 @@ const getQtyDisplayValue = (itemId) => {
 
 
 const updateSelectionDiscount = (item, value) => {
+  // Allow blank while typing
+  if (value === "") {
+    setSelection((prev) => ({
+      ...prev,
+      [item.id]: {
+        checked: !!prev[item.id]?.checked,
+        discount: "",
+      },
+    }));
+    return;
+  }
+
+  // Allow only numbers with up to 2 decimal places
+  if (!/^\d*(\.\d{0,2})?$/.test(value)) {
+    return;
+  }
+
+  const numericValue = Number(value);
+
+  // Don't allow more than 95
+  if (numericValue > 95) {
+    setSelection((prev) => ({
+      ...prev,
+      [item.id]: {
+        checked: !!prev[item.id]?.checked,
+        discount: "95",
+      },
+    }));
+    return;
+  }
+
   setSelection((prev) => ({
     ...prev,
     [item.id]: {
-      checked: !!prev[item.id]?.checked,   // <-- was: getPendingQty(item.id) > 0
+      checked: !!prev[item.id]?.checked,
       discount: value,
     },
   }));
@@ -745,9 +903,20 @@ const selectedForSubmissionCount = useMemo(
   };
 
   const handlePreview = () => {
-    // Preview the vendor's own profile, not the customer-facing profile.
-    navigate(`/vendor/preview/${vendorId}`);
-  };
+  const validationError = validateSelectedProducts();
+
+  if (validationError) {
+    setError(validationError);
+
+    // Automatically clear the error after 4 seconds
+    setTimeout(() => setError(""), 4000);
+
+    return;
+  }
+
+  setError("");
+  navigate(`/vendor/preview/${vendorId}`);
+};
 
   const handleBackToProfile = () => {
     navigate(`/profilePage/customer/${vendorId}`);
@@ -761,6 +930,156 @@ const selectedForSubmissionCount = useMemo(
         localStorage.setItem(key, JSON.stringify([...previous, category]));
     }
     setSelectedCategory(category);
+  };
+
+  const clearImageSearch = () => {
+    setImageSearchMatchIds(null);
+    setImageSearchError("");
+    setImageSearchLabel("");
+    if (photoSearchInputRef.current) photoSearchInputRef.current.value = "";
+    if (barcodePhotoInputRef.current) barcodePhotoInputRef.current.value = "";
+  };
+
+  // Loads a File or an existing data-URI/src string into an <img> element.
+  const loadImageElement = (source) =>
+    new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = () => reject(new Error("Could not read image"));
+      if (typeof source === "string") {
+        img.src = source;
+      } else {
+        const reader = new FileReader();
+        reader.onload = () => {
+          img.src = reader.result;
+        };
+        reader.onerror = () => reject(new Error("Could not read file"));
+        reader.readAsDataURL(source);
+      }
+    });
+
+  // 64-bit difference-hash (dHash): resize to 9x8 grayscale, compare each
+  // pixel to its right-hand neighbor. Two visually similar photos (same
+  // product packaging, different lighting/angle) end up with hashes that
+  // differ in only a handful of bits — good enough to shortlist matches
+  // entirely client-side, with no external image-recognition service.
+  const computeImageHash = async (source) => {
+    const img = await loadImageElement(source);
+    const canvas = document.createElement("canvas");
+    canvas.width = 9;
+    canvas.height = 8;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0, 9, 8);
+    const { data } = ctx.getImageData(0, 0, 9, 8);
+    const gray = [];
+    for (let i = 0; i < data.length; i += 4) {
+      gray.push(0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2]);
+    }
+    let hash = "";
+    for (let row = 0; row < 8; row++) {
+      for (let col = 0; col < 8; col++) {
+        hash += gray[row * 9 + col] > gray[row * 9 + col + 1] ? "1" : "0";
+      }
+    }
+    return hash;
+  };
+
+  const hammingDistance = (a, b) => {
+    let d = 0;
+    for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) d++;
+    return d;
+  };
+
+  const handlePhotoSearchFile = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = ""; // allow re-selecting the same file later
+    if (!file) return;
+    setImageSearchBusy(true);
+    setImageSearchError("");
+    setImageSearchLabel("");
+    try {
+      const queryHash = await computeImageHash(file);
+      const candidates = items.filter((i) => imageUrls[i.id]);
+      if (!candidates.length) {
+        setImageSearchError(
+          "Product photos are still loading — wait a moment and try again.",
+        );
+        setImageSearchBusy(false);
+        return;
+      }
+      const scored = [];
+      for (const item of candidates) {
+        try {
+          const h = await computeImageHash(imageUrls[item.id]);
+          scored.push({ id: item.id, distance: hammingDistance(queryHash, h) });
+        } catch {
+          // skip a product whose cached photo can't be read
+        }
+      }
+      scored.sort((a, b) => a.distance - b.distance);
+      const CLOSE_ENOUGH = 18; 
+      let matches = scored.filter((s) => s.distance <= CLOSE_ENOUGH);
+      if (!matches.length) matches = scored.slice(0, 8); 
+      setImageSearchMatchIds(new Set(matches.map((m) => m.id)));
+      setImageSearchLabel(
+        matches.length === 1
+          ? "1 product looks like your photo"
+          : `${matches.length} products look like your photo`,
+      );
+    } catch (err) {
+      console.error("Photo search failed", err);
+      setImageSearchError(
+        "Couldn't analyze that photo. Try a clearer, well-lit picture of the product.",
+      );
+    } finally {
+      setImageSearchBusy(false);
+    }
+  };
+
+  const handleBarcodePhotoFile = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    setImageSearchBusy(true);
+    setImageSearchError("");
+    setImageSearchLabel("");
+    try {
+      if (!("BarcodeDetector" in window)) {
+        setImageSearchError(
+          "Reading barcodes from a photo isn't supported in this browser. Try Chrome, or search by name instead.",
+        );
+        return;
+      }
+      const bitmap = await createImageBitmap(file);
+      // eslint-disable-next-line no-undef
+      const detector = new BarcodeDetector({ formats: BARCODE_FORMATS });
+      const codes = await detector.detect(bitmap);
+      if (!codes.length) {
+        setImageSearchError(
+          "No barcode found in that photo. Try getting closer, with better lighting.",
+        );
+        return;
+      }
+      const value = codes[0].rawValue;
+      const matched = items.filter(
+        (i) => String(i.code || "").trim() === String(value).trim(),
+      );
+      if (!matched.length) {
+        setImageSearchError(
+          `Scanned code "${value}" doesn't match any product in the catalog.`,
+        );
+        return;
+      }
+      setImageSearchMatchIds(new Set(matched.map((i) => i.id)));
+      setImageSearchLabel(`Matched barcode ${value}`);
+    } catch (err) {
+      console.error("Barcode photo scan failed", err);
+      setImageSearchError(
+        "Couldn't read a barcode from that photo. Try again with a clearer shot.",
+      );
+    } finally {
+      setImageSearchBusy(false);
+    }
   };
 
   // ---- Barcode scanning ----
@@ -812,7 +1131,6 @@ const selectedForSubmissionCount = useMemo(
             return;
           }
         } catch (e) {
-          // detection hiccup — keep trying on next frame
         }
         scanFrameRef.current = requestAnimationFrame(tick);
       };
@@ -826,7 +1144,6 @@ const selectedForSubmissionCount = useMemo(
   };
 
   useEffect(() => {
-    // Stop the camera whenever the modal closes or the mode switches away from scanning.
     if (!showAddModal || codeMode !== "scan") {
       stopScan();
     }
@@ -852,6 +1169,23 @@ const selectedForSubmissionCount = useMemo(
   const updateAddForm = (field, value) => {
     setAddForm((prev) => ({ ...prev, [field]: value }));
   };
+
+  const getAddProductPrice = () => {
+  const mrp = Number(addForm.mrp);
+  const discount = Number(addForm.discount);
+  if (
+    addForm.mrp === "" ||
+    addForm.discount === "" ||
+    !Number.isFinite(mrp) ||
+    !Number.isFinite(discount) ||
+    mrp <= 0 ||
+    discount < 0 ||
+    discount > 95
+  ) {
+    return "";
+  }
+  return (mrp - (mrp * discount) / 100).toFixed(0);
+};
 
   const getFileByteArray = (file) =>
     new Promise((resolve) => {
@@ -883,26 +1217,73 @@ const selectedForSubmissionCount = useMemo(
     }
   };
 
-  const validateAddForm = () => {
-    const finalCategory =
-      addForm.category === "__new__"
-        ? addForm.newCategory.trim()
-        : addForm.category;
-    if (!addForm.name.trim()) return "Product name is required.";
-    if (!finalCategory) return "Category is required.";
-    if (!addForm.units.trim()) return "Units are required (e.g. 1kg, 500ml).";
-    if (!addForm.code.trim())
-      return "Product code is required — scan a barcode or enter one manually.";
-    if (!addForm.mrp || isNaN(addForm.mrp))
-      return "A valid price (MRP) is required.";
-    if (addForm.discount === "" || isNaN(addForm.discount))
-      return "A valid discount is required (0 if none).";
-    if (!addForm.deliveryIn.toString().trim())
-      return "Delivery time (minutes) is required.";
-    if (addForm.stockLeft === "" || isNaN(addForm.stockLeft))
-      return "A valid starting stock quantity is required.";
-    return null;
-  };
+ const validateAddForm = () => {
+  const finalCategory =
+    addForm.category === "__new__"
+      ? addForm.newCategory.trim()
+      : addForm.category;
+
+  const mrp = Number(addForm.mrp);
+  const discount = Number(addForm.discount);
+  const stock = Number(addForm.stockLeft);
+  const delivery = Number(addForm.deliveryIn);
+  const limit = Number(addForm.limit);
+
+  if (!addForm.name.trim())
+    return "Product name is required.";
+
+  if (!finalCategory)
+    return "Category is required.";
+
+  if (!addForm.code.trim())
+    return "Product code is required.";
+
+  if (!addForm.units.trim())
+    return "Units are required.";
+
+  // Image validation
+  if (!addPhoto)
+    return "Please upload a product image.";
+
+  // MRP validation
+  if (
+    addForm.mrp === "" ||
+    !Number.isFinite(mrp) ||
+    mrp <= 0
+  ) {
+    return "Enter a valid MRP greater than 0.";
+  }
+
+  if (
+    addForm.discount === "" ||
+    !Number.isFinite(discount) ||
+    discount < 0 ||
+    discount > 100
+  ) {
+    return "Enter a discount between 0% and 100%.";
+  }
+  if (
+    addForm.stockLeft === "" ||
+    !Number.isFinite(stock) ||
+    stock < 0
+  ) {
+    return "Enter a valid starting stock quantity.";
+  }
+  if (
+    addForm.deliveryIn === "" ||
+    !Number.isFinite(delivery) ||
+    delivery <= 0
+  ) {
+    return "Enter a valid delivery time.";
+  }
+  if (
+    addForm.limit !== "" &&
+    (!Number.isFinite(limit) || limit < 0)
+  ) {
+    return "Enter a valid per-customer limit.";
+  }
+  return null;
+};
 
   const handleAddSubmit = async (e) => {
     e.preventDefault();
@@ -928,6 +1309,7 @@ const selectedForSubmissionCount = useMemo(
       const payload = {
         id: "unique-id",
         date: new Date().toISOString(),
+        vendorId: String(vendorId || ""),
         GroceryItemId: "string",
         name: addForm.name.trim(),
         category: finalCategory,
@@ -964,6 +1346,62 @@ const selectedForSubmissionCount = useMemo(
     }
   };
 
+   // ---- Add New Category ----
+
+  const openAddCategoryModal = () => {
+    setNewCategoryName("");
+    setAddCategoryError("");
+    setShowAddCategoryModal(true);
+  };
+
+  const closeAddCategoryModal = () => {
+    if (addCategorySaving) return;
+    setShowAddCategoryModal(false);
+  };
+
+  const handleAddCategorySubmit = async (e) => {
+    e.preventDefault();
+    const trimmed = newCategoryName.trim();
+    if (!trimmed) {
+      setAddCategoryError("Category name is required.");
+      return;
+    }
+    setAddCategoryError("");
+    setAddCategorySaving(true);
+    try {
+      const payload = {
+        id: "",
+        Images: [],
+        CategoryName: trimmed,
+        Status: "Pending Approval",
+        Date: new Date().toISOString(),
+        VendorId: String(vendorId || ""),
+      };
+      const response = await fetch(ADD_CATEGORY, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) throw new Error("Add category request failed");
+
+      setCustomCategories((prev) =>
+        prev.includes(trimmed) ? prev : [...prev, trimmed],
+      );
+      // Auto-select the new category on the Add Product form the user was just on.
+      setAddForm((prev) => ({ ...prev, category: trimmed }));
+      setMessage(`Category "${trimmed}" added.`);
+      setTimeout(() => setMessage(""), 3000);
+      setShowAddCategoryModal(false);
+    } catch (err) {
+      console.error("Failed to add category", err);
+      setAddCategoryError(
+        "Unable to add this category right now. Please try again.",
+      );
+    } finally {
+      setAddCategorySaving(false);
+    }
+  };
+
   if (!vendor) {
     return null;
   }
@@ -979,6 +1417,32 @@ const selectedForSubmissionCount = useMemo(
         >
           <ArrowBackIcon fontSize="small" /> Back to Preview
         </button>
+
+        {/* Hidden inputs backing the "Search by Photo" / "Scan Barcode Photo"
+            buttons in both the category-landing view and the product-list
+            view below. */}
+        <input
+          ref={photoSearchInputRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          className="d-none"
+          onChange={(e) => {
+            setSelectedCategory("All");
+            handlePhotoSearchFile(e);
+          }}
+        />
+        <input
+          ref={barcodePhotoInputRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          className="d-none"
+          onChange={(e) => {
+            setSelectedCategory("All");
+            handleBarcodePhotoFile(e);
+          }}
+        />
 
         {/* Header */}
         <div className="vsu-header p-4 p-md-5 mb-4">
@@ -1010,15 +1474,34 @@ const selectedForSubmissionCount = useMemo(
                     {vendor.address}
                   </p>
                 )}
-                <span className="vsu-pill">
-                  <StorefrontIcon style={{ fontSize: "14px" }} /> Vendor stock
-                  manager
-                </span>
+                <div className="d-flex align-items-center flex-wrap gap-2">
+                  <span className="vsu-pill">
+                    <StorefrontIcon style={{ fontSize: "14px" }} /> Vendor stock
+                    manager
+                  </span>
+                  <button
+                    type="button"
+                    className="btn btn-sm vsu-btn-gold-outline text-white"
+                    style={{ fontSize: "16px" }} 
+                    onClick={openAddModal}
+                  >
+                    <AddIcon fontSize="small" /> Add New Product
+                  </button>
+                  
+                  <button
+                    type="button"
+                    className="btn btn-sm vsu-btn-gold-outline text-white"
+                    style={{ borderColor: "#f1f5b8", fontSize: "16px" }}
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </button>
+                </div>
               </div>
             </div>
             <button
               type="button"
-              className="btn btn-sm vsu-btn-gold-outline"
+              className="text-white fw-bold "
               onClick={openEditVendorModal}
             >
               Edit
@@ -1212,8 +1695,62 @@ const selectedForSubmissionCount = useMemo(
           <div className="mb-4">
             <h3 className="vsu-section-heading mb-1">Choose a category</h3>
             <p className="text-muted mb-3">
-              Select a category to view and restock its products.
+               Select a category to view and restock its products, or find one
+              instantly below.
             </p>
+            
+              <div className="vsu-finder mb-4">
+              <div className="vsu-finder-row">
+                <div className="vsu-search-wrap flex-grow-1">
+                  <SearchIcon className="vsu-search-icon" />
+                  <input
+                    type="text"
+                    className="form-control vsu-search"
+                    placeholder="Search any product by name or code..."
+                    value={searchQuery}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      if (e.target.value.trim()) clearImageSearch();
+                      setSelectedCategory("All");
+                    }}
+                  />
+                </div>
+                <button
+                  type="button"
+                  className="vsu-icon-btn"
+                  title="Find a product by uploading its photo"
+                  disabled={imageSearchBusy}
+                  onClick={() => photoSearchInputRef.current?.click()}
+                >
+                  <CameraAltIcon fontSize="small" />
+                  <span>Search by Photo</span>
+                </button>
+                <button
+                  type="button"
+                  className="vsu-icon-btn"
+                  title="Find a product by uploading a barcode photo"
+                  disabled={imageSearchBusy}
+                  onClick={() => barcodePhotoInputRef.current?.click()}
+                >
+                  <SearchIcon fontSize="small" />
+                  <span>Scan Barcode Photo</span>
+                </button>
+              </div>
+              {imageSearchBusy && (
+                <div className="vsu-finder-status">
+                  <span
+                    className="spinner-border spinner-border-sm me-2"
+                    role="status"
+                  />
+                  Analyzing photo...
+                </div>
+              )}
+              {imageSearchError && !imageSearchBusy && (
+                <div className="vsu-finder-status vsu-finder-error">
+                  {imageSearchError}
+                </div>
+              )}
+            </div>
 
             {loading ? (
               <div className="vsu-empty">
@@ -1326,7 +1863,7 @@ const selectedForSubmissionCount = useMemo(
               <h5 className="vsu-section-heading mb-0">
                 {selectedCategory === "All" ? "All Products" : selectedCategory}
               </h5>
-              <div className="d-flex align-items-center gap-2">
+              <div className="d-flex align-items-center  flex-wrap gap-2">
                 {selectedForSubmissionCount > 0 && (
                   <span className="badge bg-success">
                     {selectedForSubmissionCount} selected for submission
@@ -1337,21 +1874,110 @@ const selectedForSubmissionCount = useMemo(
                   <input
                     type="text"
                     className="form-control form-control-sm vsu-search"
-                    placeholder="Search products..."
+                    placeholder="Search by name or code..."
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                   onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      if (e.target.value.trim()) clearImageSearch();
+                    }}
                     style={{ maxWidth: "220px" }}
                   />
                 </div>
+                <button
+                  type="button"
+                  className="vsu-icon-btn vsu-icon-btn-sm"
+                  title="Find a product by uploading its photo"
+                  disabled={imageSearchBusy}
+                  onClick={() => photoSearchInputRef.current?.click()}
+                >
+                  <CameraAltIcon fontSize="small" />
+                </button>
+                <button
+                  type="button"
+                  className="vsu-icon-btn vsu-icon-btn-sm"
+                  title="Find a product by uploading a barcode photo"
+                  disabled={imageSearchBusy}
+                  onClick={() => barcodePhotoInputRef.current?.click()}
+                >
+                  <SearchIcon fontSize="small" />
+                </button>
               </div>
             </div>
+            
+             {/* ---- My Products / All Products toggle ---- */}
+            {!imageSearchMatchIds && (
+              <div className="vsu-toggle-row mb-3">
+                <div className="vsu-toggle-group">
+                  <button
+                    type="button"
+                    className={`vsu-toggle-pill ${effectiveViewMode === "selected" ? "active" : ""}`}
+                    onClick={() => setViewModeOverride("selected")}
+                  >
+                    My Products{" "}
+                    <span className="vsu-toggle-count">
+                      {categoryMineCount}
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`vsu-toggle-pill ${effectiveViewMode === "all" ? "active" : ""}`}
+                    onClick={() => setViewModeOverride("all")}
+                  >
+                    All Products{" "}
+                    <span className="vsu-toggle-count">
+                      {categoryScopedItems.length}
+                    </span>
+                  </button>
+                </div>
+                {effectiveViewMode === "selected" && (
+                  <span className="text-muted vsu-toggle-hint">
+                    Showing products you've already picked. Switch to "All
+                    Products" to add more.
+                  </span>
+                )}
+              </div>
+            )}
+
+            {(imageSearchBusy || imageSearchError || imageSearchMatchIds) && (
+              <div className="vsu-finder-status-row mb-3">
+                {imageSearchBusy && (
+                  <span className="vsu-finder-status">
+                    <span
+                      className="spinner-border spinner-border-sm me-2"
+                      role="status"
+                    />
+                    Analyzing photo...
+                  </span>
+                )}
+                {imageSearchError && !imageSearchBusy && (
+                  <span className="vsu-finder-status vsu-finder-error">
+                    {imageSearchError}
+                  </span>
+                )}
+                {imageSearchMatchIds && !imageSearchBusy && (
+                  <span className="vsu-finder-status vsu-finder-success">
+                    {imageSearchLabel || `${imageSearchMatchIds.size} matches`}
+                  </span>
+                )}
+                {imageSearchMatchIds && (
+                  <button
+                    type="button"
+                    className="vsu-back-btn"
+                    onClick={clearImageSearch}
+                  >
+                    <CloseIcon fontSize="small" /> Clear photo search
+                  </button>
+                )}
+              </div>
+            )}
 
             {displayedItems.length === 0 ? (
               <div className="vsu-empty">
                 <p className="mb-1 fw-bold">Nothing here yet</p>
                 <p className="mb-0">
-                  Try a different category, clear your search, or add a new
-                  product.
+                  {effectiveViewMode === "selected" && !imageSearchMatchIds
+                    ? "You haven't picked any products in this category yet. Switch to \"All Products\" to browse and add some."
+                    : "Try a different category, clear your search, or add a new product."}
                 </p>
               </div>
             ) : (
@@ -1361,6 +1987,7 @@ const selectedForSubmissionCount = useMemo(
                   // const restockQty = getPendingQty(item.id);
                   const restockLimit = getPendingLimit(item);
                   const isOutOfStock = liveStock <= 0;
+                  const productValidationError = getProductValidationError(item);
                   return (
                     <div
                       key={item.id}
@@ -1460,7 +2087,7 @@ const selectedForSubmissionCount = useMemo(
                           className="d-flex justify-content-between align-items-center mb-1"
                           style={{ fontSize: "10px", color: "#6B7A70" }}
                         >
-                          <span>Live: {liveStock}</span>
+                          {/* <span>Live: {liveStock}</span> */}
                           <span
                             className="fw-bold"
                             style={{ color: "#8a611c" }}
@@ -1470,13 +2097,13 @@ const selectedForSubmissionCount = useMemo(
                         </div>
                         <input
                           type="number"
-                          min="0"
+                          min="0"     
+                          step="1"
+                          required={isSelectedForSubmission(item.id)}
                           className="form-control form-control-sm"
                           style={{ fontSize: "12px" }}
                           value={getQtyDisplayValue(item.id)}
-                          onChange={(e) =>
-                            handleQtyInputChange(item.id, e.target.value, item)
-                          }
+                          onChange={(e) => handleQtyInputChange(item.id, e.target.value, item)}
                         />
                       </div>
 
@@ -1546,9 +2173,10 @@ const selectedForSubmissionCount = useMemo(
                         </div>
                         <div className="input-group input-group-sm">
                           <input
-                            type="number"
+                            type="text"
+                            inputMode="decimal"
                             min="0"
-                            max="100"
+                            max="95"
                             className="form-control form-control-sm"
                             style={{ fontSize: "11px" }}
                             placeholder="Discount %"
@@ -1577,16 +2205,33 @@ const selectedForSubmissionCount = useMemo(
                           </span>
                         </div>
                         <input
-                          type="number"
-                          min="0"
-                          step="0.01"
+                         type="text"
+                          inputMode="decimal"
+                          min="0.01"
                           className="form-control form-control-sm"
                           style={{ fontSize: "12px" }}
                           value={getMrpDisplayValue(item)}
+                          required={isSelectedForSubmission(item.id)}
                           onChange={(e) => handleMrpInputChange(item.id, e.target.value)}
                         />
                       </div>
-
+                      {productValidationError && (
+                      <div
+                        className="mt-2"
+                        style={{
+                          color: "#dc3545",
+                          fontSize: "10px",
+                          fontWeight: 600,
+                          lineHeight: "1.3",
+                          background: "#fff1f1",
+                          border: "1px solid #f5c2c7",
+                          borderRadius: "6px",
+                          padding: "5px 7px",
+                        }}
+                      >
+                        ⚠ {productValidationError}
+                      </div>
+                    )}
                       {/* ---- Submit Price (after discount) ---- */}
                       <div className="mt-2">
                         <div
@@ -1621,6 +2266,24 @@ const selectedForSubmissionCount = useMemo(
             )}
           </div>
         )}
+
+        {/* ---- Preview Products (bottom of page) ---- */}
+        <div className="d-flex justify-content-center mt-1 mb-5 gap-2">
+          <button
+            type="button"
+            className="btn btn-primary text-white "
+            onClick={handlePreview}
+          >
+            Preview Products
+          </button>
+          <button
+              className="btn btn-primary text-white "
+              onClick={handleRefresh}
+              disabled={loading}
+            >
+              {loading ? "Refreshing..." : "Refresh from server"}
+            </button>
+        </div>
       </div>
 
       {/* ---- Floating vendor icon navigation ---- */}
@@ -1636,21 +2299,13 @@ const selectedForSubmissionCount = useMemo(
           <div
             className="bg-white vsu-fab-menu p-2 mb-2"
             style={{ minWidth: "210px" }}
-          >
-            <button
+          ><button
               className="vsu-fab-menu-item w-100 mb-1"
               onClick={openAddModal}
             >
               <AddIcon fontSize="small" /> Add New Product
             </button>
-            <button
-              className="vsu-fab-menu-item w-100 mb-1"
-              onClick={handleRefresh}
-              disabled={loading}
-            >
-              {loading ? "Refreshing..." : "Refresh from server"}
-            </button>
-            <button
+	          <button
               className="vsu-fab-menu-item w-100 mb-1"
               onClick={() => {
                 setShowVendorMenu(false);
@@ -1661,6 +2316,13 @@ const selectedForSubmissionCount = useMemo(
             </button>
             <button
               className="vsu-fab-menu-item w-100 mb-1"
+              onClick={handleRefresh}
+              disabled={loading}
+            >
+              {loading ? "Refreshing..." : "Refresh from server"}
+            </button>
+            <button
+              className="vsu-fab-menu-item w-100"
               onClick={() => {
                 setShowVendorMenu(false);
                 handleBackToProfile();
@@ -1683,7 +2345,7 @@ const selectedForSubmissionCount = useMemo(
           onClick={() => setShowVendorMenu((prev) => !prev)}
           title="Vendor menu"
         >
-          <StorefrontIcon />
+          <StorefrontIcon style={{color: "#ffffff"}}/>
         </button>
       </div>
 
@@ -1738,12 +2400,22 @@ const selectedForSubmissionCount = useMemo(
                 </div>
 
                 <div className="mb-2">
+                  <div className="d-flex justify-content-between align-items-center mb-1">
                   <label
                     className="form-label mb-1"
                     style={{ fontSize: "13px" }}
                   >
                     Category
                   </label>
+                  <button
+                      type="button"
+                      className="btn btn-link btn-sm p-0"
+                      style={{ fontSize: "12px", textDecoration: "none" }}
+                      onClick={openAddCategoryModal}
+                    >
+                      + Add New Category
+                    </button>
+                  </div>
                   <select
                     className="form-select form-select-sm"
                     value={addForm.category}
@@ -1903,27 +2575,51 @@ const selectedForSubmissionCount = useMemo(
                       className="form-control form-control-sm"
                       value={addForm.mrp}
                       onChange={(e) => updateAddForm("mrp", e.target.value)}
+                      required
                     />
                   </div>
-                  <div className="col-6">
-                    <label
-                      className="form-label mb-1"
-                      style={{ fontSize: "13px" }}
-                    >
-                      Discount (%)
-                    </label>
-                    <input
-                      type="number"
-                      min="0"
-                      max="100"
-                      className="form-control form-control-sm"
-                      value={addForm.discount}
-                      onChange={(e) =>
-                        updateAddForm("discount", e.target.value)
-                      }
-                    />
-                  </div>
-                </div>
+                   {/* Discount */}
+  <div className="col-6">
+    <label className="form-label mb-1">
+      Discount (%) *
+    </label>
+    <input
+      type="number"
+      min="0"
+      max="95"
+      step="0.01"
+      className="form-control form-control-sm"
+      value={addForm.discount}
+      onChange={(e) => {
+        const value = e.target.value;
+
+        if (
+          value === "" ||
+          (/^\d*(\.\d{0,2})?$/.test(value) &&
+            Number(value) <= 95)
+        ) {
+          updateAddForm("discount", value);
+        }
+      }}
+      required
+    />
+  </div>
+</div>
+
+{/* Selling Price */}
+<div className="mb-2">
+  <label className="form-label mb-1">
+    Price (₹) *
+  </label>
+  <input
+    type="number"
+    className="form-control form-control-sm"
+    value={getAddProductPrice()}
+    readOnly
+    required
+    placeholder="Auto-calculated selling price"
+  />
+</div>
 
                 <div className="row g-2 mb-2">
                   <div className="col-6">
@@ -1968,6 +2664,7 @@ const selectedForSubmissionCount = useMemo(
                     Product Photo (optional)
                   </label>
                   <input
+                    ref={addPhotoInputRef}
                     type="file"
                     accept="image/*"
                     className="form-control form-control-sm"
@@ -1981,6 +2678,186 @@ const selectedForSubmissionCount = useMemo(
                   disabled={addSaving}
                 >
                   {addSaving ? "Submitting..." : "Submit for Approval"}
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* ---- Add New Category modal ---- */}
+      {showAddCategoryModal && (
+        <div
+          className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+          style={{ backgroundColor: "rgba(16,48,31,0.55)", zIndex: 2100 }}
+          onClick={closeAddCategoryModal}
+        >
+          <div
+            className="bg-white vsu-modal-card"
+            style={{ width: "min(400px, 92vw)" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="vsu-modal-header d-flex justify-content-between align-items-center">
+              <h5 className="vsu-title mb-0">Add New Category</h5>
+              <button
+                className="btn btn-sm"
+                style={{ color: "#fff" }}
+                onClick={closeAddCategoryModal}
+              >
+                <CloseIcon fontSize="small" />
+              </button>
+            </div>
+
+            <div className="p-4">
+              {addCategoryError && (
+                <div className="alert alert-danger py-2 rounded-3">
+                  {addCategoryError}
+                </div>
+              )}
+
+              <form onSubmit={handleAddCategorySubmit}>
+                <div className="mb-3">
+                  <label
+                    className="form-label mb-1"
+                    style={{ fontSize: "13px" }}
+                  >
+                    Category Name
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control form-control-sm"
+                    placeholder="e.g. Vegetables"
+                    value={newCategoryName}
+                    onChange={(e) => setNewCategoryName(e.target.value)}
+                    autoFocus
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="btn vsu-btn-primary w-100 py-2"
+                  disabled={addCategorySaving}
+                >
+                  {addCategorySaving ? "Saving..." : "Save Category"}
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* ---- Add New Category modal ---- */}
+      {showAddCategoryModal && (
+        <div
+          className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+          style={{ backgroundColor: "rgba(16,48,31,0.55)", zIndex: 2100 }}
+          onClick={closeAddCategoryModal}
+        >
+          <div
+            className="bg-white vsu-modal-card"
+            style={{ width: "min(400px, 92vw)" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="vsu-modal-header d-flex justify-content-between align-items-center">
+              <h5 className="vsu-title mb-0">Add New Category</h5>
+              <button
+                className="btn btn-sm"
+                style={{ color: "#fff" }}
+                onClick={closeAddCategoryModal}
+              >
+                <CloseIcon fontSize="small" />
+              </button>
+            </div>
+
+            <div className="p-4">
+              {addCategoryError && (
+                <div className="alert alert-danger py-2 rounded-3">
+                  {addCategoryError}
+                </div>
+              )}
+
+              <form onSubmit={handleAddCategorySubmit}>
+                <div className="mb-3">
+                  <label
+                    className="form-label mb-1"
+                    style={{ fontSize: "13px" }}
+                  >
+                    Category Name
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control form-control-sm"
+                    placeholder="e.g. Vegetables"
+                    value={newCategoryName}
+                    onChange={(e) => setNewCategoryName(e.target.value)}
+                    autoFocus
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="btn vsu-btn-primary w-100 py-2"
+                  disabled={addCategorySaving}
+                >
+                  {addCategorySaving ? "Saving..." : "Save Category"}
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+        {/* ---- Add New Category modal ---- */}
+      {showAddCategoryModal && (
+        <div
+          className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+          style={{ backgroundColor: "rgba(16,48,31,0.55)", zIndex: 2100 }}
+          onClick={closeAddCategoryModal}
+        >
+          <div
+            className="bg-white vsu-modal-card"
+            style={{ width: "min(400px, 92vw)" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="vsu-modal-header d-flex justify-content-between align-items-center">
+              <h5 className="vsu-title mb-0">Add New Category</h5>
+              <button
+                className="btn btn-sm"
+                style={{ color: "#fff" }}
+                onClick={closeAddCategoryModal}
+              >
+                <CloseIcon fontSize="small" />
+              </button>
+            </div>
+
+            <div className="p-4">
+              {addCategoryError && (
+                <div className="alert alert-danger py-2 rounded-3">
+                  {addCategoryError}
+                </div>
+              )}
+
+              <form onSubmit={handleAddCategorySubmit}>
+                <div className="mb-3">
+                  <label
+                    className="form-label mb-1"
+                    style={{ fontSize: "13px" }}
+                  >
+                    Category Name
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control form-control-sm"
+                    placeholder="e.g. Vegetables"
+                    value={newCategoryName}
+                    onChange={(e) => setNewCategoryName(e.target.value)}
+                    autoFocus
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="btn vsu-btn-primary w-100 py-2"
+                  disabled={addCategorySaving}
+                >
+                  {addCategorySaving ? "Saving..." : "Save Category"}
                 </button>
               </form>
             </div>
