@@ -28,7 +28,7 @@ const AdminOrderClose = () => {
   const [customerName, setCustomerName] = useState("");
   const [date, setDate] = useState("");
   const [items, setItems] = useState([]);
-  const [selectedPartner] = useState("");
+  //const [selectedPartner] = useState("");
   const [longitude, setLongitude] = useState("");
   const [latitude, setLatitude] = useState("");
   const [grandTotal, setGrandTotal] = useState("");
@@ -268,10 +268,20 @@ const AdminOrderClose = () => {
         ...latestData,
         id: groceryItemId,
         status: "Completed",
-        AssignedTo: "",
-        DeliveryPartnerUserId: "",
-        deliveryAssignedTime: "",
-        deliverySubmitTime: "",
+
+
+
+
+        VendorId: latestData.VendorId,
+        AssignedTo: latestData.AssignedTo,
+        DeliveryPartnerUserId: latestData.DeliveryPartnerUserId,
+        deliveryAssignedTime: latestData.deliveryAssignedTime,
+        deliverySubmitTime: latestData.deliverySubmitTime,
+        
+        // AssignedTo: "",
+        // DeliveryPartnerUserId: "",
+        // deliveryAssignedTime: "",
+        // deliverySubmitTime: "",
       };
 
       const cancelResponse = await fetch(
@@ -971,7 +981,8 @@ const AdminOrderClose = () => {
                   style={{ background: "red" }}
                   onClick={handleCancelOrder}
                   title="Cancel Order"
-                  disabled={selectedPartner}
+                  //disabled={selectedPartner}
+                    disabled={status !== "Delivered"}
                 >
                   Delete
                 </Button>

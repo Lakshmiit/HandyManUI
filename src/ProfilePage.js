@@ -2444,6 +2444,100 @@ const getVendorGradient = (name = "") => {
 
 
   useEffect(() => {
+    if (!userId || userType !== "customer") return;
+
+    let cachedLocation = null;
+    try {
+      cachedLocation = JSON.parse(
+        localStorage.getItem(`deliveryLocation-${userId}`) || "null",
+      );
+    } catch {
+      localStorage.removeItem(`deliveryLocation-${userId}`);
+    }
+    if (cachedLocation?.latitude && cachedLocation?.longitude) {
+      setProfile((previousProfile) => ({
+        ...previousProfile,
+        latitude: cachedLocation.latitude,
+        longitude: cachedLocation.longitude,
+      }));
+    }
+
+    const fetchCustomerAddress = async () => {
+      try {
+        const response = await axios.get(
+          `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Address/GetAddressById/${userId}`,
+        );
+        const data = Array.isArray(response.data)
+          ? response.data[0]
+          : response.data;
+        if (!data) return;
+
+        setProfile((previousProfile) => ({
+          ...previousProfile,
+          ...data,
+          latitude:
+            data.latitude ||
+            data.Latitude ||
+            data.userLatitude ||
+            data.UserLatitude ||
+            previousProfile.latitude ||
+            cachedLocation?.latitude ||
+            "",
+          longitude:
+            data.longitude ||
+            data.Longitude ||
+            data.userLongitude ||
+            data.UserLongitude ||
+            previousProfile.longitude ||
+            cachedLocation?.longitude ||
+            "",
+        }));
+      } catch (error) {
+        console.error("Error fetching customer address:", error);
+      }
+    };
+
+    fetchCustomerAddress();
+  }, [userId, userType]);
+
+  useEffect(() => {
+    if (!userId || userType !== "customer") return;
+
+    const locationKey = `deliveryLocation-${userId}`;
+    if (localStorage.getItem(locationKey) || locationRequestRef.current) {
+      return;
+    }
+
+    const latitude = profile.latitude ?? profile.Latitude;
+    const longitude = profile.longitude ?? profile.Longitude;
+    const hasLatitude = latitude !== undefined && latitude !== null && String(latitude).trim();
+    const hasLongitude = longitude !== undefined && longitude !== null && String(longitude).trim();
+    if (hasLatitude && hasLongitude) return;
+
+    if (!navigator.geolocation) return;
+
+    locationRequestRef.current = true;
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        const location = {
+          latitude: String(coords.latitude),
+          longitude: String(coords.longitude),
+        };
+        localStorage.setItem(locationKey, JSON.stringify(location));
+        setProfile((previousProfile) => ({
+          ...previousProfile,
+          ...location,
+        }));
+      },
+      (error) => {
+        locationRequestRef.current = false;
+        console.error("Unable to capture delivery location:", error);
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
+    );
+  }, [profile.latitude, profile.longitude, profile.Latitude, profile.Longitude, userId, userType]);
+
+  useEffect(() => {
     if (category && district) {
       setMenuList(
         getMenuList(
@@ -2527,7 +2621,7 @@ const getVendorGradient = (name = "") => {
     t.martId?.toString().toLowerCase().includes(searchOrderId.toLowerCase()),
   );
 
-   let cachedProfileLocation = null;
+  let cachedProfileLocation = null;
   try {
     cachedProfileLocation = JSON.parse(
       localStorage.getItem(`deliveryLocation-${userId}`) || "null",
@@ -2825,7 +2919,6 @@ const getVendorGradient = (name = "") => {
                     <hr style={{ margin: "4px 0" }} />
                     <div className="fw-bold">Address</div>
                     <p className="mb-2">{profile.address}</p>
-                      <div className="mt-2 mb-2">{renderProfileMap()}</div>
                     <hr style={{ margin: "4px 0" }} />
                     <div
                       className="d-flex align-items-start"
@@ -3073,6 +3166,7 @@ const getVendorGradient = (name = "") => {
                         .filter(Boolean)
                         .join(", ")}
                     </div>
+ 
                      {Number.isFinite(Number(selectedOrder.latitude)) &&
                       Number.isFinite(Number(selectedOrder.longitude)) && (
                         <div className="mb-2">

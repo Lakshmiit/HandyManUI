@@ -15,6 +15,8 @@ const AddressPage = () => {
   const [districtId, setDistrictId] = useState("");
   const [savingAddress, setSavingAddress] = useState(false);
   const [addressData, setAddressData] = useState(null);
+  const [capturingLocation, setCapturingLocation] = useState(false);
+  const [locationMessage, setLocationMessage] = useState("");
   // const [district, setDistrict] = useState("");
   // const [state, setState] = useState("");
   const [addressForm, setAddressForm] = useState({
@@ -26,6 +28,8 @@ const AddressPage = () => {
     district: "",
     districtId: "",
     zipCode: "",
+    latitude: "",
+    longitude: "",
   });
 const [districtList, setDistrictList] = useState([]);
 const [stateList, setStateList] = useState([]);
@@ -68,6 +72,8 @@ const isFormValid = Boolean(
           state: data.state || "",
           district: data.district || "",
           zipCode: data.zipCode || "",
+          latitude: data.latitude ?? data.Latitude ?? "",
+          longitude: data.longitude ?? data.Longitude ?? "",
         });
          setStateId(data.stateId ? String(data.stateId) : "");
          setDistrictId(data.districtId ? String(data.districtId) : "");
@@ -268,6 +274,42 @@ const isFormValid = Boolean(
     }));
   };
 
+  const handleCaptureLocation = () => {
+    if (!navigator.geolocation) {
+      setLocationMessage("Location is not supported by this browser.");
+      return;
+    }
+
+    setCapturingLocation(true);
+    setLocationMessage("");
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        const latitude = String(coords.latitude);
+        const longitude = String(coords.longitude);
+        setAddressForm((prev) => ({
+          ...prev,
+          latitude,
+          longitude,
+        }));
+        localStorage.setItem(
+          `deliveryLocation-${userId}`,
+          JSON.stringify({ latitude, longitude }),
+        );
+        setLocationMessage("Location captured successfully.");
+        setCapturingLocation(false);
+      },
+      (error) => {
+        const message =
+          error.code === error.PERMISSION_DENIED
+            ? "Please allow location access and try again."
+            : "Unable to capture your location. Please try again.";
+        setLocationMessage(message);
+        setCapturingLocation(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
+    );
+  };
+
   const handleSaveAddress = async () => {
     const { fullName, mobileNumber, address, state, district, zipCode } = addressForm;
 
@@ -302,6 +344,10 @@ const isFormValid = Boolean(
       lastName: "lastName",
       fullName: fullName,
       walletAmount: "0",
+      latitude: addressForm.latitude,
+      longitude: addressForm.longitude,
+      Latitude: addressForm.latitude,
+      Longitude: addressForm.longitude,
     };
 
     try {
@@ -380,6 +426,22 @@ const isFormValid = Boolean(
                 }
               />
             </Form.Group>
+            {addressForm.latitude && addressForm.longitude && (
+              <div className="mb-3">
+                <Form.Label>Delivery location</Form.Label>
+                <iframe
+                  title="Saved delivery location"
+                  src={`https://www.google.com/maps?q=${encodeURIComponent(
+                    `${addressForm.latitude},${addressForm.longitude}`,
+                  )}&z=15&output=embed`}
+                  width="100%"
+                  height="220"
+                  style={{ border: 0, borderRadius: "8px" }}
+                  loading="lazy"
+                  allowFullScreen
+                />
+              </div>
+            )}
                  <div className="vr-row">
               {/* State */}
               <div className="vr-field">
@@ -565,6 +627,20 @@ const isFormValid = Boolean(
                 )}
 
               </div>
+            </div>
+            <div className="mb-3">
+              <Button
+                type="button"
+                variant="outline-success"
+                onClick={handleCaptureLocation}
+                disabled={capturingLocation}
+              >
+                <LocationOnIcon className="me-1" />
+                {capturingLocation ? "Capturing location..." : "Capture delivery location"}
+              </Button>
+              {locationMessage && (
+                <div className="small mt-1 text-muted">{locationMessage}</div>
+              )}
             </div>
             <Button
               style={{ backgroundColor: "#008000", borderColor: "#008000" }}
