@@ -206,6 +206,7 @@ const AdminUpdateGrocery = () => {
       manufactureDate: manufactureDate,
       expireDate: expireDate,
       Limit: limit,
+      VendorId: "",
     };
     try {
       const response = await fetch(

@@ -158,6 +158,7 @@ const AdminUploadGrocery = () => {
       ManufactureDate: manufactureDate,
       ExpireDate: expireDate,
       Limit: limit ? limit.toString() : "",
+      VendorId: "",
     };
     try {
       const response = await fetch(
@@ -238,15 +239,15 @@ const AdminUploadGrocery = () => {
                 onChange={(e) => setCategory(e.target.value)}
               >
                 <option>Choose Category</option>
-                <option>LMart Special</option>
-                <option>DWCRA</option>
-                <option>Grocery Value Combo Packs</option>
                 <option>Unbeatable Offers</option>
-                <option>Vegetables</option>
-                <option>Fruits</option>
+                <option>Grocery Value Combo Packs</option>
+                <option>LMart Special</option>
                 <option>Rice & Ravva</option>
+                <option>Food Hub</option>
+                <option>Electrical Products</option>
                 <option>Atta & Flours</option>
                 <option>Oils & Dals</option>
+                <option>Vegetables</option>
                 <option>Sugar, Salt & Jaggery</option>
                 <option>Milk, Curd & Ghee</option>
                 <option>Bread & Eggs</option>
@@ -254,23 +255,25 @@ const AdminUploadGrocery = () => {
                 <option>Instant Food, Chips & Namkeen</option>
                 <option>Biscuits & Chocolates</option>
                 <option>Drinks & Juices</option>
-                <option>Ice Creams</option>
-                <option>Sweets & Snacks</option>
                 <option>Dry Fruits & Bakery</option>
-                <option>Soups & Sauces</option>
+                <option>Fruits</option>
                 <option>Tea & Coffee</option>
-                <option>Chicken</option>
-                <option>Home Needs</option>
+                 <option>Home Needs</option>
                 <option>Puja Essentials</option>
                 <option>Skin & Face Care</option>
                 <option>Bath & Body Care</option>
                 <option>Hair Care</option>
-                <option>Baby Products</option>
-                <option>Kids Zone</option>
                 <option>Health Care</option>
                 <option>Kitchenware Appliances</option>
+                <option>DWCRA</option>                                                              
+                <option>Ice Creams</option>
+                <option>Sweets & Snacks</option>             
+                <option>Soups & Sauces</option>               
+                <option>Stationary</option>          
+                <option>Baby Products</option>
+                <option>Kids Zone</option>
+                <option>Chicken</option> 
                 <option>Home Decors</option>
-                <option>Stationary</option>
               </select>
             </div>
 
