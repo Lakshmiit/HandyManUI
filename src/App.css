@@ -5914,3 +5914,117 @@ cursor: not-allowed;
   transform: scale(1.04);
   box-shadow: 0 4px 10px rgba(0,0,0,0.12);
 }
+
+
+/* Vendor Store Cards */
+.vendor-store-card {
+  position: relative;
+  flex: 0 0 auto;
+  width: 100px;
+  min-height: 130px;
+  padding: 8px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  border-radius: 14px;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.vendor-store-card:hover {
+  transform: translateY(-2px);
+}
+
+/* Store Icon */
+.vendor-store-icon {
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.vendor-store-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+  display: block;
+}
+
+.vendor-store-placeholder {
+  font-size: 30px;
+  font-weight: bold;
+  color: #ff5722;
+}
+
+/* Store Name */
+.vendor-store-name {
+  width: 100%;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: center;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Active Check */
+.vendor-store-selected {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .vendor-store-card {
+    width: 88px;
+    min-height: 115px;
+    padding: 6px 4px;
+  }
+
+  .vendor-store-icon {
+    width: 68px;
+    height: 68px;
+  }
+
+  .vendor-store-name {
+    font-size: 11px;
+  }
+}
+
+.selected-vendor-heading {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 8px ;
+  font-family: "Roboto";
+}
+
+.selected-vendor-heading h5 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #000;
+  line-height: 1.3;
+}

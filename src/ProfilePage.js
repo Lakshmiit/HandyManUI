@@ -3819,7 +3819,7 @@ const getVendorGradient = (name = "") => {
               >
                 <div className="shadow-lg p-2 rounded-5 text-center bg-transparent border-0">
                   {/* Vendor Tabs */}
-                  <div className="d-flex align-items-center mb-3" style={{ gap: "6px", marginBottom: "10px" }}>
+                  <div className="d-flex align-items-center mb-3" style={{ gap: "6px", marginBottom: "5px" }}>
                   <button
                     type="button"
                     onClick={() => scrollVendorTabs(-1)}
@@ -3845,14 +3845,14 @@ const getVendorGradient = (name = "") => {
                   </button>
                   <div
                     ref={vendorTabsRef}
-                    className="vendor-tabs-wrapper mb-3"
+                    className="vendor-tabs-wrapper "
                     style={{
                       width: "100%",
                       overflowX: "auto",
                       overflowY: "hidden",
                       WebkitOverflowScrolling: "touch",
                       scrollbarWidth: "none",
-                      padding: "5px 5px 8px",
+                      padding: "8px",
                     }}
                   >
                     <div
@@ -3861,106 +3861,79 @@ const getVendorGradient = (name = "") => {
                         width: "max-content",
                       }}
                     >
-                      {/* Vendors */}
-                    {approvedVendorListJson.map((v) => {
-                      const isActive = selectedMartTab === v.vendorId;
-                      const palette = getVendorGradient(v.storeName);
-                      const vendorImage = vendorStoreImages[v.vendorId];
+{/* Vendor Store Cards */}
+{approvedVendorListJson.map((v) => {
+  const isActive = selectedMartTab === v.vendorId;
+  const palette = getVendorGradient(v.storeName);
+  const vendorImage = vendorStoreImages[v.vendorId];
 
-                      return (
-                        <button
-                          type="button"
-                          key={v.vendorId}
-                          data-vendor-id={v.vendorId}
-                          onClick={() => {
-                            setSelectedMartTab(v.vendorId);
-                            localStorage.setItem("selectedVendorId", v.vendorId);
-                          }}
-                          className="vendor-tab-v2 d-flex flex-column align-items-center bg-transparent border-0"
-                          style={{
-                            flex: "0 0 auto",
-                            padding: "4px 6px",
-                            width: "90px",
-                          }}
-                        >
-                          {/* Vendor Image Card */}
-                          <div
-                            className={
-                              isActive
-                                ? "vendor-avatar-card active"
-                                : "vendor-avatar-card"
-                            }
-                            style={{
-                            width: "90px",
-                            height: "90px",
-                            borderRadius: "15px",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            overflow: "hidden",
-                            flexShrink: 0,
-                            gap: "2px",
-                            border: isActive
-                              ? `2px solid ${palette.solid}`
-                              : "1px solid #FFFFFF",
-                            backgroundImage: isActive
-                              ? `linear-gradient(#FFFFFF, #FFFFFF), linear-gradient(135deg, ${palette.solid}, ${palette.light})`
-                              : "none",
-                            backgroundColor: "#FFFFFF",
-                            backgroundOrigin: "border-box",
-                            backgroundClip: "padding-box, border-box",
-                            boxShadow: isActive
-                              ? `0 6px 16px ${palette.shadow}`
-                              : "0 4px 20px rgba(0, 0, 0, 0.05)",
-                          }}
-                          >
-                            {vendorImage ? (
-                              <img
-                                src={vendorImage}
-                                alt={v.storeName || "Vendor"}
-                                loading="lazy"
-                                decoding="async"
-                                style={{
-                                  width: "100%",
-                                  height: "100%",
-                                  borderRadius: "9px",
-                                  objectFit: "contain",
-                                  display: "block",
-                                }}
-                                onError={(e) => {
-                                  console.error(
-                                    "Vendor image failed:",
-                                    vendorImage
-                                  );
-                                  e.currentTarget.style.display = "none";
-                                }}
-                              />
-                            ) : null}
-                          </div>
+  return (
+    <button
+      type="button"
+      key={v.vendorId}
+      data-vendor-id={v.vendorId}
+      onClick={() => {
+        setSelectedMartTab(v.vendorId);
+        localStorage.setItem("selectedVendorId", v.vendorId);
+      }}
+      className="vendor-store-card"
+      style={{
+        border: isActive
+          ? `2px solid ${palette.solid}`
+          : "1px solid #eee",
+        boxShadow: isActive
+          ? `0 4px 12px ${palette.shadow}`
+          : "0 2px 8px rgba(0,0,0,0.08)",
+      }}
+    >
+      {/* Store Icon */}
+      <div
+        className="vendor-store-icon"
+        style={{
+          border: `2px solid ${palette.light}`,
+          background: "#fff",
+        }}
+      >
+        {vendorImage ? (
+          <img
+            src={vendorImage}
+            alt={v.storeName || "Vendor"}
+            loading="lazy"
+            decoding="async"
+            onError={(e) => {
+              e.currentTarget.style.display = "none";
+            }}
+          />
+        ) : (
+          <span className="vendor-store-placeholder">
+            {(v.storeName || "S").charAt(0).toUpperCase()}
+          </span>
+        )}
+      </div>
 
-                          {/* Vendor Store Name */}
-                          <span
-                            className="vendor-label"
-                            style={{
-                              color: isActive ? palette.solid : "#000",
-                              fontWeight: isActive ? 800 : 600,
-                              marginTop: "2px",
-                              fontSize: "12px",
-                              textAlign: "center",
-                              lineHeight: "1.2",
-                              width: "90px",
-                              whiteSpace: "normal",
-                              overflow: "visible",
-                              textOverflow: "clip",
-                              wordBreak: "break-word",
-                              fontFamily: "Roboto",  
-                            }}
-                          >
-                            {v.storeName}
-                          </span>
-                        </button>
-                      );
-                    })}
+      {/* Store Name */}
+      <span
+        className="vendor-store-name"
+        style={{
+          color: isActive ? palette.solid : "#333",
+        }}
+      >
+        {v.storeName || "Vendor Store"}
+      </span>
+
+      {/* Selected Indicator */}
+      {isActive && (
+        <span
+          className="vendor-store-selected"
+          style={{ background: palette.solid }}
+        >
+          ✓
+        </span>
+      )}
+    </button>
+  );
+})}
+
                     </div>
                   </div>
                     
@@ -3988,6 +3961,18 @@ const getVendorGradient = (name = "") => {
                  <ArrowForwardIcon style={{ fontSize: 16 }} />
                 </button>
               </div>
+              {/* Selected Vendor Store Name */}
+{(() => {
+  const selectedVendor = approvedVendorListJson.find(
+    (v) => v.vendorId === selectedMartTab
+  );
+  return selectedVendor ? (
+    <div className="selected-vendor-heading">
+      <h5>{selectedVendor.storeName || "Vendor Store"}</h5>
+    </div>
+  ) : null;
+})()}
+
 
                   {/* ── Selected Vendor's categories + products (from vendorlist.json) ── */}
                   {selectedMartTab !== "Lakshmi Mart" &&

@@ -156,6 +156,7 @@ const VendorOrdersPage = () => {
   const [message, setMessage] = useState("");
   const [selectedPartnerByOrder, setSelectedPartnerByOrder] = useState({});
   const [assigning, setAssigning] = useState({});
+  const [selectedFilter, setSelectedFilter] = useState("total");
   // Order cards start collapsed, showing just the order id + status. Each
   // order's expanded state is independent, so the vendor can open several
   // at once rather than an accordion that closes the others.
@@ -274,10 +275,49 @@ const VendorOrdersPage = () => {
     };
   }, [orders]);
 
-  const visibleOrders = useMemo(
-    () => orders.filter((o) => String(o.status || "").toLowerCase() !== "draft"),
-    [orders],
-  );
+const visibleOrders = useMemo(
+  () => orders.filter((o) => String(o.status || "").toLowerCase() !== "draft"),
+  [orders],
+);
+
+const filteredOrders = useMemo(() => {
+  switch (selectedFilter) {
+    case "open":
+      return visibleOrders.filter(
+        (o) => String(o.status || "").toLowerCase() === "open"
+      );
+
+    case "delivered":
+      return visibleOrders.filter(
+        (o) =>
+          o.isDelivered ||
+          String(o.status || "").toLowerCase() === "delivered" ||
+          String(o.status || "").toLowerCase() === "completed"
+      );
+
+    case "unassigned":
+      return visibleOrders.filter(
+        (o) => !o.assignedTo
+      );
+
+    case "cancel":
+      return visibleOrders.filter(
+        (o) => {
+          const status = String(o.status || "").toLowerCase();
+          return status === "cancel" ;
+        }
+      );
+
+    case "rejected":
+      return visibleOrders.filter(
+        (o) => String(o.status || "").toLowerCase() === "rejected"
+      );
+
+    case "total":
+    default:
+      return visibleOrders;
+  }
+}, [visibleOrders, selectedFilter]);
 
   const summary = useMemo(() => {
     const total = visibleOrders.length;
@@ -454,7 +494,7 @@ const VendorOrdersPage = () => {
       icon: <CheckCircleIcon className="text-success" fontSize="small" />,
       bg: "rgba(25,135,84,.12)",
       value: summary.delivered,
-      label: "Delivered",
+      label: "Delivered",  
     },
     {
       key: "unassigned",
@@ -463,21 +503,57 @@ const VendorOrdersPage = () => {
       value: summary.unassigned,
       label: "Unassigned",
     },
+    {
+      key: "Cancel",
+      icon: <CheckCircleIcon className="text-danger" fontSize="small" />,
+      bg: "rgba(220,53,69,.12)",
+      value: summary.statusCounts.cancel || summary.statusCounts.cancel || 0,
+      label: "Cancel",
+    },
+    {
+      key: "rejected",
+      icon: <CheckCircleIcon className="text-danger" fontSize="small" />,
+      bg: "rgba(220,53,69,.12)",
+      value: summary.statusCounts.rejected || summary.statusCounts.Rejected || 0,
+      label: "Rejected",
+    },
   ].map((stat) => (
-    <div className="card border shadow-sm h-100 vendor-stat-card" key={stat.key}>
+    <div
+      className={`card border shadow-sm h-100 vendor-stat-card ${
+        selectedFilter === stat.key ? "border-primary border-2" : ""
+      }`}
+      key={stat.key}
+      onClick={() => setSelectedFilter(stat.key)}
+      style={{
+        cursor: "pointer",
+        transition: "all 0.2s ease",
+      }}
+    >
       <div className="card-body p-2 p-md-3 d-flex flex-column align-items-start gap-1 gap-md-2">
         <div className="d-flex align-items-center gap-2 vendor-stat-top">
           <div
             className="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
-            style={{ width: 32, height: 32, backgroundColor: stat.bg }}
+            style={{
+              width: 32,
+              height: 32,
+              backgroundColor: stat.bg,
+            }}
           >
             {stat.icon}
           </div>
-          <div className="fs-6 fs-md-5 fw-bold lh-1 vendor-stat-value">{stat.value}</div>
+
+          <div className="fs-6 fs-md-5 fw-bold lh-1 vendor-stat-value">
+            {stat.value}
+          </div>
         </div>
+
         <div
           className="text-muted text-uppercase vendor-stat-label"
-          style={{ fontSize: 10, letterSpacing: ".03em", lineHeight: 1.2 }}
+          style={{
+            fontSize: 10,
+            letterSpacing: ".03em",
+            lineHeight: 1.2,
+          }}
         >
           {stat.label}
         </div>
@@ -518,11 +594,11 @@ const VendorOrdersPage = () => {
       )}
 
       {/* ---- Orders ---- */}
-      {visibleOrders.length === 0 ? (
+      {filteredOrders.length === 0 ? (
         <div className="text-muted text-center py-5">No orders yet for this store.</div>
       ) : (
         <div className="row g-3">
-          {visibleOrders.map((order) => {
+          {filteredOrders.map((order) => {
             const itemCount = (order.categories || []).reduce(
               (sum, cat) => sum + (cat.products || []).length,
               0,

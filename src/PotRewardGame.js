@@ -677,7 +677,8 @@ const PotRewardGame = ({
             "0 5px 15px rgba(0,0,0,.18)",
         }}
       >
-        🏺 Break your Lucky Pot Discover your Cashback Reward!
+        🏺 Break your Lucky Pot 
+        {/* Discover your Cashback Reward! */}
       </button>
 
       {/* ==================================================
