@@ -64,6 +64,7 @@ const AdminGroceryApproval = () => {
       Code: code,
       Units: units,
       Limit: limit,
+      VendorId: "",
     };
 
     try {

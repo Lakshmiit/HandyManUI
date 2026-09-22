@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from "react";
 import HandyManCharacter from "./img/hm_char.png";
 import HandyManLogo from "./img/Hm_Logo 1.png";
@@ -117,7 +118,10 @@ const OTPVerificationPage = () => {
     }
   };
 
-   const checkAddressAndNavigate = async (userId, profileType = "customer") => {
+  // Decides where to send the user based on whether they have a real
+  // address AND a completed profile (not just the "Guest" placeholder
+  // created during guest onboarding).
+  const checkAddressAndNavigate = async (userId, profileType = "customer") => {
     try {
       const response = await axios.get(
         `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/Address/GetAddressById/${userId}`,
@@ -125,15 +129,21 @@ const OTPVerificationPage = () => {
       const data = Array.isArray(response.data)
         ? response.data[0]
         : response.data;
- 
+
       const hasAddress = Boolean(
         data && data.address && data.state && data.district && data.zipCode,
       );
- 
-      if (hasAddress) {
-        Navigate(`/profilePage/${profileType}/${userId}`);
+
+      const isGuestProfile = data?.firstName?.trim().toLowerCase() === "guest";
+
+      // Prefer the profileType coming back from the API; fall back to
+      // whatever was passed in (the API returned null in testing).
+      const resolvedProfileType = data?.profileType || profileType;
+
+      if (hasAddress && !isGuestProfile) {
+        Navigate(`/profilePage/${resolvedProfileType}/${userId}`);
       } else {
-        Navigate(`/addressPage/${profileType}/${userId}`);
+        Navigate(`/addressPage/${resolvedProfileType}/${userId}`);
       }
     } catch (error) {
       console.error("Error fetching address:", error);
@@ -224,34 +234,8 @@ const OTPVerificationPage = () => {
 
       console.log("Customer Upload Success");
 
-      // const payload3 = {
-      //   id: "string",
-      //   UserId: newUserId,
-      //   CreatedDate: new Date().toISOString(),
-      //   UpdatedDate: new Date().toISOString(),
-      //   TicketId: "",
-      //   TotalWalletAmount: "50",
-      //   AvailedAmount: "0",
-      //   RemainingAmount: "50",
-      // };
-      // console.log("Payload3:", payload3);
-      // const response3 = await fetch(
-      //   `https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/OffersTransactions/UploadOffersTransactionsDetails`,
-      //   {
-      //     method: "POST",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //     body: JSON.stringify(payload3),
-      //   },
-      // );
-
-      // const result3 = await response3.text();
-      // console.log("Offers Transaction Response:", result3);
-      // if (!response3.ok) {
-      //   throw new Error("Failed to Upload OffersTransactions Data.");
-      // }
-Navigate(`/profilePage/customer/${userId}`);
+      // Let checkAddressAndNavigate decide the destination (guest never
+      // has a real address yet, so this will send them to addressPage).
       await checkAddressAndNavigate(newUserId, "customer");
     } catch (error) {
       console.error("Registration Error:", error);
@@ -305,10 +289,9 @@ Navigate(`/profilePage/customer/${userId}`);
 
         if (userData?.profileType && userData?.userId) {
           setLoginData(userData.userId);
+          // checkAddressAndNavigate is the single source of truth for
+          // where the user lands — no extra Navigate call after this.
           await checkAddressAndNavigate(userData.userId, userData.profileType);
-          Navigate(`/profilePage/${userData.profileType}/${userData.userId}`, {
-            state: { profileType: userData.profileType, userData },
-          });
         } else {
           throw new Error("User data missing required fields.");
         }

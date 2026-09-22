@@ -542,36 +542,66 @@ let approvedVendors = (Array.isArray(vendors) ? vendors : [])
 
         if (approvedVendors.length > 0) {
           setSelectedMartTab((current) => {
-            const currentExists =
-              approvedVendors.some(
-                (v) =>
-                  v.vendorId === current,
-              );
+  let lastOrderedVendor = null;
 
-           let nextVendorId;
-    if (currentExists && !usedFallback) {
-      nextVendorId = current;
-    } else if (usedFallback) {
-      nextVendorId = approvedVendors[0].vendorId;
-          } else if (preferLMartDefault) {
-      const lmartVendor = approvedVendors.find(
-        (v) =>
-          String(v.storeName || "")
-            .trim()
-            .toLowerCase()
-            .replace(/\s+/g, "") === "lmart",
-      );
-      nextVendorId = lmartVendor ? lmartVendor.vendorId : approvedVendors[0].vendorId;
-    } else {
-      nextVendorId = approvedVendors[0].vendorId;
-    }
+  try {
+    lastOrderedVendor = JSON.parse(
+      localStorage.getItem("lastOrderedVendor") || "null"
+    );
+  } catch (error) {
+    console.error("Invalid lastOrderedVendor:", error);
+  }
 
-    if (nextVendorId) {
-      localStorage.setItem("selectedVendorId", nextVendorId);
-    }
+  // 1. Select the vendor from the most recent successful order
+  const lastOrderedMatch = approvedVendors.find(
+    (v) => v.vendorId === lastOrderedVendor?.vendorId
+  );
 
-    return nextVendorId || "";
-  });
+  if (lastOrderedMatch) {
+    localStorage.setItem(
+      "selectedVendorId",
+      lastOrderedMatch.vendorId
+    );
+
+    return lastOrderedMatch.vendorId;
+  }
+
+  // 2. Keep the currently selected vendor if it still exists
+  const currentExists = approvedVendors.some(
+    (v) => v.vendorId === current
+  );
+
+  if (currentExists && !usedFallback) {
+    return current;
+  }
+
+  // 3. Existing fallback/default behavior
+  let nextVendorId;
+
+  if (usedFallback) {
+    nextVendorId = approvedVendors[0].vendorId;
+  } else if (preferLMartDefault) {
+    const lmartVendor = approvedVendors.find(
+      (v) =>
+        String(v.storeName || "")
+          .trim()
+          .toLowerCase()
+          .replace(/\s+/g, "") === "lmart"
+    );
+
+    nextVendorId = lmartVendor
+      ? lmartVendor.vendorId
+      : approvedVendors[0].vendorId;
+  } else {
+    nextVendorId = approvedVendors[0].vendorId;
+  }
+
+  if (nextVendorId) {
+    localStorage.setItem("selectedVendorId", nextVendorId);
+  }
+
+  return nextVendorId || "";
+});
 } else {
   setSelectedMartTab("");
   localStorage.removeItem("selectedVendorId");
@@ -2019,7 +2049,7 @@ const getVendorGradient = (name = "") => {
         products: resolvedProducts,
       }),
     );
-
+    localStorage.setItem( "selectedVendorId", vendor.vendorId);
     // Also save the EXACT category
     localStorage.setItem("encodedCategory", encodedCategory);
 

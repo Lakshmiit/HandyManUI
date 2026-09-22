@@ -1516,6 +1516,8 @@
 // };
 
 // export default GroceryPaymentmethod;
+
+
 import React, { useEffect, useState, useCallback } from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -2473,6 +2475,27 @@ const primary = addresses.find((addr) => addr.type === "primary");
           `Current Wallet Balance: ₹${updatedWalletAmount}.\n` +
           `Delivery Time Intimated Shortly!. 🎉`,
       );
+// Save the vendor store associated with this successful order
+try {
+  const vendorSelection = JSON.parse(
+    localStorage.getItem("vendorGrocerySelection") || "null"
+  );
+
+  const orderedVendorId =
+    vendorSelection?.vendorId || vendorId;
+
+  if (orderedVendorId) {
+    localStorage.setItem(
+      "lastOrderedVendor",
+      JSON.stringify({
+        vendorId: orderedVendorId,
+        storeName: vendorSelection?.storeName || "",
+      })
+    );
+  }
+} catch (error) {
+  console.error("Error saving ordered vendor:", error);
+}
       window.location.href = `/profilePage/${userType}/${userId}`;
     } catch (error) {
       console.error("❌ Order placement error:", error);

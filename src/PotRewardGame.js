@@ -270,7 +270,7 @@ const PotRewardGame = ({
   );
 
   const [showPopup, setShowPopup] =
-    useState(true);
+    useState(false);
 
   const [crackingId, setCrackingId] =
     useState(null);
