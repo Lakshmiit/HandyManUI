@@ -269,15 +269,12 @@ const AdminOrderClose = () => {
         id: groceryItemId,
         status: "Completed",
 
-
-
-
         VendorId: latestData.VendorId,
         AssignedTo: latestData.AssignedTo,
         DeliveryPartnerUserId: latestData.DeliveryPartnerUserId,
         deliveryAssignedTime: latestData.deliveryAssignedTime,
         deliverySubmitTime: latestData.deliverySubmitTime,
-        
+
         // AssignedTo: "",
         // DeliveryPartnerUserId: "",
         // deliveryAssignedTime: "",
@@ -711,7 +708,7 @@ const AdminOrderClose = () => {
 
   const deliveryCharge = itemsTotal >= 150 ? 0 : 15;
 
-  const handlingCharge = itemsTotal >= 150 ? 0 : 5;
+  const handlingCharge = itemsTotal >= 150 ? 5 : 5;
 
   return (
     <>
@@ -846,12 +843,16 @@ const AdminOrderClose = () => {
                   <tr>
                     <td colSpan="5" className="text-end fw-bold text-danger">
                       Delivery Charge:{" "}
-                      {deliveryCharge === 0 ? "FREE" : `Rs ${deliveryCharge}`}
+                      {deliveryCharge === 0
+                        ? "FREE"
+                        : `Rs ${deliveryCharge} /-`}
                     </td>
 
                     <td colSpan="5" className="text-end fw-bold text-danger">
                       Handling Charge:{" "}
-                      {handlingCharge === 0 ? "FREE" : `Rs ${handlingCharge}`}
+                      {handlingCharge === 0
+                        ? "FREE"
+                        : `Rs ${handlingCharge} /-`}
                     </td>
                   </tr>
                   {availedAmount > 0 && (
@@ -973,8 +974,8 @@ const AdminOrderClose = () => {
                   disabled={!!paidAmount || !selectedPartner}
                 >
                   <ForwardIcon />
-                </Button> 
-                
+                </Button>
+
                 */}
                 <Button
                   className="text-white mx-2"
@@ -982,7 +983,7 @@ const AdminOrderClose = () => {
                   onClick={handleCancelOrder}
                   title="Cancel Order"
                   //disabled={selectedPartner}
-                    disabled={status !== "Delivered"}
+                  disabled={status !== "Delivered"}
                 >
                   Delete
                 </Button>
