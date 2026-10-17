@@ -1,3 +1,4 @@
+
 import React, {
   useEffect,
   useMemo,
@@ -42,6 +43,10 @@ const AdminGroceryZoneDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [blinkingZones, setBlinkingZones] = useState({});
   const prevZoneCountsRef = useRef({});
+
+  // Date filter (yyyy-mm-dd strings from <input type="date">)
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
 
   useEffect(() => {
     console.log(loading);
@@ -175,6 +180,34 @@ const AdminGroceryZoneDashboard = () => {
     return zones;
   }, [groceryList, zoneMap]);
 
+  // ---------- Date filter ----------
+  const isInDateRange = useCallback(
+    (item) => {
+      if (!fromDate && !toDate) return true;
+
+      const d = new Date(item.date);
+      if (isNaN(d)) return false;
+
+      if (fromDate && d < new Date(`${fromDate}T00:00:00`)) return false;
+      if (toDate && d > new Date(`${toDate}T23:59:59.999`)) return false;
+
+      return true;
+    },
+    [fromDate, toDate],
+  );
+
+  // Date-filtered version of zoneCounts (used for display only)
+  const filteredZoneCounts = useMemo(() => {
+    const result = {};
+    Object.entries(zoneCounts).forEach(([zone, v]) => {
+      const tickets = v.tickets.filter(isInDateRange);
+      result[zone] = { count: tickets.length, tickets };
+    });
+    return result;
+  }, [zoneCounts, isInDateRange]);
+
+  // Blinking uses the ORIGINAL zoneCounts so changing the date filter
+  // never triggers a fake blink.
   useEffect(() => {
     const newBlinking = {};
     const prev = prevZoneCountsRef.current;
@@ -197,14 +230,75 @@ const AdminGroceryZoneDashboard = () => {
 
   const totalValidTickets = useMemo(
     () =>
-      groceryList.filter((i) => i.status?.toLowerCase().trim() === "open")
-        .length,
-    [groceryList],
+      groceryList.filter(
+        (i) => i.status?.toLowerCase().trim() === "open" && isInDateRange(i),
+      ).length,
+    [groceryList, isInDateRange],
   );
 
-  const handleGroceryClick = (martId) => {
-    navigate(`/adminGroceryOrderPage/${martId}`, { state: { martId } });
+  const handleGroceryClick = (id) => {
+    navigate(`/adminGroceryOrderPage/${id}`, { state: { martId: id } });
   };
+
+  const clearDates = () => {
+    setFromDate("");
+    setToDate("");
+  };
+
+  // ---------- Day / Month / Year counts ----------
+  const toYMD = (d) =>
+    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+      d.getDate(),
+    ).padStart(2, "0")}`;
+
+  // Counts are for the selected tab (falls back to "All Grocery"),
+  // ignoring the date filter so they always show real totals.
+  const periodLabel = selectedZone || "All Grocery";
+  const periodStats = useMemo(() => {
+    const base = zoneCounts[periodLabel]?.tickets || [];
+    const now = new Date();
+    let today = 0;
+    let month = 0;
+    let year = 0;
+
+    base.forEach((item) => {
+      const d = new Date(item.date);
+      if (isNaN(d) || d.getFullYear() !== now.getFullYear()) return;
+      year++;
+      if (d.getMonth() !== now.getMonth()) return;
+      month++;
+      if (d.getDate() === now.getDate()) today++;
+    });
+
+    return { today, month, year };
+  }, [zoneCounts, periodLabel]);
+
+  const applyQuickRange = (type) => {
+    const now = new Date();
+    if (type === "day") {
+      setFromDate(toYMD(now));
+      setToDate(toYMD(now));
+    } else if (type === "month") {
+      setFromDate(toYMD(new Date(now.getFullYear(), now.getMonth(), 1)));
+      setToDate(toYMD(new Date(now.getFullYear(), now.getMonth() + 1, 0)));
+    } else {
+      setFromDate(toYMD(new Date(now.getFullYear(), 0, 1)));
+      setToDate(toYMD(new Date(now.getFullYear(), 11, 31)));
+    }
+  };
+
+  const chipStyle = {
+    border: "none",
+    background: "#198754",
+    color: "#fff",
+    borderRadius: "6px",
+    padding: "4px 10px",
+    cursor: "pointer",
+    fontWeight: "bold",
+    fontSize: "13px",
+  };
+
+  const selectedTickets = filteredZoneCounts[selectedZone]?.tickets || [];
 
   return (
     <div style={{ padding: "20px" }}>
@@ -229,10 +323,11 @@ const AdminGroceryZoneDashboard = () => {
           gap: "10px",
           flexWrap: "wrap",
           marginBottom: "20px",
+          alignItems: "center",
         }}
       >
         {allZones.map((zone) => {
-          const data = zoneCounts[zone] || { count: 0 };
+          const data = filteredZoneCounts[zone] || { count: 0 };
           return (
             <div
               key={zone}
@@ -266,12 +361,117 @@ const AdminGroceryZoneDashboard = () => {
             </div>
           );
         })}
+
+        {/* Date filter beside "All Grocery" */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            flexWrap: "wrap",
+            background: "#fff",
+            padding: "8px 14px",
+            borderRadius: "10px",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
+          }}
+        >
+          <label style={{ fontWeight: "bold", fontSize: "14px" }}>From</label>
+          <input
+            type="date"
+            value={fromDate}
+            max={toDate || undefined}
+            onChange={(e) => setFromDate(e.target.value)}
+          />
+          <label style={{ fontWeight: "bold", fontSize: "14px" }}>To</label>
+          <input
+            type="date"
+            value={toDate}
+            min={fromDate || undefined}
+            onChange={(e) => setToDate(e.target.value)}
+          />
+          {(fromDate || toDate) && (
+            <button
+              onClick={clearDates}
+              style={{
+                border: "none",
+                background: "#dc3545",
+                color: "#fff",
+                borderRadius: "6px",
+                padding: "4px 10px",
+                cursor: "pointer",
+                fontWeight: "bold",
+              }}
+            >
+              Clear
+            </button>
+          )}
+
+          <span
+            style={{
+              borderLeft: "2px solid #ddd",
+              paddingLeft: "10px",
+              fontSize: "13px",
+              fontWeight: "bold",
+            }}
+          >
+            {periodLabel}:
+          </span>
+          <button
+            style={chipStyle}
+            title="Show today's orders"
+            onClick={() => applyQuickRange("day")}
+          >
+            Today: {periodStats.today}
+          </button>
+          <button
+            style={chipStyle}
+            title="Show this month's orders"
+            onClick={() => applyQuickRange("month")}
+          >
+            This Month: {periodStats.month}
+          </button>
+          <button
+            style={chipStyle}
+            title="Show this year's orders"
+            onClick={() => applyQuickRange("year")}
+          >
+            This Year: {periodStats.year}
+          </button>
+
+          {(fromDate || toDate) && (
+            <span
+              style={{
+                background: "#0d6efd",
+                color: "#fff",
+                borderRadius: "6px",
+                padding: "4px 10px",
+                fontWeight: "bold",
+                fontSize: "13px",
+              }}
+              title={`Orders in the selected date range for ${periodLabel}`}
+            >
+              {fromDate ? fromDate.split("-").reverse().join("-") : "Start"}
+              {" → "}
+              {toDate ? toDate.split("-").reverse().join("-")  :   "Today"}:{" "}
+              {filteredZoneCounts[periodLabel]?.count || 0}
+            </span>
+          )}
+        </div>
       </div>
 
-      {selectedZone && zoneCounts[selectedZone] && (
+      {selectedZone && (
         <div>
           <h3 className="text-danger">Zone {selectedZone} Orders</h3>
-          {(zoneCounts[selectedZone]?.tickets || []).map((item) => (
+
+          {selectedTickets.length === 0 && (
+            <p>
+              {fromDate || toDate
+                ? "No orders found for the selected date range."
+                : "No orders found."}
+            </p>
+          )}
+
+          {selectedTickets.map((item) => (
             <div
               key={item.martId}
               style={{
@@ -339,3 +539,4 @@ const AdminGroceryZoneDashboard = () => {
 };
 
 export default AdminGroceryZoneDashboard;
+
