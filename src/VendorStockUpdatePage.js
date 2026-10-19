@@ -9,19 +9,19 @@ import Inventory2Icon from "@mui/icons-material/Inventory2";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import SearchIcon from "@mui/icons-material/Search";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
   getVendorProfileById,
   updateVendorProfile,
 } from "./utils/vendorStorage";
 import { getGroceryItems } from "./utils/groceryStore";
 
-// Same backend the customer-facing Profile page (and Admin grocery pages) use.
 const API_BASE = "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api";
 const ADD_GROCERY_ITEM = `${API_BASE}/UploadGrocery/UploadGrocery`;
 const IMAGE_UPLOAD = `${API_BASE}/FileUpload/upload?filename=`;
 const ADD_CATEGORY = `${API_BASE}/Categorie/UploadCategories`;
 const GET_VENDOR_PRODUCTS_BY_VENDOR_ID = `${API_BASE}/VendorUploadProducts/GetVendorProductsvalues`;
-
+const UPDATE_GROCERY_ITEM = `${API_BASE}/UploadGrocery/UpdateGroceryItems`;
 const BLOB_BASE_URL =
   "https://lmartfiles.blob.core.windows.net/userattechements";
 
@@ -95,12 +95,23 @@ const extractSelectionFromVendorProducts = (vendorProductsRaw) => {
   const qtyMap = {};
   const limitMap = {};
   const mrpMap = {};
-const priceMap = {};
+  const priceMap = {};
+  const rankMap = {};
+
   const vendorProducts = Array.isArray(vendorProductsRaw)
     ? vendorProductsRaw[0]
     : vendorProductsRaw;
 
-  if (!vendorProducts) return { map, qtyMap, limitMap };
+  if (!vendorProducts) {
+    return {
+      map,
+      qtyMap,
+      limitMap,
+      mrpMap,
+      priceMap,
+      rankMap,
+    };
+  }
 
   const categories =
     vendorProducts.categorie ||
@@ -109,31 +120,102 @@ const priceMap = {};
     [];
 
   categories.forEach((cat) => {
-    const products = cat.products || cat.Products || [];
+    const categoryName =
+      cat.categoryName ??
+      cat.CategoryName ??
+      cat.name ??
+      cat.Name ??
+      "";
+
+    if (categoryName) {
+      rankMap[categoryName] = String(
+        cat.rank ??
+        cat.Rank ??
+        ""
+      );
+    }
+
+    const products =
+      cat.products ||
+      cat.Products ||
+      [];
+
     products.forEach((p) => {
-      const productId = p.productIds ?? p.productId ?? p.ProductIds;
-      const qty = p.quantity ?? p.qty ?? p.Quantity;
-      const discount = p.discount ?? p.Discount;
-      const limit = p.limit ?? p.Limit;
-      const mrp = p.mrp ?? p.Mrp;
-      const price = p.price ?? p.Price ?? p.afterDiscount ?? p.AfterDiscount;
-      if (!productId || !(Number(qty) > 0)) return;
-      if (mrp !== undefined) mrpMap[productId] = Number(mrp);
-      if (price !== undefined) priceMap[productId] = Number(price);
-      map[productId] = { checked: true, discount: String(discount ?? "0") };
-      qtyMap[productId] = Number(qty);
-      limitMap[productId] = Number(limit ?? 0); 
+      const productId =
+        p.productIds ??
+        p.productId ??
+        p.ProductIds;
+
+      const qty =
+        p.quantity ??
+        p.qty ??
+        p.Quantity ??
+        0;
+
+      const discount =
+        p.discount ??
+        p.Discount;
+
+      const limit =
+        p.limit ??
+        p.Limit;
+
+      const mrp =
+        p.mrp ??
+        p.Mrp;
+
+      const price =
+        p.price ??
+        p.Price ??
+        p.afterDiscount ??
+        p.AfterDiscount;
+
+      if (!productId) return;
+
+      const numericQty = Number(qty);
+
+      // IMPORTANT:
+      // Always store vendor stock, including 0.
+      qtyMap[productId] = Number.isFinite(numericQty)
+        ? numericQty
+        : 0;
+
+      if (mrp !== undefined) {
+        mrpMap[productId] = Number(mrp);
+      }
+
+      if (price !== undefined) {
+        priceMap[productId] = Number(price);
+      }
+
+      limitMap[productId] = Number(limit ?? 0);
+
+      // Only positive-quantity products are treated as
+      // active/selected products.
+      if (numericQty > 0) {
+        map[productId] = {
+          checked: true,
+          discount: String(discount ?? "0"),
+        };
+      }
     });
   });
 
-  return { map, qtyMap, limitMap, mrpMap, priceMap };
+  return {
+    map,
+    qtyMap,
+    limitMap,
+    mrpMap,
+    priceMap,
+    rankMap,
+  };
 };
 
 const fetchVendorProductsDirect = async (vendorId) => {
   const res = await fetch(
     `${GET_VENDOR_PRODUCTS_BY_VENDOR_ID}?vendorId=${encodeURIComponent(vendorId)}`,
   );
-  if (res.status === 404) return null; // no submission yet — not an error
+  if (res.status === 404) return null; 
   if (!res.ok) throw new Error(`Request failed: ${res.status}`);
   const data = await res.json();
   return data;
@@ -202,7 +284,12 @@ const [mrpInputText, setMrpInputText] = useState({});
   const hydratedBackendRef = useRef(false);
   const [qtyInputText, setQtyInputText] = useState({}); 
 const originalValuesRef = useRef({}); 
+const categoryRanksRef = useRef({});
 const addPhotoInputRef = useRef(null);
+const [selectedStockTab, setSelectedStockTab] = useState(null);
+const [vendorStockMap, setVendorStockMap] = useState({});
+// const [vendorStockLoading, setVendorStockLoading] = useState(false);
+// Removed unused vendorStockLoading state
   const getPendingMrp = (item) =>
   Number(pendingMrp[item.id] ?? item.mrp ?? 0);
 
@@ -345,47 +432,117 @@ const getMrpDisplayValue = (item) => {
 
   // ---- Hydrate from the backend's already-submitted record (if any) ----
   useEffect(() => {
-    if (!vendor || hydratedBackendRef.current) return;
-    hydratedBackendRef.current = true;
-    (async () => {
-      try {
-        const vendorProducts = await fetchVendorProductsDirect(vendorId);
+  if (!vendor || hydratedBackendRef.current) return;
 
-        console.log(
-          "RAW response from GetVendorProductsvalues:",
-          JSON.stringify(vendorProducts, null, 2),
-        );
+  hydratedBackendRef.current = true;
+  // setVendorStockLoading(true);
 
-        const { map, qtyMap, limitMap, mrpMap, priceMap } =
-          extractSelectionFromVendorProducts(vendorProducts);
-         const baseline = {};
+  (async () => {
+    try {
+      const vendorProducts =
+        await fetchVendorProductsDirect(vendorId);
+
+      console.log(
+        "RAW response from GetVendorProductsvalues:",
+        JSON.stringify(vendorProducts, null, 2)
+      );
+
+      const {
+        map,
+        qtyMap,
+        limitMap,
+        mrpMap,
+        priceMap,
+        rankMap,
+      } = extractSelectionFromVendorProducts(vendorProducts);
+
+      // ============================================
+      // IMPORTANT:
+      // qtyMap is now the VENDOR API STOCK
+      // including quantity = 0
+      // ============================================
+      setVendorStockMap(qtyMap);
+
+      categoryRanksRef.current = rankMap;
+
+      console.log(
+        "VENDOR STOCK MAP:",
+        qtyMap
+      );
+
+      console.log(
+        "CATEGORY RANKS FROM VENDOR GET API:",
+        rankMap
+      );
+
+      const baseline = {};
+
       Object.keys(map).forEach((productId) => {
         baseline[productId] = {
           quantity: String(qtyMap[productId] ?? 0),
-          discount: String(map[productId]?.discount ?? "0"),
-          limit: String(limitMap[productId] ?? 0),
-          mrp: String(mrpMap[productId] ?? ""),
-          price: String(priceMap[productId] ?? ""),
+          discount: String(
+            map[productId]?.discount ?? "0"
+          ),
+          limit: String(
+            limitMap[productId] ?? 0
+          ),
+          mrp: String(
+            mrpMap[productId] ?? ""
+          ),
+          price: String(
+            priceMap[productId] ?? ""
+          ),
         };
       });
+
       originalValuesRef.current = baseline;
 
-        if (Object.keys(map).length)
-          setSelection((prev) => ({ ...map, ...prev }));
-        if (Object.keys(qtyMap).length)
-          setPendingQty((prev) => ({ ...qtyMap, ...prev }));
-        if (Object.keys(limitMap).length)
-          setPendingLimit((prev) => ({ ...limitMap, ...prev }));
-        if (Object.keys(mrpMap).length) setPendingMrp((prev) => ({ ...mrpMap, ...prev }));
-        if (Object.keys(priceMap).length) setPendingPrice((prev) => ({ ...priceMap, ...prev }));
-      } catch (err) {
-         console.error(
-          "Failed to load vendor's existing submitted products",
-          err,
-        );
+      if (Object.keys(map).length) {
+        setSelection((prev) => ({
+          ...map,
+          ...prev,
+        }));
       }
-    })();
-  }, [vendor, vendorId]);
+
+      if (Object.keys(qtyMap).length) {
+        setPendingQty((prev) => ({
+          ...qtyMap,
+          ...prev,
+        }));
+      }
+
+      if (Object.keys(limitMap).length) {
+        setPendingLimit((prev) => ({
+          ...limitMap,
+          ...prev,
+        }));
+      }
+
+      if (Object.keys(mrpMap).length) {
+        setPendingMrp((prev) => ({
+          ...mrpMap,
+          ...prev,
+        }));
+      }
+
+      if (Object.keys(priceMap).length) {
+        setPendingPrice((prev) => ({
+          ...priceMap,
+          ...prev,
+        }));
+      }
+    } catch (err) {
+      console.error(
+        "Failed to load vendor's existing submitted products",
+        err
+      );
+
+      setVendorStockMap({});
+    } finally {
+       // no loading state needed here
+    }
+  })();
+}, [vendor, vendorId]);
 
 const isProductUpdated = (item) => {
   const baseline = originalValuesRef.current[item.id];
@@ -476,6 +633,10 @@ if (Object.keys(priceMap).length) setPendingPrice((prev) => ({ ...priceMap, ...p
     pincodes: Array.isArray(vendor.pincodes) ? vendor.pincodes : [],
     categorie: Object.keys(categorieMap).map((categoryName) => ({
       categoryName,
+      rank: String(
+        categoryRanksRef.current[categoryName] ?? ""
+      ),
+
       products: categorieMap[categoryName],
     })),
   };
@@ -578,11 +739,84 @@ if (Object.keys(priceMap).length) setPendingPrice((prev) => ({ ...priceMap, ...p
     [categoryScopedItems, selection],
   );
 
-  const totalProducts = items.length;
-  const totalStock = items.reduce(
-    (sum, item) => sum + Number(item.stockLeft || 0),
-    0,
-  );
+  // ======================================================
+// VENDOR STOCK
+// Stock comes ONLY from:
+// VendorUploadProducts/GetVendorProductsvalues
+// ======================================================
+
+const vendorProductIds = useMemo(() => {
+  return Object.keys(vendorStockMap);
+}, [vendorStockMap]);
+
+
+// Total vendor products
+const totalProducts = vendorProductIds.length;
+
+
+// Total vendor stock
+const totalStock = useMemo(() => {
+  return vendorProductIds.reduce((sum, productId) => {
+    return sum + Number(vendorStockMap[productId] || 0);
+  }, 0);
+}, [vendorProductIds, vendorStockMap]);
+
+
+// ======================================================
+// OUT OF STOCK
+// Vendor quantity = 0
+// ======================================================
+
+const outOfStockProducts = useMemo(() => {
+  if (!items.length) return [];
+
+  return items.filter((item) => {
+    const productId = String(item.id);
+
+    // Product must exist in vendor API
+    if (!Object.prototype.hasOwnProperty.call(
+      vendorStockMap,
+      productId
+    )) {
+      return false;
+    }
+
+    const stock = Number(
+      vendorStockMap[productId] ?? 0
+    );
+
+    return stock === 0;
+  });
+}, [items, vendorStockMap]);
+
+
+// ======================================================
+// LOW STOCK
+// Vendor quantity = 1 to 4
+// ======================================================
+
+const lowStockProducts = useMemo(() => {
+  if (!items.length) return [];
+
+  return items.filter((item) => {
+    const productId = String(item.id);
+
+    // Product must exist in vendor API
+    if (!Object.prototype.hasOwnProperty.call(
+      vendorStockMap,
+      productId
+    )) {
+      return false;
+    }
+
+    const stock = Number(
+      vendorStockMap[productId] ?? 0
+    );
+
+    return stock >= 1 && stock <= 4;
+  });
+}, [items, vendorStockMap]);
+
   const dirtyIds = useMemo(
     () => Object.keys(pendingQty).filter((id) => Number(pendingQty[id]) > 0),
     [pendingQty],
@@ -736,6 +970,140 @@ const toggleSelectForSubmission = (item) => {
   }
 };
 
+const updateMasterGroceryPrice = async ({
+  groceryProduct,
+  mrp,
+  discount,
+}) => {
+  if (!groceryProduct?.id) {
+    throw new Error("Master Grocery record ID not found");
+  }
+
+  const numericMrp = Number(mrp || 0);
+  const numericDiscount = Number(discount || 0);
+
+  const afterDiscount =
+    numericMrp - (numericMrp * numericDiscount) / 100;
+
+  const payload = {
+    id: groceryProduct.id,
+    Date: groceryProduct.date || new Date().toISOString(),
+    GroceryItemId:
+      groceryProduct.groceryItemId ||
+      groceryProduct.GroceryItemId ||
+      "",
+    Name:
+      groceryProduct.name ||
+      groceryProduct.Name ||
+      "",
+    Category:
+      groceryProduct.category ||
+      groceryProduct.Category ||
+      "",
+    Images:
+      groceryProduct.images ||
+      groceryProduct.Images ||
+      [],
+    MRP: numericMrp.toString(),
+    Discount: numericDiscount.toString(),
+    AfterDiscount: afterDiscount.toString(),
+    StockLeft:
+      groceryProduct.stockLeft ??
+      groceryProduct.StockLeft ??
+      "0",
+    DeliveryIn:
+      groceryProduct.deliveryIn ??
+      groceryProduct.DeliveryIn ??
+      "",
+    Status:
+      groceryProduct.status ||
+      groceryProduct.Status ||
+      "Approved",
+    code:
+      groceryProduct.code ||
+      groceryProduct.Code ||
+      "Lakshmi Mart",
+    units:
+      groceryProduct.units ||
+      groceryProduct.Units ||
+      "",
+    RequestedBy:
+      groceryProduct.requestedBy ||
+      groceryProduct.RequestedBy ||
+      "Admin",
+    manufactureDate:
+      groceryProduct.manufactureDate ||
+      groceryProduct.ManufactureDate ||
+      "",
+    expireDate:
+      groceryProduct.expireDate ||
+      groceryProduct.ExpireDate ||
+      "",
+    Limit:
+      groceryProduct.limit ??
+      groceryProduct.Limit ??
+      "0",
+    VendorId:
+      groceryProduct.vendorId ||
+      groceryProduct.VendorId ||
+      "",
+  };
+
+  const response = await fetch(
+    `${UPDATE_GROCERY_ITEM}?id=${encodeURIComponent(
+      groceryProduct.id
+    )}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(payload),
+    }
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+
+    throw new Error(
+      `Master Grocery update failed (${response.status}): ${errorText}`
+    );
+  }
+
+  return response.json().catch(() => ({}));
+};
+
+const fetchMasterGroceryMap = async () => {
+  const groceryResponse = await fetch(
+    `${API_BASE}/UploadGrocery/GetAllGroceryItemsForAdmin`
+  );
+
+  if (!groceryResponse.ok) {
+    throw new Error(
+      `Failed to fetch Master Grocery products: ${groceryResponse.status}`
+    );
+  }
+
+  const groceryProducts = await groceryResponse.json();
+
+  const groceryMap = {};
+
+  (Array.isArray(groceryProducts) ? groceryProducts : []).forEach(
+    (product) => {
+      const groceryItemId =
+        product.groceryItemId ||
+        product.GroceryItemId;
+
+      if (groceryItemId) {
+        groceryMap[String(groceryItemId)] = product;
+      }
+    }
+  );
+
+  return groceryMap;
+};
+
   const getCategoryItems = (category) => {
     return items.filter(
       (item) => (item.category || "Unspecified") === category,
@@ -840,7 +1208,7 @@ const getQtyDisplayValue = (itemId) => {
 };
 
   const handleLimitInputChange = (itemId, rawValue, item) => {
-    const liveStock = Number(item.stockLeft || 0);
+    const liveStock = Number(vendorStockMap[String(item.id)] ?? 0);
     const next = Math.max(0, Math.min(Number(rawValue) || 0, liveStock));
     setPendingLimit((prev) => ({ ...prev, [itemId]: next }));
   };
@@ -901,21 +1269,86 @@ const selectedForSubmissionCount = useMemo(
     localStorage.removeItem("vendorSession");
     navigate("/vendor/login");
   };
-
-  const handlePreview = () => {
+  
+const handlePreview = async () => {
   const validationError = validateSelectedProducts();
 
   if (validationError) {
     setError(validationError);
 
-    // Automatically clear the error after 4 seconds
     setTimeout(() => setError(""), 4000);
 
     return;
   }
 
   setError("");
-  navigate(`/vendor/preview/${vendorId}`);
+
+  try {
+    // Get latest Master Grocery products
+    const groceryMap = await fetchMasterGroceryMap();
+
+    // Only update products that are selected
+    const selectedItems = items.filter(
+      (item) => selection[item.id]?.checked
+    );
+
+    for (const item of selectedItems) {
+      const groceryProduct = groceryMap[String(item.id)];
+
+      if (!groceryProduct) {
+        console.warn(
+          "Master Grocery product not found:",
+          item.id,
+          item.name
+        );
+        continue;
+      }
+
+      const mrp =
+        pendingMrp[item.id] ??
+        item.mrp ??
+        groceryProduct.mrp ??
+        0;
+
+      const discount =
+        selection[item.id]?.discount ??
+        item.discount ??
+        groceryProduct.discount ??
+        0;
+
+      await updateMasterGroceryPrice({
+        groceryProduct,
+        mrp,
+        discount,
+      });
+
+      console.log(
+        "Master Grocery updated successfully:",
+        item.name,
+        {
+          mrp,
+          discount,
+          afterDiscount:
+            Number(mrp) -
+            (Number(mrp) * Number(discount)) / 100,
+        }
+      );
+    }
+
+    navigate(`/vendor/preview/${vendorId}`);
+  } catch (err) {
+    console.error(
+      "Failed to update Master Grocery products:",
+      err
+    );
+
+    setError(
+      err.message ||
+        "Unable to update Master Grocery products."
+    );
+
+    setTimeout(() => setError(""), 5000);
+  }
 };
 
   const handleBackToProfile = () => {
@@ -1418,9 +1851,6 @@ const selectedForSubmissionCount = useMemo(
           <ArrowBackIcon fontSize="small" /> Back to Preview
         </button>
 
-        {/* Hidden inputs backing the "Search by Photo" / "Scan Barcode Photo"
-            buttons in both the category-landing view and the product-list
-            view below. */}
         <input
           ref={photoSearchInputRef}
           type="file"
@@ -1678,7 +2108,333 @@ const selectedForSubmissionCount = useMemo(
             </div>
           </div>
         </div>
+          
+           <div className="mb-2">
+            <div
+              className="d-flex gap-3"
+              style={{
+                width: "100%",
+                flexWrap: "wrap",
+              }}
+            >
+              {/* OUT OF STOCK TAB */}
+              <button
+                type="button"
+                onClick={() =>
+                  setSelectedStockTab(
+                    selectedStockTab === "outOfStock"
+                      ? null
+                      : "outOfStock"
+                  )
+                }
+                style={{
+                  flex: "1 1 0",
+                  minWidth: "220px",
+                  border:
+                    selectedStockTab === "outOfStock"
+                      ? "2px solid #dc3545"
+                      : "1px solid #dc3545",
+                  background:
+                    selectedStockTab === "outOfStock"
+                      ? "#fff1f1"
+                      : "#ffffff",
+                  borderRadius: "14px",
+                  padding: "14px",
+                  cursor: "pointer",
+                  boxShadow: "0 3px 5px rgba(0,0,0,0.08)",
+                  textAlign: "left",
+                }}
+              >
+                <div className="d-flex align-items-center justify-content-between">
+                  <div>
+                    <div
+                      style={{
+                        fontSize: "14px",
+                        fontWeight: 600,
+                        color: "#dc3545",
+                      }}
+                    >
+                      Out of Stock -- <strong>Products with stock 0</strong>
+                    </div>
+                  </div>
 
+                  <span
+                    className="badge bg-danger"
+                    style={{
+                      fontSize: "14px",
+                      borderRadius: "10px",
+                      padding: "8px",
+                    }}
+                  >
+                    {outOfStockProducts.length}
+                  </span>
+                </div>
+              </button>
+
+              {/* LOW STOCK TAB */}
+              <button
+                type="button"
+                onClick={() =>
+                  setSelectedStockTab(
+                    selectedStockTab === "lowStock"
+                      ? null
+                      : "lowStock"
+                  )
+                }
+                style={{
+                  flex: "1 1 0",
+                  minWidth: "220px",
+                  border:
+                    selectedStockTab === "lowStock"
+                      ? "2px solid #f0ad4e"
+                      : "1px solid #f0ad4e",
+                  background:
+                    selectedStockTab === "lowStock"
+                      ? "#fff9ed"
+                      : "#ffffff",
+                  borderRadius: "14px",
+                  padding: "14px 18px",
+                  cursor: "pointer",
+                  boxShadow: "0 3px 5px rgba(0,0,0,0.08)",
+                  textAlign: "left",
+                }}
+              >
+                <div className="d-flex align-items-center justify-content-between">
+                  <div>
+                    <div
+                      style={{
+                        fontSize: "14px",
+                        fontWeight: 600,
+                        color: "#d88900",
+                      }}
+                    >
+                      Low Stock -- <strong>Products with stock less than 5</strong>
+                    </div>
+
+                    {/* <div
+                      style={{
+                        fontSize: "11px",
+                        color: "#000",
+                        marginTop: "2px",
+                      }}
+                    >
+                      Products with stock less than 5
+                    </div> */}
+                  </div>
+
+                  <span
+                    className="badge"
+                    style={{
+                      background: "#f0ad4e",
+                      color: "#fff",
+                      fontSize: "14px",
+                      borderRadius: "10px",
+                      padding: "8px",
+                    }}
+                  >
+                    {lowStockProducts.length}
+                  </span>
+                </div>
+              </button>
+            </div>
+          </div>
+
+         {selectedStockTab && (
+            <div
+              className="mb-2"
+              style={{
+                background: "#fff",
+                borderRadius: "16px",
+                padding: "18px",
+                boxShadow: "0 3px 12px rgba(0,0,0,0.08)",
+                border: "1px solid #000",
+              }}
+            >
+              <div className="d-flex justify-content-between align-items-center">
+                <div>
+                  <h4
+                    className="mb-1"
+                    style={{
+                      fontWeight: 700,
+                      color:
+                        selectedStockTab === "outOfStock"
+                          ? "#dc3545"
+                          : "#d88900",
+                    }}
+                  >
+                    {selectedStockTab === "outOfStock"
+                      ? "Out of Stock Products"
+                      : "Low Stock Products"}
+                  </h4>
+
+                  <small className="text-muted">
+                    {selectedStockTab === "outOfStock"
+                      ? "Products that currently have 0 stock"
+                      : "Products that currently have 1 to 4 stock"}
+                  </small>
+                </div>
+
+                <button
+                  type="button"
+                  className="btn btn-sm btn-outline-danger"
+                  onClick={() => setSelectedStockTab(null)}
+                >
+                  X
+                </button>
+              </div>
+
+              {(
+                selectedStockTab === "outOfStock"
+                  ? outOfStockProducts
+                  : lowStockProducts
+              ).length === 0 ? (
+                <div
+                  className="text-center p-4"
+                  style={{
+                    background: "#f8f9fa",
+                    borderRadius: "10px",
+                  }}
+                >
+                  <strong>
+                    {selectedStockTab === "outOfStock"
+                      ? "No out-of-stock products."
+                      : "No low-stock products."}
+                  </strong>
+                </div>
+              ) : (
+                <div className="row g-3">
+                  {(
+                    selectedStockTab === "outOfStock"
+                      ? outOfStockProducts
+                      : lowStockProducts
+                  ).map((item) => {
+                    const liveStock = Number(vendorStockMap[String(item.id)] ?? 0);
+
+                    return (
+                      <div
+                        key={item.id}
+                        className="col-6 col-md-4 col-lg-3 col-xl-2"
+                      >
+                        <div
+                          style={{
+                            border: "1px solid #ddd",
+                            borderRadius: "12px",
+                            padding: "10px",
+                            height: "100%",
+                            background: "#fff",
+                            position: "relative",
+                          }}
+                        >
+                          {/* Stock badge */}
+                          <span
+                            style={{
+                              position: "absolute",
+                              top: "7px",
+                              right: "7px",
+                              zIndex: 2,
+                              background:
+                                liveStock === 0
+                                  ? "#dc3545"
+                                  : "#f0ad4e",
+                              color: "#fff",
+                              fontSize: "10px",
+                              fontWeight: 700,
+                              padding: "4px 7px",
+                              borderRadius: "8px",
+                            }}
+                          >
+                            Stock: {liveStock}
+                          </span>
+
+                          {/* Product image */}
+                          <div
+                            className="d-flex justify-content-center align-items-center"
+                            style={{
+                              height: "90px",
+                              marginBottom: "8px",
+                            }}
+                          >
+                            <img
+                              src={getProductImage(item)}
+                              alt={item.name}
+                              loading="lazy"
+                              decoding="async"
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = makePlaceholder(
+                                  item.name,
+                                  "adb5bd",
+                                  "ffffff"
+                                );
+                              }}
+                              style={{
+                                maxHeight: "80px",
+                                maxWidth: "100%",
+                                objectFit: "contain",
+                                borderRadius: "6px",
+                                backgroundColor: "#f5f5f5",
+                              }}
+                            />
+                          </div>
+
+                          {/* Product name */}
+                          <div
+                            style={{
+                              fontSize: "12px",
+                              fontWeight: 700,
+                              lineHeight: "1.3",
+                              minHeight: "32px",
+                            }}
+                          >
+                            {item.name}
+                          </div>
+
+                          {/* Product code */}
+                          <div
+                            className="text-muted"
+                            style={{
+                              fontSize: "10px",
+                              // marginTop: "3px",
+                            }}
+                          >
+                            {item.code}
+                          </div>
+
+                          {/* Category */}
+                          <div
+                            style={{
+                              fontSize: "10px",
+                              color: "#666",
+                              // marginTop: "3px",
+                            }}
+                          >
+                            {item.category || "Unspecified"}
+                          </div>
+
+                          {/* Stock status */}
+                          {/* <div
+                            className="mt-2"
+                            style={{
+                              fontSize: "11px",
+                              fontWeight: 700,
+                              color:
+                                liveStock === 0
+                                  ? "#dc3545"
+                                  : "#d88900",
+                            }}
+                          >
+                            {liveStock === 0
+                              ? "OUT OF STOCK"
+                              : `LOW STOCK - ${liveStock} LEFT`}
+                          </div> */}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
         {message && (
           <div className="alert alert-success rounded-4 border-0 shadow-sm">
             {message}
@@ -1983,7 +2739,7 @@ const selectedForSubmissionCount = useMemo(
             ) : (
               <div className="d-flex flex-wrap gap-3 mb-4">
                 {displayedItems.map((item) => {
-                  const liveStock = Number(item.stockLeft || 0);
+                  const liveStock = Number(vendorStockMap[String(item.id)] ?? 0);
                   // const restockQty = getPendingQty(item.id);
                   const restockLimit = getPendingLimit(item);
                   const isOutOfStock = liveStock <= 0;
@@ -2017,7 +2773,6 @@ const selectedForSubmissionCount = useMemo(
                           onChange={() => toggleSelectForSubmission(item)}
                         />
                       </label>
-
                       <div
                         className="d-flex justify-content-center align-items-center position-relative"
                         style={{ height: "90px" }}
@@ -2027,7 +2782,7 @@ const selectedForSubmissionCount = useMemo(
                           alt={item.name}
                           loading="lazy"
                           decoding="async"
-                          onError={(e) => {
+                          onError={(e) => { 
                             e.currentTarget.onerror = null;
                             e.currentTarget.src = makePlaceholder(
                               item.name,
