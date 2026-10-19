@@ -1361,18 +1361,18 @@ if (hasExistingRecord) {
               <ArrowBackIcon fontSize="small" /> Back to stock
             </button>
              
-<button
-  type="button"
-  className="btn btn-light d-inline-flex align-items-center gap-1"
-  onClick={() =>
-    navigate(
-      `/profilePageoffline/customer/${encodeURIComponent(userId || vendorId)}`
-    )
-  }
->
-  <ScreenshotMonitorIcon fontSize="small" />
-  Offline Billing
-</button>
+// <button
+//   type="button"
+//   className="btn btn-light d-inline-flex align-items-center gap-1"
+//   onClick={() =>
+//     navigate(
+//       `/profilePageoffline/customer/${encodeURIComponent(userId || vendorId)}`
+//     )
+//   }
+// >
+//   <ScreenshotMonitorIcon fontSize="small" />
+//   Offline Billing
+// </button>
 
 <button
   type="button"
