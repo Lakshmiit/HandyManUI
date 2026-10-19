@@ -8,9 +8,9 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Inventory2Icon from "@mui/icons-material/Inventory2";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import PendingActionsIcon from "@mui/icons-material/PendingActions";
-import SearchIcon from "@mui/icons-material/Search";
-import DeleteIcon from "@mui/icons-material/Delete";
-import {    
+import SearchIcon from "@mui/icons-material/Search";   
+// import DeleteIcon from "@mui/icons-material/Delete";
+import {
   getVendorProfileById,
   updateVendorProfile,
 } from "./utils/vendorStorage";
