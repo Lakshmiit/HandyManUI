@@ -81,9 +81,10 @@ const getPincodeValue = (p) => {
     p.pincode ?? p.pinCode ?? p.code ?? p.Pincode ?? p.name ?? p.Name ?? ""
   );
 };
-
+       
 const VendorPreviewPage = () => {
-  const { vendorId, userId } = useParams();
+  const { vendorId } = useParams();
+  // userId
   const navigate = useNavigate();
   const [vendor, setVendor] = useState(null);
   const [catalogItems, setCatalogItems] = useState([]);
@@ -1361,19 +1362,19 @@ if (hasExistingRecord) {
               <ArrowBackIcon fontSize="small" /> Back to stock
             </button>
              
-// <button
-//   type="button"
-//   className="btn btn-light d-inline-flex align-items-center gap-1"
-//   onClick={() =>
-//     navigate(
-//       `/profilePageoffline/customer/${encodeURIComponent(userId || vendorId)}`
-//     )
-//   }
-// >
-//   <ScreenshotMonitorIcon fontSize="small" />
-//   Offline Billing
-// </button>
-
+{/* <button
+  type="button"
+  className="btn btn-light d-inline-flex align-items-center gap-1"
+  onClick={() =>
+    navigate(
+      `/profilePageoffline/customer/${encodeURIComponent(userId || vendorId)}`
+    )
+  }
+>
+  <ScreenshotMonitorIcon fontSize="small" />
+  Offline Billing
+</button> */}
+  
 <button
   type="button"
   className="btn btn-light d-inline-flex align-items-center gap-1"
