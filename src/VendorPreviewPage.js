@@ -12,8 +12,7 @@ import {
   invalidateVendorProductsCache,
 } from "./utils/vendorListStore";
 
-const API_BASE =
-  "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/VendorUploadProducts";
+const API_BASE = "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/VendorUploadProducts";
 
 const VENDOR_UPLOAD_PRODUCTS_API = `${API_BASE}/vendorUploadProducts`;
 
@@ -23,23 +22,16 @@ const VENDOR_UPDATE_PRODUCTS_API = `${API_BASE}/UpdateVendorProductsValues`;
 
 // Master-data endpoints for the State -> District -> Pincode cascade used
 // to pick which pincodes this vendor's submission should serve.
-const MASTER_DATA_API_BASE =
-  "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData";
+const MASTER_DATA_API_BASE = "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api/MasterData";
 const GET_STATES_API = `${MASTER_DATA_API_BASE}/getStates`;
 const GET_DISTRICTS_API = `${MASTER_DATA_API_BASE}/getDistricts`;
 const GET_PINCODES_API = `${MASTER_DATA_API_BASE}/getPincodes`;
 
-// Category display-order key: an array of category names, in the order
-// the vendor has arranged them via the up/down arrows on this page. Kept
-// separate from pendingCartKey so quantity/discount edits on the Stock
-// Update page (which rewrite that key wholesale) never clobber the
-// vendor's arrangement — this page reconciles the two on every load.
-//
-// NOTE: VendorStockUpdatePage now also writes to this exact key, in the
-// order categories are first SELECTED there — so the initial arrangement
-// a vendor sees here already reflects the order they checked things in,
-// before they've touched the arrows on this page at all.
-const categoryOrderKey = (vendorId) => `vendorCategoryOrder_${vendorId}`;
+// Rank overrides: ONLY categories whose position the vendor changed with
+// the up/down arrows on this page are stored here ({ categoryName: rank }).
+// Every other category keeps the rank that came from the API.
+const categoryRankOverrideKey = (vendorId) =>
+  `vendorCategoryRankOverrides_${vendorId}`;
 
 // Same key VendorStockUpdatePage writes to when a vendor checks a product
 // and sets its discount — this page reads that local "cart" back for a
@@ -49,8 +41,7 @@ const pendingCartKey = (vendorId) => `vendorPendingProducts_${vendorId}`;
 // Orders bell on this page polls the same endpoint VendorOrdersPage reads
 // from. NOTE: this is the QA host, not the "localhost:7091" base used
 // elsewhere in this file — see VendorOrdersPage.js for why.
-const ORDERS_API_BASE =
-  "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api";
+const ORDERS_API_BASE = "https://lmartapiv1-fxcyd2b4btacgsav.westus2-01.azurewebsites.net/api";
 const GET_VENDOR_ORDERS = `${ORDERS_API_BASE}/Mart/GetVendorOrdersByVendorId`;
 const ORDERS_POLL_INTERVAL_MS = 25000;
 
@@ -81,10 +72,12 @@ const getPincodeValue = (p) => {
     p.pincode ?? p.pinCode ?? p.code ?? p.Pincode ?? p.name ?? p.Name ?? ""
   );
 };
-       
+
+const isValidRank = (r) =>
+  r !== undefined && r !== null && r !== "" && Number.isFinite(Number(r));
+
 const VendorPreviewPage = () => {
   const { vendorId } = useParams();
-  // userId
   const navigate = useNavigate();
   const [vendor, setVendor] = useState(null);
   const [catalogItems, setCatalogItems] = useState([]);
@@ -104,13 +97,12 @@ const VendorPreviewPage = () => {
   const [pendingCart, setPendingCart] = useState(null);
   const [finalSelected, setFinalSelected] = useState({});
 
-  // Vendor-arranged display order of pendingCart's categories — a list of
-  // category names, front-to-back. Persisted separately (see
-  // categoryOrderKey above) and reconciled against pendingCart's current
-  // categories every time either changes: known categories keep their
-  // arranged position, brand-new ones are appended at the end, and ones
-  // that dropped out of pendingCart (qty back to 0) are dropped here too.
-  const [categoryOrder, setCategoryOrder] = useState([]);
+  // NEW: category ranks exactly as returned by GetVendorProductsvalues,
+  // e.g. { "Unbeatable Offers": "1" }. This is the source of truth.
+  const [serverRanks, setServerRanks] = useState({});
+  // NEW: ranks the vendor changed with the arrows on this page.
+  const [rankOverrides, setRankOverrides] = useState({});
+
   const [expandedCategories, setExpandedCategories] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
   const pageRef = useRef(null);
@@ -166,17 +158,100 @@ const VendorPreviewPage = () => {
     return normalizeText(value).includes(normalizedQuery);
   };
 
+  // ------------------------------------------------------------
+  // NEW: load the ranks straight from GetVendorProductsvalues so the page
+  // always shows the rank saved in the API (e.g. Unbeatable Offers = 1).
+  // ------------------------------------------------------------
+  const loadServerRanks = async () => {
+    try {
+      const res = await axios.get(GET_VENDOR_PRODUCTS_VALUES_API, {
+        params: { vendorId: String(vendorId) },
+      });
+      const data = res.data;
+      const records = Array.isArray(data) ? data : data ? [data] : [];
+      const record =
+        records.find((r) => String(r.vendorId) === String(vendorId)) ||
+        records[0];
+      const cats =
+        record?.categorie || record?.categories || record?.Categorie || [];
+      const ranks = {};
+      cats.forEach((cat) => {
+        const name = cat.categoryName ?? cat.CategoryName;
+        const rank = cat.rank ?? cat.Rank;
+        if (name && isValidRank(rank)) ranks[name] = String(rank);
+      });
+      setServerRanks(ranks);
+    } catch (err) {
+      console.error("Unable to load category ranks:", err);
+    }
+  };
+
+  useEffect(() => {
+    if (!vendorId) return;
+    loadServerRanks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [vendorId]);
+
+  // NEW: restore any arrow-based rank changes the vendor made earlier.
+  useEffect(() => {
+    if (!vendorId) return;
+    try {
+      const raw = localStorage.getItem(categoryRankOverrideKey(vendorId));
+      if (raw) setRankOverrides(JSON.parse(raw) || {});
+    } catch {
+      // ignore malformed saved overrides
+    }
+  }, [vendorId]);
+
+  // NEW: one rank per category.
+  // Priority: arrow changes > API rank > rank on the saved cart.
+  // Brand-new categories (no rank anywhere) go after the highest rank.
+  const categoryRankMap = useMemo(() => {
+    const map = {};
+    const put = (name, rank) => {
+      if (name && isValidRank(rank) && map[name] === undefined) {
+        map[name] = Number(rank);
+      }
+    };
+
+    Object.entries(rankOverrides).forEach(([n, r]) => put(n, r));
+    Object.entries(serverRanks).forEach(([n, r]) => put(n, r));
+    (myProducts?.categories || []).forEach((cat) =>
+      put(
+        cat.categoryName ?? cat.category ?? cat.CategoryName,
+        cat.rank ?? cat.Rank,
+      ),
+    );
+    (pendingCart?.categorie || []).forEach((cat) =>
+      put(cat.categoryName, cat.rank),
+    );
+
+    let next = Math.max(0, ...Object.values(map));
+    (pendingCart?.categorie || []).forEach((cat) => {
+      if (map[cat.categoryName] === undefined) {
+        next += 1;
+        map[cat.categoryName] = next;
+      }
+    });
+
+    return map;
+  }, [rankOverrides, serverRanks, myProducts, pendingCart]);
+
+  // Categories sorted by their real rank. The rank shown is the API rank,
+  // NOT the position in the list.
   const orderedPendingCategories = useMemo(() => {
     const cats = pendingCart?.categorie || [];
-    const byName = new Map(cats.map((cat) => [cat.categoryName, cat]));
-    const ordered = categoryOrder
-      .map((name) => byName.get(name))
-      .filter(Boolean);
-    cats.forEach((cat) => {
-      if (!categoryOrder.includes(cat.categoryName)) ordered.push(cat);
-    });
-    return ordered.map((cat, idx) => ({ ...cat, rank: String(idx + 1) }));
-  }, [pendingCart, categoryOrder]);
+    return cats
+      .map((cat, idx) => ({
+        ...cat,
+        rank: String(categoryRankMap[cat.categoryName] ?? idx + 1),
+        __idx: idx,
+      }))
+      .sort((a, b) => {
+        const diff = Number(a.rank) - Number(b.rank);
+        return diff !== 0 ? diff : a.__idx - b.__idx;
+      });
+  }, [pendingCart, categoryRankMap]);
 
   const statusByProductId = useMemo(() => {
     const map = {};
@@ -526,37 +601,6 @@ const VendorPreviewPage = () => {
     };
   }, [vendorId]);
 
-  // Reconcile the vendor's arranged category order against pendingCart's
-  // current set of categories, and seed it from localStorage / current
-  // category order on first load.
-  useEffect(() => {
-    if (!vendorId) return;
-    const currentNames = (pendingCart?.categorie || []).map(
-      (cat) => cat.categoryName,
-    );
-    setCategoryOrder((prev) => {
-      let base = prev;
-      if (!prev.length) {
-        try {
-          const raw = localStorage.getItem(categoryOrderKey(vendorId));
-          if (raw) base = JSON.parse(raw);
-        } catch {
-          // ignore malformed saved order
-        }
-      }
-      const known = base.filter((name) => currentNames.includes(name));
-      const appended = currentNames.filter((name) => !known.includes(name));
-      const next = [...known, ...appended];
-      if (
-        next.length === prev.length &&
-        next.every((name, idx) => name === prev[idx])
-      ) {
-        return prev;
-      }
-      return next;
-    });
-  }, [vendorId, pendingCart]);
-
   // ============================================================
   // Load States (once, on mount)
   // ============================================================
@@ -652,45 +696,41 @@ const VendorPreviewPage = () => {
   // so previously-picked pincodes stay checked even before their state/
   // district has been re-selected on this page.
 
-useEffect(() => {
-  if (myProductsLoading) return;
-     if (seededPincodesRef.current) return;
+  useEffect(() => {
+    if (myProductsLoading) return;
+    if (seededPincodesRef.current) return;
 
-  const existingPincodes = Array.isArray(myProducts?.pincodes)
-    ? myProducts.pincodes
-    : [];
+    const existingPincodes = Array.isArray(myProducts?.pincodes)
+      ? myProducts.pincodes
+      : [];
 
-  const pendingPincodes = Array.isArray(pendingCart?.pincodes)
-    ? pendingCart.pincodes
-    : [];
+    const pendingPincodes = Array.isArray(pendingCart?.pincodes)
+      ? pendingCart.pincodes
+      : [];
 
-  const savedPincodes =
-    existingPincodes.length > 0
-      ? existingPincodes
-      : pendingPincodes;
+    const savedPincodes =
+      existingPincodes.length > 0 ? existingPincodes : pendingPincodes;
 
-  if (savedPincodes.length > 0) {
-    const selected = {};
+    if (savedPincodes.length > 0) {
+      const selected = {};
 
-    savedPincodes.forEach((pin) => {
-      const value = String(
-        getPincodeValue(pin)
-      ).trim();
+      savedPincodes.forEach((pin) => {
+        const value = String(getPincodeValue(pin)).trim();
 
-      if (value) {
-        selected[value] = true;
-      }
-    });
+        if (value) {
+          selected[value] = true;
+        }
+      });
 
-    setSelectedPincodes(selected);
-    setPincodesLocked(true);
-  } else {
-    setSelectedPincodes({});
-    setPincodesLocked(false);
-  }
+      setSelectedPincodes(selected);
+      setPincodesLocked(true);
+    } else {
+      setSelectedPincodes({});
+      setPincodesLocked(false);
+    }
 
-  seededPincodesRef.current = true;
-}, [myProductsLoading, myProducts, pendingCart]);
+    seededPincodesRef.current = true;
+  }, [myProductsLoading, myProducts, pendingCart]);
 
   // ------------------------------------------------------------
   // Auto-select the vendor's own State once both the vendor profile and
@@ -755,86 +795,85 @@ useEffect(() => {
     seededDistrictRef.current = true;
   }, [vendor, districtList]);
 
-   const togglePincode = (pincodeValue) => {
-  // Saved pincodes cannot be modified.
-  if (pincodesLocked) {
-    return;
-  }
+  const togglePincode = (pincodeValue) => {
+    // Saved pincodes cannot be modified.
+    if (pincodesLocked) {
+      return;
+    }
 
-  const key = String(pincodeValue).trim();
+    const key = String(pincodeValue).trim();
 
-  setSelectedPincodes((prev) => ({
-    ...prev,
-    [key]: !prev[key],
-  }));
-};
-
- const selectedPincodeValues = useMemo(
-  () =>
-    Object.keys(selectedPincodes).filter(
-      (key) => selectedPincodes[key],
-    ),
-  [selectedPincodes],
-);
-
-
-const visiblePincodeList = useMemo(() => {
-  if (!pincodesLocked) {
-    return pincodeList;
-  }
-
-  const savedPincodes = Array.isArray(myProducts?.pincodes)
-    ? myProducts.pincodes
-    : [];
-
-  const selectedValues = Object.keys(selectedPincodes)
-    .filter((pin) => selectedPincodes[pin]);
-
-  const combined = [
-    ...savedPincodes,
-    ...selectedValues,
-  ];
-
-  const uniquePincodes = [
-    ...new Set(
-      combined
-        .map((pin) => String(getPincodeValue(pin)).trim())
-        .filter(Boolean)
-    ),
-  ];
-
-  return uniquePincodes.map((pin) => {
-    const existing = pincodeList.find(
-      (p) => String(getPincodeValue(p)).trim() === pin
-    );
-
-    return (
-      existing || {
-        pincodeId: pin,
-        pincode: pin,
-      }
-    );
-  });
-}, [
-  pincodeList,
-  selectedPincodes,
-  pincodesLocked,
-  myProducts,
-]);
-
-  const persistCategoryOrder = (order) => {
-    try {
-      localStorage.setItem(categoryOrderKey(vendorId), JSON.stringify(order));
-    } catch {}
+    setSelectedPincodes((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
   };
 
-  const moveCategory = (index, direction) => {
-    setCategoryOrder((prev) => {
-      const targetIndex = index + direction;
-      if (targetIndex < 0 || targetIndex >= prev.length) return prev;
-      const next = [...prev];
-      [next[index], next[targetIndex]] = [next[targetIndex], next[index]];
-      persistCategoryOrder(next);
+  const selectedPincodeValues = useMemo(
+    () => Object.keys(selectedPincodes).filter((key) => selectedPincodes[key]),
+    [selectedPincodes],
+  );
+
+  const visiblePincodeList = useMemo(() => {
+    if (!pincodesLocked) {
+      return pincodeList;
+    }
+
+    const savedPincodes = Array.isArray(myProducts?.pincodes)
+      ? myProducts.pincodes
+      : [];
+
+    const selectedValues = Object.keys(selectedPincodes).filter(
+      (pin) => selectedPincodes[pin],
+    );
+
+    const combined = [...savedPincodes, ...selectedValues];
+
+    const uniquePincodes = [
+      ...new Set(
+        combined
+          .map((pin) => String(getPincodeValue(pin)).trim())
+          .filter(Boolean),
+      ),
+    ];
+
+    return uniquePincodes.map((pin) => {
+      const existing = pincodeList.find(
+        (p) => String(getPincodeValue(p)).trim() === pin,
+      );
+
+      return (
+        existing || {
+          pincodeId: pin,
+          pincode: pin,
+        }
+      );
+    });
+  }, [pincodeList, selectedPincodes, pincodesLocked, myProducts]);
+
+  // NEW: the arrows now SWAP the ranks of two neighbouring categories.
+  // Nothing else is renumbered, so every other category keeps its API rank.
+  const moveCategory = (categoryName, direction) => {
+    const list = readyToSubmitCategories; // already sorted by rank
+    const idx = list.findIndex((c) => c.categoryName === categoryName);
+    const targetIdx = idx + direction;
+    if (idx < 0 || targetIdx < 0 || targetIdx >= list.length) return;
+
+    const a = list[idx];
+    const b = list[targetIdx];
+
+    setRankOverrides((prev) => {
+      const next = {
+        ...prev,
+        [a.categoryName]: Number(b.rank),
+        [b.categoryName]: Number(a.rank),
+      };
+      try {
+        localStorage.setItem(
+          categoryRankOverrideKey(vendorId),
+          JSON.stringify(next),
+        );
+      } catch {}
       return next;
     });
   };
@@ -886,121 +925,120 @@ const visiblePincodeList = useMemo(() => {
     navigate(returnTo || "/");
   };
 
-   const mergeIntoExistingCategorie = (existingVendor, newCategorie) => {
-  const existingCats = new Map();
-  const order = [];
+  const mergeIntoExistingCategorie = (existingVendor, newCategorie) => {
+    const existingCats = new Map();
+    const order = [];
 
-  // Keep existing products INCLUDING their status
-  (existingVendor?.categories || []).forEach((cat) => {
-    const categoryName =
-      cat.categoryName ??
-      cat.category ??
-      cat.CategoryName ??
-      "";
+    // Keep existing products INCLUDING their status
+    (existingVendor?.categories || []).forEach((cat) => {
+      const categoryName =
+        cat.categoryName ?? cat.category ?? cat.CategoryName ?? "";
 
-    const productMap = new Map();
+      const productMap = new Map();
 
-    (cat.products || []).forEach((p) => {
-      const productId =
-        p.productIds ??
-        p.productId ??
-        p.ProductIds ??
-        "";
+      (cat.products || []).forEach((p) => {
+        const productId = p.productIds ?? p.productId ?? p.ProductIds ?? "";
 
-      productMap.set(String(productId), {
-        quantity: String(p.quantity ?? p.qty ?? p.Quantity ?? 0),
-        discount: String(p.discount ?? p.Discount ?? 0),
-        limit: String(p.limit ?? p.Limit ?? 0),
+        productMap.set(String(productId), {
+          quantity: String(p.quantity ?? p.qty ?? p.Quantity ?? 0),
+          discount: String(p.discount ?? p.Discount ?? 0),
+          limit: String(p.limit ?? p.Limit ?? 0),
 
-        // IMPORTANT: preserve existing status
-        status: p.status ?? "Pending",
+          // IMPORTANT: preserve existing status
+          status: p.status ?? "Pending",
+        });
       });
-    });
 
-    existingCats.set(categoryName, productMap);
-    order.push(categoryName);
-  });
-
-  // Add/update newly submitted products
-  newCategorie.forEach((cat) => {
-    const categoryName = cat.categoryName;
-
-    let productMap = existingCats.get(categoryName);
-
-    if (!productMap) {
-      productMap = new Map();
       existingCats.set(categoryName, productMap);
       order.push(categoryName);
-    }
+    });
 
-    (cat.products || []).forEach((p) => {
-      const productId =
-        p.productIds ??
-        p.productId ??
-        p.ProductIds ??
-        "";
+    // Add/update newly submitted products
+    newCategorie.forEach((cat) => {
+      const categoryName = cat.categoryName;
 
-      // IMPORTANT:
-      // Anything submitted from Vendor Preview is Pending
-      productMap.set(String(productId), {
-        quantity: String(p.quantity ?? p.Quantity ?? 0),
-        discount: String(p.discount ?? p.Discount ?? 0),
-        limit: String(p.limit ?? p.Limit ?? 0),
+      let productMap = existingCats.get(categoryName);
 
-        status: "Pending",
+      if (!productMap) {
+        productMap = new Map();
+        existingCats.set(categoryName, productMap);
+        order.push(categoryName);
+      }
+
+      (cat.products || []).forEach((p) => {
+        const productId = p.productIds ?? p.productId ?? p.ProductIds ?? "";
+
+        // IMPORTANT:
+        // Anything submitted from Vendor Preview is Pending
+        productMap.set(String(productId), {
+          quantity: String(p.quantity ?? p.Quantity ?? 0),
+          discount: String(p.discount ?? p.Discount ?? 0),
+          limit: String(p.limit ?? p.Limit ?? 0),
+
+          status: "Pending",
+        });
       });
     });
-  });
 
-  const rankOf = (name) => {
-    const idx = categoryOrder.indexOf(name);
-    return idx === -1 ? Infinity : idx;
+    // NEW: sort by the REAL rank (API rank / arrow changes) and send that
+    // same rank back. We no longer renumber everything as 1..N.
+    const rankFor = (name) =>
+      categoryRankMap[name] !== undefined
+        ? categoryRankMap[name]
+        : Number.MAX_SAFE_INTEGER;
+
+    const finalOrder = [...order].sort((a, b) => {
+      const diff = rankFor(a) - rankFor(b);
+
+      if (diff !== 0) return diff;
+
+      return order.indexOf(a) - order.indexOf(b);
+    });
+
+    let nextFreeRank = Math.max(0, ...Object.values(categoryRankMap));
+
+    return finalOrder.map((categoryName) => {
+      let rank = categoryRankMap[categoryName];
+      if (rank === undefined) {
+        nextFreeRank += 1;
+        rank = nextFreeRank;
+      }
+
+      return {
+        CategoryName: categoryName,
+        Rank: String(rank),
+
+        Products: Array.from(existingCats.get(categoryName).entries()).map(
+          ([productId, v]) => ({
+            ProductIds: productId,
+            Quantity: v.quantity,
+            Discount: v.discount,
+            Limit: v.limit,
+            Status: v.status,
+          }),
+        ),
+      };
+    });
   };
-
-  const finalOrder = [...order].sort((a, b) => {
-    const diff = rankOf(a) - rankOf(b);
-
-    if (diff !== 0) return diff;
-
-    return order.indexOf(a) - order.indexOf(b);
-  });
-
-  return finalOrder.map((categoryName, idx) => ({
-    CategoryName: categoryName,
-    Rank: String(idx + 1),
-
-    Products: Array.from(
-      existingCats.get(categoryName).entries()
-    ).map(([productId, v]) => ({
-      ProductIds: productId,
-      Quantity: v.quantity,
-      Discount: v.discount,
-      Limit: v.limit,
-      Status: v.status,
-    })),
-  }));
-};
-
 
   const handleSubmitFinal = async () => {
     if (!pendingCart) return;
+    // NEW: keep each category's real rank. We no longer re-number the
+    // categories 1..N after filtering.
     const categorie = readyToSubmitCategories
       .map((cat) => ({
         categoryName: cat.categoryName,
-        rank: cat.rank,
+        rank: String(cat.rank),
         products: (cat.products || [])
           .filter((p) => finalSelected[`${cat.categoryName}||${p.productIds}`])
-        .map((p) => ({
-          productIds: String(p.productIds ?? ""),
-          quantity: String(p.quantity ?? "0"),
-          limit: String(p.limit ?? "0"),
-          discount: String(p.discount ?? "0"),
-        })),
-    }))
-      .filter((cat) => cat.products.length > 0)
-      // Re-number after dropping unselected categories so rank stays a
-      // clean 1..N sequence with no gaps.
-      .map((cat, idx) => ({ ...cat, rank: String(idx + 1) }));
+          .map((p) => ({
+            productIds: String(p.productIds ?? ""),
+            quantity: String(p.quantity ?? "0"),
+            limit: String(p.limit ?? "0"),
+            discount: String(p.discount ?? "0"),
+          })),
+      }))
+      .filter((cat) => cat.products.length > 0);
 
     if (!categorie.length) {
       setError("Select at least one product before submitting for approval.");
@@ -1027,152 +1065,133 @@ const visiblePincodeList = useMemo(() => {
     try {
       let submittedCount = 0;
 
-      
-if (hasExistingRecord) {
-  // 1. Get the latest vendor record from the server
-  const getResponse = await axios.get(
-    GET_VENDOR_PRODUCTS_VALUES_API,
-    {
-      params: {
-        vendorId: String(vendorId),
-      },
-    }
-  );
+      if (hasExistingRecord) {
+        // 1. Get the latest vendor record from the server
+        const getResponse = await axios.get(GET_VENDOR_PRODUCTS_VALUES_API, {
+          params: {
+            vendorId: String(vendorId),
+          },
+        });
 
-  // API returns an array of vendor records
-  const vendorRecords = Array.isArray(getResponse.data)
-    ? getResponse.data
-    : [];
+        // API returns an array of vendor records
+        const vendorRecords = Array.isArray(getResponse.data)
+          ? getResponse.data
+          : [];
 
-  const existingRecord =
-    vendorRecords.find(
-      (item) =>
-        String(item.vendorId) === String(vendorId)
-    ) ||
-    vendorRecords.find(
-      (item) =>
-        String(item.id) === String(myProducts.id)
-    );
+        const existingRecord =
+          vendorRecords.find(
+            (item) => String(item.vendorId) === String(vendorId),
+          ) ||
+          vendorRecords.find(
+            (item) => String(item.id) === String(myProducts.id),
+          );
 
-  if (!existingRecord) {
-    throw new Error(
-      "Existing vendor record not found in GetVendorProductsvalues API."
-    );
-  }
+        if (!existingRecord) {
+          throw new Error(
+            "Existing vendor record not found in GetVendorProductsvalues API.",
+          );
+        }
 
-  // 2. Merge the updated products with existing categories
-  const mergedCategorie = mergeIntoExistingCategorie(
-    myProducts,
-    categorie
-  );
+        // 2. Merge the updated products with existing categories
+        const mergedCategorie = mergeIntoExistingCategorie(
+          myProducts,
+          categorie,
+        );
 
-  // 3. Bind image and imageName from GET API response
-  const updatePayload = {
-    id: existingRecord.id,
+        // 3. Bind image and imageName from GET API response
+        const updatePayload = {
+          id: existingRecord.id,
 
-    vendorId: String(
-      existingRecord.vendorId || vendorId
-    ),
+          vendorId: String(existingRecord.vendorId || vendorId),
 
-    storeName:
-      existingRecord.storeName ||
-      myProducts.storeName ||
-      vendor.storeName ||
-      vendor.name ||
-      "",
+          storeName:
+            existingRecord.storeName ||
+            myProducts.storeName ||
+            vendor.storeName ||
+            vendor.name ||
+            "",
 
-    status:
-      existingRecord.status ||
-      myProducts.status ||
-      "Pending",
+          status: existingRecord.status || myProducts.status || "Pending",
 
-    createdDate:
-      existingRecord.createdDate ||
-      myProducts.createdDate ||
-      new Date().toISOString(),
+          createdDate:
+            existingRecord.createdDate ||
+            myProducts.createdDate ||
+            new Date().toISOString(),
 
-    updatedDate: new Date().toISOString(),
+          updatedDate: new Date().toISOString(),
 
-    state:
-      existingRecord.state ||
-      myProducts.state ||
-      selectedStateName ||
-      "",
+          state:
+            existingRecord.state || myProducts.state || selectedStateName || "",
 
-    stateId: String(
-      existingRecord.stateId ||
-      myProducts.stateId ||
-      formData.stateId ||
-      ""
-    ),
+          stateId: String(
+            existingRecord.stateId ||
+              myProducts.stateId ||
+              formData.stateId ||
+              "",
+          ),
 
-    district:
-      existingRecord.district ||
-      myProducts.district ||
-      selectedDistrictName ||
-      "",
+          district:
+            existingRecord.district ||
+            myProducts.district ||
+            selectedDistrictName ||
+            "",
 
-    districtId: String(
-      existingRecord.districtId ||
-      myProducts.districtId ||
-      formData.districtId ||
-      ""
-    ),
+          districtId: String(
+            existingRecord.districtId ||
+              myProducts.districtId ||
+              formData.districtId ||
+              "",
+          ),
 
-    pincodes:
-      existingRecord.pincodes ||
-      selectedPincodeValues,
+          pincodes: existingRecord.pincodes || selectedPincodeValues,
 
-    // IMPORTANT: Preserve existing image data
-    image: Array.isArray(existingRecord.image)
-      ? existingRecord.image
-      : [],
+          // IMPORTANT: Preserve existing image data
+          image: Array.isArray(existingRecord.image)
+            ? existingRecord.image
+            : [],
 
-    imageName: existingRecord.imageName ?? "",
+          imageName: existingRecord.imageName ?? "",
 
-    // Preserve existing categories and product statuses
-    categorie: mergedCategorie.map((cat) => ({
-      categoryName: cat.CategoryName,
-      rank: String(cat.Rank),
+          // Preserve existing categories, ranks and product statuses
+          categorie: mergedCategorie.map((cat) => ({
+            categoryName: cat.CategoryName,
+            rank: String(cat.Rank),
 
-      products: (cat.Products || []).map((p) => ({
-        productIds: String(p.ProductIds ?? ""),
-        quantity: String(p.Quantity ?? "0"),
-        limit: String(p.Limit ?? "0"),
-        discount: String(p.Discount ?? "0"),
-        status: p.Status ?? "Pending",
-      })),
-    })),
-  };
+            products: (cat.Products || []).map((p) => ({
+              productIds: String(p.ProductIds ?? ""),
+              quantity: String(p.Quantity ?? "0"),
+              limit: String(p.Limit ?? "0"),
+              discount: String(p.Discount ?? "0"),
+              status: p.Status ?? "Pending",
+            })),
+          })),
+        };
 
-  console.log(
-    "Vendor Update Products PUT Payload:",
-    updatePayload
-  );
+        console.log("Vendor Update Products PUT Payload:", updatePayload);
 
-  // 4. Call PUT API
-  const updateResponse = await axios.put(
-    `${VENDOR_UPDATE_PRODUCTS_API}?id=${encodeURIComponent(
-      existingRecord.id
-    )}`,
-    updatePayload,
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
+        // 4. Call PUT API
+        const updateResponse = await axios.put(
+          `${VENDOR_UPDATE_PRODUCTS_API}?id=${encodeURIComponent(
+            existingRecord.id,
+          )}`,
+          updatePayload,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          },
+        );
 
-  console.log(
-    "Vendor Update Products PUT Response:",
-    updateResponse.data
-  );
+        console.log(
+          "Vendor Update Products PUT Response:",
+          updateResponse.data,
+        );
 
-  submittedCount = categorie.reduce(
-    (sum, cat) => sum + cat.products.length,
-    0
-  );
-} else {
+        submittedCount = categorie.reduce(
+          (sum, cat) => sum + cat.products.length,
+          0,
+        );
+      } else {
         const payload = {
           id: pendingCart.id || "",
           vendorId: String(vendorId || ""),
@@ -1181,9 +1200,9 @@ if (hasExistingRecord) {
           status: pendingCart.status || "Pending",
           createdDate: pendingCart.createdDate || new Date().toISOString(),
           updatedDate: new Date().toISOString(),
-        image: [],
-        imageName: "",
-        pincodes: selectedPincodeValues,
+          image: [],
+          imageName: "",
+          pincodes: selectedPincodeValues,
           categorie,
           state: selectedStateName,
           stateId: formData.stateId,
@@ -1215,11 +1234,14 @@ if (hasExistingRecord) {
       // refresh "Your submitted products" so it reflects the new state.
       try {
         localStorage.removeItem(pendingCartKey(vendorId));
+        // NEW: the arrow changes are now saved on the server, so drop them
+        localStorage.removeItem(categoryRankOverrideKey(vendorId));
       } catch (err) {
         // ignore
       }
       setPendingCart(null);
       setFinalSelected({});
+      setRankOverrides({});
 
       invalidateVendorProductsCache(vendorId);
       getVendorProductsByVendorId(vendorId, { force: true })
@@ -1227,6 +1249,8 @@ if (hasExistingRecord) {
         .catch((err) =>
           console.error("Unable to refresh vendor products:", err),
         );
+      // NEW: pick up the ranks that were just saved
+      loadServerRanks();
     } catch (submitError) {
       console.error("Vendor approval submission failed:", submitError);
       console.error("API Error Response:", submitError.response?.data);
@@ -1250,7 +1274,9 @@ if (hasExistingRecord) {
   return (
     <div
       ref={pageRef}
-      className={isFullScreen ? "container-fluid py-4 pb-5" : "container-xl py-4 pb-5"}
+      className={
+        isFullScreen ? "container-fluid py-4 pb-5" : "container-xl py-4 pb-5"
+      }
       style={{
         maxWidth: isFullScreen ? "100%" : "1320px",
         backgroundColor: isFullScreen ? "#fff" : undefined,
@@ -1259,13 +1285,13 @@ if (hasExistingRecord) {
       }}
     >
       <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-      <button
-        type="button"
-        className="btn btn-outline-secondary btn-sm mb-3 d-inline-flex align-items-center gap-1"
-        onClick={handleBackToProfile}
-      >
-        <ArrowBackIcon fontSize="small" /> Back to Profile
-      </button>
+        <button
+          type="button"
+          className="btn btn-outline-secondary btn-sm mb-3 d-inline-flex align-items-center gap-1"
+          onClick={handleBackToProfile}
+        >
+          <ArrowBackIcon fontSize="small" /> Back to Profile
+        </button>
       </div>
       <div className="border-4 shadow-sm mb-2 overflow-hidden">
         <div
@@ -1338,7 +1364,7 @@ if (hasExistingRecord) {
               </div>
             )}
           </div>
-          <div className="d-flex gap-2">
+          <div className="d-flex gap-1">
             <button
               className={`btn btn-light position-relative d-inline-flex align-items-center ${
                 hasNewOrder ? " vendor-orders-bell-pulse" : ""
@@ -1361,28 +1387,12 @@ if (hasExistingRecord) {
             >
               <ArrowBackIcon fontSize="small" /> Back to stock
             </button>
-             
-{/* <button
-  type="button"
-  className="btn btn-light d-inline-flex align-items-center gap-1"
-  onClick={() =>
-    navigate(
-      `/profilePageoffline/customer/${encodeURIComponent(userId || vendorId)}`
-    )
-  }
->
-  <ScreenshotMonitorIcon fontSize="small" />
-  Offline Billing
-</button> */}
-  
-<button
-  type="button"
-  className="btn btn-light d-inline-flex align-items-center gap-1"
-  onClick={handleLogout}
->
-  Logout
-</button>
-
+            <button
+              className="btn btn-light d-inline-flex align-items-center"
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
           </div>
         </div>
       </div>
@@ -1436,8 +1446,8 @@ if (hasExistingRecord) {
           <h3 className="mb-1">Service area</h3>
           <p className="text-muted small">
             {pincodesLocked
-    ? "Your selected pincodes are saved and cannot be changed."
-    : "Select the pincodes you want to serve. You can select or unselect multiple pincodes before submitting."}
+              ? "Your selected pincodes are saved and cannot be changed."
+              : "Select the pincodes you want to serve. You can select or unselect multiple pincodes before submitting."}
           </p>
 
           <div className="row g-1">
@@ -1465,11 +1475,9 @@ if (hasExistingRecord) {
             <div className="col-12 col-md-4">
               <label className="form-label small fw-bold">
                 Pincodes selected -- {selectedPincodeValues.length}
-                 {pincodesLocked && (
-                <span className="text-success ms-2">
-                  (Locked)
-                </span>
-              )}
+                {pincodesLocked && (
+                  <span className="text-success ms-2">(Locked)</span>
+                )}
               </label>
             </div>
           </div>
@@ -1509,7 +1517,7 @@ if (hasExistingRecord) {
                           type="checkbox"
                           className="form-check-input border-dark"
                           checked={checked}
-                           disabled={pincodesLocked}
+                          disabled={pincodesLocked}
                           onChange={() => togglePincode(value)}
                         />
                         {value}
@@ -1563,8 +1571,13 @@ if (hasExistingRecord) {
                 Use the arrows to arrange the order these categories appear in
                 on your storefront.
               </p>
-              {searchedReadyToSubmitCategories.map((cat, index) => {
+              {searchedReadyToSubmitCategories.map((cat) => {
                 const isExpanded = !!expandedCategories[cat.categoryName];
+                // Position in the FULL (unfiltered) list so the arrows
+                // still work correctly while a search is active.
+                const fullIndex = readyToSubmitCategories.findIndex(
+                  (c) => c.categoryName === cat.categoryName,
+                );
                 return (
                   <div key={cat.categoryName} className="mb-3">
                     <div className="d-flex align-items-center gap-2 mb-2">
@@ -1588,8 +1601,8 @@ if (hasExistingRecord) {
                           type="button"
                           className="btn btn-outline-secondary"
                           title="Move up"
-                          disabled={index === 0}
-                          onClick={() => moveCategory(index, -1)}
+                          disabled={fullIndex <= 0}
+                          onClick={() => moveCategory(cat.categoryName, -1)}
                         >
                           &uarr;
                         </button>
@@ -1598,9 +1611,9 @@ if (hasExistingRecord) {
                           className="btn btn-outline-secondary"
                           title="Move down"
                           disabled={
-                            index === searchedReadyToSubmitCategories.length - 1
+                            fullIndex === readyToSubmitCategories.length - 1
                           }
-                          onClick={() => moveCategory(index, 1)}
+                          onClick={() => moveCategory(cat.categoryName, 1)}
                         >
                           &darr;
                         </button>
@@ -1715,7 +1728,7 @@ if (hasExistingRecord) {
                                 >
                                   Approved
                                 </span>
-                              </div>      
+                              </div>
                               <div>
                                 Qty: {p.qty} &middot; Discount: {p.discount}%
                                 &middot; Limit: {p.limit}
